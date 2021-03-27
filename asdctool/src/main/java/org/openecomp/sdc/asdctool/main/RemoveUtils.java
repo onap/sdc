@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.main;
 
 import org.openecomp.sdc.asdctool.impl.ProductLogic;

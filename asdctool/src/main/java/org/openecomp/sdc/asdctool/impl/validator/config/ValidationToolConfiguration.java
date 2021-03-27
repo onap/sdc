@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
+import java.util.List;
 import org.openecomp.sdc.asdctool.impl.VrfObjectFixHandler;
 import org.openecomp.sdc.asdctool.impl.validator.ArtifactToolBL;
 import org.openecomp.sdc.asdctool.impl.validator.ValidationToolBL;
@@ -67,8 +67,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.FileSystemResource;
 
-import java.util.List;
-
 /**
  * Created by chaya on 7/3/2017.
  */
@@ -83,19 +81,18 @@ public class ValidationToolConfiguration {
 
     @Bean
     public NodeToscaArtifactsValidatorExecutor NodeToscaArtifactsValidatorValidator(JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade) {
+                                                                                    ToscaOperationFacade toscaOperationFacade) {
         return new NodeToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
     }
 
     @Bean
     public ServiceToscaArtifactsValidatorExecutor ServiceToscaArtifactsValidator(JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade) {
+                                                                                 ToscaOperationFacade toscaOperationFacade) {
         return new ServiceToscaArtifactsValidatorExecutor(janusGraphDao, toscaOperationFacade);
     }
 
     @Bean
-    public VFToscaArtifactValidatorExecutor VFToscaArtifactValidator(JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade) {
+    public VFToscaArtifactValidatorExecutor VFToscaArtifactValidator(JanusGraphDao janusGraphDao, ToscaOperationFacade toscaOperationFacade) {
         return new VFToscaArtifactValidatorExecutor(janusGraphDao, toscaOperationFacade);
     }
 
@@ -136,7 +133,7 @@ public class ValidationToolConfiguration {
 
     @Bean
     public ArtifactValidationUtils artifactValidationUtils(ArtifactCassandraDao artifactCassandraDao,
-        TopologyTemplateOperation topologyTemplateOperation) {
+                                                           TopologyTemplateOperation topologyTemplateOperation) {
         return new ArtifactValidationUtils(artifactCassandraDao, topologyTemplateOperation);
     }
 
@@ -156,8 +153,7 @@ public class ValidationToolConfiguration {
     }
 
     @Bean(name = "migration-janusgraph-client", initMethod = "createGraph")
-    public JanusGraphClient janusGraphMigrationClient(@Qualifier("dao-janusgraph-strategy")
-                                                     JanusGraphClientStrategy janusGraphClientStrategy) {
+    public JanusGraphClient janusGraphMigrationClient(@Qualifier("dao-janusgraph-strategy") JanusGraphClientStrategy janusGraphClientStrategy) {
         return new JanusGraphClient(janusGraphClientStrategy);
     }
 
@@ -180,7 +176,6 @@ public class ValidationToolConfiguration {
     public NodeTemplateOperation nodeTemplateOperation() {
         return new NodeTemplateOperation();
     }
-
 
     @Bean(name = "mig-derived-resolver")
     public DerivedNodeTypeResolver migrationDerivedNodeTypeResolver() {
@@ -212,24 +207,22 @@ public class ValidationToolConfiguration {
 
     @Bean(name = "janusgraph-client")
     @Primary
-    public JanusGraphClient janusGraphClient(@Qualifier("dao-client-strategy")
-        JanusGraphClientStrategy janusGraphClientStrategy) {
+    public JanusGraphClient janusGraphClient(@Qualifier("dao-client-strategy") JanusGraphClientStrategy janusGraphClientStrategy) {
         return new JanusGraphClient(janusGraphClientStrategy);
     }
 
-    @Bean(name ="dao-client-strategy")
+    @Bean(name = "dao-client-strategy")
     public JanusGraphClientStrategy janusGraphClientStrategy() {
         return new DAOJanusGraphStrategy();
     }
 
     @Bean
-    public VrfObjectFixHandler vrfObjectFixHandler(@Qualifier("janusgraph-dao")
-        JanusGraphDao janusGraphDao){
+    public VrfObjectFixHandler vrfObjectFixHandler(@Qualifier("janusgraph-dao") JanusGraphDao janusGraphDao) {
         return new VrfObjectFixHandler(janusGraphDao);
     }
 
     @Bean(name = "healingPipelineDao")
-    public HealingPipelineDao healingPipelineDao(){
+    public HealingPipelineDao healingPipelineDao() {
         return new HealingPipelineDao();
     }
 

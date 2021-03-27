@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.configuration;
 
 import org.openecomp.sdc.asdctool.impl.VrfObjectFixHandler;
@@ -34,25 +33,23 @@ import org.springframework.context.annotation.Primary;
 public class VrfObjectFixConfiguration {
 
     @Bean(name = "janusgraph-dao")
-    public JanusGraphDao janusGraphDao(@Qualifier("janusgraph-client") JanusGraphClient janusGraphClient){
+    public JanusGraphDao janusGraphDao(@Qualifier("janusgraph-client") JanusGraphClient janusGraphClient) {
         return new JanusGraphDao(janusGraphClient);
     }
 
     @Bean(name = "janusgraph-client")
     @Primary
-    public JanusGraphClient janusGraphClient(@Qualifier("dao-client-strategy")
-                                            JanusGraphClientStrategy janusGraphClientStrategy) {
+    public JanusGraphClient janusGraphClient(@Qualifier("dao-client-strategy") JanusGraphClientStrategy janusGraphClientStrategy) {
         return new JanusGraphClient(janusGraphClientStrategy);
     }
 
-    @Bean(name ="dao-client-strategy")
+    @Bean(name = "dao-client-strategy")
     public JanusGraphClientStrategy janusGraphClientStrategy() {
         return new DAOJanusGraphStrategy();
     }
 
     @Bean
-    public VrfObjectFixHandler vrfObjectFixHandler(@Qualifier("janusgraph-dao")
-                                                       JanusGraphDao janusGraphDao){
+    public VrfObjectFixHandler vrfObjectFixHandler(@Qualifier("janusgraph-dao") JanusGraphDao janusGraphDao) {
         return new VrfObjectFixHandler(janusGraphDao);
     }
 }

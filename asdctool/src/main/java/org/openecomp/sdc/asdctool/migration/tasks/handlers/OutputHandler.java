@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.migration.tasks.handlers;
 
 public interface OutputHandler {
@@ -27,5 +26,4 @@ public interface OutputHandler {
     void addRecord(Object... record);
 
     boolean writeOutputAndCloseFile();
-
 }

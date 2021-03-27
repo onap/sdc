@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -52,16 +51,11 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 public abstract class ArtifactValidatorExecutor {
 
     private static final Logger log = Logger.getLogger(ArtifactValidatorExecutor.class);
-
     private final JanusGraphDao janusGraphDao;
     private final ToscaOperationFacade toscaOperationFacade;
     private final String name;
 
-    public ArtifactValidatorExecutor(
-        JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade,
-        String name
-    ) {
+    public ArtifactValidatorExecutor(JanusGraphDao janusGraphDao, ToscaOperationFacade toscaOperationFacade, String name) {
         this.janusGraphDao = janusGraphDao;
         this.toscaOperationFacade = toscaOperationFacade;
         this.name = name;
@@ -71,11 +65,9 @@ public abstract class ArtifactValidatorExecutor {
         return name;
     }
 
-    public Map<String, List<Component>> getVerticesToValidate(VertexTypeEnum type,
-        Map<GraphPropertyEnum, Object> hasProps) {
+    public Map<String, List<Component>> getVerticesToValidate(VertexTypeEnum type, Map<GraphPropertyEnum, Object> hasProps) {
         Map<String, List<Component>> result = new HashMap<>();
-        Either<List<GraphVertex>, JanusGraphOperationStatus> resultsEither = janusGraphDao
-            .getByCriteria(type, hasProps);
+        Either<List<GraphVertex>, JanusGraphOperationStatus> resultsEither = janusGraphDao.getByCriteria(type, hasProps);
         if (resultsEither.isRight()) {
             log.error("getVerticesToValidate failed " + resultsEither.right().value());
             return result;
@@ -89,22 +81,15 @@ public abstract class ArtifactValidatorExecutor {
                 result.put(ivariantUuid, compList);
             }
             List<Component> compList = result.get(ivariantUuid);
-
             ComponentParametersView filter = new ComponentParametersView(true);
             filter.setIgnoreArtifacts(false);
-
-            Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade
-                .getToscaElement(vertex.getUniqueId(), filter);
+            Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(vertex.getUniqueId(), filter);
             if (toscaElement.isRight()) {
-                log.error(
-                    "getVerticesToValidate: failed to find element" + vertex.getUniqueId() + " staus is" + toscaElement
-                        .right().value());
+                log.error("getVerticesToValidate: failed to find element" + vertex.getUniqueId() + " staus is" + toscaElement.right().value());
             } else {
                 compList.add(toscaElement.left().value());
             }
-
         });
-
         return result;
     }
 
@@ -119,21 +104,17 @@ public abstract class ArtifactValidatorExecutor {
                 Set<String> artifactEsId = new HashSet<>();
                 for (Component component : compList) {
                     Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
-                    Optional<ArtifactDefinition> op = toscaArtifacts.values().
-                        stream().filter(a -> artifactEsId.contains(a.getEsId())).findAny();
+                    Optional<ArtifactDefinition> op = toscaArtifacts.values().stream().filter(a -> artifactEsId.contains(a.getEsId())).findAny();
                     if (op.isPresent()) {
                         result = false;
                         writeModuleResultToFile(writer, compList);
                         writer.flush();
                         break;
                     } else {
-                        artifactEsId.addAll(toscaArtifacts.values().stream().map(ArtifactDefinition::getEsId)
-                            .collect(Collectors.toList()));
+                        artifactEsId.addAll(toscaArtifacts.values().stream().map(ArtifactDefinition::getEsId).collect(Collectors.toList()));
                     }
                 }
-
             }
-
         } catch (Exception e) {
             log.error("Failed to fetch vf resources ", e);
             return false;
@@ -147,14 +128,13 @@ public abstract class ArtifactValidatorExecutor {
         try {
             // "service name, service id, state, version
             for (Component component : components) {
-                String sb = component.getName() + "," + component.getUniqueId() + "," + component.getInvariantUUID()
-                    + "," + component.getLifecycleState() + "," + component.getVersion()
-                    + "\n";
+                String sb =
+                    component.getName() + "," + component.getUniqueId() + "," + component.getInvariantUUID() + "," + component.getLifecycleState()
+                        + "," + component.getVersion() + "\n";
                 writer.write(sb);
             }
         } catch (IOException e) {
             log.error("Failed to write module result to file ", e);
         }
     }
-
 }

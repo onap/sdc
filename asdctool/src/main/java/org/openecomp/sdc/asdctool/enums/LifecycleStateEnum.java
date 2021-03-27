@@ -17,15 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.enums;
 
 public enum LifecycleStateEnum {
-
-    READY_FOR_CERTIFICATION,
-    CERTIFICATION_IN_PROGRESS,
-    CERTIFIED,
-    NOT_CERTIFIED_CHECKIN,
-    NOT_CERTIFIED_CHECKOUT;
-
+    READY_FOR_CERTIFICATION, CERTIFICATION_IN_PROGRESS, CERTIFIED, NOT_CERTIFIED_CHECKIN, NOT_CERTIFIED_CHECKOUT;
 }

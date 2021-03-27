@@ -21,17 +21,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.config;
 
 import java.util.function.Supplier;
 
 public final class ValidationConfigManager {
 
+    public static final String DEFAULT_CSV_PATH = "summary.csv";
     private static final String REPORT_OUTPUT_FILE_NAME = "/reportOutput.txt";
     private static final String CSV_FILE_PREFIX = "/csvSummary_";
     private static final String CSV_EXT = ".csv";
-    public static final String DEFAULT_CSV_PATH = "summary.csv";
 
     private ValidationConfigManager() {
     }

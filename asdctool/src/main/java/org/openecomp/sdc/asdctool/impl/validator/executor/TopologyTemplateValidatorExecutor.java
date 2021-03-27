@@ -17,9 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.Getter;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile.TXTFile;
@@ -35,48 +40,31 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 public class TopologyTemplateValidatorExecutor implements ValidatorExecutor {
 
     private static final Logger log = Logger.getLogger(TopologyTemplateValidatorExecutor.class);
-
     private final JanusGraphDao janusGraphDao;
     private final ComponentTypeEnum componentType;
     private final List<? extends TopologyTemplateValidationTask> tasks;
-
     @Getter
     private final String name;
 
-    @Autowired(required = false)
-    public static ValidatorExecutor serviceValidatorExecutor(JanusGraphDao janusGraphDao) {
-        return new TopologyTemplateValidatorExecutor(
-                janusGraphDao, "SERVICE_VALIDATOR", ComponentTypeEnum.SERVICE, new ArrayList<>()
-        );
-    }
-
-    @Autowired(required = false)
-    public static ValidatorExecutor vfValidatorExecutor(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
-        return new TopologyTemplateValidatorExecutor(
-                janusGraphDao, "BASIC_VF_VALIDATOR", ComponentTypeEnum.RESOURCE, tasks
-        );
-    }
-
-    private TopologyTemplateValidatorExecutor(
-            JanusGraphDao janusGraphDao,
-            String name,
-            ComponentTypeEnum componentType,
-            List<? extends TopologyTemplateValidationTask> tasks
-    ) {
+    private TopologyTemplateValidatorExecutor(JanusGraphDao janusGraphDao, String name, ComponentTypeEnum componentType,
+                                              List<? extends TopologyTemplateValidationTask> tasks) {
         this.janusGraphDao = janusGraphDao;
         this.name = name;
         this.componentType = componentType;
         this.tasks = tasks;
+    }
+
+    @Autowired(required = false)
+    public static ValidatorExecutor serviceValidatorExecutor(JanusGraphDao janusGraphDao) {
+        return new TopologyTemplateValidatorExecutor(janusGraphDao, "SERVICE_VALIDATOR", ComponentTypeEnum.SERVICE, new ArrayList<>());
+    }
+
+    @Autowired(required = false)
+    public static ValidatorExecutor vfValidatorExecutor(List<VfValidationTask> tasks, JanusGraphDao janusGraphDao) {
+        return new TopologyTemplateValidatorExecutor(janusGraphDao, "BASIC_VF_VALIDATOR", ComponentTypeEnum.RESOURCE, tasks);
     }
 
     @Override
@@ -88,7 +76,6 @@ public class TopologyTemplateValidatorExecutor implements ValidatorExecutor {
         boolean successAllVertices = true;
         int vertexNum = 0;
         int verticesSize = vertices.size();
-
         for (GraphVertex vertex : vertices) {
             vertexNum++;
             boolean successAllTasks = true;
@@ -113,18 +100,13 @@ public class TopologyTemplateValidatorExecutor implements ValidatorExecutor {
     }
 
     private List<GraphVertex> getVerticesToValidate() {
-        return janusGraphDao
-                .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, buildProps())
-                .either(
-                        vs -> {
-                            log.info("getVerticesToValidate: {} vertices to scan", vs.size());
-                            return vs;
-                        },
-                        sos -> {
-                            log.error("getVerticesToValidate failed {}", sos);
-                            return new ArrayList<>();
-                        }
-                );
+        return janusGraphDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, buildProps()).either(vs -> {
+            log.info("getVerticesToValidate: {} vertices to scan", vs.size());
+            return vs;
+        }, sos -> {
+            log.error("getVerticesToValidate failed {}", sos);
+            return new ArrayList<>();
+        });
     }
 
     private Map<GraphPropertyEnum, Object> buildProps() {

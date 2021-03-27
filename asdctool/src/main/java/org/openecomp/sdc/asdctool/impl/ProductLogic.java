@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl;
 
 import java.util.ArrayList;
@@ -55,8 +54,7 @@ public class ProductLogic {
         Transaction transac = null;
         try (JanusGraph graph = JanusGraphFactory.open(janusGraphFile)) {
             transac = graph.tx();
-            Iterable vertices = graph.query()
-                    .has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.Product.getName()).vertices();
+            Iterable vertices = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.Product.getName()).vertices();
             if (vertices != null) {
                 for (Vertex vertex : (Iterable<Vertex>) vertices) {
                     String id = vertex.value(GraphPropertiesDictionary.UNIQUE_ID.getProperty());

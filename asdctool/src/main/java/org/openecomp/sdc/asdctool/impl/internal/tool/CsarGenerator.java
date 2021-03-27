@@ -62,8 +62,7 @@ public class CsarGenerator extends CommonInternalTool {
     private ToscaExportHandler toscaExportHandler;
 
     @Autowired
-    public CsarGenerator(JanusGraphDao janusGraphDao, CsarUtils csarUtils,
-                         ToscaOperationFacade toscaOperationFacade,
+    public CsarGenerator(JanusGraphDao janusGraphDao, CsarUtils csarUtils, ToscaOperationFacade toscaOperationFacade,
                          ArtifactCassandraDao artifactCassandraDao, ToscaExportHandler toscaExportHandler) {
         super("generate");
         this.janusGraphDao = janusGraphDao;
@@ -75,26 +74,21 @@ public class CsarGenerator extends CommonInternalTool {
 
     public void generateCsar(String uuid, Scanner scanner) {
         JanusGraphOperationStatus status = JanusGraphOperationStatus.OK;
-
         Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
         props.put(GraphPropertyEnum.UUID, uuid);
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         props.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
-
-        List<GraphVertex> byCriteria = janusGraphDao
-            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props).either(l -> l, r -> null);
+        List<GraphVertex> byCriteria = janusGraphDao.getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props).either(l -> l, r -> null);
         if (byCriteria != null && !byCriteria.isEmpty()) {
             if (byCriteria.size() > 1) {
                 ConsoleWriter.dataLine("Warning ! More that 1 certified service with uuid", uuid);
                 // TBD
             } else {
                 GraphVertex metadataV = byCriteria.get(0);
-
                 printComponentInfo(metadataV.getMetadataProperties());
                 ConsoleWriter.dataLine("\nGenerate CSAR (yes/no)?");
                 String input = scanner.nextLine();
                 if (input.equalsIgnoreCase("yes")) {
-
                     status = handleService(metadataV, uuid);
                 }
             }
@@ -112,22 +106,18 @@ public class CsarGenerator extends CommonInternalTool {
         JanusGraphOperationStatus status = JanusGraphOperationStatus.OK;
         org.openecomp.sdc.be.model.Component component = toscaOperationFacade.getToscaFullElement(metadataV.getUniqueId()).either(l -> l, r -> null);
         if (component != null) {
-
             Supplier<byte[]> supplier = () -> generateToscaPayload(component);
             generateArtifact(component, ArtifactTypeEnum.TOSCA_TEMPLATE, supplier);
-
             supplier = () -> generateCsarPayload(component);
             generateArtifact(component, ArtifactTypeEnum.TOSCA_CSAR, supplier);
-
-            GraphVertex toscaArtifactV = janusGraphDao
-                .getChildVertex(metadataV, EdgeLabelEnum.TOSCA_ARTIFACTS, JsonParseFlagEnum.ParseJson).either(l -> l, r -> null);
+            GraphVertex toscaArtifactV = janusGraphDao.getChildVertex(metadataV, EdgeLabelEnum.TOSCA_ARTIFACTS, JsonParseFlagEnum.ParseJson)
+                .either(l -> l, r -> null);
             if (toscaArtifactV != null) {
                 Map<String, ArtifactDataDefinition> copy = component.getToscaArtifacts().entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> new ArtifactDataDefinition(e.getValue())));
                 toscaArtifactV.setJson(copy);
                 janusGraphDao.updateVertex(toscaArtifactV);
             }
-
         } else {
             ConsoleWriter.dataLine("Failed to fetch certified service with UUID ", uuid);
         }
@@ -141,7 +131,6 @@ public class CsarGenerator extends CommonInternalTool {
             .filter(p -> p.getArtifactType().equals(artifactType.getType())).findAny();
         if (op.isPresent()) {
             csarArtifact = op.get();
-
             status = savePayload(component, csarArtifact, supplier);
         }
         return status;
@@ -158,7 +147,6 @@ public class CsarGenerator extends CommonInternalTool {
     private JanusGraphOperationStatus savePayload(org.openecomp.sdc.be.model.Component component, ArtifactDefinition csarArtifact,
                                                   Supplier<byte[]> supplier) {
         byte[] payload = supplier.get();
-
         if (payload == null) {
             ConsoleWriter.dataLine("create artifact failed ", csarArtifact.getArtifactLabel());
             return JanusGraphOperationStatus.GENERAL_ERROR;
@@ -166,19 +154,15 @@ public class CsarGenerator extends CommonInternalTool {
         ConsoleWriter.dataLine("create artifact  success ", csarArtifact.getArtifactLabel());
         csarArtifact.setPayload(payload);
         byte[] decodedPayload = csarArtifact.getPayloadData();
-
         String uniqueId = UniqueIdBuilder.buildPropertyUniqueId(component.getUniqueId(), csarArtifact.getArtifactLabel());
         csarArtifact.setUniqueId(uniqueId);
         csarArtifact.setEsId(csarArtifact.getUniqueId());
-
         ConsoleWriter.dataLine("create artifact unique id ", uniqueId);
-
         csarArtifact.setArtifactChecksum(GeneralUtility.calculateMD5Base64EncodedByByteArray(decodedPayload));
         DAOArtifactData artifactData = new DAOArtifactData(csarArtifact.getEsId(), decodedPayload);
         artifactCassandraDao.saveArtifact(artifactData);
         ConsoleWriter.dataLine("Artifact generated and saved into Cassandra ", csarArtifact.getArtifactLabel());
         report(component, csarArtifact);
-
         return JanusGraphOperationStatus.OK;
     }
 
@@ -195,7 +179,6 @@ public class CsarGenerator extends CommonInternalTool {
         dataToPrint.put("artifact id", csarArtifact.getUniqueId());
         dataToPrint.put("csar es id", csarArtifact.getEsId());
         dataToPrint.put("artifact checksum", csarArtifact.getArtifactChecksum());
-
         try {
             getReportWriter().report(dataToPrint);
         } catch (IOException e) {

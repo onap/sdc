@@ -17,19 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator;
 
+import java.util.List;
 import org.openecomp.sdc.asdctool.impl.validator.executor.IArtifactValidatorExecutor;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 public class ArtifactToolBL {
 
     private static final Logger log = Logger.getLogger(ArtifactToolBL.class);
-
     private final List<IArtifactValidatorExecutor> validators;
 
     @Autowired

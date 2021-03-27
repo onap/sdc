@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl;
 
 import java.util.Properties;
@@ -32,12 +31,10 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 public class RestUtils {
 
     static final String DELETE_PRODUCT = "http://%s:%s/sdc2/rest/v1/catalog/products/%s";
-
     private static Logger log = Logger.getLogger(RestUtils.class.getName());
 
     public Integer deleteProduct(String productUid, String beHost, String bePort, String adminUser) {
         String url = String.format(DELETE_PRODUCT, beHost, bePort, productUid);
-
         Properties headers = new Properties();
         headers.put("USER_ID", adminUser);
         try {

@@ -17,9 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.xml.XMLConstants;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,25 +40,14 @@ import org.jdom2.util.IteratorIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class GraphMLDataAnalyzer {
-
-    private static Logger log = LoggerFactory.getLogger(GraphMLDataAnalyzer.class);
-
-    private static final String[] COMPONENT_SHEET_HEADER = {"uniqueId", "type", "name", "toscaResourceName",
-        "resourceType", "version", "deleted", "hasNonCalculatedReqCap"};
-    private static final String[] COMPONENT_INSTANCES_SHEET_HEADER =
-        {"uniqueId", "name", "originUid", "originType", "containerUid"};
 
     public static final String GRAPH_ML_EXTENSION = ".graphml";
     public static final String EXCEL_EXTENSION = ".xls";
+    private static final String[] COMPONENT_SHEET_HEADER = {"uniqueId", "type", "name", "toscaResourceName", "resourceType", "version", "deleted",
+        "hasNonCalculatedReqCap"};
+    private static final String[] COMPONENT_INSTANCES_SHEET_HEADER = {"uniqueId", "name", "originUid", "originType", "containerUid"};
+    private static Logger log = LoggerFactory.getLogger(GraphMLDataAnalyzer.class);
 
     public String analyzeGraphMLData(String[] args) {
         String result;
@@ -72,13 +67,10 @@ public class GraphMLDataAnalyzer {
         SAXBuilder builder = new SAXBuilder();
         builder.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         builder.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-
         File xmlFile = new File(mlFileLocation);
         Document document = builder.build(xmlFile);
-
         // XLS data file name
         String outputFile = mlFileLocation.replace(GRAPH_ML_EXTENSION, EXCEL_EXTENSION);
-
         try (Workbook wb = new HSSFWorkbook(); FileOutputStream fileOut = new FileOutputStream(outputFile)) {
             writeComponents(wb, document);
             writeComponentInstances(wb, document);
@@ -95,7 +87,6 @@ public class GraphMLDataAnalyzer {
         for (int i = 0; i < COMPONENT_SHEET_HEADER.length; i++) {
             currentRow.createCell(i).setCellValue(COMPONENT_SHEET_HEADER[i]);
         }
-
         List<ComponentRow> components = getComponents(document);
         int rowNum = 1;
         for (ComponentRow row : components) {
@@ -106,8 +97,7 @@ public class GraphMLDataAnalyzer {
             currentRow.createCell(3).setCellValue(row.getToscaResourceName());
             currentRow.createCell(4).setCellValue(row.getResourceType());
             currentRow.createCell(5).setCellValue(row.getVersion());
-            currentRow.createCell(6)
-                .setCellValue(row.getIsDeleted() != null ? row.getIsDeleted().toString() : "false");
+            currentRow.createCell(6).setCellValue(row.getIsDeleted() != null ? row.getIsDeleted().toString() : "false");
             currentRow.createCell(7).setCellValue(row.getHasNonCalculatedReqCap());
         }
     }
@@ -151,7 +141,6 @@ public class GraphMLDataAnalyzer {
                 }
             }
         }
-
         filter = new ElementFilter("node");
         IteratorIterable<Element> nodes = graph.getDescendants(filter);
         filter = new ElementFilter("data");
@@ -236,6 +225,7 @@ public class GraphMLDataAnalyzer {
             }
             if (isComponentInst) {
                 // Assuming the uid is in standard form of
+
                 // <container>.<origin>.<name>
                 String uniqueId = componentInstRow.getUniqueId();
                 if (uniqueId != null) {
@@ -250,5 +240,4 @@ public class GraphMLDataAnalyzer {
         }
         return res;
     }
-
 }

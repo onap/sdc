@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,16 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.main;
 
+import java.util.Scanner;
 import org.openecomp.sdc.asdctool.configuration.ConfigurationUploader;
 import org.openecomp.sdc.asdctool.configuration.CsarGeneratorConfiguration;
 import org.openecomp.sdc.asdctool.impl.internal.tool.CsarGenerator;
 import org.openecomp.sdc.asdctool.utils.ConsoleWriter;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.util.Scanner;
 
 public class CsarGeneratorTool extends SdcInternalTool {
 
@@ -36,14 +34,11 @@ public class CsarGeneratorTool extends SdcInternalTool {
             System.exit(1);
         }
         String appConfigDir = args[0];
-
         disableConsole();
-
         ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(CsarGeneratorConfiguration.class);
         CsarGenerator csarGenerator = context.getBean(CsarGenerator.class);
         ConsoleWriter.dataLine("STARTED... ");
-
         String input = "";
         Scanner scanner = new Scanner(System.in);
         do {

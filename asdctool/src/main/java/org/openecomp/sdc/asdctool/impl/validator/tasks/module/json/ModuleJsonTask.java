@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.tasks.module.json;
 
 import fj.data.Either;
@@ -60,53 +59,42 @@ public class ModuleJsonTask extends ServiceValidationTask {
         if (!isAfterSubmitForTesting(vertex)) {
             return new VertexResult(true);
         }
-
         ComponentParametersView paramView = new ComponentParametersView();
         paramView.disableAll();
         paramView.setIgnoreArtifacts(false);
         paramView.setIgnoreGroups(false);
         paramView.setIgnoreComponentInstances(false);
-        Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation
-                .getToscaElement(vertex.getUniqueId(), paramView);
+        Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation.getToscaElement(vertex.getUniqueId(), paramView);
         if (toscaElementEither.isRight()) {
             return new VertexResult(false);
         }
         TopologyTemplate element = (TopologyTemplate) toscaElementEither.left().value();
         Map<String, MapGroupsDataDefinition> instGroups = element.getInstGroups();
         Map<String, MapArtifactDataDefinition> instDeploymentArtifacts = element.getInstDeploymentArtifacts();
-
-        for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups)
-                .orElse(Collections.emptyMap()).entrySet()) {
+        for (Map.Entry<String, MapGroupsDataDefinition> pair : Optional.ofNullable(instGroups).orElse(Collections.emptyMap()).entrySet()) {
             MapGroupsDataDefinition groups = pair.getValue();
             if (groups != null && !groups.getMapToscaDataDefinition().isEmpty()) {
-                return new VertexResult(
-                    findCoordinateModuleJson(report, pair, instDeploymentArtifacts, vertex, reportFile));
+                return new VertexResult(findCoordinateModuleJson(report, pair, instDeploymentArtifacts, vertex, reportFile));
             }
         }
         return new VertexResult(true);
     }
 
-    private boolean findCoordinateModuleJson(
-        Report report,
-        Map.Entry<String, MapGroupsDataDefinition> pair,
-        Map<String, MapArtifactDataDefinition> instDeploymentArtifacts,
-        GraphVertex vertex,
-        ReportFile.TXTFile reportFile
-    ) {
+    private boolean findCoordinateModuleJson(Report report, Map.Entry<String, MapGroupsDataDefinition> pair,
+                                             Map<String, MapArtifactDataDefinition> instDeploymentArtifacts, GraphVertex vertex,
+                                             ReportFile.TXTFile reportFile) {
         String groupKey = pair.getKey();
         String[] split = groupKey.split("\\.");
         String instanceName = split[split.length - 1];
         MapArtifactDataDefinition deploymentsArtifacts = instDeploymentArtifacts.get(groupKey);
         if (deploymentsArtifacts != null && !deploymentsArtifacts.getMapToscaDataDefinition().isEmpty()) {
-            List<ArtifactDataDefinition> moduleJsonArtifacts = deploymentsArtifacts.getMapToscaDataDefinition().values()
-                .stream().filter(artifact -> {
-                    String artifactName = artifact.getArtifactName();
-                    return artifactName.startsWith(instanceName) && artifactName.endsWith("modules.json");
-                }).collect(Collectors.toList());
+            List<ArtifactDataDefinition> moduleJsonArtifacts = deploymentsArtifacts.getMapToscaDataDefinition().values().stream().filter(artifact -> {
+                String artifactName = artifact.getArtifactName();
+                return artifactName.startsWith(instanceName) && artifactName.endsWith("modules.json");
+            }).collect(Collectors.toList());
             if (moduleJsonArtifacts.size() > 0) {
                 String status =
-                    "Instance " + instanceName + " has a corresponding modules.json file: " + moduleJsonArtifacts.get(0)
-                        .getArtifactName();
+                    "Instance " + instanceName + " has a corresponding modules.json file: " + moduleJsonArtifacts.get(0).getArtifactName();
                 reportFile.writeReportLineToFile(status);
                 return true;
             }

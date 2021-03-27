@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -31,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+import org.openecomp.sdc.common.log.wrappers.Logger;
 
 /**
  * simple util class to verify that the janusgraph export json graph is not corrupted
@@ -47,7 +44,7 @@ public class GraphJsonValidator {
             stream.forEach(line -> {
                 try {
                     verifyJsonLine(objectMapper, atomicInteger, line);
-                } catch (RuntimeException  | IOException e) {
+                } catch (RuntimeException | IOException e) {
                     logInvalidJsonRow(atomicInteger, line, e);
                     invalidRows.add(atomicInteger.get());
                 }
@@ -57,14 +54,14 @@ public class GraphJsonValidator {
     }
 
     private void verifyJsonLine(ObjectMapper objectMapper, AtomicInteger atomicInteger, String line) throws IOException {
-        log.info("verifying line: " +  atomicInteger.get());
+        log.info("verifying line: " + atomicInteger.get());
         objectMapper.readTree(line);
         atomicInteger.incrementAndGet();
     }
 
     private void logInvalidJsonRow(AtomicInteger atomicInteger, String line, Exception e) {
         log.error("Invalid Json!!!!!!!!!!!!!!!!!!!!", e);
-        log.info("line number: " +  atomicInteger.get());
+        log.info("line number: " + atomicInteger.get());
         log.info("line value: " + line);
     }
 
@@ -75,5 +72,4 @@ public class GraphJsonValidator {
         }
         return true;
     }
-
 }

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.report;
 
 import java.util.Set;
@@ -52,39 +51,24 @@ public class ReportFile {
 
         public void reportStartTaskRun(GraphVertex vertex, String taskName) {
             writer.writeln("");
-            writer.writeln("-----------------------Vertex: " + vertex.getUniqueId() +
-                ", Task " + taskName + " Started-----------------------");
+            writer.writeln("-----------------------Vertex: " + vertex.getUniqueId() + ", Task " + taskName + " Started-----------------------");
         }
 
         public void reportStartValidatorRun(String validatorName, int componentsNum) {
             writer.writeln("");
-            writer.writeln("------ValidatorExecuter " +
-                validatorName + " Validation Started, on " +
-                componentsNum + " components---------");
+            writer.writeln("------ValidatorExecuter " + validatorName + " Validation Started, on " + componentsNum + " components---------");
         }
 
-        public void printValidationTaskStatus(
-            GraphVertex vertexScanned,
-            String taskName,
-            boolean success
-        ) {
+        public void printValidationTaskStatus(GraphVertex vertexScanned, String taskName, boolean success) {
             String successStatus = success ? "success" : "failed";
             writer.writeln("");
-            writer.writeln("-----------------------Vertex: " +
-                vertexScanned.getUniqueId() + ", Task " +
-                taskName + " " + successStatus +
-                "-----------------------"
-            );
+            writer.writeln("-----------------------Vertex: " + vertexScanned.getUniqueId() + ", Task " + taskName + " " + successStatus
+                + "-----------------------");
         }
 
-        public void reportValidatorTypeSummary(
-            String validatorName,
-            Set<String> failedTasksNames,
-            Set<String> successTasksNames
-        ) {
+        public void reportValidatorTypeSummary(String validatorName, Set<String> failedTasksNames, Set<String> successTasksNames) {
             StrBuilder sb = new StrBuilder();
-            sb.appendln("-----------------------ValidatorExecuter " + validatorName
-                + " Validation Summary-----------------------");
+            sb.appendln("-----------------------ValidatorExecuter " + validatorName + " Validation Summary-----------------------");
             sb.appendln("Failed tasks: " + failedTasksNames);
             sb.appendln("Success tasks: " + successTasksNames);
             writer.writeln("");
@@ -94,14 +78,8 @@ public class ReportFile {
         public void reportEndOfToolRun(Report report) {
             StrBuilder sb = new StrBuilder();
             sb.appendln("-----------------------------------Validator Tool Summary-----------------------------------");
-            report.forEachFailure((taskName, failedVertices) ->
-                sb.append("Task: ")
-                    .append(taskName)
-                    .appendNewLine()
-                    .append("FailedVertices: ")
-                    .append(String.valueOf(failedVertices))
-                    .appendNewLine());
-
+            report.forEachFailure((taskName, failedVertices) -> sb.append("Task: ").append(taskName).appendNewLine().append("FailedVertices: ")
+                .append(String.valueOf(failedVertices)).appendNewLine());
             writer.writeln("");
             writer.write(sb.toString());
         }

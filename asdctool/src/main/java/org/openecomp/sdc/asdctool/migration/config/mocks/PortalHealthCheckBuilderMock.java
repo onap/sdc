@@ -17,18 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.migration.config.mocks;
-
-import org.openecomp.sdc.be.components.health.PortalHealthCheckBuilder;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import org.openecomp.sdc.be.components.health.PortalHealthCheckBuilder;
+import org.springframework.stereotype.Component;
 
 @Component("portalHealthCheckBusinessLogic")
 public class PortalHealthCheckBuilderMock extends PortalHealthCheckBuilder {
-
 
     @Override
     @PostConstruct
@@ -39,6 +36,5 @@ public class PortalHealthCheckBuilderMock extends PortalHealthCheckBuilder {
     @Override
     @PreDestroy
     protected void destroy() {
-
     }
 }

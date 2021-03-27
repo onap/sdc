@@ -17,10 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl;
 
+import static org.openecomp.sdc.asdctool.Utils.getProperties;
+
 import com.google.gson.Gson;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -37,61 +50,39 @@ import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.openecomp.sdc.asdctool.Utils.getProperties;
-
 public class GraphMLConverter {
 
     private static final String STORAGE_BACKEND = "storage.backend";
-
     private static final String INMEMORY = "inmemory";
-
     private static final String EXPORT_GRAPH = "exportGraph.";
-
     private static final String DOT_JSON = ".json";
-
     private static final String EXPORTED_FILE = "Exported file={}";
-
     private static final String NODE_LABEL = "nodeLabel";
-
-    private static Logger log = Logger.getLogger(GraphMLConverter.class.getName());
-
-    private Gson gson = new Gson();
     private static final String LOG_FORMATTER = "{} {}";
+    private static Logger log = Logger.getLogger(GraphMLConverter.class.getName());
+    private Gson gson = new Gson();
+
+    private static GraphSONMapper newGraphSONMapper(final Graph graph) {
+        final GraphSONMapper.Builder builder = graph.io(IoCore.graphson()).mapper();
+        return builder.create();
+    }
 
     public boolean importGraph(String[] args) {
-
         JanusGraph graph = null;
         try {
             String janusGraphFileLocation = args[1];
             String inputFile = args[2];
             graph = openGraph(janusGraphFileLocation);
-
             List<ImmutablePair<String, String>> propertiesCriteriaToDelete = new ArrayList<>();
             ImmutablePair<String, String> immutablePair1 = new ImmutablePair<>("healthcheckis", "GOOD");
             ImmutablePair<String, String> immutablePair2 = new ImmutablePair<>(NODE_LABEL, "user");
             ImmutablePair<String, String> immutablePair3 = new ImmutablePair<>(NODE_LABEL, "resourceCategory");
             ImmutablePair<String, String> immutablePair4 = new ImmutablePair<>(NODE_LABEL, "serviceCategory");
-
             propertiesCriteriaToDelete.add(immutablePair1);
             propertiesCriteriaToDelete.add(immutablePair2);
             propertiesCriteriaToDelete.add(immutablePair3);
             propertiesCriteriaToDelete.add(immutablePair4);
-
             return importJsonGraph(graph, inputFile, propertiesCriteriaToDelete);
-
         } catch (Exception e) {
             log.info("import graph failed ", e);
             return false;
@@ -100,23 +91,18 @@ public class GraphMLConverter {
                 graph.close();
             }
         }
-
     }
 
     public boolean exportGraph(String[] args) {
-
         JanusGraph graph = null;
         try {
             String janusGraphFileLocation = args[1];
             String outputDirectory = args[2];
             graph = openGraph(janusGraphFileLocation);
-
             String result = exportJsonGraph(graph, outputDirectory);
-
             if (result == null) {
                 return false;
             }
-
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
             log.info("export graph failed ", e);
@@ -126,21 +112,17 @@ public class GraphMLConverter {
                 graph.close();
             }
         }
-
         return true;
     }
 
     public String exportGraphMl(String[] args) {
-
         JanusGraph graph = null;
         String result;
         try {
             String janusGraphFileLocation = args[1];
             String outputDirectory = args[2];
             graph = openGraph(janusGraphFileLocation);
-
             result = exportGraphMl(graph, outputDirectory);
-
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
             log.info("export exportGraphMl failed ", e);
@@ -150,24 +132,19 @@ public class GraphMLConverter {
                 graph.close();
             }
         }
-
         return result;
     }
 
     public boolean findErrorInJsonGraph(String[] args) {
-
         JanusGraph graph = null;
         try {
             String janusGraphFileLocation = args[1];
             String outputDirectory = args[2];
             graph = openGraph(janusGraphFileLocation);
-
             String result = findErrorInJsonGraph(graph, outputDirectory);
-
             if (result == null) {
                 return false;
             }
-
             log.info(LOG_FORMATTER, EXPORTED_FILE, result);
         } catch (Exception e) {
             log.info("find Error In Json Graph failed ", e);
@@ -177,7 +154,6 @@ public class GraphMLConverter {
                 graph.close();
             }
         }
-
         return true;
     }
 
@@ -186,35 +162,26 @@ public class GraphMLConverter {
     }
 
     public String exportJsonGraph(JanusGraph graph, String outputDirectory) {
-
         String result = null;
-
         String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + DOT_JSON;
-
         try (final OutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-
             final GraphSONWriter.Builder builder = GraphSONWriter.build();
             final GraphSONMapper mapper = newGraphSONMapper(graph);
             builder.mapper(mapper);
             final GraphSONWriter writer = builder.create();
             writer.writeGraph(out, graph);
-
             graph.tx().commit();
-
             result = outputFile;
-
         } catch (Exception e) {
             log.info("export Json Graph failed ", e);
             graph.tx().rollback();
         }
         return result;
-
     }
 
     public String exportGraphMl(JanusGraph graph, String outputDirectory) {
         String result = null;
-        String outputFile =
-            outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + ".graphml";
+        String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + ".graphml";
         try {
             try (final OutputStream os = new BufferedOutputStream(new FileOutputStream(outputFile))) {
                 graph.io(IoCore.graphml()).writer().normalize(true).create().writeGraph(os, graph);
@@ -226,108 +193,72 @@ public class GraphMLConverter {
             log.info("export Graph Ml failed ", e);
         }
         return result;
-
     }
 
-    private static GraphSONMapper newGraphSONMapper(final Graph graph) {
-        final GraphSONMapper.Builder builder = graph.io(IoCore.graphson()).mapper();
-        return builder.create();
-    }
-
-    public boolean importJsonGraph(JanusGraph graph, String graphJsonFile,
-                                   List<ImmutablePair<String, String>> propertiesCriteriaToDelete) {
-
+    public boolean importJsonGraph(JanusGraph graph, String graphJsonFile, List<ImmutablePair<String, String>> propertiesCriteriaToDelete) {
         boolean result = false;
-
         if (propertiesCriteriaToDelete != null) {
             for (Entry<String, String> entry : propertiesCriteriaToDelete) {
-
                 String key = entry.getKey();
                 String value = entry.getValue();
                 for (JanusGraphVertex janusGraphVertex : graph.query().has(key, value).vertices()) {
                     janusGraphVertex.remove();
                     log.info("Remove vertex of type {} and value {}", key, value);
                 }
-
             }
         }
         File file = new File(graphJsonFile);
         if (!file.isFile()) {
-            log.info("File {} cannot be found.", graphJsonFile );
+            log.info("File {} cannot be found.", graphJsonFile);
             return false;
         }
-
         try (final InputStream is = new BufferedInputStream(new FileInputStream(graphJsonFile))) {
-
             log.info("Before importing file {}", graphJsonFile);
-
             GraphSONReader create = GraphSONReader.build().create();
             create.readGraph(is, graph);
-
             graph.tx().commit();
-
             result = true;
-
         } catch (Exception e) {
             log.info("Failed to import graph ", e);
             graph.tx().rollback();
         }
         return result;
-
     }
 
     public String findErrorInJsonGraph(JanusGraph graph, String outputDirectory) {
-
         String result = null;
         String outputFile = outputDirectory + File.separator + EXPORT_GRAPH + System.currentTimeMillis() + DOT_JSON;
-
         try (final OutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-
             graph.query().has(GraphPropertiesDictionary.HEALTH_CHECK.getProperty(), "GOOD").vertices();
-
             BaseConfiguration conf = new BaseConfiguration();
             conf.setProperty(STORAGE_BACKEND, INMEMORY);
             for (NodeTypeEnum nodeTypeEnum : NodeTypeEnum.values()) {
                 removeNodesByLabel(graph, nodeTypeEnum.getName());
             }
-
             GraphSONWriter create = GraphSONWriter.build().create();
             create.writeGraph(out, graph);
-
             graph.tx().rollback();
-
             result = outputFile;
-
         } catch (Exception e) {
             log.info("Find error In Json Graph ", e);
             graph.tx().rollback();
         }
-
         return result;
-
     }
 
     private void removeNodesByLabel(JanusGraph graph, String label) {
-        Iterable<JanusGraphVertex> vertices =
-                graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), label).vertices();
+        Iterable<JanusGraphVertex> vertices = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), label).vertices();
         for (Vertex vertex : vertices) {
             vertex.remove();
         }
     }
 
     public String exportUsers(JanusGraph graph, String outputDirectory) {
-
         List<Map<String, Object>> users = new ArrayList<>();
         String result = null;
-
         String outputFile = outputDirectory + File.separator + "users." + System.currentTimeMillis() + DOT_JSON;
-
-        JanusGraphQuery graphQuery =
-            graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
-
-        @SuppressWarnings("unchecked")
-        Iterable<JanusGraphVertex> vertices = graphQuery.vertices();
-
+        JanusGraphQuery graphQuery = graph.query().has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.User.getName());
+        @SuppressWarnings("unchecked") Iterable<JanusGraphVertex> vertices = graphQuery.vertices();
         if (vertices != null) {
             for (Vertex v : vertices) {
                 Map<String, Object> properties = getProperties(v);
@@ -335,40 +266,28 @@ public class GraphMLConverter {
                 users.add(properties);
             }
         }
-
         graph.tx().commit();
-
         String jsonUsers = gson.toJson(users);
-
         try (final FileWriter fileWriter = new FileWriter(outputFile)) {
-
             fileWriter.write(jsonUsers);
-
             result = outputFile;
-
         } catch (Exception e) {
             log.info("Export users failed because ", e);
             graph.tx().rollback();
         }
-
         return result;
-
     }
 
     public boolean exportUsers(String[] args) {
-
         JanusGraph graph = null;
         try {
             String janusGraphFileLocation = args[1];
             String outputDirectory = args[2];
             graph = openGraph(janusGraphFileLocation);
-
             String result = exportUsers(graph, outputDirectory);
-
             if (result == null) {
                 return false;
             }
-
             log.info(EXPORTED_FILE, result);
         } catch (Exception e) {
             log.info("Export users failed because", e);
@@ -378,7 +297,6 @@ public class GraphMLConverter {
                 graph.close();
             }
         }
-
         return true;
     }
 }
