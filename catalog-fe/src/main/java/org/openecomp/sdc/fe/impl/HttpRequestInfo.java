@@ -17,33 +17,29 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.impl;
 
 import com.google.common.annotations.VisibleForTesting;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 public class HttpRequestInfo {
 
+    private Map<String, String> headers;
+    private String requestURL;
+    private InputStream requestData;
+    private String originServletContext;
     @VisibleForTesting
     HttpRequestInfo() {
     }
-
     public HttpRequestInfo(HttpServletRequest request, Map<String, String> headersMap, String data) {
         headers = headersMap;
         requestURL = request.getRequestURI();
         requestData = new ByteArrayInputStream(data.getBytes());
         originServletContext = request.getContextPath();
     }
-
-    private Map<String, String> headers;
-    private String requestURL;
-    private InputStream requestData;
-    private String originServletContext;
 
     public Map<String, String> getHeaders() {
         return headers;

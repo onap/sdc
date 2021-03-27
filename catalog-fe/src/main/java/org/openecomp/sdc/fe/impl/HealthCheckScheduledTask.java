@@ -17,8 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.impl;
+
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CATALOG_FACADE_MS;
+import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +30,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -48,18 +57,8 @@ import org.openecomp.sdc.common.util.HealthCheckUtil;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.FeEcompErrorManager;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_CATALOG_FACADE_MS;
-import static org.openecomp.sdc.common.api.Constants.HC_COMPONENT_ON_BOARDING;
-
 public class HealthCheckScheduledTask implements Runnable {
+
     private static final Logger healthLogger = Logger.getLogger("asdc.fe.healthcheck");
     private static final Logger log = Logger.getLogger(HealthCheckScheduledTask.class.getName());
     private static final String LOG_PARTNER_NAME = "SDC.FE";
@@ -68,18 +67,14 @@ public class HealthCheckScheduledTask implements Runnable {
     private static final String LOG_TARGET_SERVICE_NAME_OB = "getOnboardingConfig";
     private static final String LOG_TARGET_SERVICE_NAME_FACADE = "getCatalogFacadeConfig";
     private static final String LOG_SERVICE_NAME = "/rest/healthCheck";
-    private static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
-
     private static final String URL = "%s://%s:%s/sdc2/rest/healthCheck";
-
-    private final List<String> healthCheckFeComponents =
-            Arrays.asList(HC_COMPONENT_ON_BOARDING, HC_COMPONENT_CATALOG_FACADE_MS);
     private static final HealthCheckUtil healthCheckUtil = new HealthCheckUtil();
     private static final String DEBUG_CONTEXT = "HEALTH_FE";
     private static final String EXTERNAL_HC_URL = "%s://%s:%s%s";
+    private static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
     private static String ONBOARDING_HC_URL;
     private static String CATALOG_FACADE_MS_HC_URL;
-
+    private final List<String> healthCheckFeComponents = Arrays.asList(HC_COMPONENT_ON_BOARDING, HC_COMPONENT_CATALOG_FACADE_MS);
     private final HealthCheckService service;
 
     HealthCheckScheduledTask(HealthCheckService service) {
@@ -94,7 +89,6 @@ public class HealthCheckScheduledTask implements Runnable {
         return CATALOG_FACADE_MS_HC_URL;
     }
 
-
     @Override
     public void run() {
         mdcFieldsHandler.addInfoForErrorAndDebugLogging(LOG_PARTNER_NAME);
@@ -102,7 +96,6 @@ public class HealthCheckScheduledTask implements Runnable {
         HealthCheckService.HealthStatus currentHealth = checkHealth();
         int currentHealthStatus = currentHealth.getStatusCode();
         healthLogger.trace("Executing FE Health Check Task - Status = {}", currentHealthStatus);
-
         // In case health status was changed, issue alarm/recovery
         if (currentHealthStatus != service.getLastHealthStatus().getStatusCode()) {
             log.trace("FE Health State Changed to {}. Issuing alarm / recovery alarm...", currentHealthStatus);
@@ -115,13 +108,11 @@ public class HealthCheckScheduledTask implements Runnable {
     private List<HealthCheckInfo> addHostedComponentsFeHealthCheck(String baseComponent, boolean requestedByBE) {
         String healthCheckUrl = getExternalComponentHcUrl(baseComponent);
         String serviceName = getExternalComponentHcUri(baseComponent);
-        ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(baseComponent)
-                .targetServiceName(serviceName).build();
-
+        ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(baseComponent).targetServiceName(serviceName)
+            .build();
         StringBuilder description = new StringBuilder("");
         int connectTimeoutMs = 3000;
         int readTimeoutMs = service.getConfig().getHealthCheckSocketTimeoutInMs(5000);
-
         if (healthCheckUrl != null) {
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -141,13 +132,8 @@ public class HealthCheckScheduledTask implements Runnable {
         } else {
             description.append(baseComponent + " health check Configuration is missing");
         }
-
-        String  compName = requestedByBE ? Constants.HC_COMPONENT_FE : baseComponent;
-        return Collections.singletonList(new HealthCheckInfo(
-                compName,
-                HealthCheckInfo.HealthCheckStatus.DOWN,
-                null,
-                description.toString()));
+        String compName = requestedByBE ? Constants.HC_COMPONENT_FE : baseComponent;
+        return Collections.singletonList(new HealthCheckInfo(compName, HealthCheckInfo.HealthCheckStatus.DOWN, null, description.toString()));
     }
 
     private String getExternalComponentHcUri(String baseComponent) {
@@ -165,7 +151,6 @@ public class HealthCheckScheduledTask implements Runnable {
         }
         return healthCheckUri;
     }
-
 
     @VisibleForTesting
     String getExternalComponentHcUrl(String baseComponent) {
@@ -191,7 +176,8 @@ public class HealthCheckScheduledTask implements Runnable {
                 FeEcompErrorManager.getInstance().logFeHealthCheckRecovery("FE Health Recovered");
                 break;
             case 500:
-                FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT, EcompErrorEnum.FeHealthCheckError, "Connection with ASDC-BE is probably down");
+                FeEcompErrorManager.getInstance()
+                    .processEcompError(DEBUG_CONTEXT, EcompErrorEnum.FeHealthCheckError, "Connection with ASDC-BE is probably down");
                 FeEcompErrorManager.getInstance().logFeHealthCheckError("Connection with ASDC-BE is probably down");
                 break;
             default:
@@ -202,16 +188,14 @@ public class HealthCheckScheduledTask implements Runnable {
     private HealthCheckService.HealthStatus checkHealth() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Configuration config = service.getConfig();
-
         HealthCheckWrapper feAggHealthCheck;
         boolean aggregateFeStatus = false;
         String redirectedUrl = String.format(URL, config.getBeProtocol(), config.getBeHost(),
-                Constants.HTTPS.equals(config.getBeProtocol()) ? config.getBeSslPort() : config.getBeHttpPort());
+            Constants.HTTPS.equals(config.getBeProtocol()) ? config.getBeSslPort() : config.getBeHttpPort());
         int connectTimeoutMs = 3000;
         int readTimeoutMs = config.getHealthCheckSocketTimeoutInMs(5000);
         ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(LOG_TARGET_ENTITY_BE)
-                .targetServiceName(LOG_SERVICE_NAME).build();
-
+            .targetServiceName(LOG_SERVICE_NAME).build();
         try {
             HttpResponse<String> response = HttpRequest.get(redirectedUrl, new HttpClientConfig(new Timeouts(connectTimeoutMs, readTimeoutMs)));
             log.debug("HC call to BE - status code is {}", response.getStatusCode());
@@ -221,14 +205,14 @@ public class HealthCheckScheduledTask implements Runnable {
                 aggregateFeStatus = healthCheckUtil.getAggregateStatus(feAggHealthCheck.getComponentsInfo(), getExcludedComponentList());
             }
             //Getting aggregate FE status
-            return new HealthCheckService.HealthStatus(aggregateFeStatus ? HttpStatus.SC_OK : HttpStatus.SC_INTERNAL_SERVER_ERROR, gson.toJson(feAggHealthCheck));
-
-        }
-        catch (Exception e) {
+            return new HealthCheckService.HealthStatus(aggregateFeStatus ? HttpStatus.SC_OK : HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                gson.toJson(feAggHealthCheck));
+        } catch (Exception e) {
             log.debug("Health Check error when trying to connect to BE or external FE. Error: {}", e);
             log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, LOG_SERVICE_NAME, errorLogOptionalData,
-                    "Health Check error when trying to connect to BE or external FE.", e.getMessage());
-            FeEcompErrorManager.getInstance().processEcompError(DEBUG_CONTEXT,EcompErrorEnum.FeHealthCheckGeneralError, "Unexpected FE Health check error");
+                "Health Check error when trying to connect to BE or external FE.", e.getMessage());
+            FeEcompErrorManager.getInstance()
+                .processEcompError(DEBUG_CONTEXT, EcompErrorEnum.FeHealthCheckGeneralError, "Unexpected FE Health check error");
             FeEcompErrorManager.getInstance().logFeHealthCheckGeneralError("Unexpected FE Health check error");
             return new HealthCheckService.HealthStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR, gson.toJson(getBeDownCheckInfos()));
         }
@@ -236,7 +220,7 @@ public class HealthCheckScheduledTask implements Runnable {
 
     @VisibleForTesting
     List<String> getExcludedComponentList() {
-        List <String> excludedComponentList = Lists.newArrayList(service.getConfig().getHealthStatusExclude());
+        List<String> excludedComponentList = Lists.newArrayList(service.getConfig().getHealthStatusExclude());
         if (isCatalogFacadeMsExcluded()) {
             if (log.isInfoEnabled()) {
                 log.info(HC_COMPONENT_CATALOG_FACADE_MS + " has been added to the Healthcheck exclude list");
@@ -256,9 +240,8 @@ public class HealthCheckScheduledTask implements Runnable {
         }.getType();
         HealthCheckWrapper healthCheckWrapper = gson.fromJson(responseString, wrapperType);
         String description = "OK";
-        healthCheckWrapper.getComponentsInfo()
-                .add(new HealthCheckInfo(Constants.HC_COMPONENT_FE, HealthCheckInfo.HealthCheckStatus.UP, ExternalConfiguration.getAppVersion(), description));
-
+        healthCheckWrapper.getComponentsInfo().add(
+            new HealthCheckInfo(Constants.HC_COMPONENT_FE, HealthCheckInfo.HealthCheckStatus.UP, ExternalConfiguration.getAppVersion(), description));
         //add FE hosted components
         for (String component : healthCheckFeComponents) {
             buildHealthCheckListForComponent(component, healthCheckWrapper);
@@ -267,7 +250,6 @@ public class HealthCheckScheduledTask implements Runnable {
     }
 
     private void buildHealthCheckListForComponent(String component, HealthCheckWrapper healthCheckWrapper) {
-
         HealthCheckInfo componentHCInfoFromBE = getComponentHcFromList(component, healthCheckWrapper.getComponentsInfo());
         List<HealthCheckInfo> componentHCInfoList = addHostedComponentsFeHealthCheck(component, componentHCInfoFromBE != null);
         HealthCheckInfo calculateStatusFor;
@@ -277,21 +259,16 @@ public class HealthCheckScheduledTask implements Runnable {
             }
             //update the subcomponents's HC if exist and recalculate the component status according to the subcomponets HC
             calculateStatusFor = updateSubComponentsInfoOfBeHc(componentHCInfoFromBE, componentHCInfoList);
-        }
-        else {
-
+        } else {
             //this component is not in the BE HC response, need to add it and calculate the aggregated status
             if (log.isDebugEnabled()) {
                 log.debug("{} component healthcheck info has been received from the component itself, it is not monitored by the BE", component);
             }
             //we assume that response from components which HC is not requested by BE have only one entry in the responded list
             calculateStatusFor = componentHCInfoList.get(0);
-            healthCheckWrapper.getComponentsInfo()
-                        .add(calculateStatusFor);
-
+            healthCheckWrapper.getComponentsInfo().add(calculateStatusFor);
         }
         calculateAggregatedStatus(calculateStatusFor);
-
     }
 
     @VisibleForTesting
@@ -306,16 +283,14 @@ public class HealthCheckScheduledTask implements Runnable {
         return componentHCInfoFromBE;
     }
 
-    private HealthCheckInfo getComponentHcFromList(String component, List<HealthCheckInfo>  hcList) {
+    private HealthCheckInfo getComponentHcFromList(String component, List<HealthCheckInfo> hcList) {
         return hcList.stream().filter(c -> c.getHealthCheckComponent().equals(component)).findFirst().orElse(null);
     }
 
     private void calculateAggregatedStatus(HealthCheckInfo baseComponentHCInfo) {
         if (!CollectionUtils.isEmpty(baseComponentHCInfo.getComponentsInfo())) {
             boolean status = healthCheckUtil.getAggregateStatus(baseComponentHCInfo.getComponentsInfo(), getExcludedComponentList());
-            baseComponentHCInfo.setHealthCheckStatus(status ?
-                    HealthCheckInfo.HealthCheckStatus.UP : HealthCheckInfo.HealthCheckStatus.DOWN);
-
+            baseComponentHCInfo.setHealthCheckStatus(status ? HealthCheckInfo.HealthCheckStatus.UP : HealthCheckInfo.HealthCheckStatus.DOWN);
             String componentsDesc = healthCheckUtil.getAggregateDescription(baseComponentHCInfo.getComponentsInfo());
             if (!StringUtils.isEmpty(componentsDesc)) { //aggregated description contains all the internal components desc
                 baseComponentHCInfo.setDescription(componentsDesc);
@@ -325,8 +300,8 @@ public class HealthCheckScheduledTask implements Runnable {
 
     private HealthCheckWrapper getBeDownCheckInfos() {
         List<HealthCheckInfo> healthCheckInfos = new ArrayList<>();
-        healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_FE, HealthCheckInfo.HealthCheckStatus.UP,
-                ExternalConfiguration.getAppVersion(), "OK"));
+        healthCheckInfos
+            .add(new HealthCheckInfo(Constants.HC_COMPONENT_FE, HealthCheckInfo.HealthCheckStatus.UP, ExternalConfiguration.getAppVersion(), "OK"));
         healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_BE, HealthCheckInfo.HealthCheckStatus.DOWN, null, null));
         healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_JANUSGRAPH, HealthCheckInfo.HealthCheckStatus.UNKNOWN, null, null));
         healthCheckInfos.add(new HealthCheckInfo(Constants.HC_COMPONENT_CASSANDRA, HealthCheckInfo.HealthCheckStatus.UNKNOWN, null, null));
@@ -343,17 +318,14 @@ public class HealthCheckScheduledTask implements Runnable {
     private String getOnboardingHealthCheckUrl() {
         Configuration.OnboardingConfig onboardingConfig = service.getConfig().getOnboarding();
         ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(LOG_TARGET_ENTITY_CONFIG)
-                .targetServiceName(LOG_TARGET_SERVICE_NAME_OB).build();
-
+            .targetServiceName(LOG_TARGET_SERVICE_NAME_OB).build();
         if (StringUtils.isEmpty(ONBOARDING_HC_URL)) {
             if (onboardingConfig != null) {
-                ONBOARDING_HC_URL = buildHealthCheckUrl(
-                        onboardingConfig.getProtocolFe(), onboardingConfig.getHostFe(),
-                        onboardingConfig.getPortFe(), onboardingConfig.getHealthCheckUriFe());
-            }
-            else {
+                ONBOARDING_HC_URL = buildHealthCheckUrl(onboardingConfig.getProtocolFe(), onboardingConfig.getHostFe(), onboardingConfig.getPortFe(),
+                    onboardingConfig.getHealthCheckUriFe());
+            } else {
                 log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, LOG_SERVICE_NAME, errorLogOptionalData,
-                        "Onboarding health check configuration is missing.");
+                    "Onboarding health check configuration is missing.");
             }
         }
         return ONBOARDING_HC_URL;
@@ -362,27 +334,23 @@ public class HealthCheckScheduledTask implements Runnable {
     private String getCatalogFacadeHealthCheckUrl() {
         Configuration.CatalogFacadeMsConfig catalogFacadeMsConfig = service.getConfig().getCatalogFacadeMs();
         ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(LOG_TARGET_ENTITY_CONFIG)
-                .targetServiceName(LOG_TARGET_SERVICE_NAME_FACADE).build();
-
+            .targetServiceName(LOG_TARGET_SERVICE_NAME_FACADE).build();
         if (StringUtils.isEmpty(CATALOG_FACADE_MS_HC_URL)) {
             if (catalogFacadeMsConfig != null) {
-                CATALOG_FACADE_MS_HC_URL = buildHealthCheckUrl(
-                        catalogFacadeMsConfig.getProtocol(), catalogFacadeMsConfig.getHost(),
-                        catalogFacadeMsConfig.getPort(), catalogFacadeMsConfig.getHealthCheckUri());
-            }
-            else {
+                CATALOG_FACADE_MS_HC_URL = buildHealthCheckUrl(catalogFacadeMsConfig.getProtocol(), catalogFacadeMsConfig.getHost(),
+                    catalogFacadeMsConfig.getPort(), catalogFacadeMsConfig.getHealthCheckUri());
+            } else {
                 log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, LOG_SERVICE_NAME, errorLogOptionalData,
-                        "Catalog Facade MS health check configuration is missing.");
+                    "Catalog Facade MS health check configuration is missing.");
             }
         }
         return CATALOG_FACADE_MS_HC_URL;
     }
 
-
-    private List<HealthCheckInfo> convertResponse(String beJsonResponse, ObjectMapper mapper, String baseComponent, StringBuilder description, int beStatus) {
-        ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(baseComponent)
-                .targetServiceName(LOG_SERVICE_NAME).build();
-
+    private List<HealthCheckInfo> convertResponse(String beJsonResponse, ObjectMapper mapper, String baseComponent, StringBuilder description,
+                                                  int beStatus) {
+        ErrorLogOptionalData errorLogOptionalData = ErrorLogOptionalData.newBuilder().targetEntity(baseComponent).targetServiceName(LOG_SERVICE_NAME)
+            .build();
         try {
             Map<String, Object> healthCheckMap = mapper.readValue(beJsonResponse, new TypeReference<Map<String, Object>>() {
             });
@@ -394,10 +362,8 @@ public class HealthCheckScheduledTask implements Runnable {
             }
         } catch (JsonSyntaxException | IOException e) {
             log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, LOG_SERVICE_NAME, errorLogOptionalData,
-                    baseComponent + " Unexpected response body ", e);
-            description.append(baseComponent)
-                    .append("Unexpected response body. Response code: ")
-                    .append(beStatus);
+                baseComponent + " Unexpected response body ", e);
+            description.append(baseComponent).append("Unexpected response body. Response code: ").append(beStatus);
         }
         return new ArrayList<>();
     }

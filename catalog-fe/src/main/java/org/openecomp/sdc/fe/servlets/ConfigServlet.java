@@ -17,18 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.servlets;
-
-import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.exception.NotFoundException;
-import org.openecomp.sdc.fe.config.ConfigurationManager;
-import org.openecomp.sdc.fe.config.FeEcompErrorManager;
-import org.openecomp.sdc.fe.config.WorkspaceConfiguration;
-import org.openecomp.sdc.fe.impl.PluginStatusBL;
-import org.owasp.esapi.ESAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +29,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.exception.NotFoundException;
+import org.openecomp.sdc.fe.config.ConfigurationManager;
+import org.openecomp.sdc.fe.config.FeEcompErrorManager;
+import org.openecomp.sdc.fe.config.WorkspaceConfiguration;
+import org.openecomp.sdc.fe.impl.PluginStatusBL;
+import org.owasp.esapi.ESAPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Root resource (exposed at "/" path)
@@ -47,23 +45,18 @@ import javax.ws.rs.core.Response.Status;
 @Path("/config")
 public class ConfigServlet extends LoggingServlet {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigServlet.class.getName());
     public static final String UNEXPECTED_FE_RESPONSE_LOGGING_ERROR = "Unexpected FE response logging error :";
     public static final String ERROR_FE_RESPONSE = "FE Response";
+    private static final Logger log = LoggerFactory.getLogger(ConfigServlet.class.getName());
 
     @GET
     @Path("/ui/workspace")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUIWorkspaceConfiguration(@Context final HttpServletRequest request) {
-
         try {
             logFeRequest(request);
-
             ServletContext context = request.getSession().getServletContext();
-
-            ConfigurationManager configurationManager = (ConfigurationManager) context
-                    .getAttribute(Constants.CONFIGURATION_MANAGER_ATTR);
-
+            ConfigurationManager configurationManager = (ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR);
             WorkspaceConfiguration configuration = configurationManager.getWorkspaceConfiguration();
             if (configuration == null) {
                 throw new NotFoundException(WorkspaceConfiguration.class.getSimpleName());
@@ -72,67 +65,50 @@ public class ConfigServlet extends LoggingServlet {
             String result = gson.toJson(configuration);
             Response response = Response.status(Status.OK).entity(result).build();
             logFeResponse(request, response);
-
             return response;
         } catch (Exception e) {
             FeEcompErrorManager.getInstance().logFeHttpLoggingError(ERROR_FE_RESPONSE);
             log.error(UNEXPECTED_FE_RESPONSE_LOGGING_ERROR, e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
         }
-
     }
-
 
     @GET
     @Path("/ui/plugins")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPluginsConfiguration(@Context final HttpServletRequest request) {
-
         try {
             logFeRequest(request);
-
             ServletContext context = request.getSession().getServletContext();
-
             PluginStatusBL pluginStatusBL = (PluginStatusBL) context.getAttribute(Constants.PLUGIN_BL_COMPONENT);
-
             String result = pluginStatusBL.getPluginsList();
-
             Response response = Response.status(Status.OK).entity(result).build();
-
             logFeResponse(request, response);
-
             return response;
         } catch (Exception e) {
-            FeEcompErrorManager.getInstance().logFeHttpLoggingError( ERROR_FE_RESPONSE);
+            FeEcompErrorManager.getInstance().logFeHttpLoggingError(ERROR_FE_RESPONSE);
             log.error(UNEXPECTED_FE_RESPONSE_LOGGING_ERROR, e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity("{}").build();
         }
-
     }
 
     @GET
     @Path("/ui/plugins/{pluginId}/online")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPluginOnlineState(@PathParam("pluginId") String pluginId, @Context final HttpServletRequest request) {
-
         try {
             logFeRequest(request);
             pluginId = ESAPI.encoder().encodeForHTML(pluginId);
             ServletContext context = request.getSession().getServletContext();
-
             PluginStatusBL pluginStatusBL = (PluginStatusBL) context.getAttribute(Constants.PLUGIN_BL_COMPONENT);
-
             String result = pluginStatusBL.getPluginAvailability(pluginId);
-
             if (result == null) {
                 log.debug("Plugin with pluginId: {} was not found in the configuration", pluginId);
-                return Response.status(Status.NOT_FOUND).entity("Plugin with pluginId:\"" + pluginId + "\" was not found in the configuration").build();
+                return Response.status(Status.NOT_FOUND).entity("Plugin with pluginId:\"" + pluginId + "\" was not found in the configuration")
+                    .build();
             }
-
             Response response = Response.status(Status.OK).entity(result).build();
-
             logFeResponse(request, response);
-
             return response;
         } catch (Exception e) {
             FeEcompErrorManager.getInstance().logFeHttpLoggingError(ERROR_FE_RESPONSE);

@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.impl;
 
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 public class Audit {
 
@@ -36,10 +34,8 @@ public class Audit {
         if (requestInfo != null && requestInfo.getHeaders() != null) {
             Map<String, String> requestHeaders = requestInfo.getHeaders();
             errorMsg = String.format(Constants.ERROR_LOG_FORMAT, requestHeaders.get(Constants.USER_ID_HEADER),
-                    requestHeaders.get(Constants.FIRST_NAME_HEADER) + " "
-                            + requestHeaders.get(Constants.LAST_NAME_HEADER),
-                    requestHeaders.get(Constants.ORIGIN_HEADER), requestHeaders.get(Constants.ACCESS_HEADER),
-                    requestInfo.getRequestURL(), status);
+                requestHeaders.get(Constants.FIRST_NAME_HEADER) + " " + requestHeaders.get(Constants.LAST_NAME_HEADER),
+                requestHeaders.get(Constants.ORIGIN_HEADER), requestHeaders.get(Constants.ACCESS_HEADER), requestInfo.getRequestURL(), status);
         }
         log.error(errorMsg);
     }
@@ -47,12 +43,9 @@ public class Audit {
     public static void error(Logger log, HttpServletRequest request, int status) {
         String errorMsg = "Internal Error";
         if (request != null) {
-
             errorMsg = String.format(Constants.ERROR_LOG_FORMAT, request.getHeader(Constants.USER_ID_HEADER),
-                    request.getHeader(Constants.FIRST_NAME_HEADER) + " "
-                            + request.getHeader(Constants.LAST_NAME_HEADER),
-                    request.getHeader(Constants.ORIGIN_HEADER), request.getHeader(Constants.ACCESS_HEADER),
-                    request.getRequestURL(), status);
+                request.getHeader(Constants.FIRST_NAME_HEADER) + " " + request.getHeader(Constants.LAST_NAME_HEADER),
+                request.getHeader(Constants.ORIGIN_HEADER), request.getHeader(Constants.ACCESS_HEADER), request.getRequestURL(), status);
         }
         log.error(errorMsg);
     }
@@ -62,10 +55,8 @@ public class Audit {
         if (requestInfo != null && requestInfo.getHeaders() != null) {
             Map<String, String> requestHeaders = requestInfo.getHeaders();
             errorMsg = String.format(Constants.ERROR_LOG_FORMAT, requestHeaders.get(Constants.USER_ID_HEADER),
-                    requestHeaders.get(Constants.FIRST_NAME_HEADER) + " "
-                            + requestHeaders.get(Constants.LAST_NAME_HEADER),
-                    requestHeaders.get(Constants.ORIGIN_HEADER), requestHeaders.get(Constants.ACCESS_HEADER),
-                    requestInfo.getRequestURL(), status);
+                requestHeaders.get(Constants.FIRST_NAME_HEADER) + " " + requestHeaders.get(Constants.LAST_NAME_HEADER),
+                requestHeaders.get(Constants.ORIGIN_HEADER), requestHeaders.get(Constants.ACCESS_HEADER), requestInfo.getRequestURL(), status);
         }
         log.info(errorMsg);
     }

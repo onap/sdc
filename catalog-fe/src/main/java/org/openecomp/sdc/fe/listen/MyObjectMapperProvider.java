@@ -17,26 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.listen;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
 @Provider
 public class MyObjectMapperProvider implements ContextResolver<ObjectMapper> {
+
     private final ObjectMapper defaultObjectMapper;
 
     MyObjectMapperProvider() {
         defaultObjectMapper = createDefaultMapper();
-    }
-
-    @Override
-    public ObjectMapper getContext(Class<?> type) {
-        return defaultObjectMapper;
     }
 
     private static ObjectMapper createDefaultMapper() {
@@ -45,4 +39,8 @@ public class MyObjectMapperProvider implements ContextResolver<ObjectMapper> {
         return result;
     }
 
+    @Override
+    public ObjectMapper getContext(Class<?> type) {
+        return defaultObjectMapper;
+    }
 }

@@ -17,14 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe;
 
 public class Constants {
-
-    private Constants() {
-
-    }
 
     public static final String HTTP_IV_USER = "HTTP_IV_USER";
     public static final String USER_ID = "USER_ID";
@@ -35,5 +30,6 @@ public class Constants {
     public static final String HTTP_CSP_WSTYPE = "HTTP_CSP_WSTYPE";
     public static final String HTTP_CSP_EMAIL = "HTTP_CSP_EMAIL";
     public static final String WEBSEAL_USER_ID_HEADER = "csp-attuid";
-
+    private Constants() {
+    }
 }

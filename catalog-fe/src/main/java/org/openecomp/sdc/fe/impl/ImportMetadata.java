@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.fe.impl;
 
 import lombok.AllArgsConstructor;
@@ -32,6 +31,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ImportMetadata {
+
     private String name;
     private long size;
     private String mime;

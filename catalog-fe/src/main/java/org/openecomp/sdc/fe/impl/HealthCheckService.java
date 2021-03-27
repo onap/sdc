@@ -17,52 +17,41 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.impl;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javax.servlet.ServletContext;
+import javax.ws.rs.core.Response;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.Response;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-
 public class HealthCheckService {
 
     private static final Logger healthLogger = Logger.getLogger("asdc.fe.healthcheck");
+    private final HealthCheckScheduledTask task;
     /**
      * This executor will execute the health check task.
      */
-    private ScheduledExecutorService healthCheckExecutor =
-            Executors.newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "FE-Health-Check-Thread"));
-
-    private final HealthCheckScheduledTask task ;
-
+    private ScheduledExecutorService healthCheckExecutor = Executors
+        .newSingleThreadScheduledExecutor((Runnable r) -> new Thread(r, "FE-Health-Check-Thread"));
+    private HealthStatus lastHealthStatus = new HealthStatus(500, "{}");
+    private ServletContext context;
 
     public HealthCheckService(ServletContext context) {
         this.context = context;
         this.task = new HealthCheckScheduledTask(this);
     }
 
-    public Configuration getConfig(){
-        return ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
-                .getConfiguration();
+    public Configuration getConfig() {
+        return ((ConfigurationManager) context.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
     }
-
-    void setLastHealthStatus(HealthStatus lastHealthStatus) {
-        this.lastHealthStatus = lastHealthStatus;
-    }
-
-    private HealthStatus lastHealthStatus = new HealthStatus(500, "{}");
-    private ServletContext context;
 
     public void start(int interval) {
-        this.healthCheckExecutor.scheduleAtFixedRate( getTask() , 0, interval, TimeUnit.SECONDS);
+        this.healthCheckExecutor.scheduleAtFixedRate(getTask(), 0, interval, TimeUnit.SECONDS);
     }
 
     /**
@@ -82,20 +71,17 @@ public class HealthCheckService {
     public HealthStatus getLastHealthStatus() {
         return lastHealthStatus;
     }
+
+    void setLastHealthStatus(HealthStatus lastHealthStatus) {
+        this.lastHealthStatus = lastHealthStatus;
+    }
+
     public HealthCheckScheduledTask getTask() {
         return task;
     }
 
     //immutable
     static class HealthStatus {
-
-        public void setBody(String body) {
-            this.body = body;
-        }
-
-        public void setStatusCode(int statusCode) {
-            this.statusCode = statusCode;
-        }
 
         private String body;
         private int statusCode;
@@ -109,11 +95,16 @@ public class HealthCheckService {
             return statusCode;
         }
 
+        public void setStatusCode(int statusCode) {
+            this.statusCode = statusCode;
+        }
+
         public String getBody() {
             return body;
         }
+
+        public void setBody(String body) {
+            this.body = body;
+        }
     }
-
-
-
 }

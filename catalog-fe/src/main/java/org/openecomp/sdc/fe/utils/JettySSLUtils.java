@@ -17,65 +17,55 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.utils;
 
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
-import org.apache.http.ssl.SSLContexts;
-
-import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.Properties;
+import javax.net.ssl.SSLContext;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.ssl.SSLContexts;
 
 public class JettySSLUtils {
+
     private JettySSLUtils() {
     }
 
     public static JettySslConfig getSSLConfig() throws IOException {
         Properties sslProperties = new Properties();
-
         String sslPropsPath = System.getenv("JETTY_BASE") + File.separator + "/start.d/ssl.ini";
         File sslPropsFile = new File(sslPropsPath);
         try (FileInputStream fis = new FileInputStream(sslPropsFile)) {
             sslProperties.load(fis);
         }
-
         return new JettySslConfig(sslProperties);
     }
 
-
     public static SSLContext getSslContext() throws GeneralSecurityException, IOException {
         JettySSLUtils.JettySslConfig sslProperties = JettySSLUtils.getSSLConfig();
-
-        KeyStore trustStore  = KeyStore.getInstance(sslProperties.getTruststoreType());
-        try (FileInputStream instream = new FileInputStream(new File(sslProperties.getTruststorePath()));
-        ){
+        KeyStore trustStore = KeyStore.getInstance(sslProperties.getTruststoreType());
+        try (FileInputStream instream = new FileInputStream(new File(sslProperties.getTruststorePath()));) {
             trustStore.load(instream, (sslProperties.getTruststorePass()).toCharArray());
         }
-
-        KeyStore keystore  = KeyStore.getInstance(sslProperties.getKeystoreType());
-        try (FileInputStream instream = new FileInputStream(new File(sslProperties.getKeystorePath()));
-        ){
+        KeyStore keystore = KeyStore.getInstance(sslProperties.getKeystoreType());
+        try (FileInputStream instream = new FileInputStream(new File(sslProperties.getKeystorePath()));) {
             keystore.load(instream, sslProperties.getKeystorePass().toCharArray());
         }
-
         // Trust own CA and all self-signed certs
-        return SSLContexts.custom()
-                .loadKeyMaterial(keystore, sslProperties.getKeystorePass().toCharArray())
-                .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy())
-                .build();
+        return SSLContexts.custom().loadKeyMaterial(keystore, sslProperties.getKeystorePass().toCharArray())
+            .loadTrustMaterial(trustStore, new TrustSelfSignedStrategy()).build();
     }
 
-
     public static class JettySslConfig {
-        Properties sslProperties;
+
         static final String JETTY_BASE = System.getenv("JETTY_BASE");
-        static final String KEY_STORE_TYPE_PROPERTY_NAME="jetty.sslContext.keyStoreType";
-        static final String TRUST_STORE_TYPE_PROPERTY_NAME="jetty.sslContext.trustStoreType";
+        static final String KEY_STORE_TYPE_PROPERTY_NAME = "jetty.sslContext.keyStoreType";
+        static final String TRUST_STORE_TYPE_PROPERTY_NAME = "jetty.sslContext.trustStoreType";
+        Properties sslProperties;
+
         JettySslConfig(Properties sslProperties) {
             this.sslProperties = sslProperties;
         }
@@ -123,7 +113,5 @@ public class JettySSLUtils {
         public String getProperty(String key) {
             return sslProperties.getProperty(key);
         }
-
     }
-
 }
