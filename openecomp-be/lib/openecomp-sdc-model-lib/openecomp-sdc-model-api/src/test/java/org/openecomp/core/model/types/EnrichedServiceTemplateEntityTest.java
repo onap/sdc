@@ -34,56 +34,55 @@ import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-
-public class EnrichedServiceArtifactEntityTest {
+class EnrichedServiceTemplateEntityTest {
 
     private static final byte[] BYTE_ARRAY = new byte[]{0xA, 0xB, 0xC, 0xD};
 
-    private static ServiceArtifact createServiceArtifact() {
-        ServiceArtifact serviceArtifact = new ServiceArtifact();
-        serviceArtifact.setVspId("someIdd");
-        serviceArtifact.setVersion(new Version("best"));
-        serviceArtifact.setName("name");
-        serviceArtifact.setContentData(BYTE_ARRAY);
-        return serviceArtifact;
+    private static ServiceTemplate createServiceTemplate() {
+        ServiceTemplate serviceTemplate = new ServiceTemplate();
+        serviceTemplate.setVspId("someIdd");
+        serviceTemplate.setVersion(new Version("best"));
+        serviceTemplate.setName("name");
+        serviceTemplate.setContentData(BYTE_ARRAY);
+        return serviceTemplate;
     }
 
     @Test
-    public void shouldReturnNonEmptyEntityType() {
-        EnrichedServiceArtifactEntity entity =
-            new EnrichedServiceArtifactEntity();
+    void shouldReturnNonEmptyEntityType() {
+        EnrichedServiceTemplateEntity entity =
+            new EnrichedServiceTemplateEntity();
         assertTrue(StringUtils.isNoneEmpty(entity.getEntityType()));
     }
 
     @Test
-    public void shouldHaveFirstClassCitizenIdEqualToVspId() {
-        EnrichedServiceArtifactEntity entity =
-            new EnrichedServiceArtifactEntity(createServiceArtifact());
+    void shouldHaveFirstClassCitizenIdEqualToVspId() {
+        EnrichedServiceTemplateEntity entity =
+            new EnrichedServiceTemplateEntity(createServiceTemplate());
         assertEquals(entity.getId(), entity.getFirstClassCitizenId());
     }
 
     @Test
-    public void serviceArtifactGetterShouldReturnCorrectData() throws IOException {
-        ServiceArtifact serviceArtifact = createServiceArtifact();
-        EnrichedServiceArtifactEntity entity =
-            new EnrichedServiceArtifactEntity(serviceArtifact);
+    void serviceTemplateGetterShouldReturnCorrectData() throws IOException {
+        ServiceTemplate serviceTemplate = createServiceTemplate();
+        EnrichedServiceTemplateEntity entity =
+            new EnrichedServiceTemplateEntity(serviceTemplate);
 
-        ServiceArtifact actual = entity.getServiceArtifact();
+        ServiceTemplate actual = entity.getServiceTemplate();
 
-        assertEquals(serviceArtifact.getVspId(), actual.getVspId());
-        assertEquals(serviceArtifact.getVersion(), actual.getVersion());
-        assertEquals(serviceArtifact.getName(), actual.getName());
-        assertArrayEquals(IOUtils.toByteArray(serviceArtifact.getContent()), IOUtils.toByteArray(actual.getContent()));
+        assertEquals(serviceTemplate.getVspId(), actual.getVspId());
+        assertEquals(serviceTemplate.getVersion(), actual.getVersion());
+        assertEquals(serviceTemplate.getName(), actual.getName());
+        assertArrayEquals(IOUtils.toByteArray(serviceTemplate.getContent()), IOUtils.toByteArray(actual.getContent()));
     }
 
     @Test
-    public void shouldFailOnNullContentBytesSupplied() {
-        ServiceArtifact serviceArtifactMock = mock(ServiceArtifact.class);
-        given(serviceArtifactMock.getContent()).willAnswer(invocation -> {
+    void shouldFailOnNullContentBytesSupplied() {
+        ServiceTemplate serviceTemplateMock = mock(ServiceTemplate.class);
+        given(serviceTemplateMock.getContent()).willAnswer(invocation -> {
             throw new IOException("Test exception");
         });
         assertThrows(SdcRuntimeException.class, () -> {
-            new EnrichedServiceArtifactEntity(serviceArtifactMock);
+            new EnrichedServiceTemplateEntity(serviceTemplateMock);
         });
     }
 }
