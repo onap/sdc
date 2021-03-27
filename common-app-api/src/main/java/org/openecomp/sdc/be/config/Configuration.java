@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
 
 import static java.lang.String.format;
@@ -46,7 +45,6 @@ public class Configuration extends BasicConfiguration {
      * Requests from these Urls will not be logged by org.openecomp.sdc.be.filters.BeServletFilter.<br>
      **/
     private List<String> unLoggedUrls;
-
     /**
      * backend host
      */
@@ -67,7 +65,6 @@ public class Configuration extends BasicConfiguration {
      * backend protocol. http | https
      */
     private String beProtocol = "http";
-
     private Date released;
     private String version = "1111";
     private String toscaConformanceLevel = "3.0";
@@ -86,13 +83,11 @@ public class Configuration extends BasicConfiguration {
     private Long uebHealthCheckReconnectIntervalInSeconds;
     private Long uebHealthCheckReadTimeout;
     private List<Map<String, Map<String, String>>> defaultImports;
-
     private List<String> globalCsarImports;
     private List<String> resourceTypes;
     private List<String> excludeResourceCategory;
     private List<String> excludeResourceType;
     private Map<String, Set<String>> excludedPolicyTypesMapping;
-
     private Map<String, Set<String>> excludedGroupTypesMapping;
     private Map<String, Object> deploymentResourceArtifacts;
     private Map<String, Object> deploymentResourceInstanceArtifacts;
@@ -101,54 +96,34 @@ public class Configuration extends BasicConfiguration {
     private Map<String, Object> informationalServiceArtifacts;
     private Map<String, Object> serviceApiArtifacts;
     private List<String> excludeServiceCategory;
-
     private List<String> licenseTypes;
     private List<String> definedResourceNamespace;
     private List<String> directives;
-
     private Integer additionalInformationMaxNumberOfKeys;
     private HeatDeploymentArtifactTimeout heatArtifactDeploymentTimeout;
-
     private BeMonitoringConfig systemMonitoring;
     private CleanComponentsConfiguration cleanComponentsConfiguration;
-
     private String artifactsIndex;
-
     private String heatEnvArtifactHeader;
     private String heatEnvArtifactFooter;
-
     private String toscaFilesDir;
     private String heatTranslatorPath;
-
     private OnboardingConfig onboarding;
-
     private BasicAuthConfig basicAuth;
-
     private CassandrConfig cassandraConfig;
-
     private SwitchoverDetectorConfig switchoverDetector;
-
     private ApplicationL1CacheConfig applicationL1Cache;
-
     private ApplicationL2CacheConfig applicationL2Cache;
-
     private ToscaValidatorsConfig toscaValidators;
-
     private boolean disableAudit;
-
     private Boolean consumerBusinessLogic;
-
     private Map<String, VfModuleProperty> vfModuleProperties;
-
     private Map<String, String> genericAssetNodeTypes;
     private Map<String, String> serviceNodeTypes;
     private Map<String, Map<String, String>> resourceNodeTypes;
-
     private String appVersion;
     private String artifactGeneratorConfig;
-
     private CadiFilterParams cadiFilterParams;
-
     private Boolean aafAuthNeeded = false;
     private String autoHealingOwner;
     private boolean enableAutoHealing;
@@ -193,29 +168,24 @@ public class Configuration extends BasicConfiguration {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(format("backend host: %s%n", beFqdn))
-            .append(format("backend http port: %s%n", beHttpPort))
+        return new StringBuilder().append(format("backend host: %s%n", beFqdn)).append(format("backend http port: %s%n", beHttpPort))
             .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
-            .append(format("backend protocol: %s%n", beProtocol)).append(format("Version: %s%n", version))
-            .append(format("Released: %s%n", released)).append(format("Supported protocols: %s%n", protocols))
-            .append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
-            .append(format("JanusGraph Cfg File: %s%n", janusGraphCfgFile))
-            .append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
+            .append(format("backend protocol: %s%n", beProtocol)).append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
+            .append(format("Supported protocols: %s%n", protocols)).append(format("Users: %s%n", users)).append(format("Neo4j: %s%n", neo4j))
+            .append(format("JanusGraph Cfg File: %s%n", janusGraphCfgFile)).append(format("JanusGraph In memory: %s%n", janusGraphInMemoryGraph))
             .append(format("JanusGraph lock timeout: %s%n", janusGraphLockTimeout))
             .append(format("JanusGraph reconnect interval seconds: %s%n", janusGraphReconnectIntervalInSeconds))
             .append(format("excludeResourceCategory: %s%n", excludeResourceCategory))
             .append(format("informationalResourceArtifacts: %s%n", informationalResourceArtifacts))
             .append(format("deploymentResourceArtifacts: %s%n", deploymentResourceArtifacts))
             .append(format("informationalServiceArtifacts: %s%n", informationalServiceArtifacts))
-            .append(format("Supported artifacts types: %s%n", artifacts))
-            .append(format("Supported license types: %s%n", licenseTypes))
+            .append(format("Supported artifacts types: %s%n", artifacts)).append(format("Supported license types: %s%n", licenseTypes))
             .append(format("Additional information Maximum number of preoperties: %s%n", additionalInformationMaxNumberOfKeys))
             .append(format("Heat Artifact Timeout in Minutes: %s%n", heatArtifactDeploymentTimeout))
             .append(format("URLs For HTTP Requests that will not be automatically logged : %s%n", unLoggedUrls))
             .append(format("Service Api Artifacts: %s%n", serviceApiArtifacts))
             .append(format("heat env artifact header: %s%n", heatEnvArtifactHeader))
-            .append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter))
-            .append(format("onboarding: %s%n", onboarding)).toString();
+            .append(format("heat env artifact footer: %s%n", heatEnvArtifactFooter)).append(format("onboarding: %s%n", onboarding)).toString();
     }
 
     public List<String> getGlobalCsarImports() {
@@ -248,7 +218,6 @@ public class Configuration extends BasicConfiguration {
         public void setIsHttpOnly(final boolean isHttpOnly) {
             this.isHttpOnly = isHttpOnly;
         }
-
     }
 
     @Getter
@@ -284,7 +253,6 @@ public class Configuration extends BasicConfiguration {
             private String name;
             private String replicationStrategy;
             private List<String> replicationInfo;
-
         }
     }
 
@@ -330,7 +298,6 @@ public class Configuration extends BasicConfiguration {
 
             String changePriorityUrl;
             String changePriorityBody;
-
         }
     }
 
@@ -343,7 +310,6 @@ public class Configuration extends BasicConfiguration {
         private Integer defaultMinutes;
         private Integer minMinutes;
         private Integer maxMinutes;
-
     }
 
     @Getter
@@ -358,7 +324,6 @@ public class Configuration extends BasicConfiguration {
         public Integer getProbeIntervalInSeconds(int defaultVal) {
             return probeIntervalInSeconds == null ? defaultVal : probeIntervalInSeconds;
         }
-
     }
 
     @Getter
@@ -368,7 +333,6 @@ public class Configuration extends BasicConfiguration {
 
         private List<String> acceptedTypes;
         private List<String> validForResourceTypes;
-
     }
 
     @Getter
@@ -383,7 +347,6 @@ public class Configuration extends BasicConfiguration {
         private String downloadCsarUri;
         @ToString.Exclude
         private String healthCheckUri;
-
     }
 
     @Getter
@@ -395,7 +358,6 @@ public class Configuration extends BasicConfiguration {
         private String userName;
         private String userPass;
         private String excludedUrls;
-
     }
 
     @Getter
@@ -412,7 +374,6 @@ public class Configuration extends BasicConfiguration {
         private String defaultFunctionalMenu;
         private Integer pollingInterval;
         private Integer timeoutMs;
-
     }
 
     @Getter
@@ -422,7 +383,6 @@ public class Configuration extends BasicConfiguration {
     public static class ApplicationL1CacheConfig {
 
         private ApplicationL1CacheInfo datatypes;
-
     }
 
     @Getter
@@ -435,7 +395,6 @@ public class Configuration extends BasicConfiguration {
         private ApplicationL1CacheCatalogInfo catalogL1Cache;
         @ToString.Exclude
         private QueueInfo queue;
-
     }
 
     @Getter
@@ -445,7 +404,6 @@ public class Configuration extends BasicConfiguration {
     public static class ToscaValidatorsConfig {
 
         private Integer stringMaxLength;
-
     }
 
     @Getter
@@ -457,7 +415,6 @@ public class Configuration extends BasicConfiguration {
         private Boolean enabled;
         private Integer firstRunDelay;
         private Integer pollIntervalInSec;
-
     }
 
     @Getter
@@ -470,7 +427,6 @@ public class Configuration extends BasicConfiguration {
         private Integer resourcesSizeInCache;
         private Integer servicesSizeInCache;
         private Integer productsSizeInCache;
-
     }
 
     @Getter
@@ -482,7 +438,6 @@ public class Configuration extends BasicConfiguration {
         private Integer waitOnShutDownInMinutes;
         private Integer syncIntervalInSecondes;
         private Integer numberOfCacheWorkers;
-
     }
 
     @Getter
@@ -492,7 +447,6 @@ public class Configuration extends BasicConfiguration {
 
         private String defaultValue;
         private List<String> validValues;
-
     }
 
     @Getter
@@ -502,7 +456,6 @@ public class Configuration extends BasicConfiguration {
 
         private String forBaseModule;
         private String forNonBaseModule;
-
     }
 
     @Getter
@@ -513,7 +466,6 @@ public class Configuration extends BasicConfiguration {
         private String friendlyName;
         private String path;
         private Boolean searchable;
-
     }
 
     @Getter
@@ -523,7 +475,5 @@ public class Configuration extends BasicConfiguration {
 
         private String artifactType;
         private List<PathsAndNamesDefinition> pathsAndNamesDefinitions;
-
     }
-
 }

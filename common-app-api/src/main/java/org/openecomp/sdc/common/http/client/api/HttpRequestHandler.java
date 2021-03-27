@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.client.api;
 
 import com.google.common.annotations.VisibleForTesting;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,19 +32,13 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.FunctionThrows;
 import org.openecomp.sdc.common.http.config.HttpClientConfig;
 
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class HttpRequestHandler {
-    private static HttpRequestHandler handlerInstance = new HttpRequestHandler();
+
     private static final String HTTPS_PREFIX = "https://";
     private static final String HTTP_PREFIX = "http://";
-    
+    private static HttpRequestHandler handlerInstance = new HttpRequestHandler();
     private Map<HttpClientConfigImmutable, HttpClient> clients = new ConcurrentHashMap<>();
     private HttpClientFactory clientFactory;
-    
     private FunctionThrows<CloseableHttpResponse, HttpResponse<byte[]>, Exception> byteResponseBuilder = (CloseableHttpResponse httpResponse) -> {
         HttpEntity entity = httpResponse.getEntity();
         byte[] response = null;
@@ -51,29 +48,29 @@ public class HttpRequestHandler {
                 response = IOUtils.toByteArray(content);
             }
         }
-        return new HttpResponse<>(response, 
-                httpResponse.getStatusLine().getStatusCode(), 
-                httpResponse.getStatusLine().getReasonPhrase());
+        return new HttpResponse<>(response, httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
     };
-
     private FunctionThrows<CloseableHttpResponse, HttpResponse<String>, Exception> stringResponseBuilder = (CloseableHttpResponse httpResponse) -> {
         HttpEntity entity = httpResponse.getEntity();
         String response = null;
         if (entity != null) {
             response = EntityUtils.toString(entity);
         }
-        return new HttpResponse<>(response, 
-                httpResponse.getStatusLine().getStatusCode(),
-                httpResponse.getStatusLine().getReasonPhrase());
+        return new HttpResponse<>(response, httpResponse.getStatusLine().getStatusCode(), httpResponse.getStatusLine().getReasonPhrase());
     };
 
     private HttpRequestHandler() {
         HttpConnectionMngFactory connectionMngFactory = new HttpConnectionMngFactory();
         clientFactory = new HttpClientFactory(connectionMngFactory);
     }
-    
+
     public static HttpRequestHandler get() {
         return handlerInstance;
+    }
+
+    @VisibleForTesting
+    public static void setTestInstance(HttpRequestHandler handlerInstance) {
+        HttpRequestHandler.handlerInstance = handlerInstance;
     }
 
     public HttpResponse<String> get(String url, Properties headers, HttpClientConfig config) throws HttpExecuteException {
@@ -81,7 +78,7 @@ public class HttpRequestHandler {
         return client.<String>get(url, headers, stringResponseBuilder);
     }
 
-    public HttpResponse<byte []> getAsByteArray(String url, Properties headers, HttpClientConfig config) throws HttpExecuteException {
+    public HttpResponse<byte[]> getAsByteArray(String url, Properties headers, HttpClientConfig config) throws HttpExecuteException {
         HttpClient client = getOrCreateClient(url, config);
         return client.<byte[]>get(url, headers, byteResponseBuilder);
     }
@@ -105,12 +102,12 @@ public class HttpRequestHandler {
         HttpClient client = getOrCreateClient(url, config != null ? config : HttpRequest.defaultConfig);
         return client.<String>delete(url, headers, stringResponseBuilder);
     }
-    
+
     public void destroy() {
         clients.forEach((k, v) -> v.close());
         clients.clear();
     }
-    
+
     private HttpClient getOrCreateClient(String url, HttpClientConfig config) throws HttpExecuteException {
         String protocol = getProtocol(url);
         HttpClientConfigImmutable httpClientConfigImmutable = HttpClientConfigImmutable.getOrCreate(config);
@@ -121,20 +118,13 @@ public class HttpRequestHandler {
         return clientFactory.createClient(protocol, config);
     }
 
-    @VisibleForTesting
-    public static void setTestInstance(HttpRequestHandler handlerInstance) {
-        HttpRequestHandler.handlerInstance = handlerInstance;
-    }
-
     private String getProtocol(String url) throws HttpExecuteException {
         if (url.startsWith(HTTPS_PREFIX)) {
             return Constants.HTTPS;
-        }
-        else if (url.startsWith(HTTP_PREFIX)) {
+        } else if (url.startsWith(HTTP_PREFIX)) {
             return Constants.HTTP;
-        }
-        else {
+        } else {
             throw new HttpExecuteException(String.format("Failed to create http client. Requested protocol is not supported \"%s\"", url));
-        }        
+        }
     }
 }

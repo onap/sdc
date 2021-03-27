@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.api;
 
 import java.util.ArrayList;
@@ -29,12 +28,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Represents an artifact type that is used for hard-coded type representation. 
+ * Represents an artifact type that is used for hard-coded type representation.
  * All artifacts must be configured in the SDC configuration file.
  */
 @Getter
 @AllArgsConstructor
 public enum ArtifactTypeEnum {
+    // @formatter:off
     AAI_SERVICE_MODEL("AAI_SERVICE_MODEL"),
     AAI_VF_INSTANCE_MODEL("AAI_VF_INSTANCE_MODEL"),
     AAI_VF_MODEL("AAI_VF_MODEL"),
@@ -95,6 +95,7 @@ public enum ArtifactTypeEnum {
     YANG_MODULE("YANG_MODULE"),
     YANG_XML("YANG_XML"),
     YANG("YANG");
+    // @formatter:on
 
     private final String type;
 
@@ -119,67 +120,15 @@ public enum ArtifactTypeEnum {
      * @return A set of base artifact types
      */
     public static Set<ArtifactTypeEnum> getBaseArtifacts() {
-        final List<ArtifactTypeEnum> artifactTypeEnums = Arrays.asList(
-            AAI_SERVICE_MODEL,
-            AAI_VF_INSTANCE_MODEL,
-            AAI_VF_MODEL,
-            AAI_VF_MODULE_MODEL,
-            ANSIBLE_PLAYBOOK,
-            APPC_CONFIG,
-            BPEL,
-            CHEF,
-            CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT,
-            CONTROLLER_BLUEPRINT_ARCHIVE,
-            DCAE_DOC,
-            DCAE_EVENT,
-            DCAE_INVENTORY_BLUEPRINT,
-            DCAE_INVENTORY_DOC,
-            DCAE_INVENTORY_EVENT,
-            DCAE_INVENTORY_JSON,
-            DCAE_INVENTORY_POLICY,
-            DCAE_INVENTORY_TOSCA,
-            DCAE_JSON,
-            DCAE_POLICY,
-            DCAE_TOSCA,
-            DG_XML,
-            ETSI_PACKAGE,
-            GUIDE,
-            HEAT,
-            HEAT_ARTIFACT,
-            HEAT_ENV,
-            HEAT_NESTED,
-            HEAT_NET,
-            HEAT_VOL,
-            ICON,
-            LIFECYCLE_OPERATIONS,
-            MODEL_INVENTORY_PROFILE,
-            MODEL_QUERY_SPEC,
-            MURANO_PKG,
-            NETWORK_CALL_FLOW,
-            ONBOARDED_PACKAGE,
-            OTHER,
-            PERFORMANCE_COUNTER,
-            PLAN,
-            PM_DICTIONARY,
-            PNF_SW_INFORMATION,
-            PUPPET,
-            SHELL,
-            SHELL_SCRIPT,
-            SNMP_POLL,
-            SNMP_TRAP,
-            TOSCA_CSAR,
-            TOSCA_TEMPLATE,
-            UCPE_LAYER_2_CONFIGURATION,
-            VENDOR_LICENSE,
-            VES_EVENTS,
-            VF_LICENSE,
-            VF_MODULES_METADATA,
-            VNF_CATALOG,
-            WORKFLOW,
-            YANG,
-            YANG_MODULE,
-            YANG_XML
-        );
+        final List<ArtifactTypeEnum> artifactTypeEnums = Arrays
+            .asList(AAI_SERVICE_MODEL, AAI_VF_INSTANCE_MODEL, AAI_VF_MODEL, AAI_VF_MODULE_MODEL, ANSIBLE_PLAYBOOK, APPC_CONFIG, BPEL, CHEF,
+                CLOUD_TECHNOLOGY_SPECIFIC_ARTIFACT, CONTROLLER_BLUEPRINT_ARCHIVE, DCAE_DOC, DCAE_EVENT, DCAE_INVENTORY_BLUEPRINT, DCAE_INVENTORY_DOC,
+                DCAE_INVENTORY_EVENT, DCAE_INVENTORY_JSON, DCAE_INVENTORY_POLICY, DCAE_INVENTORY_TOSCA, DCAE_JSON, DCAE_POLICY, DCAE_TOSCA, DG_XML,
+                ETSI_PACKAGE, GUIDE, HEAT, HEAT_ARTIFACT, HEAT_ENV, HEAT_NESTED, HEAT_NET, HEAT_VOL, ICON, LIFECYCLE_OPERATIONS,
+                MODEL_INVENTORY_PROFILE, MODEL_QUERY_SPEC, MURANO_PKG, NETWORK_CALL_FLOW, ONBOARDED_PACKAGE, OTHER, PERFORMANCE_COUNTER, PLAN,
+                PM_DICTIONARY, PNF_SW_INFORMATION, PUPPET, SHELL, SHELL_SCRIPT, SNMP_POLL, SNMP_TRAP, TOSCA_CSAR, TOSCA_TEMPLATE,
+                UCPE_LAYER_2_CONFIGURATION, VENDOR_LICENSE, VES_EVENTS, VF_LICENSE, VF_MODULES_METADATA, VNF_CATALOG, WORKFLOW, YANG, YANG_MODULE,
+                YANG_XML);
         return new HashSet<>(artifactTypeEnums);
     }
 

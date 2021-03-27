@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,91 +17,79 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.rest.api;
 
 import org.openecomp.sdc.common.api.BasicConfiguration;
 
 public class RestConfigurationInfo extends BasicConfiguration {
 
-	private Integer readTimeoutInSec = null;
+    private Integer readTimeoutInSec = null;
+    private Boolean ignoreCertificate = null;
+    private Integer connectionPoolSize = null;
+    private Integer connectTimeoutInSec = null;
 
-	private Boolean ignoreCertificate = null;
+    /**
+     * @return the readTimeoutInSec
+     */
+    public Integer getReadTimeoutInSec() {
+        return readTimeoutInSec;
+    }
 
-	private Integer connectionPoolSize = null;
+    /**
+     * @param readTimeoutInSec the readTimeoutInSec to set
+     */
+    public void setReadTimeoutInSec(Integer readTimeoutInSec) {
+        this.readTimeoutInSec = readTimeoutInSec;
+    }
 
-	private Integer connectTimeoutInSec = null;
+    /**
+     * @return the ignoreCertificate
+     */
+    public Boolean getIgnoreCertificate() {
+        return ignoreCertificate;
+    }
 
-	/**
-	 * @return the readTimeoutInSec
-	 */
-	public Integer getReadTimeoutInSec() {
-		return readTimeoutInSec;
-	}
+    /**
+     * @param ignoreCertificate the ignoreCertificate to set
+     */
+    public void setIgnoreCertificate(Boolean ignoreCertificate) {
+        this.ignoreCertificate = ignoreCertificate;
+    }
 
-	/**
-	 * @param readTimeoutInSec
-	 *            the readTimeoutInSec to set
-	 */
-	public void setReadTimeoutInSec(Integer readTimeoutInSec) {
-		this.readTimeoutInSec = readTimeoutInSec;
-	}
+    /**
+     * @return the connectionPoolSize
+     */
+    public Integer getConnectionPoolSize() {
+        return connectionPoolSize;
+    }
 
-	/**
-	 * @return the ignoreCertificate
-	 */
-	public Boolean getIgnoreCertificate() {
-		return ignoreCertificate;
-	}
+    /**
+     * @param connectionPoolSize the connectionPoolSize to set
+     */
+    public void setConnectionPoolSize(Integer connectionPoolSize) {
+        this.connectionPoolSize = connectionPoolSize;
+    }
 
-	/**
-	 * @param ignoreCertificate
-	 *            the ignoreCertificate to set
-	 */
-	public void setIgnoreCertificate(Boolean ignoreCertificate) {
-		this.ignoreCertificate = ignoreCertificate;
-	}
+    /**
+     * @return the connectTimeoutInSec
+     */
+    public Integer getConnectTimeoutInSec() {
+        return connectTimeoutInSec;
+    }
 
-	/**
-	 * @return the connectionPoolSize
-	 */
-	public Integer getConnectionPoolSize() {
-		return connectionPoolSize;
-	}
+    /**
+     * @param connectTimeoutInSec the connectTimeoutInSec to set
+     */
+    public void setConnectTimeoutInSec(Integer connectTimeoutInSec) {
+        this.connectTimeoutInSec = connectTimeoutInSec;
+    }
 
-	/**
-	 * @param connectionPoolSize
-	 *            the connectionPoolSize to set
-	 */
-	public void setConnectionPoolSize(Integer connectionPoolSize) {
-		this.connectionPoolSize = connectionPoolSize;
-	}
-
-	/**
-	 * @return the connectTimeoutInSec
-	 */
-	public Integer getConnectTimeoutInSec() {
-		return connectTimeoutInSec;
-	}
-
-	/**
-	 * @param connectTimeoutInSec
-	 *            the connectTimeoutInSec to set
-	 */
-	public void setConnectTimeoutInSec(Integer connectTimeoutInSec) {
-		this.connectTimeoutInSec = connectTimeoutInSec;
-	}
-
-	public String toString() {
-
-		StringBuilder builder = new StringBuilder();
-
-		builder.append("[ timeoutInSec=" + readTimeoutInSec + ",");
-		builder.append("connectTimeoutInSec=" + connectTimeoutInSec + ",");
-		builder.append("ignoreCertificate=" + ignoreCertificate + ",");
-		builder.append("connectionPoolSize=" + connectionPoolSize + "]");
-
-		return builder.toString();
-
-	}
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[ timeoutInSec=" + readTimeoutInSec + ",");
+        builder.append("connectTimeoutInSec=" + connectTimeoutInSec + ",");
+        builder.append("ignoreCertificate=" + ignoreCertificate + ",");
+        builder.append("connectionPoolSize=" + connectionPoolSize + "]");
+        return builder.toString();
+    }
 }

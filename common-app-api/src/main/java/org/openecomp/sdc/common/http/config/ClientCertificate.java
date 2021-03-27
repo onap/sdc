@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.config;
 
 import fj.data.Either;
@@ -27,6 +26,7 @@ import org.onap.sdc.security.SecurityUtil;
 
 @EqualsAndHashCode
 public class ClientCertificate {
+
     private String keyStore;
     private String keyStorePassword;
 
@@ -37,28 +37,17 @@ public class ClientCertificate {
         setKeyStore(clientCertificate.getKeyStore());
         setKeyStorePassword(clientCertificate.getKeyStorePassword(), false);
     }
-    
-    public void setKeyStore(String keyStore) {
-        validate(keyStore);
-        this.keyStore = keyStore;
-    }
-
-    public void setKeyStorePassword(String keyStorePassword) {
-        setKeyStorePassword(keyStorePassword, true);
-    }
 
     private void setKeyStorePassword(String keyStorePassword, boolean isEncoded) {
         validate(keyStorePassword);
-        if(isEncoded) {
+        if (isEncoded) {
             Either<String, String> passkey = SecurityUtil.INSTANCE.decrypt(keyStorePassword);
             if (passkey.isLeft()) {
                 this.keyStorePassword = passkey.left().value();
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException(passkey.right().value());
             }
-        }
-        else {
+        } else {
             this.keyStorePassword = keyStorePassword;
         }
     }
@@ -67,8 +56,17 @@ public class ClientCertificate {
         return keyStore;
     }
 
+    public void setKeyStore(String keyStore) {
+        validate(keyStore);
+        this.keyStore = keyStore;
+    }
+
     public String getKeyStorePassword() {
         return keyStorePassword;
+    }
+
+    public void setKeyStorePassword(String keyStorePassword) {
+        setKeyStorePassword(keyStorePassword, true);
     }
 
     @Override
@@ -79,9 +77,9 @@ public class ClientCertificate {
         builder.append("]");
         return builder.toString();
     }
-    
+
     private void validate(String str) {
-        if(StringUtils.isEmpty(str)) {
+        if (StringUtils.isEmpty(str)) {
             throw new IllegalArgumentException("ClientCertificate keystore and/or kestorePassword cannot be empty");
         }
     }

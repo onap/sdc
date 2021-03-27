@@ -1,18 +1,13 @@
 package org.openecomp.sdc.common.datastructure;
 
-
 import java.util.Set;
 
 public class UserContext {
 
-
     /**
-     * a pojo which holds the business logic layer to be aware of the user context as received in the authentication cookie
-     * Story https://jira.web.labs.att.com/browse/ASDC-232
-     * Author: Idan Agam
+     * a pojo which holds the business logic layer to be aware of the user context as received in the authentication cookie Story
+     * https://jira.web.labs.att.com/browse/ASDC-232 Author: Idan Agam
      */
-
-
     private String userId;
     private String firstName;
     private String lastName;
@@ -34,7 +29,6 @@ public class UserContext {
     }
 
     private Set<String> userRoles;
-
 
     public UserContext(String userId, Set<String> userRoles, String firstName, String lastName) {
         this.userId = userId;
@@ -65,10 +59,7 @@ public class UserContext {
 
     @Override
     public String toString() {
-        return "UserContext{" + "userId='" + userId + '\'' + ", firstName='" + firstName + '\'' + ", lastname='" + lastName + '\'' + ", userRoles=" + userRoles + '}';
+        return "UserContext{" + "userId='" + userId + '\'' + ", firstName='" + firstName + '\'' + ", lastname='" + lastName + '\'' + ", userRoles="
+            + userRoles + '}';
     }
 }
-
-
-
-

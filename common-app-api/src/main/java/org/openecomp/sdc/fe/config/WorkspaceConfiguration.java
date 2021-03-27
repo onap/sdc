@@ -17,16 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.config;
-
-import org.openecomp.sdc.common.api.BasicConfiguration;
 
 import java.util.List;
 import java.util.Map;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.openecomp.sdc.common.api.BasicConfiguration;
 
 @Getter
 @Setter
@@ -37,6 +34,7 @@ public class WorkspaceConfiguration extends BasicConfiguration {
     @Getter
     @Setter
     private static class MenuConfiguration {
+
         private String text;
         private String action;
         private String state;

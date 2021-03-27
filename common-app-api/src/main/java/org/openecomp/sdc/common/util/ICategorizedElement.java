@@ -1,7 +1,5 @@
 package org.openecomp.sdc.common.util;
 
-import java.util.List;
-
 public interface ICategorizedElement {
 
     String getComponentTypeAsString();
@@ -9,7 +7,4 @@ public interface ICategorizedElement {
     String getCategoryName();
 
     String getSubcategoryName();
-
-
-
 }

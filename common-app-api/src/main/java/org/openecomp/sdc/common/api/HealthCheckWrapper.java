@@ -17,21 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.api;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class HealthCheckWrapper {
-	private List<HealthCheckInfo> componentsInfo;
-	private String sdcVersion;
-	private String siteMode;
 
+    private List<HealthCheckInfo> componentsInfo;
+    private String sdcVersion;
+    private String siteMode;
 }
