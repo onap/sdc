@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.HashMap;
@@ -34,12 +32,10 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
     }
 
     public InterfaceDefinitionType(Object toscaInterfaceDefinitionType) {
-        InterfaceDefinitionType interfaceDefinitionType =
-                (InterfaceDefinitionType) convertObjToInterfaceDefinition(toscaInterfaceDefinitionType);
+        InterfaceDefinitionType interfaceDefinitionType = (InterfaceDefinitionType) convertObjToInterfaceDefinition(toscaInterfaceDefinitionType);
         this.setType(interfaceDefinitionType.getType());
         this.setInputs(DataModelCloneUtil.cloneStringPropertyDefinitionMap(interfaceDefinitionType.getInputs()));
-        this.setOperations(
-                DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionType.getOperations()));
+        this.setOperations(DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionType.getOperations()));
     }
 
     public String getType() {
@@ -75,9 +71,7 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
             return false;
         }
         InterfaceDefinitionType that = (InterfaceDefinitionType) o;
-        return Objects.equals(type, that.type)
-                && Objects.equals(inputs, that.inputs)
-                && Objects.equals(operations, that.operations);
+        return Objects.equals(type, that.type) && Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
     }
 
     @Override
@@ -100,5 +94,4 @@ public class InterfaceDefinitionType extends InterfaceDefinition {
     public Optional<Object> convertInterfaceDefinitionTypeToToscaObj() {
         return convertInterfaceToToscaInterfaceObj(this);
     }
-
 }

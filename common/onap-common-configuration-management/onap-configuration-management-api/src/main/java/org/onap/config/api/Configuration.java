@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config.api;
 
 import java.util.Arrays;
@@ -31,7 +30,6 @@ public interface Configuration {
      * @param id tenant id; may be <code>null</code> in which case a default will be used.
      */
     static void setTenantId(String id) {
-
         if (id != null && id.trim().length() > 0) {
             TENANT.set(id);
         } else {

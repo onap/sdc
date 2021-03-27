@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model;
-
 
 public class ParameterDefinition extends DefinitionOfDataType {
 
@@ -33,5 +31,4 @@ public class ParameterDefinition extends DefinitionOfDataType {
         parameterDefinition.setValue(definitionOfDataType.getValue());
         return parameterDefinition;
     }
-
 }

@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model.extension;
 
 import org.onap.sdc.tosca.datatypes.model.NodeFilter;
-
 
 public class ServiceFilter extends NodeFilter {
 
@@ -39,9 +37,7 @@ public class ServiceFilter extends NodeFilter {
         if (!(o instanceof ServiceFilter)) {
             return false;
         }
-
         ServiceFilter that = (ServiceFilter) o;
-
         return getTosca_id() != null ? getTosca_id().equals(that.getTosca_id()) : that.getTosca_id() == null;
     }
 

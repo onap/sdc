@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import static org.onap.sdc.tosca.services.DataModelConvertUtil.convertToscaImports;
@@ -22,11 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.heatextend.AnnotationType;
 import org.onap.sdc.tosca.error.ToscaRuntimeException;
-
 
 public class ServiceTemplate implements Template {
 
@@ -167,7 +164,6 @@ public class ServiceTemplate implements Template {
         if (MapUtils.isEmpty(this.interface_types)) {
             this.interface_types = new HashMap<>();
         }
-
         Optional<Object> toscaInterfaceObj = interfaceType.convertInterfaceTypeToToscaObj();
         if (!toscaInterfaceObj.isPresent()) {
             throw new ToscaRuntimeException("Illegal Statement");
@@ -201,6 +197,4 @@ public class ServiceTemplate implements Template {
     public void setAnnotation_types(Map<String, AnnotationType> annotationTypes) {
         this.annotation_types = annotationTypes;
     }
-
-
 }

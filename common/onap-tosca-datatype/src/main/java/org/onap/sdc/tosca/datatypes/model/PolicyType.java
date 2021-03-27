@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
-
 
 @Data
 public class PolicyType {
@@ -35,5 +33,4 @@ public class PolicyType {
     private Map<String, PropertyDefinition> properties;
     private List<String> targets;
     private Map<String, Trigger> triggers;
-
 }

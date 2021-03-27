@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model.heatextend;
 
 import java.util.Collections;
@@ -28,14 +27,11 @@ import java.util.Map;
  * The enum Property type ext.
  */
 public enum PropertyTypeExt {
-
     /**
      * Json property type ext.
      */
     JSON("json");
-
-    private static final Map<String, PropertyTypeExt> M_MAP =
-            Collections.unmodifiableMap(initializeMapping());
+    private static final Map<String, PropertyTypeExt> M_MAP = Collections.unmodifiableMap(initializeMapping());
     private String displayName;
 
     PropertyTypeExt(String displayName) {
@@ -63,6 +59,4 @@ public enum PropertyTypeExt {
     public String getDisplayName() {
         return displayName;
     }
-
-
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.HashMap;
@@ -32,12 +31,10 @@ public class InterfaceDefinitionTemplate extends InterfaceDefinition {
     }
 
     public InterfaceDefinitionTemplate(Object toscaInterfaceDefTemplateObj) {
-        InterfaceDefinitionTemplate interfaceDefinitionTemplate =
-                (InterfaceDefinitionTemplate) convertObjToInterfaceDefinition(toscaInterfaceDefTemplateObj);
+        InterfaceDefinitionTemplate interfaceDefinitionTemplate = (InterfaceDefinitionTemplate) convertObjToInterfaceDefinition(
+            toscaInterfaceDefTemplateObj);
         this.setInputs(DataModelCloneUtil.cloneStringObjectMap(interfaceDefinitionTemplate.getInputs()));
-        this.setOperations(
-                DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionTemplate.getOperations()));
-
+        this.setOperations(DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionTemplate.getOperations()));
     }
 
     public Map<String, Object> getInputs() {

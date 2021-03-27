@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config.api;
 
 import java.util.Iterator;
@@ -32,7 +31,6 @@ class ConfigurationLoader {
     }
 
     static Configuration load() {
-
         ServiceLoader<ConfigurationManager> loader = ServiceLoader.load(ConfigurationManager.class);
         Iterator<ConfigurationManager> configManagers = loader.iterator();
         while (configManagers.hasNext()) {
@@ -42,7 +40,6 @@ class ConfigurationLoader {
                 // this provider loading has failed, let's try next one
             }
         }
-
         throw new IllegalStateException("No binding found for configuration service");
     }
 }

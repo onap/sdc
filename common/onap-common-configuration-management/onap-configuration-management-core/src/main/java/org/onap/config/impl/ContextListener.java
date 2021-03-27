@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config.impl;
 
 import static org.onap.config.Constants.MBEAN_NAME;

@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config.type;
 
-import org.onap.config.Constants;
 import lombok.Getter;
 import lombok.ToString;
+import org.onap.config.Constants;
 
 @ToString
 @Getter
@@ -58,7 +57,6 @@ public class ConfigurationQuery {
         }
         return this;
     }
-
 
     public ConfigurationQuery namespace(String id) {
         if (id != null) {

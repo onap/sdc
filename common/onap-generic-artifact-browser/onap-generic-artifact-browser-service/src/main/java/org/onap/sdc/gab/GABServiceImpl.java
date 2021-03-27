@@ -17,11 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.gab;
 
 import java.io.IOException;
-
 import org.onap.sdc.gab.model.GABQuery;
 import org.onap.sdc.gab.model.GABQuery.GABQueryType;
 import org.onap.sdc.gab.model.GABResults;
@@ -37,7 +35,7 @@ public class GABServiceImpl implements GABService {
     }
 
     private GABYamlParser parse(GABQuery gabQuery, GABYamlParser gabYamlParser) {
-        return gabQuery.getType() == GABQueryType.PATH
-                ? gabYamlParser.parseFile(gabQuery.getDocument()) : gabYamlParser.parseContent(gabQuery.getDocument());
+        return gabQuery.getType() == GABQueryType.PATH ? gabYamlParser.parseFile(gabQuery.getDocument())
+            : gabYamlParser.parseContent(gabQuery.getDocument());
     }
 }

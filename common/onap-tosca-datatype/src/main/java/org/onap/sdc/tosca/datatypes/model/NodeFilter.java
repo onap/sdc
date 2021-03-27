@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
 import java.util.Map;
 import org.onap.sdc.tosca.services.DataModelNormalizeUtil;
-
 
 public class NodeFilter {
 
@@ -34,13 +32,11 @@ public class NodeFilter {
         this.capabilities = DataModelNormalizeUtil.getNormalizeCapabilitiesFilter(capabilities);
     }
 
-    public void setProperties(List<Map<String, List<Constraint>>> properties) {
-        this.properties = DataModelNormalizeUtil.getNormalizePropertiesFilter(properties);
-    }
-
     public List<Map<String, List<Constraint>>> getProperties() {
         return properties;
     }
 
-
+    public void setProperties(List<Map<String, List<Constraint>>> properties) {
+        this.properties = DataModelNormalizeUtil.getNormalizePropertiesFilter(properties);
+    }
 }

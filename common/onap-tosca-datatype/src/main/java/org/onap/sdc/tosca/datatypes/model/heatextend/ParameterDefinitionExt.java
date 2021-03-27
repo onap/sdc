@@ -13,50 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model.heatextend;
 
-import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
-
 import java.util.Map;
+import org.onap.sdc.tosca.datatypes.model.ParameterDefinition;
 
 public class ParameterDefinitionExt extends ParameterDefinition {
 
-  private String label;
-  private Boolean hidden;
-  private Boolean immutable;
-  private Map<String, AnnotationDefinition> annotations;
+    private String label;
+    private Boolean hidden;
+    private Boolean immutable;
+    private Map<String, AnnotationDefinition> annotations;
 
-  public String getLabel() {
-    return label;
-  }
+    public String getLabel() {
+        return label;
+    }
 
-  public void setLabel(String label) {
-    this.label = label;
-  }
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-  public Boolean getHidden() {
-    return hidden;
-  }
+    public Boolean getHidden() {
+        return hidden;
+    }
 
-  public void setHidden(Boolean hidden) {
-    this.hidden = hidden;
-  }
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
+    }
 
-  public Boolean getImmutable() {
-    return immutable;
-  }
+    public Boolean getImmutable() {
+        return immutable;
+    }
 
-  public void setImmutable(Boolean immutable) {
-    this.immutable = immutable;
-  }
+    public void setImmutable(Boolean immutable) {
+        this.immutable = immutable;
+    }
 
-  public Map<String, AnnotationDefinition> getAnnotations() {
-    return annotations;
-  }
+    public Map<String, AnnotationDefinition> getAnnotations() {
+        return annotations;
+    }
 
-  public void setAnnotations(Map<String, AnnotationDefinition> annotations) {
-    this.annotations = annotations;
-  }
-
+    public void setAnnotations(Map<String, AnnotationDefinition> annotations) {
+        this.annotations = annotations;
+    }
 }

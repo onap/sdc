@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.gab.yaml;
 
 import java.io.IOException;
@@ -94,21 +93,18 @@ public class GABYamlParser implements AutoCloseable {
     /**
      * Collects the results from parsed yaml file and applied filters.
      *
-     * @exception IOException Means that yaml file has invalid content.
      * @return {@link GABResults}
+     * @throws IOException Means that yaml file has invalid content.
      */
     public GABResults collect() throws IOException {
-        return new GABResults(yamlParser.collect().stream()
-            .map(results -> new GABResult(createGabResultEntryList(results)))
-            .collect(Collectors.toList()));
+        return new GABResults(
+            yamlParser.collect().stream().map(results -> new GABResult(createGabResultEntryList(results))).collect(Collectors.toList()));
     }
 
     private List<GABResultEntry> createGabResultEntryList(List<SimpleEntry<String, ? extends Collection<Object>>> parsedContent) {
         return Objects.isNull(parsedContent) ? Collections.emptyList() : parsedContent.stream()
-                .map(result -> result.getValue().stream()
-                    .map(entry -> new GABResultEntry(result.getKey(), entry))
-                    .collect(Collectors.toList())).flatMap(Collection::stream)
-                .collect(Collectors.toList());
+            .map(result -> result.getValue().stream().map(entry -> new GABResultEntry(result.getKey(), entry)).collect(Collectors.toList()))
+            .flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     @Override

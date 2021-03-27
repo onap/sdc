@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.services;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +29,7 @@ public class DataModelNormalizeUtil {
         throw new IllegalStateException("Utility class");
     }
 
-    public static List<Map<String, CapabilityFilter>> getNormalizeCapabilitiesFilter(
-            List<Map<String, CapabilityFilter>> capabilitiesFilter) {
+    public static List<Map<String, CapabilityFilter>> getNormalizeCapabilitiesFilter(List<Map<String, CapabilityFilter>> capabilitiesFilter) {
         if (CollectionUtils.isEmpty(capabilitiesFilter)) {
             return capabilitiesFilter;
         }
@@ -44,8 +41,7 @@ public class DataModelNormalizeUtil {
         return normalizeCapabilities;
     }
 
-    private static Map<String, CapabilityFilter> getNormalizeCapabilityFilterEntry(
-            Map<String, CapabilityFilter> capabilityFilterEntry) {
+    private static Map<String, CapabilityFilter> getNormalizeCapabilityFilterEntry(Map<String, CapabilityFilter> capabilityFilterEntry) {
         Map<String, CapabilityFilter> normalizeCapabilityEntry = new HashMap<>();
         String capabilityKey = capabilityFilterEntry.keySet().iterator().next(); //only one entry exist in the map
         Object capabilityFilterObj = capabilityFilterEntry.get(capabilityKey);
@@ -56,15 +52,13 @@ public class DataModelNormalizeUtil {
 
     private static CapabilityFilter getNormalizeCapabilityFilter(Object capabilityFilterObj) {
         ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
-        CapabilityFilter capabilityFilter = toscaExtensionYamlUtil.yamlToObject(
-                toscaExtensionYamlUtil.objectToYaml(capabilityFilterObj), CapabilityFilter.class);
+        CapabilityFilter capabilityFilter = toscaExtensionYamlUtil
+            .yamlToObject(toscaExtensionYamlUtil.objectToYaml(capabilityFilterObj), CapabilityFilter.class);
         capabilityFilter.setProperties(getNormalizePropertiesFilter(capabilityFilter.getProperties()));
-
         return capabilityFilter;
     }
 
-    public static List<Map<String, List<Constraint>>> getNormalizePropertiesFilter(
-            List<Map<String, List<Constraint>>> properties) {
+    public static List<Map<String, List<Constraint>>> getNormalizePropertiesFilter(List<Map<String, List<Constraint>>> properties) {
         if (CollectionUtils.isEmpty(properties)) {
             return properties;
         }
@@ -74,11 +68,9 @@ public class DataModelNormalizeUtil {
             normalizeProperties.add(normalizePropertyEntry);
         }
         return normalizeProperties;
-
     }
 
-    private static Map<String, List<Constraint>> getNormalizePropertyFilterEntry(
-            Map<String, List<Constraint>> propertyFilterEntry) {
+    private static Map<String, List<Constraint>> getNormalizePropertyFilterEntry(Map<String, List<Constraint>> propertyFilterEntry) {
         Map<String, List<Constraint>> normalizePropertyEntry = new HashMap<>();
         String propertyKey = propertyFilterEntry.keySet().iterator().next();  //only one entry exist in the map
         List<Constraint> constraints = propertyFilterEntry.get(propertyKey);
@@ -92,8 +84,7 @@ public class DataModelNormalizeUtil {
         List<Constraint> normalizeConstraints = new ArrayList<>();
         for (Object constraintObj : constraints) {
             Constraint normalizeConstraint = toscaExtensionYamlUtil
-                                                     .yamlToObject(toscaExtensionYamlUtil.objectToYaml(constraintObj),
-                                                             Constraint.class);
+                .yamlToObject(toscaExtensionYamlUtil.objectToYaml(constraintObj), Constraint.class);
             normalizeConstraints.add(normalizeConstraint);
         }
         return normalizeConstraints;

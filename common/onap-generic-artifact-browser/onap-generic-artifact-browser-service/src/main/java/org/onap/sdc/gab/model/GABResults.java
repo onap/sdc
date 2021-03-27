@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.gab.model;
 
 import com.google.common.base.MoreObjects;

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,96 +17,87 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
-
-import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 import java.util.List;
 import java.util.Map;
+import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 public class CapabilityDefinition implements Cloneable {
 
-  private String type;
-  private String description;
-  private Map<String, PropertyDefinition> properties;
-  private Map<String, AttributeDefinition> attributes;
-  private List<String> valid_source_types;
-  private Object[] occurrences;
+    private String type;
+    private String description;
+    private Map<String, PropertyDefinition> properties;
+    private Map<String, AttributeDefinition> attributes;
+    private List<String> valid_source_types;
+    private Object[] occurrences;
 
+    /**
+     * Constructor.
+     */
+    public CapabilityDefinition() {
+        occurrences = new Object[2];
+        occurrences[0] = 1;
+        occurrences[1] = "UNBOUNDED";
+    }
 
-  /**
-   * Constructor.
-   */
-  public CapabilityDefinition() {
-    occurrences = new Object[2];
-    occurrences[0] = 1;
-    occurrences[1] = "UNBOUNDED";
-  }
+    public String getType() {
+        return type;
+    }
 
-  public String getType() {
-    return type;
-  }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public Map<String, PropertyDefinition> getProperties() {
+        return properties;
+    }
 
-  public Map<String, PropertyDefinition> getProperties() {
-    return properties;
-  }
+    public void setProperties(Map<String, PropertyDefinition> properties) {
+        this.properties = properties;
+    }
 
-  public void setProperties(Map<String, PropertyDefinition> properties) {
-    this.properties = properties;
-  }
+    public Map<String, AttributeDefinition> getAttributes() {
+        return attributes;
+    }
 
-  public Map<String, AttributeDefinition> getAttributes() {
-    return attributes;
-  }
+    public void setAttributes(Map<String, AttributeDefinition> attributes) {
+        this.attributes = attributes;
+    }
 
-  public void setAttributes(Map<String, AttributeDefinition> attributes) {
-    this.attributes = attributes;
-  }
+    public List<String> getValid_source_types() {
+        return valid_source_types;
+    }
 
-  public List<String> getValid_source_types() {
-    return valid_source_types;
-  }
+    public void setValid_source_types(List<String> valid_source_types) {
+        this.valid_source_types = valid_source_types;
+    }
 
-  public void setValid_source_types(List<String> valid_source_types) {
-    this.valid_source_types = valid_source_types;
-  }
+    public Object[] getOccurrences() {
+        return occurrences;
+    }
 
-  public Object[] getOccurrences() {
-    return occurrences;
-  }
+    public void setOccurrences(Object[] occurrences) {
+        this.occurrences = occurrences;
+    }
 
-  public void setOccurrences(Object[] occurrences) {
-    this.occurrences = occurrences;
-  }
-
-  @Override
-  public CapabilityDefinition clone() {
-    CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
-    capabilityDefinition
-        .setOccurrences(new Object[]{this.getOccurrences()[0], this.getOccurrences()[1]});
-    capabilityDefinition
-        .setProperties(DataModelCloneUtil.clonePropertyDefinitions(this.getProperties()));
-    capabilityDefinition.setType(this.getType());
-    capabilityDefinition
-        .setAttributes(DataModelCloneUtil.cloneAttributeDefinitions(this.getAttributes()));
-    capabilityDefinition.setDescription(this.getDescription());
-    capabilityDefinition
-        .setValid_source_types(DataModelCloneUtil.cloneListString(this.getValid_source_types()));
-    return capabilityDefinition;
-
-  }
-
+    @Override
+    public CapabilityDefinition clone() {
+        CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setOccurrences(new Object[]{this.getOccurrences()[0], this.getOccurrences()[1]});
+        capabilityDefinition.setProperties(DataModelCloneUtil.clonePropertyDefinitions(this.getProperties()));
+        capabilityDefinition.setType(this.getType());
+        capabilityDefinition.setAttributes(DataModelCloneUtil.cloneAttributeDefinitions(this.getAttributes()));
+        capabilityDefinition.setDescription(this.getDescription());
+        capabilityDefinition.setValid_source_types(DataModelCloneUtil.cloneListString(this.getValid_source_types()));
+        return capabilityDefinition;
+    }
 }

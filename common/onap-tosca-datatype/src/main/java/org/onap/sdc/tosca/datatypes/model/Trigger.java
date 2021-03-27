@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.Objects;
@@ -72,7 +71,6 @@ public class Trigger {
     }
 
     public Object getAction() {
-
         return action;
     }
 
@@ -94,11 +92,8 @@ public class Trigger {
             return false;
         }
         Trigger trigger = (Trigger) o;
-        return Objects.equals(description, trigger.description)
-                && Objects.equals(event_type, trigger.event_type)
-                && Objects.equals(schedule, trigger.schedule)
-                && Objects.equals(target_filter, trigger.target_filter)
-                && Objects.equals(condition, trigger.condition)
-                && Objects.equals(action, trigger.action);
+        return Objects.equals(description, trigger.description) && Objects.equals(event_type, trigger.event_type) && Objects
+            .equals(schedule, trigger.schedule) && Objects.equals(target_filter, trigger.target_filter) && Objects
+            .equals(condition, trigger.condition) && Objects.equals(action, trigger.action);
     }
 }

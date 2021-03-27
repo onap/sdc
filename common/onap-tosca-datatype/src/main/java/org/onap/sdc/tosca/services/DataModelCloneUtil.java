@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.services;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +40,6 @@ public class DataModelCloneUtil {
      * @return the list
      */
     public static List<Constraint> cloneConstraints(List<Constraint> constraints) {
-
         if (constraints == null) {
             return null;
         }
@@ -55,8 +52,7 @@ public class DataModelCloneUtil {
      * @param propertyDefinitions the property definitions
      * @return the map
      */
-    public static Map<String, PropertyDefinition> clonePropertyDefinitions(
-            Map<String, PropertyDefinition> propertyDefinitions) {
+    public static Map<String, PropertyDefinition> clonePropertyDefinitions(Map<String, PropertyDefinition> propertyDefinitions) {
         if (propertyDefinitions == null) {
             return null;
         }
@@ -64,7 +60,6 @@ public class DataModelCloneUtil {
         for (Map.Entry<String, PropertyDefinition> propertyDefinitionEntry : propertyDefinitions.entrySet()) {
             clonedProperties.put(propertyDefinitionEntry.getKey(), propertyDefinitionEntry.getValue().clone());
         }
-
         return clonedProperties;
     }
 
@@ -74,18 +69,14 @@ public class DataModelCloneUtil {
      * @param attributeDefinitions the attribute definitions
      * @return the map
      */
-    public static Map<String, AttributeDefinition> cloneAttributeDefinitions(
-            Map<String, AttributeDefinition> attributeDefinitions) {
-
+    public static Map<String, AttributeDefinition> cloneAttributeDefinitions(Map<String, AttributeDefinition> attributeDefinitions) {
         if (attributeDefinitions == null) {
             return null;
         }
         Map<String, AttributeDefinition> clonedAttributeDefinitions = new HashMap<>();
         for (Map.Entry<String, AttributeDefinition> attributeDefinitionEntry : attributeDefinitions.entrySet()) {
-            clonedAttributeDefinitions
-                    .put(attributeDefinitionEntry.getKey(), attributeDefinitionEntry.getValue().clone());
+            clonedAttributeDefinitions.put(attributeDefinitionEntry.getKey(), attributeDefinitionEntry.getValue().clone());
         }
-
         return clonedAttributeDefinitions;
     }
 
@@ -108,17 +99,15 @@ public class DataModelCloneUtil {
      * @param stringPropertyDefinitionMap the map that will be cloned
      * @return the cloned map
      */
-    public static Map<String, PropertyDefinition> cloneStringPropertyDefinitionMap(
-            Map<String, PropertyDefinition> stringPropertyDefinitionMap) {
+    public static Map<String, PropertyDefinition> cloneStringPropertyDefinitionMap(Map<String, PropertyDefinition> stringPropertyDefinitionMap) {
         if (Objects.isNull(stringPropertyDefinitionMap)) {
             return null;
         }
-
         Map<String, PropertyDefinition> cloneMap = new HashMap<>();
         ToscaExtensionYamlUtil toscaExtYamlUtil = new ToscaExtensionYamlUtil();
         for (Map.Entry<String, PropertyDefinition> mapEntry : stringPropertyDefinitionMap.entrySet()) {
-            PropertyDefinition propertyDefinition = toscaExtYamlUtil.yamlToObject(
-                    toscaExtYamlUtil.objectToYaml(mapEntry.getValue()), PropertyDefinition.class);
+            PropertyDefinition propertyDefinition = toscaExtYamlUtil
+                .yamlToObject(toscaExtYamlUtil.objectToYaml(mapEntry.getValue()), PropertyDefinition.class);
             cloneMap.put(mapEntry.getKey(), propertyDefinition.clone());
         }
         return cloneMap;
@@ -130,18 +119,14 @@ public class DataModelCloneUtil {
      * @param input the map that will be cloned
      * @return the cloned map
      */
-    public static <T extends OperationDefinition> Map<String, T> cloneStringOperationDefinitionMap(
-            Map<String, T> input) {
-
+    public static <T extends OperationDefinition> Map<String, T> cloneStringOperationDefinitionMap(Map<String, T> input) {
         if (Objects.isNull(input)) {
             return null;
         }
-
         Map<String, OperationDefinition> cloneMap = new HashMap<>();
         for (Map.Entry<String, T> mapEntry : input.entrySet()) {
             cloneMap.put(mapEntry.getKey(), Objects.isNull(mapEntry.getValue()) ? null : mapEntry.getValue().clone());
         }
-
         return (Map<String, T>) cloneMap;
     }
 
@@ -155,7 +140,6 @@ public class DataModelCloneUtil {
         if (Objects.isNull(stringObjectMap)) {
             return null;
         }
-
         Map<String, Object> cloneMap = new HashMap<>();
         for (Map.Entry<String, Object> mapEntry : stringObjectMap.entrySet()) {
             YamlUtil yamlUtil = new YamlUtil();
@@ -186,6 +170,4 @@ public class DataModelCloneUtil {
         }
         return new ArrayList<>(listString);
     }
-
-
 }

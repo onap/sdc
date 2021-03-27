@@ -17,22 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.services;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 public class MyPropertyUtils extends PropertyUtils {
+
     //Unsorted properties
     @Override
     protected Set<Property> createPropertySet(Class<? extends Object> type, BeanAccess bnAccess) {
-        return new LinkedHashSet<>(getPropertiesMap(type,
-                BeanAccess.FIELD).values());
+        return new LinkedHashSet<>(getPropertiesMap(type, BeanAccess.FIELD).values());
     }
 
     @Override
@@ -43,5 +41,4 @@ public class MyPropertyUtils extends PropertyUtils {
         }
         return super.getProperty(type, updatedName);
     }
-
 }

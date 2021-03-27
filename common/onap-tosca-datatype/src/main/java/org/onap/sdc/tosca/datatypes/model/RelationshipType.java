@@ -17,13 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
-
-import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
+import lombok.Data;
 
 @Data
 public class RelationshipType {
@@ -37,6 +35,6 @@ public class RelationshipType {
     private Map<String, Object> interfaces;
     private List<String> valid_target_types;
     //An optional list of one or more names of Capability Types that are valid targets
-    // for this relationship
 
+    // for this relationship
 }

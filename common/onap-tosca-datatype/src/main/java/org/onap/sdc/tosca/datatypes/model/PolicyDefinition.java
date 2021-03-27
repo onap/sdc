@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
@@ -33,5 +32,4 @@ public class PolicyDefinition implements Template {
     private Map<String, Object> properties;
     private List<String> targets;
     private Map<String, Trigger> triggers;
-
 }
