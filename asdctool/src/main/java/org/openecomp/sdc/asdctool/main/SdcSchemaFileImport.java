@@ -17,9 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.main;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openecomp.sdc.asdctool.configuration.SdcSchemaFileImportConfiguration;
@@ -38,54 +53,25 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-
 public class SdcSchemaFileImport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SdcSchemaFileImport.class);
-
     private static final String SEPARATOR = FileSystems.getDefault().getSeparator();
-
     private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
-
-    private static String importToscaPath;
-
     private static final byte[] buffer = new byte[1024];
-
     private static final String YAML_EXTENSION = ".yml";
-
     private static final String DEPLOYMENT_TYPE_ONAP = "onap";
-
+    private static String importToscaPath;
     private static String LICENSE_TXT;
-
     private static ZipOutputStream zos;
 
     public static void main(String[] args) throws Exception {
-
         //Generation flow start - generating SDC from normatives
         System.out.println("Starting SdcSchemaFileImport procedure...");
         final String FILE_NAME = "SDC.zip";
-
         if (args == null || !(args.length == 4 || args.length == 5)) {
             usageAndExit();
         }
-
         importToscaPath = args[0];
         String sdcReleaseNum = args[1];
         String conformanceLevel = args[2];
@@ -94,11 +80,8 @@ public class SdcSchemaFileImport {
         if (args.length == 5) {
             deploymentType = args[4];
         }
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
         zos = new ZipOutputStream(baos);
-
         //Initialize the license text
         try {
             LICENSE_TXT = new String(Files.readAllBytes(Paths.get(appConfigDir + SEPARATOR + "license.txt")));
@@ -106,111 +89,78 @@ public class SdcSchemaFileImport {
             System.err.println("Couldn't read license.txt in location :" + appConfigDir + ", error: " + e);
             System.exit(1);
         }
-
         //Loop over schema file list and create each yaml file from /import/tosca folder
         SchemaZipFileEnum[] schemaFileList = SchemaZipFileEnum.values();
         for (SchemaZipFileEnum schemaZipFileEnum : schemaFileList) {
             String folderName = schemaZipFileEnum.getSourceFolderName();
             String fileName = schemaZipFileEnum.getSourceFileName();
-
             if ((folderName != null) && (fileName != null)) {
                 File folder = new File(importToscaPath, folderName);
                 File path = new File(folder, fileName + YAML_EXTENSION);
-
                 try (InputStream input = new FileInputStream(path)) {
                     // Convert the content of file to yaml
                     Yaml yamlFileSource = new Yaml();
                     Object content = yamlFileSource.load(input);
-
                     createAndSaveSchemaFileYaml(schemaZipFileEnum, content);
                 } catch (Exception e) {
-                    System.err.println(
-                        "Error in file creation : "
-                            + schemaZipFileEnum.getFileName()
-                            + ", "
-                            + e.getMessage());
+                    System.err.println("Error in file creation : " + schemaZipFileEnum.getFileName() + ", " + e.getMessage());
                     System.exit(1);
                 }
             }
         }
-
         createAndSaveNodeSchemaFile(deploymentType);
-
         try {
             //close the ZipOutputStream
             zos.close();
             System.out.println("File SDC.zip creation successful");
-
         } catch (Exception ex) {
             System.err.println("Failed to pack SDC.zip file, error: " + ex);
             System.exit(1);
         }
-
         //Generation flow end - generating SDC from narratives
-
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
-        SdcSchemaFilesCassandraDao schemaFilesCassandraDao = (SdcSchemaFilesCassandraDao) context
-            .getBean("sdc-schema-files-cassandra-dao");
-
+        SdcSchemaFilesCassandraDao schemaFilesCassandraDao = (SdcSchemaFilesCassandraDao) context.getBean("sdc-schema-files-cassandra-dao");
         byte[] fileBytes = baos.toByteArray();
-
         Date date = new Date();
         String md5Hex = DigestUtils.md5Hex(fileBytes);
-
-        SdcSchemaFilesData schemeFileData = new SdcSchemaFilesData(sdcReleaseNum, date, conformanceLevel, FILE_NAME,
-            fileBytes, md5Hex);
+        SdcSchemaFilesData schemeFileData = new SdcSchemaFilesData(sdcReleaseNum, date, conformanceLevel, FILE_NAME, fileBytes, md5Hex);
         CassandraOperationStatus saveSchemaFile = schemaFilesCassandraDao.saveSchemaFile(schemeFileData);
-
         if (!saveSchemaFile.equals(CassandraOperationStatus.OK)) {
             System.err.println("SdcSchemaFileImport failed cassandra error" + saveSchemaFile);
             System.exit(1);
         }
-
         System.out.println("SdcSchemaFileImport successfully completed");
-
         System.exit(0);
     }
 
     public static void createAndSaveSchemaFileYaml(SchemaZipFileEnum schemaZipFileEnum, Object content) {
-        createAndSaveSchemaFileYaml(schemaZipFileEnum.getFileName(), schemaZipFileEnum.getImportFileList(),
-            schemaZipFileEnum.getCollectionTitle(), content);
+        createAndSaveSchemaFileYaml(schemaZipFileEnum.getFileName(), schemaZipFileEnum.getImportFileList(), schemaZipFileEnum.getCollectionTitle(),
+            content);
     }
 
-    public static void createAndSaveSchemaFileYaml(String fileName, String[] importFileList, String collectionTitle,
-        Object content) {
-
+    public static void createAndSaveSchemaFileYaml(String fileName, String[] importFileList, String collectionTitle, Object content) {
         //Initialize the snake yaml dumper option
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
         //Create the new yaml
         Yaml yaml = new Yaml(options);
         yaml.setName(fileName);
-
         //Initialize the yaml contents
         final Map<String, Object> data = new LinkedHashMap<>();
         data.put(ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), TOSCA_VERSION);
-
         if (importFileList.length > 0) {
             data.put("imports", importFileList);
         }
-
         data.put(collectionTitle, content);
-
         //Save the new yaml to file
         try {
-
             FileWriter writer;
             File file = File.createTempFile(fileName, YAML_EXTENSION);
             writer = new FileWriter(file);
-
             //Add the license as comment in top of file
             writer.write(LICENSE_TXT);
-
             yaml.dump(data, writer);
-
             writer.close();
-
             // begin writing a new ZIP entry, positions the stream to the start of the entry data
             ZipEntry entry = new ZipEntry(yaml.getName() + YAML_EXTENSION);
             zos.putNextEntry(entry);
@@ -223,8 +173,6 @@ public class SdcSchemaFileImport {
             file.delete();
             stream.close();
             zos.closeEntry();
-
-
         } catch (IOException e) {
             System.out.println("Error in file creation : " + fileName + ", " + e.getMessage());
             System.exit(1);
@@ -238,46 +186,37 @@ public class SdcSchemaFileImport {
      * @throws IOException thrown in case of issues in reding files.
      */
     public static void createAndSaveNodeSchemaFile(String deploymentType) throws IOException {
-
         //Initialize the snake yaml dumper option
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-
         Map<String, Object> nodeTypeList = new LinkedHashMap<>();
-
-        String[] importFileList = new String[]{"data.yml", "artifacts.yml", "capabilities.yml", "interfaces.yml",
-            "relationships.yml"};
-
+        String[] importFileList = new String[]{"data.yml", "artifacts.yml", "capabilities.yml", "interfaces.yml", "relationships.yml"};
         //Create node.yaml - collect all types from normative-types and heat-types directories
         String[] nodeTypesMainFolders = new String[]{"normative-types", "heat-types"};
-
         if (DEPLOYMENT_TYPE_ONAP.equals(deploymentType)) {
             String[] onapNodeTypesMainFolders = new String[]{"nfv-types"};
             nodeTypesMainFolders = ArrayUtils.addAll(nodeTypesMainFolders, onapNodeTypesMainFolders);
         }
-
         final String nodeTypesToscaEntry = "node_types";
         for (String nodeTypesMainFolder : nodeTypesMainFolders) {
             try (Stream<Path> paths = Files.walk(Paths.get(importToscaPath + SEPARATOR + nodeTypesMainFolder))) {
-                paths.filter(path -> path.getFileName().toString().toLowerCase().endsWith(YAML_EXTENSION))
-                    .forEach(yamlFile -> {
-                        try {
-                            final String path = yamlFile.toAbsolutePath().toString();
-                            System.out.println("Processing node type file " + path + "...");
-                            final FileInputStream inputStream = new FileInputStream(path);
-                            final Map<String, Object> load = new Yaml().loadAs(inputStream, Map.class);
-                            final Map<String, Object> nodeType = (Map<String, Object>) load.get(nodeTypesToscaEntry);
-                            if (nodeType == null) {
-                                LOGGER.error("Expecting '{}' entry in TOSCA yaml file '{}'", nodeTypesToscaEntry, path);
-                                System.exit(1);
-                            }
-                            nodeTypeList.putAll(nodeType);
-                        } catch (final Exception e) {
-                            LOGGER.error("An error has occurred while processing YAML '{}'",
-                                yamlFile.toAbsolutePath(), e);
+                paths.filter(path -> path.getFileName().toString().toLowerCase().endsWith(YAML_EXTENSION)).forEach(yamlFile -> {
+                    try {
+                        final String path = yamlFile.toAbsolutePath().toString();
+                        System.out.println("Processing node type file " + path + "...");
+                        final FileInputStream inputStream = new FileInputStream(path);
+                        final Map<String, Object> load = new Yaml().loadAs(inputStream, Map.class);
+                        final Map<String, Object> nodeType = (Map<String, Object>) load.get(nodeTypesToscaEntry);
+                        if (nodeType == null) {
+                            LOGGER.error("Expecting '{}' entry in TOSCA yaml file '{}'", nodeTypesToscaEntry, path);
                             System.exit(1);
                         }
-                    });
+                        nodeTypeList.putAll(nodeType);
+                    } catch (final Exception e) {
+                        LOGGER.error("An error has occurred while processing YAML '{}'", yamlFile.toAbsolutePath(), e);
+                        System.exit(1);
+                    }
+                });
             }
         }
         createAndSaveSchemaFileYaml("nodes", importFileList, nodeTypesToscaEntry, nodeTypeList);
@@ -289,13 +228,12 @@ public class SdcSchemaFileImport {
     }
 
     private static void SdcSchemaFileImportUsage() {
-        System.err.println(
-            "Usage: <file dir/filename> <SDC release number> <Schema conformance level> <configuration dir> <deployment type optional>");
+        System.err
+            .println("Usage: <file dir/filename> <SDC release number> <Schema conformance level> <configuration dir> <deployment type optional>");
     }
 
     private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-            appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         new ConfigurationManager(configurationSource);
         return new AnnotationConfigApplicationContext(SdcSchemaFileImportConfiguration.class);
     }

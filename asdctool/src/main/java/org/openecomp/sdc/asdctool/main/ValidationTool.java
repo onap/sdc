@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.main;
 
 import java.nio.file.Path;
@@ -42,18 +41,14 @@ public class ValidationTool {
     private static final Logger log = Logger.getLogger(ValidationTool.class.getName());
 
     public static void main(String[] args) {
-
         String outputPath = args[0];
         String txtReportFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
         String csvReportFilePath = ValidationConfigManager.csvReportFilePath(outputPath, System::currentTimeMillis);
-
         CSVFile csvFile = ReportFile.makeCsvFile(makeNioWriter(Paths.get(csvReportFilePath)));
         TXTFile textFile = ReportFile.makeTxtFile(makeNioWriter(Paths.get(txtReportFilePath)));
-
         String appConfigDir = args[1];
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         ValidationToolBL validationToolBL = context.getBean(ValidationToolBL.class);
-
         log.info("Start Validation Tool");
         Report report = Report.make();
         boolean result = validationToolBL.validateAll(report, textFile);
@@ -69,9 +64,7 @@ public class ValidationTool {
     }
 
     private static <A extends FileType> ReportFileWriter<A> makeNioWriter(Path path) {
-        return ReportFileWriter.makeNioWriter(path, ex ->
-            log.info("write to file failed - {}", ex.getClass().getSimpleName(), ex)
-        );
+        return ReportFileWriter.makeNioWriter(path, ex -> log.info("write to file failed - {}", ex.getClass().getSimpleName(), ex));
     }
 
     private static AnnotationConfigApplicationContext initContext(String appConfigDir) {

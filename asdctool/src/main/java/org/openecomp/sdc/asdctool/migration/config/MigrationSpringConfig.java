@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.migration.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.openecomp.sdc.asdctool.migration.core.SdcMigrationTool;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.core.task.PostMigration;
@@ -49,20 +50,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Configuration
 @Import({DAOSpringConfig.class, CatalogBESpringConfig.class, CatalogModelSpringConfig.class})
 @ComponentScan({"org.openecomp.sdc.asdctool.migration.tasks",//migration tasks
-        "org.openecomp.sdc.asdctool.migration.config.mocks",
-        "org.openecomp.sdc.be.filters" })
+    "org.openecomp.sdc.asdctool.migration.config.mocks", "org.openecomp.sdc.be.filters"})
 public class MigrationSpringConfig {
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     private List<Migration> migrations = new ArrayList<>();
-    
-    @Autowired(required=false)
+    @Autowired(required = false)
     private List<PostMigration> postMigrations = new ArrayList<>();
 
     @Bean(name = "sdc-migration-tool")
@@ -86,23 +82,21 @@ public class MigrationSpringConfig {
     }
 
     @Bean(name = "componentsCleanBusinessLogic")
-    public ComponentsCleanBusinessLogic componentsCleanBusinessLogic(
-        IElementOperation elementDao,
-        IGroupOperation groupOperation,
-        IGroupInstanceOperation groupInstanceOperation,
-        IGroupTypeOperation groupTypeOperation,
-        InterfaceOperation interfaceOperation,
-        InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-        ResourceBusinessLogic resourceBusinessLogic,
-        ServiceBusinessLogic serviceBusinessLogic,
-        ArtifactsOperations artifactToscaOperation) {
-        return  new ComponentsCleanBusinessLogic(elementDao, groupOperation,
-        groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, resourceBusinessLogic,
-        serviceBusinessLogic, artifactToscaOperation);
+    public ComponentsCleanBusinessLogic componentsCleanBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
+                                                                     IGroupInstanceOperation groupInstanceOperation,
+                                                                     IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
+                                                                     InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
+                                                                     ResourceBusinessLogic resourceBusinessLogic,
+                                                                     ServiceBusinessLogic serviceBusinessLogic,
+                                                                     ArtifactsOperations artifactToscaOperation) {
+        return new ComponentsCleanBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation,
+            interfaceLifecycleTypeOperation, resourceBusinessLogic, serviceBusinessLogic, artifactToscaOperation);
     }
-    
+
     @Bean(name = "dmaapClientFactory")
-    public DmaapClientFactory getDmaapClientFactory() {return new DmaapClientFactory();}
+    public DmaapClientFactory getDmaapClientFactory() {
+        return new DmaapClientFactory();
+    }
 
     @Bean(name = "healthCheckBusinessLogic")
     public HealthCheckBusinessLogic getHealthCheckBusinessLogic() {

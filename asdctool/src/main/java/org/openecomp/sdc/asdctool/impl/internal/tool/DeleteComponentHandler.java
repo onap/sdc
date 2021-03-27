@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,10 @@
 package org.openecomp.sdc.asdctool.impl.internal.tool;
 
 import fj.data.Either;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Scanner;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -38,29 +42,22 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Scanner;
-
 @Component("deleteComponentHandler")
-public class DeleteComponentHandler extends CommonInternalTool{
+public class DeleteComponentHandler extends CommonInternalTool {
+
+    private static Logger log = Logger.getLogger(DeleteComponentHandler.class.getName());
     private JanusGraphDao janusGraphDao;
     private NodeTypeOperation nodeTypeOperation;
     private TopologyTemplateOperation topologyTemplateOperation;
 
     @Autowired
-    public DeleteComponentHandler(JanusGraphDao janusGraphDao,
-        NodeTypeOperation nodeTypeOperation,
-        TopologyTemplateOperation topologyTemplateOperation) {
+    public DeleteComponentHandler(JanusGraphDao janusGraphDao, NodeTypeOperation nodeTypeOperation,
+                                  TopologyTemplateOperation topologyTemplateOperation) {
         super("delete");
         this.janusGraphDao = janusGraphDao;
         this.nodeTypeOperation = nodeTypeOperation;
         this.topologyTemplateOperation = topologyTemplateOperation;
     }
-
-    private static Logger log = Logger.getLogger(DeleteComponentHandler.class.getName());
-
 
     public void deleteComponent(String id, Scanner scanner) {
         JanusGraphOperationStatus status = JanusGraphOperationStatus.OK;
@@ -81,7 +78,6 @@ public class DeleteComponentHandler extends CommonInternalTool{
         Map<GraphPropertyEnum, Object> metadataProperties = metadataVertex.getMetadataProperties();
         JanusGraphOperationStatus status = JanusGraphOperationStatus.OK;
         printComponentInfo(metadataProperties);
-
         Iterator<Edge> edges = metadataVertex.getVertex().edges(Direction.OUT, EdgeLabelEnum.VERSION.name());
         if (edges != null && edges.hasNext()) {
             ConsoleWriter.dataLine("\ncomponent is not latest version and cannot be deleted");
@@ -105,22 +101,18 @@ public class DeleteComponentHandler extends CommonInternalTool{
         Iterator<Edge> edges = metadataVertex.getVertex().edges(Direction.IN, EdgeLabelEnum.VERSION.name());
         if (edges != null && edges.hasNext()) {
             JanusGraphOperationStatus status = updatePreviousVersion(metadataVertex, edges);
-            if ( status != JanusGraphOperationStatus.OK ){
+            if (status != JanusGraphOperationStatus.OK) {
                 return status;
             }
         }
-        toscaElementOperation.deleteToscaElement(metadataVertex)
-             .left()
-             .map(l -> {
-                 ConsoleWriter.dataLine("\nDeleted");
-                 report(metadataVertex);
-                 return JanusGraphOperationStatus.OK;
-             })
-             .right()
-             .map(r-> {
-                 ConsoleWriter.dataLine("\nFailed to delete. see log file");
-                 return r;
-             });
+        toscaElementOperation.deleteToscaElement(metadataVertex).left().map(l -> {
+            ConsoleWriter.dataLine("\nDeleted");
+            report(metadataVertex);
+            return JanusGraphOperationStatus.OK;
+        }).right().map(r -> {
+            ConsoleWriter.dataLine("\nFailed to delete. see log file");
+            return r;
+        });
         return JanusGraphOperationStatus.OK;
     }
 
@@ -135,10 +127,9 @@ public class DeleteComponentHandler extends CommonInternalTool{
         }
         // update highest property for previous version
         JanusGraphOperationStatus status = updateStateOfPreviuosVersion(prevVersionVertex);
-        if ( JanusGraphOperationStatus.OK != status ){
+        if (JanusGraphOperationStatus.OK != status) {
             return status;
         }
-        
         // connect to catalog or archive
         return connectToCatalogAndArchive(metadataVertex, prevVersionVertex);
     }
@@ -149,13 +140,11 @@ public class DeleteComponentHandler extends CommonInternalTool{
         GraphVertex prevVertex = prevGraphVertex.left().value();
         prevVertex.addMetadataProperty(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
         janusGraphDao.updateVertex(prevVertex);
-  
         Iterator<Edge> edgesIter = prevVersionVertex.edges(Direction.IN, EdgeLabelEnum.LAST_STATE.name());
-        if ( edgesIter.hasNext() ) {
+        if (edgesIter.hasNext()) {
             Edge lastStateEdge = edgesIter.next();
             Vertex lastModifier = lastStateEdge.outVertex();
-            JanusGraphOperationStatus
-                replaceRes = janusGraphDao
+            JanusGraphOperationStatus replaceRes = janusGraphDao
                 .replaceEdgeLabel(lastModifier, prevVersionVertex, lastStateEdge, EdgeLabelEnum.LAST_STATE, EdgeLabelEnum.STATE);
             if (replaceRes != JanusGraphOperationStatus.OK) {
                 log.info("Failed to replace label from {} to {}. status = {}", EdgeLabelEnum.LAST_STATE, EdgeLabelEnum.STATE, replaceRes);
@@ -166,35 +155,35 @@ public class DeleteComponentHandler extends CommonInternalTool{
         return JanusGraphOperationStatus.OK;
     }
 
-   
     private JanusGraphOperationStatus connectToCatalogAndArchive(GraphVertex metadataVertex, JanusGraphVertex prevVersionVertex) {
-        
-        JanusGraphOperationStatus
-            status = connectByLabel(metadataVertex, prevVersionVertex, EdgeLabelEnum.CATALOG_ELEMENT, VertexTypeEnum.CATALOG_ROOT);
-        if ( status == JanusGraphOperationStatus.OK ){
+        JanusGraphOperationStatus status = connectByLabel(metadataVertex, prevVersionVertex, EdgeLabelEnum.CATALOG_ELEMENT,
+            VertexTypeEnum.CATALOG_ROOT);
+        if (status == JanusGraphOperationStatus.OK) {
             status = connectByLabel(metadataVertex, prevVersionVertex, EdgeLabelEnum.ARCHIVE_ELEMENT, VertexTypeEnum.ARCHIVE_ROOT);
         }
         return status;
     }
 
-    private JanusGraphOperationStatus connectByLabel(GraphVertex metadataVertex, JanusGraphVertex prevVersionVertex, EdgeLabelEnum edgeLabel, VertexTypeEnum vertexlabel) {
+    private JanusGraphOperationStatus connectByLabel(GraphVertex metadataVertex, JanusGraphVertex prevVersionVertex, EdgeLabelEnum edgeLabel,
+                                                     VertexTypeEnum vertexlabel) {
         Iterator<Edge> edgesToCatalog = metadataVertex.getVertex().edges(Direction.IN, edgeLabel.name());
-        if ( edgesToCatalog != null && edgesToCatalog.hasNext() ){
+        if (edgesToCatalog != null && edgesToCatalog.hasNext()) {
             //exist edge move to prev version
             Either<GraphVertex, JanusGraphOperationStatus> catalog = janusGraphDao.getVertexByLabel(vertexlabel);
             if (catalog.isRight()) {
                 log.debug("Failed to fetch {} vertex, error {}", vertexlabel, catalog.right().value());
                 return catalog.right().value();
             }
-            GraphVertex catalogV = catalog.left().value();      
+            GraphVertex catalogV = catalog.left().value();
             Edge edge = edgesToCatalog.next();
-            return janusGraphDao.createEdge(catalogV.getVertex(), prevVersionVertex, edgeLabel, edge );
+            return janusGraphDao.createEdge(catalogV.getVertex(), prevVersionVertex, edgeLabel, edge);
         }
         return JanusGraphOperationStatus.OK;
     }
 
     private boolean isReferenceExist(GraphVertex metadataVertex) {
-        return existEdgeByLabel(metadataVertex, EdgeLabelEnum.INSTANCE_OF) || existEdgeByLabel(metadataVertex, EdgeLabelEnum.PROXY_OF) || existEdgeByLabel(metadataVertex, EdgeLabelEnum.ALLOTTED_OF);
+        return existEdgeByLabel(metadataVertex, EdgeLabelEnum.INSTANCE_OF) || existEdgeByLabel(metadataVertex, EdgeLabelEnum.PROXY_OF)
+            || existEdgeByLabel(metadataVertex, EdgeLabelEnum.ALLOTTED_OF);
     }
 
     private boolean existEdgeByLabel(GraphVertex metadataVertex, EdgeLabelEnum label) {
@@ -210,7 +199,7 @@ public class DeleteComponentHandler extends CommonInternalTool{
             return topologyTemplateOperation;
         }
     }
-   
+
     private void report(GraphVertex metadataVertex) {
         try {
             getReportWriter().report(metadataVertex.getMetadataProperties());
@@ -218,8 +207,4 @@ public class DeleteComponentHandler extends CommonInternalTool{
             ConsoleWriter.dataLine("\nFailed to created report file.");
         }
     }
-
- 
-
-
 }

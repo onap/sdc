@@ -19,15 +19,13 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.asdctool.configuration;
 
+import java.io.File;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-
-import java.io.File;
 
 public class ConfigurationUploader {
 
@@ -41,7 +39,7 @@ public class ConfigurationUploader {
 
     private static String buildArtifactGeneratorPath(String appConfigDir) {
         StringBuilder artifactGeneratorPath = new StringBuilder(appConfigDir);
-        if(!appConfigDir.endsWith(File.separator)){
+        if (!appConfigDir.endsWith(File.separator)) {
             artifactGeneratorPath.append(File.separator);
         }
         artifactGeneratorPath.append(ConfigurationManager.getConfigurationManager().getConfiguration().getArtifactGeneratorConfig());

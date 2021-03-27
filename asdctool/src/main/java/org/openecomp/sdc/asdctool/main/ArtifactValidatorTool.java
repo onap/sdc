@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.main;
 
 import org.openecomp.sdc.asdctool.configuration.ConfigurationUploader;
@@ -29,14 +28,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class ArtifactValidatorTool {
 
     public static void main(String[] args) {
-
         String outputPath = args[0];
         String txtReportFilePath = ValidationConfigManager.txtReportFilePath(outputPath);
-
         String appConfigDir = args[1];
         AnnotationConfigApplicationContext context = initContext(appConfigDir);
         ArtifactToolBL validationToolBL = context.getBean(ArtifactToolBL.class);
-
         System.out.println("Start ArtifactValidation Tool");
         Boolean result = validationToolBL.validateAll(txtReportFilePath);
         if (result) {
@@ -50,9 +46,7 @@ public class ArtifactValidatorTool {
 
     private static AnnotationConfigApplicationContext initContext(String appConfigDir) {
         ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
-            ValidationToolConfiguration.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ValidationToolConfiguration.class);
         return context;
     }
-
 }

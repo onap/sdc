@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.main;
 
 import java.util.Scanner;
@@ -35,14 +34,11 @@ public class DeleteComponentTool extends SdcInternalTool {
             System.exit(1);
         }
         String appConfigDir = args[0];
-
         disableConsole();
         ConsoleWriter.dataLine("STARTED... ");
-
         ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(InternalToolConfiguration.class);
         DeleteComponentHandler deleteComponentHandler = context.getBean(DeleteComponentHandler.class);
-
         String input = "";
         Scanner scanner = new Scanner(System.in);
         do {
@@ -61,6 +57,4 @@ public class DeleteComponentTool extends SdcInternalTool {
         ConsoleWriter.dataLine("DeleteComponentTool exit...");
         System.exit(0);
     }
-
-
 }

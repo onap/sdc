@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.report;
 
 import java.util.HashMap;
@@ -35,49 +34,29 @@ public final class Report {
     private final Map<String, Set<String>> failedVerticesPerTask = new HashMap<>();
     private final Map<String, Map<String, VertexResult>> resultsPerVertex = new HashMap<>();
 
+    private Report() {
+    }
+
     public static Report make() {
         return new Report();
     }
 
-    private Report() {
-    }
-
     public void addFailure(String taskName, String vertexId) {
-        Set<String> failedVertices =
-            get(failedVerticesPerTask, HashSet::new).apply(taskName);
-
-        put(failedVerticesPerTask).apply(taskName,
-            add(failedVertices).apply(vertexId));
+        Set<String> failedVertices = get(failedVerticesPerTask, HashSet::new).apply(taskName);
+        put(failedVerticesPerTask).apply(taskName, add(failedVertices).apply(vertexId));
     }
 
     public void addSuccess(String vertexId, String taskName, VertexResult result) {
-        Map<String, VertexResult> vertexTasksResults =
-            get(resultsPerVertex, HashMap::new).apply(vertexId);
-
-        put(resultsPerVertex).apply(vertexId,
-            put(vertexTasksResults).apply(taskName, result));
+        Map<String, VertexResult> vertexTasksResults = get(resultsPerVertex, HashMap::new).apply(vertexId);
+        put(resultsPerVertex).apply(vertexId, put(vertexTasksResults).apply(taskName, result));
     }
 
     public void forEachFailure(FailureConsumer c) {
         failedVerticesPerTask.forEach(c::traverse);
     }
 
-    @FunctionalInterface
-    public interface FailureConsumer {
-
-        void traverse(String taskName, Set<String> failedVertices);
-    }
-
     public void forEachSuccess(SuccessConsumer p) {
-        resultsPerVertex.forEach((vertex, tasksResults) ->
-            tasksResults.forEach((task, result) ->
-                p.traverse(vertex, task, result)));
-    }
-
-    @FunctionalInterface
-    public interface SuccessConsumer {
-
-        void traverse(String vertex, String task, VertexResult result);
+        resultsPerVertex.forEach((vertex, tasksResults) -> tasksResults.forEach((task, result) -> p.traverse(vertex, task, result)));
     }
 
     <K, V> Function<K, V> get(Map<K, V> kvs, Supplier<V> fallback) {
@@ -96,5 +75,17 @@ public final class Report {
             kvs.put(k, v);
             return kvs;
         };
+    }
+
+    @FunctionalInterface
+    public interface FailureConsumer {
+
+        void traverse(String taskName, Set<String> failedVertices);
+    }
+
+    @FunctionalInterface
+    public interface SuccessConsumer {
+
+        void traverse(String vertex, String task, VertexResult result);
     }
 }

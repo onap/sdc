@@ -17,9 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -28,15 +30,9 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+public class NodeToscaArtifactsValidatorExecutor extends ArtifactValidatorExecutor implements IArtifactValidatorExecutor {
 
-public class NodeToscaArtifactsValidatorExecutor
-    extends ArtifactValidatorExecutor implements IArtifactValidatorExecutor {
-
-    public NodeToscaArtifactsValidatorExecutor(JanusGraphDao janusGraphDao,
-        ToscaOperationFacade toscaOperationFacade) {
+    public NodeToscaArtifactsValidatorExecutor(JanusGraphDao janusGraphDao, ToscaOperationFacade toscaOperationFacade) {
         super(janusGraphDao, toscaOperationFacade, "RESOURCE_TOSCA_ARTIFACTS");
     }
 
@@ -45,7 +41,6 @@ public class NodeToscaArtifactsValidatorExecutor
         Map<GraphPropertyEnum, Object> hasProps = new HashMap<>();
         hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
         hasProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-
         Map<String, List<Component>> vertices = getVerticesToValidate(VertexTypeEnum.NODE_TYPE, hasProps);
         return validate(vertices, outputFilePath);
     }

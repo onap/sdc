@@ -17,8 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
-
 package org.openecomp.sdc.asdctool.impl.validator.report;
 
 import static java.nio.file.StandardOpenOption.APPEND;
@@ -32,27 +30,18 @@ import java.util.function.Consumer;
 
 /**
  * Describes a writer for report's data
- * @param <A> phantom type which is only used for type-safety to prevent mixing writers for TXT Report files
- *           and CSV Report files
+ *
+ * @param <A> phantom type which is only used for type-safety to prevent mixing writers for TXT Report files and CSV Report files
  */
 @SuppressWarnings("unused")
 public abstract class ReportFileWriter<A extends FileType> {
 
-    abstract public void write(String s);
-
-    public void writeln(String s) {
-        write(s + "\n");
-    }
-
     /**
-     *
      * @param filePath The resulting file path
-     * @param onError error handling callback
-     * @param <A> phantom type which is only used for type-safety
+     * @param onError  error handling callback
+     * @param <A>      phantom type which is only used for type-safety
      */
-    public static <A extends FileType> ReportFileWriter<A> makeNioWriter(
-        Path filePath, Consumer<IOException> onError
-    ) {
+    public static <A extends FileType> ReportFileWriter<A> makeNioWriter(Path filePath, Consumer<IOException> onError) {
         return new ReportFileWriter<A>() {
             @Override
             public void write(String line) {
@@ -65,5 +54,10 @@ public abstract class ReportFileWriter<A extends FileType> {
             }
         };
     }
-}
 
+    abstract public void write(String s);
+
+    public void writeln(String s) {
+        write(s + "\n");
+    }
+}

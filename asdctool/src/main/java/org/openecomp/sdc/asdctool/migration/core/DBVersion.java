@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,25 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.migration.core;
 
 import java.math.BigInteger;
 import lombok.Getter;
 
 @Getter
-public class DBVersion implements Comparable<DBVersion>{
-
-    private static final String VERSION_PARTS_SEPARATOR = "\\.";
-    private static final int MAJOR_PART_IDX = 0;
-    private static final int MINOR_PART_IDX = 1;
-    private final BigInteger major;
-    private final BigInteger minor;
+public class DBVersion implements Comparable<DBVersion> {
 
     /**
      * The current db version. should be tested against real db to verify it is compatible to the db version
      */
     public static final DBVersion DEFAULT_VERSION = new DBVersion(1710, 0);
+    private static final String VERSION_PARTS_SEPARATOR = "\\.";
+    private static final int MAJOR_PART_IDX = 0;
+    private static final int MINOR_PART_IDX = 1;
+    private final BigInteger major;
+    private final BigInteger minor;
 
     private DBVersion(BigInteger major, BigInteger minor) {
         this.major = major;
@@ -56,9 +54,7 @@ public class DBVersion implements Comparable<DBVersion>{
         if (split.length != 2) {
             throw new MigrationException("version must be of pattern: <major>.<minor>");
         }
-        return new DBVersion(getVersionPart(split[MAJOR_PART_IDX]),
-                             getVersionPart(split[MINOR_PART_IDX]));
-
+        return new DBVersion(getVersionPart(split[MAJOR_PART_IDX]), getVersionPart(split[MINOR_PART_IDX]));
     }
 
     private static BigInteger getVersionPart(String versionPart) {
@@ -76,11 +72,13 @@ public class DBVersion implements Comparable<DBVersion>{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DBVersion dbVersion = (DBVersion) o;
-
         return major.equals(dbVersion.major) && minor.equals(dbVersion.minor);
     }
 

@@ -18,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.impl.validator.tasks.artifacts;
 
 import fj.data.Either;
@@ -45,30 +44,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ArtifactValidationUtils {
 
     private static final Logger logger = Logger.getLogger(ArtifactValidationUtils.class);
-
     private final ArtifactCassandraDao artifactCassandraDao;
-
     private final TopologyTemplateOperation topologyTemplateOperation;
 
     @Autowired
-    public ArtifactValidationUtils(ArtifactCassandraDao artifactCassandraDao,
-        TopologyTemplateOperation topologyTemplateOperation) {
+    public ArtifactValidationUtils(ArtifactCassandraDao artifactCassandraDao, TopologyTemplateOperation topologyTemplateOperation) {
         this.artifactCassandraDao = artifactCassandraDao;
         this.topologyTemplateOperation = topologyTemplateOperation;
     }
 
-    public ArtifactsVertexResult validateArtifactsAreInCassandra(
-        Report report,
-        GraphVertex vertex,
-        String taskName,
-        List<ArtifactDataDefinition> artifacts,
-        ReportFile.TXTFile reportFile
-    ) {
+    public ArtifactsVertexResult validateArtifactsAreInCassandra(Report report, GraphVertex vertex, String taskName,
+                                                                 List<ArtifactDataDefinition> artifacts, ReportFile.TXTFile reportFile) {
         ArtifactsVertexResult result = new ArtifactsVertexResult(true);
         for (ArtifactDataDefinition artifact : artifacts) {
             boolean isArtifactExist = isArtifactInCassandra(artifact.getEsId());
-            String status = isArtifactExist ? "Artifact " + artifact.getEsId() + " is in Cassandra" :
-                "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
+            String status = isArtifactExist ? "Artifact " + artifact.getEsId() + " is in Cassandra"
+                : "Artifact " + artifact.getEsId() + " doesn't exist in Cassandra";
             reportFile.writeReportLineToFile(status);
             if (!isArtifactExist) {
                 report.addFailure(taskName, vertex.getUniqueId());
@@ -80,8 +71,7 @@ public class ArtifactValidationUtils {
     }
 
     public boolean isArtifactInCassandra(String uniqueId) {
-        Either<Long, CassandraOperationStatus> countOfArtifactsEither =
-            artifactCassandraDao.getCountOfArtifactById(uniqueId);
+        Either<Long, CassandraOperationStatus> countOfArtifactsEither = artifactCassandraDao.getCountOfArtifactById(uniqueId);
         if (countOfArtifactsEither.isRight()) {
             logger.debug("Failed to retrieve artifact with id: {} from Cassandra", uniqueId);
             return false;
@@ -100,19 +90,14 @@ public class ArtifactValidationUtils {
         return artifacts;
     }
 
-    public ArtifactsVertexResult validateTopologyTemplateArtifacts(
-        Report report,
-        GraphVertex vertex,
-        String taskName,
-        ReportFile.TXTFile reportFile
-    ) {
+    public ArtifactsVertexResult validateTopologyTemplateArtifacts(Report report, GraphVertex vertex, String taskName,
+                                                                   ReportFile.TXTFile reportFile) {
         ArtifactsVertexResult result = new ArtifactsVertexResult();
         ComponentParametersView paramView = new ComponentParametersView();
         paramView.disableAll();
         paramView.setIgnoreArtifacts(false);
         paramView.setIgnoreComponentInstances(false);
-        Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation
-            .getToscaElement(vertex.getUniqueId(), paramView);
+        Either<ToscaElement, StorageOperationStatus> toscaElementEither = topologyTemplateOperation.getToscaElement(vertex.getUniqueId(), paramView);
         if (toscaElementEither.isRight()) {
             result.setStatus(false);
             return result;
@@ -123,23 +108,17 @@ public class ArtifactValidationUtils {
         Map<String, ArtifactDataDefinition> apiArtifacts = element.getServiceApiArtifacts();
         Map<String, MapArtifactDataDefinition> instanceArtifacts = element.getInstanceArtifacts();
         Map<String, MapArtifactDataDefinition> instanceDeploymentArtifacts = element.getInstDeploymentArtifacts();
-
         List<ArtifactDataDefinition> allArtifacts = new ArrayList<>();
-
         allArtifacts.addAll(addRelevantArtifacts(deploymentArtifacts));
         allArtifacts.addAll(addRelevantArtifacts(artifacts));
         allArtifacts.addAll(addRelevantArtifacts(apiArtifacts));
-
         if (instanceArtifacts != null) {
-            instanceArtifacts.forEach((key, artifactMap) ->
-                allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
+            instanceArtifacts.forEach((key, artifactMap) -> allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
         }
-
         if (instanceDeploymentArtifacts != null) {
-            instanceDeploymentArtifacts.forEach((key, artifactMap) ->
-                allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
+            instanceDeploymentArtifacts
+                .forEach((key, artifactMap) -> allArtifacts.addAll(addRelevantArtifacts(artifactMap.getMapToscaDataDefinition())));
         }
-
         return validateArtifactsAreInCassandra(report, vertex, taskName, allArtifacts, reportFile);
     }
 }

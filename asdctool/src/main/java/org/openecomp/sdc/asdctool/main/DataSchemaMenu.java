@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  * Modifications copyright (c) 2018 Nokia
  * ================================================================================
  */
-
 package org.openecomp.sdc.asdctool.main;
 
 import org.openecomp.sdc.asdctool.impl.JanusGraphInitializer;
@@ -33,72 +32,65 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 
 public class DataSchemaMenu {
 
-	private static Logger log = Logger.getLogger(DataSchemaMenu.class.getName());
+    private static Logger log = Logger.getLogger(DataSchemaMenu.class.getName());
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
+        String operation = args[0];
+        String appConfigDir = args[1];
+        if (args == null || args.length < 2) {
+            usageAndExit();
+        }
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+        try {
+            SdcSchemaBuilder sdcSchemaBuilder = new SdcSchemaBuilder(new SdcSchemaUtils(),
+                ConfigurationManager.getConfigurationManager().getConfiguration()::getCassandraConfig);
+            switch (operation.toLowerCase()) {
+                case "create-cassandra-structures":
+                    log.debug("Start create cassandra keyspace, tables and indexes");
+                    if (sdcSchemaBuilder.createSchema()) {
+                        log.debug("create cassandra keyspace, tables and indexes successfull");
+                        System.exit(0);
+                    } else {
+                        log.debug("create cassandra keyspace, tables and indexes failed");
+                        System.exit(2);
+                    }
+                case "create-janusgraph-structures":
+                    log.debug("Start create janusgraph keyspace");
+                    String janusGraphCfg = 2 == args.length ? configurationManager.getConfiguration().getJanusGraphCfgFile() : args[2];
+                    if (JanusGraphInitializer.createGraph(janusGraphCfg)) {
+                        log.debug("create janusgraph keyspace successfull");
+                        System.exit(0);
+                    } else {
+                        log.debug("create janusgraph keyspace failed");
+                        System.exit(2);
+                    }
+                case "clean-cassndra":
+                    log.debug("Start clean keyspace, tables");
+                    if (sdcSchemaBuilder.deleteSchema()) {
+                        log.debug(" successfull");
+                        System.exit(0);
+                    } else {
+                        log.debug(" failed");
+                        System.exit(2);
+                    }
+                default:
+                    usageAndExit();
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+            log.debug("create cassandra keyspace, tables and indexes failed");
+            System.exit(3);
+        }
+    }
 
-		String operation = args[0];
+    private static void usageAndExit() {
+        DataSchemeUsage();
+        System.exit(1);
+    }
 
-		String appConfigDir = args[1];
-
-		if (args == null || args.length < 2) {
-			usageAndExit();
-		}
-
-		ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-		ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
-		try {
-
-        SdcSchemaBuilder sdcSchemaBuilder = new SdcSchemaBuilder(new SdcSchemaUtils(),
-            ConfigurationManager.getConfigurationManager().getConfiguration()::getCassandraConfig);
-
-			switch (operation.toLowerCase()) {
-			case "create-cassandra-structures":
-				log.debug("Start create cassandra keyspace, tables and indexes");
-                if (sdcSchemaBuilder.createSchema()) {
-					log.debug("create cassandra keyspace, tables and indexes successfull");
-					System.exit(0);
-				} else {
-					log.debug("create cassandra keyspace, tables and indexes failed");
-					System.exit(2);
-				}
-            case "create-janusgraph-structures":
-                log.debug("Start create janusgraph keyspace");
-                String janusGraphCfg = 2 == args.length ? configurationManager.getConfiguration().getJanusGraphCfgFile() : args[2];
-                if (JanusGraphInitializer.createGraph(janusGraphCfg)) {
-                    log.debug("create janusgraph keyspace successfull");
-					System.exit(0);
-				} else {
-                    log.debug("create janusgraph keyspace failed");
-					System.exit(2);
-				}
-			case "clean-cassndra":
-				log.debug("Start clean keyspace, tables");
-                if (sdcSchemaBuilder.deleteSchema()) {
-					log.debug(" successfull");
-					System.exit(0);
-				} else {
-					log.debug(" failed");
-					System.exit(2);
-				}
-			default:
-				usageAndExit();
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-			log.debug("create cassandra keyspace, tables and indexes failed");
-			System.exit(3);
-		}
-	}
-
-	private static void usageAndExit() {
-		DataSchemeUsage();
-		System.exit(1);
-	}
-
-	private static void DataSchemeUsage() {
-		System.out.println("Usage: create-cassandra-structures <configuration dir> ");
+    private static void DataSchemeUsage() {
+        System.out.println("Usage: create-cassandra-structures <configuration dir> ");
         System.out.println("Usage: create-janusgraph-structures <configuration dir> ");
-	}
+    }
 }

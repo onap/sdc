@@ -20,6 +20,7 @@
 package org.openecomp.sdc.asdctool.impl;
 
 public class ComponentRow {
+
     private String uniqueId;
     private String type;
     private String name;

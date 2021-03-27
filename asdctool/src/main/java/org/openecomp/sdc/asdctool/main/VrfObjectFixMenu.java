@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool.main;
 
+import java.util.Arrays;
 import org.openecomp.sdc.asdctool.configuration.VrfObjectFixConfiguration;
 import org.openecomp.sdc.asdctool.impl.VrfObjectFixHandler;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -29,13 +29,12 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.Arrays;
-
 public class VrfObjectFixMenu {
 
     private static final Logger log = Logger.getLogger(VrfObjectFixMenu.class);
 
-    private VrfObjectFixMenu(){}
+    private VrfObjectFixMenu() {
+    }
 
     public static void main(String[] args) {
         if (isNotValidArguments(args)) {
@@ -47,7 +46,7 @@ public class VrfObjectFixMenu {
         VrfObjectFixHandler vrfObjectFixHandler = getVrfObjectFixHandler();
         if (vrfObjectFixHandler.handle(args[1], args.length == 3 ? args[2] : null)) {
             log.info("#main - The {} operation of the corrupted VRFObject Node Types has been finished successfully", args[1]);
-        } else{
+        } else {
             log.info("#main - The {} operation of the corrupted VRFObject Node Types has been failed", args[1]);
             System.exit(2);
         }
@@ -63,10 +62,8 @@ public class VrfObjectFixMenu {
         return args == null || args.length < 2;
     }
 
-
     private static void initConfig(String configDir) {
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), configDir);
         new ConfigurationManager(configurationSource);
     }
-
 }

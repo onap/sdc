@@ -17,9 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.asdctool;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Element;
@@ -29,18 +34,10 @@ import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
 public class Utils {
 
-    private static final Logger log = Logger.getLogger(Utils.class.getName());
-
     public static final String NEW_LINE = System.getProperty("line.separator");
+    private static final Logger log = Logger.getLogger(Utils.class.getName());
 
     private Utils() {
     }
@@ -75,8 +72,9 @@ public class Utils {
     }
 
     public static boolean vertexLeftContainsRightProps(Map<String, Object> leftProps, Map<String, Object> rightProps) {
-        if (rightProps == null)
+        if (rightProps == null) {
             return true;
+        }
         for (Entry<String, Object> entry : rightProps.entrySet()) {
             String key = entry.getKey();
             Object leftValue = leftProps.get(key);
@@ -111,15 +109,11 @@ public class Utils {
 
     public static Map<String, Object> getProperties(Element element) {
         Map<String, Object> result = new HashMap<>();
-
         if (element != null && CollectionUtils.isNotEmpty(element.keys())) {
-            Map<String, Property> propertyMap = ElementHelper.propertyMap(element,
-                    element.keys().toArray(new String[element.keys().size()]));
-
+            Map<String, Property> propertyMap = ElementHelper.propertyMap(element, element.keys().toArray(new String[element.keys().size()]));
             for (Entry<String, Property> entry : propertyMap.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue().value();
-
                 result.put(key, value);
             }
         }
