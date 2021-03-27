@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.Map;
@@ -37,14 +36,11 @@ public class GetInputValueDataDefinition extends ToscaDataDefinition {
 
     private String propName;
     private String inputName;
-
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private String inputId;
-
     private Integer indexValue;
     private GetInputValueDataDefinition getInputIndex;
-
     private boolean isList = false;
 
     public GetInputValueDataDefinition(Map<String, Object> pr) {
@@ -59,5 +55,4 @@ public class GetInputValueDataDefinition extends ToscaDataDefinition {
         this.setGetInputIndex(p.getGetInputIndex());
         this.setList(p.isList());
     }
-
 }

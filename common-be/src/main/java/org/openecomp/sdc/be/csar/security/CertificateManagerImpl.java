@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.security;
 
 import java.io.File;
@@ -47,21 +46,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class CertificateManagerImpl implements CertificateManager {
 
+    public static final String CERT_DIR_ENV_VARIABLE = "SDC_CERT_DIR";
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateManagerImpl.class);
-
     private final PrivateKeyReader privateKeyReader;
     private final CertificateReader certificateReader;
     private final Environment environment;
-
+    private final Map<String, CertificateInfo> certificateMap = new HashMap<>();
     private Path certificateDirectoryPath;
     private File certificateDirectory;
-    private final Map<String, CertificateInfo> certificateMap = new HashMap<>();
 
-    public static final String CERT_DIR_ENV_VARIABLE = "SDC_CERT_DIR";
-
-    public CertificateManagerImpl(final PrivateKeyReader privateKeyReader,
-                                  final CertificateReader certificateReader,
-                                  final Environment environment) {
+    public CertificateManagerImpl(final PrivateKeyReader privateKeyReader, final CertificateReader certificateReader, final Environment environment) {
         this.certificateReader = certificateReader;
         this.privateKeyReader = privateKeyReader;
         this.environment = environment;
@@ -72,7 +66,6 @@ public class CertificateManagerImpl implements CertificateManager {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
-
         final String certificateDir = environment.getProperty(CERT_DIR_ENV_VARIABLE);
         if (certificateDir == null) {
             LOGGER.warn("Environment variable '{}' was not provided. Could not load certificates.", CERT_DIR_ENV_VARIABLE);
@@ -81,8 +74,8 @@ public class CertificateManagerImpl implements CertificateManager {
         try {
             this.certificateDirectoryPath = Paths.get(certificateDir);
         } catch (final Exception e) {
-            LOGGER.error("Invalid path '{}' provided in the environment variable '{}'. Could not load certificates.",
-                certificateDir, CERT_DIR_ENV_VARIABLE, e);
+            LOGGER.error("Invalid path '{}' provided in the environment variable '{}'. Could not load certificates.", certificateDir,
+                CERT_DIR_ENV_VARIABLE, e);
             return;
         }
         try {
@@ -104,49 +97,37 @@ public class CertificateManagerImpl implements CertificateManager {
             LOGGER.warn("Certificate directory is empty. No trusted certificate found.");
             return;
         }
-
-        final List<File> certFileList = Arrays.stream(files)
-            .filter(file -> "cert".equals(FilenameUtils.getExtension(file.getName())))
+        final List<File> certFileList = Arrays.stream(files).filter(file -> "cert".equals(FilenameUtils.getExtension(file.getName())))
             .collect(Collectors.toList());
-        final List<File> keyFileList = Arrays.stream(files)
-            .filter(file -> "key".equals(FilenameUtils.getExtension(file.getName())))
+        final List<File> keyFileList = Arrays.stream(files).filter(file -> "key".equals(FilenameUtils.getExtension(file.getName())))
             .collect(Collectors.toList());
-
         if (certFileList.isEmpty()) {
             LOGGER.error("Certificate directory is empty. No trusted certificate found.");
             return;
         }
-
         certFileList.forEach(certFile -> {
             final String baseFileName = FilenameUtils.getBaseName(certFile.getName());
             final Certificate certificate = loadCertificate(certFile);
-            final Optional<File> keyFileOptional = keyFileList.stream().filter(
-                keyFile1 -> FilenameUtils.getBaseName(keyFile1.getName())
-                    .equals(baseFileName)).findFirst();
-            keyFileOptional.ifPresentOrElse(
-                keyFile -> {
-                    final CertificateInfoImpl certificateInfo =
-                        new CertificateInfoImpl(certFile, certificate, keyFile, loadPrivateKey(keyFile));
-                    if (certificateInfo.isValid()) {
-                        certificateMap.put(baseFileName, certificateInfo);
-                    }
-                },
-                () -> {
-                    final CertificateInfoImpl certificateInfo = new CertificateInfoImpl(certFile, certificate);
-                    if (certificateInfo.isValid()) {
-                        certificateMap.put(baseFileName, new CertificateInfoImpl(certFile, certificate));
-                    }
+            final Optional<File> keyFileOptional = keyFileList.stream()
+                .filter(keyFile1 -> FilenameUtils.getBaseName(keyFile1.getName()).equals(baseFileName)).findFirst();
+            keyFileOptional.ifPresentOrElse(keyFile -> {
+                final CertificateInfoImpl certificateInfo = new CertificateInfoImpl(certFile, certificate, keyFile, loadPrivateKey(keyFile));
+                if (certificateInfo.isValid()) {
+                    certificateMap.put(baseFileName, certificateInfo);
                 }
-            );
+            }, () -> {
+                final CertificateInfoImpl certificateInfo = new CertificateInfoImpl(certFile, certificate);
+                if (certificateInfo.isValid()) {
+                    certificateMap.put(baseFileName, new CertificateInfoImpl(certFile, certificate));
+                }
+            });
         });
     }
 
     private void loadCertificateDirectory() {
         final File file = certificateDirectoryPath.toFile();
         if (!file.exists() || !file.isDirectory()) {
-            final String errorMsg =
-                String.format("Provided certificate path '%s' is not a directory or does not exist",
-                    certificateDirectoryPath);
+            final String errorMsg = String.format("Provided certificate path '%s' is not a directory or does not exist", certificateDirectoryPath);
             throw new CertificateNotFoundException(errorMsg);
         }
         this.certificateDirectory = file;

@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.google.common.collect.Lists;
@@ -40,7 +39,6 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
     public static final String MIN_OCCURRENCES = "0";
     public static final String MAX_OCCURRENCES = "UNBOUNDED";
     public static final String MAX_DEFAULT_OCCURRENCES = "1";
-
     @Getter
     @Setter
     public boolean external = false;
@@ -111,7 +109,6 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
     /**
      * specify the capability type
      */
-
     public String getCapability() {
         return (String) getToscaPresentationValue(JsonPresentationFields.CAPABILITY);
     }
@@ -219,5 +216,4 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
         }
         setPath(path);
     }
-
 }

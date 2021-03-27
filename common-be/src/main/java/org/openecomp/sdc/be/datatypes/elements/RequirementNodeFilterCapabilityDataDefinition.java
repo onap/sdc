@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
@@ -25,8 +24,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class RequirementNodeFilterCapabilityDataDefinition extends ToscaDataDefinition implements Serializable {
 
     public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
-        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
-            JsonPresentationFields.PROPERTIES);
+        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.AllArgsConstructor;
@@ -21,11 +20,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum EnvironmentStatusEnum {
-    UNKNOWN("unknown"),
-    IN_PROGRESS("in_progress"),
-    FAILED("failed"),
-    COMPLETED("completed");
-
+    UNKNOWN("unknown"), IN_PROGRESS("in_progress"), FAILED("failed"), COMPLETED("completed");
     private final String name;
 
     public static EnvironmentStatusEnum getByName(final String name) {
@@ -40,5 +35,4 @@ public enum EnvironmentStatusEnum {
                 return UNKNOWN;
         }
     }
-
 }

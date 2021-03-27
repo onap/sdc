@@ -17,20 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.utils;
 
 import org.openecomp.sdc.common.api.Constants;
 
 public class CommonBeUtils {
+
     /**
      * Compares two ASDC versions of a component. It's for internal usage, so the assumption is that the versions are in valid format.
      *
      * @param firstVersion  - version in format major.minor or just major (e.g, 2.0 or 2)
      * @param secondVersion - version in format major.minor or just major (e.g, 2.0 or 2)
-     * @return Returns true iff:<br>
-     * 1) first version's major number is higher than second's (e.g., firstVersion = 1.1, secondVersion = 0.3)<br>
-     * 2) major version are equal, but first's minor version is higher than second's (e.g., firstVersion = 0.10, secondVersion = 0.9) <br>
+     * @return Returns true iff:<br> 1) first version's major number is higher than second's (e.g., firstVersion = 1.1, secondVersion = 0.3)<br> 2)
+     * major version are equal, but first's minor version is higher than second's (e.g., firstVersion = 0.10, secondVersion = 0.9) <br>
      */
     public static boolean compareAsdcComponentVersions(String firstVersion, String secondVersion) {
         String[] firstVersionNums = firstVersion.split("\\.");
@@ -48,18 +47,15 @@ public class CommonBeUtils {
         }
     }
 
-
     /**
      * Compares two version strings.
-     *
-     * Use this instead of String.compareTo() for a non-lexicographical
-     * comparison that works for version strings. e.g. "1.10".compareTo("1.6").
+     * <p>
+     * Use this instead of String.compareTo() for a non-lexicographical comparison that works for version strings. e.g. "1.10".compareTo("1.6").
      *
      * @param str1 a string of ordinal numbers separated by decimal points.
      * @param str2 a string of ordinal numbers separated by decimal points.
-     * @return The result is a negative integer if str1 is _numerically_ less than str2.
-     * The result is a positive integer if str1 is _numerically_ greater than str2.
-     * The result is zero if the strings are _numerically_ equal.
+     * @return The result is a negative integer if str1 is _numerically_ less than str2. The result is a positive integer if str1 is _numerically_
+     * greater than str2. The result is zero if the strings are _numerically_ equal.
      * @note It does not work if "1.10" is supposed to be equal to "1.10.0".
      */
     public static int conformanceLevelCompare(String str1, String str2) {
@@ -76,6 +72,7 @@ public class CommonBeUtils {
             return Integer.signum(diff);
         }
         // the strings are equal or one string is a substring of the other
+
         // e.g. "1.2.3" = "1.2.3" or "1.2.3" < "1.2.3.4"
         return Integer.signum(vals1.length - vals2.length);
     }
@@ -83,5 +80,4 @@ public class CommonBeUtils {
     public static String generateToscaResourceName(String resourceType, String resourceSystemName) {
         return Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + resourceType.toLowerCase() + "." + resourceSystemName;
     }
-
 }

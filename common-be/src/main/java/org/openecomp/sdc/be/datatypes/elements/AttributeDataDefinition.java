@@ -61,7 +61,6 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
         if (CollectionUtils.isNotEmpty(attributeDataDefinition.getGetOutputValues())) {
             this.getOutputValues = new ArrayList<>(attributeDataDefinition.getGetOutputValues());
         }
-
     }
 
     public String getUniqueId() {
@@ -126,5 +125,4 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
     public String getParentUniqueId() {
         return getOwnerId();
     }
-
 }

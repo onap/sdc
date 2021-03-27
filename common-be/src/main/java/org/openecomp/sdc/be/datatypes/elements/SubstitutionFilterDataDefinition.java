@@ -47,8 +47,7 @@ public class SubstitutionFilterDataDefinition extends ToscaDataDefinition implem
     }
 
     public ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> getProperties() {
-        return (ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition>) getToscaPresentationValue(
-            JsonPresentationFields.PROPERTIES);
+        return (ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> properties) {
@@ -71,5 +70,4 @@ public class SubstitutionFilterDataDefinition extends ToscaDataDefinition implem
     public void setID(final String name) {
         setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, name);
     }
-
 }

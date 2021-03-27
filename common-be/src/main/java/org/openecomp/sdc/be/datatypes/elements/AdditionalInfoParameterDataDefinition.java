@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
@@ -37,7 +36,6 @@ public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
     private Long creationTime;
     private Long modificationTime;
     private Integer lastCreatedCounter = 0;
-
     @ToString.Exclude
     private List<AdditionalInfoParameterInfo> parameters;
 
@@ -48,5 +46,4 @@ public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
         this.lastCreatedCounter = p.lastCreatedCounter;
         this.parameters = p.parameters;
     }
-
 }

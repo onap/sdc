@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.IO_WORKFLOW_ASSOCIATION_TYPE;
@@ -74,8 +73,7 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
     }
 
     public ListDataDefinition<OperationInputDefinition> getInputs() {
-        return (ListDataDefinition<OperationInputDefinition>) getToscaPresentationValue(
-            JsonPresentationFields.OPERATION_INPUTS);
+        return (ListDataDefinition<OperationInputDefinition>) getToscaPresentationValue(JsonPresentationFields.OPERATION_INPUTS);
     }
 
     public void setInputs(ListDataDefinition<OperationInputDefinition> inputs) {
@@ -83,8 +81,7 @@ public class OperationDataDefinition extends ToscaDataDefinition implements Seri
     }
 
     public ListDataDefinition<OperationOutputDefinition> getOutputs() {
-        return (ListDataDefinition<OperationOutputDefinition>) getToscaPresentationValue(
-            JsonPresentationFields.OPERATION_OUTPUTS);
+        return (ListDataDefinition<OperationOutputDefinition>) getToscaPresentationValue(JsonPresentationFields.OPERATION_OUTPUTS);
     }
 
     public void setOutputs(ListDataDefinition<OperationOutputDefinition> outputs) {

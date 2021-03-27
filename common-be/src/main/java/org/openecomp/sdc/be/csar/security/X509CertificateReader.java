@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.security;
 
 import java.io.File;
@@ -53,5 +52,4 @@ public class X509CertificateReader implements CertificateReader {
         final CertificateFactory factory = CertificateFactory.getInstance("X.509");
         return factory.generateCertificate(certificateInputStream);
     }
-
 }

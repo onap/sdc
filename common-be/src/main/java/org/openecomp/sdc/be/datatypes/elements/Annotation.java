@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
@@ -35,7 +34,6 @@ public class Annotation {
 
     @EqualsAndHashCode.Include
     private String name;
-
     private String type;
     private String description;
     private List<PropertyDataDefinition> properties;
@@ -43,5 +41,4 @@ public class Annotation {
     public static void setAnnotationsName(Map<String, Annotation> annotations) {
         annotations.forEach((name, annotation) -> annotation.setName(name));
     }
-
 }

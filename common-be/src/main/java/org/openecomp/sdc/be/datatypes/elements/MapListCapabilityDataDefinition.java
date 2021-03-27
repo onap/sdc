@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
-
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -32,7 +30,6 @@ public class MapListCapabilityDataDefinition extends MapDataDefinition<ListCapab
 
     public MapListCapabilityDataDefinition(MapListCapabilityDataDefinition cdt) {
         super(cdt);
-
     }
 
     @JsonCreator

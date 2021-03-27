@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.security.model;
 
 import java.io.File;
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory;
 public class CertificateInfoImpl implements CertificateInfo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CertificateInfoImpl.class);
-
     private final String name;
     private final File certificateFile;
     private final Certificate certificate;
@@ -46,8 +44,7 @@ public class CertificateInfoImpl implements CertificateInfo {
         this.name = FilenameUtils.getBaseName(certificateFile.getName());
     }
 
-    public CertificateInfoImpl(final File certificateFile, final Certificate certificate,
-                               final File privateKeyFile, final Key privateKey) {
+    public CertificateInfoImpl(final File certificateFile, final Certificate certificate, final File privateKeyFile, final Key privateKey) {
         this(certificateFile, certificate);
         this.privateKeyFile = privateKeyFile;
         this.privateKey = privateKey;
@@ -55,7 +52,7 @@ public class CertificateInfoImpl implements CertificateInfo {
 
     @Override
     public boolean isValid() {
-        if("X.509".equals(certificate.getType())) {
+        if ("X.509".equals(certificate.getType())) {
             try {
                 ((X509Certificate) certificate).checkValidity();
                 return true;
@@ -66,5 +63,4 @@ public class CertificateInfoImpl implements CertificateInfo {
         }
         throw new UnsupportedOperationException(String.format("Certificate type '%s' not supported", certificate.getType()));
     }
-
 }

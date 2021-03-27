@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.AllArgsConstructor;
@@ -21,7 +20,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ComponentFieldsEnum {
-
+    // @formatter:off
     PROPERTIES("properties"),
     INPUTS("inputs"),
     OUTPUTS("outputs"),
@@ -55,6 +54,7 @@ public enum ComponentFieldsEnum {
     SUBSTITUTION_FILTER("substitutionFilter"),
     COMPONENT_INSTANCES_INTERFACES("componentInstancesInterfaces"),
     DATA_TYPES("data_types");
+    // @formatter:on
 
     private final String value;
 

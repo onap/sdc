@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
@@ -176,7 +175,6 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
 
     public Long getCreationTime() {
         return (Long) getToscaPresentationValue(JsonPresentationFields.CREATION_TIME);
-
     }
 
     public void setCreationTime(Long creationTime) {
@@ -210,10 +208,8 @@ public class RelationshipInstDataDefinition extends ToscaDataDefinition {
         Boolean originUI = isOriginUI();
         Long creationTime = getCreationTime();
         Long modificationTime = getModificationTime();
-
         return "RelationshipTypeDataDefinition [uniqueId=" + uniqueId + ", description=" + description + ", type=" + type + ", validSourceTypes="
-            + validSourceTypes
-            + ", version=" + version + ", originUI=" + originUI + ", creationTime=" + creationTime + ", modificationTime=" + modificationTime + "]";
+            + validSourceTypes + ", version=" + version + ", originUI=" + originUI + ", creationTime=" + creationTime + ", modificationTime="
+            + modificationTime + "]";
     }
-
 }

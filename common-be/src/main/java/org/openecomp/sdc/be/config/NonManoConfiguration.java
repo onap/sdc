@@ -16,15 +16,13 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.Data;
-
-import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 
 /**
@@ -32,13 +30,14 @@ import org.apache.commons.collections.MapUtils;
  */
 @Data
 public class NonManoConfiguration {
+
     private Map<String, NonManoFolderType> nonManoKeyFolderMapping;
 
     /**
      * Gets the non mano folder type based on the non mano artifact type.
+     *
      * @param nonManoArtifactType the artifact type
-     * @return
-     *  The NonManoType for the artifact type
+     * @return The NonManoType for the artifact type
      */
     public NonManoFolderType getNonManoType(final NonManoArtifactType nonManoArtifactType) {
         return nonManoKeyFolderMapping.get(nonManoArtifactType.getType());
@@ -48,9 +47,7 @@ public class NonManoConfiguration {
         if (MapUtils.isEmpty(nonManoKeyFolderMapping)) {
             return Collections.emptyMap();
         }
-
-        return nonManoKeyFolderMapping.entrySet().stream()
-            .filter(entry -> entry.getValue().isValid())
+        return nonManoKeyFolderMapping.entrySet().stream().filter(entry -> entry.getValue().isValid())
             .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 }

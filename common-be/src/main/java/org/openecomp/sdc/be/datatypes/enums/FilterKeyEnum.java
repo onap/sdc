@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.Arrays;
@@ -26,7 +25,6 @@ import lombok.Getter;
 public enum FilterKeyEnum {
     RESOURCE_TYPE("resourceType"), SUB_CATEGORY("subCategory"), CATEGORY("category"), DISTRIBUTION_STATUS("distributionStatus"), NAME_FRAGMENT(
         "nameFragment");
-
     private static final int NUMBER_OF_RESOURCES_FILTERED = 3;
     private static final int NUMBER_OF_SERVICES_FILTERED = 4;
     private final String name;
@@ -47,6 +45,5 @@ public enum FilterKeyEnum {
             default:
                 return null;
         }
-
     }
 }

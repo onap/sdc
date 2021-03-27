@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.stream.Stream;
@@ -22,10 +21,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum InstantiationTypes {
-
-    A_LA_CARTE("A-la-carte"),
-    MACRO("Macro");
-
+    A_LA_CARTE("A-la-carte"), MACRO("Macro");
     private final String value;
 
     /**
@@ -34,9 +30,7 @@ public enum InstantiationTypes {
      * @param type
      * @return bool
      */
-
     public static boolean containsName(String type) {
-        return Stream.of(InstantiationTypes.values())
-            .anyMatch(instType -> type.equals(instType.getValue()));
+        return Stream.of(InstantiationTypes.values()).anyMatch(instType -> type.equals(instType.getValue()));
     }
 }

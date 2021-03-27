@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.security.api.model;
 
 import java.io.File;
@@ -42,5 +41,4 @@ public interface CertificateInfo {
      * @throws UnsupportedOperationException when the certificate is not supported
      */
     boolean isValid();
-
 }

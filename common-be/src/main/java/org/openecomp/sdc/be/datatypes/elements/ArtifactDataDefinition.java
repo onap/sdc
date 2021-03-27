@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.ArrayList;
@@ -76,18 +75,14 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
         }
         this.setGeneratedFromId(a.getGeneratedFromId());
         this.setIsFromCsar(a.getIsFromCsar());
-
-
     }
 
     public String getArtifactName() {
         return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-
     }
 
     public void setArtifactName(String artifactName) {
         setToscaPresentationValue(JsonPresentationFields.NAME, artifactName);
-
     }
 
     public String getArtifactType() {
@@ -96,7 +91,6 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
 
     public void setArtifactType(String artifactType) {
         setToscaPresentationValue(JsonPresentationFields.ARTIFACT_TYPE, artifactType);
-
     }
 
     public boolean isHeatEnvType() {
@@ -105,7 +99,6 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
 
     public String getArtifactRef() {
         return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_REF);
-
     }
 
     public void setArtifactRef(String artifactRef) {
@@ -114,7 +107,6 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
 
     public String getArtifactRepository() {
         return (String) getToscaPresentationValue(JsonPresentationFields.ARTIFACT_REPOSITORY);
-
     }
 
     public void setArtifactRepository(String artifactRepository) {
@@ -130,7 +122,6 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
     }
 
     public String getUserIdCreator() {
-
         return (String) getToscaPresentationValue(JsonPresentationFields.USER_ID_CREATOR);
     }
 
@@ -367,21 +358,18 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
         return "ArtifactDataDefinition [uniqueId=" + getUniqueId() + ", artifactType=" + getArtifactType() + ", artifactRef=" + getArtifactRef()
             + ", artifactName=" + getArtifactName() + ", artifactRepository=" + getArtifactRepository() + ", artifactChecksum="
             + getArtifactChecksum() + ", userIdCreator=" + getUserIdCreator() + ", userIdLastUpdater=" + getUserIdLastUpdater() + ", creatorFullName="
-            + getCreatorFullName() + ", updaterFullName=" + getUpdaterFullName() + ", creationDate=" + getCreationDate()
-            + ", lastUpdateDate=" + getLastUpdateDate() + ", esId=" + getEsId() + ", artifactLabel=" + getArtifactLabel() + ", artifactCreator="
-            + getArtifactCreator() + ", description=" + getDescription() + ", mandatory=" + getMandatory() + ", artifactDisplayName="
-            + getArtifactDisplayName() + ", apiUrl=" + getApiUrl() + ", serviceApi=" + getServiceApi() + ", artifactGroupType="
-            + getArtifactGroupType() + ", timeout=" + getTimeout() + ", artifactVersion=" + getArtifactVersion() + ", artifactUUID="
-            + getArtifactUUID()
-            + ", payloadUpdateDate=" + getPayloadUpdateDate() + ", heatParamsUpdateDate=" + getHeatParamsUpdateDate() + ", requiredArtifacts="
-            + getRequiredArtifacts() + "]";
+            + getCreatorFullName() + ", updaterFullName=" + getUpdaterFullName() + ", creationDate=" + getCreationDate() + ", lastUpdateDate="
+            + getLastUpdateDate() + ", esId=" + getEsId() + ", artifactLabel=" + getArtifactLabel() + ", artifactCreator=" + getArtifactCreator()
+            + ", description=" + getDescription() + ", mandatory=" + getMandatory() + ", artifactDisplayName=" + getArtifactDisplayName()
+            + ", apiUrl=" + getApiUrl() + ", serviceApi=" + getServiceApi() + ", artifactGroupType=" + getArtifactGroupType() + ", timeout="
+            + getTimeout() + ", artifactVersion=" + getArtifactVersion() + ", artifactUUID=" + getArtifactUUID() + ", payloadUpdateDate="
+            + getPayloadUpdateDate() + ", heatParamsUpdateDate=" + getHeatParamsUpdateDate() + ", requiredArtifacts=" + getRequiredArtifacts() + "]";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-
         String apiUrl = getApiUrl();
         String artifactChecksum = getArtifactChecksum();
         String artifactCreator = getArtifactCreator();
@@ -392,27 +380,23 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
         String artifactRef = getArtifactRef();
         String artifactRepository = getArtifactRepository();
         String artifactType = getArtifactType();
-
         String artifactUUID = getArtifactUUID();
         String artifactVersion = getArtifactVersion();
         String userIdCreator = getUserIdCreator();
         String userIdLastUpdater = getUserIdLastUpdater();
         Long creationDate = getCreationDate();
-
         String creatorFullName = getCreatorFullName();
         String description = getDescription();
         String esId = getEsId();
         Long heatParamsUpdateDate = getHeatParamsUpdateDate();
         Long lastUpdateDate = getLastUpdateDate();
         Boolean mandatory = getMandatory();
-
         Long payloadUpdateDate = getPayloadUpdateDate();
         List<String> requiredArtifacts = getRequiredArtifacts();
         Boolean serviceApi = getServiceApi();
         Integer timeout = getTimeout();
         String uniqueId = getUniqueId();
         String updaterFullName = getUpdaterFullName();
-
         result = prime * result + ((apiUrl == null) ? 0 : apiUrl.hashCode());
         result = prime * result + ((artifactChecksum == null) ? 0 : artifactChecksum.hashCode());
         result = prime * result + ((artifactCreator == null) ? 0 : artifactCreator.hashCode());

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.csar.security.api;
 
 import java.security.Key;
@@ -25,8 +24,7 @@ import org.openecomp.sdc.be.csar.security.exception.CmsSignatureException;
 
 public interface CmsContentSigner {
 
-    byte[] signData(byte[] data, Certificate signingCertificate, Key signingKey)
-        throws CmsSignatureException;
+    byte[] signData(byte[] data, Certificate signingCertificate, Key signingKey) throws CmsSignatureException;
 
     String formatToPemSignature(byte[] signedData) throws CmsSignatureException;
 }

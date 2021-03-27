@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.Getter;
@@ -39,5 +38,4 @@ public class ToscaTypeDataDefinition extends ToscaDataDefinition {
         this.icon = other.icon;
         this.type = other.type;
     }
-
 }

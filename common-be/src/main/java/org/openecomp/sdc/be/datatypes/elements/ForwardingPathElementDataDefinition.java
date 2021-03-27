@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -110,8 +109,8 @@ public class ForwardingPathElementDataDefinition extends ToscaDataDefinition {
             return false;
         }
         ForwardingPathElementDataDefinition that = (ForwardingPathElementDataDefinition) o;
-        return Objects.equals(getFromNode(), that.getFromNode()) && Objects.equals(getToNode(), that.getToNode())
-            && Objects.equals(getFromCPOriginId(), that.getFromCPOriginId()) && Objects.equals(getToCPOriginId(), that.getToCPOriginId());
+        return Objects.equals(getFromNode(), that.getFromNode()) && Objects.equals(getToNode(), that.getToNode()) && Objects
+            .equals(getFromCPOriginId(), that.getFromCPOriginId()) && Objects.equals(getToCPOriginId(), that.getToCPOriginId());
     }
 
     @Override
@@ -121,9 +120,7 @@ public class ForwardingPathElementDataDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("fromNode", getFromNode()).add("toNode", getToNode())
-            .add("fromCPOriginId", getFromCPOriginId()).add("toCPOriginId", getToCPOriginId())
-            .add("fromCPName", getFromCP()).add("toCPName", getToCP()).toString();
+        return MoreObjects.toStringHelper(this).add("fromNode", getFromNode()).add("toNode", getToNode()).add("fromCPOriginId", getFromCPOriginId())
+            .add("toCPOriginId", getToCPOriginId()).add("fromCPName", getFromCP()).add("toCPName", getToCP()).toString();
     }
 }

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum GraphPropertyEnum {
-
+    // @formatter:off
     // field name ,class type ,unique ,indexed
     UNIQUE_ID("uid", String.class, true, true),
     LABEL("nodeLabel", String.class, false, true),
@@ -60,14 +59,12 @@ public enum GraphPropertyEnum {
     DATA_TYPES("data_types", Map.class, false, false),
 
     //Archive/Restore
-    IS_ARCHIVED("isArchived", Boolean.class, false, true),
-    IS_VSP_ARCHIVED("isVspArchived", Boolean.class, false, true),
-    ARCHIVE_TIME("archiveTime", Long.class, false, true),
-    PREV_CATALOG_UPDATE_TIME("previousUpdateTime", Long.class, false, true),
-    CURRENT_CATALOG_UPDATE_TIME("currentUpdateTime", Long.class, false, true),
-
+    IS_ARCHIVED("isArchived", Boolean.class, false, true), IS_VSP_ARCHIVED("isVspArchived", Boolean.class, false, true), ARCHIVE_TIME("archiveTime",
+        Long.class, false, true), PREV_CATALOG_UPDATE_TIME("previousUpdateTime", Long.class, false, true), CURRENT_CATALOG_UPDATE_TIME(
+        "currentUpdateTime", Long.class, false, true),
     //Healing
     HEALING_VERSION("healVersion", Integer.class, false, true);
+    // @formatter:on
 
     private final String property;
     private final Class<?> clazz;
@@ -84,13 +81,10 @@ public enum GraphPropertyEnum {
     }
 
     public static List<String> getAllProperties() {
-
         List<String> arrayList = new ArrayList<>();
-
         for (GraphPropertyEnum graphProperty : GraphPropertyEnum.values()) {
             arrayList.add(graphProperty.getProperty());
         }
-
         return arrayList;
     }
 }

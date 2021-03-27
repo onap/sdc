@@ -15,7 +15,6 @@
  */
 package org.openecomp.sdc.be.datatypes.elements;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.Setter;
@@ -65,5 +64,4 @@ public class OperationInputDefinition extends InputDataDefinition {
     public void setLabel(String name) {
         setToscaPresentationValue(JsonPresentationFields.ARTIFACT_LABEL, name);
     }
-
 }

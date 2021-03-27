@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.AllArgsConstructor;
@@ -42,5 +41,4 @@ public class AdditionalInfoParameterInfo extends ToscaDataDefinition {
         this.key = key;
         this.value = value;
     }
-
 }

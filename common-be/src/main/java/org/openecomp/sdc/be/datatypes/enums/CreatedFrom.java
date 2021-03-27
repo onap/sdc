@@ -12,15 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openecomp.sdc.be.datatypes.enums;
 
 import lombok.Getter;
 
 @Getter
-public enum CreatedFrom {
-
-    UI,
-    CSAR
-
-}
+public enum CreatedFrom {UI, CSAR}

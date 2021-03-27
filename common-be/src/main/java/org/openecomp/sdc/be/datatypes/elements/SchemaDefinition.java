@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.List;
@@ -42,12 +41,10 @@ public class SchemaDefinition extends ToscaDataDefinition {
     private Map<String, PropertyDataDefinition> properties;
     private PropertyDataDefinition property;
 
-    public SchemaDefinition(String derivedFrom, List<String> constraints,
-                            Map<String, PropertyDataDefinition> properties) {
+    public SchemaDefinition(String derivedFrom, List<String> constraints, Map<String, PropertyDataDefinition> properties) {
         this.setDerivedFrom(derivedFrom);
         this.setConstraints(constraints);
         this.setProperties(properties);
-
     }
 
     public void addProperty(String key, PropertyDataDefinition property) {
@@ -56,7 +53,7 @@ public class SchemaDefinition extends ToscaDataDefinition {
 
     @Override
     public String toString() {
-        return "SchemaDefinition [" + "derivedFrom='" + derivedFrom + ", constraints=" + constraints + ", properties="
-            + properties + ", property=" + property + ']';
+        return "SchemaDefinition [" + "derivedFrom='" + derivedFrom + ", constraints=" + constraints + ", properties=" + properties + ", property="
+            + property + ']';
     }
 }

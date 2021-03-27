@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.Map;
@@ -54,5 +53,4 @@ public class GetOutputValueDataDefinition extends ToscaDataDefinition {
         this.setGetOutputIndex(p.getGetOutputIndex());
         this.setList(p.isList());
     }
-
 }

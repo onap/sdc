@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import lombok.AllArgsConstructor;
@@ -25,11 +24,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum PolicyTargetType {
-
-    GROUPS("GROUPS"),
-    COMPONENT_INSTANCES("COMPONENT_INSTANCES"),
-    TYPE_DOES_NOT_EXIST("TYPE_DOES_NOT_EXIST");
-
+    GROUPS("GROUPS"), COMPONENT_INSTANCES("COMPONENT_INSTANCES"), TYPE_DOES_NOT_EXIST("TYPE_DOES_NOT_EXIST");
     @Getter
     private final String name;
 

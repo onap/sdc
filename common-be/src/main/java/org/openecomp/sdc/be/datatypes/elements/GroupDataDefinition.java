@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.datatypes.elements;
 
 import static java.util.Collections.emptyMap;
@@ -60,14 +59,12 @@ public class GroupDataDefinition extends ToscaDataDefinition {
         this.setGroupUUID(other.getGroupUUID());
         this.setInvariantName(other.getInvariantName());
         this.setCreatedFrom(other.getCreatedFrom());
-
         if (other.getMembers() != null) {
             this.setMembers(new HashMap<>(other.getMembers()));
         }
         if (other.getArtifacts() != null) {
             this.setArtifacts(new ArrayList<>(other.getArtifacts()));
         }
-
         if (other.getArtifactsUuid() != null) {
             this.setArtifactsUuid(new ArrayList<>(other.getArtifactsUuid()));
         }
@@ -161,7 +158,6 @@ public class GroupDataDefinition extends ToscaDataDefinition {
             return members;
         }
         return emptyMap();
-
     }
 
     public List<String> getArtifacts() {
@@ -199,12 +195,10 @@ public class GroupDataDefinition extends ToscaDataDefinition {
     @Override
     public String toString() {
         return "GroupDataDefinition [propertyValueCounter=" + propertyValueCounter + ", toscaPresentation=" + toscaPresentation + ", getName()="
-            + getName() + ", getUniqueId()=" + getUniqueId() + ", getType()=" + getType() + ", getVersion()="
-            + getVersion() + ", getInvariantUUID()=" + getInvariantUUID() + ", getDescription()=" + getDescription() + ", getPropertyValueCounter()="
-            + getPropertyValueCounter() + ", getGroupUUID()=" + getGroupUUID() + ", getMembers()="
-            + getMembers() + ", getArtifacts()=" + getArtifacts() + ", getArtifactsUuid()=" + getArtifactsUuid() + ", getClass()=" + getClass()
-            + ", hashCode()=" + hashCode() + ", toString()="
-            + super.toString() + "]";
+            + getName() + ", getUniqueId()=" + getUniqueId() + ", getType()=" + getType() + ", getVersion()=" + getVersion() + ", getInvariantUUID()="
+            + getInvariantUUID() + ", getDescription()=" + getDescription() + ", getPropertyValueCounter()=" + getPropertyValueCounter()
+            + ", getGroupUUID()=" + getGroupUUID() + ", getMembers()=" + getMembers() + ", getArtifacts()=" + getArtifacts() + ", getArtifactsUuid()="
+            + getArtifactsUuid() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
     }
 
     public boolean containsInstanceAsMember(String instanceId) {
