@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -33,20 +29,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NonConfigResource {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NonConfigResource.class);
 
     static final String NODE_CONFIG_LOCATION = "node.config.location";
     static final String CONFIG_LOCATION = "config.location";
-
-    private final List<Function<String, Path>> lookupFunctions =
-            Arrays.asList(this::getFromFile, this::findInFiles, this::getForNode, this::getGlobal, this::findInUris);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(NonConfigResource.class);
     private final Set<URI> uris = Collections.synchronizedSet(new HashSet<>());
     private final Set<File> files = Collections.synchronizedSet(new HashSet<>());
-
     private final Function<String, String> propertyGetter;
+    private final List<Function<String, Path>> lookupFunctions = Arrays
+        .asList(this::getFromFile, this::findInFiles, this::getForNode, this::getGlobal, this::findInUris);
 
     NonConfigResource(Function<String, String> propertyGetter) {
         this.propertyGetter = propertyGetter;
@@ -54,6 +49,22 @@ public class NonConfigResource {
 
     public NonConfigResource() {
         this(System::getProperty);
+    }
+
+    private static URI toUri(URL url) {
+        try {
+            return url.toURI();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Unexpected URL syntax: " + url, e);
+        }
+    }
+
+    private static URL toUrl(URI uri) {
+        try {
+            return uri.toURL();
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException("Unexpected URI syntax: " + uri, e);
+        }
     }
 
     public void add(URL url) {
@@ -65,18 +76,11 @@ public class NonConfigResource {
     }
 
     public Path locate(String resource) {
-
         if (resource == null) {
             return null;
         }
-
         try {
-
-            return lookupFunctions.stream()
-                           .map(f -> f.apply(resource))
-                           .filter(Objects::nonNull)
-                           .findFirst().orElse(null);
-
+            return lookupFunctions.stream().map(f -> f.apply(resource)).filter(Objects::nonNull).findFirst().orElse(null);
         } catch (Exception exception) {
             LOGGER.error("Failed to locate resource '{}'.", resource, exception);
             return null;
@@ -84,17 +88,11 @@ public class NonConfigResource {
     }
 
     private Path locate(File root, String resource) {
-
         if (!root.exists()) {
             return null;
         }
-
-        return ConfigurationUtils.getAllFiles(root, true, false)
-                       .stream()
-                       .filter(f -> !ConfigurationUtils.isConfig(f))
-                       .peek(this::add).filter(f -> f.getAbsolutePath().endsWith(resource))
-                       .findFirst()
-                       .map(file -> Paths.get(file.getAbsolutePath())).orElse(null);
+        return ConfigurationUtils.getAllFiles(root, true, false).stream().filter(f -> !ConfigurationUtils.isConfig(f)).peek(this::add)
+            .filter(f -> f.getAbsolutePath().endsWith(resource)).findFirst().map(file -> Paths.get(file.getAbsolutePath())).orElse(null);
     }
 
     private Path getFromFile(String resource) {
@@ -111,15 +109,12 @@ public class NonConfigResource {
     }
 
     private Path findInFiles(String resource) {
-
         for (File availableFile : files) {
-
             String absolutePath = availableFile.getAbsolutePath();
             if (absolutePath.endsWith(resource) && availableFile.exists()) {
                 return Paths.get(absolutePath);
             }
         }
-
         return null;
     }
 
@@ -134,22 +129,5 @@ public class NonConfigResource {
     private Path getFromProperty(String property, String resource) {
         String value = propertyGetter.apply(property);
         return (value == null) ? null : locate(new File(value), resource);
-    }
-
-    private static URI toUri(URL url) {
-
-        try {
-            return url.toURI();
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Unexpected URL syntax: " + url, e);
-        }
-    }
-
-    private static URL toUrl(URI uri) {
-        try {
-            return uri.toURL();
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException("Unexpected URI syntax: " + uri, e);
-        }
     }
 }

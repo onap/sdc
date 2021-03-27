@@ -17,18 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.services;
-
-import org.yaml.snakeyaml.constructor.Constructor;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.parser.ParserException;
 
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Set;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.parser.ParserException;
 
 public class StrictMapAppenderConstructor extends Constructor {
+
     /**
      * Instantiates a new Strict map appender constructor.
      *
@@ -62,9 +61,7 @@ public class StrictMapAppenderConstructor extends Constructor {
         try {
             return super.constructMapping(node);
         } catch (IllegalStateException exception) {
-            throw new ParserException("while parsing MappingNode",
-                    node.getStartMark(), exception.getMessage(),
-                    node.getEndMark());
+            throw new ParserException("while parsing MappingNode", node.getStartMark(), exception.getMessage(), node.getEndMark());
         }
     }
 }

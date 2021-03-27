@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.HashMap;
@@ -32,8 +31,7 @@ import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
 public class InterfaceType extends Interface {
 
-    protected static final String CONVERT_INTERFACE_TYPE_OBJECT_ERROR =
-            "Could not create InterfaceType from input object, input object -  ";
+    protected static final String CONVERT_INTERFACE_TYPE_OBJECT_ERROR = "Could not create InterfaceType from input object, input object -  ";
     private String derived_from;
     private String version;
     private Map<String, String> metadata;
@@ -56,8 +54,7 @@ public class InterfaceType extends Interface {
 
     protected InterfaceType convertObjToInterfaceType(Object toscaInterfaceTypeObj) {
         try {
-            Optional<InterfaceType> interfaceType =
-                    CommonUtil.createObjectUsingSetters(toscaInterfaceTypeObj, this.getClass());
+            Optional<InterfaceType> interfaceType = CommonUtil.createObjectUsingSetters(toscaInterfaceTypeObj, this.getClass());
             if (interfaceType.isPresent()) {
                 updateInterfaceTypeOperations(CommonUtil.getObjectAsMap(toscaInterfaceTypeObj), interfaceType.get());
                 return interfaceType.get();
@@ -67,17 +64,14 @@ public class InterfaceType extends Interface {
         } catch (Exception exc) {
             throw new ToscaRuntimeException(CONVERT_INTERFACE_TYPE_OBJECT_ERROR + toscaInterfaceTypeObj.toString(), exc);
         }
-
     }
 
     private void updateInterfaceTypeOperations(Map<String, Object> interfaceAsMap, InterfaceType interfaceType) {
-
         Set<String> fieldNames = CommonUtil.getClassFieldNames(interfaceType.getClass());
         for (Map.Entry<String, Object> entry : interfaceAsMap.entrySet()) {
-            Optional<Map.Entry<String, ? extends OperationDefinition>> operationDefinition =
-                    createOperation(entry.getKey(), entry.getValue(), fieldNames, OperationDefinitionType.class);
-            operationDefinition
-                    .ifPresent(operation -> interfaceType.addOperation(operation.getKey(), operation.getValue()));
+            Optional<Map.Entry<String, ? extends OperationDefinition>> operationDefinition = createOperation(entry.getKey(), entry.getValue(),
+                fieldNames, OperationDefinitionType.class);
+            operationDefinition.ifPresent(operation -> interfaceType.addOperation(operation.getKey(), operation.getValue()));
         }
     }
 
@@ -101,8 +95,16 @@ public class InterfaceType extends Interface {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Map<String, String> getMetadata() {
         return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 
     public Map<String, PropertyDefinition> getInputs() {
@@ -128,17 +130,8 @@ public class InterfaceType extends Interface {
         this.operations.put(operationName, operationDefinition);
     }
 
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public int hashCode() {
-
         return Objects.hash(derived_from, version, metadata, description, inputs, operations);
     }
 
@@ -151,14 +144,11 @@ public class InterfaceType extends Interface {
             return false;
         }
         InterfaceType that = (InterfaceType) o;
-        return Objects.equals(derived_from, that.derived_from) && Objects.equals(version, that.version)
-                       && Objects.equals(metadata, that.metadata) && Objects.equals(description, that.description)
-                       && Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
+        return Objects.equals(derived_from, that.derived_from) && Objects.equals(version, that.version) && Objects.equals(metadata, that.metadata)
+            && Objects.equals(description, that.description) && Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
     }
 
     public Optional<Object> convertInterfaceTypeToToscaObj() {
         return convertInterfaceToToscaInterfaceObj(this);
     }
-
-
 }

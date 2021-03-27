@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config.impl;
 
 import static org.onap.config.ConfigurationUtils.isBlank;
@@ -36,7 +35,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.onap.config.ConfigurationUtils;
 import org.onap.config.Constants;
@@ -49,113 +47,16 @@ import org.slf4j.LoggerFactory;
 public class ConfigurationImpl implements org.onap.config.api.Configuration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationImpl.class);
-
     private static final String KEY_CANNOT_BE_NULL = "Key can't be null.";
     private static final NonConfigResource NON_CONFIG_RESOURCE = new NonConfigResource();
     private static final Map<String, AggregateConfiguration> MODULE_CONFIG_STORE = new HashMap<>();
 
     static {
-        if (!loadClassPathConfigurationsAndResources()
-                || !loadAdditionalConfigurationsAndResources()
-                || !loadTenantConfigurations()) {
+        if (!loadClassPathConfigurationsAndResources() || !loadAdditionalConfigurationsAndResources() || !loadTenantConfigurations()) {
             throw new IllegalStateException("Failed to initialize configuration");
         }
         populateFinalConfigurationIncrementally(MODULE_CONFIG_STORE);
         loadNodeSpecificConfigurations();
-    }
-
-    @Override
-    public <T> T get(String tenant, String namespace, String key, Class<T> clazz, Hint... hints) {
-        String[] tenantNamespaceArray;
-        if (tenant == null && namespace != null) {
-            tenantNamespaceArray = namespace.split(Constants.TENANT_NAMESPACE_SEPARATOR);
-            if (tenantNamespaceArray.length > 1) {
-                tenant = tenantNamespaceArray[0];
-                namespace = tenantNamespaceArray[1];
-            }
-        }
-
-        tenant = ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase() : Constants.DEFAULT_TENANT;
-        namespace = ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase() : Constants.DEFAULT_NAMESPACE;
-        hints = hints == null || hints.length == 0 ? new Hint[]{Hint.EXTERNAL_LOOKUP, Hint.NODE_SPECIFIC} : hints;
-        T returnValue;
-        returnValue = getInternal(tenant, namespace, key, clazz, hints);
-        if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue))
-                && !Constants.DEFAULT_TENANT.equals(tenant)) {
-            returnValue = getInternal(Constants.DEFAULT_TENANT, namespace, key, clazz, hints);
-        }
-        if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue))
-                && !Constants.DEFAULT_NAMESPACE.equals(namespace)) {
-            returnValue = getInternal(tenant, Constants.DEFAULT_NAMESPACE, key, clazz, hints);
-        }
-        if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue))
-                && !Constants.DEFAULT_NAMESPACE.equals(namespace) && !Constants.DEFAULT_TENANT.equals(tenant)) {
-            returnValue = getInternal(Constants.DEFAULT_TENANT, Constants.DEFAULT_NAMESPACE, key, clazz, hints);
-        }
-        if (returnValue == null && ConfigurationUtils.isAPrimitive(clazz)) {
-            returnValue = (T) ConfigurationUtils.getDefaultFor(clazz);
-        }
-        return returnValue;
-    }
-
-    @Override
-    public <T> Map<String, T> populateMap(String tenantId, String namespace, String key, Class<T> clazz) {
-        final String calculatedTenantId = calculateTenant(tenantId);
-        final String calculatedNamespace = calculateNamespace(namespace);
-        Map<String, T> map = new HashMap<>();
-        Iterator<String> keys;
-        try {
-            keys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys(key);
-            keys.forEachRemaining(k -> {
-                if (k.startsWith(key + ".")) {
-                    k = k.substring(key.length() + 1);
-                    String subkey = k.substring(0, k.indexOf('.'));
-                    if (!map.containsKey(subkey)) {
-                        map.put(subkey, get(calculatedTenantId, calculatedNamespace, key + "." + subkey, clazz));
-                    }
-                }
-            });
-        } catch (Exception e) {
-            LOGGER.warn(
-                    "Couldn't populate map fot tenant: {}, namespace: {}, key: {}, type: {}",
-                    tenantId,
-                    namespace,
-                    key,
-                    clazz.getSimpleName(),
-                    e
-            );
-        }
-        return map;
-    }
-
-    @Override
-    public Map<Object, Object> generateMap(String tenantId, String namespace, String key) {
-        final String calculatedTenantId = calculateTenant(tenantId);
-        final String calculatedNamespace = calculateNamespace(namespace);
-        Map<Object, Object> parentMap = new HashMap<>();
-        Iterator<String> configKeys;
-        try {
-            if (isBlank(key)) {
-                configKeys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys();
-            } else {
-                configKeys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys(key);
-            }
-            configKeys.forEachRemaining(subKey -> {
-                if (!isBlank(key) && !subKey.startsWith(key + ".")) {
-                    configKeys.remove();
-                }
-                parseConfigSubKeys(subKey, key, calculatedTenantId, calculatedNamespace, parentMap);
-            });
-        } catch (Exception e) {
-            LOGGER.warn(
-                    "Couldn't generate map fot tenant: {}, namespace: {}, key: {}",
-                    tenantId,
-                    namespace,
-                    key,
-                    e
-            );
-        }
-        return parentMap;
     }
 
     private static boolean loadClassPathConfigurationsAndResources() {
@@ -165,11 +66,8 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         List<URL> configResources = resources.get(true);
         List<URL> nonConfigResources = resources.get(false);
         AtomicReference<Boolean> successFlagHolder = new AtomicReference<>(true);
-
         configResources.forEach(url -> successFlagHolder.set(setUpdateModuleConfigStore(url)));
-
         nonConfigResources.forEach(NON_CONFIG_RESOURCE::add);
-
         return successFlagHolder.get();
     }
 
@@ -183,9 +81,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             Map<Boolean, List<File>> resources = filesystemResources.stream().collect(Collectors.partitioningBy(filePredicate));
             List<File> configResources = resources.get(true);
             List<File> nonConfigResources = resources.get(false);
-
             configResources.forEach(file -> successFlagHolder.set(setUpdateModuleConfigStore(file)));
-
             nonConfigResources.forEach(NON_CONFIG_RESOURCE::add);
         }
         return successFlagHolder.get();
@@ -198,20 +94,17 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             File root = new File(tenantConfigLocation);
             Collection<File> tenantsRoot = ConfigurationUtils.getAllFiles(root, false, true);
             Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
-
             Map<Boolean, List<File>> resources = filesystemResources.stream().collect(Collectors.partitioningBy(ConfigurationUtils::isConfig));
             Collection<File> tenantResources = resources.get(true);
-
             tenantResources.forEach(configFile -> {
                 AtomicReference<String> moduleNameHolder = new AtomicReference<>(ConfigurationUtils.getNamespace(configFile));
                 Predicate<File> startsWithRootPredicate = tenantRoot -> configFile.getAbsolutePath().startsWith(tenantRoot.getAbsolutePath());
-                Collection<File> matchesTenantRoot = tenantsRoot.stream().filter(startsWithRootPredicate).collect(Collectors.toCollection(ArrayList::new));
+                Collection<File> matchesTenantRoot = tenantsRoot.stream().filter(startsWithRootPredicate)
+                    .collect(Collectors.toCollection(ArrayList::new));
                 AtomicReference<String[]> altResource = new AtomicReference<>();
                 matchesTenantRoot.forEach(file -> altResource.set(
-                        (file.getName().toUpperCase() + Constants.TENANT_NAMESPACE_SEPARATOR + moduleNameHolder.get())
-                                .split(Constants.TENANT_NAMESPACE_SEPARATOR)
-                        )
-                );
+                    (file.getName().toUpperCase() + Constants.TENANT_NAMESPACE_SEPARATOR + moduleNameHolder.get())
+                        .split(Constants.TENANT_NAMESPACE_SEPARATOR)));
                 successFlagHolder.set(setUpdateModuleConfigStore(configFile, altResource.get()));
             });
         }
@@ -223,25 +116,20 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         if (!isBlank(nodeConfigLocation)) {
             File root = new File(nodeConfigLocation);
             Collection<File> filesystemResources = ConfigurationUtils.getAllFiles(root, true, false);
-            filesystemResources.stream().filter(ConfigurationUtils::isConfig).forEach(
-                    file -> ConfigurationRepository.lookup().populateOverrideConfiguration(
-                            ConfigurationUtils.getConfigurationRepositoryKey(
-                                    ConfigurationUtils.getNamespace(file).split(Constants.TENANT_NAMESPACE_SEPARATOR)), file)
-            );
+            filesystemResources.stream().filter(ConfigurationUtils::isConfig).forEach(file -> ConfigurationRepository.lookup()
+                .populateOverrideConfiguration(ConfigurationUtils
+                    .getConfigurationRepositoryKey(ConfigurationUtils.getNamespace(file).split(Constants.TENANT_NAMESPACE_SEPARATOR)), file));
         }
     }
 
     private static void populateFinalConfigurationIncrementally(Map<String, AggregateConfiguration> configs) {
         if (configs.get(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE) != null) {
-            ConfigurationRepository.lookup().populateConfiguration(
-                    Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE,
-                    configs.remove(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE)
-                            .getFinalConfiguration());
+            ConfigurationRepository.lookup()
+                .populateConfiguration(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE,
+                    configs.remove(Constants.DEFAULT_TENANT + Constants.KEY_ELEMENTS_DELIMITER + Constants.DB_NAMESPACE).getFinalConfiguration());
         }
         Set<String> modules = configs.keySet();
-        modules.forEach(
-                m -> ConfigurationRepository.lookup().populateConfiguration(m, configs.get(m).getFinalConfiguration())
-        );
+        modules.forEach(m -> ConfigurationRepository.lookup().populateConfiguration(m, configs.get(m).getFinalConfiguration()));
     }
 
     private static <T> boolean setUpdateModuleConfigStore(T resource, String... namedResources) {
@@ -292,6 +180,98 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         }
     }
 
+    private static String calculateNamespace(String namespace) {
+        if (isBlank(namespace)) {
+            return Constants.DEFAULT_NAMESPACE;
+        }
+        return namespace.toUpperCase();
+    }
+
+    private static String calculateTenant(String tenant) {
+        if (isBlank(tenant)) {
+            return Constants.DEFAULT_TENANT;
+        }
+        return tenant.toUpperCase();
+    }
+
+    @Override
+    public <T> T get(String tenant, String namespace, String key, Class<T> clazz, Hint... hints) {
+        String[] tenantNamespaceArray;
+        if (tenant == null && namespace != null) {
+            tenantNamespaceArray = namespace.split(Constants.TENANT_NAMESPACE_SEPARATOR);
+            if (tenantNamespaceArray.length > 1) {
+                tenant = tenantNamespaceArray[0];
+                namespace = tenantNamespaceArray[1];
+            }
+        }
+        tenant = ConfigurationRepository.lookup().isValidTenant(tenant) ? tenant.toUpperCase() : Constants.DEFAULT_TENANT;
+        namespace = ConfigurationRepository.lookup().isValidNamespace(namespace) ? namespace.toUpperCase() : Constants.DEFAULT_NAMESPACE;
+        hints = hints == null || hints.length == 0 ? new Hint[]{Hint.EXTERNAL_LOOKUP, Hint.NODE_SPECIFIC} : hints;
+        T returnValue;
+        returnValue = getInternal(tenant, namespace, key, clazz, hints);
+        if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue)) && !Constants.DEFAULT_TENANT.equals(tenant)) {
+            returnValue = getInternal(Constants.DEFAULT_TENANT, namespace, key, clazz, hints);
+        }
+        if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue)) && !Constants.DEFAULT_NAMESPACE.equals(namespace)) {
+            returnValue = getInternal(tenant, Constants.DEFAULT_NAMESPACE, key, clazz, hints);
+        }
+        if ((returnValue == null || ConfigurationUtils.isZeroLengthArray(clazz, returnValue)) && !Constants.DEFAULT_NAMESPACE.equals(namespace)
+            && !Constants.DEFAULT_TENANT.equals(tenant)) {
+            returnValue = getInternal(Constants.DEFAULT_TENANT, Constants.DEFAULT_NAMESPACE, key, clazz, hints);
+        }
+        if (returnValue == null && ConfigurationUtils.isAPrimitive(clazz)) {
+            returnValue = (T) ConfigurationUtils.getDefaultFor(clazz);
+        }
+        return returnValue;
+    }
+
+    @Override
+    public <T> Map<String, T> populateMap(String tenantId, String namespace, String key, Class<T> clazz) {
+        final String calculatedTenantId = calculateTenant(tenantId);
+        final String calculatedNamespace = calculateNamespace(namespace);
+        Map<String, T> map = new HashMap<>();
+        Iterator<String> keys;
+        try {
+            keys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys(key);
+            keys.forEachRemaining(k -> {
+                if (k.startsWith(key + ".")) {
+                    k = k.substring(key.length() + 1);
+                    String subkey = k.substring(0, k.indexOf('.'));
+                    if (!map.containsKey(subkey)) {
+                        map.put(subkey, get(calculatedTenantId, calculatedNamespace, key + "." + subkey, clazz));
+                    }
+                }
+            });
+        } catch (Exception e) {
+            LOGGER.warn("Couldn't populate map fot tenant: {}, namespace: {}, key: {}, type: {}", tenantId, namespace, key, clazz.getSimpleName(), e);
+        }
+        return map;
+    }
+
+    @Override
+    public Map<Object, Object> generateMap(String tenantId, String namespace, String key) {
+        final String calculatedTenantId = calculateTenant(tenantId);
+        final String calculatedNamespace = calculateNamespace(namespace);
+        Map<Object, Object> parentMap = new HashMap<>();
+        Iterator<String> configKeys;
+        try {
+            if (isBlank(key)) {
+                configKeys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys();
+            } else {
+                configKeys = ConfigurationRepository.lookup().getConfigurationFor(calculatedTenantId, calculatedNamespace).getKeys(key);
+            }
+            configKeys.forEachRemaining(subKey -> {
+                if (!isBlank(key) && !subKey.startsWith(key + ".")) {
+                    configKeys.remove();
+                }
+                parseConfigSubKeys(subKey, key, calculatedTenantId, calculatedNamespace, parentMap);
+            });
+        } catch (Exception e) {
+            LOGGER.warn("Couldn't generate map fot tenant: {}, namespace: {}, key: {}", tenantId, namespace, key, e);
+        }
+        return parentMap;
+    }
+
     private void parseConfigSubKeys(String subKey, String keyPrefix, String tenantId, String namespace, Map<Object, Object> targetMap) {
         String value = getAsString(tenantId, namespace, subKey);
         if (!isBlank(keyPrefix) && subKey.startsWith(keyPrefix + ".")) {
@@ -318,18 +298,14 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
                 processingHints = processingHints | hint.value();
             }
         }
-
         tenant = calculateTenant(tenant);
         namespace = calculateNamespace(namespace);
-
         if (isBlank(key) && !clazz.isAnnotationPresent(Config.class)) {
             throw new IllegalArgumentException(KEY_CANNOT_BE_NULL);
         }
-
         if (clazz == null) {
             throw new IllegalArgumentException("clazz is null.");
         }
-
         if (ConfigurationUtils.isAPrimitive(clazz)) {
             clazz = getWrapperClass(clazz);
         }
@@ -341,43 +317,31 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             } else if (clazz.isAnnotationPresent(Config.class)) {
                 return getAnnotatedTypeValue(tenant, namespace, clazz, isBlank(key) ? "" : (key + "."), hints);
             } else {
-                throw new IllegalArgumentException(
-                        "Only primitive classes, wrapper classes, corresponding array classes and any "
-                                + "class decorated with @org.openecomp.config.api.Config are allowed as argument.");
+                throw new IllegalArgumentException("Only primitive classes, wrapper classes, corresponding array classes and any "
+                    + "class decorated with @org.openecomp.config.api.Config are allowed as argument.");
             }
         } catch (Exception exception) {
-            LOGGER.warn(
-                    "Failed to get internal value fot tenant: {}, namespace: {}, key: {}, type: {}",
-                    tenant,
-                    namespace,
-                    key,
-                    clazz.getSimpleName(),
-                    exception
-            );
+            LOGGER
+                .warn("Failed to get internal value fot tenant: {}, namespace: {}, key: {}, type: {}", tenant, namespace, key, clazz.getSimpleName(),
+                    exception);
         }
         return null;
     }
 
     private <T> T getWrapperTypeValue(String tenant, String namespace, String key, Class<T> clazz, int processingHints) throws Exception {
-        Object obj = ConfigurationUtils.getProperty(
-                ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
+        Object obj = ConfigurationUtils.getProperty(ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
         if (obj != null) {
             if (ConfigurationUtils.isCollection(obj.toString())) {
                 obj = ConfigurationUtils.getCollectionString(obj.toString());
             }
-            String value = ConfigurationUtils.processVariablesIfPresent(
-                    tenant,
-                    namespace,
-                    obj.toString().split(",")[0]
-            );
+            String value = ConfigurationUtils.processVariablesIfPresent(tenant, namespace, obj.toString().split(",")[0]);
             return (T) getTypeValue(value, clazz, processingHints);
         }
         return null;
     }
 
     private <T> T getArrayTypeValue(String tenant, String namespace, String key, Class<T> clazz, int processingHints) throws Exception {
-        Object obj = ConfigurationUtils.getProperty(
-                ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
+        Object obj = ConfigurationUtils.getProperty(ConfigurationRepository.lookup().getConfigurationFor(tenant, namespace), key, processingHints);
         if (obj != null) {
             Class componentType = clazz.getComponentType();
             if (ConfigurationUtils.isAPrimitivesArray(clazz)) {
@@ -388,11 +352,8 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             for (String itemValue : collString.split(",")) {
                 tempCollection.add(ConfigurationUtils.processVariablesIfPresent(tenant, namespace, itemValue));
             }
-            Collection<T> collection = convert(
-                    ConfigurationUtils.getCollectionString(Arrays.toString(tempCollection.toArray())),
-                    (Class<T>) componentType,
-                    processingHints
-            );
+            Collection<T> collection = convert(ConfigurationUtils.getCollectionString(Arrays.toString(tempCollection.toArray())),
+                (Class<T>) componentType, processingHints);
             if (ConfigurationUtils.isAPrimitivesArray(clazz)) {
                 return (T) ConfigurationUtils.getPrimitiveArray(collection, componentType);
             } else {
@@ -403,27 +364,8 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         }
     }
 
-    private static String calculateNamespace(String namespace) {
-
-        if (isBlank(namespace)) {
-            return Constants.DEFAULT_NAMESPACE;
-        }
-
-        return namespace.toUpperCase();
-    }
-
-    private static String calculateTenant(String tenant) {
-
-        if (isBlank(tenant)) {
-            return Constants.DEFAULT_TENANT;
-        }
-
-        return tenant.toUpperCase();
-    }
-
     private <T> T getAnnotatedTypeValue(String tenant, String namespace, Class<T> clazz, String keyPrefix, Hint... hints)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-
+        throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Config confAnnotation = clazz.getAnnotation(Config.class);
         if (confAnnotation != null && confAnnotation.key().length() > 0 && !keyPrefix.endsWith(".")) {
             keyPrefix += (confAnnotation.key() + ".");
@@ -438,8 +380,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
             if (fieldConfAnnotation == null) {
                 continue;
             }
-            if (ConfigurationUtils.isAPrimitiveOrWrapper(fieldType) ||
-                ConfigurationUtils.isAPrimitivesOrWrappersArray(fieldType)) {
+            if (ConfigurationUtils.isAPrimitiveOrWrapper(fieldType) || ConfigurationUtils.isAPrimitivesOrWrappersArray(fieldType)) {
                 setPrimitiveField(field, objToReturn, tenant, namespace, keyPrefix, hints);
             }
             if (ConfigurationUtils.isACollection(fieldType)) {
@@ -453,25 +394,23 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     }
 
     private void setPrimitiveField(Field field, Object objToReturn, String tenant, String namespace, String keyPrefix, Hint[] hints)
-            throws IllegalAccessException {
+        throws IllegalAccessException {
         String fieldConfAnnotationKey = field.getAnnotation(Config.class).key();
         Class<?> fieldType = field.getType();
         field.set(objToReturn, get(tenant, namespace, keyPrefix + fieldConfAnnotationKey, fieldType, hints));
     }
 
-    private void setMapField(Field field, Object objToReturn, String tenant, String namespace, String keyPrefix)
-            throws IllegalAccessException {
+    private void setMapField(Field field, Object objToReturn, String tenant, String namespace, String keyPrefix) throws IllegalAccessException {
         String fieldConfAnnotationKey = field.getAnnotation(Config.class).key();
         field.set(objToReturn, generateMap(tenant, namespace, keyPrefix + fieldConfAnnotationKey));
     }
 
     private void setCollectionField(Field field, Object objToReturn, String tenant, String namespace, String keyPrefix, Hint[] hints)
-            throws IllegalAccessException, InvocationTargetException, InstantiationException {
+        throws IllegalAccessException, InvocationTargetException, InstantiationException {
         String fieldConfAnnotationKey = field.getAnnotation(Config.class).key();
         Class<?> fieldType = field.getType();
         Object obj = get(tenant, namespace, keyPrefix + fieldConfAnnotationKey,
-                ConfigurationUtils.getArrayClass(ConfigurationUtils.getCollectionGenericType(field)),
-                hints);
+            ConfigurationUtils.getArrayClass(ConfigurationUtils.getCollectionGenericType(field)), hints);
         if (obj == null) {
             return;
         }
@@ -480,20 +419,16 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
         if (fieldType.isInterface()) {
             clazzToInstantiate = ConfigurationUtils.getConcreteCollection(fieldType).getClass();
         } else if (Modifier.isAbstract(fieldType.getModifiers())) {
-            clazzToInstantiate =
-                    ConfigurationUtils.getCompatibleCollectionForAbstractDef(fieldType)
-                            .getClass();
+            clazzToInstantiate = ConfigurationUtils.getCompatibleCollectionForAbstractDef(fieldType).getClass();
         } else {
             clazzToInstantiate = fieldType;
         }
         Constructor construct = getConstructorWithArguments(clazzToInstantiate, Collection.class);
-
         if (construct != null) {
             construct.setAccessible(true);
             field.set(objToReturn, construct.newInstance(list));
         } else {
-            construct = getConstructorWithArguments(clazzToInstantiate, Integer.class,
-                   Boolean.class, Collection.class);
+            construct = getConstructorWithArguments(clazzToInstantiate, Integer.class, Boolean.class, Collection.class);
             if (construct != null) {
                 construct.setAccessible(true);
                 field.set(objToReturn, construct.newInstance(list.size(), true, list));
@@ -555,8 +490,7 @@ public class ConfigurationImpl implements org.onap.config.api.Configuration {
     private <T> T getValueForStringType(Object obj, int processingHint) {
         if (obj.toString().startsWith("@") && ConfigurationUtils.isExternalLookup(processingHint)) {
             String subString = obj.toString().substring(1).trim();
-            String contents = ConfigurationUtils.getFileContents(
-                    NON_CONFIG_RESOURCE.locate(subString));
+            String contents = ConfigurationUtils.getFileContents(NON_CONFIG_RESOURCE.locate(subString));
             if (contents == null) {
                 contents = ConfigurationUtils.getFileContents(subString);
             }

@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.services;
 
-import java.beans.IntrospectionException;
 import org.onap.sdc.tosca.error.ToscaRuntimeException;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.Property;
@@ -24,19 +22,13 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.NodeId;
 
-
 public class ToscaExtensionYamlUtil extends YamlUtil {
 
-    public static final String TOSCA_MODEL_PARAMETER_DEFINITION =
-            "org.onap.sdc.tosca.datatypes.model.ParameterDefinition";
-    public static final String TOSCA_MODEL_EXT_PARAMETER_DEFINITION =
-            "org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt";
-    public static final String TOSCA_MODEL_REQUIREMENT_ASSIGNMENT =
-            "org.onap.sdc.tosca.datatypes.model.RequirementAssignment";
-    public static final String TOSCA_MODEL_EXT_REQUIREMENT_ASSIGNMENT =
-            "org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignmentExt";
-    public static final String TOSCA_MODEL_SUBSTITUTION_MAPPING =
-            "org.onap.sdc.tosca.datatypes.model.SubstitutionMapping";
+    public static final String TOSCA_MODEL_PARAMETER_DEFINITION = "org.onap.sdc.tosca.datatypes.model.ParameterDefinition";
+    public static final String TOSCA_MODEL_EXT_PARAMETER_DEFINITION = "org.onap.sdc.tosca.datatypes.model.heatextend.ParameterDefinitionExt";
+    public static final String TOSCA_MODEL_REQUIREMENT_ASSIGNMENT = "org.onap.sdc.tosca.datatypes.model.RequirementAssignment";
+    public static final String TOSCA_MODEL_EXT_REQUIREMENT_ASSIGNMENT = "org.onap.sdc.tosca.datatypes.model.extension.RequirementAssignmentExt";
+    public static final String TOSCA_MODEL_SUBSTITUTION_MAPPING = "org.onap.sdc.tosca.datatypes.model.SubstitutionMapping";
 
     @Override
     public <T> Constructor getConstructor(Class<T> typClass) {
@@ -51,7 +43,7 @@ public class ToscaExtensionYamlUtil extends YamlUtil {
     public class ToscaPropertyUtilsWithHeatExtension extends MyPropertyUtils {
 
         @Override
-        public Property getProperty(Class<? extends Object> type, String name)  {
+        public Property getProperty(Class<? extends Object> type, String name) {
             Class<? extends Object> classType = type;
             try {
                 if (type.equals(Class.forName(TOSCA_MODEL_PARAMETER_DEFINITION))) {

@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.Map;
 import java.util.Objects;
@@ -33,34 +30,31 @@ class Interface {
     private static final String COULD_NOT_CREATE_OPERATION = "Could not create Operation from [";
     private static final String OPER = "operations";
 
-    Optional<Map.Entry<String, ? extends OperationDefinition>> createOperation(String propertyName,
-            Object operationCandidate, Set<String> fieldNames, Class<? extends OperationDefinition> operationClass) {
+    Optional<Map.Entry<String, ? extends OperationDefinition>> createOperation(String propertyName, Object operationCandidate, Set<String> fieldNames,
+                                                                               Class<? extends OperationDefinition> operationClass) {
         if (!fieldNames.contains(propertyName)) {
             try {
-                Optional<? extends OperationDefinition> operationDefinition =
-                        CommonUtil.createObjectUsingSetters(operationCandidate, operationClass);
-                Map.Entry<String, ? extends OperationDefinition> operation =
-                        new Map.Entry<String, OperationDefinition>() {
-                            @Override
-                            public String getKey() {
-                                return propertyName;
-                            }
+                Optional<? extends OperationDefinition> operationDefinition = CommonUtil.createObjectUsingSetters(operationCandidate, operationClass);
+                Map.Entry<String, ? extends OperationDefinition> operation = new Map.Entry<String, OperationDefinition>() {
+                    @Override
+                    public String getKey() {
+                        return propertyName;
+                    }
 
-                            @Override
-                            public OperationDefinition getValue() {
-                                if (operationDefinition.isPresent()) {
-                                    return operationDefinition.get();
-                                }
-                                return null;
-                            }
+                    @Override
+                    public OperationDefinition getValue() {
+                        if (operationDefinition.isPresent()) {
+                            return operationDefinition.get();
+                        }
+                        return null;
+                    }
 
-                            @Override
-                            public OperationDefinition setValue(OperationDefinition value) {
-                                return null;
-                            }
-                        };
+                    @Override
+                    public OperationDefinition setValue(OperationDefinition value) {
+                        return null;
+                    }
+                };
                 return Optional.of(operation);
-
             } catch (Exception exc) {
                 throw new ToscaRuntimeException(COULD_NOT_CREATE_OPERATION + propertyName + "]", exc);
             }
@@ -72,17 +66,14 @@ class Interface {
         if (Objects.isNull(interfaceEntity)) {
             return Optional.empty();
         }
-
         Map<String, Object> interfaceAsMap = CommonUtil.getObjectAsMap(interfaceEntity);
         Map<String, Object> operations = (Map<String, Object>) interfaceAsMap.get(OPER);
         if (MapUtils.isNotEmpty(operations)) {
             interfaceAsMap.remove(OPER);
             interfaceAsMap.putAll(operations);
         }
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         return Optional.of(objectMapper.convertValue(interfaceAsMap, Object.class));
     }
-
 }

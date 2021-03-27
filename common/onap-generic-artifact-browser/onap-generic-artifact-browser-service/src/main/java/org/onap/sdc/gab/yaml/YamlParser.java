@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.gab.yaml;
 
 import com.google.gson.Gson;
@@ -54,7 +53,6 @@ import org.yaml.snakeyaml.Yaml;
 public class YamlParser implements AutoCloseable {
 
     private static final Logger LOGGER = Logger.getLogger(YamlParser.class.getName());
-
     private Stream<Object> parsedYamlContent;
     private InputStream inputStream;
     private Set<String> filters;
@@ -119,8 +117,8 @@ public class YamlParser implements AutoCloseable {
     /**
      * Collects the results from parsed yaml file and applied filters.
      *
-     * @exception IOException Means that yaml file has invalid content.
      * @return List of List of simple entry 'key: collection of data'
+     * @throws IOException Means that yaml file has invalid content.
      */
     List<List<SimpleEntry<String, ? extends Collection<Object>>>> collect() throws IOException {
         try {
@@ -145,12 +143,8 @@ public class YamlParser implements AutoCloseable {
         }
     }
 
-    private List<SimpleEntry<String, ? extends Collection<Object>>> findInJson(Set<String> keys,
-        JsonElement document) {
-        return keys.stream()
-            .map(getEntryForKeyFunction(document))
-            .filter(notEmptyEntryPredicate())
-            .collect(Collectors.toList());
+    private List<SimpleEntry<String, ? extends Collection<Object>>> findInJson(Set<String> keys, JsonElement document) {
+        return keys.stream().map(getEntryForKeyFunction(document)).filter(notEmptyEntryPredicate()).collect(Collectors.toList());
     }
 
     private Predicate<? super List<SimpleEntry<String, ? extends Collection<Object>>>> notEmptyListPredicate() {
@@ -161,8 +155,7 @@ public class YamlParser implements AutoCloseable {
         return entry -> !entry.getValue().isEmpty();
     }
 
-    private Function<String, SimpleEntry<String, ? extends Collection<Object>>> getEntryForKeyFunction(
-        JsonElement document) {
+    private Function<String, SimpleEntry<String, ? extends Collection<Object>>> getEntryForKeyFunction(JsonElement document) {
         return key -> {
             JsonSurfer surfer = JsonSurferGson.INSTANCE;
             try {

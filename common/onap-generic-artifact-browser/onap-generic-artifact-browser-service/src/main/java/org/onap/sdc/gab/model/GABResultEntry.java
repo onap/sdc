@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.gab.model;
 
 import com.google.common.base.MoreObjects;
@@ -30,22 +29,20 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GABResultEntry {
+
     /**
      * Path of queried data.
      */
     private String path;
-
     /**
      * Specific events-template data served by the GABService
+     *
      * @see GABService
      */
     private Object data;
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-            .add("path", path)
-            .add("data", data)
-            .toString();
+        return MoreObjects.toStringHelper(this).add("path", path).add("data", data).toString();
     }
 }

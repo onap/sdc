@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.Map;
@@ -55,7 +54,6 @@ public class OperationDefinitionType extends OperationDefinition {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(implementation, inputs);
     }
 

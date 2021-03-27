@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.error;
 
 public class ToscaRuntimeException extends RuntimeException {
 
-  public ToscaRuntimeException(String message) {
-    super(message);
-  }
+    public ToscaRuntimeException(String message) {
+        super(message);
+    }
 
-  public ToscaRuntimeException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public ToscaRuntimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public ToscaRuntimeException(Throwable cause) {
-    super(cause);
-  }
+    public ToscaRuntimeException(Throwable cause) {
+        super(cause);
+    }
 }

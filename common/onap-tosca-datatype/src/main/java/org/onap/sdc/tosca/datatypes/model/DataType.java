@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
@@ -25,108 +24,108 @@ import java.util.Map;
 
 public class DataType {
 
-  private String derived_from;
-  private String version;
-  private Map<String, String> metadata;
-  private String description;
-  private List<Constraint> constraints;
-  private Map<String, PropertyDefinition> properties;
+    private String derived_from;
+    private String version;
+    private Map<String, String> metadata;
+    private String description;
+    private List<Constraint> constraints;
+    private Map<String, PropertyDefinition> properties;
 
-  /**
-   * Gets derived from.
-   *
-   * @return the derived from
-   */
-  public String getDerived_from() {
-    return derived_from;
-  }
+    /**
+     * Gets derived from.
+     *
+     * @return the derived from
+     */
+    public String getDerived_from() {
+        return derived_from;
+    }
 
-  /**
-   * Sets derived from.
-   *
-   * @param derived_from the derived from
-   */
-  public void setDerived_from(String derived_from) {
-    this.derived_from = derived_from;
-  }
+    /**
+     * Sets derived from.
+     *
+     * @param derived_from the derived from
+     */
+    public void setDerived_from(String derived_from) {
+        this.derived_from = derived_from;
+    }
 
-  /**
-   * Gets version.
-   *
-   * @return the version
-   */
-  public String getVersion() {
-    return version;
-  }
+    /**
+     * Gets version.
+     *
+     * @return the version
+     */
+    public String getVersion() {
+        return version;
+    }
 
-  /**
-   * Sets version.
-   *
-   * @param version the version
-   */
-  public void setVersion(String version) {
-    this.version = version;
-  }
+    /**
+     * Sets version.
+     *
+     * @param version the version
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-  public Map<String, String> getMetadata() {
-    return metadata;
-  }
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
 
-  public void setMetadata(Map<String, String> metadata) {
-    this.metadata = metadata;
-  }
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
 
-  /**
-   * Gets description.
-   *
-   * @return the description
-   */
-  public String getDescription() {
-    return description;
-  }
+    /**
+     * Gets description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-  /**
-   * Sets description.
-   *
-   * @param description the description
-   */
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    /**
+     * Sets description.
+     *
+     * @param description the description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  /**
-   * Gets constraints.
-   *
-   * @return the constraints
-   */
-  public List<Constraint> getConstraints() {
-    return constraints;
-  }
+    /**
+     * Gets constraints.
+     *
+     * @return the constraints
+     */
+    public List<Constraint> getConstraints() {
+        return constraints;
+    }
 
-  /**
-   * Sets constraints.
-   *
-   * @param constraints the constraints
-   */
-  public void setConstraints(List<Constraint> constraints) {
-    this.constraints = constraints;
-  }
+    /**
+     * Sets constraints.
+     *
+     * @param constraints the constraints
+     */
+    public void setConstraints(List<Constraint> constraints) {
+        this.constraints = constraints;
+    }
 
-  /**
-   * Gets properties.
-   *
-   * @return the properties
-   */
-  public Map<String, PropertyDefinition> getProperties() {
-    return properties;
-  }
+    /**
+     * Gets properties.
+     *
+     * @return the properties
+     */
+    public Map<String, PropertyDefinition> getProperties() {
+        return properties;
+    }
 
-  /**
-   * Sets properties.
-   *
-   * @param properties the properties
-   */
-  public void setProperties(Map<String, PropertyDefinition> properties) {
-    this.properties = properties;
-  }
+    /**
+     * Sets properties.
+     *
+     * @param properties the properties
+     */
+    public void setProperties(Map<String, PropertyDefinition> properties) {
+        this.properties = properties;
+    }
 }

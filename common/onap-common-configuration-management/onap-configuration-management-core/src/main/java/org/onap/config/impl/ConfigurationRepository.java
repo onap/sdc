@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config.impl;
 
 import java.io.File;
@@ -40,26 +39,20 @@ public final class ConfigurationRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationRepository.class);
     private static final ConfigurationRepository REPO = new ConfigurationRepository();
-
     private final Set<String> tenants = Collections.synchronizedSet(new HashSet<>());
-
     private final Set<String> namespaces = Collections.synchronizedSet(new HashSet<>());
-
-    private final Map<String, ConfigurationHolder> store = Collections.synchronizedMap(
-
-            new LinkedHashMap<String, ConfigurationHolder>(16, 0.75f, true) {
-
-                @Override
-                protected boolean removeEldestEntry(Map.Entry eldest) {
-                    try {
-                        return size() > getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-                                .getInt("config.size.max");
-                    } catch (Exception exception) {
-                        logger.info("ConfigurationException", exception);
-                        return false;
-                    }
+    private final Map<String, ConfigurationHolder> store = Collections
+        .synchronizedMap(new LinkedHashMap<String, ConfigurationHolder>(16, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry eldest) {
+                try {
+                    return size() > getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE).getInt("config.size.max");
+                } catch (Exception exception) {
+                    logger.info("ConfigurationException", exception);
+                    return false;
                 }
-            });
+            }
+        });
 
     private ConfigurationRepository() {
         tenants.add(Constants.DEFAULT_TENANT);
@@ -106,22 +99,18 @@ public final class ConfigurationRepository {
     }
 
     public void populateOverrideConfiguration(String key, File file) {
-
         ConfigurationHolder holder = store.get(key);
-
         if (holder == null) {
             holder = new ConfigurationHolder(new CombinedConfiguration());
             store.put(key, holder);
         }
-
         holder.addOverrideConfiguration(file.getAbsolutePath(), ConfigurationUtils.getConfigurationBuilder(file));
         populateTenantsNamespace(key);
     }
 
     private class ConfigurationHolder {
 
-        private final Map<String, FileBasedConfigurationBuilder<FileBasedConfiguration>> overrideConfiguration =
-                new LinkedHashMap<>();
+        private final Map<String, FileBasedConfigurationBuilder<FileBasedConfiguration>> overrideConfiguration = new LinkedHashMap<>();
         private BasicConfigurationBuilder<Configuration> builder;
         private Timestamp lastConfigurationBuildTime;
         private Configuration config;
@@ -160,17 +149,13 @@ public final class ConfigurationRepository {
             if (config == null) {
                 config = builder.getConfiguration();
                 lastConfigurationBuildTime = new Timestamp(System.currentTimeMillis());
-            } else if (lastConfigurationBuildTime != null
-                    && System.currentTimeMillis() - lastConfigurationBuildTime.getTime()
-                    > getConfigurationFor(Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE)
-                    .getInt("config.refresh.interval")) {
+            } else if (lastConfigurationBuildTime != null && System.currentTimeMillis() - lastConfigurationBuildTime.getTime() > getConfigurationFor(
+                Constants.DEFAULT_TENANT, Constants.DB_NAMESPACE).getInt("config.refresh.interval")) {
                 lastConfigurationBuildTime = new Timestamp(System.currentTimeMillis());
             }
-
             if (composite == null && overrideConfiguration.size() != 0) {
                 composite = getEffectiveConfiguration(config, overrideConfiguration.values());
             }
-
             return overrideConfiguration.size() == 0 ? config : composite;
         }
     }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config.impl;
 
 import static org.onap.config.Constants.DEFAULT_NAMESPACE;
@@ -59,8 +58,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                 if (queryData.isFallback()) {
                     value = get(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class, hints);
                 } else {
-                    value = getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class,
-                        hints);
+                    value = getInternal(queryData.getTenant(), queryData.getNamespace(), queryData.getKey(), String[].class, hints);
                 }
                 return ConfigurationUtils.getCommaSeparatedList(value);
             } catch (Exception exception) {
@@ -130,11 +128,7 @@ public final class CliConfigurationImpl extends ConfigurationImpl implements Con
                 }
             }
         } catch (Exception exception) {
-            LOGGER.warn("Error occurred while searching for in-memory keys for namespace: '{}' and tenant: '{}'",
-                namespace,
-                tenant,
-                exception
-            );
+            LOGGER.warn("Error occurred while searching for in-memory keys for namespace: '{}' and tenant: '{}'", namespace, tenant, exception);
         }
         return keys;
     }

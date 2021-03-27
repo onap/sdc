@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -41,10 +40,7 @@ public class AttributeDefinition implements Cloneable {
         status = Status.SUPPORTED.getName();
     }
 
-    public AttributeDefinition(final String type,
-                               final String description,
-                               final Object _default,
-                               final String status,
+    public AttributeDefinition(final String type, final String description, final Object _default, final String status,
                                final EntrySchema entry_schema) {
         this.setType(type);
         this.setDescription(description);
@@ -60,8 +56,7 @@ public class AttributeDefinition implements Cloneable {
         attributeDefinition.setDescription(this.getDescription());
         attributeDefinition.set_default(this.get_default());
         attributeDefinition.setStatus(this.getStatus());
-        attributeDefinition.setEntry_schema(
-            Objects.isNull(this.getEntry_schema()) ? null : this.getEntry_schema().clone());
+        attributeDefinition.setEntry_schema(Objects.isNull(this.getEntry_schema()) ? null : this.getEntry_schema().clone());
         return attributeDefinition;
     }
 }

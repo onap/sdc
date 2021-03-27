@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model.extension;
 
 import lombok.EqualsAndHashCode;
@@ -27,6 +26,4 @@ import org.onap.sdc.tosca.datatypes.model.RequirementAssignment;
 public class RequirementAssignmentExt extends RequirementAssignment {
 
     private ServiceFilter service_filter;
-
-
 }

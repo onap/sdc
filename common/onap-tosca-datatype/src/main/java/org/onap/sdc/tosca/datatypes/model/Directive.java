@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.tosca.datatypes.model;
-
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,11 +25,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Directive {
-
-
-  SELECTABLE("selectable"),
-  SUBSTITUTABLE("substitutable");
-
-  private final String displayName;
-
+    SELECTABLE("selectable"), SUBSTITUTABLE("substitutable");
+    private final String displayName;
 }

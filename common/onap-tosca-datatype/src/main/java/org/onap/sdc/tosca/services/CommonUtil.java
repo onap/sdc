@@ -18,6 +18,8 @@
  */
 package org.onap.sdc.tosca.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -27,42 +29,34 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import com.google.common.collect.ImmutableSet;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtils;
 
 public class CommonUtil {
 
     public static final String DEFAULT = "default";
     public static final String UNDERSCORE_DEFAULT = "_default";
-    private static ImmutableSet<Class<?>> complexClassType = ImmutableSet.of(Map.class, String.class, Integer.class, Float.class,
-            Double.class, Set.class, Object.class, List.class);
+    private static ImmutableSet<Class<?>> complexClassType = ImmutableSet
+        .of(Map.class, String.class, Integer.class, Float.class, Double.class, Set.class, Object.class, List.class);
 
     private CommonUtil() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static <T> Optional<T> createObjectUsingSetters(Object objectCandidate, Class<? extends T> classToCreate)
-            throws Exception {
+    public static <T> Optional<T> createObjectUsingSetters(Object objectCandidate, Class<? extends T> classToCreate) throws Exception {
         if (Objects.isNull(objectCandidate)) {
             return Optional.empty();
         }
         Map<String, Object> objectAsMap = getObjectAsMap(objectCandidate);
-
         Field[] declaredFields = classToCreate.getDeclaredFields();
         createSubObjectsUsingSetters(objectAsMap, declaredFields);
         T result = populateBean(objectAsMap, classToCreate);
-
         return Optional.of(result);
     }
 
-    public static void createSubObjectsUsingSetters(Map<String, Object> objectAsMap, Field[] declaredFields)
-        throws Exception {
+    public static void createSubObjectsUsingSetters(Map<String, Object> objectAsMap, Field[] declaredFields) throws Exception {
         for (Field field : declaredFields) {
             if (isComplexClass(field)) {
-                Optional<?> objectUsingSetters =
-                        createObjectUsingSetters(objectAsMap.get(field.getName()), field.getType());
+                Optional<?> objectUsingSetters = createObjectUsingSetters(objectAsMap.get(field.getName()), field.getType());
                 if (objectUsingSetters.isPresent()) {
                     objectAsMap.remove(field.getName());
                     objectAsMap.put(field.getName(), objectUsingSetters.get());
@@ -79,9 +73,7 @@ public class CommonUtil {
     }
 
     public static Map<String, Object> getObjectAsMap(Object obj) {
-        Map<String, Object> objectAsMap =
-                obj instanceof Map ? (Map<String, Object>) obj : new ObjectMapper().convertValue(obj, Map.class);
-
+        Map<String, Object> objectAsMap = obj instanceof Map ? (Map<String, Object>) obj : new ObjectMapper().convertValue(obj, Map.class);
         if (objectAsMap.containsKey(DEFAULT)) {
             Object defaultValue = objectAsMap.get(DEFAULT);
             objectAsMap.remove(DEFAULT);

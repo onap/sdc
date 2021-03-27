@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.config.impl;
 
 import java.io.IOException;
@@ -27,7 +26,6 @@ import javax.servlet.annotation.WebFilter;
 import org.onap.config.Constants;
 import org.onap.config.api.Configuration;
 
-
 @WebFilter("/")
 public class ConfigurationFilter implements Filter {
 
@@ -37,8 +35,8 @@ public class ConfigurationFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest paramServletRequest, ServletResponse paramServletResponse,
-            FilterChain paramFilterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest paramServletRequest, ServletResponse paramServletResponse, FilterChain paramFilterChain)
+        throws IOException, ServletException {
         Configuration.TENANT.set(Constants.DEFAULT_TENANT);
         try {
             paramFilterChain.doFilter(paramServletRequest, paramServletResponse);
@@ -51,5 +49,4 @@ public class ConfigurationFilter implements Filter {
     public void destroy() {
         //Use the default behavior
     }
-
 }

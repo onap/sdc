@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.onap.sdc.gab.model;
 
 import java.util.Set;
@@ -32,29 +31,21 @@ import lombok.Getter;
 public class GABQuery {
 
     /**
-     * PATH - when provided path to the yaml file
-     * CONTENT - when provided yaml file content
-     */
-    public enum GABQueryType {
-        PATH, CONTENT
-    }
-
-    /**
      * JSON paths for querying specific data (this will be the definition of a "column").
      */
     private Set<String> fields;
-
     /**
      * An YAML document path/content
      */
     private String document;
-
     /**
      * Used for query type checking.
      *
      * @see GABQueryType
-     *
      */
     private GABQueryType type;
-
+    /**
+     * PATH - when provided path to the yaml file CONTENT - when provided yaml file content
+     */
+    public enum GABQueryType {PATH, CONTENT}
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.Collections;
@@ -27,61 +26,63 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum PropertyType {
+    // @formatter:off
+    STRING("string"),
+    INTEGER("integer"),
+    FLOAT("float"),
+    BOOLEAN("boolean"),
+    TIMESTAMP("timestamp"),
+    NULL("null"),
+    MAP("map"),
+    LIST("list"),
+    SCALAR_UNIT_SIZE("scalar-unit.size"),
+    SCALAR_UNIT_TIME("scalar-unit.time"),
+    SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
+    // @formatter:on
 
-  STRING("string"),
-  INTEGER("integer"),
-  FLOAT("float"),
-  BOOLEAN("boolean"),
-  TIMESTAMP("timestamp"),
-  NULL("null"),
-  MAP("map"),
-  LIST("list"),
-  SCALAR_UNIT_SIZE("scalar-unit.size"),
-  SCALAR_UNIT_TIME("scalar-unit.time"),
-  SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
+    private static final Map<String, PropertyType> M_MAP = Collections.unmodifiableMap(initializeMapping());
+    private static final Set<String> SIMPLE_PROPERTY_TYPES = Collections.unmodifiableSet(initializeSimplePropertyTypes());
+    private String displayName;
 
-  private static final Map<String, PropertyType> M_MAP = Collections.unmodifiableMap(initializeMapping());
-  private static final Set<String> SIMPLE_PROPERTY_TYPES = Collections.unmodifiableSet(initializeSimplePropertyTypes());
-  private String displayName;
-
-  /**
-   * Initilize property type display name mapping.
-   * @return Map
-   */
-  public static Map<String, PropertyType> initializeMapping() {
-    final Map<String, PropertyType> typeMap = new HashMap<>();
-    for (final PropertyType propertyType : PropertyType.values()) {
-      typeMap.put(propertyType.displayName, propertyType);
+    /**
+     * Initilize property type display name mapping.
+     *
+     * @return Map
+     */
+    public static Map<String, PropertyType> initializeMapping() {
+        final Map<String, PropertyType> typeMap = new HashMap<>();
+        for (final PropertyType propertyType : PropertyType.values()) {
+            typeMap.put(propertyType.displayName, propertyType);
+        }
+        return typeMap;
     }
-    return typeMap;
-  }
 
-  /**
-   * Get Property type by display name.
-   * @param displayName
-   * @return PropertyType
-   */
-  public static PropertyType getPropertyTypeByDisplayName(final String displayName) {
-    if (M_MAP.containsKey(displayName)) {
-      return M_MAP.get(displayName);
+    /**
+     * Get Property type by display name.
+     *
+     * @param displayName
+     * @return PropertyType
+     */
+    public static PropertyType getPropertyTypeByDisplayName(final String displayName) {
+        if (M_MAP.containsKey(displayName)) {
+            return M_MAP.get(displayName);
+        }
+        return null;
     }
-    return null;
-  }
 
-  private static Set<String> initializeSimplePropertyTypes() {
-    final Set<String> simplePropertyTypes = new HashSet<>();
-    simplePropertyTypes.add(STRING.getDisplayName().toLowerCase());
-    simplePropertyTypes.add(INTEGER.getDisplayName().toLowerCase());
-    simplePropertyTypes.add(FLOAT.getDisplayName().toLowerCase());
-    simplePropertyTypes.add(BOOLEAN.getDisplayName().toLowerCase());
-    simplePropertyTypes.add(SCALAR_UNIT_SIZE.getDisplayName().toLowerCase());
-    simplePropertyTypes.add(SCALAR_UNIT_TIME.getDisplayName().toLowerCase());
-    simplePropertyTypes.add(SCALAR_UNIT_FREQUENCY.getDisplayName().toLowerCase());
-    return simplePropertyTypes;
-  }
+    private static Set<String> initializeSimplePropertyTypes() {
+        final Set<String> simplePropertyTypes = new HashSet<>();
+        simplePropertyTypes.add(STRING.getDisplayName().toLowerCase());
+        simplePropertyTypes.add(INTEGER.getDisplayName().toLowerCase());
+        simplePropertyTypes.add(FLOAT.getDisplayName().toLowerCase());
+        simplePropertyTypes.add(BOOLEAN.getDisplayName().toLowerCase());
+        simplePropertyTypes.add(SCALAR_UNIT_SIZE.getDisplayName().toLowerCase());
+        simplePropertyTypes.add(SCALAR_UNIT_TIME.getDisplayName().toLowerCase());
+        simplePropertyTypes.add(SCALAR_UNIT_FREQUENCY.getDisplayName().toLowerCase());
+        return simplePropertyTypes;
+    }
 
-  public static Set<String> getSimplePropertyTypes() {
-    return SIMPLE_PROPERTY_TYPES;
-  }
-
+    public static Set<String> getSimplePropertyTypes() {
+        return SIMPLE_PROPERTY_TYPES;
+    }
 }

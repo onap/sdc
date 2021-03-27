@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.Map;
  * @author KATYR
  * @since May 13, 2018
  */
-
 public class CapabilityFilter {
 
     private List<Map<String, List<Constraint>>> properties;
@@ -40,5 +38,4 @@ public class CapabilityFilter {
     public String toString() {
         return "CapabilityFilter{" + "properties=" + properties + '}';
     }
-
 }
