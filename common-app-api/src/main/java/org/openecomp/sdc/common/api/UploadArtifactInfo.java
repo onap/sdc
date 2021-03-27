@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,127 +17,135 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.api;
 
 public class UploadArtifactInfo {
 
-	public UploadArtifactInfo() {
+    private String artifactName;
+    private String artifactPath;
+    private ArtifactTypeEnum artifactType;
+    private String artifactDescription;
+    private String artifactData;
+    public UploadArtifactInfo() {
+    }
+    public UploadArtifactInfo(String artifactName, String artifactPath, ArtifactTypeEnum artifactType, String artifactDescription) {
+        super();
+        this.artifactName = artifactName;
+        this.artifactPath = artifactPath;
+        this.artifactType = artifactType;
+        this.artifactDescription = artifactDescription;
+    }
+    public UploadArtifactInfo(String artifactName, String artifactPath, ArtifactTypeEnum artifactType, String artifactDescription,
+                              String artifactData) {
+        super();
+        this.artifactName = artifactName;
+        this.artifactPath = artifactPath;
+        this.artifactType = artifactType;
+        this.artifactDescription = artifactDescription;
+        this.artifactData = artifactData;
+    }
 
-	}
+    public String getArtifactName() {
+        return artifactName;
+    }
 
-	public UploadArtifactInfo(String artifactName, String artifactPath, ArtifactTypeEnum artifactType, String artifactDescription) {
-		super();
-		this.artifactName = artifactName;
-		this.artifactPath = artifactPath;
-		this.artifactType = artifactType;
-		this.artifactDescription = artifactDescription;
-	}
+    public void setArtifactName(String artifactName) {
+        this.artifactName = artifactName;
+    }
 
-	public UploadArtifactInfo(String artifactName, String artifactPath, ArtifactTypeEnum artifactType, String artifactDescription, String artifactData) {
-		super();
-		this.artifactName = artifactName;
-		this.artifactPath = artifactPath;
-		this.artifactType = artifactType;
-		this.artifactDescription = artifactDescription;
-		this.artifactData = artifactData;
-	}
+    public String getArtifactPath() {
+        return artifactPath;
+    }
 
-	private String artifactName;
-	private String artifactPath;
-	private ArtifactTypeEnum artifactType;
-	private String artifactDescription;
-	private String artifactData;
+    public void setArtifactPath(String artifactPath) {
+        this.artifactPath = artifactPath;
+    }
 
-	public String getArtifactName() {
-		return artifactName;
-	}
+    public ArtifactTypeEnum getArtifactType() {
+        return artifactType;
+    }
 
-	public void setArtifactName(String artifactName) {
-		this.artifactName = artifactName;
-	}
+    public void setArtifactType(ArtifactTypeEnum artifactType) {
+        this.artifactType = artifactType;
+    }
 
-	public String getArtifactPath() {
-		return artifactPath;
-	}
+    public String getArtifactDescription() {
+        return artifactDescription;
+    }
 
-	public void setArtifactPath(String artifactPath) {
-		this.artifactPath = artifactPath;
-	}
+    public void setArtifactDescription(String artifactDescription) {
+        this.artifactDescription = artifactDescription;
+    }
 
-	public ArtifactTypeEnum getArtifactType() {
-		return artifactType;
-	}
+    public String getArtifactData() {
+        return artifactData;
+    }
 
-	public void setArtifactType(ArtifactTypeEnum artifactType) {
-		this.artifactType = artifactType;
-	}
+    public void setArtifactData(String artifactData) {
+        this.artifactData = artifactData;
+    }
 
-	public String getArtifactDescription() {
-		return artifactDescription;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((artifactData == null) ? 0 : artifactData.hashCode());
+        result = prime * result + ((artifactDescription == null) ? 0 : artifactDescription.hashCode());
+        result = prime * result + ((artifactName == null) ? 0 : artifactName.hashCode());
+        result = prime * result + ((artifactPath == null) ? 0 : artifactPath.hashCode());
+        result = prime * result + ((artifactType == null) ? 0 : artifactType.hashCode());
+        return result;
+    }
 
-	public void setArtifactDescription(String artifactDescription) {
-		this.artifactDescription = artifactDescription;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        UploadArtifactInfo other = (UploadArtifactInfo) obj;
+        if (artifactData == null) {
+            if (other.artifactData != null) {
+                return false;
+            }
+        } else if (!artifactData.equals(other.artifactData)) {
+            return false;
+        }
+        if (artifactDescription == null) {
+            if (other.artifactDescription != null) {
+                return false;
+            }
+        } else if (!artifactDescription.equals(other.artifactDescription)) {
+            return false;
+        }
+        if (artifactName == null) {
+            if (other.artifactName != null) {
+                return false;
+            }
+        } else if (!artifactName.equals(other.artifactName)) {
+            return false;
+        }
+        if (artifactPath == null) {
+            if (other.artifactPath != null) {
+                return false;
+            }
+        } else if (!artifactPath.equals(other.artifactPath)) {
+            return false;
+        }
+        if (artifactType != other.artifactType) {
+            return false;
+        }
+        return true;
+    }
 
-	public String getArtifactData() {
-		return artifactData;
-	}
-
-	public void setArtifactData(String artifactData) {
-		this.artifactData = artifactData;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((artifactData == null) ? 0 : artifactData.hashCode());
-		result = prime * result + ((artifactDescription == null) ? 0 : artifactDescription.hashCode());
-		result = prime * result + ((artifactName == null) ? 0 : artifactName.hashCode());
-		result = prime * result + ((artifactPath == null) ? 0 : artifactPath.hashCode());
-		result = prime * result + ((artifactType == null) ? 0 : artifactType.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		UploadArtifactInfo other = (UploadArtifactInfo) obj;
-		if (artifactData == null) {
-			if (other.artifactData != null)
-				return false;
-		} else if (!artifactData.equals(other.artifactData))
-			return false;
-		if (artifactDescription == null) {
-			if (other.artifactDescription != null)
-				return false;
-		} else if (!artifactDescription.equals(other.artifactDescription))
-			return false;
-		if (artifactName == null) {
-			if (other.artifactName != null)
-				return false;
-		} else if (!artifactName.equals(other.artifactName))
-			return false;
-		if (artifactPath == null) {
-			if (other.artifactPath != null)
-				return false;
-		} else if (!artifactPath.equals(other.artifactPath))
-			return false;
-		if (artifactType != other.artifactType)
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "UploadArtifactInfo [artifactName=" + artifactName + ", artifactPath=" + artifactPath + ", artifactType=" + artifactType + ", artifactDescription=" + artifactDescription + ", artifactData=" + artifactData + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "UploadArtifactInfo [artifactName=" + artifactName + ", artifactPath=" + artifactPath + ", artifactType=" + artifactType
+            + ", artifactDescription=" + artifactDescription + ", artifactData=" + artifactData + "]";
+    }
 }

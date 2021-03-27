@@ -13,7 +13,6 @@ public class CadiFilterParams {
     private String cadi_loglevel;
     private String cadi_truststore;
     private String cadi_truststore_password;
-
     private String aaf_id;
     private String aaf_password;
     private String aaf_env;

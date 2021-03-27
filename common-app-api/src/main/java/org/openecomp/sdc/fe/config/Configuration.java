@@ -17,7 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.fe.config;
 
 import static java.lang.String.format;
@@ -50,23 +49,14 @@ public class Configuration extends BasicConfiguration {
      * backend http secured port
      */
     private Integer beSslPort;
-
     private Integer healthCheckSocketTimeoutInMs;
-
     private Integer healthCheckIntervalInSeconds;
-
     private List<String> healthStatusExclude;
-
     private FeMonitoringConfig systemMonitoring;
-
     private String onboardingForwardContext;
-
     private OnboardingConfig onboarding;
-
     private CookieConfig authCookie;
-
     private BasicAuthConfig basicAuth;
-
     private CatalogFacadeMsConfig catalogFacadeMs;
     /**
      * be http context
@@ -84,7 +74,6 @@ public class Configuration extends BasicConfiguration {
     private int requestTimeout;
     private List<List<String>> identificationHeaderFields;
     private List<List<String>> optionalHeaderFields;
-
     private List<String> forwardHeaderFields;
 
     public Integer getHealthCheckSocketTimeoutInMs(int defaultVal) {
@@ -97,14 +86,11 @@ public class Configuration extends BasicConfiguration {
 
     @Override
     public String toString() {
-        return new StringBuilder().append(format("backend host: %s%n", beHost))
-            .append(format("backend http port: %s%n", beHttpPort))
+        return new StringBuilder().append(format("backend host: %s%n", beHost)).append(format("backend http port: %s%n", beHttpPort))
             .append(format("backend ssl port: %s%n", beSslPort)).append(format("backend context: %s%n", beContext))
-            .append(format("backend protocol: %s%n", beProtocol))
-            .append(format("onboarding forward context: %s%n", onboardingForwardContext))
+            .append(format("backend protocol: %s%n", beProtocol)).append(format("onboarding forward context: %s%n", onboardingForwardContext))
             .append(format("Version: %s%n", version)).append(format("Released: %s%n", released))
-            .append(format("Connecting to database: %s%n", connection))
-            .append(format("Supported protocols: %s%n", protocols)).toString();
+            .append(format("Connecting to database: %s%n", connection)).append(format("Supported protocols: %s%n", protocols)).toString();
     }
 
     @Getter
@@ -133,7 +119,6 @@ public class Configuration extends BasicConfiguration {
         private String hostBe;
         private Integer portBe;
         private String healthCheckUriFe;
-
     }
 
     @Getter
@@ -145,7 +130,6 @@ public class Configuration extends BasicConfiguration {
         private String path = "";
         private String domain = "";
         private String securityKey = "";
-
     }
 
     @Getter
@@ -156,8 +140,6 @@ public class Configuration extends BasicConfiguration {
         private boolean enabled = false;
         private String userName = "";
         private String userPass = "";
-
-
     }
 
     @Getter
@@ -170,7 +152,5 @@ public class Configuration extends BasicConfiguration {
         private Integer port;
         private String healthCheckUri;
         private String path;
-
     }
-
 }

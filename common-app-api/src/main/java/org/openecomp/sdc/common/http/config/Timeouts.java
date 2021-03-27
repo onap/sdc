@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,20 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.config;
 
 public class Timeouts {
 
+    public static final Timeouts DEFAULT;
     private static final int DEFAULT_TIMEOUT_MS = 15000;
+
+    static {
+        DEFAULT = new Timeouts();
+    }
+
     private int connectTimeoutMs = DEFAULT_TIMEOUT_MS;
     private int readTimeoutMs = DEFAULT_TIMEOUT_MS;
     private int connectPoolTimeoutMs = DEFAULT_TIMEOUT_MS;
-
-    public static final Timeouts DEFAULT;
-    static {
-        DEFAULT = new Timeouts(); 
-    }
 
     private Timeouts() {
     }
@@ -49,30 +49,30 @@ public class Timeouts {
     public int getConnectTimeoutMs() {
         return connectTimeoutMs;
     }
-    
+
     public void setConnectTimeoutMs(int connectTimeoutMs) {
         validate(connectTimeoutMs);
         this.connectTimeoutMs = connectTimeoutMs;
     }
-    
+
     public int getReadTimeoutMs() {
         return readTimeoutMs;
     }
-    
+
     public void setReadTimeoutMs(int readTimeoutMs) {
         validate(readTimeoutMs);
         this.readTimeoutMs = readTimeoutMs;
     }
-    
+
     public int getConnectPoolTimeoutMs() {
         return connectPoolTimeoutMs;
     }
-    
+
     public void setConnectPoolTimeoutMs(int connectPoolTimeoutMs) {
         validate(connectPoolTimeoutMs);
         this.connectPoolTimeoutMs = connectPoolTimeoutMs;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -82,25 +82,31 @@ public class Timeouts {
         result = prime * result + readTimeoutMs;
         return result;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Timeouts other = (Timeouts) obj;
-        if (connectPoolTimeoutMs != other.connectPoolTimeoutMs)
+        if (connectPoolTimeoutMs != other.connectPoolTimeoutMs) {
             return false;
-        if (connectTimeoutMs != other.connectTimeoutMs)
+        }
+        if (connectTimeoutMs != other.connectTimeoutMs) {
             return false;
-        if (readTimeoutMs != other.readTimeoutMs)
+        }
+        if (readTimeoutMs != other.readTimeoutMs) {
             return false;
+        }
         return true;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -113,9 +119,9 @@ public class Timeouts {
         builder.append("]");
         return builder.toString();
     }
-    
+
     private void validate(int timeout) {
-        if(timeout <= 0) {
+        if (timeout <= 0) {
             throw new IllegalArgumentException("Timeout values cannot be less than zero");
         }
     }

@@ -16,7 +16,6 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.be.config;
 
 import lombok.AllArgsConstructor;
@@ -25,12 +24,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ComponentType {
-
-    RESOURCE("Resource"),
-    SERVICE("Service"),
-    RESOURCE_INSTANCE("Resource Instance"),
-    SERVICE_INSTANCE("Service Instance");
-
+    RESOURCE("Resource"), SERVICE("Service"), RESOURCE_INSTANCE("Resource Instance"), SERVICE_INSTANCE("Service Instance");
     private final String value;
-
 }

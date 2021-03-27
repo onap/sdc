@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,17 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package org.openecomp.sdc.common.http.client.api;
-
-import org.openecomp.sdc.common.http.config.BasicAuthorization;
-import org.openecomp.sdc.common.http.config.ClientCertificate;
-import org.openecomp.sdc.common.http.config.HttpClientConfig;
-import org.openecomp.sdc.common.http.config.Timeouts;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.openecomp.sdc.common.http.config.BasicAuthorization;
+import org.openecomp.sdc.common.http.config.ClientCertificate;
+import org.openecomp.sdc.common.http.config.HttpClientConfig;
+import org.openecomp.sdc.common.http.config.Timeouts;
 
 public final class HttpClientConfigImmutable {
 
@@ -35,26 +33,27 @@ public final class HttpClientConfigImmutable {
     private final BasicAuthorization basicAuthorization;
     private final ClientCertificate clientCertificate;
     private final Timeouts timeouts;
-    private boolean enableMetricLogging;
     /*
-     * use ComparableHttpRequestRetryHandler.compare instead of default generated equals 
+     * use ComparableHttpRequestRetryHandler.compare instead of default generated equals
      */
     private final ComparableHttpRequestRetryHandler retryHandler;
     private final int numOfRetries;
-    
-    static HttpClientConfigImmutable getOrCreate(HttpClientConfig httpClientConfig) {
-        // TODO: retrieve from a pool if exist, otherwise create new
-        return new HttpClientConfigImmutable(httpClientConfig); 
-    }
+    private boolean enableMetricLogging;
 
     public HttpClientConfigImmutable(HttpClientConfig httpClientConfig) {
         timeouts = httpClientConfig.getTimeouts() != null ? new Timeouts(httpClientConfig.getTimeouts()) : null;
-        basicAuthorization = httpClientConfig.getBasicAuthorization() != null ? new BasicAuthorization(httpClientConfig.getBasicAuthorization()) : null;
+        basicAuthorization =
+            httpClientConfig.getBasicAuthorization() != null ? new BasicAuthorization(httpClientConfig.getBasicAuthorization()) : null;
         clientCertificate = httpClientConfig.getClientCertificate() != null ? new ClientCertificate(httpClientConfig.getClientCertificate()) : null;
         headers = httpClientConfig.getHeaders() != null ? Collections.unmodifiableMap(new HashMap<>(httpClientConfig.getHeaders())) : null;
         retryHandler = httpClientConfig.getRetryHandler();
         numOfRetries = httpClientConfig.getNumOfRetries();
         enableMetricLogging = httpClientConfig.isEnableMetricLogging();
+    }
+
+    static HttpClientConfigImmutable getOrCreate(HttpClientConfig httpClientConfig) {
+        // TODO: retrieve from a pool if exist, otherwise create new
+        return new HttpClientConfigImmutable(httpClientConfig);
     }
 
     public boolean isEnableMetricLogging() {
@@ -68,7 +67,7 @@ public final class HttpClientConfigImmutable {
     public int getNumOfRetries() {
         return numOfRetries;
     }
-    
+
     String getBasicAuthPassword() {
         return basicAuthorization != null ? basicAuthorization.getPassword() : null;
     }
@@ -88,7 +87,7 @@ public final class HttpClientConfigImmutable {
     ClientCertificate getClientCertificate() {
         return clientCertificate != null ? new ClientCertificate(clientCertificate) : null;
     }
-    
+
     public int getReadTimeoutMs() {
         return timeouts.getReadTimeoutMs();
     }
@@ -119,43 +118,51 @@ public final class HttpClientConfigImmutable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         HttpClientConfigImmutable other = (HttpClientConfigImmutable) obj;
         if (basicAuthorization == null) {
-            if (other.basicAuthorization != null)
+            if (other.basicAuthorization != null) {
                 return false;
-        }
-        else if (!basicAuthorization.equals(other.basicAuthorization))
+            }
+        } else if (!basicAuthorization.equals(other.basicAuthorization)) {
             return false;
+        }
         if (clientCertificate == null) {
-            if (other.clientCertificate != null)
+            if (other.clientCertificate != null) {
                 return false;
-        }
-        else if (!clientCertificate.equals(other.clientCertificate))
+            }
+        } else if (!clientCertificate.equals(other.clientCertificate)) {
             return false;
+        }
         if (headers == null) {
-            if (other.headers != null)
+            if (other.headers != null) {
                 return false;
-        }
-        else if (!headers.equals(other.headers))
+            }
+        } else if (!headers.equals(other.headers)) {
             return false;
+        }
         if (retryHandler == null) {
-            if (other.retryHandler != null)
+            if (other.retryHandler != null) {
                 return false;
-        }
-        else if (!retryHandler.compare(other.retryHandler))
+            }
+        } else if (!retryHandler.compare(other.retryHandler)) {
             return false;
+        }
         if (timeouts == null) {
-            if (other.timeouts != null)
+            if (other.timeouts != null) {
                 return false;
-        }
-        else if (!timeouts.equals(other.timeouts))
+            }
+        } else if (!timeouts.equals(other.timeouts)) {
             return false;
+        }
         return true;
     }
 
