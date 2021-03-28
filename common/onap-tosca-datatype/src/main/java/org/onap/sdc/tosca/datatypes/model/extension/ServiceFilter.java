@@ -15,34 +15,17 @@
  */
 package org.onap.sdc.tosca.datatypes.model.extension;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.onap.sdc.tosca.datatypes.model.NodeFilter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public class ServiceFilter extends NodeFilter {
 
     private Object tosca_id;
-
-    public Object getTosca_id() {
-        return tosca_id;
-    }
-
-    public void setTosca_id(Object toscaId) {
-        this.tosca_id = toscaId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ServiceFilter)) {
-            return false;
-        }
-        ServiceFilter that = (ServiceFilter) o;
-        return getTosca_id() != null ? getTosca_id().equals(that.getTosca_id()) : that.getTosca_id() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return getTosca_id() != null ? getTosca_id().hashCode() : 0;
-    }
 }

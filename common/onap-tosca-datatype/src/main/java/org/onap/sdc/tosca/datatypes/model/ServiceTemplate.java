@@ -21,10 +21,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.datatypes.model.heatextend.AnnotationType;
 import org.onap.sdc.tosca.error.ToscaRuntimeException;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class ServiceTemplate implements Template {
 
     private String tosca_definitions_version;
@@ -44,108 +50,12 @@ public class ServiceTemplate implements Template {
     private Map<String, AnnotationType> annotation_types;
     private TopologyTemplate topology_template;
 
-    public String getTosca_definitions_version() {
-        return tosca_definitions_version;
-    }
-
-    public void setTosca_definitions_version(String toscaDefinitionsVersion) {
-        this.tosca_definitions_version = toscaDefinitionsVersion;
-    }
-
-    public Map<String, String> getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
-    }
-
-    public Object getDsl_definitions() {
-        return dsl_definitions;
-    }
-
-    public void setDsl_definitions(Object dslDefinitions) {
-        this.dsl_definitions = dslDefinitions;
-    }
-
-    public Map<String, Repository> getRepositories() {
-        return repositories;
-    }
-
-    public void setRepositories(Map<String, Repository> repositories) {
-        this.repositories = repositories;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public List getImports() {
         return imports;
     }
 
     public void setImports(List imports) {
         this.imports = convertToscaImports(imports);
-    }
-
-    public Map<String, ArtifactType> getArtifact_types() {
-        return artifact_types;
-    }
-
-    public void setArtifact_types(Map<String, ArtifactType> artifactTypes) {
-        this.artifact_types = artifactTypes;
-    }
-
-    public Map<String, DataType> getData_types() {
-        return data_types;
-    }
-
-    public void setData_types(Map<String, DataType> dataTypes) {
-        this.data_types = dataTypes;
-    }
-
-    public Map<String, CapabilityType> getCapability_types() {
-        return capability_types;
-    }
-
-    public void setCapability_types(Map<String, CapabilityType> capabilityTypes) {
-        this.capability_types = capabilityTypes;
-    }
-
-    public Map<String, RelationshipType> getRelationship_types() {
-        return relationship_types;
-    }
-
-    public void setRelationship_types(Map<String, RelationshipType> relationshipTypes) {
-        this.relationship_types = relationshipTypes;
-    }
-
-    public Map<String, NodeType> getNode_types() {
-        return node_types;
-    }
-
-    public void setNode_types(Map<String, NodeType> nodeTypes) {
-        this.node_types = nodeTypes;
-    }
-
-    public Map<String, GroupType> getGroup_types() {
-        return group_types;
-    }
-
-    public void setGroup_types(Map<String, GroupType> groupTypes) {
-        this.group_types = groupTypes;
-    }
-
-    public Map<String, Object> getInterface_types() {
-        return interface_types;
-    }
-
-    public void setInterface_types(Map<String, Object> interfaceTypes) {
-        this.interface_types = interfaceTypes;
     }
 
     public Map<String, InterfaceType> getNormalizeInterfaceTypes() {
@@ -174,27 +84,4 @@ public class ServiceTemplate implements Template {
         this.interface_types.put(interfaceKey, toscaInterfaceObj.get());
     }
 
-    public Map<String, PolicyType> getPolicy_types() {
-        return policy_types;
-    }
-
-    public void setPolicy_types(Map<String, PolicyType> policyTypes) {
-        this.policy_types = policyTypes;
-    }
-
-    public TopologyTemplate getTopology_template() {
-        return topology_template;
-    }
-
-    public void setTopology_template(TopologyTemplate topologyTemplate) {
-        this.topology_template = topologyTemplate;
-    }
-
-    public Map<String, AnnotationType> getAnnotation_types() {
-        return annotation_types;
-    }
-
-    public void setAnnotation_types(Map<String, AnnotationType> annotationTypes) {
-        this.annotation_types = annotationTypes;
-    }
 }

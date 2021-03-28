@@ -23,7 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class TopologyTemplate {
 
     private String description;
@@ -35,46 +41,6 @@ public class TopologyTemplate {
     private SubstitutionMapping substitution_mappings;
     private Map<String, PolicyDefinition> policies;
     private List<WorkflowDefinition> workflows;
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Map<String, ParameterDefinition> getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(Map<String, ParameterDefinition> inputs) {
-        this.inputs = inputs;
-    }
-
-    public Map<String, NodeTemplate> getNode_templates() {
-        return node_templates;
-    }
-
-    public void setNode_templates(Map<String, NodeTemplate> node_templates) {
-        this.node_templates = node_templates;
-    }
-
-    public Map<String, RelationshipTemplate> getRelationship_templates() {
-        return relationship_templates;
-    }
-
-    public void setRelationship_templates(Map<String, RelationshipTemplate> relationship_templates) {
-        this.relationship_templates = relationship_templates;
-    }
-
-    public Map<String, GroupDefinition> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Map<String, GroupDefinition> groups) {
-        this.groups = groups;
-    }
 
     /**
      * Add group.
@@ -89,35 +55,4 @@ public class TopologyTemplate {
         this.groups.put(groupKey, groupDefinition);
     }
 
-    public Map<String, ParameterDefinition> getOutputs() {
-        return outputs;
-    }
-
-    public void setOutputs(Map<String, ParameterDefinition> outputs) {
-        this.outputs = outputs;
-    }
-
-    public SubstitutionMapping getSubstitution_mappings() {
-        return substitution_mappings;
-    }
-
-    public void setSubstitution_mappings(SubstitutionMapping substitution_mappings) {
-        this.substitution_mappings = substitution_mappings;
-    }
-
-    public Map<String, PolicyDefinition> getPolicies() {
-        return policies;
-    }
-
-    public void setPolicies(Map<String, PolicyDefinition> policies) {
-        this.policies = policies;
-    }
-
-    public List<WorkflowDefinition> getWorkflows() {
-        return workflows;
-    }
-
-    public void setWorkflows(List<WorkflowDefinition> workflows) {
-        this.workflows = workflows;
-    }
 }

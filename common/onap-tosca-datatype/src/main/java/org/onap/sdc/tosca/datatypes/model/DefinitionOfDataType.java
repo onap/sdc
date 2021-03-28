@@ -17,8 +17,14 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
 import java.util.Objects;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class DefinitionOfDataType implements Cloneable {
 
     private String type;
@@ -29,70 +35,6 @@ public class DefinitionOfDataType implements Cloneable {
     private String status;
     private List<Constraint> constraints;
     private EntrySchema entry_schema;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    public Boolean getRequired() {
-        return required;
-    }
-
-    public void setRequired(Boolean required) {
-        this.required = required;
-    }
-
-    public Object get_default() {
-        return _default;
-    }
-
-    public void set_default(Object _default) {
-        this._default = _default;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public List<Constraint> getConstraints() {
-        return constraints;
-    }
-
-    public void setConstraints(List<Constraint> constraints) {
-        this.constraints = constraints;
-    }
-
-    public EntrySchema getEntry_schema() {
-        return entry_schema;
-    }
-
-    public void setEntry_schema(EntrySchema entry_schema) {
-        this.entry_schema = entry_schema;
-    }
 
     @Override
     public DefinitionOfDataType clone() {
