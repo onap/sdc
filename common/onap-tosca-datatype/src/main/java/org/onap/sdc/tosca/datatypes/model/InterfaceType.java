@@ -21,14 +21,21 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.error.ToscaRuntimeException;
 import org.onap.sdc.tosca.services.CommonUtil;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public class InterfaceType extends Interface {
 
     protected static final String CONVERT_INTERFACE_TYPE_OBJECT_ERROR = "Could not create InterfaceType from input object, input object -  ";
@@ -38,9 +45,6 @@ public class InterfaceType extends Interface {
     private String description;
     private Map<String, PropertyDefinition> inputs;
     private Map<String, OperationDefinition> operations;
-
-    public InterfaceType() {
-    }
 
     public InterfaceType(Object toscaInterfaceTypeObj) {
         InterfaceType interfaceType = convertObjToInterfaceType(toscaInterfaceTypeObj);
@@ -75,77 +79,11 @@ public class InterfaceType extends Interface {
         }
     }
 
-    public String getDerived_from() {
-        return derived_from;
-    }
-
-    public void setDerived_from(String derivedFrom) {
-        this.derived_from = derivedFrom;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Map<String, String> getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
-    }
-
-    public Map<String, PropertyDefinition> getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(Map<String, PropertyDefinition> inputs) {
-        this.inputs = inputs;
-    }
-
-    public Map<String, OperationDefinition> getOperations() {
-        return operations;
-    }
-
-    public void setOperations(Map<String, OperationDefinition> operations) {
-        this.operations = operations;
-    }
-
     public void addOperation(String operationName, OperationDefinition operationDefinition) {
         if (MapUtils.isEmpty(this.operations)) {
             this.operations = new HashMap<>();
         }
         this.operations.put(operationName, operationDefinition);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(derived_from, version, metadata, description, inputs, operations);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof InterfaceType)) {
-            return false;
-        }
-        InterfaceType that = (InterfaceType) o;
-        return Objects.equals(derived_from, that.derived_from) && Objects.equals(version, that.version) && Objects.equals(metadata, that.metadata)
-            && Objects.equals(description, that.description) && Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
     }
 
     public Optional<Object> convertInterfaceTypeToToscaObj() {

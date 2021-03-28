@@ -20,26 +20,37 @@
 
 package org.onap.sdc.tosca.datatypes.model;
 
-import org.junit.Test;
 
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEquals;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCode;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ImplementationTest {
+import org.junit.jupiter.api.Test;
+
+class ImplementationTest {
+
     @Test
-    public void shouldHaveValidGettersAndSetters() {
+    void shouldHaveValidGettersAndSetters() {
         assertThat(Implementation.class, hasValidGettersAndSetters());
     }
 
     @Test
-    public void shouldHaveValidEquals() {
+    void shouldHaveValidEquals() {
         assertThat(Implementation.class, hasValidBeanEquals());
     }
 
     @Test
-    public void shouldHaveValidHashCode() {
+    void shouldHaveValidHashCode() {
         assertThat(Implementation.class, hasValidBeanHashCode());
+    }
+
+    @Test
+    void cloneTest() {
+        final Implementation clone = new Implementation().clone();
+        assertNotNull(clone);
+        assertTrue(clone instanceof Implementation);
     }
 }

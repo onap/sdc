@@ -17,23 +17,19 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.onap.sdc.tosca.services.DataModelNormalizeUtil;
 
+@Getter
+@NoArgsConstructor
 public class NodeFilter {
 
     private List<Map<String, List<Constraint>>> properties;
     private List<Map<String, CapabilityFilter>> capabilities;
 
-    public List<Map<String, CapabilityFilter>> getCapabilities() {
-        return capabilities;
-    }
-
     public void setCapabilities(List<Map<String, CapabilityFilter>> capabilities) {
         this.capabilities = DataModelNormalizeUtil.getNormalizeCapabilitiesFilter(capabilities);
-    }
-
-    public List<Map<String, List<Constraint>>> getProperties() {
-        return properties;
     }
 
     public void setProperties(List<Map<String, List<Constraint>>> properties) {

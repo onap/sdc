@@ -17,57 +17,28 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public class InterfaceDefinitionTemplate extends InterfaceDefinition {
 
     private Map<String, Object> inputs;
     private Map<String, OperationDefinitionTemplate> operations;
-
-    public InterfaceDefinitionTemplate() {
-    }
 
     public InterfaceDefinitionTemplate(Object toscaInterfaceDefTemplateObj) {
         InterfaceDefinitionTemplate interfaceDefinitionTemplate = (InterfaceDefinitionTemplate) convertObjToInterfaceDefinition(
             toscaInterfaceDefTemplateObj);
         this.setInputs(DataModelCloneUtil.cloneStringObjectMap(interfaceDefinitionTemplate.getInputs()));
         this.setOperations(DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionTemplate.getOperations()));
-    }
-
-    public Map<String, Object> getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(Map<String, Object> inputs) {
-        this.inputs = inputs;
-    }
-
-    public Map<String, OperationDefinitionTemplate> getOperations() {
-        return operations;
-    }
-
-    public void setOperations(Map<String, OperationDefinitionTemplate> operations) {
-        this.operations = operations;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(inputs, operations);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof InterfaceDefinitionTemplate)) {
-            return false;
-        }
-        InterfaceDefinitionTemplate that = (InterfaceDefinitionTemplate) o;
-        return Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
     }
 
     @Override

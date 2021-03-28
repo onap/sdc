@@ -17,66 +17,29 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public class InterfaceDefinitionType extends InterfaceDefinition {
 
     private String type;
     private Map<String, PropertyDefinition> inputs;
     private Map<String, OperationDefinitionType> operations;
 
-    public InterfaceDefinitionType() {
-    }
-
     public InterfaceDefinitionType(Object toscaInterfaceDefinitionType) {
         InterfaceDefinitionType interfaceDefinitionType = (InterfaceDefinitionType) convertObjToInterfaceDefinition(toscaInterfaceDefinitionType);
         this.setType(interfaceDefinitionType.getType());
         this.setInputs(DataModelCloneUtil.cloneStringPropertyDefinitionMap(interfaceDefinitionType.getInputs()));
         this.setOperations(DataModelCloneUtil.cloneStringOperationDefinitionMap(interfaceDefinitionType.getOperations()));
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Map<String, PropertyDefinition> getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(Map<String, PropertyDefinition> inputs) {
-        this.inputs = inputs;
-    }
-
-    public Map<String, OperationDefinitionType> getOperations() {
-        return operations;
-    }
-
-    public void setOperations(Map<String, OperationDefinitionType> operations) {
-        this.operations = operations;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        InterfaceDefinitionType that = (InterfaceDefinitionType) o;
-        return Objects.equals(type, that.type) && Objects.equals(inputs, that.inputs) && Objects.equals(operations, that.operations);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, inputs, operations);
     }
 
     @Override

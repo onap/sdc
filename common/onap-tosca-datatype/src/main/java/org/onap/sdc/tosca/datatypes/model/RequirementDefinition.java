@@ -19,6 +19,11 @@
  */
 package org.onap.sdc.tosca.datatypes.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class RequirementDefinition implements Cloneable {
 
     private String capability;
@@ -33,38 +38,6 @@ public class RequirementDefinition implements Cloneable {
         occurrences = new Object[2];
         occurrences[0] = 1;
         occurrences[1] = 1;
-    }
-
-    public String getCapability() {
-        return capability;
-    }
-
-    public void setCapability(String capability) {
-        this.capability = capability;
-    }
-
-    public String getNode() {
-        return node;
-    }
-
-    public void setNode(String node) {
-        this.node = node;
-    }
-
-    public String getRelationship() {
-        return relationship;
-    }
-
-    public void setRelationship(String relationship) {
-        this.relationship = relationship;
-    }
-
-    public Object[] getOccurrences() {
-        return occurrences;
-    }
-
-    public void setOccurrences(Object[] occurrences) {
-        this.occurrences = occurrences;
     }
 
     @Override
