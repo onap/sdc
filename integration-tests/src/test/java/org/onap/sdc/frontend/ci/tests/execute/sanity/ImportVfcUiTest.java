@@ -47,7 +47,7 @@ import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
 
@@ -64,8 +64,8 @@ public class ImportVfcUiTest extends SetupCDTest {
         filePath = FileHandling.getFilePath("importVfc/");
     }
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeMethod
+    public void beforeTest() {
         webDriver = DriverFactory.getDriver();
         homePage = new HomePage(webDriver);
     }
