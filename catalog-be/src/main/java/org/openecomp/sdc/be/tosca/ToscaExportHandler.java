@@ -151,6 +151,7 @@ public class ToscaExportHandler {
     private static final String FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION = "convertToToscaTemplate - failed to get Default Imports section from configuration";
     private static final String NOT_SUPPORTED_COMPONENT_TYPE = "Not supported component type {}";
     private static final String NATIVE_ROOT = "tosca.nodes.Root";
+    private static final List<String> EXCLUDED_CATEGORY_SPECIFIC_METADATA = List.of("Service Function", "Service Role", "Naming Policy", "Service Type");
     private static final YamlUtil yamlUtil = new YamlUtil();
     private ApplicationDataTypeCache dataTypeCache;
     private ToscaOperationFacade toscaOperationFacade;
@@ -482,7 +483,8 @@ public class ToscaExportHandler {
                 log.debug(NOT_SUPPORTED_COMPONENT_TYPE, component.getComponentType());
         }
         for (final String key : component.getCategorySpecificMetadata().keySet()) {
-            toscaMetadata.put(key, component.getCategorySpecificMetadata().get(key));
+            if (!EXCLUDED_CATEGORY_SPECIFIC_METADATA.contains(key))
+                toscaMetadata.put(key, component.getCategorySpecificMetadata().get(key));
         }
         return toscaMetadata;
     }
