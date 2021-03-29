@@ -18,6 +18,7 @@
  */
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.openqa.selenium.WebDriver;
 
@@ -43,5 +44,9 @@ public class ComponentPage extends AbstractPageObject {
 
     public ToscaArtifactsPage goToToscaArtifacts() {
         return resourceLeftSideMenu.clickOnToscaArtifactsMenuItem();
+    }
+
+    public CompositionPage goToComposition() {
+        return resourceLeftSideMenu.clickOnCompositionMenuItem();
     }
 }
