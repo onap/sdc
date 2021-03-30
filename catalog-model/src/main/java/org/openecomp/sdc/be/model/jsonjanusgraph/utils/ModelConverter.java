@@ -766,30 +766,30 @@ public class ModelConverter {
         component.setUUID((String) toscaElement.getMetadataValue(JsonPresentationFields.UUID));
         component.setIsDeleted((Boolean) toscaElement.getMetadataValue(JsonPresentationFields.IS_DELETED));
         component.setToscaType(toscaElement.getToscaType().getValue());
-        final List<String> metadataKeys = getCategorySpecificMetadataKeys(toscaElement);
+        final List<MetadataKeyDataDefinition> metadataKeys = getCategorySpecificMetadataKeys(toscaElement);
         if (CollectionUtils.isNotEmpty(metadataKeys)) {
             final Map<String, String> categorySpecificMetadata = new HashMap<>();
-            for (final String metadataKey : metadataKeys) {
-                categorySpecificMetadata.put(metadataKey, (String) toscaElement.getMetadata().get(metadataKey));
+            for (final MetadataKeyDataDefinition metadataKey : metadataKeys) {
+                if (toscaElement.getMetadata().get(metadataKey.getName()) != null) {
+                    categorySpecificMetadata.put(metadataKey.getName(), (String) toscaElement.getMetadata().get(metadataKey.getName()));
+                } else if (metadataKey.getDefaultValue() != null && metadataKey.isMandatory()) {
+                    categorySpecificMetadata.put(metadataKey.getName(), metadataKey.getDefaultValue());
+                }
             }
             component.setCategorySpecificMetadata(categorySpecificMetadata);
         }
     }
-
-    private static List<String> getCategorySpecificMetadataKeys(final ToscaElement toscaElement) {
-        final List<String> metadataKeys = new ArrayList<>();
+    
+    private static List<MetadataKeyDataDefinition> getCategorySpecificMetadataKeys(final ToscaElement toscaElement) {
+        final List<MetadataKeyDataDefinition> metadataKeys = new ArrayList<>();
         final Optional<CategoryDefinition> category = getCategory(toscaElement);
         if (category.isPresent()) {
             if (CollectionUtils.isNotEmpty(category.get().getMetadataKeys())) {
-                for (final MetadataKeyDataDefinition metadataKey : category.get().getMetadataKeys()) {
-                    metadataKeys.add(metadataKey.getName());
-                }
+                metadataKeys.addAll(category.get().getMetadataKeys());
             }
             final Optional<SubCategoryDefinition> subCategory = getSubCategory(category.get());
             if (subCategory.isPresent() && CollectionUtils.isNotEmpty(subCategory.get().getMetadataKeys())) {
-                for (final MetadataKeyDataDefinition metadataKey : subCategory.get().getMetadataKeys()) {
-                    metadataKeys.add(metadataKey.getName());
-                }
+                metadataKeys.addAll(subCategory.get().getMetadataKeys());
             }
         }
         return metadataKeys;
