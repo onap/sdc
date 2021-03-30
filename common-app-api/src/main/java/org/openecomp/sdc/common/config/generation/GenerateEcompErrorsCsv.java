@@ -24,9 +24,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.openecomp.sdc.common.config.EcompErrorEnum;
 import org.openecomp.sdc.common.config.EcompErrorEnum.AlarmSeverity;
 import org.openecomp.sdc.common.config.EcompErrorEnum.ErrorType;
@@ -36,26 +37,26 @@ import org.slf4j.LoggerFactory;
 
 public class GenerateEcompErrorsCsv {
 
-    private static Logger log = LoggerFactory.getLogger(GenerateEcompErrorsCsv.class);
-    private static String DATE_FORMAT = "dd-M-yyyy-hh-mm-ss";
-    private static String NEW_LINE = System.getProperty("line.separator");
+    private static final Logger log = LoggerFactory.getLogger(GenerateEcompErrorsCsv.class);
+    private static final String DATE_FORMAT = "dd-M-yyyy-hh-mm-ss";
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
-    public boolean generateEcompErrorsCsvFile(String targetFolder, boolean addTimeToFileName) {
+    public boolean generateEcompErrorsCsvFile(String targetFolder, final boolean addTimeToFileName) {
         targetFolder += File.separator;
         boolean result = false;
         String dateFormatted = "";
         if (addTimeToFileName) {
-            DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-            Date date = new Date();
+            final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+            final Date date = new Date();
             dateFormatted = "." + dateFormat.format(date);
         }
-        String outputFile = targetFolder + "ecompErrorCodes" + dateFormatted + ".csv";
-        try (FileWriter writer = new FileWriter(outputFile)) {
-            List<EcompErrorRow> errors = new ArrayList<>();
-            for (EcompErrorEnum ecompErrorEnum : EcompErrorEnum.values()) {
-                EcompErrorRow ecompErrorRow = new EcompErrorRow();
-                String errorCode = EcompErrorLogUtil.createEcode(ecompErrorEnum);
-                EcompErrorEnum clearCodeEnum = ecompErrorEnum.getClearCode();
+        final String outputFile = targetFolder + "ecompErrorCodes" + dateFormatted + ".csv";
+        try (final FileWriter writer = new FileWriter(outputFile)) {
+            writeHeaders(writer);
+            for (final EcompErrorEnum ecompErrorEnum : EcompErrorEnum.values()) {
+                final EcompErrorRow ecompErrorRow = new EcompErrorRow();
+                final String errorCode = EcompErrorLogUtil.createEcode(ecompErrorEnum);
+                final EcompErrorEnum clearCodeEnum = ecompErrorEnum.getClearCode();
                 String cleanErrorCode = null;
                 if (clearCodeEnum != null) {
                     cleanErrorCode = EcompErrorLogUtil.createEcode(clearCodeEnum);
@@ -67,10 +68,6 @@ public class GenerateEcompErrorsCsv {
                 ecompErrorRow.setErrorName(ecompErrorEnum.name());
                 ecompErrorRow.setErrorType(ecompErrorEnum.getEType());
                 ecompErrorRow.setResolution(ecompErrorEnum.getEcompErrorCode().getResolution());
-                errors.add(ecompErrorRow);
-            }
-            writeHeaders(writer);
-            for (EcompErrorRow ecompErrorRow : errors) {
                 writer.append(addInvertedCommas(ecompErrorRow.getErrorCode()));
                 writer.append(',');
                 writer.append(addInvertedCommas(ecompErrorRow.getErrorType().toString()));
@@ -87,13 +84,13 @@ public class GenerateEcompErrorsCsv {
                 writer.append(NEW_LINE);
             }
             result = true;
-        } catch (Exception e) {
-            log.info("generate Ecomp Errors Csv File failed", e);
+        } catch (final Exception e) {
+            log.warn("generate Ecomp Errors Csv File failed", e);
         }
         return result;
     }
 
-    private void writeHeaders(FileWriter writer) throws IOException {
+    private void writeHeaders(final FileWriter writer) throws IOException {
         writer.append("\"ERROR CODE\"");
         writer.append(',');
         writer.append("\"ERROR TYPE\"");
@@ -110,77 +107,25 @@ public class GenerateEcompErrorsCsv {
         writer.append(NEW_LINE);
     }
 
-    private String addInvertedCommas(String str) {
+    private String addInvertedCommas(final String str) {
         if (str == null) {
             return "\"\"";
         }
         return "\"" + str + "\"";
     }
 
-    public static class EcompErrorRow {
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    private class EcompErrorRow {
 
-        String errorName;
-        String errorCode;
-        String description;
-        ErrorType errorType;
-        AlarmSeverity alarmSeverity;
-        String cleanErrorCode;
-        String resolution;
+        private String errorName;
+        private String errorCode;
+        private String description;
+        private ErrorType errorType;
+        private AlarmSeverity alarmSeverity;
+        private String cleanErrorCode;
+        private String resolution;
 
-        public String getErrorName() {
-            return errorName;
-        }
-
-        public void setErrorName(String errorName) {
-            this.errorName = errorName;
-        }
-
-        public String getErrorCode() {
-            return errorCode;
-        }
-
-        public void setErrorCode(String errorCode) {
-            this.errorCode = errorCode;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public ErrorType getErrorType() {
-            return errorType;
-        }
-
-        public void setErrorType(ErrorType errorType) {
-            this.errorType = errorType;
-        }
-
-        public AlarmSeverity getAlarmSeverity() {
-            return alarmSeverity;
-        }
-
-        public void setAlarmSeverity(AlarmSeverity alarmSeverity) {
-            this.alarmSeverity = alarmSeverity;
-        }
-
-        public String getCleanErrorCode() {
-            return cleanErrorCode;
-        }
-
-        public void setCleanErrorCode(String cleanErrorCode) {
-            this.cleanErrorCode = cleanErrorCode;
-        }
-
-        public String getResolution() {
-            return resolution;
-        }
-
-        public void setResolution(String resolution) {
-            this.resolution = resolution;
-        }
     }
 }

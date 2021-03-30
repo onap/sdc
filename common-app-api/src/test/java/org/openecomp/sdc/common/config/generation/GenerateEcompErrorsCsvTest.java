@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,25 +20,21 @@
 
 package org.openecomp.sdc.common.config.generation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class GenerateEcompErrorsCsvTest {
+class GenerateEcompErrorsCsvTest {
 
 	private GenerateEcompErrorsCsv createTestSubject() {
 		return new GenerateEcompErrorsCsv();
 	}
 
-	
 	@Test
-	public void testGenerateEcompErrorsCsvFile() throws Exception {
-		GenerateEcompErrorsCsv testSubject;
-		String targetFolder = "";
-		boolean addTimeToFileName = false;
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.generateEcompErrorsCsvFile(targetFolder, addTimeToFileName);
+	void generateEcompErrorFileInTargetTest() {
+		final GenerateEcompErrorsCsv ecompErrorsCsv = createTestSubject();
+		Assertions.assertNotNull(ecompErrorsCsv);
+		final boolean result = ecompErrorsCsv.generateEcompErrorsCsvFile("target", true);
+		Assertions.assertTrue(result);
 	}
 
 }
