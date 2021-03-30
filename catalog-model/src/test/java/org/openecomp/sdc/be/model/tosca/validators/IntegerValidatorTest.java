@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,16 +20,17 @@
 
 package org.openecomp.sdc.be.model.tosca.validators;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
-public class IntegerValidatorTest {
-    private static IntegerValidator validator = IntegerValidator.getInstance();
+class IntegerValidatorTest {
+
+    private static final IntegerValidator validator = IntegerValidator.getInstance();
 
     @Test
-    public void testIntegerValidatorDecimal() {
+    void testIntegerValidatorDecimal() {
         assertTrue(validator.isValid(null, null));
         assertTrue(validator.isValid("", null));
         assertTrue(validator.isValid("0", null));
@@ -37,33 +38,34 @@ public class IntegerValidatorTest {
         assertTrue(validator.isValid("-0", null));
         assertTrue(validator.isValid("+65465", null));
         assertTrue(validator.isValid("-65465", null));
-        assertTrue(validator.isValid("2147483647", null));
-        assertFalse(validator.isValid("2147483648", null));
-        assertTrue(validator.isValid("-2147483648", null));
-        assertFalse(validator.isValid("-2147483649", null));
+        assertTrue(validator.isValid("9223372036854775807", null));
+        assertTrue(validator.isValid("92233720368547758079223372036854775807", null));
+        assertTrue(validator.isValid("-9223372036854775808", null));
+        assertTrue(validator.isValid("-92233720368547758089223372036854775808", null));
     }
 
     @Test
-    public void testIntegerValidatorHexa() {
+    void testIntegerValidatorHexa() {
         assertTrue(validator.isValid("-0xadc", null));
         assertTrue(validator.isValid("+0xadf", null));
-        assertTrue(validator.isValid("0x7FFFFFFF", null));
-        assertFalse(validator.isValid("0x80000000", null));
-        assertTrue(validator.isValid("-0x80000000", null));
-        assertFalse(validator.isValid("-0x80000001", null));
-    }
-
-    public void testIntegerValidatorOctal() {
-        assertTrue(validator.isValid("0o545435", null));
-        assertTrue(validator.isValid("-0o545435", null));
-        assertTrue(validator.isValid("0o17777777777", null));
-        assertFalse(validator.isValid("0o20000000000", null));
-        assertTrue(validator.isValid("-0o20000000000", null));
-        assertFalse(validator.isValid("-0o20000000001", null));
+        assertTrue(validator.isValid("0x7FFFFFFFFFFFFFFF", null));
+        assertTrue(validator.isValid("0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", null));
+        assertTrue(validator.isValid("-0x8000000000000000", null));
+        assertTrue(validator.isValid("-0x8000000000000000000000000000000", null));
     }
 
     @Test
-    public void testIntegerValidatorIncorrect() {
+    void testIntegerValidatorOctal() {
+        assertTrue(validator.isValid("+0o545435", null));
+        assertTrue(validator.isValid("-0o545435", null));
+        assertTrue(validator.isValid("0o777777777777777777777", null));
+        assertTrue(validator.isValid("0o777777777777777777777777777777777777777777", null));
+        assertTrue(validator.isValid("-0o1000000000000000000000", null));
+        assertTrue(validator.isValid("-0o1000000000000000000000000000000000000000000", null));
+    }
+
+    @Test
+    void testIntegerValidatorIncorrect() {
         assertFalse(validator.isValid("-2.147483649", null));
         assertFalse(validator.isValid("dsfasf342342", null));
     }
