@@ -23,15 +23,16 @@ import static org.openecomp.core.utilities.file.FileUtils.getNetworkPackageName;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.inject.Named;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
@@ -73,27 +74,67 @@ import org.springframework.stereotype.Service;
 public class VnfPackageRepositoryImpl implements VnfPackageRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VnfPackageRepositoryImpl.class);
-    private static final Client CLIENT = ignoreSSLClient();
+    private static final Client CLIENT = trustSSLClient();
 
-    private static Client ignoreSSLClient() {
+    private static Client trustSSLClient() {
         try {
             SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null, new TrustManager[]{new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] c, String s) {
-                }
+            sslcontext.init(null, new TrustManager[]{new MyTrustManager()}, new java.security.SecureRandom());
+            return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((requestedHost, remoteServerSession)
+                    -> requestedHost.equalsIgnoreCase(remoteServerSession.getPeerHost())).build();
 
-                public void checkServerTrusted(X509Certificate[] c, String s) {
-                }
-
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-            }}, new java.security.SecureRandom());
-            return ClientBuilder.newBuilder().sslContext(sslcontext).hostnameVerifier((a, b) -> true).build();
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             LOGGER.error("Failed to initialize SSL unsecure context", e);
         }
         return ClientBuilder.newClient();
+    }
+
+    private static class MyTrustManager implements X509TrustManager {
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            private MyTrustManager(){
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[] {};
+            }
+            @Override
+            public void checkServerTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+                X509TrustManager x509Tm = getDefaultTrustManager(tmf);
+
+                if(x509Tm != null) {
+                    //Wrap it in your own class
+                    final X509TrustManager finalTm = x509Tm;
+                    finalTm.checkServerTrusted(certs, authType);
+                }
+
+            }
+        @Override
+        public void checkClientTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+            X509TrustManager x509Tm = getDefaultTrustManager(tmf);
+            if(x509Tm != null) {
+                //Wrap it in your own class
+                final X509TrustManager finalTm = x509Tm;
+                finalTm.checkClientTrusted(certs, authType);
+            }
+        }
+
+        private X509TrustManager getDefaultTrustManager(TrustManagerFactory tmf) {
+            try {
+                tmf.init((KeyStore)null);
+            } catch (KeyStoreException e) {
+                throw new IllegalStateException(e);
+            }
+            X509TrustManager x509Tm = null;
+            for(TrustManager tm: tmf.getTrustManagers())
+            {
+                if(tm instanceof X509TrustManager) {
+                    x509Tm = (X509TrustManager) tm;
+                    break;
+                }
+            }
+            return x509Tm;
+        }
     }
 
     private final Configuration config;
