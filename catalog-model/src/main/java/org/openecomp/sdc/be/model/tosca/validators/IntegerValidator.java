@@ -19,18 +19,25 @@
  */
 package org.openecomp.sdc.be.model.tosca.validators;
 
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IntegerValidator implements PropertyTypeValidator {
 
-    private static IntegerValidator integerValidator = new IntegerValidator();
-    private PatternBase base8Pattern = new PatternBase(Pattern.compile("([-+])?0o([0-7]+)"), 8);
-    private PatternBase base10Pattern = new PatternBase(Pattern.compile("([-+])?(0|[1-9][0-9]*)"), 10);
-    private PatternBase base16Pattern = new PatternBase(Pattern.compile("([-+])?0x([0-9a-fA-F]+)"), 16);
-    private PatternBase[] patterns = {base10Pattern, base8Pattern, base16Pattern};
+    private static final Logger log = LoggerFactory.getLogger(IntegerValidator.class);
+
+    private static final IntegerValidator integerValidator = new IntegerValidator();
+    private final PatternBase base8Pattern = new PatternBase(Pattern.compile("([-+])?0o([0-7]+)"), 8);
+    private final PatternBase base10Pattern = new PatternBase(Pattern.compile("([-+])?(0|[1-9][0-9]*)"), 10);
+    private final PatternBase base16Pattern = new PatternBase(Pattern.compile("([-+])?0x([0-9a-fA-F]+)"), 16);
+    private final PatternBase[] patterns = {base10Pattern, base8Pattern, base16Pattern};
 
     private IntegerValidator() {
     }
@@ -40,21 +47,19 @@ public class IntegerValidator implements PropertyTypeValidator {
     }
 
     @Override
-    public boolean isValid(String value, String innerType, Map<String, DataTypeDefinition> allDataTypes) {
+    public boolean isValid(final String value, final String innerType, final Map<String, DataTypeDefinition> allDataTypes) {
+
         if (value == null || value.isEmpty()) {
             return true;
         }
-        for (PatternBase patternBase : patterns) {
-            Matcher matcher = patternBase.pattern.matcher(value);
-            Long parsed = null;
+        for (final PatternBase patternBase : patterns) {
+            final Matcher matcher = patternBase.getPattern().matcher(value);
             if (matcher.matches()) {
                 try {
-                    parsed = Long.parseLong(matcher.group(2), patternBase.base);
-                    if (matcher.group(1) != null && matcher.group(1).compareTo("-") == 0) {
-                        parsed *= -1;
-                    }
-                    return (Integer.MIN_VALUE <= parsed && parsed <= (Integer.MAX_VALUE)) ? true : false;
-                } catch (NumberFormatException e) {
+                    new BigInteger(matcher.group(2), patternBase.base);
+                    return true;
+                } catch (Exception e) {
+                    log.warn("Failed to build BigInteger {}", value, e);
                     return false;
                 }
             }
@@ -63,18 +68,16 @@ public class IntegerValidator implements PropertyTypeValidator {
     }
 
     @Override
-    public boolean isValid(String value, String innerType) {
+    public boolean isValid(final String value, final String innerType) {
         return isValid(value, innerType, null);
     }
 
+    @Getter
+    @AllArgsConstructor
     private class PatternBase {
 
-        Pattern pattern;
-        Integer base;
+        private final Pattern pattern;
+        private final Integer base;
 
-        public PatternBase(Pattern pattern, Integer base) {
-            this.pattern = pattern;
-            this.base = base;
-        }
     }
 }
