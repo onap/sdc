@@ -17,27 +17,28 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
+import java.util.List;
+
 public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
 
     private String uniqueId;
+
     private Long creationTime;
+
     private Long modificationTime;
+
     private Integer lastCreatedCounter = 0;
-    @ToString.Exclude
+
     private List<AdditionalInfoParameterInfo> parameters;
+
+    public AdditionalInfoParameterDataDefinition() {
+
+    }
 
     public AdditionalInfoParameterDataDefinition(AdditionalInfoParameterDataDefinition p) {
         this.uniqueId = p.uniqueId;
@@ -46,4 +47,51 @@ public class AdditionalInfoParameterDataDefinition extends ToscaDataDefinition {
         this.lastCreatedCounter = p.lastCreatedCounter;
         this.parameters = p.parameters;
     }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public Long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Long creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public Long getModificationTime() {
+        return modificationTime;
+    }
+
+    public void setModificationTime(Long modificationTime) {
+        this.modificationTime = modificationTime;
+    }
+
+    public Integer getLastCreatedCounter() {
+        return lastCreatedCounter;
+    }
+
+    public void setLastCreatedCounter(Integer lastCreatedCounter) {
+        this.lastCreatedCounter = lastCreatedCounter;
+    }
+
+    public List<AdditionalInfoParameterInfo> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<AdditionalInfoParameterInfo> parameters) {
+        this.parameters = parameters;
+    }
+
+    @Override
+    public String toString() {
+        return "AdditionalInfoParameterDataDefinition [uniqueId=" + uniqueId + ", creationTime=" + creationTime
+                + ", modificationTime=" + modificationTime + ", lastCreatedCounter=" + lastCreatedCounter + "]";
+    }
+
 }

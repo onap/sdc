@@ -21,10 +21,9 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.List;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+import java.util.List;
+
 public class ListCapabilityDataDefinition extends ListDataDefinition<CapabilityDataDefinition> {
 
     public ListCapabilityDataDefinition(ListCapabilityDataDefinition cdt) {
@@ -34,6 +33,11 @@ public class ListCapabilityDataDefinition extends ListDataDefinition<CapabilityD
     @JsonCreator
     public ListCapabilityDataDefinition(List<CapabilityDataDefinition> listToscaDataDefinition) {
         super(listToscaDataDefinition);
+    }
+
+    public ListCapabilityDataDefinition() {
+        super();
+
     }
 
     @JsonValue

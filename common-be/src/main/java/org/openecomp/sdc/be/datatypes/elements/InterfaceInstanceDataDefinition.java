@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
+
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 public class InterfaceInstanceDataDefinition extends ToscaDataDefinition implements Serializable {
 
-    public InterfaceInstanceDataDefinition(InterfaceInstanceDataDefinition inter) {
+    public InterfaceInstanceDataDefinition(
+            InterfaceInstanceDataDefinition inter) {
         this.toscaPresentation = null;
-        setInputs(inter.getInputs() == null ? new HashMap<String, Object>() : new HashMap<>(inter.getInputs()));
+        setInputs(inter.getInputs() == null ? new HashMap() : new HashMap<>(inter.getInputs()));
         setOperations(new HashMap<>(inter.getOperations()));
     }
 
@@ -64,6 +67,8 @@ public class InterfaceInstanceDataDefinition extends ToscaDataDefinition impleme
 
     @Override
     public int hashCode() {
+
         return Objects.hash(this.getInputs());
     }
+
 }

@@ -17,9 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import org.apache.commons.collections.CollectionUtils;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +32,9 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.collections.CollectionUtils;
+
 import org.apache.commons.collections.MapUtils;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -132,17 +134,17 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return required;
     }
 
+    public void setSchemaType(String schemaType) {
+        if (schema != null && schema.getProperty() != null) {
+            schema.getProperty().setType(schemaType);
+        }
+    }
+
     public String getSchemaType() {
         if (schema != null && schema.getProperty() != null) {
             return schema.getProperty().getType();
         }
         return null;
-    }
-
-    public void setSchemaType(String schemaType) {
-        if (schema != null && schema.getProperty() != null) {
-            schema.getProperty().setType(schemaType);
-        }
     }
 
     public PropertyDataDefinition getSchemaProperty() {
@@ -281,10 +283,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return this.getGetInputValues() != null && !this.getGetInputValues().isEmpty();
     }
 
-    public List<Annotation> getAnnotations() {
-        return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
-    }
-
     public void setAnnotations(List<Annotation> newAnnotations) {
         Set<Annotation> annotationSet = isNotEmpty(newAnnotations) ? new HashSet<>(newAnnotations) : new HashSet<>();
         //We would to prioritize the new valid annotations over the old ones if the same one existed.
@@ -293,5 +291,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         }
         this.annotations = new ArrayList<>(annotationSet);
         setToscaPresentationValue(JsonPresentationFields.ANNOTATIONS, this.annotations);
+    }
+
+    public List<Annotation> getAnnotations() {
+        return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
     }
 }

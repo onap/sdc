@@ -21,10 +21,9 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.util.List;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+import java.util.List;
+
 public class ListRequirementDataDefinition extends ListDataDefinition<RequirementDataDefinition> {
 
     public ListRequirementDataDefinition(ListRequirementDataDefinition cdt) {
@@ -34,6 +33,11 @@ public class ListRequirementDataDefinition extends ListDataDefinition<Requiremen
     @JsonCreator
     public ListRequirementDataDefinition(List<RequirementDataDefinition> listToscaDataDefinition) {
         super(listToscaDataDefinition);
+    }
+
+    public ListRequirementDataDefinition() {
+        super();
+
     }
 
     @JsonValue

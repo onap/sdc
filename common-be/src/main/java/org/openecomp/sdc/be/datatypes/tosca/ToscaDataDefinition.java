@@ -77,14 +77,6 @@ public abstract class ToscaDataDefinition {
         return null;
     }
 
-    public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
-    }
-
-    public void setName(String name) {
-        setToscaPresentationValue(JsonPresentationFields.NAME, name);
-    }
-
     public void setToscaPresentationValue(JsonPresentationFields name, Object value) {
         if (name != null) {
             if (toscaPresentation == null) {

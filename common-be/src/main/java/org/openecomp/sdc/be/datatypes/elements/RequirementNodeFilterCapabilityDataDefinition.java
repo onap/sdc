@@ -13,18 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.io.Serializable;
-import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-@NoArgsConstructor
+import java.io.Serializable;
+
 public class RequirementNodeFilterCapabilityDataDefinition extends ToscaDataDefinition implements Serializable {
 
+    /**
+     * Default Constructor
+     */
+    public RequirementNodeFilterCapabilityDataDefinition() {
+    }
+
+    public String getName() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
+    }
+
+    public void setName(String name) {
+        setToscaPresentationValue(JsonPresentationFields.NAME, name);
+    }
+
     public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
-        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
+        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
+                JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {

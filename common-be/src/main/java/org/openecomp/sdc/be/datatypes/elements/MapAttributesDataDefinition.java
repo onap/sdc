@@ -17,7 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
+
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -54,7 +56,6 @@ public class MapAttributesDataDefinition extends MapDataDefinition<AttributeData
         this.mapToscaDataDefinition = toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition == null ? null
             : new HashMap(toBeDeepCopiedMapPropertiesDataDefinition.mapToscaDataDefinition);
     }
-
     @JsonValue
     @Override
     public Map<String, AttributeDataDefinition> getMapToscaDataDefinition() {
@@ -64,4 +65,5 @@ public class MapAttributesDataDefinition extends MapDataDefinition<AttributeData
     public void setMapToscaDataDefinition(Map<String, AttributeDataDefinition> mapToscaDataDefinition) {
         this.mapToscaDataDefinition = mapToscaDataDefinition;
     }
+
 }

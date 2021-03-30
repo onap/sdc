@@ -19,21 +19,40 @@
  */
 package org.openecomp.sdc.be.datatypes.elements;
 
-import static java.util.Collections.emptyList;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 
 import java.util.List;
 import java.util.Map;
-import lombok.NoArgsConstructor;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+
+import static java.util.Collections.emptyList;
 
 /**
- * public class representing the component policy, described by the next properties:
- * <p>
- * name uniqueId type (policy type name) typeUid (policy type uniqueId) version (version) derivedFrom (policy type derivedFrom) description policyUUID
- * invariantUUID members metadata properties targets isFromCsar
+ * public class representing the component policy,
+ * described by the next properties:
+ *
+ * name
+ * uniqueId
+ * type (policy type name)
+ * typeUid (policy type uniqueId)
+ * version (version)
+ * derivedFrom (policy type derivedFrom)
+ * description
+ * policyUUID
+ * invariantUUID
+ * members
+ * metadata
+ * properties
+ * targets
+ * isFromCsar
  */
-@NoArgsConstructor
 public class PolicyDataDefinition extends PropertyDataDefinition {
+
+    /**
+     * public constructor by default
+     */
+    public PolicyDataDefinition() {
+        super();
+    }
 
     public PolicyDataDefinition(PropertyDataDefinition propertyDataDefinition) {
         super(propertyDataDefinition);
@@ -80,17 +99,17 @@ public class PolicyDataDefinition extends PropertyDataDefinition {
         }
     }
 
-    public Boolean getIsFromCsar() {
-        Boolean isFromCsar = (Boolean) getToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR);
-        return (isFromCsar != null) ? isFromCsar : false;
-    }
-
     private void setIsFromCsar(Boolean isFromCsar) {
         if (isFromCsar == null) {
             setToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR, false);
         } else {
             setToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR, isFromCsar);
         }
+    }
+
+    public Boolean getIsFromCsar() {
+        Boolean isFromCsar = (Boolean) getToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR);
+        return (isFromCsar != null) ? isFromCsar : false;
     }
 
     public String getComponentName() {
@@ -125,7 +144,6 @@ public class PolicyDataDefinition extends PropertyDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.TYPE_UNIQUE_ID, policyTypeUid);
     }
 
-    @Override
     public String getVersion() {
         return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
     }
@@ -142,12 +160,10 @@ public class PolicyDataDefinition extends PropertyDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.DERIVED_FROM, derivedFrom);
     }
 
-    @Override
     public String getDescription() {
         return (String) getToscaPresentationValue(JsonPresentationFields.DESCRIPTION);
     }
 
-    @Override
     public void setDescription(String description) {
         setToscaPresentationValue(JsonPresentationFields.DESCRIPTION, description);
     }

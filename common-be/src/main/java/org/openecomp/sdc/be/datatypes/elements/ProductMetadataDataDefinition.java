@@ -19,29 +19,30 @@
  */
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.ArrayList;
-import java.util.List;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@ToString
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProductMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
     private String fullName;
+
     private List<String> contacts;
+
     private Boolean isActive;
 
-    public ProductMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
-        super(extractor);
+    public ProductMetadataDataDefinition() {
+        super();
+    }
+
+    public ProductMetadataDataDefinition(ProductMetadataDataDefinition other) {
+        super(other);
+	}
+
+	public ProductMetadataDataDefinition(JsonPresentationFieldsExtractor extractor){
+		super(extractor);
     }
 
     public Boolean getIsActive() {
@@ -52,6 +53,14 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
         isActive = active;
     }
 
+    public List<String> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<String> contacts) {
+        this.contacts = contacts;
+    }
+
     public void addContact(String contact) {
         if (contact != null) {
             if (contacts == null) {
@@ -59,6 +68,67 @@ public class ProductMetadataDataDefinition extends ComponentMetadataDataDefiniti
             }
             contacts.add(contact);
         }
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductMetadataDataDefinition [fullName=" + fullName + ", contacts=" + contacts + ", isActive="
+                + isActive + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+
+        result = prime * result + ((contacts == null) ? 0 : contacts.hashCode());
+        result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
+        result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ProductMetadataDataDefinition other = (ProductMetadataDataDefinition) obj;
+        if (contacts == null) {
+            if (other.contacts != null) {
+                return false;
+            }
+        } else if (!contacts.equals(other.contacts)) {
+            return false;
+        }
+        if (fullName == null) {
+            if (other.fullName != null) {
+                return false;
+            }
+        } else if (!fullName.equals(other.fullName)) {
+            return false;
+        }
+        if (isActive == null) {
+            if (other.isActive != null) {
+                return false;
+            }
+        } else if (!isActive.equals(other.isActive)) {
+            return false;
+        }
+        return super.equals(obj);
     }
 
     @Override

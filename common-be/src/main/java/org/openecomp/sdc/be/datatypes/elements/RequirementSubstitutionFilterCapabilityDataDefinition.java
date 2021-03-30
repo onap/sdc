@@ -16,18 +16,32 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
-import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-@NoArgsConstructor
 public class RequirementSubstitutionFilterCapabilityDataDefinition extends ToscaDataDefinition implements Serializable {
 
+    /**
+     * Default Constructor
+     */
+    public RequirementSubstitutionFilterCapabilityDataDefinition() {
+    }
+
+    public String getName() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
+    }
+
+    public void setName(final String name) {
+        setToscaPresentationValue(JsonPresentationFields.NAME, name);
+    }
+
     public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
-        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
+        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
+                JsonPresentationFields.PROPERTIES);
     }
 
     public void setProperties(final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {
