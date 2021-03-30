@@ -17,28 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
-@ToString
 public class HeatParameterDataDefinition extends ToscaDataDefinition {
 
     private String uniqueId;
+
     private String name;
     private String type;
     private String description;
+
     private String currentValue;
     private String defaultValue;
+
+    public HeatParameterDataDefinition() {
+    }
 
     public HeatParameterDataDefinition(HeatParameterDataDefinition hp) {
         this.uniqueId = hp.uniqueId;
@@ -47,5 +43,127 @@ public class HeatParameterDataDefinition extends ToscaDataDefinition {
         this.description = hp.description;
         this.currentValue = hp.currentValue;
         this.defaultValue = hp.defaultValue;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(String currentValue) {
+        this.currentValue = currentValue;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public String toString() {
+        return "HeatParameterDataDefinition [uniqueId=" + uniqueId + ", name=" + name + ", type=" + type
+                + ", description=" + description + ", currentValue=" + currentValue + ", defaultValue=" + defaultValue
+                + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((currentValue == null) ? 0 : currentValue.hashCode());
+        result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        HeatParameterDataDefinition other = (HeatParameterDataDefinition) obj;
+        if (currentValue == null) {
+            if (other.currentValue != null) {
+                return false;
+            }
+        } else if (!currentValue.equals(other.currentValue)) {
+            return false;
+        }
+        if (defaultValue == null) {
+            if (other.defaultValue != null) {
+                return false;
+            }
+        } else if (!defaultValue.equals(other.defaultValue)) {
+            return false;
+        }
+        if (description == null) {
+            if (other.description != null) {
+                return false;
+            }
+        } else if (!description.equals(other.description)) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (type == null) {
+            if (other.type != null) {
+                return false;
+            }
+        } else if (!type.equals(other.type)) {
+            return false;
+        }
+        if (uniqueId == null) {
+            return other.uniqueId == null;
+        } else {
+            return uniqueId.equals(other.uniqueId);
+        }
     }
 }

@@ -13,20 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
 
 import java.util.Map;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Objects;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
-public class OperationInstance {
-
+public class OperationInstance/* extends Operation*/ {
     private OperationImplementation implementation;
     private Map<String, Object> inputs;
+
+
+    public OperationImplementation getImplementation() {
+        return implementation;
+    }
+
+    public void setImplementation(OperationImplementation implementation) {
+        this.implementation = implementation;
+    }
+
+    public Map<String, Object> getInputs() {
+        return inputs;
+    }
+
+    public void setInputs(Map<String, Object> inputs) {
+        this.inputs = inputs;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OperationInstance)) {
+            return false;
+        }
+        OperationInstance that = (OperationInstance) o;
+        return Objects.equals(implementation, that.implementation)
+                && Objects.equals(inputs, that.inputs);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(implementation, inputs);
+    }
 }

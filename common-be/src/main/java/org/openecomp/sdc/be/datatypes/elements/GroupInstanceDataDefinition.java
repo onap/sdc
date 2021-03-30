@@ -19,15 +19,18 @@
  */
 package org.openecomp.sdc.be.datatypes.elements;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-@NoArgsConstructor
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class GroupInstanceDataDefinition extends ToscaDataDefinition {
+
+    public GroupInstanceDataDefinition() {
+        super();
+    }
 
     public GroupInstanceDataDefinition(Map<String, Object> gi) {
         super(gi);
@@ -73,6 +76,14 @@ public class GroupInstanceDataDefinition extends ToscaDataDefinition {
 
     public void setUniqueId(String uniqueId) {
         setToscaPresentationValue(JsonPresentationFields.UNIQUE_ID, uniqueId);
+    }
+
+    public String getName() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.NAME);
+    }
+
+    public void setName(String name) {
+        setToscaPresentationValue(JsonPresentationFields.NAME, name);
     }
 
     public String getNormalizedName() {
@@ -155,12 +166,10 @@ public class GroupInstanceDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.INVARIANT_UUID, invariantUUID);
     }
 
-    @Override
     public String getType() {
         return (String) getToscaPresentationValue(JsonPresentationFields.TYPE);
     }
 
-    @Override
     public void setType(String type) {
         setToscaPresentationValue(JsonPresentationFields.TYPE, type);
     }
@@ -173,7 +182,6 @@ public class GroupInstanceDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.GROUP_UUID, groupUUID);
     }
 
-    @Override
     public String getVersion() {
         return (String) getToscaPresentationValue(JsonPresentationFields.VERSION);
     }

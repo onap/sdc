@@ -17,28 +17,59 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.datatypes.elements;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
-@AllArgsConstructor
 public class AdditionalInfoParameterInfo extends ToscaDataDefinition {
 
     private String uniqueId;
     private String key;
     private String value;
 
+    public AdditionalInfoParameterInfo() {
+        super();
+    }
+
     public AdditionalInfoParameterInfo(String key, String value) {
         this.key = key;
         this.value = value;
     }
+
+    public AdditionalInfoParameterInfo(String uniqueId, String key, String value) {
+        this.uniqueId = uniqueId;
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "AdditionalInfoParameterInfo [uniqueId=" + uniqueId + ", key=" + key + ", value=" + value + "]";
+    }
+
 }
