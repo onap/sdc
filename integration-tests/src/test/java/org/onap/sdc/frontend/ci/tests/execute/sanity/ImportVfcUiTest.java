@@ -47,7 +47,6 @@ import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
 
@@ -64,14 +63,10 @@ public class ImportVfcUiTest extends SetupCDTest {
         filePath = FileHandling.getFilePath("importVfc/");
     }
 
-    @BeforeSuite
-    public void beforeSuite() {
-        webDriver = DriverFactory.getDriver();
-        homePage = new HomePage(webDriver);
-    }
-
     @Test
     public void importVFC_createVF_addVFC2VF_test() throws UnzipException {
+        webDriver = DriverFactory.getDriver();
+        homePage = new HomePage(webDriver);
         // TC - Import VFC with root namespace
         String fileName = "org.openecomp.resource.VFC-root.yml";
         CreateVfcFlow createVfcFlow = createVFC(fileName);

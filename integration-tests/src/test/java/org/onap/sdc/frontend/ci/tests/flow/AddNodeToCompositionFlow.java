@@ -4,8 +4,8 @@ import com.aventstack.extentreports.Status;
 import java.util.Objects;
 import java.util.Optional;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
+import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.openqa.selenium.WebDriver;
 
@@ -14,7 +14,7 @@ public class AddNodeToCompositionFlow extends AbstractUiTestFlow {
     private final ResourceCreateData destination;
     private final ResourceCreateData resource;
     private CompositionPage compositionPage;
-    private ResourceCreatePage resourceCreatePage;
+    private ComponentPage componentPage;
 
     public AddNodeToCompositionFlow(final WebDriver webDriver, final ResourceCreateData destination, final ResourceCreateData resource) {
         super(webDriver);
@@ -28,10 +28,10 @@ public class AddNodeToCompositionFlow extends AbstractUiTestFlow {
         Objects.requireNonNull(resource);
         extendTest.log(Status.INFO, String.format("Adding Resource '%s' to VF/Service '%s'", resource.getName(), destination.getName()));
 
-        resourceCreatePage = findParameter(pageObjects, ResourceCreatePage.class);
-        resourceCreatePage.isLoaded();
+        componentPage = findParameter(pageObjects, ComponentPage.class);
+        componentPage.isLoaded();
 
-        compositionPage = resourceCreatePage.goToComposition();
+        compositionPage = componentPage.goToComposition();
         compositionPage.isLoaded();
         compositionPage.addNodeToResourceCompositionUsingApi(destination.getName(), "0.1", resource.getName(), "1.0");
         compositionPage.goToGeneral();
@@ -40,6 +40,6 @@ public class AddNodeToCompositionFlow extends AbstractUiTestFlow {
 
     @Override
     public Optional<? extends PageObject> getLandedPage() {
-        return Optional.ofNullable(resourceCreatePage);
+        return Optional.ofNullable(componentPage);
     }
 }

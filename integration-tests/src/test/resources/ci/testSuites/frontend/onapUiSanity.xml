@@ -11,6 +11,7 @@
           <include name="changeInstanceNameInVfTest"/>
         </methods>
       </class>
+      <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.ImportVfcUiTest"/>
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.Service">
         <methods>
           <include name="updateService"/>

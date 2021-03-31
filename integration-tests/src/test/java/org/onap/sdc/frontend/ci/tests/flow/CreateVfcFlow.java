@@ -31,7 +31,6 @@ public class CreateVfcFlow extends AbstractUiTestFlow {
 
     private final ResourceCreateData vfcCreateData;
     private final String fullFileName;
-    private HomePage homePage;
     private ResourceCreatePage vfcCreatePage;
 
     public CreateVfcFlow(final WebDriver webDriver, final ResourceCreateData vfcCreateData, final String fullFileName) {
@@ -44,7 +43,7 @@ public class CreateVfcFlow extends AbstractUiTestFlow {
     public Optional<? extends PageObject> run(final PageObject... pageObjects) {
         Objects.requireNonNull(vfcCreateData);
         extendTest.log(Status.INFO, String.format("Creating VFC '%s'", vfcCreateData.getName()));
-        homePage = findParameter(pageObjects, HomePage.class);
+        final HomePage homePage = findParameter(pageObjects, HomePage.class);
         homePage.isLoaded();
 
         vfcCreatePage = homePage.clickOnImportVfc(fullFileName);
