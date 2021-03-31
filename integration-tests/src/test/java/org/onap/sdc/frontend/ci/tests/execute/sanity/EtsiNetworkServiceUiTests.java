@@ -79,6 +79,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
 
         final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
+        propertyMap.entrySet().removeIf(e -> e.getValue() == null);
         checkEtsiNsPackage(createServiceFlow.getServiceCreateData().getName(), downloadedCsarName, propertyMap);
     }
 

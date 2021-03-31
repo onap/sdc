@@ -71,6 +71,8 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         .getDefaultImports();
     private static final List<String> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE = Arrays
         .asList("cds_model_name", "cds_model_version", "skip_post_instantiation_configuration", "controller_actor");
+    private static final List<String> ETSI_SOL_NSD_NS_NODE_TYPE_PROPERTIES = Arrays
+            .asList("descriptor_id", "designer", "version", "name", "invariant_id", "flavour_id", "ns_profile", "service_availability_level");
     private static final List<String> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TEMPLATE = Arrays
         .asList("nf_function", "nf_role", "nf_naming_code", "nf_type", "nf_naming", "availability_zone_max_count", "min_instances", "max_instances",
             "multi_stage_design", "sdnc_model_name", "sdnc_model_version", "sdnc_artifact_name", "skip_post_instantiation_configuration",
@@ -175,7 +177,7 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
             componentToscaTemplate.getNode_types().putAll(nodeTypeMap);
         }
         handleNodeTemplates(componentToscaTemplate);
-        removeOnapPropertiesFromInputs(componentToscaTemplate);
+        removeOnapAndEtsiNsdPropertiesFromInputs(componentToscaTemplate);
         handleSubstitutionMappings(componentToscaTemplate, nsNodeTypeName);
         final Map<String, ToscaNodeTemplate> nodeTemplates = new HashMap<>();
         nodeTemplates.put(nsNodeTypeName,
@@ -248,7 +250,7 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         for (final Entry<String, Object> property : propertyMap.entrySet()) {
             if (!PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TEMPLATE.contains(property.getKey()) && propertyIsDefinedInNodeType(
                 property.getKey())) {
-                editedPropertyMap.put(property.getKey().substring(property.getKey().indexOf('_') + 1), property.getValue());
+                editedPropertyMap.put(property.getKey(), property.getValue());
             }
         }
         if (editedPropertyMap.isEmpty()) {
@@ -276,11 +278,13 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         nodeTemplate.getValue().setCapabilities(null);
     }
 
-    private void removeOnapPropertiesFromInputs(final ToscaTemplate template) {
+    private void removeOnapAndEtsiNsdPropertiesFromInputs(final ToscaTemplate template) {
         final ToscaTopolgyTemplate topologyTemplate = template.getTopology_template();
         final Map<String, ToscaProperty> inputMap = topologyTemplate.getInputs();
+        
+        
         if (MapUtils.isNotEmpty(inputMap)) {
-            inputMap.entrySet().removeIf(entry -> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE.contains(entry.getKey()));
+            inputMap.entrySet().removeIf(entry -> PROPERTIES_TO_EXCLUDE_FROM_ETSI_SOL_NSD_NS_NODE_TYPE.contains(entry.getKey()) || ETSI_SOL_NSD_NS_NODE_TYPE_PROPERTIES.contains(entry.getKey()));
         }
         if (MapUtils.isEmpty(inputMap)) {
             topologyTemplate.setInputs(null);
@@ -324,7 +328,7 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         final Map<String, ToscaProperty> propertiesInNsNodeType = nsNodeType.getProperties();
         for (final Entry<String, ToscaProperty> property : propertiesInNsNodeType.entrySet()) {
             final ToscaProperty toscaProperty = property.getValue();
-            if (toscaProperty.getDefaultp() != null) {
+            if (toscaProperty.getDefaultp() != null && ETSI_SOL_NSD_NS_NODE_TYPE_PROPERTIES.contains(property.getKey())) {
                 final ToscaPropertyConstraintValidValues constraint = new ToscaPropertyConstraintValidValues(
                     Collections.singletonList(toscaProperty.getDefaultp().toString()));
                 toscaProperty.setConstraints(Collections.singletonList(constraint));
@@ -370,7 +374,9 @@ public class NsDescriptorGeneratorImpl implements NsDescriptorGenerator {
         final Map<String, ToscaProperty> properties = toscaNodeType.getProperties();
         final Map<String, Object> nodeTemplateProperties = new HashMap<>();
         for (final Entry<String, ToscaProperty> property : properties.entrySet()) {
-            nodeTemplateProperties.put(property.getKey(), property.getValue().getDefaultp());
+            if (property.getValue().getDefaultp() != null) {
+                nodeTemplateProperties.put(property.getKey(), property.getValue().getDefaultp());
+            }
         }
         if (!nodeTemplateProperties.isEmpty()) {
             nodeTemplate.setProperties(nodeTemplateProperties);
