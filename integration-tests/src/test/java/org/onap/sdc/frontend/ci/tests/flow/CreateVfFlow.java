@@ -24,7 +24,6 @@ import java.util.Optional;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
-import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.openqa.selenium.WebDriver;
 
