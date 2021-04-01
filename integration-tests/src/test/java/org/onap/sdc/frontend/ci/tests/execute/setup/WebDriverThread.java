@@ -54,8 +54,13 @@ public class WebDriverThread {
 
     void quitDriver() {
         if (webdriver != null) {
-            webdriver.quit();
-            webdriver = null;
+            try {
+                webdriver.quit();
+            } catch (final Exception e) {
+                LOGGER.warn("Failed to QUIT webDriver", e);
+            } finally {
+                webdriver = null;
+            }
         }
     }
 
@@ -77,7 +82,7 @@ public class WebDriverThread {
             }
             final RemoteWebDriver remoteWebDriver = new RemoteWebDriver(remoteUrl, firefoxOptions);
             remoteWebDriver.setFileDetector(new LocalFileDetector());
-            remoteWebDriver.manage().window().setSize(new Dimension(1920,1440));
+            remoteWebDriver.manage().window().setSize(new Dimension(1920, 1440));
             webdriver = remoteWebDriver;
 
         } else {
