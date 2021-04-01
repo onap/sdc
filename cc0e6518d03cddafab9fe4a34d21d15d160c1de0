@@ -45,6 +45,30 @@
       "revId": "cc0e6518d03cddafab9fe4a34d21d15d160c1de0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b29f6b09_1429ce16",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 5
+      },
+      "writtenOn": "2021-04-01T07:22:28Z",
+      "side": 1,
+      "message": "Yes the default trustStore is set at startup by the chef config in the onboarding BE and is bundled in the dockerfile\n(this is set to jetty.sslContext in the onboarding-be and I see that in the main SDC BE we use the system wide ssl setting javax.net.ssl)\n       \nWhen deploying with OOM, it is then overridden by the ONAP trustore by init containers (that do get new certificates through AAF but also a copy of the ONAP sdc truststore) and mounted as a volume. see deployment.yaml of onboarding-be component",
+      "parentUuid": "5e008b39_629077ae",
+      "range": {
+        "startLine": 125,
+        "startChar": 0,
+        "endLine": 125,
+        "endChar": 41
+      },
+      "revId": "cc0e6518d03cddafab9fe4a34d21d15d160c1de0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
