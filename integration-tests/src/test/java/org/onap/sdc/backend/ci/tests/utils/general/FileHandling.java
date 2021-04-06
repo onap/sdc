@@ -136,7 +136,8 @@ public class FileHandling {
 		XnfTypeEnum.PNF, getPnfRepositoryPath(),
 		XnfTypeEnum.CNF, getCnfRepositoryPath(),
 		XnfTypeEnum.VNF, getVnfRepositoryPath(),
-		XnfTypeEnum.ETSI, getEtsiRepositoryPath()
+		XnfTypeEnum.ETSI, getEtsiRepositoryPath(),
+		XnfTypeEnum.VFC, getVfcRepositoryPath()
 	));
 
 	public static String getVnfRepositoryPath() {
@@ -152,6 +153,8 @@ public class FileHandling {
 	}
 
 	private static String getEtsiRepositoryPath() { return getFilePath("ETSI"); }
+
+	private static String getVfcRepositoryPath() { return getFilePath("VFCs"); }
 
 	public static String getXnfRepositoryPath(XnfTypeEnum xnfTypeEnum) {
 		return XNF_REPOSITORY_PATHS_MAP.get(xnfTypeEnum);

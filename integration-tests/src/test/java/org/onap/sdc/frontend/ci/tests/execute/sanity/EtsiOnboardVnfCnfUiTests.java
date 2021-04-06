@@ -126,6 +126,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
         ComponentPage componentPage = loadComponentPage();
         final CompositionPage compositionPage = (CompositionPage) addNodeToCompositionFlow.run(componentPage.goToComposition())
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
+        compositionPage.isLoaded();
         ExtentTestActions.takeScreenshot(Status.INFO, "node-added-to-composition",
             String.format("Resource '%s' was added to composition", serviceCreateData.getName()));
         componentPage = compositionPage.goToGeneral();
@@ -149,7 +150,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
     private ServiceCreatePage createService(final HomePage homePage, final ServiceCreateData serviceCreateData) {
         final CreateServiceFlow createServiceFlow = new CreateServiceFlow(webDriver, serviceCreateData);
         return createServiceFlow.run(homePage)
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ServiceCreatePage"));
     }
 
     private ServiceCreateData createServiceFormData() {

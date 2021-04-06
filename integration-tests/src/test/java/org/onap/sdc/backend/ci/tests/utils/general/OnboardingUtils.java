@@ -21,6 +21,8 @@
 
 package org.onap.sdc.backend.ci.tests.utils.general;
 
+import static org.onap.sdc.backend.ci.tests.utils.general.FileHandling.filterFileNamesListFromFolder;
+
 import java.io.File;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpHeaderEnum;
@@ -217,7 +219,18 @@ public class OnboardingUtils {
 			return vnfNamesFileList.subList(filesCount/2, filesCount);
 		}
 	}
-	
+
+	/**
+	 * Returns VFC files from src/test/resources/Files/VFCs directory
+	 * @return a list of VFC files
+	 */
+	public static List<String> getVfcFilenameList() {
+		final String filepath = FileHandling.getXnfRepositoryPath(XnfTypeEnum.VFC);
+		List<String> fileNamesListFromFolder = filterFileNamesListFromFolder(filepath, ".yml");
+		fileNamesListFromFolder.addAll(filterFileNamesListFromFolder(filepath, ".yaml"));
+		return fileNamesListFromFolder;
+	}
+
 	/**
 	 * @return
 	 * The method returns VNF names list from Files directory under sdc-vnfs repository excluding zip files that known as failed in tosca parser
