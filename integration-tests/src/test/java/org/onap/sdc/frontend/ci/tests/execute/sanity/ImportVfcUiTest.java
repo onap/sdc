@@ -63,7 +63,7 @@ public class ImportVfcUiTest extends SetupCDTest {
 
     @BeforeClass
     public void beforeClass() {
-        filePath = FileHandling.getFilePath("importVfc/");
+        filePath = FileHandling.getFilePath("VFCs/");
     }
 
     @Test

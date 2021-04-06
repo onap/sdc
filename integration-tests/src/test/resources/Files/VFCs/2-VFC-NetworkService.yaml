@@ -1,0 +1,38 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+  org.openecomp.resource.MyNetworkServiceCI:
+    derived_from: org.openecomp.resource.MyNetworkFunctionCI
+    description: Integration Test Network Service
+    properties:
+      resourceType:
+        type: string
+        default: 'NetworkService'
+      nsName:
+        type: string
+      nsdId:
+        type: string
+      nsDescription:
+        type: string
+      subsystemName:
+        type: string
+      connectionName:
+        type: string
+      tenant:
+        type: string
+      vdcName:
+        type: string
+        required: false
+      core_service_ip:
+        type: string
+    attributes:
+      service_ip:
+        type: string
+        default: "1.2.3.4"
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        create:
+          implementation: 'camunda/nsCreate'
+        delete:
+          implementation: 'camunda/nsDelete'

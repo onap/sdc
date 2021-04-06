@@ -138,6 +138,29 @@ public final class OnboardingDataProviders {
         return parametersArray;
     }
 
+    @DataProvider(name = "vfcList")
+    private static Object[][] vfcList() {
+        final List<String> vfcFileNameList = OnboardingUtils.getVfcFilenameList();
+        if (CollectionUtils.isEmpty(vfcFileNameList)) {
+            fail("Could not create vfcList datasource");
+        }
+        final String vfc1 = "1-VFC-NetworkFunction.yaml";
+        final String vfc2 = "2-VFC-NetworkService.yaml";
+        final List<String> vfcFiles = vfcFileNameList.stream()
+            .filter(filename -> filename.equals(vfc1) || filename.equals(vfc2))
+            .collect(Collectors.toList());
+        Collections.sort(vfcFiles);
+        if (CollectionUtils.isEmpty(vfcFiles) || vfcFiles.size() < 2) {
+            fail(String.format("Could not create vfcList datasource, one of the vfc file '%s' was not found", vfcFiles));
+        }
+
+        final String folderPath = FileHandling.getXnfRepositoryPath(XnfTypeEnum.VFC);
+        final Object[][] parametersArray = new Object[2][];
+        parametersArray[0] = new Object[]{folderPath, vfcFiles.get(0)};
+        parametersArray[1] = new Object[]{folderPath, vfcFiles.get(1)};
+        return parametersArray;
+    }
+
     private static Object[][] provideData(final List<String> fileNamesFromFolder, final String folderPath) {
         final Object[][] parametersArray = new Object[fileNamesFromFolder.size()][];
         int index = 0;

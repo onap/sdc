@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+  org.openecomp.resource.MyNetworkFunctionCI:
+    derived_from: tosca.nodes.Root
+    properties:
+      resourceType:
+        type: string
+      resourceSubtype:
+        type: string
+        required: false
+    attributes:
+      atttr_1:
+        type: string
+        default: 'Integration Test'
+      attr_2:
+        type: integer
+        default: 2021
+      attr_3:
+        type: boolean
+        default: true
