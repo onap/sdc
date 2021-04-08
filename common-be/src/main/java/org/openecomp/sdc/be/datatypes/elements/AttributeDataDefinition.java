@@ -53,6 +53,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
         this.setValue(attributeDataDefinition.getValue());
         this.setStatus(attributeDataDefinition.getStatus());
         this.setEntry_schema(attributeDataDefinition.getEntry_schema());
+        this.setSchema(attributeDataDefinition.getSchema());
         this.setOutputPath(attributeDataDefinition.getOutputPath());
         this.setInstanceUniqueId(attributeDataDefinition.getInstanceUniqueId());
         this.setAttributeId(attributeDataDefinition.getAttributeId());
@@ -120,7 +121,11 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
     }
 
     public SchemaDefinition getSchema() {
-        return null;
+        return (SchemaDefinition) getToscaPresentationValue(JsonPresentationFields.SCHEMA);
+    }
+
+    public void setSchema(final SchemaDefinition schema) {
+        setToscaPresentationValue(JsonPresentationFields.SCHEMA, schema);
     }
 
     public String getParentUniqueId() {
