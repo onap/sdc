@@ -49,14 +49,12 @@ import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.yaml.snakeyaml.Yaml;
 
 public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends PropertiesOwner, ATTRIBUTETYPE extends AttributeDataDefinition> implements
     AttributeDeclarator {
 
     private static final Logger log = Logger.getLogger(DefaultAttributeDeclarator.class);
-    private static final short LOOP_PROTECTION_LEVEL = 10;
     private static final String UNDERSCORE = "_";
     private final Gson gson = new Gson();
 
@@ -287,65 +285,6 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         return lhm1;
     }
 
-    Either<OutputDefinition, ResponseFormat> prepareValueBeforeDelete(final OutputDefinition inputForDelete, final AttributeDataDefinition inputValue,
-                                                                      final List<String> pathOfComponentInstances) {
-        final Either<OutputDefinition, ResponseFormat> deleteEither = prepareValueBeforeDelete(inputForDelete, inputValue);
-//        Either<String, JanusGraphOperationStatus> findDefaultValue = propertyOperation
-
-//            .findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(),
-
-//                (String) inputValue.get_default());
-
-//        if (findDefaultValue.isRight()) {
-
-//            deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils
-
-//                .convertFromStorageResponse(
-
-//                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findDefaultValue.right().value()))));
-
-//            return deleteEither;
-
-//
-
-//        }
-
-//        String defaultValue = findDefaultValue.left().value();
-
-//        inputValue.set_default(defaultValue);
-
-//        log.debug("The returned default value in ResourceInstanceProperty is {}", defaultValue);
-        return deleteEither;
-    }
-
-    private Either<OutputDefinition, ResponseFormat> prepareValueBeforeDelete(final OutputDefinition outputForDelete,
-                                                                              final AttributeDataDefinition outputValue) {
-        final Either<OutputDefinition, ResponseFormat> deleteEither = Either.left(outputForDelete);
-        String value = outputValue.getValue();
-        final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(value);
-        resetOutputName(mappedToscaTemplate, outputForDelete.getName());
-        value = "";
-        if (MapUtils.isNotEmpty(mappedToscaTemplate)) {
-            final Either result = cleanNestedMap(mappedToscaTemplate, true);
-            Map modifiedMappedToscaTemplate = mappedToscaTemplate;
-            if (result.isLeft()) {
-                modifiedMappedToscaTemplate = (Map) result.left().value();
-            } else {
-                log.warn("Map cleanup failed -> {}", result.right().value());    //continue, don't break operation
-            }
-            value = gson.toJson(modifiedMappedToscaTemplate);
-        }
-        outputValue.setValue(value);
-        final List<GetOutputValueDataDefinition> getInputsValues = outputValue.getGetOutputValues();
-        if (getInputsValues != null && !getInputsValues.isEmpty()) {
-            final Optional<GetOutputValueDataDefinition> op = getInputsValues.stream()
-                .filter(gi -> gi.getOutputId().equals(outputForDelete.getUniqueId())).findAny();
-            op.ifPresent(getInputsValues::remove);
-        }
-        outputValue.setGetOutputValues(getInputsValues);
-        return deleteEither;
-    }
-
     private void resetOutputName(final Map<String, Object> lhm1, final String outputName) {
         for (final Map.Entry<String, Object> entry : lhm1.entrySet()) {
             final String key = entry.getKey();
@@ -358,22 +297,6 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
             } else if (value instanceof List && ((List) value).contains(outputName) && GET_ATTRIBUTE.equals(key)) {
                 lhm1.remove(key);
             }
-        }
-    }
-
-    private Either cleanNestedMap(Map mappedToscaTemplate, final boolean deepClone) {
-        if (MapUtils.isNotEmpty(mappedToscaTemplate)) {
-            if (deepClone) {
-                if (!(mappedToscaTemplate instanceof HashMap)) {
-                    return Either.right("expecting mappedToscaTemplate as HashMap ,recieved " + mappedToscaTemplate.getClass().getSimpleName());
-                } else {
-                    mappedToscaTemplate = (HashMap) ((HashMap) mappedToscaTemplate).clone();
-                }
-            }
-            return Either.left((Map) cleanEmptyNestedValuesInMap(mappedToscaTemplate, LOOP_PROTECTION_LEVEL));
-        } else {
-            log.debug("mappedToscaTemplate is empty ");
-            return Either.right("mappedToscaTemplate is empty ");
         }
     }
 

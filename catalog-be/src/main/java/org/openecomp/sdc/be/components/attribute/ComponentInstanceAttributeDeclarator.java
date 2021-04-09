@@ -27,14 +27,12 @@ import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 @org.springframework.stereotype.Component
@@ -44,10 +42,8 @@ public class ComponentInstanceAttributeDeclarator extends DefaultAttributeDeclar
     private ToscaOperationFacade toscaOperationFacade;
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
-    public ComponentInstanceAttributeDeclarator(final ComponentsUtils componentsUtils, final AttributeOperation attributeOperation,
-                                                final ToscaOperationFacade toscaOperationFacade,
+    public ComponentInstanceAttributeDeclarator(final ToscaOperationFacade toscaOperationFacade,
                                                 final ComponentInstanceBusinessLogic componentInstanceBusinessLogic) {
-//        super(componentsUtils, attributeOperation);
         this.toscaOperationFacade = toscaOperationFacade;
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
     }
@@ -79,8 +75,6 @@ public class ComponentInstanceAttributeDeclarator extends DefaultAttributeDeclar
         if (CollectionUtils.isEmpty(componentInstancePropertiesDeclaredAsInput)) {
             return StorageOperationStatus.OK;
         }
-        componentInstancePropertiesDeclaredAsInput
-            .forEach(cmptInstanceProperty -> prepareValueBeforeDelete(output, cmptInstanceProperty, cmptInstanceProperty.getPath()));
         return toscaOperationFacade
             .updateComponentInstanceAttributes(component, componentInstancePropertiesDeclaredAsInput.get(0).getComponentInstanceId(),
                 componentInstancePropertiesDeclaredAsInput);

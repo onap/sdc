@@ -20,32 +20,24 @@
 package org.openecomp.sdc.be.components.attribute;
 
 import fj.data.Either;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetOutputValueDataDefinition;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
 
 @org.springframework.stereotype.Component
 public class ComponentAttributeDeclarator extends DefaultAttributeDeclarator<Component, AttributeDataDefinition> {
 
     private final ToscaOperationFacade toscaOperationFacade;
-    private final AttributeBusinessLogic attributeBusinessLogic;
 
-    public ComponentAttributeDeclarator(final ComponentsUtils componentsUtils, final AttributeOperation attributeOperation,
-                                        final ToscaOperationFacade toscaOperationFacade, final AttributeBusinessLogic attributeBusinessLogic) {
-//    super(componentsUtils, attributeOperation);
+    public ComponentAttributeDeclarator(final ToscaOperationFacade toscaOperationFacade) {
         this.toscaOperationFacade = toscaOperationFacade;
-        this.attributeBusinessLogic = attributeBusinessLogic;
     }
 
     @Override
@@ -75,12 +67,7 @@ public class ComponentAttributeDeclarator extends DefaultAttributeDeclarator<Com
 
     @Override
     public StorageOperationStatus unDeclareAttributesAsOutputs(final Component component, final OutputDefinition output) {
-        AttributeDefinition attributeDefinition = new AttributeDefinition(output);
-        // TODO - do we need this one
-        if (attributeBusinessLogic.isAttributeUsedByOperation(component, attributeDefinition)) {
-            return StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION;
-        }
-        Optional<AttributeDefinition> attributeToUpdateCandidate = getDeclaredAttributeByOutputId(component, output.getUniqueId());
+        final Optional<AttributeDefinition> attributeToUpdateCandidate = getDeclaredAttributeByOutputId(component, output.getUniqueId());
         if (attributeToUpdateCandidate.isPresent()) {
             AttributeDefinition attributeToUpdate = attributeToUpdateCandidate.get();
             return unDeclareOutput(component, output, attributeToUpdate);
@@ -90,7 +77,6 @@ public class ComponentAttributeDeclarator extends DefaultAttributeDeclarator<Com
 
     private StorageOperationStatus unDeclareOutput(final Component component, final OutputDefinition output,
                                                    final AttributeDefinition attributeToUpdate) {
-        prepareValueBeforeDelete(output, attributeToUpdate, Collections.emptyList());
         attributeToUpdate.setValue(output.getDefaultValue());
         Either<AttributeDefinition, StorageOperationStatus> status = toscaOperationFacade.updateAttributeOfComponent(component, attributeToUpdate);
         if (status.isRight()) {
