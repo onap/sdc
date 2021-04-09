@@ -18,21 +18,30 @@
  */
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
+import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
+import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.WebDriver;
 
 public class ComponentPage extends AbstractPageObject {
 
-    private final TopNavComponent topNavComponent;
-    private final ResourceLeftSideMenu resourceLeftSideMenu;
-    private final ResourceWorkspaceTopBarComponent workspaceTopBarComponent;
+    protected final TopNavComponent topNavComponent;
+    protected final ResourceLeftSideMenu resourceLeftSideMenu;
+    protected final ResourceWorkspaceTopBarComponent workspaceTopBarComponent;
+    protected final LoaderHelper loaderHelper;
+    protected final NotificationComponent notificationComponent;
 
     public ComponentPage(final WebDriver webDriver) {
         super(webDriver);
-        this.topNavComponent = new TopNavComponent(webDriver);
-        this.resourceLeftSideMenu = new ResourceLeftSideMenu(webDriver);
-        this.workspaceTopBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
+        topNavComponent = new TopNavComponent(webDriver);
+        resourceLeftSideMenu = new ResourceLeftSideMenu(webDriver);
+        workspaceTopBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
+        loaderHelper = new LoaderHelper(webDriver);
+        notificationComponent = new NotificationComponent(webDriver);
     }
 
     @Override
@@ -40,6 +49,10 @@ public class ComponentPage extends AbstractPageObject {
         topNavComponent.isLoaded();
         resourceLeftSideMenu.isLoaded();
         workspaceTopBarComponent.isLoaded();
+    }
+
+    public HomePage goToHomePage() {
+        return topNavComponent.clickOnHome();
     }
 
     public ToscaArtifactsPage goToToscaArtifacts() {
@@ -50,8 +63,29 @@ public class ComponentPage extends AbstractPageObject {
         return resourceLeftSideMenu.clickOnCompositionMenuItem();
     }
 
+    public ResourcePropertiesAssignmentPage goToPropertiesAssignment() {
+        return resourceLeftSideMenu.clickOnPropertiesAssignmentMenuItem();
+    }
+
     public void certifyComponent() {
-        workspaceTopBarComponent.certifyComponent();
+        workspaceTopBarComponent.certifyResource();
+    }
+
+    /**
+     * Creates the resource and wait for success notification.
+     */
+    public void clickOnCreate() {
+        workspaceTopBarComponent.clickOnCreate();
+        loaderHelper.waitForLoader(20);
+        notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
+    }
+
+    public String getLifecycleState() {
+        return workspaceTopBarComponent.getLifecycleState();
+    }
+
+    public boolean isInDesign() {
+        return LifeCycleStateEnum.IN_DESIGN.getValue().equalsIgnoreCase(getLifecycleState());
     }
 
 }

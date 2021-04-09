@@ -22,32 +22,54 @@ package org.onap.sdc.frontend.ci.tests.execute.sanity;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
 
+import com.aventstack.extentreports.Status;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Assertions;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
+import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
+import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
+import org.onap.sdc.frontend.ci.tests.datatypes.composition.RelationshipInformation;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
+import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CheckEtsiNsPropertiesFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFromVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateServiceFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.EditServicePropertiesFlow;
+import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
+import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
+import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
+import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent.CompositionDetailTabName;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionRequirementsCapabilitiesTab;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,15 +81,31 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtsiNetworkServiceUiTests.class);
 
     private WebDriver webDriver;
+    private ComponentInstance virtualLinkableVnf1;
+    private ComponentInstance virtualLinkableVnf2;
+    private ComponentInstance nsVirtualLink;
 
     @Test
-    public void createEtsiNetworkService() throws UnzipException {
+    public void etsiNetworkServiceTest() throws UnzipException {
         webDriver = DriverFactory.getDriver();
 
-        final CreateServiceFlow createServiceFlow = createService();
+        createVlm();
+        final String resourceName = createVsp();
+        ResourceCreatePage resourceCreatePage = importVsp(resourceName);
+        resourceCreatePage = createAndCertifyVf(resourceName, resourceCreatePage);
+        resourceCreatePage.isLoaded();
+        final HomePage homePage = resourceCreatePage.goToHomePage();
+        homePage.isLoaded();
+
+        final ServiceCreateData serviceCreateData = createServiceFormData();
+        final CreateServiceFlow createServiceFlow = createService(serviceCreateData);
+
         final CheckEtsiNsPropertiesFlow checkEtsiNsPropertiesFlow = checkServiceProperties();
-        final ServiceComponentPage serviceComponentPage = checkEtsiNsPropertiesFlow.getLandedPage()
+        ServiceComponentPage serviceComponentPage = checkEtsiNsPropertiesFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ServiceComponentPage"));
+
+        //adding node
+        addNodesAndCreateRelationships(resourceName, serviceCreateData, serviceComponentPage);
 
         final Map<String, Object> propertyMap = createPropertyToEditMap();
         editProperties(serviceComponentPage, propertyMap);
@@ -83,11 +121,120 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         checkEtsiNsPackage(createServiceFlow.getServiceCreateData().getName(), downloadedCsarName, propertyMap);
     }
 
-    private CreateServiceFlow createService() {
-        final ServiceCreateData serviceCreateData = createServiceFormData();
+    private void addNodesAndCreateRelationships(final String resourceName, final ServiceCreateData serviceCreateData,
+                                                final ServiceComponentPage serviceComponentPage) {
+        //add first VF node
+        final ComponentData parentComponent = new ComponentData();
+        parentComponent.setName(serviceCreateData.getName());
+        parentComponent.setVersion("0.1");
+        parentComponent.setComponentType(ComponentType.SERVICE);
+        final ComponentData resourceToAdd = new ComponentData();
+        resourceToAdd.setName(resourceName);
+        resourceToAdd.setVersion("1.0");
+        resourceToAdd.setComponentType(ComponentType.RESOURCE);
+        CompositionPage compositionPage = serviceComponentPage.goToComposition();
+        AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToComposition(parentComponent, resourceToAdd, compositionPage);
+        virtualLinkableVnf1 = addNodeToCompositionFlow.getCreatedComponentInstance()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Could not get the created component instance"));
+        //add second VF node
+        addNodeToCompositionFlow = addNodeToComposition(parentComponent, resourceToAdd, compositionPage);
+        virtualLinkableVnf2 = addNodeToCompositionFlow.getCreatedComponentInstance()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Could not get the created component instance"));
+        //add NsVirtualLink node
+        final ComponentData nsVirtualLinkToAdd = new ComponentData();
+        nsVirtualLinkToAdd.setName("NsVirtualLink");
+        nsVirtualLinkToAdd.setVersion("1.0");
+        nsVirtualLinkToAdd.setComponentType(ComponentType.RESOURCE);
+        addNodeToCompositionFlow = addNodeToComposition(parentComponent, nsVirtualLinkToAdd, compositionPage);
+        nsVirtualLink = addNodeToCompositionFlow.getCreatedComponentInstance()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Could not get the created component instance"));
+
+        //create a relationship from NsVirtualLink to first VF
+        final String virtualLinkableCapability = "tosca.capabilities.nfv.VirtualLinkable";
+        compositionPage = createRelationship(compositionPage, nsVirtualLink.getName(), virtualLinkableCapability,
+            virtualLinkableVnf1.getName(), virtualLinkableCapability);
+        CreateRelationshipFlow createRelationshipFlow;
+        //create a relationship from NsVirtualLink to second VF
+        final RelationshipInformation relationshipInfoVirtualLinkToVnf2 =
+            new RelationshipInformation(nsVirtualLink.getName(), virtualLinkableCapability, virtualLinkableVnf2.getName(), virtualLinkableCapability);
+        createRelationshipFlow = new CreateRelationshipFlow(webDriver, relationshipInfoVirtualLinkToVnf2);
+        compositionPage = (CompositionPage) createRelationshipFlow.run(compositionPage)
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a CompositionPage instance"));
+        compositionPage.goToServiceGeneral();
+    }
+
+    private ResourceCreatePage createAndCertifyVf(final String resourceName, final ResourceCreatePage resourceCreatePage) {
+        final CreateResourceFromVspFlow createResourceFlow = new CreateResourceFromVspFlow(webDriver, resourceName);
+        final ResourceCreatePage resourceCreatePage1 = createResourceFlow.run(resourceCreatePage)
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        resourceCreatePage1.isLoaded();
+        final CompositionPage compositionPage = resourceCreatePage1.goToComposition();
+        compositionPage.isLoaded();
+        //selecting node
+        final String mgmtPortNodeName = "mgmt_port";
+        compositionPage.selectNode(mgmtPortNodeName);
+        final CompositionDetailSideBarComponent detailSideBar = compositionPage.getDetailSideBar();
+        detailSideBar.isLoaded();
+        //going to requirements and capabilities tab and externalizing requirement
+        final CompositionRequirementsCapabilitiesTab compositionRequirementsCapabilitiesTab =
+            (CompositionRequirementsCapabilitiesTab) detailSideBar.selectTab(CompositionDetailTabName.REQUIREMENTS_CAPABILITIES);
+        compositionRequirementsCapabilitiesTab.isLoaded();
+        ExtentTestActions.takeScreenshot(Status.INFO, "requirement-capabilities-tab-loaded", "Requirement and Capabilities tab is loaded");
+        compositionRequirementsCapabilitiesTab.clickOnRequirements();
+        final String externalVirtualLinkRequirement = "external_virtual_link";
+        getExtendTest().log(Status.INFO,
+            String.format("Externalizing requirement '%s' in node '%s'", externalVirtualLinkRequirement, mgmtPortNodeName));
+        compositionRequirementsCapabilitiesTab.toggleRequirementAsExternal(externalVirtualLinkRequirement);
+        ExtentTestActions.takeScreenshot(Status.INFO, "requirement-externalized",
+            String.format("Requirement '%s' of node '%s' was externalized", externalVirtualLinkRequirement, mgmtPortNodeName));
+
+        final ComponentPage componentPage = compositionPage.goToGeneral();
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        return resourceCreatePage1;
+    }
+
+    private CompositionPage createRelationship(final CompositionPage compositionPage, final String fromComponentInstanceName,
+                                               final String fromCapability, final String toComponentInstanceName, final String toRequirement) {
+        final RelationshipInformation relationshipInformation =
+            new RelationshipInformation(fromComponentInstanceName, fromCapability, toComponentInstanceName, toRequirement);
+        CreateRelationshipFlow createRelationshipFlow = new CreateRelationshipFlow(webDriver, relationshipInformation);
+        return (CompositionPage) createRelationshipFlow.run(compositionPage)
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a CompositionPage instance"));
+    }
+
+    private ResourceCreatePage importVsp(final String resourceName) {
+        final ImportVspFlow importVspFlow = new ImportVspFlow(webDriver, resourceName);
+        return importVspFlow.run()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+    }
+
+    private String createVsp() {
+        final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
+        final String virtualLinkableVnf = "etsi-vnf-virtual-linkable.csar";
+        final String rootFolder = org.onap.sdc.backend.ci.tests.utils.general.FileHandling.getXnfRepositoryPath(XnfTypeEnum.VNF);
+        final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, virtualLinkableVnf, rootFolder);
+        createVspFlow.run(new TopNavComponent(webDriver));
+        return resourceName;
+    }
+
+    private void createVlm() {
+        getExtendTest().log(Status.INFO, "Creating a VLM");
+        final CreateVlmFlow createVlmFlow = new CreateVlmFlow(webDriver);
+        createVlmFlow.run();
+    }
+
+    public AddNodeToCompositionFlow addNodeToComposition(final ComponentData parentComponent, final ComponentData resourceToAdd,
+                                                         CompositionPage compositionPage) {
+
+        final AddNodeToCompositionFlow addNodeToCompositionFlow = new AddNodeToCompositionFlow(webDriver, parentComponent, resourceToAdd);
+        addNodeToCompositionFlow.run(compositionPage);
+        return addNodeToCompositionFlow;
+    }
+
+    private CreateServiceFlow createService(final ServiceCreateData serviceCreateData) {
         final CreateServiceFlow createServiceFlow = new CreateServiceFlow(webDriver, serviceCreateData);
-        final TopNavComponent topNavComponent = new TopNavComponent(webDriver);
-        createServiceFlow.run(new HomePage(webDriver, topNavComponent));
+        createServiceFlow.run(new HomePage(webDriver));
         return createServiceFlow;
     }
 
@@ -167,51 +314,84 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     }
 
     private void checkNsCsar(final String expectedServiceName, final String expectedServiceNodeType, final Map<String, Object> expectedPropertiesMap,
-                             final byte[] nsCsar) {
-        try {
-            final Map<String, byte[]> csarFileMap = FileHandling.getFilesFromZip(nsCsar);
-            final String mainDefinitionFile = String.format("Definitions/%s.yaml", expectedServiceName);
-            final byte[] mainDefinitionFileBytes = csarFileMap.get(mainDefinitionFile);
-            if (mainDefinitionFileBytes == null) {
-                Assertions.fail(String.format("Could not find the Main Definition file in '%s'", mainDefinitionFile));
-            }
+                             final byte[] nsCsar) throws UnzipException {
+        final Map<String, byte[]> csarFileMap = FileHandling.getFilesFromZip(nsCsar);
 
-            final Map<String, Object> mainDefinitionYamlMap = loadYamlObject(mainDefinitionFileBytes);
-            final Map<String, Object> topologyTemplateTosca = getMapEntry(mainDefinitionYamlMap, "topology_template");
-            assertThat(String.format("'%s' should contain a topology_template entry", mainDefinitionFile), topologyTemplateTosca, notNullValue());
-            final Map<String, Object> substitutionMappingsTosca = getMapEntry(topologyTemplateTosca, "substitution_mappings");
-            assertThat(String.format("'%s' should contain a substitution_mappings entry", mainDefinitionFile), substitutionMappingsTosca, notNullValue());
-            final String nodeType = (String) substitutionMappingsTosca.get("node_type");
-            assertThat("substitution_mappings->node_type should be as expected", nodeType, is(expectedServiceNodeType));
-
-            final Map<String, Object> nodeTemplatesTosca = getMapEntry(topologyTemplateTosca, "node_templates");
-            assertThat(String.format("'%s' should contain a node_templates entry", mainDefinitionFile), nodeTemplatesTosca, notNullValue());
-            final Map<String, Object> serviceNodeTemplate = getMapEntry(nodeTemplatesTosca, expectedServiceNodeType);
-            assertThat(String.format("'%s' should contain a '%s' entry in node_templates", mainDefinitionFile, expectedServiceNodeType),
-                serviceNodeTemplate, notNullValue());
-            final Map<String, Object> properties = getMapEntry(serviceNodeTemplate, "properties");
-            assertThat(String.format("'%s' node template in '%s' should contain a properties entry", expectedServiceNodeType, mainDefinitionFile),
-                properties, notNullValue());
-            assertThat(String.format("'%s' node template should contain '%s' properties", expectedServiceNodeType, expectedPropertiesMap.size()),
-                properties.size(), is(expectedPropertiesMap.size()));
-            for (final Entry<String, Object> expectedPropertyEntry : expectedPropertiesMap.entrySet()) {
-                final String expectedPropertyName = expectedPropertyEntry.getKey();
-                assertThat(String.format("'%s' node template should contain the property '%s'", expectedServiceNodeType, expectedPropertyName),
-                    properties, hasKey(expectedPropertyName));
-                final Object expectedPropertyValue = expectedPropertyEntry.getValue();
-                if (expectedPropertyValue != null) {
-                    final Object actualPropertyValue = properties.get(expectedPropertyName);
-                    final String msg = String.format("The property '%s', in '%s' node template should have the expected value '%s'",
-                        expectedPropertyName, expectedServiceNodeType, actualPropertyValue);
-                    assertThat(msg, actualPropertyValue, is(expectedPropertyValue));
-                }
-            }
-
-        } catch (final UnzipException e) {
-            final String errorMsg = "Could not unzip Network Service CSAR.";
-            LOGGER.info(errorMsg, e);
-            fail(String.format("%s Error: %s", errorMsg, e.getMessage()));
+        final String mainDefinitionFile = String.format("Definitions/%s.yaml", expectedServiceName);
+        final byte[] mainDefinitionFileBytes = csarFileMap.get(mainDefinitionFile);
+        if (mainDefinitionFileBytes == null) {
+            fail(String.format("Could not find the Main Definition file in '%s'", mainDefinitionFile));
         }
+
+        final Map<String, Object> mainDefinitionYamlMap = loadYamlObject(mainDefinitionFileBytes);
+        final Map<String, Object> topologyTemplateTosca = getMapEntry(mainDefinitionYamlMap, "topology_template");
+        assertThat(String.format("'%s' should contain a topology_template entry", mainDefinitionFile), topologyTemplateTosca, notNullValue());
+        final Map<String, Object> substitutionMappingsTosca = getMapEntry(topologyTemplateTosca, "substitution_mappings");
+        assertThat(String.format("'%s' should contain a substitution_mappings entry", mainDefinitionFile), substitutionMappingsTosca, notNullValue());
+        final String nodeType = (String) substitutionMappingsTosca.get("node_type");
+        assertThat("substitution_mappings->node_type should be as expected", nodeType, is(expectedServiceNodeType));
+
+        final Map<String, Object> nodeTemplatesTosca = getMapEntry(topologyTemplateTosca, "node_templates");
+        assertThat(String.format("'%s' should contain a node_templates entry", mainDefinitionFile), nodeTemplatesTosca, notNullValue());
+
+        checkVirtualLinkableNode(mainDefinitionFile, virtualLinkableVnf1, nodeTemplatesTosca);
+        checkVirtualLinkableNode(mainDefinitionFile, virtualLinkableVnf2, nodeTemplatesTosca);
+        //checking tosca.nodes.nfv.NsVirtualLink node
+        final Map<String, Object> nsVirtualLinkNode = getMapEntry(nodeTemplatesTosca, nsVirtualLink.getName());
+        assertThat(String.format("'%s' should contain a '%s' entry in node_templates", mainDefinitionFile, nsVirtualLink.getName()),
+            nsVirtualLinkNode, notNullValue());
+        assertThat(String.format("Type from '%s' should be as expected", nsVirtualLink.getName()),
+            nsVirtualLinkNode.get("type"), is("tosca.nodes.nfv.NsVirtualLink"));
+
+        //checking the main service node
+        final Map<String, Object> serviceNodeTemplate = getMapEntry(nodeTemplatesTosca, expectedServiceNodeType);
+        assertThat(String.format("'%s' should contain a '%s' entry in node_templates", mainDefinitionFile, expectedServiceNodeType),
+            serviceNodeTemplate, notNullValue());
+        final Map<String, Object> properties = getMapEntry(serviceNodeTemplate, "properties");
+        assertThat(String.format("'%s' node template in '%s' should contain a properties entry", expectedServiceNodeType, mainDefinitionFile),
+            properties, notNullValue());
+        assertThat(String.format("'%s' node template should contain '%s' properties", expectedServiceNodeType, expectedPropertiesMap.size()),
+            properties.size(), is(expectedPropertiesMap.size()));
+        for (final Entry<String, Object> expectedPropertyEntry : expectedPropertiesMap.entrySet()) {
+            final String expectedPropertyName = expectedPropertyEntry.getKey();
+            assertThat(String.format("'%s' node template should contain the property '%s'", expectedServiceNodeType, expectedPropertyName),
+                properties, hasKey(expectedPropertyName));
+            final Object expectedPropertyValue = expectedPropertyEntry.getValue();
+            if (expectedPropertyValue != null) {
+                final Object actualPropertyValue = properties.get(expectedPropertyName);
+                final String msg = String.format("The property '%s', in '%s' node template should have the expected value '%s'",
+                    expectedPropertyName, expectedServiceNodeType, actualPropertyValue);
+                assertThat(msg, actualPropertyValue, is(expectedPropertyValue));
+            }
+        }
+    }
+
+    private void checkVirtualLinkableNode(final String mainDefinitionFileName, final ComponentInstance virtualLinkableVnf,
+                                          final Map<String, Object> nodeTemplatesTosca) {
+        final Map<String, Object> virtualLinkableVnfNode = getMapEntry(nodeTemplatesTosca, virtualLinkableVnf.getName());
+        assertThat(String.format("'%s' should contain a '%s' entry in node_templates", mainDefinitionFileName, virtualLinkableVnf.getName()),
+            virtualLinkableVnfNode, notNullValue());
+        assertThat(String.format("Type from '%s' should be as expected", virtualLinkableVnf.getName()),
+            virtualLinkableVnfNode.get("type"), is("org.openecomp.resource.EtsiVnfVirtualLinkable"));
+        final Object requirementsObj = virtualLinkableVnfNode.get("requirements");
+        assertThat(String.format("'%s' should contain a requirements entry in node_templates", virtualLinkableVnf.getName()),
+            requirementsObj, notNullValue());
+        if (!(requirementsObj instanceof List)) {
+            fail(String.format("Requirements in '%s' is not a list", virtualLinkableVnf.getName()));
+        }
+        final var requirements = (List<Map<String, Object>>) requirementsObj;
+        assertThat(String.format("'%s' should contain only one requirement", virtualLinkableVnf.getName()), requirements, hasSize(1));
+        final Map<String, Object> externalVirtualLinkRequirement = getMapEntry(requirements.get(0), "external_virtual_link");
+        assertThat(String.format("'%s' should contain the requirement 'external_virtual_link'", virtualLinkableVnf.getName()),
+            externalVirtualLinkRequirement, notNullValue());
+        assertThat(
+            String.format("Requirement 'external_virtual_link' in '%s' should contain the capability 'virtual_linkable'",
+                virtualLinkableVnf.getName()),
+            externalVirtualLinkRequirement.get("capability"), is("virtual_linkable"));
+        assertThat(
+            String.format("Requirement 'external_virtual_link' in '%s' should relate to the node '%s'",
+                virtualLinkableVnf.getName(), nsVirtualLink.getName()),
+            externalVirtualLinkRequirement.get("node"), is(nsVirtualLink.getName()));
     }
 
     private Map<String, Object> getMapEntry(final Map<String, Object> yamlObj, final String entryName) {

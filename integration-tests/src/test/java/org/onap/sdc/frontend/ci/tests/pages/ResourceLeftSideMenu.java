@@ -26,7 +26,6 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPa
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * Handles the Resource Page Left Side Menu UI actions
@@ -43,6 +42,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     @Override
     public void isLoaded() {
         wrappingElement = getWrappingElement();
+        waitToBeClickable(By.xpath(XpathSelector.GENERAL_MENU.getXpath()));
     }
 
     /**
@@ -51,8 +51,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
      * @return the enclosing element
      */
     public WebElement getWrappingElement() {
-        return getWait()
-            .until(ExpectedConditions.visibilityOfElementLocated(By.className(XpathSelector.MAIN_DIV.getId())));
+        return waitForElementVisibility(By.className(XpathSelector.MAIN_DIV.getId()));
     }
 
     /**

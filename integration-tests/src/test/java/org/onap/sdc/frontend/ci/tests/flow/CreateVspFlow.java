@@ -43,8 +43,7 @@ public class CreateVspFlow extends AbstractUiTestFlow {
     private final String rootFolder;
     private HomePage homePage;
 
-    public CreateVspFlow(final WebDriver webDriver, final String resourceName, final String packageFile,
-                         final String rootFolder) {
+    public CreateVspFlow(final WebDriver webDriver, final String resourceName, final String packageFile, final String rootFolder) {
         super(webDriver);
         this.resourceName = resourceName;
         this.packageFile = packageFile;

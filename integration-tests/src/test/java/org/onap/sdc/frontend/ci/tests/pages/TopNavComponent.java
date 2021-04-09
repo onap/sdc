@@ -19,6 +19,7 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import java.time.Duration;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +116,6 @@ public class TopNavComponent extends AbstractPageObject {
      * @return the next page object
      */
     public OnboardHomePage clickOnOnboard() {
-        waitForElementInvisibility(By.xpath(XpathSelector.SDC_LOADER_BACKGROUND.getXpath()));
         wrappingElement.findElement(By.xpath(XpathSelector.MAIN_MENU_ONBOARD_BTN.getXpath())).click();
         return new OnboardHomePage(DriverFactory.getDriver(), new OnboardHeaderComponent(DriverFactory.getDriver()));
     }
@@ -129,11 +128,9 @@ public class TopNavComponent extends AbstractPageObject {
      */
     public WebElement hoverToBreadcrumbArrow(final int arrowPosition) {
         final Actions actions = new Actions(webDriver);
-        final List<WebElement> arrowElementList = getWait()
-            .until(
-                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(XpathSelector.ARROW_DROPDOWN.getXpath())));
+        final List<WebElement> arrowElementList = waitForAllElementsVisibility(By.xpath(XpathSelector.ARROW_DROPDOWN.getXpath()));
         final WebElement selectedArrowElement = arrowElementList.get(arrowPosition);
-        actions.moveByOffset(20, 20).moveToElement(selectedArrowElement).perform();
+        actions.moveByOffset(20, 20).moveToElement(selectedArrowElement).pause(Duration.ofMillis(500)).perform();
         return selectedArrowElement;
     }
 
@@ -147,8 +144,7 @@ public class TopNavComponent extends AbstractPageObject {
         MAIN_MENU_LINK_HOME("main-menu-button-home", "//*[@data-tests-id='%s']"),
         ARROW_DROPDOWN("triangle-dropdown", "//li[contains(@class, '%s')]"),
         MAIN_MENU_ONBOARD_BTN("main-menu-button-onboard", "//a[@data-tests-id='%s']"),
-        REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']"),
-        SDC_LOADER_BACKGROUND("sdc-loader-global-wrapper sdc-loader-background", "//div[@class='%s']");
+        REPOSITORY_ICON("repository-icon", "//*[@data-tests-id='%s']");
 
         @Getter
         private final String id;

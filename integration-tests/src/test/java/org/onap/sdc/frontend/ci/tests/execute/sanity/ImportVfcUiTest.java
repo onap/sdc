@@ -43,7 +43,7 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
+import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
@@ -74,9 +74,13 @@ public class ImportVfcUiTest extends SetupCDTest {
         String fileName = "org.openecomp.resource.VFC-root.yml";
         CreateVfcFlow createVfcFlow = createVFC(fileName);
 
-        createVfcFlow.getLandedPage().get().clickOnCertify();
+        ComponentPage componentPage = createVfcFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        componentPage.isLoaded();
 
-        Map<String, Object> yamlObject = downloadToscaArtifact(createVfcFlow.getLandedPage().get());
+        Map<String, Object> yamlObject = downloadToscaArtifact(componentPage);
         checkMetadata(yamlObject, vfcCreateData);
         checkNodeTypes(yamlObject);
         homePage.getTopNavComponent().clickOnHome();
@@ -84,7 +88,9 @@ public class ImportVfcUiTest extends SetupCDTest {
         // TC - Import hierarchy of VFCs
         fileName = "org.openecomp.resource.VFC-child.yml";
         createVfcFlow = createVFC(fileName);
-        createVfcFlow.getLandedPage().get().clickOnCertify();
+        componentPage = createVfcFlow.getLandedPage().orElseThrow();
+        componentPage.certifyComponent();
+        componentPage.isLoaded();
 
         yamlObject = downloadToscaArtifact(createVfcFlow.getLandedPage().get());
         checkMetadata(yamlObject, vfcCreateData);
@@ -94,21 +100,26 @@ public class ImportVfcUiTest extends SetupCDTest {
         // TC - Import VFC with interface inputs
         // TC - Import VFC with attributes
         final CreateVfFlow createVfFlow = createVF();
+        componentPage = createVfFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage.isLoaded();
 
-        final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionFlow(createVfFlow);
+        final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionFlow(componentPage);
+
         final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
-        compositionPage.isLoaded();
-        final ResourceCreatePage resourceCreatePage = compositionPage.goToGeneral();
-        resourceCreatePage.isLoaded();
-        resourceCreatePage.clickOnCertify();
-        yamlObject = downloadToscaArtifact(createVfFlow.getLandedPage().get());
+        componentPage = compositionPage.goToGeneral();
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        componentPage.isLoaded();
+        yamlObject = downloadToscaArtifact(componentPage);
         checkMetadata(yamlObject, vfCreateData);
         checkTopologyTemplate(yamlObject);
 
     }
 
-    private AddNodeToCompositionFlow addNodeToCompositionFlow(final CreateVfFlow createVfFlow) {
+    private AddNodeToCompositionFlow addNodeToCompositionFlow(final ComponentPage componentPage) {
+        componentPage.isLoaded();
         final ComponentData parentComponent = new ComponentData();
         parentComponent.setName(vfCreateData.getName());
         parentComponent.setVersion("0.1");
@@ -118,14 +129,12 @@ public class ImportVfcUiTest extends SetupCDTest {
         componentToAdd.setVersion("1.0");
         componentToAdd.setComponentType(ComponentType.RESOURCE);
         final AddNodeToCompositionFlow addNodeToCompositionFlow = new AddNodeToCompositionFlow(webDriver, parentComponent, componentToAdd);
-        final ResourceCreatePage resourceCreatePage = createVfFlow.getLandedPage()
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ResourceCreatePage"));
-        addNodeToCompositionFlow.run(resourceCreatePage.goToComposition());
+        addNodeToCompositionFlow.run(componentPage.goToComposition());
         return addNodeToCompositionFlow;
     }
 
-    private Map<String, Object> downloadToscaArtifact(final ResourceCreatePage resourceCreatePage) throws UnzipException {
-        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(resourceCreatePage);
+    private Map<String, Object> downloadToscaArtifact(final ComponentPage componentPage) throws UnzipException {
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(componentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
 
@@ -156,10 +165,10 @@ public class ImportVfcUiTest extends SetupCDTest {
         return new Yaml().load(new String(mainDefinitionFileBytes));
     }
 
-    private DownloadCsarArtifactFlow downloadCsarArtifact(final ResourceCreatePage resourceCreatePage) {
+    private DownloadCsarArtifactFlow downloadCsarArtifact(final ComponentPage componentPage) {
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
         downloadCsarArtifactFlow.setWaitBeforeGetTheFile(5L);
-        downloadCsarArtifactFlow.run(resourceCreatePage);
+        downloadCsarArtifactFlow.run(componentPage);
         return downloadCsarArtifactFlow;
     }
 

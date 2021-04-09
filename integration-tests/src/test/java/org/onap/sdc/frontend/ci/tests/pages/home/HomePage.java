@@ -27,8 +27,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceLeftSideMenu;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
@@ -127,8 +125,7 @@ public class HomePage extends AbstractPageObject {
         final String text = componentTypeDiv.getText();
         element.click();
         if ("S".equals(text)) {
-            return new ServiceComponentPage(webDriver, topNavComponent,
-                new ResourceLeftSideMenu(webDriver), new ResourceWorkspaceTopBarComponent(webDriver));
+            return new ServiceComponentPage(webDriver);
         }
 
         throw new UnsupportedOperationException("Return not yet implemented for " + text);
