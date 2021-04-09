@@ -28,14 +28,12 @@ import java.util.Map;
 import java.util.Optional;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
 @org.springframework.stereotype.Component
@@ -45,10 +43,8 @@ public class ComponentInstanceOutputAttributeDeclarator extends DefaultAttribute
     private final ToscaOperationFacade toscaOperationFacade;
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
-    public ComponentInstanceOutputAttributeDeclarator(final ComponentsUtils componentsUtils, final AttributeOperation attributeOperation,
-                                                      final ToscaOperationFacade toscaOperationFacade,
+    public ComponentInstanceOutputAttributeDeclarator(final ToscaOperationFacade toscaOperationFacade,
                                                       final ComponentInstanceBusinessLogic componentInstanceBusinessLogic) {
-//        super(componentsUtils, attributeOperation);
         this.toscaOperationFacade = toscaOperationFacade;
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
     }
@@ -79,8 +75,6 @@ public class ComponentInstanceOutputAttributeDeclarator extends DefaultAttribute
         if (isEmpty(componentInstanceInputsByInputId)) {
             return StorageOperationStatus.OK;
         }
-        componentInstanceInputsByInputId
-            .forEach(cmptInstanceInput -> prepareValueBeforeDelete(output, cmptInstanceInput, cmptInstanceInput.getPath()));
         return toscaOperationFacade.updateComponentInstanceOutputs(component, componentInstanceInputsByInputId.get(0).getComponentInstanceId(),
             componentInstanceInputsByInputId);
     }
