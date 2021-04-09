@@ -200,7 +200,7 @@ public class ToscaExportHandler {
     }
 
     public Either<ToscaRepresentation, ToscaError> exportComponentInterface(final Component component, final boolean isAssociatedComponent) {
-        final List<Map<String, Map<String, String>>> imports = getDefaultToscaImportConfig();
+        final List<Map<String, Map<String, String>>> imports = new ArrayList<>(getDefaultToscaImportConfig());
         if (CollectionUtils.isEmpty(imports)) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -220,7 +220,7 @@ public class ToscaExportHandler {
             toscaVersion = ((Resource) component).getToscaVersion();
         }
         ToscaTemplate toscaTemplate = new ToscaTemplate(toscaVersion != null ? toscaVersion : TOSCA_VERSION);
-        toscaTemplate.setImports(new ArrayList<>(imports));
+        toscaTemplate.setImports(imports);
         final Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         final Either<ToscaTemplate, ToscaError> toscaTemplateRes = convertInterfaceNodeType(new HashMap<>(), component, toscaTemplate, nodeTypes,
             isAssociatedComponent);

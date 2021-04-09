@@ -165,6 +165,10 @@ public class Configuration extends BasicConfiguration {
     public Map<String, Set<String>> getExcludedGroupTypesMapping() {
         return safeGetCapsInsensitiveMap(excludedGroupTypesMapping);
     }
+    
+    public List<Map<String, Map<String, String>>> getDefaultImports(){
+        return Collections.unmodifiableList(defaultImports);
+    }
 
     @Override
     public String toString() {
