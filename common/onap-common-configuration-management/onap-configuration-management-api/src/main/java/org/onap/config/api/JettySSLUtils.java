@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.fe.utils;
+package org.onap.config.api;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,7 +45,7 @@ public class JettySSLUtils {
     }
 
     public static SSLContext getSslContext() throws GeneralSecurityException, IOException {
-        JettySSLUtils.JettySslConfig sslProperties = JettySSLUtils.getSSLConfig();
+        JettySslConfig sslProperties = JettySSLUtils.getSSLConfig();
         KeyStore trustStore = KeyStore.getInstance(sslProperties.getTruststoreType());
         try (FileInputStream instream = new FileInputStream(new File(sslProperties.getTruststorePath()));) {
             trustStore.load(instream, (sslProperties.getTruststorePass()).toCharArray());
