@@ -17,19 +17,19 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.onap.sdc.frontend.ci.tests.pages;
+package org.onap.sdc.frontend.ci.tests.datatypes.composition;
 
-import org.openqa.selenium.WebDriver;
+import lombok.Data;
 
-public class ServiceComponentPage extends ComponentPage {
+/**
+ * Holds information about a relationship between two nodes/component instances.
+ */
+@Data
+public class RelationshipInformation {
 
-    public ServiceComponentPage(final WebDriver webDriver) {
-        super(webDriver);
-    }
-
-    @Override
-    public void isLoaded() {
-        super.isLoaded();
-    }
+    final String fromNode;
+    final String fromCapability;
+    final String toNode;
+    final String toRequirement;
 
 }

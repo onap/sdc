@@ -126,9 +126,8 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
         ComponentPage componentPage = loadComponentPage();
         final CompositionPage compositionPage = (CompositionPage) addNodeToCompositionFlow.run(componentPage.goToComposition())
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
-        compositionPage.isLoaded();
-	      ExtentTestActions.takeScreenshot(Status.INFO, "node-added-to-composition",
-		    String.format("Resource '%s' was added to composition", serviceCreateData.getName()));
+        ExtentTestActions.takeScreenshot(Status.INFO, "node-added-to-composition",
+            String.format("Resource '%s' was added to composition", serviceCreateData.getName()));
         componentPage = compositionPage.goToGeneral();
         componentPage.isLoaded();
         componentPage.certifyComponent();
@@ -187,7 +186,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
     }
 
     /**
-     * Download the generated packag
+     * Download the generated package
      *
      * @return DownloadToscaCsarFlow
      */

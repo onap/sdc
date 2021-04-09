@@ -62,15 +62,7 @@ public class CheckEtsiNsPropertiesFlow extends AbstractUiTestFlow {
     @Override
     public Optional<ServiceComponentPage> run(final PageObject... pageObjects) {
         extendTest.log(Status.INFO, "Checking ETSI NFV Network Service properties");
-        serviceComponentPage = getParameter(pageObjects, ServiceComponentPage.class)
-            .orElseGet(() -> {
-                final TopNavComponent topNavComponent = getParameter(pageObjects, TopNavComponent.class).orElse(new TopNavComponent(webDriver));
-                final ResourceLeftSideMenu resourceLeftSideMenu =
-                    getParameter(pageObjects, ResourceLeftSideMenu.class).orElse(new ResourceLeftSideMenu(webDriver));
-                final ResourceWorkspaceTopBarComponent workspaceTopBarComponent =
-                    getParameter(pageObjects, ResourceWorkspaceTopBarComponent.class).orElse(new ResourceWorkspaceTopBarComponent(webDriver));
-                return new ServiceComponentPage(webDriver, topNavComponent, resourceLeftSideMenu, workspaceTopBarComponent);
-            });
+        serviceComponentPage = getParameter(pageObjects, ServiceComponentPage.class).orElseGet(() -> new ServiceComponentPage(webDriver));
         serviceComponentPage.isLoaded();
         final ResourcePropertiesAssignmentPage resourcePropertiesAssignmentPage = serviceComponentPage.goToPropertiesAssignment();
         checkProperty(resourcePropertiesAssignmentPage, "descriptor_id");

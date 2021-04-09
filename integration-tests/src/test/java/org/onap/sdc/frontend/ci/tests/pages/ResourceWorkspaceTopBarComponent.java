@@ -60,16 +60,19 @@ public class ResourceWorkspaceTopBarComponent extends AbstractPageObject {
         waitToBeClickable(XpathSelector.CREATE_BTN.getXpath()).click();
     }
 
-    public void clickOnCertify() {
+    public ComponentCertificationModal clickOnCertify() {
         waitToBeClickable(XpathSelector.CERTIFY_BTN.getXpath()).click();
+        return new ComponentCertificationModal(webDriver);
     }
 
-    public void certifyComponent() {
-        clickOnCertify();
-        final ComponentCertificationModal componentCertificationModal = new ComponentCertificationModal(webDriver);
+    /**
+     * Certify the resource and wait for success notification.
+     */
+    public void certifyResource() {
+        final ComponentCertificationModal componentCertificationModal = clickOnCertify();
         componentCertificationModal.isLoaded();
-        componentCertificationModal.fillCommentWithDefaultMessage();
-        componentCertificationModal.submit();
+        componentCertificationModal.fillComment("Certifying for the UI Integration Test");
+        componentCertificationModal.clickOnOkButton();
         notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
     }
 

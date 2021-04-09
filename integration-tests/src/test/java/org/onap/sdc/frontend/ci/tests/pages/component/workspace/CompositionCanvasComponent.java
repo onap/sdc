@@ -37,6 +37,7 @@ import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasNodeElement;
 import org.onap.sdc.frontend.ci.tests.exception.CompositionCanvasRuntimeException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
+import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
@@ -99,12 +100,6 @@ public class CompositionCanvasComponent extends AbstractPageObject {
         canvasCenterX = canvasWidth / 2;
         canvasCenterY = canvasHeight / 2;
         LOGGER.debug("Canvas with size [{}, {}] and center [{}, {}]", canvasWidth, canvasHeight, canvasCenterX, canvasCenterY);
-        final String scriptJS = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');\n"
-            + "return JSON.stringify({width: cy.width(), height: cy.height()});";
-        final Object sizeObj = ((JavascriptExecutor) webDriver).executeScript(scriptJS);
-        final JsonObject size = new JsonParser().parse(sizeObj.toString()).getAsJsonObject();
-
-        LOGGER.debug("Canvas with size [{}, {}]", size.get("width"), size.get("height"));
     }
 
     private void loadElements() {
@@ -248,6 +243,49 @@ public class CompositionCanvasComponent extends AbstractPageObject {
         int xElement = positionAsJson.get("x").getAsInt();
         int yElement = positionAsJson.get("y").getAsInt();
         return new ImmutablePair<>(xElement, yElement);
+    }
+
+    public RelationshipWizardComponent createLink(final String fromNodeName, final String toNodeName) {
+        final CanvasNodeElement fromCanvasElement = canvasElementList.stream()
+            .filter(canvasNodeElement -> canvasNodeElement.getName().equals(fromNodeName)).findFirst()
+            .orElseThrow(() -> new UiTestFlowRuntimeException(String.format("Could not find node '%s'", fromNodeName)));
+        final CanvasNodeElement toCanvasElement = canvasElementList.stream()
+            .filter(canvasNodeElement -> canvasNodeElement.getName().equals(toNodeName)).findFirst()
+            .orElseThrow(() -> new UiTestFlowRuntimeException(String.format("Could not find node '%s'", toNodeName)));
+
+        final Point greenPlusPosition = getElementGreenPlusPosition(fromCanvasElement.getName());
+        final Point greenPlusPositionFromCenter = calculateOffsetFromCenter(greenPlusPosition);
+        final Point toElementPositionFromCenter = calculateOffsetFromCenter(toCanvasElement.getPositionX(), toCanvasElement.getPositionY());
+        new Actions(webDriver)
+            .moveToElement(canvasWebElement, greenPlusPositionFromCenter.getX(), greenPlusPositionFromCenter.getY())
+            .moveByOffset(3, 3).moveByOffset(-3, -3)
+            .pause(Duration.ofSeconds(2))
+            .clickAndHold()
+            .pause(Duration.ofSeconds(1))
+            .moveToElement(canvasWebElement, toElementPositionFromCenter.getX(), toElementPositionFromCenter.getY())
+            .pause(Duration.ofSeconds(1))
+            .release()
+            .perform();
+        return new RelationshipWizardComponent(webDriver);
+    }
+
+    public Point getElementGreenPlusPosition(final String elementName) {
+        String scriptJS = "var cy = window.jQuery('.sdc-composition-graph-wrapper').cytoscape('get');\n"
+            + "var cyZoom = cy.zoom();\n"
+            + "var n = cy.nodes('[name=\"" + elementName + "\"]');\n"
+            + "var nPos = n.renderedPosition();\n"
+            + "var nData = n.data();\n"
+            + "var nImgSize = nData.imgWidth;\n"
+            + "var shiftSize = (nImgSize-18)*cyZoom/2;\n"
+            + "return JSON.stringify({\n"
+            + "\tx: nPos.x + shiftSize,\n"
+            + "\ty: nPos.y - shiftSize\n"
+            + "});";
+        final String o = (String) ((JavascriptExecutor) webDriver).executeScript(scriptJS);
+        final JsonObject node = new JsonParser().parse(o).getAsJsonObject();
+        final int x = node.get("x").getAsInt();
+        final int y = node.get("y").getAsInt();
+        return new Point(x, y);
     }
 
     /**

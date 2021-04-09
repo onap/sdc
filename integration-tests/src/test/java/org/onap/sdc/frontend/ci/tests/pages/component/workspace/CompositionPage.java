@@ -20,7 +20,7 @@
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
+import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
@@ -66,6 +66,10 @@ public class CompositionPage extends AbstractPageObject {
         return compositionCanvasComponent.createNodeOnResourceCanvas(serviceName, serviceVersion, resourceName, resourceVersion);
     }
 
+    public RelationshipWizardComponent createLink(final String fromNodeName, final String toNodeName) {
+        return compositionCanvasComponent.createLink(fromNodeName, toNodeName);
+    }
+
     /**
      * Select a node in the canvas
      *
@@ -76,9 +80,9 @@ public class CompositionPage extends AbstractPageObject {
         compositionDetailSideBarComponent.checkComponentIsSelected(nodeName);
     }
 
-    public ResourceCreatePage goToGeneral() {
+    public ComponentPage goToGeneral() {
         topNavComponent.clickOnBreadCrumb(1);
-        return new ResourceCreatePage(webDriver);
+        return new ComponentPage(webDriver);
     }
 
     public ServiceComponentPage goToServiceGeneral() {

@@ -25,11 +25,8 @@ import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceLeftSideMenu;
 import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceWorkspaceTopBarComponent;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
-import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
 import org.openqa.selenium.WebDriver;
 
 public class EditServicePropertiesFlow extends AbstractUiTestFlow {
@@ -44,15 +41,7 @@ public class EditServicePropertiesFlow extends AbstractUiTestFlow {
 
     @Override
     public Optional<ServiceComponentPage> run(final PageObject... pageObjects) {
-        serviceComponentPage = getParameter(pageObjects, ServiceComponentPage.class)
-            .orElseGet(() -> {
-                final TopNavComponent topNavComponent = getParameter(pageObjects, TopNavComponent.class).orElse(new TopNavComponent(webDriver));
-                final ResourceLeftSideMenu resourceLeftSideMenu =
-                    getParameter(pageObjects, ResourceLeftSideMenu.class).orElse(new ResourceLeftSideMenu(webDriver));
-                final ResourceWorkspaceTopBarComponent workspaceTopBarComponent =
-                    getParameter(pageObjects, ResourceWorkspaceTopBarComponent.class).orElse(new ResourceWorkspaceTopBarComponent(webDriver));
-                return new ServiceComponentPage(webDriver, topNavComponent, resourceLeftSideMenu, workspaceTopBarComponent);
-            });
+        serviceComponentPage = getParameter(pageObjects, ServiceComponentPage.class).orElseGet(() -> new ServiceComponentPage(webDriver));
         serviceComponentPage.isLoaded();
         final ResourcePropertiesAssignmentPage resourcePropertiesAssignmentPage = serviceComponentPage.goToPropertiesAssignment();
         if (MapUtils.isEmpty(propertiesMap)) {

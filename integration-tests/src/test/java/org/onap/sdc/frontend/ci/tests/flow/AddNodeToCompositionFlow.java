@@ -4,6 +4,7 @@ import com.aventstack.extentreports.Status;
 import java.util.Objects;
 import java.util.Optional;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
@@ -36,6 +37,9 @@ public class AddNodeToCompositionFlow extends AbstractUiTestFlow {
         final ComponentPage componentPage = compositionPage.goToGeneral();
         componentPage.isLoaded();
         compositionPage = componentPage.goToComposition();
+        compositionPage.isLoaded();
+        ExtentTestActions.takeScreenshot(Status.INFO, "component-instance-created",
+            String.format("Component instance '%s' of type '%s' created", createdComponentInstance.getName(), componentToAdd.getName()));
         return Optional.of(this.compositionPage);
     }
 

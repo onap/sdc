@@ -41,24 +41,41 @@ public class ComponentCertificationModal extends AbstractPageObject {
     }
 
     public void isLoaded() {
-        LOGGER.debug("Finding element with xpath '{}'", XpathSelector.MODAL_DIV.getXpath());
-        wrappingElement = waitForElementVisibility(XpathSelector.MODAL_DIV.getXpath());
+        LOGGER.debug("Finding element with xpath '{}'", XpathSelector.MAIN_MODAL_DIV.getXpath());
+        waitForElementVisibility(XpathSelector.COMMIT_COMMENT_TXT.getXpath());
+        waitToBeClickable(XpathSelector.CANCEL_BUTTON.getXpath());
+        wrappingElement = waitForElementVisibility(XpathSelector.MAIN_MODAL_DIV.getXpath());
     }
 
     /**
-     * Fills commit text area with a default message.
+     * Fills commit text area with given message.
+     *
+     * @param comment the comment message
      */
-    public void fillCommentWithDefaultMessage() {
+    public void fillComment(final String comment) {
         final WebElement commentTxt = wrappingElement.findElement(By.xpath(XpathSelector.COMMIT_COMMENT_TXT.getXpath()));
-        commentTxt.sendKeys("UI Integration Test");
+        commentTxt.sendKeys(comment);
     }
 
     /**
-     * Clicks on the modal submit and confirms success.
+     * Click on the Ok button, submitting the certification.
      */
-    public void submit() {
-        final WebElement commitAndSubmitBtn = wrappingElement.findElement(By.xpath(XpathSelector.MODAL_OK_BTN.getXpath()));
-        commitAndSubmitBtn.click();
+    public void clickOnOkButton() {
+        wrappingElement.findElement(By.xpath(XpathSelector.OK_BUTTON.getXpath())).click();
+    }
+
+    /**
+     * Click on the "x" to close the dialog.
+     */
+    public void clickOnCloseButton() {
+        wrappingElement.findElement(By.xpath(XpathSelector.CLOSE_X_BUTTON.getXpath())).click();
+    }
+
+    /**
+     * Click on the cancel button, closing the dialog.
+     */
+    public void clickOnCancelButton() {
+        wrappingElement.findElement(By.xpath(XpathSelector.CANCEL_BUTTON.getXpath())).click();
     }
 
     /**
@@ -66,10 +83,11 @@ public class ComponentCertificationModal extends AbstractPageObject {
      */
     @AllArgsConstructor
     private enum XpathSelector {
-        MODAL_DIV("sdc-modal-type-custom", "//div[contains(@class, '%s')]"),
+        MAIN_MODAL_DIV("sdc-modal-type-custom", "//div[contains(@class, '%s')]"),
         COMMIT_COMMENT_TXT("checkindialog", "//textarea[@data-tests-id='%s']"),
-        MODAL_OK_BTN("confirm-modal-button-ok", "//button[@data-tests-id='%s']"),
-        MODAL_CANCEL_BTN("confirm-modal-button-cancel", "//button[@data-tests-id='%s']");
+        OK_BUTTON("confirm-modal-button-ok", "//button[@data-tests-id='%s']"),
+        CANCEL_BUTTON("confirm-modal-button-cancel", "//button[@data-tests-id='%s']"),
+        CLOSE_X_BUTTON("confirm-modal-close", "//button[@data-tests-id='%s']");
 
         @Getter
         private final String id;

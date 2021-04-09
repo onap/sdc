@@ -50,7 +50,7 @@ public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
         final ComponentPage componentPage = findParameter(pageObjects, ComponentPage.class);
-        toscaArtifactsPage = (ToscaArtifactsPage) componentPage.goToToscaArtifacts();
+        toscaArtifactsPage = componentPage.goToToscaArtifacts();
         toscaArtifactsPage.isLoaded();
 
         toscaArtifactsPage.clickOnDownload("Tosca Model");

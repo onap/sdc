@@ -17,7 +17,7 @@
                          *ngIf="isInstanceSelected">
                         <checkbox
                                 class="checkbox-label"
-                                data-tests-id="checkbox-mark-as-external"
+                                [attr.data-tests-id]="'checkbox-mark-as-external-' + requirement.name"
                                 [label]="'External'"
                                 (checkedChange)="onMarkAsExternal(requirement)"
                                 [(checked)]="requirement.external"

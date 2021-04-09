@@ -151,6 +151,17 @@ public abstract class AbstractPageObject implements PageObject {
     }
 
     /**
+     * Waits for the visibility of a list of elements matched by the locator.
+     *
+     * @param locator the locator to find the elements
+     * @return the list of elements found if any visible
+     */
+    protected List<WebElement> waitForAllElementsVisibility(final By locator) {
+        return getWait(timeoutInSeconds)
+            .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(locator));
+    }
+
+    /**
      * Waits for element invisibility with the default timeout.
      *
      * @param locator the By locator to search for the element
