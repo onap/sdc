@@ -25,6 +25,7 @@
     "VNF",
     "osContainer",
     "osContainerGroup",
+    "vduCp",
     "virtualCp"
   ],
   "onap": [
