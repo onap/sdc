@@ -22,6 +22,30 @@
       "revId": "890b06400263f2243611e6d98dabdd1a8b9ea991",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93c0d3f0_f3ed26e8",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vnf-repository-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VnfPackageRepositoryImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-04-09T09:49:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6abf69c_fbf68dfd",
+      "range": {
+        "startLine": 87,
+        "startChar": 12,
+        "endLine": 87,
+        "endChar": 32
+      },
+      "revId": "890b06400263f2243611e6d98dabdd1a8b9ea991",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
