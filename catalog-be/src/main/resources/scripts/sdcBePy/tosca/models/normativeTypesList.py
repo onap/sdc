@@ -138,6 +138,7 @@ def get_nfv_4_1_1(base_file_location="/"):
                                   ["VNF",
                                    "osContainer",
                                    "osContainerGroup",
+                                   "vduCp",
                                    "virtualCp"])
 
 def get_onap(base_file_location="/"):
