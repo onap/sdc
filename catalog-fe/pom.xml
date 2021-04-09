@@ -26,7 +26,11 @@
       <version>${functionaljava.version}</version>
       <scope>compile</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.onap.sdc.common</groupId>
+      <artifactId>onap-configuration-management-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.openecomp.sdc</groupId>
       <artifactId>common-app-api</artifactId>
