@@ -21,27 +21,28 @@
 package org.openecomp.sdc.be.components.attribute;
 
 import fj.data.Either;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.components.impl.AttributeBusinessLogic;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetOutputValueDataDefinition;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.AttributeOperation;
 
 @org.springframework.stereotype.Component
 public class ComponentAttributeDeclarator extends DefaultAttributeDeclarator<Component, AttributeDataDefinition> {
 
+<<<<<<< HEAD   (0d13c9 Update SDC version)
   private final ToscaOperationFacade toscaOperationFacade;
   private final AttributeBusinessLogic attributeBusinessLogic;
+=======
+    private final ToscaOperationFacade toscaOperationFacade;
+>>>>>>> CHANGE (88a3a7 Fix 'Unable to delete declared outputs')
 
+<<<<<<< HEAD   (0d13c9 Update SDC version)
   public ComponentAttributeDeclarator(final ComponentsUtils componentsUtils,
                                       final AttributeOperation attributeOperation,
                                       final ToscaOperationFacade toscaOperationFacade,
@@ -86,6 +87,10 @@ public class ComponentAttributeDeclarator extends DefaultAttributeDeclarator<Com
     // TODO - do we need this one
     if (attributeBusinessLogic.isAttributeUsedByOperation(component, attributeDefinition)) {
       return StorageOperationStatus.DECLARED_INPUT_USED_BY_OPERATION;
+=======
+    public ComponentAttributeDeclarator(final ToscaOperationFacade toscaOperationFacade) {
+        this.toscaOperationFacade = toscaOperationFacade;
+>>>>>>> CHANGE (88a3a7 Fix 'Unable to delete declared outputs')
     }
 
     Optional<AttributeDefinition> attributeToUpdateCandidate =
@@ -120,6 +125,7 @@ public class ComponentAttributeDeclarator extends DefaultAttributeDeclarator<Com
       return Optional.empty();
     }
 
+<<<<<<< HEAD   (0d13c9 Update SDC version)
     for (AttributeDefinition attributeDefinition : attributes) {
       List<GetOutputValueDataDefinition> getOutputValues = attributeDefinition.getGetOutputValues();
       if (CollectionUtils.isEmpty(getOutputValues)) {
@@ -132,9 +138,31 @@ public class ComponentAttributeDeclarator extends DefaultAttributeDeclarator<Com
       if (getOutputCandidate.isPresent()) {
         return Optional.of(attributeDefinition);
       }
+=======
+    @Override
+    public StorageOperationStatus unDeclareAttributesAsOutputs(final Component component, final OutputDefinition output) {
+        final Optional<AttributeDefinition> attributeToUpdateCandidate = getDeclaredAttributeByOutputId(component, output.getUniqueId());
+        if (attributeToUpdateCandidate.isPresent()) {
+            AttributeDefinition attributeToUpdate = attributeToUpdateCandidate.get();
+            return unDeclareOutput(component, output, attributeToUpdate);
+        }
+        return StorageOperationStatus.OK;
+>>>>>>> CHANGE (88a3a7 Fix 'Unable to delete declared outputs')
     }
 
+<<<<<<< HEAD   (0d13c9 Update SDC version)
     return Optional.empty();
   }
+=======
+    private StorageOperationStatus unDeclareOutput(final Component component, final OutputDefinition output,
+                                                   final AttributeDefinition attributeToUpdate) {
+        attributeToUpdate.setValue(output.getDefaultValue());
+        Either<AttributeDefinition, StorageOperationStatus> status = toscaOperationFacade.updateAttributeOfComponent(component, attributeToUpdate);
+        if (status.isRight()) {
+            return status.right().value();
+        }
+        return StorageOperationStatus.OK;
+    }
+>>>>>>> CHANGE (88a3a7 Fix 'Unable to delete declared outputs')
 
 }

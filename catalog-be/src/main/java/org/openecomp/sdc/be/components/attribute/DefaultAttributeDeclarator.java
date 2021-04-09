@@ -50,14 +50,12 @@ import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.exception.ResponseFormat;
 import org.yaml.snakeyaml.Yaml;
 
 public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends PropertiesOwner, ATTRIBUTETYPE extends AttributeDataDefinition>
     implements AttributeDeclarator {
 
     private static final Logger log = Logger.getLogger(DefaultAttributeDeclarator.class);
-    private static final short LOOP_PROTECTION_LEVEL = 10;
     private static final String UNDERSCORE = "_";
     private final Gson gson = new Gson();
 
@@ -319,6 +317,7 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         return lhm1;
     }
 
+<<<<<<< HEAD   (0d13c9 Update SDC version)
     private class AttributesDeclarationData {
 
         private final List<OutputDefinition> outputsToCreate;
@@ -391,6 +390,8 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         return deleteEither;
     }
 
+=======
+>>>>>>> CHANGE (88a3a7 Fix 'Unable to delete declared outputs')
     private void resetOutputName(final Map<String, Object> lhm1, final String outputName) {
         for (final Map.Entry<String, Object> entry : lhm1.entrySet()) {
             final String key = entry.getKey();
@@ -406,6 +407,7 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         }
     }
 
+<<<<<<< HEAD   (0d13c9 Update SDC version)
     private Either cleanNestedMap(Map mappedToscaTemplate, final boolean deepClone) {
         if (MapUtils.isNotEmpty(mappedToscaTemplate)) {
             if (deepClone) {
@@ -424,6 +426,8 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         }
     }
 
+=======
+>>>>>>> CHANGE (88a3a7 Fix 'Unable to delete declared outputs')
     /*        Mutates the object
      *        Tail recurse -> traverse the tosca elements and remove nested empty map properties
      *        this only handles nested maps, other objects are left untouched (even a Set containing a map) since behaviour is unexpected
