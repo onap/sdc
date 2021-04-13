@@ -408,6 +408,7 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
         return Either.left(status.left().value().getAttributes());
     }
 
+<<<<<<< HEAD   (0d13c9 Update SDC version)
     public boolean isAttributeUsedByOperation(Component component,
                                               AttributeDefinition propertyDefinitionEntry) {
         // TODO - do we need this one
@@ -442,4 +443,6 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
     }
 
 
+=======
+>>>>>>> CHANGE (88a3a7 Fix 'Unable to delete declared outputs')
 }
