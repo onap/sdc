@@ -33,9 +33,8 @@ public interface AttributeDeclarator {
      * creates a list of outputs from the given list of attributes and updates the attributes accordingly
      *
      * @param component         the container
-     * @param propertiesOwnerId the id of the owner of the attributes to declare (e.g ComponentInstance, Policy, Group
-     *                          etc)
-     * @param attribsToDeclare    the list of attributes that are being declared as outputs
+     * @param propertiesOwnerId the id of the owner of the attributes to declare (e.g ComponentInstance, Policy, Group etc)
+     * @param attribsToDeclare  the list of attributes that are being declared as outputs
      * @return the list of outputs that were created from the given attributes
      */
     Either<List<OutputDefinition>, StorageOperationStatus> declareAttributesAsOutputs(final Component component,
@@ -43,11 +42,11 @@ public interface AttributeDeclarator {
                                                                                       final List<ComponentInstanceAttribOutput> attribsToDeclare);
 
     /**
-     * returns the values of declared attributes to each original state before it was declared as an input. this
-     * function is to be called when an input, that was created by declaring a property, is deleted.
+     * returns the values of declared attributes to each original state before it was declared as an input. this function is to be called when an
+     * input, that was created by declaring a property, is deleted.
      *
      * @param component the container of the input to be deleted
-     * @param output     the input to be deleted
+     * @param output    the input to be deleted
      */
     StorageOperationStatus unDeclareAttributesAsOutputs(final Component component, final OutputDefinition output);
 }
