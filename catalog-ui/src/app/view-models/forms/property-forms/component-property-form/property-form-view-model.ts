@@ -260,7 +260,6 @@ export class PropertyFormViewModel {
             };
 
             let onPropertySuccess = (propertyFromBE:PropertyModel):void => {
-                console.info('onPropertyResourceSuccess : ', propertyFromBE);
                 this.$scope.isLoading = false;
                 this.filteredProperties[this.$scope.currentPropertyIndex] = propertyFromBE;
                 if (!doNotCloseModal) {
@@ -410,19 +409,18 @@ export class PropertyFormViewModel {
             });
     };
 
-    private addOrUpdateProperty = (property:PropertyModel):Observable<PropertyModel> => {
+    private addOrUpdateProperty = (property: PropertyModel): Observable<PropertyModel> => {
         if (!property.uniqueId) {
-            let onSuccess = (property:PropertyModel):PropertyModel => {
-                let newProperty = new PropertyModel(property);
+            let onSuccess = (newProperty: PropertyModel): PropertyModel => {
                 this.filteredProperties.push(newProperty);
                 return newProperty;
             };
-            return this.topologyTemplateService.addProperty(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, property).map(onSuccess);
-        }
-        else {
-            let onSuccess = (newProperty:PropertyModel):PropertyModel => {
+            return this.topologyTemplateService.addProperty(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, property)
+            .map(onSuccess);
+        } else {
+            let onSuccess = (newProperty: PropertyModel): PropertyModel => {
                 // find exist instance property in parent component for update the new value ( find bu uniqueId )
-                let existProperty:PropertyModel = <PropertyModel>_.find(this.filteredProperties, {uniqueId: newProperty.uniqueId});
+                let existProperty: PropertyModel = <PropertyModel>_.find(this.filteredProperties, {uniqueId: newProperty.uniqueId});
                 let propertyIndex = this.filteredProperties.indexOf(existProperty);
                 this.filteredProperties[propertyIndex] = newProperty;
                 return newProperty;
