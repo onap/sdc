@@ -374,8 +374,9 @@ export class TopologyTemplateService {
 
     // ------------------------------------------------ Properties API --------------------------------------------------//
     addProperty = (componentType: string, componentId: string, property: PropertyModel):Observable<PropertyModel> => {
-        return this.http.post<PropertyModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/properties', property.convertToServerObject()).map((response) => {
-            return new PropertyModel(response[Object.keys(response)[0]]);
+        return this.http.post<PropertyModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/properties', property.convertToServerObject())
+        .map((response) => {
+            return new PropertyModel(response);
         });
     }
 
