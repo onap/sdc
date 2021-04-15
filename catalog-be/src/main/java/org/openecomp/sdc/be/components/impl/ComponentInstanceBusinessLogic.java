@@ -79,6 +79,7 @@ import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.ServiceFilterUtils;
 import org.openecomp.sdc.be.info.CreateAndAssotiateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -997,7 +998,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND, componentInstance.getName(),
                 instanceType.getValue().toLowerCase());
         }
-        if (!validateParentStatus.left().value()) {
+        if (!Boolean.TRUE.equals(validateParentStatus.left().value())) {
             throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, componentInstance.getName(),
                 instanceType.getValue().toLowerCase(), containerComponentType.getValue().toLowerCase(), containerComponentId);
         }
@@ -1062,7 +1063,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                         ComponentInstance updatedCi = op.get();
                         updatedCi = buildComponentInstance(updatedCi, origInst);
                         Boolean isUniqueName = validateInstanceNameUniquenessUponUpdate(containerComponent, origInst, updatedCi.getName());
-                        if (!isUniqueName) {
+                        if (!Boolean.TRUE.equals(isUniqueName)) {
                             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                                 "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ",
                                 origInst.getName(), updatedCi.getName());
@@ -1137,7 +1138,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             isNameChanged = true;
         }
         Boolean isUniqueName = validateInstanceNameUniquenessUponUpdate(containerComponent, oldComponentInstance, newInstanceName);
-        if (!isUniqueName) {
+        if (!Boolean.TRUE.equals(isUniqueName)) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                 "Failed to update the name of the component instance {} to {}. A component instance with the same name already exists. ",
                 oldComponentInstance.getName(), newInstanceName);
@@ -1911,7 +1912,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Component containerComponent = getResourceResult.left().value();
 
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
-            if (containerComponent.isArchived()) {
+            if (Boolean.TRUE.equals(containerComponent.isArchived())) {
                 log.info("Component is archived. Component id: {}", componentId);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_IS_ARCHIVED, containerComponent.getName()));
             }
@@ -1986,6 +1987,96 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
+    public Either<List<ComponentInstanceAttribute>, ResponseFormat> createOrUpdateAttributeValues(final ComponentTypeEnum componentTypeEnum,
+                                                                                                  final String componentId,
+                                                                                                  final String resourceInstanceId,
+                                                                                                  final List<ComponentInstanceAttribute> attributes,
+                                                                                                  final String userId) {
+        Either<List<ComponentInstanceAttribute>, ResponseFormat> resultOp = null;
+        /*-------------------------------Validations---------------------------------*/
+        validateUserExists(userId);
+
+        if (componentTypeEnum == null) {
+            BeEcompErrorManager.getInstance().logInvalidInputError("CreateOrUpdatePropertiesValues", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
+            resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+            return resultOp;
+        }
+        final Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade
+            .getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
+
+        if (getResourceResult.isRight()) {
+            log.debug(FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID, componentId);
+            final ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getResourceResult.right().value(), componentTypeEnum);
+            return Either.right(componentsUtils.getResponseFormat(actionStatus, componentId));
+        }
+        final Component containerComponent = getResourceResult.left().value();
+
+        if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
+            if (Boolean.TRUE.equals(containerComponent.isArchived())) {
+                log.info("Component is archived. Component id: {}", componentId);
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_IS_ARCHIVED, containerComponent.getName()));
+            }
+            log.info("Restricted operation for user: {} on service {}", userId, componentId);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+        }
+
+        final Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent,
+            resourceInstanceId);
+        if (resourceInstanceStatus.isRight()) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
+                resourceInstanceId, "resource instance", "service", componentId));
+        }
+        final ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
+
+        // lock resource
+        final StorageOperationStatus lockStatus = graphLockOperation.lockComponent(componentId, componentTypeEnum.getNodeType());
+        if (lockStatus != StorageOperationStatus.OK) {
+            log.debug(FAILED_TO_LOCK_SERVICE, componentId);
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
+        }
+        final List<ComponentInstanceAttribute> updatedProperties = new ArrayList<>();
+        try {
+            for (final ComponentInstanceAttribute attribute : attributes) {
+                final ComponentInstanceAttribute componentInstanceProperty = validateAttributeExistsOnComponent(attribute, containerComponent,
+                    foundResourceInstance);
+                final Either<String, ResponseFormat> updatedPropertyValue = updateAttributeObjectValue(attribute);
+                if (updatedPropertyValue.isRight()) {
+                    log.error("Failed to update attribute object value of attribute: {}", attribute);
+                    throw new ByResponseFormatComponentException(updatedPropertyValue.right().value());
+                }
+                updatedPropertyValue.bimap(
+                    updatedValue -> {
+                        componentInstanceProperty.setValue(updatedValue);
+                        return updateAttributeOnContainerComponent(attribute, updatedValue,
+                            containerComponent, foundResourceInstance);
+                    }, Either::right);
+                updatedProperties.add(componentInstanceProperty);
+            }
+
+            final Either<Component, StorageOperationStatus> updateContainerRes = toscaOperationFacade
+                .updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
+            if (updateContainerRes.isRight()) {
+                final ActionStatus actionStatus = componentsUtils
+                    .convertFromStorageResponseForResourceInstanceProperty(updateContainerRes.right().value());
+                resultOp = Either.right(componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, ""));
+                return resultOp;
+            }
+            resultOp = Either.left(updatedProperties);
+            return resultOp;
+
+        } catch (final ComponentException e) {
+            return Either.right(e.getResponseFormat());
+        } finally {
+            if (resultOp == null || resultOp.isRight()) {
+                janusGraphDao.rollback();
+            } else {
+                janusGraphDao.commit();
+            }
+            // unlock resource
+            graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
+        }
+    }
+
     private void validateMandatoryFields(PropertyDataDefinition property) {
         if (StringUtils.isEmpty(property.getName())) {
             throw new ByActionStatusComponentException(ActionStatus.MISSING_PROPERTY_NAME);
@@ -2002,6 +2093,19 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, property.getName());
         }
         return instanceProperty.get();
+    }
+
+    private ComponentInstanceAttribute validateAttributeExistsOnComponent(final ComponentInstanceAttribute attribute,
+                                                                          final Component containerComponent,
+                                                                          final ComponentInstance foundResourceInstance) {
+        final List<ComponentInstanceAttribute> instanceProperties =
+            containerComponent.getComponentInstancesAttributes().get(foundResourceInstance.getUniqueId());
+        final Optional<ComponentInstanceAttribute> instanceAttribute =
+            instanceProperties.stream().filter(p -> p.getName().equals(attribute.getName())).findAny();
+        if (!instanceAttribute.isPresent()) {
+            throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, attribute.getName());
+        }
+        return instanceAttribute.get();
     }
 
     private ResponseFormat updateCapabilityPropertyOnContainerComponent(ComponentInstanceProperty property,
@@ -2092,6 +2196,22 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return componentsUtils.getResponseFormat(ActionStatus.OK);
     }
 
+    private ResponseFormat updateAttributeOnContainerComponent(final ComponentInstanceAttribute instanceAttribute,
+                                                               final String newValue,
+                                                               final Component containerComponent,
+                                                               final ComponentInstance foundResourceInstance) {
+
+        instanceAttribute.setValue(newValue);
+        final StorageOperationStatus status =
+            toscaOperationFacade.updateComponentInstanceAttribute(containerComponent, foundResourceInstance.getUniqueId(), instanceAttribute);
+        if (status != StorageOperationStatus.OK) {
+            final ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForResourceInstanceProperty(status);
+            return componentsUtils.getResponseFormatForResourceInstanceProperty(actionStatus, "");
+        }
+        foundResourceInstance.setCustomizationUUID(UUID.randomUUID().toString());
+        return componentsUtils.getResponseFormat(ActionStatus.OK);
+    }
+
     private <T extends PropertyDefinition> Either<String, ResponseFormat> validatePropertyObjectValue(T property, String newValue, boolean isInput) {
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
         if (allDataTypesEither.isRight()) {
@@ -2110,8 +2230,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Object, Boolean> isValid = propertyOperation
             .validateAndUpdatePropertyValue(property.getType(), newValue, true, innerType, allDataTypes);
         if (isValid.isRight()) {
-            Boolean res = isValid.right().value();
-            if (!res) {
+            if (!Boolean.TRUE.equals(isValid.right().value())) {
                 log.error("Invalid value {} of property {} ", newValue, property.getName());
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
@@ -2184,8 +2303,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<Object, Boolean> isValid = propertyOperation
             .validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType, allDataTypes);
         if (isValid.isRight()) {
-            Boolean res = isValid.right().value();
-            if (!res) {
+            if (!Boolean.TRUE.equals(isValid.right().value())) {
                 log.debug("validate and update property value has failed with value: {}", property.getValue());
                 throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(
                     DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
@@ -2199,10 +2317,62 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (!isInput) {
             ImmutablePair<String, Boolean> pair = propertyOperation
                 .validateAndUpdateRules(propertyType, ((ComponentInstanceProperty) property).getRules(), innerType, allDataTypes, true);
-            if (pair.getRight() != null && pair.getRight() == false) {
+            if (pair.getRight() != null && Boolean.FALSE.equals(pair.getRight())) {
                 BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), property.getName(), propertyType);
                 return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
                     DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT))));
+            }
+        }
+        return Either.left(newValue);
+    }
+
+    private <T extends AttributeDefinition> Either<String, ResponseFormat> updateAttributeObjectValue(final T attribute) {
+        final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
+        if (allDataTypesEither.isRight()) {
+            JanusGraphOperationStatus status = allDataTypesEither.right().value();
+            BeEcompErrorManager.getInstance()
+                .logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update attribute value on instance. Status is " + status,
+                    ErrorSeverity.ERROR);
+            return Either.right(componentsUtils
+                .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
+        }
+        String innerType = null;
+        final String attributeType = attribute.getType();
+        final ToscaPropertyType type = ToscaPropertyType.isValidType(attributeType);
+        log.debug("The type of the attribute {} is {}", attribute.getUniqueId(), attributeType);
+
+        if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
+            final SchemaDefinition def = attribute.getSchema();
+            if (def == null) {
+                log.debug("Schema doesn't exists for attribute of type {}", type);
+                return Either
+                    .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
+            }
+            PropertyDataDefinition propDef = def.getProperty();
+            if (propDef == null) {
+                log.debug("Property in Schema Definition inside attribute of type {} doesn't exist", type);
+                return Either
+                    .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
+            }
+            innerType = propDef.getType();
+        }
+
+        // Specific Update Logic
+        String newValue = attribute.getValue();
+
+        final Either<Object, Boolean> isValid = attributeOperation
+            .validateAndUpdateAttributeValue(attributeType, attribute.getValue(), true, innerType, allDataTypesEither.left().value());
+        if (isValid.isRight()) {
+            final Boolean res = isValid.right().value();
+            if (!Boolean.TRUE.equals(res)) {
+                log.debug("validate and update attribute value has failed with value: {}", attribute.getValue());
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(
+                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
+            }
+        } else {
+            final Object object = isValid.left().value();
+            if (object != null) {
+                newValue = object.toString();
             }
         }
         return Either.left(newValue);
@@ -2270,7 +2440,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Component containerComponent = getResourceResult.left().value();
 
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
-            if (containerComponent.isArchived()) {
+            if (Boolean.TRUE.equals(containerComponent.isArchived())) {
                 log.info("Component is archived. Component id: {}", componentId);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_IS_ARCHIVED, containerComponent.getName()));
             }
@@ -2513,7 +2683,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             ActionStatus actionStatus = ActionStatus.CONTAINER_CANNOT_CONTAIN_COMPONENT_IN_STATE;
             throw new ByActionStatusComponentException(actionStatus, containerComponent.getComponentType().toString(), resourceCurrState.toString());
         }
-        if (component.isArchived() == true) {
+        if (Boolean.TRUE.equals(component.isArchived())) {
             ActionStatus actionStatus = ActionStatus.COMPONENT_IS_ARCHIVED;
             throw new ByActionStatusComponentException(actionStatus, component.getName());
         }
@@ -2553,7 +2723,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             resultOp = Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse
                 (componentExistsRes.right().value()), resourceId));
             return resultOp;
-        } else if (!componentExistsRes.left().value()) {
+        } else if (!Boolean.TRUE.equals(componentExistsRes.left().value())) {
             log.debug("The resource {} not found ", resourceId);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, resourceId));
             return resultOp;
@@ -2636,7 +2806,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 log.debug("Failed to validate existing of the component {}. Status is {} ", resourceId, errorStatus);
                 throw new ByActionStatusComponentException(
                     componentsUtils.convertFromStorageResponse(errorStatus), resourceId);
-            } else if (!componentExistsRes.left().value()) {
+            } else if (!Boolean.TRUE.equals(componentExistsRes.left().value())) {
                 log.debug("The resource {} not found ", resourceId);
                 throw new ByActionStatusComponentException(ActionStatus.RESOURCE_NOT_FOUND, resourceId);
             }
@@ -3325,7 +3495,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         Either<ComponentInstanceAttribute, ResponseFormat> resultOp = null;
         validateUserExists(userId);
         if (componentTypeEnum == null) {
-            BeEcompErrorManager.getInstance().logInvalidInputError("createOrUpdateAttributeValue", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
+            BeEcompErrorManager.getInstance()
+                .logInvalidInputError("createOrUpdateAttributeValueForCopyPaste", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
             return resultOp;
         }

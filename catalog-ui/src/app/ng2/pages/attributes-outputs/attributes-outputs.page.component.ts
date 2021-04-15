@@ -198,7 +198,6 @@ export class AttributesOutputsComponent {
         event.preventDefault();
         this.showUnsavedChangesAlert().then(() => {
           this.$state.go(toState, toParams);
-        }, () => {
         });
       }
     });
@@ -390,7 +389,6 @@ export class AttributesOutputsComponent {
       this.attributeOutputTabs.triggerTabChange(this.currentMainTab.title);
       this.showUnsavedChangesAlert().then(() => {
         this.attributeOutputTabs.selectTab(this.attributeOutputTabs.tabs.find((tab) => tab.title === event.title));
-      }, () => {
       });
       return;
     }
@@ -451,7 +449,7 @@ export class AttributesOutputsComponent {
       let request;
       let handleSuccess, handleError;
       if (this.isAttributesTabSelected) {
-        this.changedData.map((changedAttrib) => {
+        const changedAttribs = this.changedData.map((changedAttrib) => {
           changedAttrib = <AttributeFEModel>changedAttrib;
           const attribBE = new AttributeBEModel(changedAttrib);
           attribBE.toscaPresentation = new ToscaPresentationData();
@@ -461,6 +459,28 @@ export class AttributesOutputsComponent {
           delete attribBE.origName;
           return attribBE;
         });
+
+        if (this.selectedInstanceData instanceof ComponentInstance) {
+          if (this.isSelf()) {
+            console.log("changedAttribs", changedAttribs);
+            request = this.topologyTemplateService.updateServiceAttributes(this.component.uniqueId, _.map(changedAttribs, cp => {
+              delete cp.constraints;
+              return cp;
+            }));
+          } else {
+            request = this.componentInstanceServiceNg2
+            .updateInstanceAttributes(this.component.componentType, this.component.uniqueId, this.selectedInstanceData.uniqueId, changedAttribs);
+          }
+          handleSuccess = (response) => {
+            // reset each changed attribute with new value and remove it from changed attributes list
+            response.forEach((resAttrib) => {
+              const changedAttrib = <AttributeFEModel>this.changedData.shift();
+              this.attributesUtils.resetAttributeValue(changedAttrib, resAttrib.value);
+            });
+            resolve(response);
+            console.log("updated instance attributes: ", response);
+          };
+        }
       } else if (this.isOutputsTabSelected) {
         const changedOutputs: OutputBEModel[] = this.changedData.map((changedOutput) => {
           changedOutput = <OutputFEModel>changedOutput;
@@ -468,8 +488,7 @@ export class AttributesOutputsComponent {
           outputBE.defaultValue = changedOutput.getJSONDefaultValue();
           return outputBE;
         });
-        request = this.componentServiceNg2
-        .updateComponentOutputs(this.component, changedOutputs);
+        request = this.componentServiceNg2.updateComponentOutputs(this.component, changedOutputs);
         handleSuccess = (response) => {
           // reset each changed attribute with new value and remove it from changed attributes list
           response.forEach((resOutput) => {
@@ -478,22 +497,23 @@ export class AttributesOutputsComponent {
             changedOutput.required = resOutput.required;
           });
         }
-        this.savingChangedData = true;
-        request.subscribe(
-            (response) => {
-              this.savingChangedData = false;
-              handleSuccess && handleSuccess(response);
-              this.updateHasChangedData();
-              resolve(response);
-            },
-            (error) => {
-              this.savingChangedData = false;
-              handleError && handleError(error);
-              this.updateHasChangedData();
-              reject(error);
-            }
-        );
       }
+
+      this.savingChangedData = true;
+      request.subscribe(
+          (response) => {
+            this.savingChangedData = false;
+            handleSuccess && handleSuccess(response);
+            this.updateHasChangedData();
+            resolve(response);
+          },
+          (error) => {
+            this.savingChangedData = false;
+            handleError && handleError(error);
+            this.updateHasChangedData();
+            reject(error);
+          }
+      );
 
     });
   };
