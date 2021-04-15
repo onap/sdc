@@ -315,4 +315,37 @@ public class AttributeOperation extends AbstractOperation {
     private void updateAttributeValue(final AttributeDataDefinition attributeDefinition, final JsonElement jsonElement) {
         attributeDefinition.set_default(jsonElement);
     }
+
+    public Either<Object, Boolean> validateAndUpdateAttributeValue(final String attributeType,
+                                                                   final String value,
+                                                                   final boolean isValidate,
+                                                                   final String innerType,
+                                                                   final Map<String, DataTypeDefinition> dataTypes) {
+        log.trace("Going to validate attribute value and its type. type = {}, value = {}", attributeType, value);
+        final ToscaPropertyType type = getType(attributeType);
+        if (isValidate) {
+            if (type == null) {
+                final DataTypeDefinition dataTypeDefinition = dataTypes.get(attributeType);
+                final ImmutablePair<JsonElement, Boolean> validateResult =
+                    dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
+                if (Boolean.FALSE.equals(validateResult.right)) {
+                    log.debug(THE_VALUE_OF_ATTRIBUTE_FROM_TYPE_IS_INVALID, value, attributeType);
+                    return Either.right(false);
+                }
+                return Either.left(getValueFromJsonElement(validateResult.left));
+            }
+            log.trace("before validating property type {}", attributeType);
+            if (!isValidValue(type, value, innerType, dataTypes)) {
+                log.debug(THE_VALUE_OF_ATTRIBUTE_FROM_TYPE_IS_INVALID, value, type);
+                return Either.right(false);
+            }
+        }
+        Object convertedValue = value;
+        if (!isEmptyValue(value) && isValidate) {
+            PropertyValueConverter converter = type.getConverter();
+            convertedValue = converter.convert(value, innerType, dataTypes);
+        }
+        return Either.left(convertedValue);
+    }
+
 }

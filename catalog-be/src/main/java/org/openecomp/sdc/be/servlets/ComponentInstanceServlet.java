@@ -35,7 +35,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -111,7 +110,7 @@ import org.springframework.stereotype.Controller;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDCE-2 APIs")})
+@Tag(name = "SDCE-2 APIs")
 @Server(url = "/sdc2/rest")
 @Controller
 public class ComponentInstanceServlet extends AbstractValidationsServlet {
@@ -121,6 +120,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     private static final String GET_GROUP_ARTIFACT_BY_ID_UNEXPECTED_EXCEPTION = "getGroupArtifactById unexpected exception";
     private static final String GET_START_HANDLE_REQUEST_OF = "(GET) Start handle request of {}";
     private static final String START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS = "Start handle request of updateResourceInstanceProperty. Received property is {}";
+    private static final String START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_ATTRIBUTE_RECEIVED_ATTRIBUTE_IS = "Start handle request of updateResourceInstanceAttribute. Received attribute is {}";
     private static final String UPDATE_RESOURCE_INSTANCE = "Update Resource Instance";
     private static final String RESOURCE_INSTANCE_UPDATE_RESOURCE_INSTANCE = "Resource Instance - updateResourceInstance";
     private static final String UPDATE_RESOURCE_INSTANCE_WITH_EXCEPTION = "update resource instance with exception";
@@ -641,10 +641,10 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
      * @return
      */
     @POST
-    @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/attribute")
+    @Path("/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/attributes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Update resource instance attribute", method = "POST", summary = "Returns updated resource instance attribute", responses = {
+    @Operation(description = "Update resource instance attribute", method = "POST", summary = "Returns updated resource instance property", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Resource instance created"),
         @ApiResponse(responseCode = "403", description = "Restricted operation"),
@@ -655,45 +655,52 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                                                         ComponentTypeEnum.RESOURCE_PARAM_NAME,
                                                         ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("containerComponentType") final String containerComponentType,
                                                     @Parameter(description = "resource instance id") @PathParam("componentInstanceId") final String componentInstanceId,
-                                                    @Parameter(description = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-                                                    @Context final HttpServletRequest request) throws IOException {
-        String url = request.getMethod() + " " + request.getRequestURI();
+                                                    @Parameter(description = "id of user initiating the operation") @HeaderParam(value = Constants.USER_ID_HEADER) final String userId,
+                                                    @Context final HttpServletRequest request,
+                                                    @Parameter(description = "Component Instance Properties JSON Array", required = true) final String componentInstanceAttributesJsonArray) {
+        final String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
-        loggerSupportability
-            .log(LoggerSupportabilityActions.UPDATE_RESOURCE, StatusCode.STARTED, "Starting to update Resource Instance Attribute for component {} ",
-                componentId + " by " + userId);
-        try {
-            Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
-            Wrapper<String> dataWrapper = new Wrapper<>();
-            Wrapper<ComponentInstanceProperty> attributeWrapper = new Wrapper<>();
-            Wrapper<ComponentInstanceBusinessLogic> blWrapper = new Wrapper<>();
-            validateInputStream(request, dataWrapper, errorWrapper);
-            if (errorWrapper.isEmpty()) {
-                validateClassParse(dataWrapper.getInnerElement(), attributeWrapper, () -> ComponentInstanceProperty.class, errorWrapper);
+        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE, StatusCode.STARTED,
+            "Starting to update Resource Instance Attributes for component {} ", componentId + " by " + userId);
+        final Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+        List<ComponentInstanceAttribute> attributesToUpdate = new ArrayList<>();
+        if (errorWrapper.isEmpty()) {
+            final Either<List<ComponentInstanceAttribute>, ResponseFormat> attributesToUpdateEither = convertMultipleAttributes(
+                componentInstanceAttributesJsonArray);
+            if (attributesToUpdateEither.isRight()) {
+                errorWrapper.setInnerElement(attributesToUpdateEither.right().value());
+            } else {
+                attributesToUpdate = attributesToUpdateEither.left().value();
             }
-            if (errorWrapper.isEmpty()) {
-                validateComponentInstanceBusinessLogic(request, containerComponentType, blWrapper, errorWrapper);
-            }
-            if (errorWrapper.isEmpty()) {
-                ComponentInstanceBusinessLogic componentInstanceLogic = blWrapper.getInnerElement();
-                ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-                log.debug("Start handle request of ComponentInstanceAttribute. Received attribute is {}", attributeWrapper.getInnerElement());
-                Either<ComponentInstanceProperty, ResponseFormat> eitherAttribute = componentInstanceLogic
-                    .createOrUpdateAttributeValue(componentTypeEnum, componentId, componentInstanceId, attributeWrapper.getInnerElement(), userId);
-                if (eitherAttribute.isRight()) {
-                    errorWrapper.setInnerElement(eitherAttribute.right().value());
-                } else {
-                    attributeWrapper.setInnerElement(eitherAttribute.left().value());
-                }
-            }
-            loggerSupportability
-                .log(LoggerSupportabilityActions.UPDATE_RESOURCE, StatusCode.COMPLETE, "Ended update Resource Instance Attribute for component {} ",
-                    componentId + " by " + userId);
-            return buildResponseFromElement(errorWrapper, attributeWrapper);
-        } catch (Exception e) {
-            log.error(CREATE_AND_ASSOCIATE_RI_FAILED_WITH_EXCEPTION, e.getMessage(), e);
-            throw e;
         }
+        if (!errorWrapper.isEmpty()) {
+            return buildErrorResponse(errorWrapper.getInnerElement());
+        }
+        log.debug(START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_ATTRIBUTE_RECEIVED_ATTRIBUTE_IS, attributesToUpdate);
+        final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
+        if (componentInstanceBusinessLogic == null) {
+            log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
+        }
+        final Either<List<ComponentInstanceAttribute>, ResponseFormat> actionResponse = componentInstanceBusinessLogic
+            .createOrUpdateAttributeValues(componentTypeEnum, componentId, componentInstanceId, attributesToUpdate, userId);
+        if (actionResponse.isRight()) {
+            return buildErrorResponse(actionResponse.right().value());
+        }
+        final List<ComponentInstanceAttribute> resourceInstanceAttributes = actionResponse.left().value();
+        final ObjectMapper mapper = new ObjectMapper();
+        String result;
+        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE, StatusCode.COMPLETE,
+            "Ended update Resource Instance Attributes for component {} ", componentId + " by " + userId);
+        try {
+            result = mapper.writeValueAsString(resourceInstanceAttributes);
+        } catch (JsonProcessingException e) {
+            log.error(UPDATE_RESOURCE_INSTANCE_WITH_EXCEPTION, e.getMessage(), e);
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+        }
+        loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE, StatusCode.COMPLETE,
+            "Ended update Resource Instance Attributes for component {} ", componentId + " by user " + userId);
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
     }
 
     @DELETE
@@ -1252,6 +1259,18 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         }
         Either<ComponentInstanceProperty[], ResponseFormat> convertStatus = getComponentsUtils()
             .convertJsonToObjectUsingObjectMapper(dataList, new User(), ComponentInstanceProperty[].class, null, ComponentTypeEnum.RESOURCE_INSTANCE);
+        if (convertStatus.isRight()) {
+            return Either.right(convertStatus.right().value());
+        }
+        return Either.left(Arrays.asList(convertStatus.left().value()));
+    }
+
+    private Either<List<ComponentInstanceAttribute>, ResponseFormat> convertMultipleAttributes(final String dataList) {
+        if (StringUtils.isEmpty(dataList)) {
+            return Either.right(getComponentsUtils().getResponseFormat(ActionStatus.MISSING_BODY));
+        }
+        final Either<ComponentInstanceAttribute[], ResponseFormat> convertStatus = getComponentsUtils().
+            convertJsonToObjectUsingObjectMapper(dataList, new User(), ComponentInstanceAttribute[].class, null, ComponentTypeEnum.RESOURCE_INSTANCE);
         if (convertStatus.isRight()) {
             return Either.right(convertStatus.right().value());
         }
