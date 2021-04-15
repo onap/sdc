@@ -176,7 +176,7 @@ public class ResourceImportManager {
                 if (latestByName.isLeft()) {
                     throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, resource.getName());
                 }
-            } else {
+            } else if (!isCsarPresent(csarInfo)) {
                 final Either<Resource, StorageOperationStatus> component = toscaOperationFacade
                     .getComponentByNameAndVendorRelease(resource.getComponentType(), resource.getName(), resource.getVendorRelease(),
                         JsonParseFlagEnum.ParseAll);
@@ -208,6 +208,10 @@ public class ResourceImportManager {
             }
         }
         return responsePair;
+    }
+
+    private boolean isCsarPresent(final CsarInfo csarInfo) {
+        return csarInfo != null && StringUtils.isNotEmpty(csarInfo.getCsarUUID());
     }
 
     private String getLatestCertifiedResourceId(Resource resource) {
