@@ -20,17 +20,24 @@
 
 'use strict';
 import * as _ from "lodash";
-import {ModalsHandler, ValidationUtils, EVENTS, CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, DEFAULT_ICON,
-    ResourceType, ComponentState, instantiationType, ComponentFactory} from "app/utils";
-import { EventListenerService, ProgressService} from "app/services";
-import {CacheService, OnboardingService, ImportVSPService, ElementService} from "app/services-ng2";
-import {IAppConfigurtaion, IValidate, IMainCategory, Resource, ISubCategory,Service, ICsarComponent, Component, IMetadataKey} from "app/models";
-import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {Dictionary} from "lodash";
-import { PREVIOUS_CSAR_COMPONENT, CATEGORY_SERVICE_METADATA_KEYS } from "../../../../utils/constants";
-import { Observable, Subject } from "rxjs";
-import { MetadataEntry } from "app/models/metadataEntry";
-import { Metadata } from "app/models/metadata";
+import {
+    ComponentFactory,
+    ComponentState,
+    ComponentType,
+    DEFAULT_ICON,
+    EVENTS,
+    instantiationType,
+    ModalsHandler,
+    ResourceType,
+    ValidationUtils
+} from "app/utils";
+import {EventListenerService, ProgressService} from "app/services";
+import {CacheService, ElementService, ImportVSPService, OnboardingService} from "app/services-ng2";
+import {Component, IAppConfigurtaion, ICsarComponent, IMainCategory, IMetadataKey, ISubCategory, IValidate, Resource, Service} from "app/models";
+import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
+import {CATEGORY_SERVICE_METADATA_KEYS, PREVIOUS_CSAR_COMPONENT} from "../../../../utils/constants";
+import {Observable} from "rxjs";
 
 export class Validation {
     componentNameValidationPattern:RegExp;
@@ -272,18 +279,8 @@ export class GeneralViewModel {
 
         if (this.$stateParams.componentCsar && !this.$scope.isCreateMode()) {
             this.$scope.updateUnsavedFileFlag(true);
-            // We are coming from update VSP modal we need to automatically checkout (if needed) and save the VF
-            if (this.$scope.component.lifecycleState !== ComponentState.NOT_CERTIFIED_CHECKOUT) {
-                // Checkout is needed after that a save will be invoked in workspace-view.handleLifeCycleStateChange
-                this.EventListenerService.notifyObservers(EVENTS.ON_LIFECYCLE_CHANGE_WITH_SAVE, 'checkOut');
-                // if(this.$scope.component.lifecycleState !== 'NOT_CERTIFIED_CHECKIN') {
-                //     (<Resource>this.$scope.component).csarVersion = this.$stateParams.componentCsar.csarVersion;
-                // }
-            } else {
-                this.$scope.save();
-            }
+            this.$scope.save();
         }
-
 
         if (this.$scope.component.isResource() &&
             (this.$scope.component as Resource).resourceType === ResourceType.VF ||

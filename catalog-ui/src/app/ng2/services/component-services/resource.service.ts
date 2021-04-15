@@ -18,21 +18,32 @@
  * ============LICENSE_END=========================================================
  */
 
-import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
-import { HttpClient } from '@angular/common/http';
+import {Inject, Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
+import {Observable} from "rxjs/Observable";
+import {ComponentMetadata} from "../../../models/component-metadata";
+import {ComponentLifecycleState} from "../../../models/component-lifecycle-state.enum";
 
 @Injectable()
 export class ResourceServiceNg2 {
 
-    protected baseUrl = "";
+  private readonly baseUrl: string;
 
-    constructor(private http: HttpClient) {
+  constructor(protected http: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
+    this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
+  }
 
-    }
+  public checkout(componentUniqueId: string): Observable<ComponentMetadata> {
+    return this.changeLifecycleState(componentUniqueId, ComponentLifecycleState.CHECKOUT);
+  }
 
-
-
+  private changeLifecycleState(componentUniqueId: string, state: ComponentLifecycleState): Observable<ComponentMetadata> {
+    const url: string = this.baseUrl + 'resources/' + componentUniqueId + '/lifecycleState/' + state;
+    return this.http.post<ComponentMetadata>(url, {}).map(value => {
+          return value;
+        }
+    );
+  }
 
 }

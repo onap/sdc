@@ -1,22 +1,17 @@
+import {SdcConfigToken} from "../../config/sdc-config.config";
+import {SdcMenuToken} from "../../config/sdc-menu.config";
 
-import { SdcConfigToken, ISdcConfig } from "../../config/sdc-config.config";
-import { SdcMenuToken, IAppMenu } from "../../config/sdc-menu.config";
 
-
-import { async, ComponentFixture, TestBed } from "@angular/core/testing";
-import { HomeComponent } from "./home.component";
+import {async, ComponentFixture, TestBed} from "@angular/core/testing";
+import {HomeComponent} from "./home.component";
 import {ConfigureFn, configureTests} from "../../../../jest/test-config.helper";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
-import { TranslateService } from "../../shared/translator/translate.service";
-import { HomeService, CacheService, AuthenticationService, ImportVSPService } from '../../../../app/services-ng2';
-import { ModalsHandler } from "../../../../app/utils";
-import { SdcUiServices } from "onap-ui-angular";
+import {TranslateService} from "../../shared/translator/translate.service";
+import {AuthenticationService, CacheService, HomeService, ImportVSPService, ResourceServiceNg2} from '../../../../app/services-ng2';
+import {ModalsHandler} from "../../../../app/utils";
+import {SdcUiServices} from "onap-ui-angular";
 import {ComponentType, ResourceType} from "../../../utils/constants";
-import { FoldersMenu, FoldersItemsMenu, FoldersItemsMenuGroup } from './folders';
-import { HomeFilter } from "../../../../app/models/home-filter";
-import {Component} from "../../../models/components/component";
-
-
+import {HomeFilter} from "../../../models/home-filter";
 
 
 describe('home component', () => {
@@ -33,6 +28,7 @@ describe('home component', () => {
     let homeFilterMock :Partial<HomeFilter>;
     let foldersMock;
     let loaderServiceMock;
+    let resourceServiceNg2Mock: Partial<ResourceServiceNg2>;
 
 
     beforeEach(
@@ -62,7 +58,11 @@ describe('home component', () => {
             loaderServiceMock = {
                 activate: jest.fn(),
                 deactivate: jest.fn()
-            }
+            };
+
+            resourceServiceNg2Mock = {
+                checkout: jest.fn()
+            };
 
             const configure: ConfigureFn = testBed => {
                 testBed.configureTestingModule({
@@ -80,7 +80,8 @@ describe('home component', () => {
                         {provide: ModalsHandler, useValue: {}},
                         {provide: SdcUiServices.ModalService, useValue: modalServiceMock},
                         {provide: SdcUiServices.LoaderService, useValue: loaderServiceMock},
-                        {provide: ImportVSPService, useValue: {}}
+                        {provide: ImportVSPService, useValue: {}},
+                        {provide: ResourceServiceNg2, useValue: resourceServiceNg2Mock}
                     ],
                 });
             };

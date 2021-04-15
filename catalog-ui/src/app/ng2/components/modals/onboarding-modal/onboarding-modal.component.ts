@@ -18,6 +18,12 @@ export interface ImportVSPdata {
     componentCsar: Resource;
     previousComponent?: Resource;
     type: string;
+    actionType: ImportVSPActionType;
+}
+
+export enum ImportVSPActionType {
+    IMPORT_VSP,
+    UPDATE_VSP
 }
 
 // tslint:disable-next-line:interface-name
@@ -118,13 +124,14 @@ export class OnboardingModalComponent implements OnInit {
     }
 
     importOrUpdateCsar = (): void => {
-        const selectedComponentConverted = this.onBoardingService.convertMetaDataToComponent(this.selectedComponent);
+        const selectedComponentConverted: Resource = this.onBoardingService.convertMetaDataToComponent(this.selectedComponent);
         const componentFromServerConverted = this.componentFromServer ?
             this.onBoardingService.convertMetaDataToComponent(this.componentFromServer) : undefined;
         const importVSPdata: ImportVSPdata = {
             componentCsar: selectedComponentConverted,
             previousComponent: componentFromServerConverted,
-            type: ComponentType.RESOURCE.toLowerCase()
+            type: ComponentType.RESOURCE.toLowerCase(),
+            actionType: this.isCsarComponentExists ? ImportVSPActionType.UPDATE_VSP : ImportVSPActionType.IMPORT_VSP
         };
         this.closeModalEvent.emit(importVSPdata);
     }

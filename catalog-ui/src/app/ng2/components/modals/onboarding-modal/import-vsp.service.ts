@@ -1,8 +1,7 @@
 import { Injectable, Inject } from "@angular/core";
-import { OnboardingModalComponent } from "./onboarding-modal.component";
+import {ImportVSPdata, OnboardingModalComponent} from "./onboarding-modal.component";
 import { SdcUiServices, SdcUiCommon } from "onap-ui-angular";
 import { Observable, Subject } from "rxjs";
-import { CHANGE_COMPONENT_CSAR_VERSION_FLAG } from "../../../../utils/constants";
 import { CacheService } from "../../../services/cache.service";
 
 
@@ -25,7 +24,7 @@ export class ImportVSPService {
         } as SdcUiCommon.IModalConfig;
         const onboardingModalInstance = this.modalService.openCustomModal(onboardingModalConfig, OnboardingModalComponent, {currentCsarUUID: csarUUID, currentCsarVersion: csarVersion});
         onboardingModalInstance.innerModalContent.instance.closeModalEvent.subscribe(
-            (result: any) => {
+            (result: ImportVSPdata) => {
                 subject.next(result);
                 onboardingModalInstance.closeModal(); 
             }, (err) =>{}

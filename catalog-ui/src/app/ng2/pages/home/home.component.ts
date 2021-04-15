@@ -18,19 +18,20 @@
  * ============LICENSE_END=========================================================
  */
 'use strict';
-import { Component as NgComponent, Inject, OnInit } from '@angular/core';
-import { Component, IConfigRoles, IUserProperties, Resource } from 'app/models';
-import { HomeFilter } from 'app/models/home-filter';
-import { AuthenticationService, CacheService, HomeService } from 'app/services-ng2';
-import { ModalsHandler } from 'app/utils';
-import { SdcUiServices } from 'onap-ui-angular';
-import { CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, ResourceType } from '../../../utils/constants';
-import { ImportVSPService } from '../../components/modals/onboarding-modal/import-vsp.service';
-import { ISdcConfig, SdcConfigToken } from '../../config/sdc-config.config';
-import { IAppMenu, SdcMenuToken } from '../../config/sdc-menu.config';
-import { EntityFilterPipe } from '../../pipes/entity-filter.pipe';
-import { TranslateService } from '../../shared/translator/translate.service';
-import { FoldersItemsMenu, FoldersItemsMenuGroup, FoldersMenu } from './folders';
+import {Component as NgComponent, Inject, OnInit} from '@angular/core';
+import {Component, ComponentMetadata, IConfigRoles, IUserProperties, Resource} from 'app/models';
+import {HomeFilter} from 'app/models/home-filter';
+import {AuthenticationService, CacheService, HomeService, ResourceServiceNg2} from 'app/services-ng2';
+import {ComponentState, ModalsHandler} from 'app/utils';
+import {SdcUiServices} from 'onap-ui-angular';
+import {CHANGE_COMPONENT_CSAR_VERSION_FLAG, ComponentType, ResourceType} from '../../../utils/constants';
+import {ImportVSPService} from '../../components/modals/onboarding-modal/import-vsp.service';
+import {ISdcConfig, SdcConfigToken} from '../../config/sdc-config.config';
+import {IAppMenu, SdcMenuToken} from '../../config/sdc-menu.config';
+import {EntityFilterPipe} from '../../pipes/entity-filter.pipe';
+import {TranslateService} from '../../shared/translator/translate.service';
+import {FoldersItemsMenu, FoldersItemsMenuGroup, FoldersMenu} from './folders';
+import {ImportVSPdata} from "../../components/modals/onboarding-modal/onboarding-modal.component";
 
 @NgComponent({
     selector: 'home-page',
@@ -63,8 +64,9 @@ export class HomeComponent implements OnInit {
         private modalsHandler: ModalsHandler,
         private modalService: SdcUiServices.ModalService,
         private loaderService: SdcUiServices.LoaderService,
-        private importVSPService: ImportVSPService
-    ) {}
+        private importVSPService: ImportVSPService,
+        private resourceService: ResourceServiceNg2
+    ) { }
 
     ngOnInit(): void {
         this.initHomeComponentVars();
@@ -90,16 +92,38 @@ export class HomeComponent implements OnInit {
 
     // Open onboarding modal
     public notificationIconCallback(): void {
-        this.importVSPService.openOnboardingModal().subscribe((result) => {
-            if (!result.previousComponent || result.previousComponent.csarVersion !== result.componentCsar.csarVersion) {
-                this.cacheService.set(CHANGE_COMPONENT_CSAR_VERSION_FLAG, result.componentCsar.csarVersion);
+        this.importVSPService.openOnboardingModal().subscribe((importVSPdata: ImportVSPdata) => {
+            const actualComponent = importVSPdata.previousComponent;
+            if (!actualComponent || actualComponent.csarVersion !== importVSPdata.componentCsar.csarVersion) {
+                this.cacheService.set(CHANGE_COMPONENT_CSAR_VERSION_FLAG, importVSPdata.componentCsar.csarVersion);
+            }
+            const vfExistsAndIsNotCheckedOut: boolean = actualComponent && actualComponent.lifecycleState != ComponentState.NOT_CERTIFIED_CHECKOUT;
+            if (vfExistsAndIsNotCheckedOut) {
+                this.checkoutAndRedirectToWorkspace(importVSPdata);
+                return;
             }
             this.$state.go('workspace.general', {
-                id: result.previousComponent && result.previousComponent.uniqueId,
-                componentCsar: result.componentCsar,
-                type: result.type
+                id: actualComponent && actualComponent.uniqueId,
+                componentCsar: importVSPdata.componentCsar,
+                type: importVSPdata.type
             });
         });
+    }
+
+    private checkoutAndRedirectToWorkspace(importVSPdata: ImportVSPdata) {
+        this.loaderService.activate();
+        this.resourceService.checkout(importVSPdata.previousComponent.uniqueId)
+        .subscribe((componentMetadata: ComponentMetadata) => {
+            this.$state.go('workspace.general', {
+                id: componentMetadata.uniqueId,
+                componentCsar: importVSPdata.componentCsar,
+                type: importVSPdata.type
+            });
+            this.loaderService.deactivate();
+        }, () => {
+            this.loaderService.deactivate();
+        });
+        return;
     }
 
     public onImportVf(file: any): void {

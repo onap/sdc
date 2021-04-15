@@ -13,6 +13,7 @@ exports[`home component should match current snapshot 1`] = `
   loaderService={[Function Object]}
   modalService={[Function Object]}
   modalsHandler={[Function Object]}
+  resourceService={[Function Object]}
   sdcConfig={[Function Object]}
   sdcMenu={[Function Object]}
   translateService={[Function Object]}

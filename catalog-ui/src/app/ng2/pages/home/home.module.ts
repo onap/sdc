@@ -6,6 +6,7 @@ import { UiElementsModule } from "../../components/ui/ui-elements.module";
 import { GlobalPipesModule } from "../../pipes/global-pipes.module";
 import { TranslateModule } from "../../shared/translator/translate.module";
 import { SdcUiComponentsModule } from "onap-ui-angular";
+import { ResourceServiceNg2 } from "../../services/component-services/resource.service";
 
 @NgModule({
     declarations: [
@@ -25,7 +26,7 @@ import { SdcUiComponentsModule } from "onap-ui-angular";
     entryComponents: [
         HomeComponent
     ],
-    providers: []
+    providers: [ResourceServiceNg2]
 })
 export class HomeModule {
 }
