@@ -38,6 +38,7 @@ public class ToscaNodeTemplate {
     private Map<String, String> metadata;
     private String description;
     private Map<String, Object> properties;
+    private Map<String, Object> attributes;
     private List<Map<String, ToscaTemplateRequirement>> requirements;
     private Map<String, ToscaTemplateCapability> capabilities;
     private Map<String, ToscaTemplateArtifact> artifacts;
