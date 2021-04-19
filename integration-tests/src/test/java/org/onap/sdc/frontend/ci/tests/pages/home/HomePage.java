@@ -20,8 +20,8 @@
 package org.onap.sdc.frontend.ci.tests.pages.home;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
-import static org.testng.Assert.assertNotNull;
 
 import java.time.Duration;
 import lombok.AllArgsConstructor;
@@ -120,20 +120,20 @@ public class HomePage extends AbstractPageObject {
         return new ResourceCreatePage(webDriver);
     }
 
-    public AbstractPageObject clickOnComponent(final String component) {
-        final WebElement element = waitForElementVisibility(By.xpath(XpathSelector.COMPONENT.getXpath(component)));
+    public AbstractPageObject clickOnComponent(final String componentName) {
+        final WebElement element = waitForElementVisibility(By.xpath(XpathSelector.COMPONENT.getXpath(componentName)));
         final WebElement componentTypeDiv = element.findElement(By.xpath("./../../../div[contains(@class, 'sdc-tile-header')]/div"));
-        final String text = componentTypeDiv.getText();
+        final String componentType = componentTypeDiv.getText();
+        assertThat("The given component type should not be null", componentType, is(notNullValue()));
         element.click();
-        assertNotNull(text);
-        switch (text) {
+        switch (componentType) {
             case "S":
                 return new ServiceComponentPage(webDriver);
             case "VF":
             case "VFC":
                 return new ResourceCreatePage(webDriver);
             default:
-                throw new UnsupportedOperationException("Not yet implemented for " + text);
+                throw new UnsupportedOperationException("Not yet implemented for " + componentType);
         }
     }
 

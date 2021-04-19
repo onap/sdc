@@ -80,7 +80,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
         createVlmFlow.run();
     }
 
-    @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "etsiVnfCnfOnboardPackages")
+    @Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "etsiVnfCnfOnboardPackages", dependsOnMethods = "createVlm")
     public void onboardEtsiVnfCnfFlow(final String rootFolder, final String vnfFile) {
         setLog(vnfFile);
         final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
@@ -92,8 +92,8 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
      * Runs ETSI onboarding VNF/CNF UI flow
      *
      * @param resourceName VSP name
-     * @param rootFolder   VNF/CNF package location
-     * @param vnfCnfFile   file to be onboarded
+     * @param rootFolder VNF/CNF package location
+     * @param vnfCnfFile file to be onboarded
      */
     private void runOnboardEtsiVnfCnf(final String resourceName, final String rootFolder, final String vnfCnfFile) {
         final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, vnfCnfFile, rootFolder);
@@ -132,6 +132,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
         componentPage = compositionPage.goToGeneral();
         componentPage.isLoaded();
         componentPage.certifyComponent();
+        componentPage.isLoaded();
         ExtentTestActions.takeScreenshot(Status.INFO, "service-certified",
             String.format("Service '%s' was certified", serviceCreateData.getName()));
 
@@ -139,8 +140,8 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
     }
 
     private void downloadAndVerifyOnboardedPackage(final ComponentPage componentPage) {
-        final DownloadCsarArtifactFlow downloadToscaCsarFlow = downloadToscaCsar(componentPage);
-        final ToscaArtifactsPage toscaArtifactsPage = downloadToscaCsarFlow.getLandedPage()
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadToscaCsar(componentPage);
+        final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
         assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
         final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
@@ -189,12 +190,12 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
     /**
      * Download the generated package
      *
-     * @return DownloadToscaCsarFlow
+     * @return DownloadCsarArtifactFlow
      */
     private DownloadCsarArtifactFlow downloadToscaCsar(final ComponentPage componentPage) {
-        final DownloadCsarArtifactFlow downloadToscaCsarFlow = new DownloadCsarArtifactFlow(webDriver);
-        downloadToscaCsarFlow.run(componentPage);
-        return downloadToscaCsarFlow;
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
+        downloadCsarArtifactFlow.run(componentPage);
+        return downloadCsarArtifactFlow;
     }
 
     /**

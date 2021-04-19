@@ -24,28 +24,28 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
+import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage;
-import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
 import org.openqa.selenium.WebDriver;
 
-public class EditServicePropertiesFlow extends AbstractUiTestFlow {
+public class EditComponentPropertiesFlow extends AbstractUiTestFlow {
 
     private final Map<String, Object> propertiesMap;
-    private ServiceComponentPage serviceComponentPage;
+    private ComponentPage componentPage;
 
-    public EditServicePropertiesFlow(final WebDriver webDriver, final Map<String, Object> propertiesMap) {
+    public EditComponentPropertiesFlow(final WebDriver webDriver, final Map<String, Object> propertiesMap) {
         super(webDriver);
         this.propertiesMap = propertiesMap;
     }
 
     @Override
-    public Optional<ServiceComponentPage> run(final PageObject... pageObjects) {
-        serviceComponentPage = getParameter(pageObjects, ServiceComponentPage.class).orElseGet(() -> new ServiceComponentPage(webDriver));
-        serviceComponentPage.isLoaded();
-        final ResourcePropertiesAssignmentPage resourcePropertiesAssignmentPage = serviceComponentPage.goToPropertiesAssignment();
+    public Optional<ComponentPage> run(final PageObject... pageObjects) {
+        componentPage = getParameter(pageObjects, ComponentPage.class).orElseGet(() -> new ComponentPage(webDriver));
+        componentPage.isLoaded();
+        final ResourcePropertiesAssignmentPage resourcePropertiesAssignmentPage = componentPage.goToPropertiesAssignment();
         if (MapUtils.isEmpty(propertiesMap)) {
-            return Optional.of(serviceComponentPage);
+            return Optional.of(componentPage);
         }
         final String propertyNames = String.join(", ", propertiesMap.keySet());
         ExtentTestActions.takeScreenshot(Status.INFO, "etsi-ns-edited-properties",
@@ -55,11 +55,11 @@ public class EditServicePropertiesFlow extends AbstractUiTestFlow {
         resourcePropertiesAssignmentPage.saveProperties();
         ExtentTestActions.takeScreenshot(Status.INFO, "etsi-ns-edited-properties",
             String.format("Properties edited: %s", propertyNames));
-        return Optional.of(serviceComponentPage);
+        return Optional.of(componentPage);
     }
 
     @Override
-    public Optional<ServiceComponentPage> getLandedPage() {
-        return Optional.ofNullable(serviceComponentPage);
+    public Optional<ComponentPage> getLandedPage() {
+        return Optional.ofNullable(componentPage);
     }
 }
