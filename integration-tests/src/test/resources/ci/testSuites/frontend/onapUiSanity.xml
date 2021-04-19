@@ -38,7 +38,8 @@
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.ServiceTemplateDesignUiTests">
         <methods>
           <include name="importAndCertifyVfc"/>
-          <include name="runServiceDesign"/>
+          <include name="createBaseService"/>
+          <include name="addComponentProperty"/>
           <include name="addOutputsToVF_test"/>
         </methods>
       </class>

@@ -54,7 +54,7 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateServiceFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
-import org.onap.sdc.frontend.ci.tests.flow.EditServicePropertiesFlow;
+import org.onap.sdc.frontend.ci.tests.flow.EditComponentPropertiesFlow;
 import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
@@ -245,8 +245,8 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     }
 
     private void editProperties(final ServiceComponentPage serviceComponentPage, final Map<String, Object> propertyMap) {
-        final EditServicePropertiesFlow editServicePropertiesFlow = new EditServicePropertiesFlow(webDriver, propertyMap);
-        editServicePropertiesFlow.run(serviceComponentPage);
+        final EditComponentPropertiesFlow editComponentPropertiesFlow = new EditComponentPropertiesFlow(webDriver, propertyMap);
+        editComponentPropertiesFlow.run(serviceComponentPage);
     }
 
     private DownloadCsarArtifactFlow downloadCsarArtifact(final ServiceComponentPage serviceComponentPage) {

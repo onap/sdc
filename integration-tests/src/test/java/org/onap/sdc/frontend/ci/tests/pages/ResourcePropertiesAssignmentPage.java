@@ -21,11 +21,15 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.aventstack.extentreports.Status;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.atomic.AtomicInteger;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
@@ -33,9 +37,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * Handles the Resource Properties Assignment Page UI actions
@@ -80,34 +82,114 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
     }
 
     /**
+     * Gets the property row element for the given propertyName
+     * @param propertyName the property name
+     * @return the property row element
+     */
+    private WebElement getPropertyRow(String propertyName) {
+        final By propertyCheckboxLocator = By.xpath(XpathSelector.PROPERTY_CHECKBOX.getXpath(propertyName));
+        final WebElement propertyCheckbox = waitForElementVisibility(propertyCheckboxLocator, 5);
+        return propertyCheckbox.findElement(By.xpath("./../../.."));
+    }
+
+    /**
      * Gets the value of a string TOSCA property.
-     *
      * @return the value of the property
      */
     public String getStringPropertyValue(final String propertyName) {
         waitPropertiesToLoad();
-        final By propertyCheckboxLocator = By.xpath(XpathSelector.PROPERTY_CHECKBOX.getXpath(propertyName));
-        final WebElement propertyCheckbox = waitForElementVisibility(propertyCheckboxLocator, 5);
-        final WebElement propertyRow = propertyCheckbox.findElement(By.xpath("./../../.."));
-        final WebElement propertyInput = propertyRow.findElement(By.xpath(XpathSelector.INPUT_PROPERTY.getXpath(propertyName)));
+        final WebElement propertyInput = getPropertyRow(propertyName).findElement(By.xpath(XpathSelector.INPUT_PROPERTY.getXpath(propertyName)));
         return propertyInput.getAttribute("value");
     }
 
     /**
-     * Set a value to a TOSCA string property.
+     * Sets a String value to a TOSCA property.
+     * @param propertyName the property name
+     * @param value property value to be set
      */
     public void setStringPropertyValue(final String propertyName, final String value) {
         if (value == null) {
             return;
         }
         waitPropertiesToLoad();
-        final By propertyCheckboxLocator = By.xpath(XpathSelector.PROPERTY_CHECKBOX.getXpath(propertyName));
-        final WebElement propertyCheckbox = waitForElementVisibility(propertyCheckboxLocator, 5);
-        final WebElement propertyRow = propertyCheckbox.findElement(By.xpath("./../../.."));
-        final WebElement propertyInput = propertyRow.findElement(By.xpath(XpathSelector.INPUT_PROPERTY.getXpath(propertyName)));
-        propertyInput.sendKeys(value);
+        getPropertyRow(propertyName).findElement(By.xpath(XpathSelector.INPUT_PROPERTY.getXpath(propertyName))).sendKeys(value);
     }
 
+    /**
+     * Sets a boolean value to a TOSCA property.
+     * @param propertyName
+     */
+    private void setBooleanPropertyValue(final String propertyName) {
+        waitPropertiesToLoad();
+        new Select(getPropertyRow(propertyName).findElement(By.xpath(XpathSelector.SELECT_INPUT_PROPERTY.getXpath(propertyName)))).
+            selectByVisibleText("TRUE");
+    }
+
+    /**
+     * Sets a complex property  type value to a TOSCA property. It handles List and Map
+     * @param propertyName the property name
+     * @param objectValue the property complex type value
+     */
+    public void setComplexPropertyValue(final String propertyName, final Object objectValue) {
+        if (objectValue == null) {
+            return;
+        }
+        waitPropertiesToLoad();
+        final WebElement addToListLink = getPropertyRow(propertyName)
+            .findElement(By.xpath(XpathSelector.PROPERTY_ADD_VALUE_COMPLEX_TYPE.getXpath(propertyName)));
+        if (objectValue instanceof List) {
+            setValueFromList(propertyName, (List<String>) objectValue, addToListLink);
+        }
+        if (objectValue instanceof Map) {
+            setValueFromMap(propertyName, (Map) objectValue, addToListLink);
+        }
+    }
+
+    /**
+     * Sets a value to a complex (List) property type.
+     * @param propertyName the property name
+     * @param values the List of values to be added to the given property name
+     * @param addToListLink the link to add the input value
+     */
+    private void setValueFromList(final String propertyName, final List<String> values, final WebElement addToListLink) {
+        AtomicInteger inputIndex = new AtomicInteger(0);
+        values.forEach(value -> {
+            addToListLink.click();
+            final WebElement propertyInput = addToListLink.findElement(By.xpath(XpathSelector.INPUT_PROPERTY_COMPLEX_TYPE_VALUE.getXpath(
+                String.valueOf(new StringBuilder(propertyName).append(".").append(inputIndex)))));
+            propertyInput.sendKeys(value);
+            inputIndex.getAndIncrement();
+        });
+    }
+
+    /**
+     * Sets a value to a complex (Map) property type.
+     * @param propertyName the property name
+     * @param values the Map of values to be added to the given property name
+     * @param addToListLink the link to add the input value
+     */
+    private void setValueFromMap(final String propertyName, final Map values, final WebElement addToListLink) {
+        AtomicInteger inputIndex = new AtomicInteger(0);
+        values.forEach((key, value) -> {
+            addToListLink.click();
+            WebElement propertyInput;
+            // Add Key
+            propertyInput = addToListLink.findElement(By.xpath(XpathSelector.INPUT_PROPERTY_COMPLEX_TYPE_KEY.getXpath(
+                String.valueOf(new StringBuilder(propertyName).append(".").append(inputIndex)))));
+            propertyInput.sendKeys(key.toString());
+            // Add Value
+            propertyInput = addToListLink.findElement(By.xpath(XpathSelector.INPUT_PROPERTY_COMPLEX_TYPE_VALUE.getXpath(
+                String.valueOf(new StringBuilder(propertyName).append(".").append(inputIndex)))));
+            propertyInput.sendKeys(value.toString());
+            inputIndex.getAndIncrement();
+        });
+    }
+
+    /**
+     * Sets a property value
+     * @param propertyName the property name
+     * @param value the property value
+     */
     public void setPropertyValue(final String propertyName, final Object value) {
         if (value == null) {
             return;
@@ -124,7 +206,17 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
         }
 
         if (value instanceof Boolean) {
-            setStringPropertyValue(propertyName, ((Boolean) value).toString());
+            setBooleanPropertyValue(propertyName);
+            return;
+        }
+
+        if (value instanceof Map) {
+            setComplexPropertyValue(propertyName, value);
+            return;
+        }
+
+        if (value instanceof List) {
+            setComplexPropertyValue(propertyName, value);
             return;
         }
 
@@ -133,7 +225,7 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
 
     /**
      * Checks if a property exists.
-     *
+     * @param propertyName the property name
      * @return the value of the property
      */
     public boolean isPropertyPresent(final String propertyName) {
@@ -154,12 +246,59 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
         waitForElementInvisibility(By.xpath(XpathSelector.NO_DATA_MESSAGE.getXpath()), 5);
     }
 
+    /**
+     * Saves a property
+     */
     public void saveProperties() {
         final WebElement saveBtn = waitForElementVisibility(By.xpath(XpathSelector.PROPERTY_SAVE_BTN.getXpath()));
         assertTrue(saveBtn.isEnabled(), "Property save button should be enabled.");
         saveBtn.click();
-        loaderHelper.waitForLoader(20);
+        loaderHelper.waitForLoaderInvisibility(20);
         notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
+    }
+
+    /**
+     * Adds a property
+     * @param propertiesMap the properties map to be added
+     */
+    public void addProperties(final Map<String, String> propertiesMap) {
+        waitPropertiesToLoad();
+        propertiesMap.forEach((propertyName, propertyType) -> {
+            final By addPropertyButtonLocator = By.xpath(XpathSelector.PROPERTY_ADD_BTN.getXpath());
+            waitForElementVisibility(addPropertyButtonLocator, 30);
+            final WebElement addPropertyRightColumn = findElement(By.xpath(XpathSelector.PROPERTY_ADD_RIGHT_COLUMN_DIV.getXpath()));
+            final WebElement propertyAddButton = addPropertyRightColumn.findElement(addPropertyButtonLocator);
+            assertTrue(propertyAddButton.isDisplayed(), "Property add button should be enabled.");
+            propertyAddButton.click();
+            createProperty(propertyName, propertyType);
+            verifyProperty(propertyName);
+            ExtentTestActions.takeScreenshot(Status.INFO, "added-property",
+                String.format("Property '%s' was created on component", propertyName));
+        });
+    }
+
+    /**
+     * Fills the creation property modal.
+     * @param propertyName the property name to be created
+     * @param propertyType the property type to be selected
+     */
+    private void createProperty(final String propertyName, final String propertyType) {
+        final AddPropertyModal addPropertyModal = new AddPropertyModal(webDriver);
+        addPropertyModal.isLoaded();
+        addPropertyModal.fillPropertyForm(propertyName, propertyType);
+        addPropertyModal.clickOnCreate();
+    }
+
+    /**
+     * Verifies if the added property is displayed on the UI.
+     * @param propertyName the property name to be found
+     */
+    private void verifyProperty(final String propertyName) {
+        final By propertyCheckboxLocator = By.xpath(XpathSelector.PROPERTY_CHECKBOX.getXpath(propertyName));
+        final WebElement propertyCheckbox = waitForElementVisibility(propertyCheckboxLocator, 5);
+        assertTrue(propertyCheckbox.isDisplayed(), String.format("%s Property should be displayed", propertyName));
+        assertTrue(this.getPropertyNamesAndTypes().containsKey(propertyName),
+            String.format("%s Property should be listed but found %s", propertyName, this.getPropertyNamesAndTypes().toString()));
     }
 
     /**
@@ -167,7 +306,7 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
      */
     public Map<String, String> getPropertyNamesAndTypes() {
         waitPropertiesToLoad();
-        final Map<String, String> namesAndTypes = new HashMap<String, String>();
+        final Map<String, String> namesAndTypes = new HashMap<>();
         final List<WebElement> names = findElements(By.xpath(XpathSelector.PROPERTY_NAMES.getXpath()));
         final List<WebElement> types = findElements(By.xpath(XpathSelector.PROPERTY_TYPES.getXpath()));
 
@@ -191,7 +330,13 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
         SOFTWARE_VERSION_INPUT("value-prop-software_versions", "//input[starts-with(@data-tests-id,'%s')]"),
         PROPERTY_CHECKBOX("//checkbox[@data-tests-id='%s']"),
         PROPERTY_SAVE_BTN("properties-save-button", "//button[@data-tests-id='%s']"),
+        PROPERTY_ADD_RIGHT_COLUMN_DIV("right-column", "//div[@class='%s']"),
+        PROPERTY_ADD_BTN("add-btn", "//div[contains(@class,'%s')]"),
+        PROPERTY_ADD_VALUE_COMPLEX_TYPE("//a[contains(@data-tests-id, 'add-to-list-%s')]"),
+        INPUT_PROPERTY_COMPLEX_TYPE_KEY("//input[contains(@data-tests-id, 'value-prop-key-%s')]"),
+        INPUT_PROPERTY_COMPLEX_TYPE_VALUE("//input[contains(@data-tests-id, 'value-prop-%s')]"),
         INPUT_PROPERTY("//input[@data-tests-id='value-prop-%s']"),
+        SELECT_INPUT_PROPERTY("//select[@data-tests-id='value-prop-%s']"),
         PROPERTY_TYPES("//*[contains(@data-tests-id, 'propertyType')]"),
         PROPERTY_NAMES("//*[contains(@data-tests-id, 'propertyName')]");
 

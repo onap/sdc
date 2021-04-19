@@ -36,12 +36,12 @@ import com.aventstack.extentreports.Status;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.backend.ci.tests.data.providers.OnboardingDataProviders;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
@@ -53,10 +53,12 @@ import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
+import org.onap.sdc.frontend.ci.tests.flow.AddComponentPropertyFlow;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
+import org.onap.sdc.frontend.ci.tests.flow.EditComponentPropertiesFlow;
 import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.AttributesOutputsPage;
@@ -71,7 +73,6 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -88,6 +89,8 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     private ComponentInstance networkFunctionInstance;
     private ComponentInstance networkServiceInstance;
     private AddNodeToCompositionFlow addNodeToCompositionFlow;
+    private ComponentPage componentPage;
+    private Map<String, String> propertiesToBeAddedMap;
 
     @BeforeMethod
     public void init() {
@@ -112,18 +115,27 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     @Test(dependsOnMethods = "importAndCertifyVfc")
-    public void runServiceDesign() throws UnzipException {
+    public void createBaseService() throws UnzipException {
         final CreateVfFlow createVfFlow = createVF();
         addNodeToCompositionFlow = addNodeToCompositionAndCreateRelationship(createVfFlow);
         final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
         compositionPage.isLoaded();
-        final ComponentPage componentPage = compositionPage.goToGeneral();
+        componentPage = compositionPage.goToGeneral();
         componentPage.isLoaded();
-        downloadAndVerifyCsarPackage(componentPage);
+        downloadAndVerifyCsarPackageAfterBaseServiceCreation(componentPage);
     }
 
-    @Test(dependsOnMethods = "runServiceDesign")
+    @Test(dependsOnMethods = "createBaseService")
+    public void addComponentProperty() throws UnzipException {
+        propertiesToBeAddedMap = loadPropertiesToAdd();
+        addProperty(propertiesToBeAddedMap);
+        componentPage = addValueToProperty(loadPropertiesToEdit());
+        componentPage.isLoaded();
+        downloadAndVerifyCsarPackageAfterAddProperty(componentPage);
+    }
+
+    @Test(dependsOnMethods = "createBaseService")
     public void addOutputsToVF_test() throws UnzipException, IOException {
         homePage.isLoaded();
         final ComponentPage resourceCreatePage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
@@ -320,12 +332,11 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Creates a DependsOn relationship between the imported VFCs
-     *
-     * @param compositionPage           Composition Page
+     * @param compositionPage Composition Page
      * @param fromComponentInstanceName VFC - Network Function
-     * @param fromCapability            Node Capability
-     * @param toComponentInstanceName   VFC - Network Service
-     * @param toRequirement             Node Requirement
+     * @param fromCapability Node Capability
+     * @param toComponentInstanceName  VFC - Network Service
+     * @param toRequirement Node Requirement
      */
     private void createRelationship(final CompositionPage compositionPage, final String fromComponentInstanceName,
                                     final String fromCapability, final String toComponentInstanceName, final String toRequirement) {
@@ -338,25 +349,86 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
                 fromComponentInstanceName, toComponentInstanceName));
     }
 
-    private void downloadAndVerifyCsarPackage(final ComponentPage componentPage) throws UnzipException {
-        final DownloadCsarArtifactFlow downloadToscaCsarFlow = downloadToscaCsar(componentPage);
-        final ToscaArtifactsPage toscaArtifactsPage = downloadToscaCsarFlow.getLandedPage()
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
-        assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
-        final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
-        checkCsarPackage(vfResourceCreateData.getName(), downloadedCsarName);
+    /**
+     * Adds a property to the base service
+     * @param propertyMap map of properties to be added
+     */
+    private void addProperty(final Map<String, String> propertyMap) {
+        componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        componentPage.isLoaded();
+        final AddComponentPropertyFlow addComponentPropertyFlow = new AddComponentPropertyFlow(webDriver, propertyMap);
+        addComponentPropertyFlow.run(componentPage.goToPropertiesAssignment());
     }
 
     /**
-     * Download the generated package
-     *
-     * @return DownloadCsarArtifactFlow
+     * Edits a property to add a value
+     * @param propertyMap map of properties to be edited
+     */
+    private ComponentPage addValueToProperty(final Map<String, Object> propertyMap) {
+        final EditComponentPropertiesFlow editComponentPropertiesFlow = new EditComponentPropertiesFlow(webDriver, propertyMap);
+        return editComponentPropertiesFlow.run().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ComponentPage"));
+    }
+
+    /**
+     * Downloads and verifies the generated tosca templates.
+     * @param componentPage the component page
+     * @throws UnzipException
+     */
+    private void downloadAndVerifyCsarPackageAfterBaseServiceCreation(final ComponentPage componentPage) throws UnzipException {
+        checkCsarPackage(downloadCsarPackage(componentPage));
+    }
+
+    /**
+     * Downloads and verifies if the generated Tosca template contains the expected properties.
+     * @throws UnzipException
+     * @param componentPage
+     */
+    private void downloadAndVerifyCsarPackageAfterAddProperty(final ComponentPage componentPage) throws UnzipException {
+        verifyPropertiesOnGeneratedTemplate(downloadCsarPackage(componentPage));
+    }
+
+    private String downloadCsarPackage(final ComponentPage componentPage) {
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadToscaCsar(componentPage);
+        final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
+        assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
+        return toscaArtifactsPage.getDownloadedArtifactList().get(0);
+    }
+
+    /**
+     * Downloads the generated CSAR package.
+     * @param componentPage the component page
+     * @return the Downloaded Tosca CSAR file
      */
     private DownloadCsarArtifactFlow downloadToscaCsar(final ComponentPage componentPage) {
-        final DownloadCsarArtifactFlow downloadToscaCsarFlow = new DownloadCsarArtifactFlow(webDriver);
-        downloadToscaCsarFlow.setWaitBeforeGetTheFile(5);
-        downloadToscaCsarFlow.run(componentPage);
-        return downloadToscaCsarFlow;
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
+        downloadCsarArtifactFlow.setWaitBeforeGetTheFile(5L);
+        downloadCsarArtifactFlow.run(componentPage);
+        return downloadCsarArtifactFlow;
+    }
+
+    /**
+     * Verifies if the generated Tosca template contains the expected properties.
+     * @param downloadedCsarName the downloaded csar file name
+     * @throws UnzipException
+     */
+    private void verifyPropertiesOnGeneratedTemplate(final String downloadedCsarName) throws UnzipException {
+        final Map<String, byte[]> filesFromZip = extractFilesFromCsar(downloadedCsarName);
+        final String virtualFunctionName = vfResourceCreateData.getName().replace("-", "").toLowerCase();
+        final String vfResourceTemplateFile = "Definitions/resource-" + virtualFunctionName + "-template-interface.yml";
+        final String interfaceTemplateFile = filesFromZip.keySet().stream()
+            .filter(filename -> filename.equalsIgnoreCase(vfResourceTemplateFile)).findFirst()
+            .orElseThrow(() -> new UiTestFlowRuntimeException(String.format("Resource template file not found %s", vfResourceTemplateFile)));
+        final byte[] toscaInterfaceTemplateGenerated = filesFromZip.get(interfaceTemplateFile);
+        assertThat("The Generated Tosca template should not be null", toscaInterfaceTemplateGenerated, is(notNullValue()));
+        final Map<String, Object> interfaceTemplateYamlMap = loadYamlObject(toscaInterfaceTemplateGenerated);
+        final Map<String, Object> nodeTypesYamlMap = getMapEntry(interfaceTemplateYamlMap, "node_types");
+        assertThat(String.format("'%s' should contain a node_types entry", interfaceTemplateYamlMap), nodeTypesYamlMap, is(notNullValue()));
+        final Map<String, Object> properties = (Map) nodeTypesYamlMap.values().stream().filter(stringObjectEntry -> stringObjectEntry != null)
+            .collect(Collectors.toList()).get(0);
+        final Map<String, Object> propertiesFoundMap = (Map<String, Object>) properties.get("properties");
+        assertThat(String.format("The generated template file %s should contain all added properties", vfResourceTemplateFile),
+            propertiesFoundMap.keySet().containsAll(propertiesToBeAddedMap.keySet()), is(true));
     }
 
     /**
@@ -364,14 +436,12 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
      * the generated service template declared “tosca_simple_yaml_1_3” as its Tosca version,
      * the generated csar contains the node type definitions for the added VFCs in the Definitions directory,
      * the interface template contains the relationship declaration
-     * @param vfResourceName     VF created
      * @param downloadedCsarName download Tosca CSAR filename
      * @throws UnzipException
      */
-    private void checkCsarPackage(final String vfResourceName, final String downloadedCsarName) throws UnzipException {
-        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
-        final Map<String, byte[]> filesFromZip = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
-        final String virtualFunctionName = vfResourceName.replace("-", "").toLowerCase();
+    private void checkCsarPackage(final String downloadedCsarName) throws UnzipException {
+        final Map<String, byte[]> filesFromZip = extractFilesFromCsar(downloadedCsarName);
+        final String virtualFunctionName = vfResourceCreateData.getName().replace("-", "").toLowerCase();
         final List<String> expectedDefinitionFolderFileList = getExpectedDefinitionFolderFileList(virtualFunctionName);
         final Map<String, byte[]> expectedFilesFromZipMap = filesFromZip.entrySet().parallelStream()
             .filter(key -> expectedDefinitionFolderFileList.stream()
@@ -384,6 +454,12 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         assertThat(toscaTemplateGenerated, is(notNullValue()));
         verifyGeneratedTemplate(toscaTemplateGenerated, generatedTemplateFile);
         verifyNodesRelationship(expectedFilesFromZipMap, virtualFunctionName, filesFromZip);
+    }
+
+    private Map<String, byte[]> extractFilesFromCsar(final String downloadedCsarName) throws UnzipException {
+        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
+        final Map<String, byte[]> filesFromCsar = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
+        return filesFromCsar;
     }
 
     private void verifyGeneratedTemplate(final byte[] generatedTemplateData, final String generatedTemplateFile) {
@@ -446,4 +522,29 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         return new Yaml().load(new String(definitionYamlFile));
     }
 
+    private Map<String, String> loadPropertiesToAdd() {
+        final Map<String, String> propertyMap = new HashMap<>();
+        propertyMap.put("property1", "string");
+        propertyMap.put("property2", "integer");
+        propertyMap.put("property3", "boolean");
+        propertyMap.put("property4", "list");
+        propertyMap.put("property5", "map");
+        propertyMap.put("property6", "scalar-unit.size");
+        return propertyMap;
+    }
+
+    private Map<String, Object> loadPropertiesToEdit() {
+        final Map<String, Object> propertyMap = new HashMap<>();
+        propertyMap.put("property1", "Integration Test");
+        propertyMap.put("property2", 100);
+        propertyMap.put("property3", Boolean.TRUE);
+        propertyMap.put("property4", Arrays.asList("PropListV1", "PropListV2", "PropListV3"));
+        final Map<String, String> stringMap = new HashMap<>();
+        stringMap.put("PropMapKey1", "PropMapValue1");
+        stringMap.put("PropMapKey2", "PropMapValue2");
+        stringMap.put("PropMapKey3", "PropMapValue3");
+        propertyMap.put("property5", stringMap);
+        propertyMap.put("property6", 500);
+        return propertyMap;
+    }
 }

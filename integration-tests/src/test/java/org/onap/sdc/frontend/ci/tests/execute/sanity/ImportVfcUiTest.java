@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -63,7 +62,7 @@ public class ImportVfcUiTest extends SetupCDTest {
     private ResourceCreateData vfCreateData;
 
     @BeforeClass
-    public void beforeClass() throws IOException {
+    public void beforeClass() {
         filePath = FileHandling.getFilePath("VFCs/");
     }
 
@@ -89,7 +88,8 @@ public class ImportVfcUiTest extends SetupCDTest {
         // TC - Import hierarchy of VFCs
         fileName = "org.openecomp.resource.VFC-child.yml";
         createVfcFlow = createVFC(fileName);
-        componentPage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage = createVfcFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
         componentPage.isLoaded();
         componentPage.certifyComponent();
         componentPage.isLoaded();

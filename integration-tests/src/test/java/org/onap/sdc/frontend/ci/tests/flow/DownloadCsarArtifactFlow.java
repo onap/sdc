@@ -57,15 +57,14 @@ public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
         componentPage.isLoaded();
         toscaArtifactsPage = componentPage.goToToscaArtifacts();
         toscaArtifactsPage.isLoaded();
-
         toscaArtifactsPage.clickOnDownload("Tosca Model");
+
         final File downloadedCsar = waitAndGetDownloadedCsar();
         assertThat("The downloaded CSAR should exist", downloadedCsar, is(notNullValue()));
         assertThat("The downloaded CSAR should exist", downloadedCsar.exists(), is(true));
         toscaArtifactsPage.addToDownloadedArtifactList(downloadedCsar.getName());
         extendTest.log(Status.INFO, "Tosca CSAR was successfully downloaded");
-        ExtentTestActions.takeScreenshot(Status.INFO, "tosca-artifact-csar-download", "TOSCA Artifact downloaded");
-
+        ExtentTestActions.takeScreenshot(Status.INFO, "tosca-artifact-csar-downloaded", "TOSCA Artifact Downloaded");
         return Optional.of(toscaArtifactsPage);
     }
 
