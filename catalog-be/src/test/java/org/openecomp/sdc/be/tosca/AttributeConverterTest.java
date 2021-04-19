@@ -44,7 +44,7 @@ class AttributeConverterTest {
     @Test
     void testScalarTypeConversion() throws ToscaConversionException {
         //given
-        final AttributeConverter attributeConverter = new AttributeConverter(Collections.emptyMap());
+        final AttributeConverter attributeConverter = createTestSubject();
         final AttributeDefinition attributeDefinition = new AttributeDefinition();
         attributeDefinition.setType(ToscaPropertyType.STRING.getType());
         attributeDefinition.setDescription("aDescription");
@@ -59,7 +59,7 @@ class AttributeConverterTest {
     @Test
     void testScalarNoDefaultValueConversion() throws ToscaConversionException {
         //given
-        final AttributeConverter attributeConverter = new AttributeConverter(Collections.emptyMap());
+        final AttributeConverter attributeConverter = createTestSubject();
         final AttributeDefinition attributeDefinition = new AttributeDefinition();
         attributeDefinition.setType(ToscaPropertyType.STRING.getType());
         attributeDefinition.setDescription("aDescription");
@@ -132,13 +132,28 @@ class AttributeConverterTest {
     @Test
     void testInvalidDefaultValueJsonConversion() {
         //given
-        final AttributeConverter attributeConverter = new AttributeConverter(Collections.emptyMap());
+        final AttributeConverter attributeConverter = createTestSubject();
         final AttributeDefinition attributeDefinition = new AttributeDefinition();
         attributeDefinition.setDefaultValue(": thisIsAnInvalidJson");
         //when, then
         final ToscaConversionException toscaConversionException = assertThrows(ToscaConversionException.class,
             () -> attributeConverter.convert(attributeDefinition));
         assertEquals("Failed to parse json value", toscaConversionException.getMessage());
+    }
+
+    @Test
+    void testConvertAndAddValue() throws ToscaConversionException {
+        final AttributeConverter converter = createTestSubject();
+        final AttributeDefinition attribute = new AttributeDefinition();
+        attribute.setName("attrib");
+        attribute.setDefaultValue("default");
+        final Map<String, Object> attribs = new HashMap<>();
+        converter.convertAndAddValue(attribs, attribute);
+        assertEquals(1, attribs.size());
+    }
+
+    private AttributeConverter createTestSubject() {
+        return new AttributeConverter(Collections.emptyMap());
     }
 
     private void assertAttribute(final AttributeDefinition expectedAttributeDefinition, final ToscaAttribute actualToscaAttribute) {
