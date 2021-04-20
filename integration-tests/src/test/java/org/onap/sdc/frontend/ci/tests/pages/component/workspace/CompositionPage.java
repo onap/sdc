@@ -28,7 +28,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Represents the Component (Service, VF, VFC, etc.) Composition Page
+ * Represents the Component (Service, VF, CR, PNF, etc.) Composition Page
  */
 public class CompositionPage extends AbstractPageObject {
 
@@ -57,12 +57,12 @@ public class CompositionPage extends AbstractPageObject {
     }
 
     public ComponentInstance addNodeToServiceCompositionUsingApi(final String serviceName, final String serviceVersion, final String resourceName,
-                                                          final String resourceVersion) {
+                                                                 final String resourceVersion) {
         return compositionCanvasComponent.createNodeOnServiceCanvas(serviceName, serviceVersion, resourceName, resourceVersion);
     }
 
     public ComponentInstance addNodeToResourceCompositionUsingApi(final String serviceName, final String serviceVersion, final String resourceName,
-                                                          final String resourceVersion) {
+                                                                  final String resourceVersion) {
         return compositionCanvasComponent.createNodeOnResourceCanvas(serviceName, serviceVersion, resourceName, resourceVersion);
     }
 

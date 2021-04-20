@@ -37,6 +37,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.FluentWait;
 
+/**
+ * UI Flow for downloading Tosca CSAR from a component
+ */
 public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
 
     private ToscaArtifactsPage toscaArtifactsPage;
@@ -49,15 +52,18 @@ public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
 
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
+        extendTest.log(Status.INFO, "Downloading Tosca CSAR generated");
         final ComponentPage componentPage = findParameter(pageObjects, ComponentPage.class);
+        componentPage.isLoaded();
         toscaArtifactsPage = componentPage.goToToscaArtifacts();
         toscaArtifactsPage.isLoaded();
 
         toscaArtifactsPage.clickOnDownload("Tosca Model");
-        final File downloadedCsar = waitAndGetDowloadedCsar();
+        final File downloadedCsar = waitAndGetDownloadedCsar();
         assertThat("The downloaded CSAR should exist", downloadedCsar, is(notNullValue()));
         assertThat("The downloaded CSAR should exist", downloadedCsar.exists(), is(true));
         toscaArtifactsPage.addToDownloadedArtifactList(downloadedCsar.getName());
+        extendTest.log(Status.INFO, "Tosca CSAR was successfully downloaded");
         ExtentTestActions.takeScreenshot(Status.INFO, "tosca-artifact-csar-download", "TOSCA Artifact downloaded");
 
         return Optional.of(toscaArtifactsPage);
@@ -68,7 +74,7 @@ public class DownloadCsarArtifactFlow extends AbstractUiTestFlow {
         return Optional.ofNullable(toscaArtifactsPage);
     }
 
-    private File waitAndGetDowloadedCsar() {
+    private File waitAndGetDownloadedCsar() {
         new Actions(webDriver).pause(Duration.ofSeconds(waitBeforeGetTheFile)).perform();
         final FluentWait<String> fluentWait = new FluentWait<>("").withTimeout(Duration.ofSeconds(5)).pollingEvery(Duration.ofSeconds(1));
         fluentWait.until(s -> FileHandling.getLastModifiedFileNameFromDir() != null);

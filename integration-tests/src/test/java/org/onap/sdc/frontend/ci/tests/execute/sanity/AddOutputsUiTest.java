@@ -25,8 +25,10 @@ import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.aventstack.extentreports.Status;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
@@ -38,23 +40,26 @@ import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
+import org.onap.sdc.frontend.ci.tests.pages.AttributesOutputsPage;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
 
-public class ImportVfcUiTest extends SetupCDTest {
+public class AddOutputsUiTest extends SetupCDTest {
 
     private String filePath;
     private WebDriver webDriver;
@@ -68,52 +73,92 @@ public class ImportVfcUiTest extends SetupCDTest {
     }
 
     @Test
-    public void importVFC_createVF_addVFC2VF_test() throws UnzipException {
-        ComponentPage componentPage;
+    public void addOutputsToVF_test() throws UnzipException, IOException {
+        ComponentPage resourceCreatePage;
         webDriver = DriverFactory.getDriver();
         homePage = new HomePage(webDriver);
         // TC - Import VFC with root namespace
         String fileName = "org.openecomp.resource.VFC-root.yml";
         CreateVfcFlow createVfcFlow = createVFC(fileName);
 
-        componentPage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
-        componentPage.isLoaded();
-        componentPage.certifyComponent();
-        componentPage.isLoaded();
+        resourceCreatePage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ResourceCreatePage"));
+        resourceCreatePage.isLoaded();
+        resourceCreatePage.certifyComponent();
+        resourceCreatePage.isLoaded();
 
-        Map<String, Object> yamlObject = downloadToscaArtifact(componentPage);
+        Map<String, Object> yamlObject = downloadToscaArtifact(resourceCreatePage);
         checkMetadata(yamlObject, vfcCreateData);
         checkNodeTypes(yamlObject);
-        homePage.getTopNavComponent().clickOnHome();
+
+        homePage = homePage.getTopNavComponent().clickOnHome();
+        homePage.isLoaded();
 
         // TC - Import hierarchy of VFCs
         fileName = "org.openecomp.resource.VFC-child.yml";
         createVfcFlow = createVFC(fileName);
-        componentPage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
-        componentPage.isLoaded();
-        componentPage.certifyComponent();
-        componentPage.isLoaded();
+        resourceCreatePage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ResourceCreatePage"));
+        resourceCreatePage.isLoaded();
+        resourceCreatePage.certifyComponent();
+        resourceCreatePage.isLoaded();
 
-        yamlObject = downloadToscaArtifact(createVfcFlow.getLandedPage().get());
+        yamlObject = downloadToscaArtifact(resourceCreatePage);
         checkMetadata(yamlObject, vfcCreateData);
         checkNodeTypes(yamlObject);
-        homePage.getTopNavComponent().clickOnHome();
+
+        homePage = homePage.getTopNavComponent().clickOnHome();
+        homePage.isLoaded();
 
         // TC - Import VFC with interface inputs
         // TC - Import VFC with attributes
         final CreateVfFlow createVfFlow = createVF();
-        componentPage = createVfFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
-        componentPage.isLoaded();
 
-        final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionFlow(componentPage);
-
+        final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionFlow(resourceCreatePage);
         final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
-        componentPage = compositionPage.goToGeneral();
-        componentPage.isLoaded();
-        componentPage.certifyComponent();
-        componentPage.isLoaded();
-        yamlObject = downloadToscaArtifact(componentPage);
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a CompositionPage"));
+        compositionPage.isLoaded();
+        resourceCreatePage = compositionPage.goToGeneral();
+        resourceCreatePage.isLoaded();
+
+        final AttributesOutputsPage attributesOutputsPage = resourceCreatePage.goToAttributesOutputs();
+        attributesOutputsPage.isLoaded();
+
+        final ComponentInstance createdComponentInstance = addNodeToCompositionFlow.getCreatedComponentInstance()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ComponentInstance"));
+
+        attributesOutputsPage.clickOnAttributeNavigation(createdComponentInstance.getName());
+        assertTrue(attributesOutputsPage.isAttributePresent("test_1"));
+        attributesOutputsPage.declareOutput("test_1");
+        attributesOutputsPage.clickOnOutputsTab();
+        assertTrue(attributesOutputsPage.isOutputPresent("test_1"));
+
+        attributesOutputsPage.clickOnAttributesTab();
+        assertTrue(attributesOutputsPage.isAttributePresent("test_2"));
+        attributesOutputsPage.declareOutput("test_2");
+        attributesOutputsPage.clickOnOutputsTab();
+        assertTrue(attributesOutputsPage.isOutputPresent("test_2"));
+
+        attributesOutputsPage.clickOnAttributesTab();
+        assertTrue(attributesOutputsPage.isAttributePresent("test_3"));
+        attributesOutputsPage.declareOutput("test_3");
+        attributesOutputsPage.clickOnOutputsTab();
+        assertTrue(attributesOutputsPage.isOutputPresent("test_3"));
+
+        attributesOutputsPage.deleteOutput(createdComponentInstance.getName() + "_test_2");
+        attributesOutputsPage.clickOnAttributesTab();
+        assertTrue(attributesOutputsPage.isAttributePresent("test_2"));
+        attributesOutputsPage.clickOnOutputsTab();
+        assertTrue(attributesOutputsPage.isOutputDeleted("test_2"));
+
+        attributesOutputsPage.clickOnAttributesTab();
+        ExtentTestActions.addScreenshot(Status.INFO, "AttributesTab", "The Attribute's list : ");
+
+        attributesOutputsPage.clickOnOutputsTab();
+        ExtentTestActions.addScreenshot(Status.INFO, "OutputsTab", "The Output's list : ");
+
+        attributesOutputsPage.certifyComponent();
+        attributesOutputsPage.isLoaded();
+
+        yamlObject = downloadToscaArtifact(attributesOutputsPage);
         checkMetadata(yamlObject, vfCreateData);
         checkTopologyTemplate(yamlObject);
 
@@ -134,8 +179,8 @@ public class ImportVfcUiTest extends SetupCDTest {
         return addNodeToCompositionFlow;
     }
 
-    private Map<String, Object> downloadToscaArtifact(final ComponentPage componentPage) throws UnzipException {
-        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(componentPage);
+    private Map<String, Object> downloadToscaArtifact(final ComponentPage resourceCreatePage) throws UnzipException {
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(resourceCreatePage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
 
@@ -166,10 +211,10 @@ public class ImportVfcUiTest extends SetupCDTest {
         return new Yaml().load(new String(mainDefinitionFileBytes));
     }
 
-    private DownloadCsarArtifactFlow downloadCsarArtifact(final ComponentPage componentPage) {
+    private DownloadCsarArtifactFlow downloadCsarArtifact(final ComponentPage resourceCreatePage) {
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
         downloadCsarArtifactFlow.setWaitBeforeGetTheFile(5L);
-        downloadCsarArtifactFlow.run(componentPage);
+        downloadCsarArtifactFlow.run(resourceCreatePage);
         return downloadCsarArtifactFlow;
     }
 
@@ -246,14 +291,22 @@ public class ImportVfcUiTest extends SetupCDTest {
         final Map<String, Object> mapEntry = getMapEntry(map, "topology_template");
         assertNotNull(mapEntry);
 
-        final Map<String, Object> properties = getMapEntry(mapEntry, "inputs");
-        assertThat(properties, not(anEmptyMap()));
+        final Map<String, Object> inputs = getMapEntry(mapEntry, "inputs");
+        assertThat(inputs, not(anEmptyMap()));
 
-        final Map<String, Object> attributes = getMapEntry(mapEntry, "node_templates");
+        final Map<String, Object> outputs = getMapEntry(mapEntry, "outputs");
+        assertThat(outputs, not(anEmptyMap()));
+        assertEquals(2, outputs.keySet().stream().filter(s -> (s.contains("_test_1") || s.contains("_test_3")) && !s.contains("_test_2")).count());
+
+        final Map<String, Object> nodeTemplates = getMapEntry(mapEntry, "node_templates");
+        assertThat(nodeTemplates, not(anEmptyMap()));
+
+        final Map<String, Object> substitutionMappings = getMapEntry(mapEntry, "substitution_mappings");
+        assertThat(substitutionMappings, not(anEmptyMap()));
+
+        final Map<String, Object> attributes = getMapEntry(substitutionMappings, "attributes");
         assertThat(attributes, not(anEmptyMap()));
-
-        final Map<String, Object> interfaces = getMapEntry(mapEntry, "substitution_mappings");
-        assertThat(interfaces, not(anEmptyMap()));
+        assertEquals(2, attributes.keySet().stream().filter(s -> (s.contains("_test_1") || s.contains("_test_3")) && !s.contains("_test_2")).count());
 
     }
 }

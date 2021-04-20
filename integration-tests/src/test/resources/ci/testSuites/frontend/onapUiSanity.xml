@@ -39,6 +39,7 @@
         <methods>
           <include name="importAndCertifyVfc"/>
           <include name="runServiceDesign"/>
+          <include name="addOutputsToVF_test"/>
         </methods>
       </class>
     </classes>

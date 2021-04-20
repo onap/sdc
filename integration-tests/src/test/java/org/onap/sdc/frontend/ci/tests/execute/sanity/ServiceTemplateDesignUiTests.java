@@ -20,20 +20,28 @@
 package org.onap.sdc.frontend.ci.tests.execute.sanity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.aventstack.extentreports.Status;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.backend.ci.tests.data.providers.OnboardingDataProviders;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
@@ -48,9 +56,10 @@ import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
-import org.onap.sdc.frontend.ci.tests.flow.DownloadToscaCsarFlow;
+import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
+import org.onap.sdc.frontend.ci.tests.pages.AttributesOutputsPage;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
@@ -62,6 +71,7 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
@@ -77,6 +87,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     private ResourceCreateData vfResourceCreateData;
     private ComponentInstance networkFunctionInstance;
     private ComponentInstance networkServiceInstance;
+    private AddNodeToCompositionFlow addNodeToCompositionFlow;
 
     @BeforeMethod
     public void init() {
@@ -103,13 +114,118 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     @Test(dependsOnMethods = "importAndCertifyVfc")
     public void runServiceDesign() throws UnzipException {
         final CreateVfFlow createVfFlow = createVF();
-        final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionAndCreateRelationship(createVfFlow);
+        addNodeToCompositionFlow = addNodeToCompositionAndCreateRelationship(createVfFlow);
         final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
         compositionPage.isLoaded();
         final ComponentPage componentPage = compositionPage.goToGeneral();
         componentPage.isLoaded();
         downloadAndVerifyCsarPackage(componentPage);
+    }
+
+    @Test(dependsOnMethods = "runServiceDesign")
+    public void addOutputsToVF_test() throws UnzipException, IOException {
+        homePage.isLoaded();
+        final ComponentPage resourceCreatePage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        resourceCreatePage.isLoaded();
+
+        final AttributesOutputsPage attributesOutputsPage = resourceCreatePage.goToAttributesOutputs();
+        attributesOutputsPage.isLoaded();
+
+        final ComponentInstance createdComponentInstance = addNodeToCompositionFlow.getCreatedComponentInstance()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ComponentInstance"));
+
+        attributesOutputsPage.clickOnAttributeNavigation(createdComponentInstance.getName());
+        assertTrue(attributesOutputsPage.isAttributePresent("attr_1"));
+        attributesOutputsPage.declareOutput("attr_1");
+        attributesOutputsPage.clickOnOutputsTab();
+        assertTrue(attributesOutputsPage.isOutputPresent("attr_1"));
+
+        attributesOutputsPage.clickOnAttributesTab();
+        assertTrue(attributesOutputsPage.isAttributePresent("attr_2"));
+        attributesOutputsPage.declareOutput("attr_2");
+        attributesOutputsPage.clickOnOutputsTab();
+        assertTrue(attributesOutputsPage.isOutputPresent("attr_2"));
+
+        attributesOutputsPage.clickOnAttributesTab();
+        assertTrue(attributesOutputsPage.isAttributePresent("attr_3"));
+        attributesOutputsPage.declareOutput("attr_3");
+        attributesOutputsPage.clickOnOutputsTab();
+        assertTrue(attributesOutputsPage.isOutputPresent("attr_3"));
+
+        attributesOutputsPage.deleteOutput(createdComponentInstance.getName() + "_attr_2");
+        attributesOutputsPage.clickOnAttributesTab();
+        assertTrue(attributesOutputsPage.isAttributePresent("attr_2"));
+        attributesOutputsPage.clickOnOutputsTab();
+        assertTrue(attributesOutputsPage.isOutputDeleted("attr_2"));
+
+        attributesOutputsPage.clickOnAttributesTab();
+        ExtentTestActions.addScreenshot(Status.INFO, "AttributesTab", "The Attribute's list : ");
+
+        attributesOutputsPage.clickOnOutputsTab();
+        ExtentTestActions.addScreenshot(Status.INFO, "OutputsTab", "The Output's list : ");
+
+        attributesOutputsPage.certifyComponent();
+        attributesOutputsPage.isLoaded();
+
+        Map<String, Object> yamlObject = downloadToscaArtifact(attributesOutputsPage);
+        checkMetadata(yamlObject, vfResourceCreateData);
+        checkTopologyTemplate(yamlObject);
+
+    }
+
+    private void checkMetadata(final Map<String, Object> map, final ResourceCreateData createdData) {
+        final Map<String, Object> metadata = getMapEntry(map, "metadata");
+
+        assertEquals(createdData.getName(), metadata.get("name"));
+        assertEquals(createdData.getDescription(), metadata.get("description"));
+        assertEquals("Generic", metadata.get("category"));
+        assertThat((String) metadata.get("type"), not(emptyString()));
+        assertEquals(createdData.getCategory(), metadata.get("subcategory"));
+        assertEquals(createdData.getVendorName(), metadata.get("resourceVendor"));
+        assertEquals(createdData.getVendorRelease(), metadata.get("resourceVendorRelease"));
+        assertEquals(createdData.getVendorModelNumber(), metadata.get("reourceVendorModelNumber"));
+    }
+
+    private void checkTopologyTemplate(final Map<String, Object> map) {
+        final Map<String, Object> mapEntry = getMapEntry(map, "topology_template");
+        assertNotNull(mapEntry);
+
+        final Map<String, Object> inputs = getMapEntry(mapEntry, "inputs");
+        assertThat(inputs, not(anEmptyMap()));
+
+        final Map<String, Object> outputs = getMapEntry(mapEntry, "outputs");
+        assertThat(outputs, not(anEmptyMap()));
+        assertEquals(2, outputs.keySet().stream().filter(s -> (s.contains("_attr_1") || s.contains("_attr_3")) && !s.contains("_attr_2")).count());
+
+        final Map<String, Object> nodeTemplates = getMapEntry(mapEntry, "node_templates");
+        assertThat(nodeTemplates, not(anEmptyMap()));
+
+        final Map<String, Object> substitutionMappings = getMapEntry(mapEntry, "substitution_mappings");
+        assertThat(substitutionMappings, not(anEmptyMap()));
+
+        final Map<String, Object> attributes = getMapEntry(substitutionMappings, "attributes");
+        assertThat(attributes, not(anEmptyMap()));
+        assertEquals(2, attributes.keySet().stream().filter(s -> (s.contains("_attr_1") || s.contains("_attr_3")) && !s.contains("_attr_2")).count());
+
+    }
+
+    private Map<String, Object> downloadToscaArtifact(final ComponentPage resourceCreatePage) throws UnzipException {
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadToscaCsar(resourceCreatePage);
+        final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
+
+        assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
+        final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
+        final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
+        final Map<String, byte[]> filesFromZip = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
+        final Optional<String> resourceEntryOpt = filesFromZip.keySet().stream()
+            .filter(s -> s.equals("Definitions/" + downloadedCsarName.replace("-csar.csar", "-template.yml")))
+            .findFirst();
+        if (resourceEntryOpt.isEmpty()) {
+            fail("Could not find the resource package in Definitions");
+        }
+        return loadYamlObject(filesFromZip.get(resourceEntryOpt.get()));
     }
 
     private CreateVfFlow createVF() {
@@ -204,11 +320,12 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     /**
      * Creates a DependsOn relationship between the imported VFCs
-     * @param compositionPage Composition Page
+     *
+     * @param compositionPage           Composition Page
      * @param fromComponentInstanceName VFC - Network Function
-     * @param fromCapability Node Capability
-     * @param toComponentInstanceName  VFC - Network Service
-     * @param toRequirement Node Requirement
+     * @param fromCapability            Node Capability
+     * @param toComponentInstanceName   VFC - Network Service
+     * @param toRequirement             Node Requirement
      */
     private void createRelationship(final CompositionPage compositionPage, final String fromComponentInstanceName,
                                     final String fromCapability, final String toComponentInstanceName, final String toRequirement) {
@@ -222,7 +339,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     private void downloadAndVerifyCsarPackage(final ComponentPage componentPage) throws UnzipException {
-        final DownloadToscaCsarFlow downloadToscaCsarFlow = downloadToscaCsar(componentPage);
+        final DownloadCsarArtifactFlow downloadToscaCsarFlow = downloadToscaCsar(componentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadToscaCsarFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
         assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
@@ -233,10 +350,11 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     /**
      * Download the generated package
      *
-     * @return DownloadToscaCsarFlow
+     * @return DownloadCsarArtifactFlow
      */
-    private DownloadToscaCsarFlow downloadToscaCsar(final ComponentPage componentPage) {
-        final DownloadToscaCsarFlow downloadToscaCsarFlow = new DownloadToscaCsarFlow(webDriver);
+    private DownloadCsarArtifactFlow downloadToscaCsar(final ComponentPage componentPage) {
+        final DownloadCsarArtifactFlow downloadToscaCsarFlow = new DownloadCsarArtifactFlow(webDriver);
+        downloadToscaCsarFlow.setWaitBeforeGetTheFile(5);
         downloadToscaCsarFlow.run(componentPage);
         return downloadToscaCsarFlow;
     }
@@ -246,7 +364,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
      * the generated service template declared “tosca_simple_yaml_1_3” as its Tosca version,
      * the generated csar contains the node type definitions for the added VFCs in the Definitions directory,
      * the interface template contains the relationship declaration
-     * @param vfResourceName VF created
+     * @param vfResourceName     VF created
      * @param downloadedCsarName download Tosca CSAR filename
      * @throws UnzipException
      */
@@ -255,9 +373,10 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         final Map<String, byte[]> filesFromZip = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
         final String virtualFunctionName = vfResourceName.replace("-", "").toLowerCase();
         final List<String> expectedDefinitionFolderFileList = getExpectedDefinitionFolderFileList(virtualFunctionName);
-        final Map<String, byte[]> expectedFilesFromZipMap = filesFromZip.entrySet().parallelStream().filter(key -> expectedDefinitionFolderFileList.stream()
-            .anyMatch(filename -> filename.equalsIgnoreCase(key.getKey()))).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        final String vfResourceTemplateFile = "Definitions/resource-"+ virtualFunctionName +"-template.yml";
+        final Map<String, byte[]> expectedFilesFromZipMap = filesFromZip.entrySet().parallelStream()
+            .filter(key -> expectedDefinitionFolderFileList.stream()
+                .anyMatch(filename -> filename.equalsIgnoreCase(key.getKey()))).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        final String vfResourceTemplateFile = "Definitions/resource-" + virtualFunctionName + "-template.yml";
         final String generatedTemplateFile = expectedFilesFromZipMap.keySet().stream()
             .filter(filename -> filename.equalsIgnoreCase(vfResourceTemplateFile)).findFirst()
             .orElseThrow(() -> new UiTestFlowRuntimeException(String.format("Resource template file not found %s", vfResourceTemplateFile)));
@@ -270,7 +389,8 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     private void verifyGeneratedTemplate(final byte[] generatedTemplateData, final String generatedTemplateFile) {
         final Map<String, Object> templateYamlMap = loadYamlObject(generatedTemplateData);
         final boolean hasToscaDefinitionVersionEntry = templateYamlMap.containsKey("tosca_definitions_version");
-        assertThat(String.format("'%s' should contain tosca_definitions_version entry", generatedTemplateFile), hasToscaDefinitionVersionEntry, is(true));
+        assertThat(String.format("'%s' should contain tosca_definitions_version entry", generatedTemplateFile), hasToscaDefinitionVersionEntry,
+            is(true));
         final String toscaVersion = (String) templateYamlMap.get("tosca_definitions_version");
         assertThat(String.format("'%s' tosca_definitions_version entry should have tosca_simple_yaml_1_3 value", generatedTemplateFile),
             toscaVersion.equalsIgnoreCase("tosca_simple_yaml_1_3"));
@@ -280,12 +400,13 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         assertThat(String.format("'%s' should contain a node_templates entry", generatedTemplateFile), nodeTemplatesTosca, is(notNullValue()));
         final List<String> nodeTemplateFound = nodeTemplatesTosca.keySet().parallelStream().filter(s -> vfcs.stream()
             .anyMatch(vfc -> s.startsWith(vfc.getName()))).collect(Collectors.toList());
-        assertThat(String.format("'%s' should contain the node type definitions for the added VFCs '%s'", nodeTemplatesTosca, vfcs), nodeTemplateFound, hasSize(vfcs.size()));
+        assertThat(String.format("'%s' should contain the node type definitions for the added VFCs '%s'", nodeTemplatesTosca, vfcs),
+            nodeTemplateFound, hasSize(vfcs.size()));
     }
 
     private void verifyNodesRelationship(final Map<String, byte[]> expectedFilesFromZipMap, final String virtualFunctionName,
                                          final Map<String, byte[]> filesFromZip) {
-        final String vfResourceTemplateFile = "Definitions/resource-"+ virtualFunctionName +"-template-interface.yml";
+        final String vfResourceTemplateFile = "Definitions/resource-" + virtualFunctionName + "-template-interface.yml";
         final String interfaceTemplateFile = expectedFilesFromZipMap.keySet().stream()
             .filter(filename -> filename.equalsIgnoreCase(vfResourceTemplateFile)).findFirst()
             .orElseThrow(() -> new UiTestFlowRuntimeException(String.format("Resource template file not found %s", vfResourceTemplateFile)));
@@ -304,9 +425,9 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
     private List<String> getExpectedDefinitionFolderFileList(final String vfResourceName) {
         final List<String> expectedDefinitionFolderFileList = new ArrayList<>();
-        vfcs.forEach(vfc -> expectedDefinitionFolderFileList.add("Definitions/resource-"+ vfc.getName() +"-template.yml"));
-        expectedDefinitionFolderFileList.add("Definitions/resource-"+ vfResourceName +"-template.yml");
-        expectedDefinitionFolderFileList.add("Definitions/resource-"+ vfResourceName +"-template-interface.yml");
+        vfcs.forEach(vfc -> expectedDefinitionFolderFileList.add("Definitions/resource-" + vfc.getName() + "-template.yml"));
+        expectedDefinitionFolderFileList.add("Definitions/resource-" + vfResourceName + "-template.yml");
+        expectedDefinitionFolderFileList.add("Definitions/resource-" + vfResourceName + "-template-interface.yml");
         return expectedDefinitionFolderFileList;
     }
 

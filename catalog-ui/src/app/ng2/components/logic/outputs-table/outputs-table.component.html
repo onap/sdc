@@ -87,8 +87,7 @@
                            [constraints]="getConstraints(output)">
           </dynamic-element>
           <div class="delete-button-container">
-            <span *ngIf="output.instanceUniqueId && !readonly" class="sprite-new delete-btn"
-                  (click)="openDeleteModal(output)"></span>
+            <span [attr.data-tests-id]="'delete-'+output.name" *ngIf="output.instanceUniqueId && !readonly" class="sprite-new delete-btn" (click)="openDeleteModal(output)"></span>
           </div>
         </div>
       </div>

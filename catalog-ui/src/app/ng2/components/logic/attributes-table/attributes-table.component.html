@@ -41,7 +41,7 @@
         <ng-container *ngFor="let instanceId of feAttributesMap | keys; trackBy:vspId">
             <!-- Icon & Instance Name -->
             <div class="table-rows-header white-sub-header" *ngIf="feInstanceNamesMap">
-                <span [ngClass]="['prop-instance-icon', feInstanceNamesMap[instanceId].iconClass, 'small']"></span>
+                <span [ngClass]="['attrib-instance-icon', feInstanceNamesMap[instanceId].iconClass, 'small']"></span>
                 {{feInstanceNamesMap[instanceId].name}}
                 <div class="sprite-new archive-label" *ngIf="feInstanceNamesMap[instanceId].originArchived == true"></div>
             </div>

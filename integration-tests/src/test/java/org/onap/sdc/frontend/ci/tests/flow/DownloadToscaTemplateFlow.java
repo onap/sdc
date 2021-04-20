@@ -23,10 +23,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
+import com.aventstack.extentreports.Status;
 import java.io.File;
 import java.time.Duration;
 import java.util.Optional;
-
+import lombok.Setter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
@@ -35,10 +36,6 @@ import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.FluentWait;
-
-import com.aventstack.extentreports.Status;
-
-import lombok.Setter;
 
 public class DownloadToscaTemplateFlow extends AbstractUiTestFlow {
 
@@ -53,7 +50,7 @@ public class DownloadToscaTemplateFlow extends AbstractUiTestFlow {
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
         final ComponentPage componentPage = findParameter(pageObjects, ComponentPage.class);
-        toscaArtifactsPage = (ToscaArtifactsPage) componentPage.goToToscaArtifacts();
+        toscaArtifactsPage = componentPage.goToToscaArtifacts();
         toscaArtifactsPage.isLoaded();
 
         toscaArtifactsPage.clickOnDownload("Tosca Template");
