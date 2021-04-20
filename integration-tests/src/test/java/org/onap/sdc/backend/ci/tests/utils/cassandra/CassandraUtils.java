@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,24 +20,33 @@
 
 package org.onap.sdc.backend.ci.tests.utils.cassandra;
 
-import com.datastax.driver.core.*;
-import com.datastax.driver.core.policies.*;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.KeyspaceMetadata;
+import com.datastax.driver.core.Metadata;
+import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.TableMetadata;
+import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
+import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
+import com.datastax.driver.core.policies.DefaultRetryPolicy;
+import com.datastax.driver.core.policies.LoadBalancingPolicy;
+import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.querybuilder.Select.Where;
-import org.javatuples.Pair;
-import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
-import org.onap.sdc.backend.ci.tests.utils.Utils;
-import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.javatuples.Pair;
+import org.onap.sdc.backend.ci.tests.utils.Utils;
+import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
+import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CassandraUtils {
+
     private static Logger logger = LoggerFactory.getLogger(CassandraUtils.class.getName());
 
     protected static Cluster cluster = null;
@@ -51,8 +60,8 @@ public final class CassandraUtils {
 
             logger.debug("creating cluster to hosts:{} with reconnect timeout:{}", cassandraHosts, reconnectTimeout);
             Cluster.Builder clusterBuilder = Cluster.builder()
-                    .withReconnectionPolicy(new ConstantReconnectionPolicy(reconnectTimeout))
-                    .withRetryPolicy(DefaultRetryPolicy.INSTANCE);
+                .withReconnectionPolicy(new ConstantReconnectionPolicy(reconnectTimeout))
+                .withRetryPolicy(DefaultRetryPolicy.INSTANCE);
 
             cassandraHosts.forEach(host -> clusterBuilder.addContactPoint(host));
             enableAuthentication(clusterBuilder);
@@ -67,7 +76,7 @@ public final class CassandraUtils {
     }
 
     private static void enableAuthentication(Cluster.Builder clusterBuilder) throws FileNotFoundException {
-        boolean authenticate = Utils.getConfig().getCassandraAuthenticate();
+        boolean authenticate = Utils.getConfig().isCassandraAuthenticate();
         if (authenticate) {
             String username = Utils.getConfig().getCassandraUsername();
             String password = Utils.getConfig().getCassandraPassword();
@@ -81,7 +90,7 @@ public final class CassandraUtils {
     }
 
     private static void enableSsl(Cluster.Builder clusterBuilder) throws FileNotFoundException {
-        boolean ssl = Utils.getConfig().getCassandraSsl();
+        boolean ssl = Utils.getConfig().isCassandraSsl();
         if (ssl) {
             String truststorePath = Utils.getConfig().getCassandraTruststorePath();
             String truststorePassword = Utils.getConfig().getCassandraTruststorePassword();
@@ -103,7 +112,8 @@ public final class CassandraUtils {
             LoadBalancingPolicy tokenAwarePolicy = new TokenAwarePolicy(DCAwareRoundRobinPolicy.builder().withLocalDc(localDataCenter).build());
             clusterBuilder.withLoadBalancingPolicy(tokenAwarePolicy);
         } else {
-            logger.info("localDatacenter was provided, the driver will use the datacenter of the first contact point that was reached at initialization");
+            logger.info(
+                "localDatacenter was provided, the driver will use the datacenter of the first contact point that was reached at initialization");
         }
     }
 
@@ -113,7 +123,7 @@ public final class CassandraUtils {
             initConnection(keyspace);
         }
 
-        try (Cluster cluster = CassandraUtils.cluster){
+        try (Cluster cluster = CassandraUtils.cluster) {
 
             if (session != null) {
                 session.execute(QueryBuilder.truncate(keyspace, tableName));
@@ -157,13 +167,14 @@ public final class CassandraUtils {
             }
 
         } finally {
-             if (cluster != null) {
-             cluster.close();
-             }
+            if (cluster != null) {
+                cluster.close();
+            }
         }
     }
 
-    public static List<Row> fetchFromTable(String keyspace, String tableName, List<Pair<AuditingFieldsKey, String>> fields) throws FileNotFoundException {
+    public static List<Row> fetchFromTable(String keyspace, String tableName, List<Pair<AuditingFieldsKey, String>> fields)
+        throws FileNotFoundException {
 
         List<Pair<String, String>> fieldsConverted = new ArrayList<>();
 
@@ -188,7 +199,7 @@ public final class CassandraUtils {
     }
 
     public static List<Row> fetchFromTableQuery(String keyspace, String tableName, List<Pair<String, String>> fields)
-            throws FileNotFoundException {
+        throws FileNotFoundException {
 
         if (session == null || session.isClosed()) {
             initConnection(keyspace);
@@ -232,8 +243,6 @@ public final class CassandraUtils {
         }
         return null;
     }
-
-
 
 
 }

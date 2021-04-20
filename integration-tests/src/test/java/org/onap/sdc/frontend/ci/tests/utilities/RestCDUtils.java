@@ -34,21 +34,21 @@ import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.backend.ci.tests.datatypes.ComponentReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.ResourceReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
-import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
-import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
-import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.backend.ci.tests.utils.rest.CatalogRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.CategoryRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResourceRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResponseParser;
 import org.onap.sdc.backend.ci.tests.utils.rest.ServiceRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.rest.UserRestUtils;
+import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
+import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 
 public class RestCDUtils {
 
@@ -97,7 +97,7 @@ public class RestCDUtils {
         try {
             Thread.sleep(threadSleepTime);
             RestResponse getServiceResponse = ServiceRestUtils.getServiceByNameAndVersion(user, service.getName(),
-                    service.getVersion());
+                service.getVersion());
             if (getServiceResponse.getErrorCode().intValue() == HttpStatus.SC_OK) {
                 setResourceUniqueIdAndUUID(service, getServiceResponse);
             }
@@ -135,7 +135,6 @@ public class RestCDUtils {
 
         Map<String, List<CategoryDefinition>> map = new HashMap<>();
 
-
         RestResponse allResourceCategories = CategoryRestUtils.getAllCategories(defaultAdminUser, ComponentTypeEnum.RESOURCE_PARAM_NAME);
         RestResponse allServiceCategories = CategoryRestUtils.getAllCategories(defaultAdminUser, ComponentTypeEnum.SERVICE_PARAM_NAME);
 
@@ -156,11 +155,10 @@ public class RestCDUtils {
         User defaultAdminUser = ElementFactory.getDefaultUser(UserRoleEnum.ADMIN);
         final String userId = defaultAdminUser.getUserId();
 
-
         List<Component> resourcesArrayList = map.get("resources");
         List<String> collect = resourcesArrayList.stream().filter(s -> s.getName().startsWith(ElementFactory.getResourcePrefix())).
-                map(e -> e.getUniqueId()).
-                collect(Collectors.toList());
+            map(e -> e.getUniqueId()).
+            collect(Collectors.toList());
         for (String uId : collect) {
             ResourceRestUtils.markResourceToDelete(uId, userId);
 
@@ -169,12 +167,12 @@ public class RestCDUtils {
 
         resourcesArrayList = map.get("services");
         collect = resourcesArrayList.stream().
-                filter(e -> e != null).
-                filter(e -> e.getName() != null).
-                filter(s -> s.getName().startsWith(ElementFactory.getServicePrefix())).
-                filter(e -> e.getUniqueId() != null).
-                map(e -> e.getUniqueId()).
-                collect(Collectors.toList());
+            filter(e -> e != null).
+            filter(e -> e.getName() != null).
+            filter(s -> s.getName().startsWith(ElementFactory.getServicePrefix())).
+            filter(e -> e.getUniqueId() != null).
+            map(e -> e.getUniqueId()).
+            collect(Collectors.toList());
         for (String uId : collect) {
             ServiceRestUtils.markServiceToDelete(uId, userId);
         }
@@ -204,10 +202,11 @@ public class RestCDUtils {
 
     public static void deleteOnDemand() throws IOException {
         Config config = DriverFactory.getConfig();
-        if (!config.getSystemUnderDebug()) {
+        if (!config.isSystemUnderDebug()) {
             deleteCreatedComponents(getCatalogAsMap());
         } else {
-            System.out.println("According to configuration components will not be deleted, in case to unable option to delete, please change systemUnderDebug parameter value to false ...");
+            System.out.println(
+                "According to configuration components will not be deleted, in case to unable option to delete, please change systemUnderDebug parameter value to false ...");
         }
     }
 

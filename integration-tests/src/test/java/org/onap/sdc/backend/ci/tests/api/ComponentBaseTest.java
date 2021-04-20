@@ -43,6 +43,12 @@ import org.onap.sdc.backend.ci.tests.utils.Utils;
 import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.backend.ci.tests.utils.general.FileHandling;
+import org.onap.sdc.backend.ci.tests.utils.rest.BaseRestUtils;
+import org.onap.sdc.backend.ci.tests.utils.rest.CatalogRestUtils;
+import org.onap.sdc.backend.ci.tests.utils.rest.ProductRestUtils;
+import org.onap.sdc.backend.ci.tests.utils.rest.ResourceRestUtils;
+import org.onap.sdc.backend.ci.tests.utils.rest.ResponseParser;
+import org.onap.sdc.backend.ci.tests.utils.rest.ServiceRestUtils;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
@@ -50,12 +56,6 @@ import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.onap.sdc.backend.ci.tests.utils.rest.BaseRestUtils;
-import org.onap.sdc.backend.ci.tests.utils.rest.CatalogRestUtils;
-import org.onap.sdc.backend.ci.tests.utils.rest.ProductRestUtils;
-import org.onap.sdc.backend.ci.tests.utils.rest.ResourceRestUtils;
-import org.onap.sdc.backend.ci.tests.utils.rest.ResponseParser;
-import org.onap.sdc.backend.ci.tests.utils.rest.ServiceRestUtils;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
@@ -108,7 +108,7 @@ public abstract class ComponentBaseTest {
     @BeforeMethod(alwaysRun = true)
     public void setupBeforeTest(java.lang.reflect.Method method, ITestContext context) throws Exception {
         if (!"onboardVNFShotFlow".equals(method.getName()) &&
-                !"onboardPNFFlow".equals(method.getName())) {
+            !"onboardPNFFlow".equals(method.getName())) {
             logger.info("ExtentReport instance started from BeforeMethod...");
             ExtentTestManager.startTest(method.getName());
             ExtentTestManager.assignCategory(this.getClass());
@@ -147,16 +147,18 @@ public abstract class ComponentBaseTest {
     }
 
     public void setLog(String fromDataProvider) {
-        ExtentTestManager.startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
+        ExtentTestManager
+            .startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
         ExtentTestManager.assignCategory(this.getClass());
     }
 
     protected static void performClean() throws Exception {
-        if (!config.getSystemUnderDebug()) {
+        if (!config.isSystemUnderDebug()) {
             deleteCreatedComponents(getCatalogAsMap());
             FileHandling.overWriteExistindDir("target/outputCsar");
         } else {
-            System.out.println("Accordindig to configuration components will not be deleted, in case to unable option to delete, please change systemUnderDebug parameter value to false ...");
+            System.out.println(
+                "Accordindig to configuration components will not be deleted, in case to unable option to delete, please change systemUnderDebug parameter value to false ...");
         }
     }
 
@@ -184,16 +186,15 @@ public abstract class ComponentBaseTest {
 
     protected static List<String> buildCollectionUniqueId(List<Component> resourcesArrayList) {
 
-
         List<String> genericCollection = new ArrayList<>();
         if (resourcesArrayList.get(0) != null) {
             ComponentTypeEnum componentTypeEnum = resourcesArrayList.get(0).getComponentType();
             resourcesArrayList.stream().filter(Objects::nonNull).
-                    filter(s -> s.getName().toLowerCase().startsWith("ci") && !s.getName().toLowerCase().equals("cindervolume")).
-                    filter(f -> f.getUniqueId() != null).
-                    map(Component::getUniqueId).
-                    collect(Collectors.toList()).
-                    forEach((i) -> buildCollectionBaseOnComponentType(componentTypeEnum, genericCollection, i));
+                filter(s -> s.getName().toLowerCase().startsWith("ci") && !s.getName().toLowerCase().equals("cindervolume")).
+                filter(f -> f.getUniqueId() != null).
+                map(Component::getUniqueId).
+                collect(Collectors.toList()).
+                forEach((i) -> buildCollectionBaseOnComponentType(componentTypeEnum, genericCollection, i));
         }
         return genericCollection;
     }
@@ -218,7 +219,6 @@ public abstract class ComponentBaseTest {
                     genericCollection.addAll(values);
 
                     break;
-
 
                 case PRODUCT:
                     RestResponse product = ProductRestUtils.getProduct(i);
