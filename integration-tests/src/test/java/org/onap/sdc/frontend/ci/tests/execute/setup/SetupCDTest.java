@@ -24,16 +24,15 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.UUID;
-
 import net.lightbody.bmp.core.har.Har;
 import org.json.simple.JSONObject;
 import org.onap.sdc.backend.ci.tests.config.UserCredentialsFromFile;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
+import org.onap.sdc.backend.ci.tests.utils.rest.AutomationUtils;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.UserCredentials;
 import org.onap.sdc.frontend.ci.tests.execute.sanity.OnboardingFlowsUi;
@@ -41,9 +40,7 @@ import org.onap.sdc.frontend.ci.tests.pages.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.RestCDUtils;
-import org.onap.sdc.backend.ci.tests.utils.rest.AutomationUtils;
 import org.openecomp.sdc.be.model.User;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -158,7 +155,7 @@ public abstract class SetupCDTest extends DriverFactory {
             System.out.println("ExtentReport instance started from Test...");
         }
 
-        if (getConfig().getCaptureTraffic()) {
+        if (getConfig().isCaptureTraffic()) {
             try {
                 MobProxy.getPoxyServer().newHar(method.getName() + ".har");
             } catch (Throwable e) {
@@ -175,7 +172,7 @@ public abstract class SetupCDTest extends DriverFactory {
             GeneralUIUtils.closeErrorMessage();
         } finally {
             try {
-                if (getConfig().getCaptureTraffic()) {
+                if (getConfig().isCaptureTraffic()) {
                     addTrafficFileToReport(result);
                 }
 
@@ -198,7 +195,6 @@ public abstract class SetupCDTest extends DriverFactory {
                 LOGGER.error("An unexpected error has occurred", e);
                 getExtendTest().log(Status.ERROR, "Exception:" + e.toString());
             }
-
 
             ExtentTestManager.getInstance().endTest();
             final String suiteName = ExtentManager.getSuiteName(context);
@@ -259,7 +255,7 @@ public abstract class SetupCDTest extends DriverFactory {
             System.out.println("Resources will not be deleted according to suite configuration ...");
         }
 
-        if (getConfig().getUseBrowserMobProxy()) {
+        if (getConfig().isUseBrowserMobProxy()) {
             MobProxy.getPoxyServer().stop();
         }
     }
@@ -271,7 +267,8 @@ public abstract class SetupCDTest extends DriverFactory {
             String message = "no URL found";
             System.out.println(message);
             Assert.fail(message);
-        } else if (!url.contains("localhost") && !url.contains("192.168.33.10") && !url.contains("127.0.0.1") && !url.contains("192.168.50.5") && !uiSimulator) {
+        } else if (!url.contains("localhost") && !url.contains("192.168.33.10") && !url.contains("127.0.0.1") && !url.contains("192.168.50.5")
+            && !uiSimulator) {
             localEnv = false;
         }
         return url;
@@ -339,7 +336,8 @@ public abstract class SetupCDTest extends DriverFactory {
             return;
         }
         try {
-            getWindowTest().setRefreshAttempts(getWindowTest().getRefreshAttempts() == 0 ? NUM_OF_ATTEMPTS_TO_REFTRESH : getWindowTest().getRefreshAttempts());
+            getWindowTest()
+                .setRefreshAttempts(getWindowTest().getRefreshAttempts() == 0 ? NUM_OF_ATTEMPTS_TO_REFTRESH : getWindowTest().getRefreshAttempts());
             if (!GeneralUIUtils.isElementVisibleByTestId(DataTestIdEnum.MainMenuButtons.HOME_BUTTON.getValue())) {
                 restartBrowser(role);
             }
@@ -389,7 +387,7 @@ public abstract class SetupCDTest extends DriverFactory {
     private void loginWithUser(final UserRoleEnum role) {
         try {
             final String msg = String
-                    .format("Login as user '%s', role '%s'", role.getUserId(), role.getUserRole());
+                .format("Login as user '%s', role '%s'", role.getUserId(), role.getUserRole());
             getExtendTest().log(Status.INFO, msg);
             LOGGER.info(msg);
             loginToSystem(role);
@@ -420,7 +418,7 @@ public abstract class SetupCDTest extends DriverFactory {
         LOGGER.info(String.format("Setup before test for role '%s'", role.name()));
         if (!getWindowTest().getPreviousRole().equalsIgnoreCase(role.name())) {
             LOGGER.info(String.format("Logging in with new role '%s'. Previous role was: '%s'.", role.name(),
-                    getWindowTest().getPreviousRole()));
+                getWindowTest().getPreviousRole()));
             navigateAndLogin(role);
         }
     }
@@ -471,11 +469,12 @@ public abstract class SetupCDTest extends DriverFactory {
 
         String suiteName = ExtentManager.getSuiteName(myContext);
         if (ExtentManager.suiteNameXml.TESTNG_FAILED_XML_NAME.getValue().equals(suiteName)) {
-            ExtentTestManager.getInstance().startTest(RE_RUN + Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
+            ExtentTestManager.getInstance().startTest(
+                RE_RUN + Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
         } else {
-            ExtentTestManager.getInstance().startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
+            ExtentTestManager.getInstance()
+                .startTest(Thread.currentThread().getStackTrace()[2].getMethodName() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + fromDataProvider);
         }
-
 
         getWindowTest().setAddedValueFromDataProvider(fromDataProvider);
         ExtentTestManager.getInstance().assignCategory(this.getClass());

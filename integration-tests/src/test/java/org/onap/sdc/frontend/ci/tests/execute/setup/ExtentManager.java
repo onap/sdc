@@ -25,17 +25,16 @@ import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import com.aventstack.extentreports.reporter.ExtentXReporter;
 import com.aventstack.extentreports.reporter.configuration.Protocol;
 import com.aventstack.extentreports.reporter.configuration.Theme;
-import org.onap.sdc.backend.ci.tests.config.Config;
-import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
-import org.onap.sdc.frontend.ci.tests.utilities.RestCDUtils;
-import org.onap.sdc.backend.ci.tests.utils.Utils;
-import org.onap.sdc.backend.ci.tests.utils.rest.AutomationUtils;
-import org.testng.ITestContext;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import org.onap.sdc.backend.ci.tests.config.Config;
+import org.onap.sdc.backend.ci.tests.utils.Utils;
+import org.onap.sdc.backend.ci.tests.utils.rest.AutomationUtils;
+import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
+import org.onap.sdc.frontend.ci.tests.utilities.RestCDUtils;
+import org.testng.ITestContext;
 
 public class ExtentManager {
 
@@ -60,7 +59,7 @@ public class ExtentManager {
 
     }
 
-    private static synchronized  ExtentReports setReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
+    private static synchronized ExtentReports setReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
         String dbIp = DriverFactory.getConfig().getReportDBhost();
         int dbPort = DriverFactory.getConfig().getReportDBport();
 
@@ -77,19 +76,19 @@ public class ExtentManager {
         return extent;
     }
 
-    private static synchronized  void setExtentXReporter(Boolean isAppend) {
+    private static synchronized void setExtentXReporter(Boolean isAppend) {
         extentxReporter.setAppendExisting(isAppend);
         extent.attachReporter(extentxReporter);
     }
 
-    private static synchronized  void initAndSetExtentHtmlReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
+    private static synchronized void initAndSetExtentHtmlReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
         htmlReporter = new ExtentHtmlReporter(filePath + htmlFile);
         setConfiguration(htmlReporter);
         htmlReporter.setAppendExisting(isAppend);
         extent.attachReporter(htmlReporter);
     }
 
-    static synchronized  ExtentReports getReporter() {
+    static synchronized ExtentReports getReporter() {
         return extent;
     }
 
@@ -102,7 +101,7 @@ public class ExtentManager {
         String suiteName = getSuiteName(context);
         String reportStartDate = null;
         if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) {
-            if (config.getUseBrowserMobProxy()) {
+            if (config.isUseBrowserMobProxy()) {
                 setTrafficCaptue(config);
             }
             setReporter(filepath, htmlFile, true);
@@ -116,12 +115,14 @@ public class ExtentManager {
             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
             reportStartDate = formatter.format(calendar.getTime());
             reporterDataDefinition(onboardVersion, osVersion, envData, suiteName);
-            AutomationUtils.createVersionsInfoFile(filepath + VERSIONS_INFO_FILE_NAME, onboardVersion, osVersion, envData, suiteName, reportStartDate);
+            AutomationUtils
+                .createVersionsInfoFile(filepath + VERSIONS_INFO_FILE_NAME, onboardVersion, osVersion, envData, suiteName, reportStartDate);
         }
 
     }
 
-    private static void reporterDataDefinition(String onboardVersion, String osVersion, String envData, String suiteNameFromVersionInfoFile) throws Exception {
+    private static void reporterDataDefinition(String onboardVersion, String osVersion, String envData, String suiteNameFromVersionInfoFile)
+        throws Exception {
         extent.setSystemInfo("Onboard Version", onboardVersion);
         extent.setSystemInfo("OS Version", osVersion);
         extent.setSystemInfo("Host Name Address", RestCDUtils.getExecutionHostAddress());
@@ -139,7 +140,7 @@ public class ExtentManager {
         return null;
     }
 
-    private static synchronized  ExtentHtmlReporter setConfiguration(ExtentHtmlReporter htmlReporter) throws Exception {
+    private static synchronized ExtentHtmlReporter setConfiguration(ExtentHtmlReporter htmlReporter) throws Exception {
 
         htmlReporter.config().setTheme(Theme.STANDARD);
         htmlReporter.config().setEncoding("UTF-8");
@@ -157,10 +158,9 @@ public class ExtentManager {
     }
 
     private static void setTrafficCaptue(Config config) {
-        boolean mobProxyStatus = config.getUseBrowserMobProxy();
+        boolean mobProxyStatus = config.isUseBrowserMobProxy();
         if (mobProxyStatus) {
             config.setCaptureTraffic(true);
         }
     }
 }
-
