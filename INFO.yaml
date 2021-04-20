@@ -66,6 +66,11 @@ committers:
     company: 'Ericsson Software Technology (EST)'
     id: 'MichaelMorris'
     timezone: 'Europe/Dublin'
+  - name: 'Anderson Ribeiro'
+    email: 'anderson.ribeiro@est.tech'
+    company: 'Ericsson Software Technology (EST)'
+    id: 'aribeiro'
+    timezone: 'Europe/Dublin'
 tsc:
   approval: 'https://lists.onap.org/pipermail/onap-tsc'
   changes:
@@ -165,3 +170,6 @@ tsc:
     - type: 'Removal'
       name: 'Tali Orenbach'
       link: 'https://lists.onap.org/g/onap-tsc/message/7746'
+    - type: 'Addition'
+      name: 'Anderson Ribeiro'
+      link: 'https://wiki.onap.org/pages/viewpage.action?pageId=100895269'
