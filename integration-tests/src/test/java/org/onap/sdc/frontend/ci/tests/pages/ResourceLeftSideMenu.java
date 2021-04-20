@@ -65,6 +65,16 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     }
 
     /**
+     * Clicks on the 'Attributes & Outputs' menu item.
+     *
+     * @return the next page object
+     */
+    public AttributesOutputsPage clickOnAttributesOutputsMenuItem() {
+        wrappingElement.findElement(By.xpath(XpathSelector.ATTRIBUTES_OUTPUTS_MENU.getXpath())).click();
+        return new AttributesOutputsPage(webDriver);
+    }
+
+    /**
      * Clicks on the TOSCA artifacts menu item.
      *
      * @return the next page object
@@ -96,6 +106,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     private enum XpathSelector {
         MAIN_DIV("w-sdc-left-sidebar", "//div[@class='%s']"),
         PROPERTIES_ASSIGNMENT_MENU("Properties AssignmentLeftSideMenu", "//*[@data-tests-id='%s']"),
+        ATTRIBUTES_OUTPUTS_MENU("Attributes & OutputsLeftSideMenu", "//*[@data-tests-id='%s']"),
         GENERAL_MENU("GeneralLeftSideMenu", "//*[@data-tests-id='%s']"),
         COMPOSITION_MENU("CompositionLeftSideMenu", "//*[@data-tests-id='%s']"),
         TOSCA_ARTIFACTS_MENU("TOSCA ArtifactsLeftSideMenu", "//*[@data-tests-id='%s']");

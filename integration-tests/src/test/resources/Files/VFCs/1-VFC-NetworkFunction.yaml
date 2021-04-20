@@ -10,7 +10,7 @@ node_types:
         type: string
         required: false
     attributes:
-      atttr_1:
+      attr_1:
         type: string
         default: 'Integration Test'
       attr_2:

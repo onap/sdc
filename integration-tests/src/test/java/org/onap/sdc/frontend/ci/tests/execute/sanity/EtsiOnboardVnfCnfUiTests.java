@@ -43,7 +43,7 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFromVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateServiceFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
-import org.onap.sdc.frontend.ci.tests.flow.DownloadToscaCsarFlow;
+import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
@@ -92,8 +92,8 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
      * Runs ETSI onboarding VNF/CNF UI flow
      *
      * @param resourceName VSP name
-     * @param rootFolder VNF/CNF package location
-     * @param vnfCnfFile file to be onboarded
+     * @param rootFolder   VNF/CNF package location
+     * @param vnfCnfFile   file to be onboarded
      */
     private void runOnboardEtsiVnfCnf(final String resourceName, final String rootFolder, final String vnfCnfFile) {
         final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, vnfCnfFile, rootFolder);
@@ -139,7 +139,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
     }
 
     private void downloadAndVerifyOnboardedPackage(final ComponentPage componentPage) {
-        final DownloadToscaCsarFlow downloadToscaCsarFlow = downloadToscaCsar(componentPage);
+        final DownloadCsarArtifactFlow downloadToscaCsarFlow = downloadToscaCsar(componentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadToscaCsarFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
         assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
@@ -181,7 +181,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
      */
     private ComponentPage loadComponentPage() {
         final ComponentPage componentPage = Optional.of(new ComponentPage(webDriver))
-        	.orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ComponentPage"));
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ComponentPage"));
         componentPage.isLoaded();
         return componentPage;
     }
@@ -191,8 +191,8 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
      *
      * @return DownloadToscaCsarFlow
      */
-    private DownloadToscaCsarFlow downloadToscaCsar(final ComponentPage componentPage) {
-        final DownloadToscaCsarFlow downloadToscaCsarFlow = new DownloadToscaCsarFlow(webDriver);
+    private DownloadCsarArtifactFlow downloadToscaCsar(final ComponentPage componentPage) {
+        final DownloadCsarArtifactFlow downloadToscaCsarFlow = new DownloadCsarArtifactFlow(webDriver);
         downloadToscaCsarFlow.run(componentPage);
         return downloadToscaCsarFlow;
     }

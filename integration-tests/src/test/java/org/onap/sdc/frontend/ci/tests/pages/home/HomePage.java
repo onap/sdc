@@ -21,6 +21,7 @@ package org.onap.sdc.frontend.ci.tests.pages.home;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.testng.Assert.assertNotNull;
 
 import java.time.Duration;
 import lombok.AllArgsConstructor;
@@ -120,15 +121,20 @@ public class HomePage extends AbstractPageObject {
     }
 
     public AbstractPageObject clickOnComponent(final String component) {
-        WebElement element = waitForElementVisibility(By.xpath(XpathSelector.COMPONENT.getXpath(component)));
+        final WebElement element = waitForElementVisibility(By.xpath(XpathSelector.COMPONENT.getXpath(component)));
         final WebElement componentTypeDiv = element.findElement(By.xpath("./../../../div[contains(@class, 'sdc-tile-header')]/div"));
         final String text = componentTypeDiv.getText();
         element.click();
-        if ("S".equals(text)) {
-            return new ServiceComponentPage(webDriver);
+        assertNotNull(text);
+        switch (text) {
+            case "S":
+                return new ServiceComponentPage(webDriver);
+            case "VF":
+            case "VFC":
+                return new ResourceCreatePage(webDriver);
+            default:
+                throw new UnsupportedOperationException("Not yet implemented for " + text);
         }
-
-        throw new UnsupportedOperationException("Return not yet implemented for " + text);
     }
 
     private void clickOnAdd(final By locator) {

@@ -63,10 +63,9 @@ public class ComponentPage extends AbstractPageObject {
         return resourceLeftSideMenu.clickOnCompositionMenuItem();
     }
 
-    public ResourcePropertiesAssignmentPage goToPropertiesAssignment() {
-        return resourceLeftSideMenu.clickOnPropertiesAssignmentMenuItem();
-    }
-
+    /**
+     * Certifies the resource and wait for success notification.
+     */
     public void certifyComponent() {
         workspaceTopBarComponent.certifyResource();
     }
@@ -88,4 +87,11 @@ public class ComponentPage extends AbstractPageObject {
         return LifeCycleStateEnum.IN_DESIGN.getValue().equalsIgnoreCase(getLifecycleState());
     }
 
+    public AttributesOutputsPage goToAttributesOutputs() {
+        return resourceLeftSideMenu.clickOnAttributesOutputsMenuItem();
+    }
+
+    public ResourcePropertiesAssignmentPage goToPropertiesAssignment() {
+        return resourceLeftSideMenu.clickOnPropertiesAssignmentMenuItem();
+    }
 }

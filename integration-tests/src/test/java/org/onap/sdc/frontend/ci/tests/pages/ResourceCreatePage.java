@@ -23,19 +23,35 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
+import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles the Resource Create Page UI actions
  */
 public class ResourceCreatePage extends ComponentPage {
 
+    private final LoaderHelper loaderHelper;
+    private final NotificationComponent notificationComponent;
+    private final ResourceWorkspaceTopBarComponent topBarComponent;
+    private final ResourceLeftSideMenu resourceLeftSideMenu;
+
     public ResourceCreatePage(final WebDriver webDriver) {
         super(webDriver);
+        this.loaderHelper = new LoaderHelper(webDriver);
+        this.notificationComponent = new NotificationComponent(webDriver);
+        this.resourceLeftSideMenu = new ResourceLeftSideMenu(webDriver);
+        this.topBarComponent = new ResourceWorkspaceTopBarComponent(webDriver);
         timeoutInSeconds = 5;
     }
 
