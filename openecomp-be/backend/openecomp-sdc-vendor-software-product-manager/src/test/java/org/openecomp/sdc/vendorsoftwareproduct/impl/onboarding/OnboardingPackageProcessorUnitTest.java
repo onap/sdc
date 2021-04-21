@@ -19,6 +19,9 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,14 +29,13 @@ import org.junit.Test;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData.Type;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 
 
 public class OnboardingPackageProcessorUnitTest {
 
-    private OnboardingPackageProcessor processor = new OnboardingPackageProcessor("unitTestPackage", null);
+    private OnboardingPackageProcessor processor = new OnboardingPackageProcessor("unitTestPackage",
+        null, new CnfPackageValidator());
 
     @Test
     public void shouldValidateZipPackage_helmWithoutHeat() {

@@ -28,6 +28,7 @@ import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData.Type;
 import org.openecomp.sdc.validation.Validator;
 import org.openecomp.sdc.validation.impl.util.YamlValidatorUtil;
 import org.yaml.snakeyaml.DumperOptions;
@@ -44,7 +45,7 @@ public class YamlValidator implements Validator {
 
     @Override
     public void validate(GlobalValidationContext globalContext) {
-        Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
+        Set<String> pmDictionaryFiles = GlobalContextUtil.findFilesByType(globalContext, Type.PM_DICTIONARY);
         Collection<String> files = globalContext
             .files((fileName, globalValidationContext) -> FileExtensionUtils.isYaml(fileName) && !pmDictionaryFiles.contains(fileName));
         files.forEach(fileName -> validate(fileName, globalContext));
