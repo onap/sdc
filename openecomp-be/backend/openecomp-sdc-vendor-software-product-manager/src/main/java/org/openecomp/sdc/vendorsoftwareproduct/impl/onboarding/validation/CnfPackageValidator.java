@@ -42,7 +42,7 @@ public class CnfPackageValidator {
         Stats stats = new Stats();
         for (FileData mod : modules) {
             if (mod.getBase() == null) {
-                stats.without++;
+                stats.withoutBase++;
             } else if (mod.getBase()) {
                 stats.base++;
             }
@@ -50,14 +50,14 @@ public class CnfPackageValidator {
         return stats;
     }
 
-    private List<String> createErrorMessages(Stats stats) {
+    private List<String> createErrorMessages(Stats result) {
         List<String> messages = new ArrayList<>();
-        if (stats.without > 0) {
-            messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_MISSING.formatMessage(stats.without));
+        if (result.withoutBase > 0) {
+            messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_MISSING.formatMessage(result.withoutBase));
         }
-        if (stats.base == 0) {
+        if (result.base == 0) {
             messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_NOT_SET.getErrorMessage());
-        } else if (stats.base > 1) {
+        } else if (result.base > 1) {
             messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_NOT_UNIQUE.getErrorMessage());
         }
         return messages;
@@ -66,6 +66,7 @@ public class CnfPackageValidator {
     private static class Stats {
 
         private int base = 0;
-        private int without = 0;
+        private int withoutBase = 0;
     }
+
 }
