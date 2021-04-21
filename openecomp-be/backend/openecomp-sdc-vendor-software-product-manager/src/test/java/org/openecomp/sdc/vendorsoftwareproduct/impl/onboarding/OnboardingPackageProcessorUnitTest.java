@@ -37,22 +37,22 @@ public class OnboardingPackageProcessorUnitTest {
 
     @Test
     public void shouldValidateZipPackage_helmWithoutHeat() {
-        assertThat(processor.validateZipPackage(manifest(withHelmWithoutHeat())).size(), is(0));
+        assertThat(processor.validateZipPackage(manifest(withHelmWithoutHeat())).getErrorMessages().size(), is(0));
     }
 
     @Test
     public void shouldValidateZipPackage_withHelmAndHeat() {
-        assertThat(processor.validateZipPackage(manifest(withHelmAndHeat())).size(), is(0));
+        assertThat(processor.validateZipPackage(manifest(withHelmAndHeat())).getErrorMessages().size(), is(0));
     }
 
     @Test
     public void shouldValidateZipPackage_withHelmWithoutHeat() {
-        assertThat(processor.validateZipPackage(manifest(withoutHelmWithoutHeat())).size(), is(0));
+        assertThat(processor.validateZipPackage(manifest(withoutHelmWithoutHeat())).getErrorMessages().size(), is(0));
     }
 
     @Test
     public void shouldValidateZipPackage_helmInvalid() {
-        assertThat(processor.validateZipPackage(manifest(withHelmInvalid())).size(), is(1));
+        assertThat(processor.validateZipPackage(manifest(withHelmInvalid())).getErrorMessages().size(), is(1));
     }
 
     @Test

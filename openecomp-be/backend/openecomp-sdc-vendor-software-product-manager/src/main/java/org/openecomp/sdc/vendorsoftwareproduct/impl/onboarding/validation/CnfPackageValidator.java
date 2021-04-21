@@ -22,18 +22,59 @@ import static org.openecomp.sdc.common.errors.Messages.MANIFEST_VALIDATION_HELM_
 import static org.openecomp.sdc.common.errors.Messages.MANIFEST_VALIDATION_HELM_IS_BASE_NOT_SET;
 import static org.openecomp.sdc.common.errors.Messages.MANIFEST_VALIDATION_HELM_IS_BASE_NOT_UNIQUE;
 
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorErrorResponse;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorResponse;
 
 public class CnfPackageValidator {
 
-    public List<String> validateHelmPackage(List<FileData> modules) {
-        List<String> messages = Collections.emptyList();
+    private final HelmValidatorHttpClient helmValidatorHttpClient;
+    private final HelmValidatorConfig helmValidatorConfig;
+
+    public CnfPackageValidator(HelmValidatorHttpClient helmValidationHttpClient,
+        HelmValidatorConfig helmValidatorConfig) {
+        this.helmValidatorHttpClient = helmValidationHttpClient;
+        this.helmValidatorConfig = helmValidatorConfig;
+    }
+
+    public CnfValidatorResult validateHelmPackage(String packageFileName, List<FileData> modules) {
+        CnfValidatorResult validatorResult = new CnfValidatorResult();
+
+        List<String> manifestErrorMessages = validateManifest(modules);
+        validatorResult.addErrorMessages(manifestErrorMessages);
+
+        if (helmValidatorConfig.isEnabled()) {
+            var httpResponse = helmValidatorHttpClient.execute(packageFileName, helmValidatorConfig);
+            if (httpResponse != null) {
+                if (httpResponse.getStatusCode() == 200) {
+                    var helmValidatorResponse = new Gson().fromJson(httpResponse.getResponse(), HelmValidatorResponse.class);
+                    validatorResult.addErrorMessages(helmValidatorResponse.getRenderErrors());
+                    validatorResult.addWarningMessages(helmValidatorResponse.getLintError());
+                    validatorResult.addWarningMessages(helmValidatorResponse.getLintWarning());
+                    validatorResult.setDeployable(helmValidatorResponse.isDeployable());
+                } else {
+                    var errorResponse = new Gson().fromJson(httpResponse.getResponse(), HelmValidatorErrorResponse.class);
+                    validatorResult.addWarning(errorResponse.getMessage());
+                }
+            }
+            else {
+                validatorResult.addWarning("Could not execute validation using Helm");
+            }
+        }
+
+        return validatorResult;
+    }
+
+    private List<String> validateManifest(List<FileData> modules) {
+        List<String> messages = new ArrayList<>();
         if (modules != null && !modules.isEmpty()) {
             Stats stats = calculateStats(modules);
-            messages = createErrorMessages(stats);
+            messages.addAll(createErrorMessages(stats));
         }
         return messages;
     }
@@ -42,7 +83,7 @@ public class CnfPackageValidator {
         Stats stats = new Stats();
         for (FileData mod : modules) {
             if (mod.getBase() == null) {
-                stats.without++;
+                stats.withoutBase++;
             } else if (mod.getBase()) {
                 stats.base++;
             }
@@ -50,14 +91,14 @@ public class CnfPackageValidator {
         return stats;
     }
 
-    private List<String> createErrorMessages(Stats stats) {
+    private List<String> createErrorMessages(Stats result) {
         List<String> messages = new ArrayList<>();
-        if (stats.without > 0) {
-            messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_MISSING.formatMessage(stats.without));
+        if (result.withoutBase > 0) {
+            messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_MISSING.formatMessage(result.withoutBase));
         }
-        if (stats.base == 0) {
+        if (result.base == 0) {
             messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_NOT_SET.getErrorMessage());
-        } else if (stats.base > 1) {
+        } else if (result.base > 1) {
             messages.add(MANIFEST_VALIDATION_HELM_IS_BASE_NOT_UNIQUE.getErrorMessage());
         }
         return messages;
@@ -66,6 +107,16 @@ public class CnfPackageValidator {
     private static class Stats {
 
         private int base = 0;
-        private int without = 0;
+        private int withoutBase = 0;
+
+    }
+
+    public List<String> validateHelmPackage(List<FileData> modules) {
+        List<String> messages = Collections.emptyList();
+        if (modules != null && !modules.isEmpty()) {
+            Stats stats = calculateStats(modules);
+            messages = createErrorMessages(stats);
+        }
+        return messages;
     }
 }

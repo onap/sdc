@@ -31,7 +31,7 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 
 public class CnfPackageValidatorTest {
 
-    private CnfPackageValidator validator = new CnfPackageValidator();
+    private CnfPackageValidator validator = new CnfPackageValidator(null, null);
 
     @Test
     public void shouldBeValidForNullInput() {
