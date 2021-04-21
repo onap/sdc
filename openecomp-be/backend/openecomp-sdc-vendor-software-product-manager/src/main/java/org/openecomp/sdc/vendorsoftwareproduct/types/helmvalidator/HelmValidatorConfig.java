@@ -1,0 +1,89 @@
+package org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator;
+
+public class HelmValidatorConfig {
+    private final String validationEndpoint;
+    private final String version;
+    private final boolean isEnabled;
+    private final boolean isDeployable;
+    private final boolean isLintable;
+    private final boolean isStrictLintable;
+
+    private HelmValidatorConfig(String validationEndpoint, String version, boolean isEnabled, boolean isDeployable,
+        boolean isLintable, boolean isStrictLintable) {
+        this.validationEndpoint = validationEndpoint;
+        this.version = version;
+        this.isEnabled = isEnabled;
+        this.isDeployable = isDeployable;
+        this.isLintable = isLintable;
+        this.isStrictLintable = isStrictLintable;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public boolean isDeployable() {
+        return isDeployable;
+    }
+
+    public boolean isLintable() {
+        return isLintable;
+    }
+
+    public boolean isStrictLintable() {
+        return isStrictLintable;
+    }
+
+    public String getValidationEndpoint() {
+        return validationEndpoint;
+    }
+
+    public static class HelmValidationConfigBuilder {
+
+        private String validationEndpoint;
+        private String version;
+        private boolean enabled;
+        private boolean deployable;
+        private boolean lintable;
+        private boolean strictLintable;
+
+        public HelmValidationConfigBuilder setVersion(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public HelmValidationConfigBuilder setEnabled(boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
+        public HelmValidationConfigBuilder setDeployable(boolean deployable) {
+            this.deployable = deployable;
+            return this;
+        }
+
+        public HelmValidationConfigBuilder setLintable(boolean lintable) {
+            this.lintable = lintable;
+            return this;
+        }
+
+        public HelmValidationConfigBuilder setStrictLintable(boolean strictLintable) {
+            this.strictLintable = strictLintable;
+            return this;
+        }
+
+        public HelmValidationConfigBuilder setValidationEndpoint(String validationEndpoint) {
+            this.validationEndpoint = validationEndpoint;
+            return this;
+        }
+
+        public HelmValidatorConfig build() {
+            return new HelmValidatorConfig(validationEndpoint, version, enabled, deployable, lintable, strictLintable);
+        }
+    }
+
+}

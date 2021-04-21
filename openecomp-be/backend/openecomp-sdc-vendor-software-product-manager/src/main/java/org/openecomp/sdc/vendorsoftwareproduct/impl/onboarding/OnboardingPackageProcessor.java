@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +45,11 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.onap.config.api.ConfigurationManager;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.common.http.client.api.HttpRequestHandler;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.common.zip.exception.ZipException;
@@ -59,9 +60,13 @@ import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfValidatorResult;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.HelmValidatorHttpClient;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig;
+import org.openecomp.sdc.vendorsoftwareproduct.utils.HelmValidatorConfigReader;
 
 public class OnboardingPackageProcessor {
 
@@ -75,10 +80,29 @@ public class OnboardingPackageProcessor {
     private final CnfPackageValidator cnfPackageValidator;
     private FileContentHandler packageContent;
 
+    public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent, final CnfPackageValidator cnfPackageValidator) {
+        this.packageFileName = packageFileName;
+        this.packageFileContent = packageFileContent;
+        this.cnfPackageValidator = cnfPackageValidator;
+        onboardPackageInfo = processPackage();
+    }
+
     public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent) {
         this.packageFileName = packageFileName;
         this.packageFileContent = packageFileContent;
-        this.cnfPackageValidator = new CnfPackageValidator();
+        var helmValidatorHttpClient = new HelmValidatorHttpClient(HttpRequestHandler.get());
+        var helmValidatorConfig = new HelmValidatorConfigReader(ConfigurationManager.lookup())
+            .getHelmValidatorConfig();
+        this.cnfPackageValidator = new CnfPackageValidator(helmValidatorHttpClient, helmValidatorConfig);
+        onboardPackageInfo = processPackage();
+    }
+
+    public OnboardingPackageProcessor(final HelmValidatorConfig helmValidatorConfig,
+        final String packageFileName, final byte[] packageFileContent) {
+        this.packageFileName = packageFileName;
+        this.packageFileContent = packageFileContent;
+        var helmValidatorHttpClient = new HelmValidatorHttpClient(HttpRequestHandler.get());
+        this.cnfPackageValidator = new CnfPackageValidator(helmValidatorHttpClient, helmValidatorConfig);
         onboardPackageInfo = processPackage();
     }
 
@@ -145,13 +169,15 @@ public class OnboardingPackageProcessor {
     private OnboardPackageInfo processOnapNativeZipPackage(String packageName, String packageExtension) {
         ManifestContent manifest = getManifest();
         if (manifest != null) {
-            List<String> errors = validateZipPackage(manifest);
-            if (errors.isEmpty()) {
+            var cnfValidatorResult = validateZipPackage(manifest);
+            List<String> validationErrorMessages = cnfValidatorResult.getErrorMessages();
+            validationErrorMessages.forEach(message -> reportError(ErrorLevel.ERROR, message));
+            List<String> validationWarningMessages = cnfValidatorResult.getWarningMessages();
+            validationWarningMessages.forEach(message -> reportError(ErrorLevel.WARNING, message));
+            if (cnfValidatorResult.isValid()) {
                 final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
                     packageContent);
                 return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
-            } else {
-                errors.forEach(message -> reportError(ErrorLevel.ERROR, message));
             }
         } else {
             reportError(ErrorLevel.ERROR, COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName));
@@ -159,16 +185,16 @@ public class OnboardingPackageProcessor {
         return null;
     }
 
-    List<String> validateZipPackage(ManifestContent manifest) {
+    CnfValidatorResult validateZipPackage(ManifestContent manifest) {
         ManifestAnalyzer analyzer = new ManifestAnalyzer(manifest);
-        List<String> errors = Collections.emptyList();
+        CnfValidatorResult result = new CnfValidatorResult();
         if (analyzer.hasHelmEntries()) {
             if (shouldValidateHelmPackage(analyzer)) {
-                errors = cnfPackageValidator.validateHelmPackage(analyzer.getHelmEntries());
+                result = cnfPackageValidator.validateHelmPackage(analyzer.getHelmEntries(), packageContent);
             }
         }
         addDummyHeat(manifest);
-        return errors;
+        return result;
     }
 
     boolean shouldValidateHelmPackage(ManifestAnalyzer analyzer) {

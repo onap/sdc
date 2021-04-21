@@ -35,6 +35,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.onap.config.api.ConfigurationManager;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -57,6 +58,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateAction
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig;
+import org.openecomp.sdc.vendorsoftwareproduct.utils.HelmValidatorConfigReader;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplateActionResponseDto;
@@ -98,7 +101,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         final byte[] fileToUploadBytes = fileToUpload.getObject(byte[].class);
         final DataHandler dataHandler = fileToUpload.getDataHandler();
         final String filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
-        final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(filename, fileToUploadBytes);
+        final var onboardingPackageProcessor = new OnboardingPackageProcessor(getHelmValidatorConfig(), filename, fileToUploadBytes);
         if (onboardingPackageProcessor.hasErrors()) {
             final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
                 onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]));
@@ -113,6 +116,11 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         final VspDetails vspDetails = new VspDetails(ValidationUtils.sanitizeInputString(vspId),
             new Version(ValidationUtils.sanitizeInputString(versionId)));
         return processOnboardPackage(onboardPackageInfo, vspDetails);
+    }
+
+    private HelmValidatorConfig getHelmValidatorConfig() {
+        final var helmValidatorConfigReader = new HelmValidatorConfigReader(ConfigurationManager.lookup());
+        return helmValidatorConfigReader.getHelmValidatorConfig();
     }
 
     private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails) {
