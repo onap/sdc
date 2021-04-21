@@ -52,6 +52,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -98,10 +99,12 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         final byte[] fileToUploadBytes = fileToUpload.getObject(byte[].class);
         final DataHandler dataHandler = fileToUpload.getDataHandler();
         final String filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
-        final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(filename, fileToUploadBytes);
+        final OnboardingPackageProcessor onboardingPackageProcessor =
+            new OnboardingPackageProcessor(filename, fileToUploadBytes, new CnfPackageValidator());
+        final ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
         if (onboardingPackageProcessor.hasErrors()) {
             final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
-                onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]));
+                errorMessages);
             return Response.status(Status.NOT_ACCEPTABLE).entity(uploadFileResponseDto).build();
         }
         final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
@@ -112,23 +115,30 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         }
         final VspDetails vspDetails = new VspDetails(ValidationUtils.sanitizeInputString(vspId),
             new Version(ValidationUtils.sanitizeInputString(versionId)));
-        return processOnboardPackage(onboardPackageInfo, vspDetails);
+        return processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
     }
 
-    private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails) {
+    private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails, final ErrorMessage... errorMessages) {
         final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
         final UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
             .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
+        if (errorMessages.length > 0) {
+            uploadFileResponseDto.setErrors(getErrorMap(errorMessages));
+        }
         return Response.ok(uploadFileResponseDto).build();
     }
 
-    private UploadFileResponseDto buildUploadResponseWithError(final ErrorMessage... errorMessages) {
-        final UploadFileResponseDto uploadFileResponseDto = new UploadFileResponseDto();
+    private Map<String, List<ErrorMessage>> getErrorMap(ErrorMessage[] errorMessages) {
         final Map<String, List<ErrorMessage>> errorMap = new HashMap<>();
         final List<ErrorMessage> errorMessageList = new ArrayList<>();
         Collections.addAll(errorMessageList, errorMessages);
         errorMap.put(SdcCommon.UPLOAD_FILE, errorMessageList);
-        uploadFileResponseDto.setErrors(errorMap);
+        return errorMap;
+    }
+
+    private UploadFileResponseDto buildUploadResponseWithError(final ErrorMessage... errorMessages) {
+        final UploadFileResponseDto uploadFileResponseDto = new UploadFileResponseDto();
+        uploadFileResponseDto.setErrors(getErrorMap(errorMessages));
         return uploadFileResponseDto;
     }
 
