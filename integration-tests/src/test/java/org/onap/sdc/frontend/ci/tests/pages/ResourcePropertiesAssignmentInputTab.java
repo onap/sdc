@@ -85,6 +85,21 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
     }
 
     /**
+     * Checks if a input exists.
+     * @param inputName the property name
+     * @return the value of the input
+     */
+    public boolean isInputPresent(final String inputName) {
+        isInputPropertiesTableLoaded();
+        try {
+            waitForElementVisibility(By.xpath(XpathSelector.INPUT_CHECKBOX.formatXpath(inputName)), 5);
+        } catch (final Exception ignored) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     @AllArgsConstructor
@@ -92,6 +107,7 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
     private enum XpathSelector {
         INPUT_TAB("//*[contains(@data-tests-id, 'Inputs') and contains(@class, 'active')]"),
         PROPERTIES_TABLE("//div[contains(@class,'properties-table')]"),
+        INPUT_CHECKBOX("//checkbox[@data-tests-id='%s']"),
         NO_DATA_MESSAGE("//div[contains(@class,'no-data') and text()='No data to display']"),
         PROPERTY_SAVE_BTN("//button[@data-tests-id='properties-save-button']"),
         PROPERTY_SAVE_MESSAGE("//div[contains(text(), 'Successfully saved')]"),
@@ -100,6 +116,7 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
         INPUT_PROPERTY_ADD_METADATA_BUTTON(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//a")),
         INPUT_PROPERTY_METADATA_KEY_VALUE_PAIR(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//input"));
 
+        @Getter
         private final String xpath;
 
         public String formatXpath(Object... params) {

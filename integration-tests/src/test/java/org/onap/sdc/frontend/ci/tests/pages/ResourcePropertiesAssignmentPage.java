@@ -19,9 +19,11 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import com.aventstack.extentreports.Status;
 import java.util.List;
 import java.util.Map;
 
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -77,6 +79,13 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
         return resourcePropertiesAssignmentTab.isPropertyPresent(propertyName);
     }
 
+    public boolean isInputPresent(final String inputName) {
+        return resourcePropertiesAssignmentInputTab.isInputPresent(inputName);
+    }
+
+    /**
+     * Saves a property
+     */
     public void saveProperties() {
         resourcePropertiesAssignmentTab.saveProperties();
     }
@@ -98,6 +107,31 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
     }
 
     /**
+     * select property
+     */
+    public void selectProperty(String propertyName){
+        resourcePropertiesAssignmentTab.selectProperty(propertyName);
+    }
+
+    public void loadComponentInstanceProperties(final String instanceName){
+        resourcePropertiesAssignmentTab.loadComponentInstanceProperties(instanceName);
+    }
+
+    public void clickOnDeclareInput(){
+        resourcePropertiesAssignmentTab.clickOnDeclareInput();
+    }
+
+    public void loadCompositionTab(){
+        resourcePropertiesAssignmentTab.loadCompositionTab();
+    }
+
+    public void clickInputTab(String propertyName){
+        waitForElementVisibility(By.xpath(XpathSelector.DECLARE_NOTIFIFICATION.getXpath()));
+        ExtentTestActions.takeScreenshot(Status.INFO, "Declare-Input", String.format("Added declared input for property %s", propertyName));
+        selectInputTab();
+    }
+
+    /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     @AllArgsConstructor
@@ -105,7 +139,8 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
         MAIN_DIV("w-sdc-main-right-container", "//div[@class='%s']"),
         TITLE_DIV("tab-title", "//div[contains(@class,'%s') and contains(text(), 'Properties Assignment')]"),
         PROPERTIES_TAB("//*[contains(@data-tests-id, 'Properties') and contains(@class, 'tab')]"),
-        INPUT_TAB("//*[contains(@data-tests-id, 'Inputs') and contains(@class, 'tab')]");
+        INPUT_TAB("//*[contains(@data-tests-id, 'Inputs') and contains(@class, 'tab')]"),
+        DECLARE_NOTIFIFICATION("//div[@data-tests-id='Inputs']/div[contains(@class, 'tab-indication')]");
 
         @Getter
         private String id;
