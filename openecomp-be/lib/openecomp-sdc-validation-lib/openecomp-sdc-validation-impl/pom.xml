@@ -94,6 +94,12 @@
       <artifactId>vavr</artifactId>
       <version>${io.vavr.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>${httpclient.version}</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
 </project>

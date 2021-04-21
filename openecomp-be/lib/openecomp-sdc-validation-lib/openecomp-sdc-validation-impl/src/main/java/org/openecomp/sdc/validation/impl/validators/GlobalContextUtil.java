@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData.Type;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.services.manifest.ManifestUtil;
 import org.openecomp.sdc.validation.util.ValidationUtil;
@@ -34,20 +35,22 @@ class GlobalContextUtil {
     private GlobalContextUtil() {
     }
 
-    static Set<String> findPmDictionaryFiles(GlobalValidationContext globalContext) {
+    static Set<String> findFilesByType(GlobalValidationContext globalContext, Type type) {
         if (isManifestMissing(globalContext)) {
             return Set.of();
         }
         Map<String, FileData.Type> filesWithTypes = readAllFilesWithTypes(globalContext);
-        return filterPmDictionaryFiles(filesWithTypes);
+        return filterFilesByType(filesWithTypes, entry -> entry.getValue().equals(type));
     }
 
     private static boolean isManifestMissing(GlobalValidationContext globalContext) {
         return globalContext.getFileContent("MANIFEST.json").isEmpty();
     }
 
-    private static Set<String> filterPmDictionaryFiles(Map<String, FileData.Type> filesWithTypes) {
-        return filesWithTypes.entrySet().stream().filter(isPmDictionaryType()).map(Map.Entry::getKey).collect(Collectors.toSet());
+    private static Set<String> filterFilesByType(Map<String, FileData.Type> filesWithTypes,
+        Predicate<Map.Entry<String, FileData.Type>> typePredicate) {
+        return filesWithTypes.entrySet().stream().filter(typePredicate).map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
     }
 
     private static Map<String, FileData.Type> readAllFilesWithTypes(GlobalValidationContext globalContext) {
@@ -55,7 +58,4 @@ class GlobalContextUtil {
         return ManifestUtil.getFileTypeMap(manifestContent);
     }
 
-    private static Predicate<Map.Entry<String, FileData.Type>> isPmDictionaryType() {
-        return entry -> entry.getValue().equals(FileData.Type.PM_DICTIONARY);
-    }
 }
