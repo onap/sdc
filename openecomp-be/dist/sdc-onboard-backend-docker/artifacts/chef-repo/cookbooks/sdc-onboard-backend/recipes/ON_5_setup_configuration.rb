@@ -42,6 +42,21 @@ template "VnfrepoConfiguration" do
 end
 
 
+template "HelmValidatorConfiguration" do
+   path "#{ENV['JETTY_BASE']}/config/onboarding-be/config-helmvalidator.yaml"
+   source "helmvalidator-configuration.yaml.erb"
+   owner "jetty"
+   group "jetty"
+   mode "0755"
+   variables({
+      :HVALIDATOR_ENABLED           => node['HelmValidator']['validator_enabled'],
+      :HVALIDATOR_HELM_VERSION      => node['HelmValidator']['helm_version'],
+      :HVALIDATOR_DEPLOYABLE        => node['HelmValidator']['deployable'],
+      :HVALIDATOR_LINTABLE          => node['HelmValidator']['lintable'],
+      :HVALIDATOR_STRICT_LINTABLE   => node['HelmValidator']['strict_lintable']
+   })
+end
+
 
 template "ExternalTestingConfiguration" do
    path "#{ENV['JETTY_BASE']}/config/onboarding-be/externaltesting-configuration.yaml"

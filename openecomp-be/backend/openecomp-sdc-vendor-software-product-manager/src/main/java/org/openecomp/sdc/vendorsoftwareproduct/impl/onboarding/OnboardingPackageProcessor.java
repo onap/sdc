@@ -63,11 +63,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 
+import org.onap.config.api.ConfigurationManager;
+
 public class OnboardingPackageProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OnboardingPackageProcessor.class);
     private static final String CSAR_EXTENSION = "csar";
     private static final String ZIP_EXTENSION = "zip";
+    private static final String CONFIG_NAMESPACE = "helmvalidator";
     private final String packageFileName;
     private final byte[] packageFileContent;
     private final Set<ErrorMessage> errorMessages = new HashSet<>();
@@ -165,6 +168,21 @@ public class OnboardingPackageProcessor {
         if (analyzer.hasHelmEntries()) {
             if (shouldValidateHelmPackage(analyzer)) {
                 errors = cnfPackageValidator.validateHelmPackage(analyzer.getHelmEntries());
+            }
+
+            if (errors.isEmpty()) {
+                LOGGER.error("JJ ======== Trying to read helm validator configuration =======");
+
+                org.onap.config.api.Configuration config = ConfigurationManager.lookup();
+
+                String version = readConfig(config, "hValidatorVersion", "v3");
+                String enabled = readConfig(config, "hValidatorEnabled", "false");
+                String deployable = readConfig(config, "hValidatorDeployable", "a");
+                String lintable = readConfig(config, "hValidatorLintable", "b");
+                String strictLintable = readConfig(config, "hValidatorStrictLintable", "c");
+
+                LOGGER.error("JJ ======== Helm validator enabled: {}, using helm version: {}, deployable: {}, lintable: {}, strict-lintable: {}",
+                    enabled, version, deployable, lintable, strictLintable);
             }
         }
         addDummyHeat(manifest);
@@ -318,5 +336,15 @@ public class OnboardingPackageProcessor {
         final Map<String, byte[]> files = packageContent.getFiles();
         return files.keySet().stream().filter(fileName -> ALLOWED_CERTIFICATE_EXTENSIONS.contains(FilenameUtils.getExtension(fileName).toLowerCase()))
             .findFirst();
+    }
+
+    private String readConfig(org.onap.config.api.Configuration config, String key, String defaultValue) {
+        try {
+            String value = config.getAsString(CONFIG_NAMESPACE, key);
+            return (value == null) ? defaultValue : value;
+        } catch (Exception e) {
+            LOGGER.error("Failed to read helm validator configuration key '{}', default value '{}' will be used", key, defaultValue, e);
+            return defaultValue;
+        }
     }
 }
