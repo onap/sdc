@@ -38,6 +38,13 @@
       "VnfRepo": {
          "vnfRepoPort": "8702",
          "vnfRepoHost": "10.0.14.1"
+      },
+      "HelmValidator": {
+         "validator_enabled": true,
+         "helm_version": "v3",
+         "deployable": true,
+         "lintable": false,
+         "strict_lintable": false
       }
    },
    "override_attributes": {
