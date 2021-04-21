@@ -309,6 +309,26 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
     }
 
     /**
+     * select property
+     */
+    public void selectProperty(String propertyName){
+        isPropertyPresent(propertyName);
+        waitToBeClickable(By.xpath(ResourcePropertiesAssignmentTab.XpathSelector.PROPERTY_CHECKBOX.getXpath(propertyName))).click();
+    }
+
+    public void loadComponentInstanceProperties(final String instanceName){
+        waitToBeClickable(By.xpath(ResourcePropertiesAssignmentTab.XpathSelector.INSTANCE_SPAN.getXpath(instanceName))).click();
+    }
+
+    public void clickOnDeclareInput(){
+        waitToBeClickable(By.xpath(ResourcePropertiesAssignmentTab.XpathSelector.DECLARE_INPUT_BTN.getXpath())).click();
+    }
+
+    public void loadCompositionTab(){
+        waitToBeClickable(By.xpath(ResourcePropertiesAssignmentTab.XpathSelector.COMPOSITION_TAB.getXpath())).click();
+    }
+
+    /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
     @AllArgsConstructor
@@ -329,7 +349,10 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         INPUT_PROPERTY("//input[@data-tests-id='value-prop-%s']"),
         SELECT_INPUT_PROPERTY("//select[@data-tests-id='value-prop-%s']"),
         PROPERTY_TYPES("//*[contains(@data-tests-id, 'propertyType')]"),
-        PROPERTY_NAMES("//*[contains(@data-tests-id, 'propertyName')]");
+        PROPERTY_NAMES("//*[contains(@data-tests-id, 'propertyName')]"),
+        DECLARE_INPUT_BTN("declare-button declare-input", "//button[@data-tests-id='%s']"),
+        COMPOSITION_TAB("Composition", "//div[contains(@class,'tab') and contains(text(), '%s')]"),
+        INSTANCE_SPAN("//span[@data-tests-id='%s']");
 
         @Getter
         private String id;

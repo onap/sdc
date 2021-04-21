@@ -64,8 +64,8 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateDirectiveNodeFilterFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateSubstitutionFilterFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
-import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadToscaTemplateFlow;
+import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.EditComponentPropertiesFlow;
 import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
@@ -308,6 +308,19 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         verifyToscaTemplateHasDirectiveNodeFilter(yaml, serviceDependencyProperty, vfcNameInComposition);
     }
 
+    @Test(dependsOnMethods = "addComponentProperty")
+    public void declareInputFromProperties() throws Exception {
+        componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        componentPage.isLoaded();
+
+        ResourcePropertiesAssignmentPage propertiesAssignmentPage = componentPage.goToPropertiesAssignment();
+        propertiesAssignmentPage.isLoaded();
+
+        declareInputToBaseService(propertiesAssignmentPage, "property1");
+        declareInputToInstanceProperties(propertiesAssignmentPage, "resourceSubtype");
+        verifyToscaTemplateHasDeclareInput(downloadToscaTemplate());
+    }
+
     private void checkMetadata(final Map<String, Object> map, final ResourceCreateData createdData) {
         final Map<String, Object> metadata = getMapEntry(map, "metadata");
 
@@ -451,6 +464,23 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
             fail("Could not find the resource package in Definitions");
         }
         return loadYamlObject(filesFromZip.get(resourceEntryOpt.get()));
+    }
+
+    private void declareInputToBaseService(ResourcePropertiesAssignmentPage propertiesAssignmentPage, String propertyName){
+        propertiesAssignmentPage.selectProperty(propertyName);
+        propertiesAssignmentPage.clickOnDeclareInput();
+        propertiesAssignmentPage.clickInputTab(propertyName);
+        propertiesAssignmentPage.isInputPresent(vfResourceCreateData.getName() + "_" + propertyName);
+    }
+
+    private void declareInputToInstanceProperties(ResourcePropertiesAssignmentPage propertiesAssignmentPage, String propertyName){
+        propertiesAssignmentPage.selectPropertiesTab();
+        propertiesAssignmentPage.loadCompositionTab();
+        propertiesAssignmentPage.loadComponentInstanceProperties(vfcs.get(0).getName().concat(" 0"));
+        propertiesAssignmentPage.selectProperty(propertyName);
+        propertiesAssignmentPage.clickOnDeclareInput();
+        propertiesAssignmentPage.clickInputTab(propertyName);
+        propertiesAssignmentPage.isInputPresent(vfResourceCreateData.getName() + "_" + vfcs.get(0).getName());
     }
 
     private CreateVfFlow createVF() {
@@ -738,6 +768,26 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         expectedDefinitionFolderFileList.add("Definitions/resource-" + vfResourceName + "-template.yml");
         expectedDefinitionFolderFileList.add("Definitions/resource-" + vfResourceName + "-template-interface.yml");
         return expectedDefinitionFolderFileList;
+    }
+
+    private void verifyToscaTemplateHasDeclareInput(Map<?, ?> yaml) {
+        assertNotNull(yaml, "No contents in TOSCA Template");
+        final Map<String, Object> toscaYaml = (Map<String, Object>) yaml;
+        final Map<String, Object> topologyTemplateTosca = getMapEntry(toscaYaml, "topology_template");
+        assertThat(String.format("'%s' should contain a topology_template entry", toscaYaml), topologyTemplateTosca,
+            notNullValue());
+        final Map<String, Object> inputsTosca = getMapEntry(topologyTemplateTosca, "inputs");
+        assertThat(String.format("'%s' should contain a inputs entry", toscaYaml), inputsTosca, notNullValue());
+        assertEquals(2, inputsTosca.keySet().stream()
+            .filter(s -> (s.contains("resourceSubtype") || s.contains("property1"))).count());
+        final Map<String, Object> substitutionMapping = getMapEntry(topologyTemplateTosca, "substitution_mappings");
+        assertThat(String.format("'%s' should contain a substitution_mappings entry", toscaYaml), substitutionMapping,
+            notNullValue());
+        final Map<String, Object> substitutionMappingProperties = getMapEntry(substitutionMapping, "properties");
+        assertThat(String.format("'%s' should contain a properties entry", toscaYaml), substitutionMappingProperties,
+            notNullValue());
+        assertEquals(2, substitutionMappingProperties.keySet().stream()
+            .filter(s -> (s.contains("resourceSubtype") || s.contains("property1"))).count());
     }
 
     private Map<String, Object> getMapEntry(final Map<?, ?> yamlObj, final String entryName) {
