@@ -242,6 +242,17 @@ function parseUploadErrorMsg(error) {
     return message.replace(/\n$/, '');
 }
 
+function showWarningValidationInfo(dispatch, errors) {
+    dispatch({
+        type: modalActionTypes.GLOBAL_MODAL_WARNING,
+        data: {
+            title: 'Validation messages',
+            msg: parseUploadErrorMsg(errors),
+            cancelButtonText: 'OK'
+        }
+    });
+}
+
 function fetchSoftwareProductCategories(dispatch) {
     let handleResponse = response =>
         dispatch({
@@ -447,6 +458,9 @@ const SoftwareProductActionHelper = {
                             break;
                     }
                     closeTimingValidationInfo(dispatch);
+                    if (response.errors !== null) {
+                        showWarningValidationInfo(dispatch, response.errors);
+                    }
                 } else {
                     throw new Error(parseUploadErrorMsg(response.errors));
                 }
@@ -460,7 +474,8 @@ const SoftwareProductActionHelper = {
                             msg:
                                 error.message ||
                                 (error.responseJSON &&
-                                    error.responseJSON.message)
+                                    error.responseJSON.message) ||
+                                parseUploadErrorMsg(error.responseJSON.errors)
                         }
                     },
                     closeTimingValidationInfo(dispatch)
