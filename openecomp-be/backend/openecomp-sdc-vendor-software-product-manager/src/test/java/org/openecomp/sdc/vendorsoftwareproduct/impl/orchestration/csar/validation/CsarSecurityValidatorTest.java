@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
@@ -56,7 +57,7 @@ public class CsarSecurityValidatorTest {
     public void isSignatureValidTestCorrectStructureAndValidSignatureExists() throws SecurityManagerException {
         final byte[] packageBytes = getFileBytesOrFail("signing/signed-package.zip");
         final OnboardSignedPackage onboardSignedPackage = loadSignedPackage("signed-package.zip",
-            packageBytes);
+            packageBytes, null);
         when(securityManager.verifySignedData(any(), any(), any())).thenReturn(true);
         final boolean isSignatureValid = csarSecurityValidator.verifyPackageSignature(onboardSignedPackage);
         assertThat("Signature should be valid", isSignatureValid, is(true));
@@ -66,7 +67,7 @@ public class CsarSecurityValidatorTest {
     public void isSignatureValidTestCorrectStructureAndNotValidSignatureExists() throws SecurityManagerException {
         final byte[] packageBytes = getFileBytesOrFail("signing/signed-package-tampered-data.zip");
         final OnboardSignedPackage onboardSignedPackage = loadSignedPackage("signed-package-tampered-data.zip",
-            packageBytes);
+            packageBytes, null);
         //no mocked securityManager
         csarSecurityValidator = new CsarSecurityValidator();
         csarSecurityValidator.verifyPackageSignature(onboardSignedPackage);
@@ -86,9 +87,10 @@ public class CsarSecurityValidatorTest {
             CsarSecurityValidatorTest.class.getResource(BASE_DIR + path).toURI()));
     }
 
-    private OnboardSignedPackage loadSignedPackage(final String packageName, final byte[] packageBytes) {
+    private OnboardSignedPackage loadSignedPackage(final String packageName, final byte[] packageBytes,
+        CnfPackageValidator cnfPackageValidator) {
         final OnboardingPackageProcessor onboardingPackageProcessor =
-            new OnboardingPackageProcessor(packageName, packageBytes);
+            new OnboardingPackageProcessor(packageName, packageBytes, cnfPackageValidator);
         final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
         if (onboardPackageInfo == null) {
             fail("Unexpected error. Could not load original package");

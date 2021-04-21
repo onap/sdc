@@ -460,7 +460,8 @@ const SoftwareProductActionHelper = {
                             msg:
                                 error.message ||
                                 (error.responseJSON &&
-                                    error.responseJSON.message)
+                                    error.responseJSON.message) ||
+                                parseUploadErrorMsg(error.responseJSON.errors)
                         }
                     },
                     closeTimingValidationInfo(dispatch)
