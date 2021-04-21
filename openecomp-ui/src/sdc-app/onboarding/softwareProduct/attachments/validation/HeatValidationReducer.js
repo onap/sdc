@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,8 +130,13 @@ function createErrorList(node, parent, deep = 0, errorList = []) {
 }
 
 const mapValidationDataToTree = (validationData, packageName) => {
-    let { errors, heat, nested, volume, network, artifacts, other } =
+    let { errors, heat, helm, nested, volume, network, artifacts, other } =
         validationData.importStructure || {};
+    let heatChildren =
+        heat && heat.length
+            ? heat.map(mapHeatData)
+            : nested ? nested.map(mapHeatData) : [];
+    let helmChildren = helm && helm.length ? helm.map(mapHeatData) : [];
     return {
         children: [
             {
@@ -139,10 +145,7 @@ const mapValidationDataToTree = (validationData, packageName) => {
                 type: 'heat',
                 header: true,
                 errors: errors,
-                children:
-                    heat && heat.length
-                        ? heat.map(mapHeatData)
-                        : nested ? nested.map(mapHeatData) : []
+                children: heatChildren.concat(helmChildren)
             },
             ...(artifacts
                 ? [

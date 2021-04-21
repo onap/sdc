@@ -30,6 +30,7 @@ import org.openecomp.core.validation.ErrorMessageCode;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.core.validation.types.GlobalValidationContext;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData.Type;
 import org.openecomp.sdc.validation.Validator;
 
 public class PmDictionaryValidator implements Validator {
@@ -38,7 +39,7 @@ public class PmDictionaryValidator implements Validator {
 
     @Override
     public void validate(GlobalValidationContext globalContext) {
-        Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
+        Set<String> pmDictionaryFiles = GlobalContextUtil.findFilesByType(globalContext, Type.PM_DICTIONARY);
         validatePmDictionaryFiles(globalContext, pmDictionaryFiles);
     }
 
