@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2017 European Support Limited
+ * Copyright (C) 2021 Nokia
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +34,7 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.DefinedHeatParameterTypes;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData.Type;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.model.Environment;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
@@ -453,7 +455,10 @@ public class HeatValidator implements Validator {
         globalContext.getFiles().stream().filter(fileName -> FileData.isHeatFile(fileTypeMap.get(fileName))).forEach(
             fileName -> validate(fileName, fileEnvMap.get(fileName) == null ? null : fileEnvMap.get(fileName).getFile(), artifacts, globalContext));
         Set<String> manifestArtifacts = ManifestUtil.getArtifacts(manifestContent);
-        globalContext.getFiles().stream().filter(fileName -> isManifestArtifact(manifestArtifacts, fileName) && isNotArtifact(artifacts, fileName))
+        globalContext.getFiles().stream()
+            .filter(fileName -> isManifestArtifact(manifestArtifacts, fileName)
+                && isNotArtifact(artifacts, fileName)
+                && isNotHelmType(fileTypeMap, fileName))
             .forEach(fileName -> {
                 globalContext.addMessage(fileName, ErrorLevel.WARNING,
                     ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_HOT_11, Messages.ARTIFACT_FILE_NOT_REFERENCED.getErrorMessage()));
@@ -466,6 +471,10 @@ public class HeatValidator implements Validator {
             globalContext.addMessage(fileName, ErrorLevel.ERROR,
                 ErrorMessagesFormatBuilder.getErrorWithParameters(ERROR_CODE_HOT_18, Messages.GENERATED_ARTIFACT_IN_USE.getErrorMessage(), fileName));
         }
+    }
+
+    private boolean isNotHelmType(Map<String, Type> fileTypeMap, String fileName) {
+        return !Type.HELM.equals(fileTypeMap.get(fileName));
     }
 
     private boolean isManifestArtifact(Set<String> manifestArtifacts, String fileName) {
