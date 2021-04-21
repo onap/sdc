@@ -75,10 +75,11 @@ public class OnboardingPackageProcessor {
     private final CnfPackageValidator cnfPackageValidator;
     private FileContentHandler packageContent;
 
-    public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent) {
+    public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent,
+        final CnfPackageValidator cnfPackageValidator) {
         this.packageFileName = packageFileName;
         this.packageFileContent = packageFileContent;
-        this.cnfPackageValidator = new CnfPackageValidator();
+        this.cnfPackageValidator = cnfPackageValidator;
         onboardPackageInfo = processPackage();
     }
 
@@ -87,11 +88,13 @@ public class OnboardingPackageProcessor {
     }
 
     public boolean hasErrors() {
-        return !errorMessages.isEmpty();
+        return errorMessages.stream()
+            .anyMatch(error -> error.getLevel() == ErrorLevel.ERROR);
     }
 
     public boolean hasNoErrors() {
-        return errorMessages.isEmpty();
+        return errorMessages.stream()
+            .noneMatch(error -> error.getLevel() == ErrorLevel.ERROR);
     }
 
     public Set<ErrorMessage> getErrorMessages() {

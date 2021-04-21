@@ -20,13 +20,13 @@
 
 package org.openecomp.sdc.validation.impl.validators;
 
-import org.junit.jupiter.api.Test;
-import org.openecomp.core.validation.types.GlobalValidationContext;
-import org.openecomp.sdc.validation.util.ValidationTestUtil;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.heat.datatypes.manifest.FileData.Type;
+import org.openecomp.sdc.validation.util.ValidationTestUtil;
 
 class GlobalContextUtilTest {
     private static final String TEST_MANIFEST_PATH = "/org/openecomp/validation/validators/global_context_util/";
@@ -37,7 +37,7 @@ class GlobalContextUtilTest {
         GlobalValidationContext globalContext = new ValidationTestUtil().createGlobalContextFromPath(TEST_MANIFEST_PATH);
 
         // when
-        Set<String> pmDictionaryFiles = GlobalContextUtil.findPmDictionaryFiles(globalContext);
+        Set<String> pmDictionaryFiles = GlobalContextUtil.findFilesByType(globalContext, Type.PM_DICTIONARY);
 
         // then
         assertEquals(1, pmDictionaryFiles.size());
