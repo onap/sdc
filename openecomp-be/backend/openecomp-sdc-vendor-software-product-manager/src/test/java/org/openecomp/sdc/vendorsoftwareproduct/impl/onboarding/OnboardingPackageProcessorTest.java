@@ -49,7 +49,10 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig.HelmValidationConfigBuilder;
 
 @RunWith(Parameterized.class)
 public class OnboardingPackageProcessorTest {
@@ -59,6 +62,7 @@ public class OnboardingPackageProcessorTest {
     private final byte[] packageBytes;
     private final Set<ErrorMessage> expectedErrorSet;
     private final OnboardingTypesEnum expectedPackageType;
+    private final CnfPackageValidator cnfPackageValidator;
 
     public OnboardingPackageProcessorTest(final String packageName, final byte[] packageBytes,
         final Set<ErrorMessage> expectedErrorSet,
@@ -67,6 +71,8 @@ public class OnboardingPackageProcessorTest {
         this.packageBytes = packageBytes;
         this.expectedErrorSet = expectedErrorSet;
         this.expectedPackageType = expectedPackageType;
+        HelmValidatorConfig helmValidatorConfig = new HelmValidationConfigBuilder().setEnabled(false).build();
+        this.cnfPackageValidator =  new CnfPackageValidator(null, helmValidatorConfig);
     }
 
     @Parameters(name = "Run {index} for {0}")
@@ -115,7 +121,7 @@ public class OnboardingPackageProcessorTest {
     @Test
     public void processPackage() {
         final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(packageName,
-            packageBytes);
+            packageBytes, cnfPackageValidator);
         assertThat("Should contains errors", onboardingPackageProcessor.hasErrors(), is(!expectedErrorSet.isEmpty()));
         assertThat("Should have the same number of errors", onboardingPackageProcessor.getErrorMessages().size(),
             equalTo(expectedErrorSet.size()));
