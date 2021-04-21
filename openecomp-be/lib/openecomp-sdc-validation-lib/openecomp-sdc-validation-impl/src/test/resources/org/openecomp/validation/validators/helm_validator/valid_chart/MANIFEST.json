@@ -1,0 +1,11 @@
+{
+  "name": "Valid package",
+  "description": "",
+  "data": [
+    {
+      "file": "chart.tgz",
+      "type": "HELM",
+      "isBase": "true"
+    }
+  ]
+}

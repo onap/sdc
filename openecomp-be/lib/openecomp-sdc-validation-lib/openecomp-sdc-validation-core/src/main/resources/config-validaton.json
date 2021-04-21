@@ -23,6 +23,10 @@
       "enable": true,
       "implementationClass": "org.openecomp.sdc.validation.impl.validators.ContrailValidator"
     },
+    "helmValidator": {
+      "enable": true,
+      "implementationClass": "org.openecomp.sdc.validation.impl.validators.HelmValidator"
+    },
     "resourceHeatValidator": {
       "enable": true,
       "implementationClass": "org.openecomp.sdc.validation.impl.validators.HeatResourceValidator",
