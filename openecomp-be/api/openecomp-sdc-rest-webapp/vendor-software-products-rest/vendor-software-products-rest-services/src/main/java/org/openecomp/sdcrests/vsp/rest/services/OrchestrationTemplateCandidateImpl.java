@@ -35,11 +35,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.onap.config.api.ConfigurationManager;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.common.http.client.api.HttpRequestHandler;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -52,11 +54,16 @@ import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.HelmValidatorHttpClient;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.FilesDataStructure;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig;
+import org.openecomp.sdc.vendorsoftwareproduct.utils.HelmValidatorConfigReader;
+import org.openecomp.sdc.vendorsoftwareproduct.utils.HelmValidatorConfigReader;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplateActionResponseDto;
@@ -98,10 +105,12 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         final byte[] fileToUploadBytes = fileToUpload.getObject(byte[].class);
         final DataHandler dataHandler = fileToUpload.getDataHandler();
         final String filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
-        final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(filename, fileToUploadBytes);
+        final OnboardingPackageProcessor onboardingPackageProcessor =
+            new OnboardingPackageProcessor(filename, fileToUploadBytes, getCnfPackageValidator());
+        final ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
         if (onboardingPackageProcessor.hasErrors()) {
             final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
-                onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]));
+                errorMessages);
             return Response.status(Status.NOT_ACCEPTABLE).entity(uploadFileResponseDto).build();
         }
         final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
@@ -112,23 +121,34 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         }
         final VspDetails vspDetails = new VspDetails(ValidationUtils.sanitizeInputString(vspId),
             new Version(ValidationUtils.sanitizeInputString(versionId)));
-        return processOnboardPackage(onboardPackageInfo, vspDetails);
+        return processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
     }
 
-    private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails) {
+    private CnfPackageValidator getCnfPackageValidator() {
+        final HelmValidatorHttpClient helmValidatorHttpClient = new HelmValidatorHttpClient(HttpRequestHandler.get());
+        final var helmValidatorConfigReader = new HelmValidatorConfigReader(ConfigurationManager.lookup());
+        return new CnfPackageValidator(helmValidatorHttpClient, helmValidatorConfigReader.getHelmValidatorConfig());
+    }
+
+    private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails, final ErrorMessage... errorMessages) {
         final UploadFileResponse uploadFileResponse = candidateManager.upload(vspDetails, onboardPackageInfo);
         final UploadFileResponseDto uploadFileResponseDto = new MapUploadFileResponseToUploadFileResponseDto()
             .applyMapping(uploadFileResponse, UploadFileResponseDto.class);
+        uploadFileResponseDto.setErrors(getErrorMap(errorMessages));
         return Response.ok(uploadFileResponseDto).build();
     }
 
-    private UploadFileResponseDto buildUploadResponseWithError(final ErrorMessage... errorMessages) {
-        final UploadFileResponseDto uploadFileResponseDto = new UploadFileResponseDto();
+    private Map<String, List<ErrorMessage>> getErrorMap(ErrorMessage[] errorMessages) {
         final Map<String, List<ErrorMessage>> errorMap = new HashMap<>();
         final List<ErrorMessage> errorMessageList = new ArrayList<>();
         Collections.addAll(errorMessageList, errorMessages);
         errorMap.put(SdcCommon.UPLOAD_FILE, errorMessageList);
-        uploadFileResponseDto.setErrors(errorMap);
+        return errorMap;
+    }
+
+    private UploadFileResponseDto buildUploadResponseWithError(final ErrorMessage... errorMessages) {
+        final UploadFileResponseDto uploadFileResponseDto = new UploadFileResponseDto();
+        uploadFileResponseDto.setErrors(getErrorMap(errorMessages));
         return uploadFileResponseDto;
     }
 
