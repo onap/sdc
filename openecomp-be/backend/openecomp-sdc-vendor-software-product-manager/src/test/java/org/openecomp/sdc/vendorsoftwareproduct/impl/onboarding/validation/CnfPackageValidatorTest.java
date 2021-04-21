@@ -22,77 +22,233 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig;
 
+@ExtendWith(MockitoExtension.class)
 public class CnfPackageValidatorTest {
 
-    private CnfPackageValidator validator = new CnfPackageValidator();
+    private static final String VALIDATOR_RESPONSE_WITH_ERRORS = "{\"renderErrors\":[\"[ERROR] render error\"],\""
+        + "lintWarning\":[\"[WARNING] warning\"],"
+        + "\"lintError\":[\"[ERROR] lint error\"],"
+        + "\"versionUsed\":\"3.5.2\",\"valid\":false,\"deployable\":true}";
+    private static final String VALIDATOR_RESPONSE_WITHOUT_LINTING = "{\"renderErrors\":[\"[ERROR] render error\"],"
+        + "\"versionUsed\":\"3.5.2\",\"valid\":false,\"deployable\":true}";
+    private static final String VALIDATOR_ERROR_RESPONSE = "{\"message\":\"Error response message\"}";
+
+    @InjectMocks
+    private CnfPackageValidator validator;
+    @Mock
+    private HelmValidatorHttpClient helmValidatorHttpClient;
+    @Mock
+    private HelmValidatorConfig helmValidatorConfig;
 
     @Test
-    public void shouldBeValidForNullInput() {
-        List<String> messages = validator.validateHelmPackage(null);
+    void shouldCallHelmValidatorForEveryChartWhenIsEnabled() throws Exception{
+        when(helmValidatorConfig.isEnabled()).thenReturn(true);
+        FileContentHandler validContent = createValidPackageContent();
+        List<FileData> validInput = createValidInput();
 
+        CnfValidatorResult result = validator.validateHelmPackage(validInput, validContent);
+
+        for(FileData fd : validInput) {
+            verify(helmValidatorHttpClient)
+                .execute(eq(fd.getFile()), eq(validContent.getFileContent(fd.getFile())), eq(helmValidatorConfig));
+        }
+
+        assertThat(result.getErrorMessages(), is(emptyIterable()));
+        assertEquals(3, result.getWarningMessages().size());
+        validInput.forEach(fd -> assertTrue(result.getWarningMessages()
+            .contains(String.format("Could not execute file %s validation using Helm", fd.getFile()))));
+    }
+
+    @Test
+    void shouldNotCallHelmValidatorClientWhenIsDisabled() throws Exception{
+        when(helmValidatorConfig.isEnabled()).thenReturn(false);
+        FileContentHandler validContent = createValidPackageContent();
+        List<FileData> validInput = createValidInput();
+
+        CnfValidatorResult result = validator.validateHelmPackage(validInput, validContent);
+
+        verify(helmValidatorHttpClient, times(0)).execute(any(), any(), any());
+        assertThat(result.getErrorMessages(), is(emptyIterable()));
+        assertThat(result.getWarningMessages(), is(emptyIterable()));
+        assertTrue(result.isValid());
+    }
+
+    @Test
+    void shouldCorectlySetErrorsAndWarningsFromHelmValidator() throws Exception{
+        when(helmValidatorConfig.isEnabled()).thenReturn(true);
+        when(helmValidatorHttpClient.execute(any(), any(), any()))
+            .thenReturn(new HttpResponse<>(VALIDATOR_RESPONSE_WITH_ERRORS, 200));
+        FileContentHandler validContent = createValidPackageContent();
+        List<FileData> validInput = createValidInput();
+
+        CnfValidatorResult result = validator.validateHelmPackage(validInput, validContent);
+
+        verify(helmValidatorHttpClient, times(3)).execute(any(), any(), any());
+        assertTrue(result.getWarningMessages().contains("[ERROR] lint error"));
+        assertTrue(result.getWarningMessages().contains("[WARNING] warning"));
+        assertTrue(result.getErrorMessages().contains("[ERROR] render error"));
+        assertEquals(6, result.getWarningMessages().size());
+        assertEquals(3, result.getErrorMessages().size());
+        assertFalse(result.isValid());
+    }
+
+    @Test
+    void shouldAddWarningWhenErrorResponseFromValidator() throws Exception{
+        when(helmValidatorConfig.isEnabled()).thenReturn(true);
+        when(helmValidatorHttpClient.execute(any(), any(), any()))
+            .thenReturn(new HttpResponse<>(VALIDATOR_ERROR_RESPONSE, 400));
+        FileContentHandler validContent = createValidPackageContent();
+        List<FileData> validInput = createValidInput();
+
+        CnfValidatorResult result = validator.validateHelmPackage(validInput, validContent);
+
+        verify(helmValidatorHttpClient, times(3)).execute(any(), any(), any());
+        assertEquals(3, result.getWarningMessages().size());
+        assertEquals(0, result.getErrorMessages().size());
+        assertTrue(result.getWarningMessages().contains("Error response message"));
+        assertTrue(result.isValid());
+    }
+
+
+    @Test
+    void shouldResultContainsLintErrorsAsWarning() throws Exception{
+        when(helmValidatorConfig.isEnabled()).thenReturn(true);
+        when(helmValidatorHttpClient.execute(any(), any(), any()))
+            .thenReturn(new HttpResponse<>(VALIDATOR_RESPONSE_WITHOUT_LINTING, 200));
+        FileContentHandler validContent = createValidPackageContent();
+        List<FileData> validInput = createValidInput();
+
+        CnfValidatorResult result = validator.validateHelmPackage(validInput, validContent);
+
+        verify(helmValidatorHttpClient, times(3)).execute(any(), any(), any());
+        assertEquals(0, result.getWarningMessages().size());
+        assertEquals(3, result.getErrorMessages().size());
+        assertTrue(result.getErrorMessages().contains("[ERROR] render error"));
+        assertFalse(result.isValid());
+    }
+
+    @Test
+    void shouldBeInvalidWhenIsNotDeployable() throws Exception{
+        when(helmValidatorConfig.isEnabled()).thenReturn(true);
+        when(helmValidatorHttpClient.execute(any(), any(), any()))
+            .thenReturn(new HttpResponse<>("{\"deployable\":false}", 200));
+        FileContentHandler validContent = createValidPackageContent();
+        List<FileData> validInput = createValidInput();
+
+        CnfValidatorResult result = validator.validateHelmPackage(validInput, validContent);
+
+        verify(helmValidatorHttpClient, times(3)).execute(any(), any(), any());
+        assertEquals(0, result.getWarningMessages().size());
+        assertEquals(0, result.getErrorMessages().size());
+        assertFalse(result.isValid());
+    }
+
+    @Test
+    void shouldBeValidForNullInput() {
+        CnfValidatorResult result = validator.validateHelmPackage(null, null);
+
+        List<String> errorMessages = result.getErrorMessages();
+        List<String> warningMessages = result.getWarningMessages();
+        assertThat(errorMessages, is(emptyIterable()));
+        assertThat(warningMessages, is(emptyIterable()));
+        assertTrue(result.isValid());
+    }
+
+    @Test
+    void shouldBeValidForEmptyInput() {
+        CnfValidatorResult result = validator.validateHelmPackage(Collections.emptyList(), null);
+
+        List<String> messages = result.getErrorMessages();
         assertThat(messages, is(emptyIterable()));
+        assertTrue(result.isValid());
     }
 
     @Test
-    public void shouldBeValidForEmptyInput() {
-        List<String> messages = validator.validateHelmPackage(Collections.emptyList());
+    void shouldBeValid() {
+        CnfValidatorResult result = validator.validateHelmPackage(createValidInput(), null);
 
+        List<String> messages = result.getErrorMessages();
         assertThat(messages, is(emptyIterable()));
+        assertTrue(result.isValid());
     }
 
     @Test
-    public void shouldBeValid() {
-        List<String> messages = validator.validateHelmPackage(createValidInput());
+    void shouldBeInvalidNoneIsMarkedAsBase() {
+        CnfValidatorResult result = validator.validateHelmPackage(noneIsMarkedAsBase(), null);
 
-        assertThat(messages, is(emptyIterable()));
+        List<String> messages = result.getErrorMessages();
+        assertEquals(1, messages.size());
+        assertEquals("None of charts is marked as 'isBase'.", messages.get(0));
+        assertFalse(result.isValid());
     }
 
     @Test
-    public void shouldBeInvalidNoneIsMarkedAsBase() {
-        List<String> messages = validator.validateHelmPackage(noneIsMarkedAsBase());
+    void shouldBeInvalidMultipleAreMarkedAsBase() {
+        CnfValidatorResult result = validator.validateHelmPackage(multipleAreMarkedAsBase(), null);
 
-        assertThat(messages.size(), is(1));
-        assertThat(messages.get(0), is("None of charts is marked as 'isBase'."));
+        List<String> messages = result.getErrorMessages();
+        assertEquals(1, messages.size());
+        assertEquals("More than one chart is marked as 'isBase'.", messages.get(0));
+        assertFalse(result.isValid());
     }
 
     @Test
-    public void shouldBeInvalidMultipleAreMarkedAsBase() {
-        List<String> messages = validator.validateHelmPackage(multipleAreMarkedAsBase());
+    void shouldBeInvalidIsBaseMissing() {
+        CnfValidatorResult result = validator.validateHelmPackage(isBaseMissing(), null);
 
-        assertThat(messages.size(), is(1));
-        assertThat(messages.get(0), is("More than one chart is marked as 'isBase'."));
+        List<String> messages = result.getErrorMessages();
+        assertEquals(1, messages.size());
+        assertEquals("Definition of 'isBase' is missing in 2 charts.", messages.get(0));
+        assertFalse(result.isValid());
     }
 
     @Test
-    public void shouldBeInvalidIsBaseMissing() {
-        List<String> messages = validator.validateHelmPackage(isBaseMissing());
+    void shouldBeInvalidDueMultipleReasons() {
+        CnfValidatorResult result = validator.validateHelmPackage(invalidMultipleReasons(), null);
 
-        assertThat(messages.size(), is(1));
-        assertThat(messages.get(0), is("Definition of 'isBase' is missing in 2 charts."));
-    }
-
-    @Test
-    public void shouldBeInvalidDueMultipleReasons() {
-        List<String> messages = validator.validateHelmPackage(invalidMultipleReasons());
-
-        assertThat(messages.size(), is(2));
-        assertThat(messages.get(0), is("Definition of 'isBase' is missing in 1 charts."));
-        assertThat(messages.get(1), is("None of charts is marked as 'isBase'."));
+        List<String> messages = result.getErrorMessages();
+        assertEquals(2, messages.size());
+        assertEquals("Definition of 'isBase' is missing in 1 charts.", messages.get(0));
+        assertEquals("None of charts is marked as 'isBase'.", messages.get(1));
+        assertFalse(result.isValid());
     }
 
     private List<FileData> createValidInput() {
         List<FileData> files = new ArrayList<>();
-        files.add(createFileData(true));
-        files.add(createFileData(false));
-        files.add(createFileData(false));
+        files.add(createFileData(true, "test1.tgz"));
+        files.add(createFileData(false, "test2.tgz"));
+        files.add(createFileData(false, "test3.tgz"));
         return files;
+    }
+
+    private FileContentHandler createValidPackageContent() {
+        FileContentHandler contentHandler = new FileContentHandler();
+        contentHandler.addFile("test1.tgz", "testContent".getBytes());
+        contentHandler.addFile("test2.tgz", "testContent34".getBytes());
+        contentHandler.addFile("test3.tgz", "testContent65".getBytes());
+        return contentHandler;
     }
 
     private List<FileData> noneIsMarkedAsBase() {
@@ -134,4 +290,12 @@ public class CnfPackageValidatorTest {
         f.setBase(base);
         return f;
     }
+
+    private FileData createFileData(Boolean base, String fileName) {
+        FileData f = new FileData();
+        f.setBase(base);
+        f.setFile(fileName);
+        return f;
+    }
+
 }

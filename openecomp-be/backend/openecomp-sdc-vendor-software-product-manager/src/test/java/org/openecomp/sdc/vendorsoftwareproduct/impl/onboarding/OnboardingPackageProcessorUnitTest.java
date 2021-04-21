@@ -19,6 +19,9 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,33 +29,34 @@ import org.junit.Test;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData.Type;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig;
+import org.openecomp.sdc.vendorsoftwareproduct.types.helmvalidator.HelmValidatorConfig.HelmValidationConfigBuilder;
 
 
 public class OnboardingPackageProcessorUnitTest {
 
-    private OnboardingPackageProcessor processor = new OnboardingPackageProcessor("unitTestPackage", null);
+    private OnboardingPackageProcessor processor = new OnboardingPackageProcessor("unitTestPackage",
+        null, getCnfPackageValidator());
 
     @Test
     public void shouldValidateZipPackage_helmWithoutHeat() {
-        assertThat(processor.validateZipPackage(manifest(withHelmWithoutHeat())).size(), is(0));
+        assertThat(processor.validateZipPackage(manifest(withHelmWithoutHeat())).getErrorMessages().size(), is(0));
     }
 
     @Test
     public void shouldValidateZipPackage_withHelmAndHeat() {
-        assertThat(processor.validateZipPackage(manifest(withHelmAndHeat())).size(), is(0));
+        assertThat(processor.validateZipPackage(manifest(withHelmAndHeat())).getErrorMessages().size(), is(0));
     }
 
     @Test
     public void shouldValidateZipPackage_withHelmWithoutHeat() {
-        assertThat(processor.validateZipPackage(manifest(withoutHelmWithoutHeat())).size(), is(0));
+        assertThat(processor.validateZipPackage(manifest(withoutHelmWithoutHeat())).getErrorMessages().size(), is(0));
     }
 
     @Test
     public void shouldValidateZipPackage_helmInvalid() {
-        assertThat(processor.validateZipPackage(manifest(withHelmInvalid())).size(), is(1));
+        assertThat(processor.validateZipPackage(manifest(withHelmInvalid())).getErrorMessages().size(), is(1));
     }
 
     @Test
@@ -140,4 +144,8 @@ public class OnboardingPackageProcessorUnitTest {
         return f;
     }
 
+    private CnfPackageValidator getCnfPackageValidator() {
+        HelmValidatorConfig helmValidatorConfig = new HelmValidationConfigBuilder().setEnabled(false).build();
+        return new CnfPackageValidator(null, helmValidatorConfig);
+    }
 }
