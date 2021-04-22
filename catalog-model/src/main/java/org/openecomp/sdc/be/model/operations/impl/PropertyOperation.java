@@ -1562,14 +1562,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     }
 
     public Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypeNodes() {
-        Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypes = janusGraphGenericDao
-            .getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
-        if (getAllDataTypes.isRight()) {
-            JanusGraphOperationStatus status = getAllDataTypes.right().value();
-            if (status == JanusGraphOperationStatus.NOT_FOUND) {
-                status = JanusGraphOperationStatus.OK;
-                return Either.right(status);
-            }
+        final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypes =
+            janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
+        if (getAllDataTypes.isRight() && getAllDataTypes.right().value() == JanusGraphOperationStatus.NOT_FOUND) {
+            return Either.left(Collections.emptyList());
         }
         return getAllDataTypes;
     }
