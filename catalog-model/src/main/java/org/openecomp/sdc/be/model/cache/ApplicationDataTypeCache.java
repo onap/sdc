@@ -20,36 +20,29 @@
 package org.openecomp.sdc.be.model.cache;
 
 import fj.data.Either;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import lombok.Getter;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
-import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
 import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheInfo;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
-import org.openecomp.sdc.be.resources.data.DataTypeData;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -58,49 +51,66 @@ import org.springframework.stereotype.Component;
 public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefinition>, Runnable {
 
     private static final String APPLICATION_DATA_TYPES_CACHE = "ApplicationDataTypesCache";
-    private static final Logger log = Logger.getLogger(ApplicationDataTypeCache.class.getName());
-    private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
-    private final Lock r = rwl.readLock();
-    private final Lock w = rwl.writeLock();
-    ScheduledFuture<?> scheduledFuture = null;
-    private Map<String, DataTypeDefinition> data = new HashMap<>();
-    private ScheduledExecutorService scheduledPollingService = Executors
-        .newScheduledThreadPool(1, new BasicThreadFactory.Builder().namingPattern("ApplicationDataTypeCacheThread-%d").build());
+    private static final Logger log = Logger.getLogger(ApplicationDataTypeCache.class);
+
+    private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final PropertyOperation propertyOperation;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final ScheduledExecutorService scheduledPollingService;
+    private ScheduledFuture<?> scheduledFuture = null;
+    private Map<String, DataTypeDefinition> dataTypesCacheMap = new HashMap<>();
     private int firstRunDelayInSec = 30;
     private int pollingIntervalInSec = 60;
-    @Resource
-    private PropertyOperation propertyOperation;
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+
+    public ApplicationDataTypeCache(final PropertyOperation propertyOperation, final ApplicationEventPublisher applicationEventPublisher) {
+        this.propertyOperation = propertyOperation;
+        this.applicationEventPublisher = applicationEventPublisher;
+        scheduledPollingService = Executors
+            .newScheduledThreadPool(1, new BasicThreadFactory.Builder().namingPattern("ApplicationDataTypeCacheThread-%d").build());
+    }
 
     @PostConstruct
-    public void init() {
-        ApplicationL1CacheConfig applicationL1CacheConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getApplicationL1Cache();
-        if (applicationL1CacheConfig != null) {
-            if (applicationL1CacheConfig.getDatatypes() != null) {
-                ApplicationL1CacheInfo datatypesInfo = applicationL1CacheConfig.getDatatypes();
-                if (datatypesInfo.getEnabled()) {
-                    Integer intervalInSec = datatypesInfo.getPollIntervalInSec();
-                    if (intervalInSec != null) {
-                        pollingIntervalInSec = intervalInSec;
-                    }
-                    Integer firstRunDelay = datatypesInfo.getFirstRunDelay();
-                    if (firstRunDelay != null) {
-                        firstRunDelayInSec = firstRunDelay;
-                    }
-                    log.trace("ApplicationDataTypesCache polling interval is {} seconds.", pollingIntervalInSec);
-                    if (scheduledPollingService != null) {
-                        log.debug("Start ApplicationDataTypeCache polling task. polling interval {} seconds", pollingIntervalInSec);
-                        scheduledFuture = scheduledPollingService
-                            .scheduleAtFixedRate(this, firstRunDelayInSec, pollingIntervalInSec, TimeUnit.SECONDS);
-                    }
-                }
-            } else {
-                BeEcompErrorManager.getInstance().logInternalFlowError(APPLICATION_DATA_TYPES_CACHE, "Cache is disabled", ErrorSeverity.INFO);
-            }
-        } else {
-            BeEcompErrorManager.getInstance().logInternalFlowError(APPLICATION_DATA_TYPES_CACHE, "Cache is disabled", ErrorSeverity.INFO);
+    void init() {
+        final Optional<ApplicationL1CacheInfo> dataTypeCacheConfigOptional = getDataTypeCacheConfig();
+        if (dataTypeCacheConfigOptional.isEmpty()) {
+            BeEcompErrorManager.getInstance()
+                .logInternalFlowError(APPLICATION_DATA_TYPES_CACHE, "Data types cache is not configured and will be disabled", ErrorSeverity.INFO);
+            return;
         }
+        final ApplicationL1CacheInfo dataTypesCacheInfo = dataTypeCacheConfigOptional.get();
+        if (!Boolean.TRUE.equals(dataTypesCacheInfo.getEnabled())) {
+            BeEcompErrorManager.getInstance().logInternalFlowError(APPLICATION_DATA_TYPES_CACHE, "Data types cache is disabled", ErrorSeverity.INFO);
+            return;
+        }
+        loadConfigurationValues(dataTypesCacheInfo);
+        if (scheduledPollingService != null) {
+            log.debug("Starting ApplicationDataTypeCache polling task. Initial delay {}s and polling interval {}s",
+                firstRunDelayInSec, pollingIntervalInSec);
+            scheduledFuture = scheduledPollingService
+                .scheduleAtFixedRate(this, firstRunDelayInSec, pollingIntervalInSec, TimeUnit.SECONDS);
+        }
+    }
+
+    private void loadConfigurationValues(final ApplicationL1CacheInfo dataTypesCacheInfo) {
+        final Integer firstRunDelay = dataTypesCacheInfo.getFirstRunDelay();
+        if (firstRunDelay != null) {
+            firstRunDelayInSec = firstRunDelay;
+        }
+        log.trace("ApplicationDataTypesCache initial delay configured to {} seconds.", firstRunDelayInSec);
+
+        final Integer intervalInSec = dataTypesCacheInfo.getPollIntervalInSec();
+        if (intervalInSec != null) {
+            pollingIntervalInSec = intervalInSec;
+        }
+        log.trace("ApplicationDataTypesCache polling interval configured to {} seconds.", pollingIntervalInSec);
+    }
+
+    private Optional<ApplicationL1CacheInfo> getDataTypeCacheConfig() {
+        final var applicationL1CacheConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getApplicationL1Cache();
+        if (applicationL1CacheConfig == null || applicationL1CacheConfig.getDatatypes() == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(applicationL1CacheConfig.getDatatypes());
     }
 
     @PreDestroy
@@ -147,138 +157,136 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     @Override
     public Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAll() {
         try {
-            r.lock();
-            if (data == null || data.isEmpty()) {
+            readWriteLock.readLock().lock();
+            if (MapUtils.isEmpty(dataTypesCacheMap)) {
                 return getAllDataTypesFromGraph();
             }
-            return Either.left(data);
+            return Either.left(new HashMap<>(dataTypesCacheMap));
         } finally {
-            r.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public Either<DataTypeDefinition, JanusGraphOperationStatus> get(String uniqueId) {
         try {
-            r.lock();
-            if (data == null || data.isEmpty()) {
+            readWriteLock.readLock().lock();
+            if (MapUtils.isEmpty(dataTypesCacheMap)) {
                 return propertyOperation.getDataTypeByUid(uniqueId);
-            } else {
-                DataTypeDefinition dataTypeDefinition = data.values().stream().filter(p -> p.getUniqueId().equals(uniqueId)).findFirst().orElse(null);
-                if (dataTypeDefinition == null) {
-                    return propertyOperation.getDataTypeByUid(uniqueId);
-                } else {
-                    return Either.left(dataTypeDefinition);
-                }
             }
+
+            final Optional<DataTypeDefinition> dataTypeDefinition = dataTypesCacheMap.values().stream()
+                .filter(p -> p.getUniqueId().equals(uniqueId)).findFirst();
+            if (dataTypeDefinition.isEmpty()) {
+                return propertyOperation.getDataTypeByUid(uniqueId);
+            }
+            return Either.left(new DataTypeDefinition(dataTypeDefinition.get()));
         } finally {
-            r.unlock();
+            readWriteLock.readLock().unlock();
         }
     }
 
     @Override
     public void run() {
-        log.trace("run() method. polling db to fetch data types");
         try {
-            Long start = System.currentTimeMillis();
-            log.trace("Start fetching all data types from db");
-            Either<List<DataTypeData>, JanusGraphOperationStatus> allDataTypeNodes = propertyOperation.getAllDataTypeNodes();
-            Long end = System.currentTimeMillis();
-            log.trace("Finish fetching all data types from db. Took {} Milliseconds", (end - start));
-            if (allDataTypeNodes.isRight()) {
-                JanusGraphOperationStatus status = allDataTypeNodes.right().value();
-                if (status != JanusGraphOperationStatus.OK) {
-                    log.debug("ApplicationDataTypesCache - Failed to fetch all data types nodes");
-                    BeEcompErrorManager.getInstance()
-                        .logInternalConnectionError("FetchDataTypes", "Failed to fetch data types from graph(cache)", ErrorSeverity.INFO);
-                }
-            } else {
-                List<DataTypeData> list = allDataTypeNodes.left().value();
-                if (list != null) {
-                    Map<String, ImmutablePair<Long, Long>> dataTypeNameToModificationTime = list.stream().collect(Collectors
-                        .toMap(p -> p.getDataTypeDataDefinition().getName(), p -> new ImmutablePair<>(p.getDataTypeDataDefinition().getCreationTime(),
-                            p.getDataTypeDataDefinition().getModificationTime())));
-                    Map<String, ImmutablePair<Long, Long>> currentDataTypeToModificationTime = new HashMap<>();
-                    try {
-                        r.lock();
-                        if (data != null) {
-                            currentDataTypeToModificationTime = data.values().stream().collect(Collectors
-                                .toMap(DataTypeDataDefinition::getName, p -> new ImmutablePair<>(p.getCreationTime(), p.getModificationTime())));
-                        }
-                    } finally {
-                        r.unlock();
-                    }
-                    boolean isChanged = compareDataTypes(dataTypeNameToModificationTime, currentDataTypeToModificationTime);
-                    if (isChanged) {
-                        replaceAllData();
-                    }
-                }
+            log.trace("Starting refresh data types cache job");
+            if (hasDataTypesChanged()) {
+                log.info("Detected changes in the data types, updating the data type cache.");
+                refreshDataTypesCache();
             }
-        } catch (Exception e) {
-            log.debug("unexpected error occured", e);
-            BeEcompErrorManager.getInstance()
-                .logInternalUnexpectedError(APPLICATION_DATA_TYPES_CACHE, "Failed to run refresh data types job", ErrorSeverity.INFO);
-        } finally {
-            try {
-                propertyOperation.getJanusGraphGenericDao().commit();
-            } catch (Exception e) {
-                log.trace("Failed to commit ApplicationDataTypeCache", e);
-            }
+        } catch (final Exception e) {
+            var errorMsg = "Failed to run refresh data types cache job";
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, ApplicationDataTypeCache.class.getName(), errorMsg, e);
+            BeEcompErrorManager.getInstance().logInternalUnexpectedError(APPLICATION_DATA_TYPES_CACHE, errorMsg, ErrorSeverity.INFO);
         }
     }
 
-    private boolean compareDataTypes(Map<String, ImmutablePair<Long, Long>> dataTypeNameToModificationTime,
-                                     Map<String, ImmutablePair<Long, Long>> currentDataTypeToModificationTime) {
-        if (dataTypeNameToModificationTime.size() != currentDataTypeToModificationTime.size()) {
+    private boolean hasDataTypesChanged() {
+        final Map<String, DataTypeDefinition> dataTypeDefinitionMap = findAllDataTypes();
+        final Map<String, DataTypeDefinition> dataTypesCacheCopyMap = copyDataTypeCache();
+
+        if (dataTypeDefinitionMap.size() != dataTypesCacheCopyMap.size()) {
+            log.debug("Total of cached data types '{}' differs from the actual '{}'", dataTypeDefinitionMap.size(),  dataTypesCacheCopyMap.size());
             return true;
-        } else {
-            Set<String> currentkeySet = currentDataTypeToModificationTime.keySet();
-            Set<String> keySet = dataTypeNameToModificationTime.keySet();
-            if (currentkeySet.containsAll(keySet)) {
-                for (Entry<String, ImmutablePair<Long, Long>> entry : dataTypeNameToModificationTime.entrySet()) {
-                    String dataTypeName = entry.getKey();
-                    ImmutablePair<Long, Long> creationAndModificationTimes = entry.getValue();
-                    long creationTime = creationAndModificationTimes.getLeft() == null ? 0 : creationAndModificationTimes.getLeft().longValue();
-                    long modificationTime = creationAndModificationTimes.getRight() == null ? 0 : creationAndModificationTimes.getRight().longValue();
-                    ImmutablePair<Long, Long> currentEntry = currentDataTypeToModificationTime.get(dataTypeName);
-                    long currentCreationTime = currentEntry.getLeft() == null ? 0 : currentEntry.getLeft().longValue();
-                    long currentModificationTime = currentEntry.getRight() == null ? 0 : currentEntry.getRight().longValue();
-                    if (creationTime > currentCreationTime || modificationTime > currentModificationTime) {
-                        log.debug("Datatype {} was updated. Creation Time  {} vs {}. Modification Time {} vs {}", dataTypeName, currentCreationTime,
-                            creationTime, currentModificationTime, modificationTime);
-                        return true;
-                    }
-                }
-            } else {
+        }
+
+        if (MapUtils.isEmpty(dataTypeDefinitionMap)) {
+            log.debug("Both data type cache and database are empty");
+            return false;
+        }
+
+        if (!dataTypesCacheCopyMap.keySet().containsAll(dataTypeDefinitionMap.keySet())) {
+            log.debug("Cached data types differs from database. Cache '{}'; Database '{}'",
+                dataTypesCacheCopyMap.keySet(), dataTypeDefinitionMap.keySet());
+            return true;
+        }
+
+        return dataTypesCacheCopyMap.entrySet().stream().anyMatch(dataTypeEntry -> {
+            final DataTypeDefinition cachedDataTypeDefinition = dataTypeEntry.getValue();
+            final DataTypeDefinition actualDataTypeDefinition = dataTypeDefinitionMap.get(dataTypeEntry.getKey());
+            final long cachedCreationTime = cachedDataTypeDefinition.getCreationTime() == null ? 0 : cachedDataTypeDefinition.getCreationTime();
+            final long actualCreationTime = actualDataTypeDefinition.getCreationTime() == null ? 0 : actualDataTypeDefinition.getCreationTime();
+            if (cachedCreationTime != actualCreationTime) {
+                log.debug("Datatype '{}' was updated. Cache/database creation time '{}'/'{}'.",
+                    dataTypeEntry.getKey(), cachedCreationTime, actualCreationTime);
                 return true;
             }
-        }
-        return false;
-    }
-
-    private void replaceAllData() {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = propertyOperation.getAllDataTypes();
-        if (allDataTypes.isRight()) {
-            JanusGraphOperationStatus status = allDataTypes.right().value();
-            log.debug("Failed to fetch all data types from db. Status is {}", status);
-        } else {
-            try {
-                w.lock();
-                data = allDataTypes.left().value();
-                // send notification on data types change
-                onDataChangeEventEmit(data);
-                BeEcompErrorManager.getInstance()
-                    .logInternalFlowError("ReplaceDataTypesCache", "Succeed to replace the data types cache", ErrorSeverity.INFO);
-            } finally {
-                w.unlock();
+            final long cachedModificationTime =
+                cachedDataTypeDefinition.getModificationTime() == null ? 0 : cachedDataTypeDefinition.getModificationTime();
+            final long actualModificationTime =
+                actualDataTypeDefinition.getModificationTime() == null ? 0 : actualDataTypeDefinition.getModificationTime();
+            if (cachedModificationTime != actualModificationTime) {
+                log.debug("Datatype '{}' was updated. Cache/database modification time '{}'/'{}'.",
+                    dataTypeEntry.getKey(), cachedModificationTime, actualModificationTime);
+                return true;
             }
+            return false;
+        });
+    }
+
+    private Map<String, DataTypeDefinition> copyDataTypeCache() {
+        try {
+            readWriteLock.readLock().lock();
+            return new HashMap<>(this.dataTypesCacheMap);
+        } finally {
+            readWriteLock.readLock().unlock();
         }
     }
 
-    private void onDataChangeEventEmit(Map<String, DataTypeDefinition> newData) {
-        log.trace("Cache data has changed, sending event to all listening for this change.");
-        DataTypesCacheChangedEvent dataTypesCacheChangedEvent = new DataTypesCacheChangedEvent(this, newData);
-        applicationEventPublisher.publishEvent(dataTypesCacheChangedEvent);
+    private void refreshDataTypesCache() {
+        final Map<String, DataTypeDefinition> dataTypesDefinitionMap = findAllDataTypes();
+        if (dataTypesDefinitionMap.isEmpty()) {
+            return;
+        }
+        try {
+            readWriteLock.writeLock().lock();
+            dataTypesCacheMap = dataTypesDefinitionMap;
+            onDataChangeEventEmit();
+            BeEcompErrorManager.getInstance()
+                .logInternalFlowError("ReplaceDataTypesCache", "Succeed to replace the data types cache", ErrorSeverity.INFO);
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
+    }
+
+    private Map<String, DataTypeDefinition> findAllDataTypes() {
+        log.trace("Fetching all data types from database");
+        final long startTime = System.currentTimeMillis();
+        final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = propertyOperation.getAllDataTypes();
+        log.trace("Finish fetching all data types from database. Took {}ms", (System.currentTimeMillis() - startTime));
+        if (allDataTypes.isRight()) {
+            final JanusGraphOperationStatus status = allDataTypes.right().value();
+            var errorMsg= String.format("Failed to fetch data types from database. Status is %s", status);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, ApplicationDataTypeCache.class.getName(), errorMsg);
+            BeEcompErrorManager.getInstance().logInternalConnectionError(APPLICATION_DATA_TYPES_CACHE, errorMsg, ErrorSeverity.ERROR);
+            return Collections.emptyMap();
+        }
+        return allDataTypes.left().value();
+    }
+
+    private void onDataChangeEventEmit() {
+        log.trace("Data type cache has changed, sending DataTypesCacheChangedEvent.");
+        applicationEventPublisher.publishEvent(new DataTypesCacheChangedEvent(this, copyDataTypeCache()));
     }
 
     /**
@@ -287,11 +295,21 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     public static class DataTypesCacheChangedEvent extends ApplicationEvent {
 
         @Getter
-        private Map<String, DataTypeDefinition> newData;
+        private final Map<String, DataTypeDefinition> newData;
 
-        public DataTypesCacheChangedEvent(Object source, Map<String, DataTypeDefinition> newData) {
+        public DataTypesCacheChangedEvent(final Object source, final Map<String, DataTypeDefinition> newData) {
             super(source);
             this.newData = newData;
         }
+    }
+
+    //for test purposes
+    ScheduledFuture<?> getScheduledFuture() {
+        return scheduledFuture;
+    }
+
+    //for test purposes
+    ScheduledExecutorService getScheduledPollingService() {
+        return scheduledPollingService;
     }
 }
