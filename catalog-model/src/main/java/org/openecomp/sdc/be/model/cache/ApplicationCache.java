@@ -25,7 +25,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 
 public interface ApplicationCache<T> {
 
-    public abstract Either<Map<String, T>, JanusGraphOperationStatus> getAll();
+    Either<Map<String, T>, JanusGraphOperationStatus> getAll();
 
-    public abstract Either<T, JanusGraphOperationStatus> get(String uniqueId);
+    Either<T, JanusGraphOperationStatus> get(String uniqueId);
 }

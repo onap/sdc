@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,175 +20,281 @@
 
 package org.openecomp.sdc.be.model.cache;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import mockit.Deencapsulation;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Before;
-import org.junit.Test;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.config.Configuration;
+import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheConfig;
+import org.openecomp.sdc.be.config.Configuration.ApplicationL1CacheInfo;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
-import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;
 
-public class ApplicationDataTypeCacheTest extends ModelConfDependentTest{
+class ApplicationDataTypeCacheTest {
 
-	@InjectMocks
-	private ApplicationDataTypeCache testSubject;
-	
-	@Mock
-	PropertyOperation propertyOperation;
+    @Mock
+    private PropertyOperation propertyOperation;
 
-	@Mock
-	ApplicationEventPublisher applicationEventPublisher;
+    @Mock
+	private ApplicationEventPublisher applicationEventPublisher;
 
-	@Before
-	public void setUpMocks() throws Exception {
-		MockitoAnnotations.initMocks(this);
+    @InjectMocks
+    private ApplicationDataTypeCache applicationDataTypeCache;
+
+    private Map<String, DataTypeDefinition> dataTypeDefinitionMap;
+
+    private int schedulerFirstRunDelay = 0;
+    private int schedulerPollIntervalInSec = 2;
+    private boolean schedulerIsEnabled = true;
+
+	@BeforeEach
+	public void beforeEach() {
+		MockitoAnnotations.openMocks(this);
 	}
 
+	@AfterEach
+	public void afterEach() {
+		final ScheduledExecutorService scheduledPollingService = applicationDataTypeCache.getScheduledPollingService();
+		if (scheduledPollingService == null) {
+			return;
+		}
 
-	@Test
-	public void testInit() throws Exception {
-		testSubject.init();
-	}
+		if (scheduledPollingService.isShutdown()) {
+			return;
+		}
 
-	@Test
-	public void testDestroy() throws Exception {
-		testSubject.init();
-		Deencapsulation.invoke(testSubject, "destroy");
-	}
-
-	@Test
-	public void testShutdownExecutor() throws Exception {
-
-		// default test
-		Deencapsulation.invoke(testSubject, "shutdownExecutor");
-	}
-
-	@Test
-	public void testGetAllDataTypesFromGraph() throws Exception {
-		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getAllDataTypesFromGraph");
+		scheduledPollingService.shutdownNow();
 	}
 
 	@Test
-	public void testGetAll() throws Exception {
-		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> result;
-
-		// default test
-		result = testSubject.getAll();
+	void testInitSuccess() {
+		defaultInit();
+		assertNotNull(applicationDataTypeCache.getScheduledFuture(), "The job should have been triggered");
 	}
 
 	@Test
-	public void testGet() throws Exception {
-		String uniqueId = "";
-		Either<DataTypeDefinition, JanusGraphOperationStatus> result;
-
-		// default test
-		result = testSubject.get(uniqueId);
+	void testDestroySuccess() {
+		defaultInit();
+		assertNotNull(applicationDataTypeCache.getScheduledFuture(), "The job should have been triggered");
+		applicationDataTypeCache.destroy();
+		assertNull(applicationDataTypeCache.getScheduledFuture(), "The job should have been stopped");
+		assertTrue(applicationDataTypeCache.getScheduledPollingService().isShutdown(), "The scheduler should have been stopped");
 	}
 
 	@Test
-	public void testGet2() throws Exception {
-		String uniqueId = "";
-		Either<DataTypeDefinition, JanusGraphOperationStatus> result;
-
-		HashMap<String, DataTypeDefinition> a = new HashMap<>();
-		DataTypeDefinition value1 = new DataTypeDefinition();
-		value1.setUniqueId("mock");
-		a.put("mock", value1);
-		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> value = Either.left(a);
-		Mockito.when(propertyOperation.getAllDataTypes()).thenReturn(value);
-		// default test
-		Deencapsulation.invoke(testSubject, "replaceAllData");
-		result = testSubject.get(uniqueId);
-	}
-	
-	@Test
-	public void testRun() throws Exception {
-		testSubject.run();
+	void testDestroyWithoutSchedulerInitialization() {
+		mockEmptyConfiguration();
+		applicationDataTypeCache.init();
+		assertNotNull(applicationDataTypeCache.getScheduledPollingService(), "The scheduler should have been created");
+		assertFalse(applicationDataTypeCache.getScheduledPollingService().isShutdown(), "The scheduler should have been running");
+		assertNull(applicationDataTypeCache.getScheduledFuture(), "The job should not have been triggered");
+		applicationDataTypeCache.destroy();
+		assertTrue(applicationDataTypeCache.getScheduledPollingService().isShutdown(), "The scheduler should have been stopped");
 	}
 
 	@Test
-	public void testRun2() throws Exception {
-		Either<List<DataTypeData>, JanusGraphOperationStatus> value = Either.right(
-        JanusGraphOperationStatus.GENERAL_ERROR);
-		Mockito.when(propertyOperation.getAllDataTypeNodes()).thenReturn(value);
-		testSubject.run();
-	}
-	
-	@Test
-	public void testRun3() throws Exception {
-		LinkedList<DataTypeData> a = new LinkedList<>();
-		a.add(new DataTypeData());
-		Either<List<DataTypeData>, JanusGraphOperationStatus> value = Either.left(a);
-		Mockito.when(propertyOperation.getAllDataTypeNodes()).thenReturn(value);
-		
-		HashMap<String, DataTypeDefinition> a1 = new HashMap<>();
-		DataTypeDefinition value1 = new DataTypeDefinition();
-		value1.setUniqueId("mock");
-		a1.put("mock", value1);
-		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> value2 = Either.left(a1);
-		Mockito.when(propertyOperation.getAllDataTypes()).thenReturn(value2);
-		
-		Deencapsulation.invoke(testSubject, "replaceAllData");
-		testSubject.run();
-	}
-	
-	@Test
-	public void testCompareDataTypes() throws Exception {
-		Map<String, ImmutablePair<Long, Long>> dataTypeNameToModificationTime = new HashMap<>();
-		Map<String, ImmutablePair<Long, Long>> currentDataTypeToModificationTime = new HashMap<>();
-		boolean result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "compareDataTypes", dataTypeNameToModificationTime, currentDataTypeToModificationTime);
+	void testInitEmptyConfiguration() {
+		mockEmptyConfiguration();
+		applicationDataTypeCache.init();
+		assertNull(applicationDataTypeCache.getScheduledFuture(), "The scheduler should not have started");
 	}
 
 	@Test
-	public void testCompareDataTypes2() throws Exception {
-		Map<String, ImmutablePair<Long, Long>> dataTypeNameToModificationTime = new HashMap<>();
-		Map<String, ImmutablePair<Long, Long>> currentDataTypeToModificationTime = new HashMap<>();
-		boolean result;
-		
-		currentDataTypeToModificationTime.put("mock", ImmutablePair.of(1L, 2L));
-		dataTypeNameToModificationTime.put("mock", ImmutablePair.of(5L, 6L));
-		
-		// default test
-		result = Deencapsulation.invoke(testSubject, "compareDataTypes", dataTypeNameToModificationTime, currentDataTypeToModificationTime);
+	void testInitCacheDisabled() {
+		final var applicationL1CacheInfo = new ApplicationL1CacheInfo();
+		applicationL1CacheInfo.setEnabled(false);
+		mockConfiguration(applicationL1CacheInfo);
+		applicationDataTypeCache.init();
+		assertNull(applicationDataTypeCache.getScheduledFuture(), "The scheduler should not have started");
 	}
-	
+
 	@Test
-	public void testReplaceAllData() throws Exception {
-		HashMap<String, DataTypeDefinition> a = new HashMap<>();
-		DataTypeDefinition value1 = new DataTypeDefinition();
-		value1.setUniqueId("mock");
-		a.put("mock", value1);
-		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> value = Either.left(a);
-		Mockito.when(propertyOperation.getAllDataTypes()).thenReturn(value);
-		// default test
-		Deencapsulation.invoke(testSubject, "replaceAllData");
+	void testGetAllAfterInitialization() {
+		defaultInit();
+		final ScheduledFuture<?> scheduledFuture = applicationDataTypeCache.getScheduledFuture();
+		//waiting the cache to be filled
+		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
+		assertDataTypeCache(dataTypeDefinitionMap);
 	}
-	
+
 	@Test
-	public void testReplaceAllData2() throws Exception {
-		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> value = Either.right(
-        JanusGraphOperationStatus.GENERAL_ERROR);
-		Mockito.when(propertyOperation.getAllDataTypes()).thenReturn(value);
-		// default test
-		Deencapsulation.invoke(testSubject, "replaceAllData");
+	void testCacheChangeWithDataTypeChange() {
+		defaultInit();
+		final ScheduledFuture<?> scheduledFuture = applicationDataTypeCache.getScheduledFuture();
+		//waiting the cache to be filled
+		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
+		assertDataTypeCache(dataTypeDefinitionMap);
+
+		final DataTypeDefinition testDataType1 = createDataTypeDefinition("test.data.type1", "test.data.type1", 101L, 1000L);
+		final DataTypeDefinition testDataType2 = createDataTypeDefinition("test.data.type2", "test.data.type2", 101L, 1002L);
+		final Map<String, DataTypeDefinition> modifiedDataTypeDefinitionMap =
+			Map.of(testDataType1.getName(), testDataType1, testDataType2.getName(), testDataType2);
+		when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(modifiedDataTypeDefinitionMap));
+
+		final DataTypeData dataTypeData1 = createDataTypeData("test.data.type1", "test.data.type1", 101L, 101L);
+		final DataTypeData dataTypeData2 = createDataTypeData("test.data.type2", "test.data.type2", 101L, 1002L);
+
+		when(propertyOperation.getAllDataTypeNodes()).thenReturn(Either.left(List.of(dataTypeData1, dataTypeData2)));
+
+		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) == 0);
+		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
+		assertDataTypeCache(modifiedDataTypeDefinitionMap);
+	}
+
+	@Test
+	void testCacheChangeWithAddedDataType() {
+		defaultInit();
+		final ScheduledFuture<?> scheduledFuture = applicationDataTypeCache.getScheduledFuture();
+		//waiting the cache to be filled
+		await().until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
+		assertDataTypeCache(dataTypeDefinitionMap);
+
+		final Map<String, DataTypeDefinition> modifiedDataTypeDefinitionMap = new HashMap<>();
+		final DataTypeDefinition testDataType1 = createDataTypeDefinition("test.data.type1", "test.data.type1", 1L, 1L);
+		modifiedDataTypeDefinitionMap.put(testDataType1.getName(), testDataType1);
+		final DataTypeDefinition testDataType3 = createDataTypeDefinition("test.data.type3", "test.data.type3", 1L, 1L);
+		modifiedDataTypeDefinitionMap.put(testDataType3.getName(), testDataType3);
+		when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(modifiedDataTypeDefinitionMap));
+
+		final DataTypeData dataTypeData1 = createDataTypeData("test.data.type1", "test.data.type1", 1L, 1L);
+		final DataTypeData dataTypeData3 = createDataTypeData("test.data.type3", "test.data.type3", 1L, 1L);
+
+		when(propertyOperation.getAllDataTypeNodes()).thenReturn(Either.left(List.of(dataTypeData1, dataTypeData3)));
+
+		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) == 0);
+		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
+		assertDataTypeCache(modifiedDataTypeDefinitionMap);
+	}
+
+	@Test
+	void testGetAllWithNoInitialization() {
+		final Map<String, DataTypeDefinition> dataTypeDefinitionMap = new HashMap<>();
+		when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(dataTypeDefinitionMap));
+		final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> response = applicationDataTypeCache.getAll();
+		assertNotNull(response);
+		assertTrue(response.isLeft());
+	}
+
+	@Test
+	void testGetWhenCacheIsEmpty() {
+		var dataTypeDefinition = new DataTypeDefinition();
+		when(propertyOperation.getDataTypeByUid("uniqueId")).thenReturn(Either.left(dataTypeDefinition));
+		final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeEither = applicationDataTypeCache.get("uniqueId");
+		assertNotNull(dataTypeEither);
+		assertTrue(dataTypeEither.isLeft());
+		assertEquals(dataTypeDefinition, dataTypeEither.left().value());
+	}
+
+	@Test
+	void testGetCacheHit() {
+		defaultInit();
+		final ScheduledFuture<?> scheduledFuture = applicationDataTypeCache.getScheduledFuture();
+		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
+		final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeEither = applicationDataTypeCache.get("test.data.type1");
+		assertNotNull(dataTypeEither);
+		assertTrue(dataTypeEither.isLeft());
+		final DataTypeDefinition actualDataTypeDefinition = dataTypeEither.left().value();
+		final DataTypeDefinition expectedDataTypeDefinition = dataTypeDefinitionMap.get("test.data.type1");
+		assertEquals(expectedDataTypeDefinition.getName(), actualDataTypeDefinition.getName());
+		assertEquals(expectedDataTypeDefinition.getUniqueId(), actualDataTypeDefinition.getUniqueId());
+		assertEquals(expectedDataTypeDefinition.getCreationTime(), actualDataTypeDefinition.getCreationTime());
+		assertEquals(expectedDataTypeDefinition.getModificationTime(), actualDataTypeDefinition.getModificationTime());
+	}
+
+    private void defaultInit() {
+        var applicationL1CacheInfo = new ApplicationL1CacheInfo();
+        applicationL1CacheInfo.setEnabled(schedulerIsEnabled);
+        applicationL1CacheInfo.setFirstRunDelay(schedulerFirstRunDelay);
+        applicationL1CacheInfo.setPollIntervalInSec(schedulerPollIntervalInSec);
+        mockConfiguration(applicationL1CacheInfo);
+
+        dataTypeDefinitionMap = new HashMap<>();
+        final DataTypeDefinition testDataType1 = createDataTypeDefinition("test.data.type1", "test.data.type1", 100L, 1000L);
+        dataTypeDefinitionMap.put(testDataType1.getName(), testDataType1);
+        final DataTypeDefinition testDataType2 = createDataTypeDefinition("test.data.type2", "test.data.type2", 101L, 1001L);
+        dataTypeDefinitionMap.put(testDataType2.getName(), testDataType2);
+        when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(dataTypeDefinitionMap));
+
+        final DataTypeData dataTypeData1 = createDataTypeData("test.data.type1", testDataType1.getName(), 100L, 1000L);
+        final DataTypeData dataTypeData2 = createDataTypeData("test.data.type2", testDataType2.getName(), 101L, 1001L);
+
+        when(propertyOperation.getAllDataTypeNodes()).thenReturn(Either.left(List.of(dataTypeData1, dataTypeData2)));
+        applicationDataTypeCache.init();
+    }
+
+    private DataTypeDefinition createDataTypeDefinition(String name, String uniqueId, long creationTime, long modificationTime) {
+        final DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setName(name);
+        dataTypeDefinition.setUniqueId(uniqueId);
+        dataTypeDefinition.setCreationTime(creationTime);
+        dataTypeDefinition.setModificationTime(modificationTime);
+        return dataTypeDefinition;
+    }
+
+    private DataTypeData createDataTypeData(String name, String uniqueId, long creationTime, long modificationTime) {
+        final DataTypeData dataTypeData1 = new DataTypeData();
+        dataTypeData1.setDataTypeDataDefinition(createDataTypeDataDefinition(name, uniqueId, creationTime, modificationTime));
+        return dataTypeData1;
+    }
+    private DataTypeDataDefinition createDataTypeDataDefinition(String name, String uniqueId, long creationTime, long modificationTime) {
+        final DataTypeDataDefinition testDataType1DataDefinition = new DataTypeDataDefinition();
+        testDataType1DataDefinition.setName(name);
+        testDataType1DataDefinition.setUniqueId(uniqueId);
+        testDataType1DataDefinition.setCreationTime(creationTime);
+        testDataType1DataDefinition.setModificationTime(modificationTime);
+        return testDataType1DataDefinition;
+    }
+
+	private void mockConfiguration(final ApplicationL1CacheInfo applicationL1CacheInfo) {
+		final var applicationL1CacheConfig = new ApplicationL1CacheConfig();
+		applicationL1CacheConfig.setDatatypes(applicationL1CacheInfo);
+		final var configuration = new Configuration();
+		configuration.setApplicationL1Cache(applicationL1CacheConfig);
+		final var configurationManager = new ConfigurationManager();
+		configurationManager.setConfiguration(configuration);
+	}
+
+	private void mockEmptyConfiguration() {
+		final var applicationL1CacheConfig = new ApplicationL1CacheConfig();
+		final var configuration = new Configuration();
+		configuration.setApplicationL1Cache(applicationL1CacheConfig);
+		final var configurationManager = new ConfigurationManager();
+		configurationManager.setConfiguration(configuration);
+	}
+
+	public void assertDataTypeCache(final Map<String, DataTypeDefinition> expectedDataTypeCache) {
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypeCacheMapEither = applicationDataTypeCache.getAll();
+		assertNotNull(dataTypeCacheMapEither);
+		assertTrue(dataTypeCacheMapEither.isLeft());
+		final Map<String, DataTypeDefinition> actualDataTypeMap = dataTypeCacheMapEither.left().value();
+		expectedDataTypeCache.forEach((dataType, dataTypeDefinition) -> {
+			final DataTypeDefinition actualDataTypeDefinition = actualDataTypeMap.get(dataType);
+			assertNotNull(actualDataTypeDefinition);
+			assertEquals(dataTypeDefinition.getCreationTime(), actualDataTypeDefinition.getCreationTime());
+			assertEquals(dataTypeDefinition.getModificationTime(), actualDataTypeDefinition.getModificationTime());
+		});
 	}
 }
