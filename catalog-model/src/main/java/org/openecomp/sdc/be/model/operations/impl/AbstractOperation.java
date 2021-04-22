@@ -42,7 +42,6 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
-import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -60,8 +59,6 @@ public abstract class AbstractOperation {
     @Autowired
     protected HealingJanusGraphGenericDao janusGraphGenericDao;
     protected Gson gson = new Gson();
-    @Autowired
-    protected ApplicationDataTypeCache applicationDataTypeCache;
     protected DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
     public <ElementDefinition> JanusGraphOperationStatus findAllResourceElementsDefinitionRecursively(String resourceId,

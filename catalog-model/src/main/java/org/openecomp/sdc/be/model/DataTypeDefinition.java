@@ -37,17 +37,18 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
     private List<PropertyConstraint> constraints;
     private List<PropertyDefinition> properties;
 
-    public DataTypeDefinition(DataTypeDataDefinition p) {
-        super(p);
+    public DataTypeDefinition(final DataTypeDataDefinition dataTypeDataDefinition) {
+        super(dataTypeDataDefinition);
     }
 
-    public DataTypeDefinition(DataTypeDefinition pd) {
-        this.setName(pd.getName());
-        this.setDerivedFrom(pd.getDerivedFrom());
-        this.setDerivedFromName(pd.getDerivedFromName());
-        this.setUniqueId(pd.getUniqueId());
-        this.setConstraints(pd.getConstraints());
-        this.setDescription(pd.getDescription());
+    public DataTypeDefinition(final DataTypeDefinition dataTypeDefinition) {
+        super(dataTypeDefinition);
+        this.setName(dataTypeDefinition.getName());
+        this.setDerivedFrom(dataTypeDefinition.getDerivedFrom());
+        this.setDerivedFromName(dataTypeDefinition.getDerivedFromName());
+        this.setUniqueId(dataTypeDefinition.getUniqueId());
+        this.setConstraints(dataTypeDefinition.getConstraints());
+        this.setDescription(dataTypeDefinition.getDescription());
     }
 
     public List<PropertyConstraint> safeGetConstraints() {
