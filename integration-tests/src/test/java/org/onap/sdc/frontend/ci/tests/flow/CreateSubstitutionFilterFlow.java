@@ -21,9 +21,10 @@ package org.onap.sdc.frontend.ci.tests.flow;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.aventstack.extentreports.Status;
 import java.util.Optional;
-
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceDependencyProperty;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
 import org.onap.sdc.frontend.ci.tests.pages.ServiceDependenciesEditor;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent;
@@ -32,14 +33,12 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionSubstitutionFilterTab;
 import org.openqa.selenium.WebDriver;
 
-import com.aventstack.extentreports.Status;
-
-public class CreateSubtitutionFilterFlow extends AbstractUiTestFlow {
+public class CreateSubstitutionFilterFlow extends AbstractUiTestFlow {
 
     private CompositionPage compositionPage;
     private final ServiceDependencyProperty substitutionFilterProperty;
 
-    public CreateSubtitutionFilterFlow(final WebDriver webDriver, final ServiceDependencyProperty substitutionFilterProperty) {
+    public CreateSubstitutionFilterFlow(final WebDriver webDriver, final ServiceDependencyProperty substitutionFilterProperty) {
         super(webDriver);
         this.substitutionFilterProperty = substitutionFilterProperty;
     }
@@ -47,14 +46,13 @@ public class CreateSubtitutionFilterFlow extends AbstractUiTestFlow {
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
         extendTest.log(Status.INFO, "Creating substitution filter");
-
-        compositionPage = getCompositionPage(pageObjects);
-        compositionPage.isLoaded();
+        compositionPage = findParameter(pageObjects, CompositionPage.class);
 
         final CompositionDetailSideBarComponent sideBar = compositionPage.getDetailSideBar();
         sideBar.isLoaded();
 
-        final CompositionSubstitutionFilterTab compositionSubstitutionFilterTab = (CompositionSubstitutionFilterTab) sideBar.selectTab(CompositionDetailTabName.SUBSTITUTION_FILTER);
+        final CompositionSubstitutionFilterTab compositionSubstitutionFilterTab = (CompositionSubstitutionFilterTab) sideBar
+            .selectTab(CompositionDetailTabName.SUBSTITUTION_FILTER);
         compositionSubstitutionFilterTab.isLoaded();
 
         final ServiceDependenciesEditor compositionSubstitutionDependenciesEditor = compositionSubstitutionFilterTab.clickAddSubstitutionFilter();
@@ -62,7 +60,10 @@ public class CreateSubtitutionFilterFlow extends AbstractUiTestFlow {
         compositionSubstitutionDependenciesEditor.addProperty(substitutionFilterProperty);
 
         compositionSubstitutionFilterTab.isLoaded();
-        assertTrue(compositionSubstitutionFilterTab.isSubstitutionFilterPresent(substitutionFilterProperty.getName()), "Created substitution filter is not present");
+        assertTrue(compositionSubstitutionFilterTab.isSubstitutionFilterPresent(substitutionFilterProperty.getName()),
+            "Created substitution filter is not present");
+        ExtentTestActions.takeScreenshot(Status.INFO, "AddSubstitutionFilter",
+            String.format("Substitution filter '%s' successfully created", substitutionFilterProperty));
 
         return Optional.of(compositionPage);
     }
@@ -70,12 +71,5 @@ public class CreateSubtitutionFilterFlow extends AbstractUiTestFlow {
     @Override
     public Optional<? extends PageObject> getLandedPage() {
         return Optional.ofNullable(compositionPage);
-    }
-
-    private CompositionPage getCompositionPage(final PageObject... pageObjects) {
-        return getParameter(pageObjects, CompositionPage.class)
-        .orElseGet(() -> {
-            return new CompositionPage(webDriver);
-        });
     }
 }

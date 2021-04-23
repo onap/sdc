@@ -34,13 +34,13 @@
         </methods>
       </class>
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.ImportVfcUiTest"/>
-      <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.CreateServiceSubstitutionFilterTest"/>
       <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.ServiceTemplateDesignUiTests">
         <methods>
           <include name="importAndCertifyVfc"/>
           <include name="createBaseService"/>
           <include name="addComponentProperty"/>
           <include name="addOutputsToVF_test"/>
+          <include name="createSubstitutionFilter"/>
         </methods>
       </class>
     </classes>

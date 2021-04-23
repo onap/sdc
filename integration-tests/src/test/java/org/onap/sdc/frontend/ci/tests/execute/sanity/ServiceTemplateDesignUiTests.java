@@ -47,7 +47,9 @@ import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
+import org.onap.sdc.frontend.ci.tests.datatypes.LogicalOperator;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
+import org.onap.sdc.frontend.ci.tests.datatypes.ServiceDependencyProperty;
 import org.onap.sdc.frontend.ci.tests.datatypes.composition.RelationshipInformation;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
@@ -55,16 +57,18 @@ import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.flow.AddComponentPropertyFlow;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateSubstitutionFilterFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
+import org.onap.sdc.frontend.ci.tests.flow.DownloadToscaTemplateFlow;
 import org.onap.sdc.frontend.ci.tests.flow.EditComponentPropertiesFlow;
 import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.AttributesOutputsPage;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
-import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
+import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
@@ -82,7 +86,6 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceTemplateDesignUiTests.class);
 
     private WebDriver webDriver;
-    private TopNavComponent topNavComponent;
     private HomePage homePage;
     private List<ResourceCreateData> vfcs = new ArrayList<>();
     private ResourceCreateData vfResourceCreateData;
@@ -91,11 +94,11 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     private AddNodeToCompositionFlow addNodeToCompositionFlow;
     private ComponentPage componentPage;
     private Map<String, String> propertiesToBeAddedMap;
+    private final List<ServiceDependencyProperty> substitutionFilterProperties = new ArrayList<>();
 
     @BeforeMethod
     public void init() {
         webDriver = DriverFactory.getDriver();
-        topNavComponent = new TopNavComponent(webDriver);
         homePage = new HomePage(webDriver);
     }
 
@@ -177,13 +180,26 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         attributesOutputsPage.clickOnOutputsTab();
         ExtentTestActions.addScreenshot(Status.INFO, "OutputsTab", "The Output's list : ");
 
-        attributesOutputsPage.certifyComponent();
-        attributesOutputsPage.isLoaded();
-
         Map<String, Object> yamlObject = downloadToscaArtifact(attributesOutputsPage);
         checkMetadata(yamlObject, vfResourceCreateData);
         checkTopologyTemplate(yamlObject);
+    }
 
+
+    @Test(dependsOnMethods = "addComponentProperty")
+    public void createSubstitutionFilter() throws Exception {
+        componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        componentPage.isLoaded();
+        loadSubstitutionFilterProperties();
+        final CompositionPage compositionPage = componentPage.goToComposition();
+        compositionPage.isLoaded();
+        substitutionFilterProperties.forEach(substitutionFilterProperty -> {
+            final CreateSubstitutionFilterFlow createSubstitutionFilterFlow = new CreateSubstitutionFilterFlow(webDriver, substitutionFilterProperty);
+            createSubstitutionFilterFlow.run(compositionPage);
+        });
+        componentPage = compositionPage.goToGeneral();
+        componentPage.isLoaded();
+        verifyToscaTemplateHasSubstitutionFilter(downloadToscaTemplate());
     }
 
     private void checkMetadata(final Map<String, Object> map, final ResourceCreateData createdData) {
@@ -219,7 +235,6 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         final Map<String, Object> attributes = getMapEntry(substitutionMappings, "attributes");
         assertThat(attributes, not(anEmptyMap()));
         assertEquals(2, attributes.keySet().stream().filter(s -> (s.contains("_attr_1") || s.contains("_attr_3")) && !s.contains("_attr_2")).count());
-
     }
 
     private Map<String, Object> downloadToscaArtifact(final ComponentPage resourceCreatePage) throws UnzipException {
@@ -546,5 +561,76 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         propertyMap.put("property5", stringMap);
         propertyMap.put("property6", 500);
         return propertyMap;
+    }
+
+    private void loadSubstitutionFilterProperties() {
+        final ResourcePropertiesAssignmentPage propertiesPage = componentPage.goToPropertiesAssignment();
+        propertiesPage.isLoaded();
+        ExtentTestActions.takeScreenshot(Status.INFO, "propertiesAssigment",
+            String.format("The %s Properties Assignment Page is loaded", vfResourceCreateData.getName()));
+        Map<String, String> propertyNamesAndTypes = propertiesPage.getPropertyNamesAndTypes();
+        assertThat(String.format("The Component '%s' should have properties", vfResourceCreateData.getName()), propertyNamesAndTypes,
+            not(anEmptyMap()));
+        propertyNamesAndTypes.forEach((name, type)
+            -> substitutionFilterProperties.add(new ServiceDependencyProperty(name, getPropertyValueByType(type), LogicalOperator.EQUALS)));
+    }
+
+    private String getPropertyValueByType(final String type) {
+        switch (type) {
+            case "string":
+                return "IntegrationTest";
+            case "integer":
+                return "202";
+            case "size":
+                return "500";
+            case "boolean":
+                return "TRUE";
+            case "list":
+                return "[value1, value2]";
+            case "map":
+                return "MyKey: MyValue";
+            default:
+                throw new UnsupportedOperationException("Not yet implemented for " + type);
+        }
+    }
+
+    /**
+     * Downloads Tosca Template file
+     * @return the tosca template yaml file
+     * @throws Exception
+     */
+    private Map<?, ?> downloadToscaTemplate() throws Exception {
+        final DownloadToscaTemplateFlow downloadToscaTemplateFlow = new DownloadToscaTemplateFlow(webDriver);
+        final ToscaArtifactsPage toscaArtifactsPage = (ToscaArtifactsPage) downloadToscaTemplateFlow.run(componentPage).get();
+        return FileHandling.parseYamlFile(getConfig().getDownloadAutomationFolder()
+            .concat(java.io.File.separator).concat(toscaArtifactsPage.getDownloadedArtifactList().get(0)));
+    }
+
+    private void verifyToscaTemplateHasSubstitutionFilter(final Map<?, ?> yaml) {
+        assertNotNull(yaml, "No contents in TOSCA Template");
+        final List<?> substitutionFilters = (List<?>) getSubstitutionFilterFromYaml(yaml).get("properties");
+        substitutionFilterProperties.forEach(substitutionFilterProperty -> {
+            final Map<?, ?> substitutionFilterMap = (Map<?, ?>) substitutionFilters.stream()
+                .filter(subFilter -> ((Map<?, ?>) subFilter).containsKey(substitutionFilterProperty.getName())).findAny().get();
+            assertThat("Added substitution filter not found in TOSCA Template",
+                substitutionFilterMap.containsKey(substitutionFilterProperty.getName()));
+            final Map<?, ?> substitutionFilterValue = (Map<?, ?>) ((List<?>) substitutionFilterMap.get(substitutionFilterProperty.getName())).get(0);
+            assertThat("Substitution Filter Value should not be empty", substitutionFilterMap, not(anEmptyMap()));
+            final String expectedSubstitutionPropertyValue = substitutionFilterProperty.getValue();
+            final String actualSubstitutionPropertyValue = substitutionFilterValue.values().stream().findFirst().get() instanceof Map
+                ? substitutionFilterValue.values().stream().findFirst().get().toString().replace("=", ": ")
+                .replaceAll("\\{(.*?)\\}", "$1").trim()
+                : substitutionFilterValue.values().stream().findFirst().get().toString();
+            assertThat("Invalid value for added substitution filters found in TOSCA Template",
+                expectedSubstitutionPropertyValue.equalsIgnoreCase(actualSubstitutionPropertyValue));
+            assertThat("Invalid logical operator for added substitution filters found in TOSCA Template",
+                substitutionFilterValue.containsKey(substitutionFilterProperty.getLogicalOperator().getName()));
+        });
+    }
+
+    private Map<?, ?> getSubstitutionFilterFromYaml(final Map<?, ?> yaml) {
+        final Map<?, ?> topology = (Map<?, ?>) yaml.get("topology_template");
+        final Map<?, ?> substitutionMappings = (Map<?, ?>) topology.get("substitution_mappings");
+        return (Map<?, ?>) substitutionMappings.get("substitution_filter");
     }
 }
