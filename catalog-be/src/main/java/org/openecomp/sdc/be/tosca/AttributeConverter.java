@@ -32,7 +32,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.DataTypePropertyConverter;
 import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
-import org.openecomp.sdc.be.tosca.exception.ToscaConversionException;
+import org.openecomp.sdc.be.model.tosca.converters.ToscaValueBaseConverter;
 import org.openecomp.sdc.be.tosca.model.ToscaAttribute;
 import org.openecomp.sdc.be.tosca.model.ToscaSchemaDefinition;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -69,7 +69,7 @@ public class AttributeConverter {
      * @param attributeDefinition the attribute definition to be converted
      * @return the {@link ToscaAttribute} instance based on the the given {@link AttributeDefinition} instance
      */
-    public ToscaAttribute convert(final AttributeDefinition attributeDefinition) throws ToscaConversionException {
+    public ToscaAttribute convert(final AttributeDefinition attributeDefinition) {
         final ToscaAttribute toscaAttribute = new ToscaAttribute();
         LOGGER.trace("Converting attribute '{}' from type '{}' with default value '{}'", attributeDefinition.getName(), attributeDefinition.getType(),
             attributeDefinition.getDefaultValue());
@@ -77,13 +77,11 @@ public class AttributeConverter {
         toscaAttribute.setType(attributeDefinition.getType());
         toscaAttribute.setDescription(attributeDefinition.getDescription());
         toscaAttribute.setStatus(attributeDefinition.getStatus());
-        final Object defaultValue = convertToToscaObject(attributeDefinition.getName(), attributeDefinition.getType(),
-            attributeDefinition.getDefaultValue(), attributeDefinition.getEntry_schema(), false);
+        final Object defaultValue = convertToToscaObject(attributeDefinition, attributeDefinition.getDefaultValue(), false);
         if (defaultValue != null) {
             toscaAttribute.setDefault(defaultValue);
         }
-        final Object value = convertToToscaObject(attributeDefinition.getName(), attributeDefinition.getType(), attributeDefinition.getValue(),
-            attributeDefinition.getEntry_schema(), false);
+        final Object value = convertToToscaObject(attributeDefinition, attributeDefinition.getValue(), false);
         if (value != null) {
             toscaAttribute.setValue(value);
         }
@@ -100,8 +98,13 @@ public class AttributeConverter {
         return toscaSchemaDefinition;
     }
 
-    private Object convertToToscaObject(final String name, final String attributeType, String value, final EntrySchema schemaDefinition,
-                                        final boolean preserveEmptyValue) throws ToscaConversionException {
+    private Object convertToToscaObject(final AttributeDefinition attributeDefinition,
+                                        String value,
+                                        final boolean preserveEmptyValue) {
+        final String name = attributeDefinition.getName();
+        final String attributeType = attributeDefinition.getType();
+        final EntrySchema schemaDefinition = attributeDefinition.getEntry_schema();
+
         final String innerType = schemaDefinition == null ? attributeType : schemaDefinition.getType();
         LOGGER.trace("Converting attribute '{}' of type '{}', value '{}', innerType '{}'", name, attributeType, value, innerType);
         if (StringUtils.isEmpty(value)) {
@@ -141,11 +144,11 @@ public class AttributeConverter {
         } catch (final JsonParseException e) {
             final String errorMsg = "Failed to parse json value";
             LOGGER.error(EcompLoggerErrorCode.SCHEMA_ERROR, "Attribute Converter", errorMsg, e);
-            throw new ToscaConversionException(errorMsg, e);
+            return null;
         } catch (final Exception e) {
             final String errorMsg = "Unexpected error occurred while converting attribute value to TOSCA";
             LOGGER.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "Attribute Converter", errorMsg, e);
-            throw new ToscaConversionException(errorMsg, e);
+            return null;
         }
     }
 
@@ -167,4 +170,13 @@ public class AttributeConverter {
     private String getTypeDefaultValue(final String attributeType) {
         return DataTypePropertyConverter.getInstance().getDataTypePropertiesDefaultValuesRec(attributeType, dataTypes);
     }
+
+    public void convertAndAddValue(final Map<String, Object> attribs,
+                                   final AttributeDefinition attribute) {
+        final Object convertedValue = convertToToscaObject(attribute, attribute.getDefaultValue(), false);
+        if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue)) {
+            attribs.put(attribute.getName(), convertedValue);
+        }
+    }
+
 }
