@@ -19,68 +19,70 @@
 -->
 
 <div class="operation-handler">
-  <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+    <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
 
-  <form class="w-sdc-form">
+    <form class="w-sdc-form">
 
-    <div class="side-by-side">
-      <div class="form-item">
-        <sdc-input
-            label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
-            [(value)]="interfaceType"
-            [disabled]="true">
-        </sdc-input>
-      </div>
+        <div class="side-by-side">
+            <div class="form-item">
+                <sdc-input
+                    label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
+                    [(value)]="interfaceType"
+                    [disabled]="true">
+                </sdc-input>
+            </div>
 
-      <div class="form-item">
-        <sdc-input
-            label="{{ 'OPERATION_NAME' | translate }}"
-            [(value)]="operationToUpdate.name"
-            [disabled]="true">
-        </sdc-input>
-      </div>
-    </div>
+            <div class="form-item">
+                <sdc-input
+                    label="{{ 'OPERATION_NAME' | translate }}"
+                    [(value)]="operationToUpdate.name"
+                    [disabled]="true">
+                </sdc-input>
+            </div>
+        </div>
 
-    <div class="i-sdc-form-item">
-      <sdc-input
-          label="{{'OPERATION_DESCRIPTION' | translate}}"
-          [(value)]="operationToUpdate.description"
-          (valueChange)="onDescriptionChange($event)">
-      </sdc-input>
-    </div>
+        <div class="i-sdc-form-item">
+            <sdc-input
+                label="{{'OPERATION_DESCRIPTION' | translate}}"
+                [(value)]="operationToUpdate.description"
+                testId="interface-operation-description"
+                (valueChange)="onDescriptionChange($event)">
+            </sdc-input>
+        </div>
 
-    <div class="i-sdc-form-item">
-      <sdc-input
-          label="{{'IMPLEMENTATION_NAME' | translate}}"
-          [(value)]="operationToUpdate.implementation.artifactName">
-      </sdc-input>
-    </div>
+        <div class="i-sdc-form-item">
+            <sdc-input
+                label="{{'IMPLEMENTATION_NAME' | translate}}"
+                testId="interface-operation-implementation-name"
+                [(value)]="operationToUpdate.implementation.artifactName">
+            </sdc-input>
+        </div>
 
-    <div class="separator-buttons">
-      <tab tabTitle="Inputs"></tab>
-      <a class="add-param-link add-btn"
-         [ngClass]="{'disabled': readonly}"
-         (click)="onAddInput()">{{'OPERATION_ADD_INPUT' | translate}}
-      </a>
-    </div>
+        <div class="separator-buttons">
+            <tab tabTitle="Inputs"></tab>
+            <a class="add-param-link add-btn"
+               [ngClass]="{'disabled': readonly}"
+               (click)="onAddInput()">{{'OPERATION_ADD_INPUT' | translate}}
+            </a>
+        </div>
 
-    <div class="generic-table">
-      <div class="header-row table-row">
-        <span class="cell header-cell field-input-name">{{ 'OPERATION_PARAM_NAME' | translate }}</span>
-        <span class="cell header-cell field-input-value">{{ 'OPERATION_INPUT_VALUE' | translate }}</span>
-        <span class="cell header-cell remove">●●●</span>
-      </div>
-      <div class="empty-msg data-row" *ngIf="!inputs.length">
-        <div>{{ 'OPERATION_INPUT_EMPTY' | translate }}</div>
-      </div>
-      <input-param-row
-          *ngFor="let inputParameter of inputs"
-          class="data-row"
-          [input]="inputParameter"
-          [onRemoveInput]="onRemoveInput"
-          [validityChanged]="validityChanged">
-      </input-param-row>
-    </div>
+        <div class="generic-table">
+            <div class="header-row table-row">
+                <span class="cell header-cell field-input-name">{{ 'OPERATION_PARAM_NAME' | translate }}</span>
+                <span class="cell header-cell field-input-value">{{ 'OPERATION_INPUT_VALUE' | translate }}</span>
+                <span class="cell header-cell remove">●●●</span>
+            </div>
+            <div class="empty-msg data-row" *ngIf="!inputs.length">
+                <div>{{ 'OPERATION_INPUT_EMPTY' | translate }}</div>
+            </div>
+            <input-param-row
+                *ngFor="let inputParameter of inputs"
+                class="data-row"
+                [input]="inputParameter"
+                [onRemoveInput]="onRemoveInput"
+                [validityChanged]="validityChanged">
+            </input-param-row>
+        </div>
 
-  </form>
+    </form>
 </div>

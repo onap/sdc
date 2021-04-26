@@ -25,8 +25,10 @@ import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.aventstack.extentreports.Status;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
@@ -38,6 +40,7 @@ import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
@@ -45,10 +48,16 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent.CompositionDetailTabName;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInformationTab;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsModal;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsTab;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -105,18 +114,69 @@ public class ImportVfcUiTest extends SetupCDTest {
         componentPage = createVfFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
         componentPage.isLoaded();
 
-        final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionFlow(componentPage);
-
-        final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
+        final CompositionPage compositionPage = addInterfaceOperations(componentPage);
         componentPage = compositionPage.goToGeneral();
         componentPage.isLoaded();
         componentPage.certifyComponent();
         componentPage.isLoaded();
+
         yamlObject = downloadToscaArtifact(componentPage);
         checkMetadata(yamlObject, vfCreateData);
         checkTopologyTemplate(yamlObject);
 
+    }
+
+    private CompositionPage addInterfaceOperations(final ComponentPage componentPage) {
+        final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionFlow(componentPage);
+        final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
+        final CompositionDetailSideBarComponent detailSideBar = compositionPage.getDetailSideBar();
+        detailSideBar.isLoaded();
+
+        final ComponentInstance createdComponentInstance = addNodeToCompositionFlow.getCreatedComponentInstance()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ComponentInstance"));
+
+        compositionPage.selectNode(createdComponentInstance.getName());
+
+        CompositionInterfaceOperationsTab compositionInterfaceOperationsTab =
+            (CompositionInterfaceOperationsTab) detailSideBar.selectTab(CompositionDetailTabName.INTERFACE_OPERATIONS);
+        compositionInterfaceOperationsTab.isLoaded();
+        ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsTab", "Composition Interface Operations Tab opened");
+        assertTrue(compositionInterfaceOperationsTab.isOperationPresent("create"));
+        CompositionInterfaceOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab.clickOnOperation("create");
+        compositionInterfaceOperationsModal.isLoaded();
+        ExtentTestActions
+            .takeScreenshot(Status.INFO, "compositionInterfaceOperationsTab.clickOnOperation", "Composition Interface Operations Modal opened");
+        compositionInterfaceOperationsModal.clickOnDelete();
+        ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsModal.clickOnDelete", "Input deleted");
+        compositionInterfaceOperationsModal.addInput();
+        ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsModal.addInput", "Adding Input");
+
+        final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData = new CompositionInterfaceOperationsModal.InterfaceOperationsData
+            ("This is CREATE operation", "fullPath/to/my/newImplementation.sh", "second", "9876");
+        compositionInterfaceOperationsModal.updateInterfaceOperation(interfaceOperationsData);
+        compositionInterfaceOperationsTab.isLoaded();
+
+        final CompositionInformationTab compositionInformationTab =
+            (CompositionInformationTab) detailSideBar.selectTab(CompositionDetailTabName.INFORMATION);
+        compositionInformationTab.isLoaded();
+
+        compositionInterfaceOperationsTab =
+            (CompositionInterfaceOperationsTab) detailSideBar.selectTab(CompositionDetailTabName.INTERFACE_OPERATIONS);
+        compositionInterfaceOperationsTab.isLoaded();
+
+        assertTrue(compositionInterfaceOperationsTab.isOperationPresent("create"));
+        assertTrue(compositionInterfaceOperationsTab.isDescriptionPresent());
+        ExtentTestActions.takeScreenshot(Status.INFO, "isDescriptionPresent", "Description is present");
+        compositionInterfaceOperationsModal = compositionInterfaceOperationsTab.clickOnOperation("create");
+        compositionInterfaceOperationsModal.isLoaded();
+        ExtentTestActions
+            .takeScreenshot(Status.INFO, "compositionInterfaceOperationsTab.clickOnOperation", "Composition Interface Operations Modal opened");
+
+        checkCompositionInterfaceOperations(compositionInterfaceOperationsModal, interfaceOperationsData);
+        compositionInterfaceOperationsModal.clickOnCancel();
+        compositionInterfaceOperationsTab.isLoaded();
+        return compositionPage;
     }
 
     private AddNodeToCompositionFlow addNodeToCompositionFlow(final ComponentPage componentPage) {
@@ -255,5 +315,13 @@ public class ImportVfcUiTest extends SetupCDTest {
         final Map<String, Object> interfaces = getMapEntry(mapEntry, "substitution_mappings");
         assertThat(interfaces, not(anEmptyMap()));
 
+    }
+
+    private void checkCompositionInterfaceOperations(final CompositionInterfaceOperationsModal compositionInterfaceOperationsModal,
+                                                     final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData) {
+        assertEquals(interfaceOperationsData.getDescription(), compositionInterfaceOperationsModal.getDescription());
+        assertEquals(interfaceOperationsData.getImplementationName(), compositionInterfaceOperationsModal.getImplementationName());
+        assertEquals(interfaceOperationsData.getInputName(), compositionInterfaceOperationsModal.getInputName());
+        assertEquals(interfaceOperationsData.getInputValue(), compositionInterfaceOperationsModal.getInputValue());
     }
 }

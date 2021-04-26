@@ -10,15 +10,27 @@ node_types:
       test_1:
         type: string
         default: 'MydefaultValue'
-
       test_2:
         type: integer
         default: 266305
-
       test_3:
         type: string
         default: 'TestValue3'
-
       test_4:
         type: boolean
         default: true
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        inputs:
+          url_path:
+            type: string
+        operations:
+          create:
+            description: 'My create Desc'
+            implementation: path/to/my/implementation.sh
+            inputs:
+              first:
+                type: string
+                default: '1234'
+                description: My inputs Desc

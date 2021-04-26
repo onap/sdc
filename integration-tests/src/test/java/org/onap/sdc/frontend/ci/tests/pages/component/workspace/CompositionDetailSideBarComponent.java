@@ -78,6 +78,8 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
                 return new CompositionSubstitutionFilterTab(webDriver);
             case REQUIREMENTS_CAPABILITIES:
                 return new CompositionRequirementsCapabilitiesTab(webDriver);
+            case INTERFACE_OPERATIONS:
+                return new CompositionInterfaceOperationsTab(webDriver);
             default:
                 throw new IllegalStateException("Not yet implemented: " + tabName);
         }
@@ -99,6 +101,7 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
         INFORMATION_ARTIFACTS_TAB("detail-tab-information-artifacts", "//li[@data-tests-id='%s']"),
         REQUIREMENTS_CAPABILITIES_TAB("detail-tab-requirements-capabilities", "//li[@data-tests-id='%s']"),
         API_ARTIFACTS_TAB("detail-tab-api-artifacts", "//li[@data-tests-id='%s']"),
+        INTERFACE_OPERATIONS_TAB("detail-tab-interface-operations", "//li[@data-tests-id='%s']"),
         SUBSTITUTION_FILTER_TAB("detail-tab-substitution-filter", "//li[@data-tests-id='%s']");
 
         @Getter
@@ -119,6 +122,7 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
         INFORMATIONAL_ARTIFACTS(XpathSelector.INFORMATION_ARTIFACTS_TAB),
         API_ARTIFACTS(XpathSelector.API_ARTIFACTS_TAB),
         SUBSTITUTION_FILTER(XpathSelector.SUBSTITUTION_FILTER_TAB),
+        INTERFACE_OPERATIONS(XpathSelector.INTERFACE_OPERATIONS_TAB),
         REQUIREMENTS_CAPABILITIES(XpathSelector.REQUIREMENTS_CAPABILITIES_TAB);
 
         private final XpathSelector xpathSelector;

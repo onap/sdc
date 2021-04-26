@@ -92,7 +92,7 @@ public class ResourceCreatePage extends ComponentPage {
     }
 
     private void fillDescription(final String description) {
-        setTextAreaField(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()), description);
+        setInputField(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()), description);
     }
 
     private void fillContactId(final String contactId) {
@@ -123,10 +123,6 @@ public class ResourceCreatePage extends ComponentPage {
             return;
         }
         findElement(locator).sendKeys(value);
-    }
-
-    private void setTextAreaField(final By locator, final String value) {
-        setInputField(locator, value);
     }
 
     /**
