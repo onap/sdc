@@ -21,6 +21,7 @@
 <div class="cell field-input-name">
     <sdc-input
         [(value)]="input.name"
+        testId="interface-operation-input-name"
         (valueChange)="onChange()">
     </sdc-input>
 </div>
@@ -28,9 +29,9 @@
 <div class="cell field-input-value">
     <sdc-input
         [(value)]="input.toscaDefaultValue"
+        testId="interface-operation-input-value"
         (valueChange)="onChange()">
     </sdc-input>
-
 </div>
 
 <div class="cell remove" *ngIf="!readonly">
