@@ -168,6 +168,28 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     @Test(dependsOnMethods = "addRelationshipTemplate")
+    public void createMetadataForServiceProperty() throws Exception {
+        homePage.isLoaded();
+        componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        componentPage.isLoaded();
+        final ResourcePropertiesAssignmentPage propertiesAssignmentPage = componentPage.goToPropertiesAssignment();
+
+        propertiesAssignmentPage.isLoaded();
+        propertiesAssignmentPage.selectInputTab();
+        final var propertyName = propertiesAssignmentPage.getInputPropertyNames().get(0);
+        final var key = "Key";
+        final var value = "Test";
+        propertiesAssignmentPage.setInputPropertyMetadata(propertyName, key, value);
+
+        final var topologyTemplate = getMapEntry(downloadToscaTemplate(), "topology_template");
+        final var inputs = getMapEntry(topologyTemplate, "inputs");
+        final var serviceProperty = getMapEntry(inputs, propertyName);
+        final var servicePropertyMetadata = getMapEntry(serviceProperty, "metadata");
+        assertNotNull(servicePropertyMetadata, String.format("Metadata not found for property %s", propertyName));
+        assertEquals(servicePropertyMetadata.get(key), value, "Created service property metadata has invalid value");
+    }
+
+    @Test(dependsOnMethods = "addRelationshipTemplate")
     public void addOutputsToVF_test() throws UnzipException, IOException {
         homePage.isLoaded();
         final ComponentPage resourceCreatePage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
