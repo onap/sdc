@@ -208,6 +208,28 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         checkTopologyTemplate(yamlObject);
     }
 
+    @Test(dependsOnMethods = "createBaseService")
+    public void createMetadataForServiceProperty() throws Exception {
+        homePage.isLoaded();
+        componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        componentPage.isLoaded();
+        final ResourcePropertiesAssignmentPage propertiesAssignmentPage = componentPage.goToPropertiesAssignment();
+
+        propertiesAssignmentPage.isLoaded();
+        propertiesAssignmentPage.selectInputTab();
+        final var propertyName = propertiesAssignmentPage.getInputPropertyNames().get(0);
+        final var key = "Key";
+        final var value = "Test";
+        propertiesAssignmentPage.setInputPropertyMetadata(propertyName, key, value);
+
+        final var topologyTemplate = getMapEntry(downloadToscaTemplate(), "topology_template");
+        final var inputs = getMapEntry(topologyTemplate, "inputs");
+        final var serviceProperty = getMapEntry(inputs, propertyName);
+        final var servicePropertyMetadata = getMapEntry(serviceProperty, "metadata");
+        assertNotNull(servicePropertyMetadata, String.format("Metadata not found for property %s", propertyName));
+        assertEquals(servicePropertyMetadata.get(key), value, "Created service property metadata has invalid value");
+    }
+
     @Test(dependsOnMethods = "addComponentProperty")
     public void createSubstitutionFilter() throws Exception {
         componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
@@ -602,7 +624,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         return expectedDefinitionFolderFileList;
     }
 
-    private Map<String, Object> getMapEntry(final Map<String, Object> yamlObj, final String entryName) {
+    private Map<String, Object> getMapEntry(final Map<?, ?> yamlObj, final String entryName) {
         try {
             return (Map<String, Object>) yamlObj.get(entryName);
         } catch (final Exception e) {
