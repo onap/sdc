@@ -109,6 +109,11 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
         return new CompositionPage(webDriver);
     }
 
+    public ResourcePropertiesPage clickOnPropertiesMenuItem() {
+        wrappingElement.findElement(By.xpath(XpathSelector.PROPERTIES_MENU.getXpath())).click();
+        return new ResourcePropertiesPage(webDriver);
+    }
+
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */

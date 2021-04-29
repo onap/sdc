@@ -41,6 +41,7 @@
           <include name="addComponentProperty"/>
           <include name="addOutputsToVF_test"/>
           <include name="createSubstitutionFilter"/>
+          <include name="createDirectiveNodeFilterTest"/>
         </methods>
       </class>
     </classes>

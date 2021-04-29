@@ -28,11 +28,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.aventstack.extentreports.Status;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,11 +42,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.onap.sdc.backend.ci.tests.data.providers.OnboardingDataProviders;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
+import org.onap.sdc.frontend.ci.tests.datatypes.DirectiveType;
 import org.onap.sdc.frontend.ci.tests.datatypes.LogicalOperator;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceDependencyProperty;
@@ -57,6 +59,7 @@ import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.flow.AddComponentPropertyFlow;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateDirectiveNodeFilterFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateSubstitutionFilterFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
@@ -69,6 +72,7 @@ import org.onap.sdc.frontend.ci.tests.pages.AttributesOutputsPage;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage;
+import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
@@ -80,6 +84,8 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
+
+import com.aventstack.extentreports.Status;
 
 public class ServiceTemplateDesignUiTests extends SetupCDTest {
 
@@ -200,6 +206,44 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         componentPage = compositionPage.goToGeneral();
         componentPage.isLoaded();
         verifyToscaTemplateHasSubstitutionFilter(downloadToscaTemplate());
+    }
+
+    @Test(dependsOnMethods = "createBaseService")
+    public void createDirectiveNodeFilterTest() throws Exception {
+        final ResourceCreateData vfcResourceCreateData = vfcs.get(1);
+        final String vfcNameInComposition = vfcResourceCreateData.getName().concat(" 0");
+        final String value = "Test";
+        final LogicalOperator operator = LogicalOperator.EQUALS;
+        homePage.isLoaded();
+        componentPage = (ComponentPage) homePage.clickOnComponent(vfcResourceCreateData.getName());
+
+        componentPage.isLoaded();
+        final ResourcePropertiesPage vfcPropertiesPage = componentPage.goToProperties();
+        vfcPropertiesPage.isLoaded();
+        final List<String> propertyNames = vfcPropertiesPage.getPropertyNames();
+        final ServiceDependencyProperty serviceDependencyProperty = new ServiceDependencyProperty(propertyNames.get(0), value, operator);
+
+        homePage.getTopNavComponent().clickOnHome();
+        homePage.isLoaded();
+        homePage.clickOnComponent(vfResourceCreateData.getName());
+
+        componentPage.isLoaded();
+        final CompositionPage compositionPage = componentPage.goToComposition();
+        compositionPage.isLoaded();
+        compositionPage.selectNode(vfcNameInComposition);
+
+        final CreateDirectiveNodeFilterFlow createDirectiveNodeFilterFlow =
+                new CreateDirectiveNodeFilterFlow(webDriver, 2, DirectiveType.SELECT, serviceDependencyProperty);
+        createDirectiveNodeFilterFlow.run(componentPage);
+
+        verifyAvailableDirectiveTypes(createDirectiveNodeFilterFlow.getDirectiveOptions());
+
+        verifyAvailablePropertyNames(propertyNames, createDirectiveNodeFilterFlow.getPropertyOptions());
+
+        componentPage = compositionPage.goToGeneral();
+        componentPage.isLoaded();
+        final Map<?, ?> yaml = downloadToscaTemplate();
+        verifyToscaTemplateHasDirectiveNodeFilter(yaml, serviceDependencyProperty, vfcNameInComposition);
     }
 
     private void checkMetadata(final Map<String, Object> map, final ResourceCreateData createdData) {
@@ -632,5 +676,45 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         final Map<?, ?> topology = (Map<?, ?>) yaml.get("topology_template");
         final Map<?, ?> substitutionMappings = (Map<?, ?>) topology.get("substitution_mappings");
         return (Map<?, ?>) substitutionMappings.get("substitution_filter");
+    }
+
+    private void verifyAvailableDirectiveTypes(final List<String> availableDirectiveTypes) {
+        assertNotNull(availableDirectiveTypes, "Expected list of available Directive Types, but recieved null");
+        Arrays.asList(DirectiveType.values()).forEach(directiveType -> {
+            assertTrue(availableDirectiveTypes.contains(directiveType.getName())
+                    , String.format("Expected directive %s to be availabe in UI options %s"
+                            , directiveType.getName(), availableDirectiveTypes.toString()));
+        });
+        ExtentTestActions.log(Status.PASS, "All expected directive types are available for selection");
+    }
+
+    private void verifyAvailablePropertyNames(List<String> propertyNames, List<String> propertyNameOptions) {
+        assertEquals(propertyNameOptions.size(), propertyNames.size(), "Mismatch in the number of properties available for selection");
+        propertyNames.forEach(name -> {
+            assertNotEquals(false, propertyNameOptions.remove(name)
+                    , String.format("Expected property %s not found in UI Select element", name));
+        });
+        ExtentTestActions.log(Status.PASS, "All expected properties are available for selection");
+    }
+
+    private void verifyToscaTemplateHasDirectiveNodeFilter(final Map<?, ?> yaml, ServiceDependencyProperty nodeFilterProperty, String nodeTemplateName) {
+        assertNotNull(yaml, "Tosca Template Yaml is not expected to be empty");
+        final List<?> nodeFilters = (List<?>) getDirectiveNodeFilterFromYaml(yaml, nodeTemplateName).get("properties");
+        final Map<?, ?> nodeFilter = (Map<?, ?>) nodeFilters.stream()
+                    .filter(yamlNodeFilter -> ((Map<?, ?>) yamlNodeFilter).containsKey(nodeFilterProperty.getName())).findAny().get();
+        assertNotNull(nodeFilter, "Added directive node filter not found in TOSCA Template");
+
+        final Map<?, ?> nodeFilterValue = (Map<?, ?>) ((List<?>) nodeFilter.get(nodeFilterProperty.getName())).get(0);
+        assertTrue(nodeFilterValue.containsValue(nodeFilterProperty.getValue())
+                , "Invalid value for added directive node filter found in TOSCA Template");
+        assertTrue(nodeFilterValue.containsKey(nodeFilterProperty.getLogicalOperator().getName())
+                , "Invalid logical operator for added directive node filter found in TOSCA Template");
+    }
+
+    private Map<?,?> getDirectiveNodeFilterFromYaml(final Map<?,?> yaml, String nodeTemplateName) {
+        final Map<?, ?> topology = (Map<?, ?>) yaml.get("topology_template");
+        final Map<?, ?> nodeTemplates = (Map<?, ?>) topology.get("node_templates");
+        final Map<?, ?> resourceNode = (Map<?, ?>) nodeTemplates.get(nodeTemplateName);
+        return (Map<?, ?>) resourceNode.get("node_filter");
     }
 }
