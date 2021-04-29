@@ -19,6 +19,9 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceDependencyProperty;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -40,6 +43,15 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
     @Override
     public void isLoaded() {
         waitForElementVisibility(By.xpath(XpathSelector.SERVICE_DEPENDENCIES_EDITOR.xPath));
+    }
+    /**
+     * Returns a list of strings based on the property UI Select
+     * @return List of property names which can be selected
+     */
+    public List<String> getPropertySelectOptions() {
+        return new Select(webDriver.findElement(By.xpath(XpathSelector.SERVICE_PROPERTY_NAME.xPath)))
+                .getOptions().stream()
+                .map(option -> option.getAttribute("innerText")).collect(Collectors.toList());
     }
 
     public void addProperty(final ServiceDependencyProperty property) {

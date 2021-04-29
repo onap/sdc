@@ -102,4 +102,8 @@ public class ComponentPage extends AbstractPageObject {
     public ResourcePropertiesAssignmentPage goToPropertiesAssignment() {
         return resourceLeftSideMenu.clickOnPropertiesAssignmentMenuItem();
     }
+
+    public ResourcePropertiesPage goToProperties() {
+        return resourceLeftSideMenu.clickOnPropertiesMenuItem();
+    }
 }

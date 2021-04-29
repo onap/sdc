@@ -109,6 +109,11 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
         return new CompositionPage(webDriver);
     }
 
+    public ResourcePropertiesPage clickOnPropertiesMenuItem() {
+        wrappingElement.findElement(By.xpath(XpathSelector.PROPERTIES_MENU.getXpath())).click();
+        return new ResourcePropertiesPage(webDriver);
+    }
+
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
@@ -120,6 +125,7 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
         ATTRIBUTES_OUTPUTS_MENU("Attributes & OutputsLeftSideMenu", "//*[@data-tests-id='%s']"),
         ATTRIBUTES_MENU("AttributesLeftSideMenu", "//*[@data-tests-id='%s']"),
         GENERAL_MENU("GeneralLeftSideMenu", "//*[@data-tests-id='%s']"),
+        PROPERTIES_MENU("PropertiesLeftSideMenu", "//*[@data-tests-id='%s']"),
         COMPOSITION_MENU("CompositionLeftSideMenu", "//*[@data-tests-id='%s']"),
         REQUIREMENT_CAPABILITY_MENU("Req. & CapabilitiesLeftSideMenu", "//*[@data-tests-id='%s']"),
         TOSCA_ARTIFACTS_MENU("TOSCA ArtifactsLeftSideMenu", "//*[@data-tests-id='%s']");
