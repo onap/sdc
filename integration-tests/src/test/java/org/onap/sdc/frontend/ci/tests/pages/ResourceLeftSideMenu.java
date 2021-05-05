@@ -75,6 +75,16 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     }
 
     /**
+     * Clicks on the 'Attributes' menu item.
+     *
+     * @return the next page object
+     */
+    public AttributesPage clickOnAttributesMenuItem() {
+        wrappingElement.findElement(By.xpath(XpathSelector.ATTRIBUTES_MENU.getXpath())).click();
+        return new AttributesPage(webDriver);
+    }
+
+    /**
      * Clicks on the TOSCA artifacts menu item.
      *
      * @return the next page object
@@ -85,13 +95,13 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     }
 
     /**
-     * Clicks on the TOSCA artifacts menu item.
+     * Clicks on the 'General' menu item.
      *
      * @return the next page object
      */
-    public ServiceCreatePage clickOnGeneralMenuItem() {
+    public <T extends ComponentPage> T clickOnGeneralMenuItem(Class<? extends T> clazz) {
         wrappingElement.findElement(By.xpath(XpathSelector.GENERAL_MENU.getXpath())).click();
-        return new ServiceCreatePage(webDriver);
+        return (T) new ComponentPage(webDriver);
     }
 
     public CompositionPage clickOnCompositionMenuItem() {
@@ -106,9 +116,12 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     private enum XpathSelector {
         MAIN_DIV("w-sdc-left-sidebar", "//div[@class='%s']"),
         PROPERTIES_ASSIGNMENT_MENU("Properties AssignmentLeftSideMenu", "//*[@data-tests-id='%s']"),
+        PROPERTIES_MENU("PropertiesLeftSideMenu", "//*[@data-tests-id='%s']"),
         ATTRIBUTES_OUTPUTS_MENU("Attributes & OutputsLeftSideMenu", "//*[@data-tests-id='%s']"),
+        ATTRIBUTES_MENU("AttributesLeftSideMenu", "//*[@data-tests-id='%s']"),
         GENERAL_MENU("GeneralLeftSideMenu", "//*[@data-tests-id='%s']"),
         COMPOSITION_MENU("CompositionLeftSideMenu", "//*[@data-tests-id='%s']"),
+        REQUIREMENT_CAPABILITY_MENU("Req. & CapabilitiesLeftSideMenu", "//*[@data-tests-id='%s']"),
         TOSCA_ARTIFACTS_MENU("TOSCA ArtifactsLeftSideMenu", "//*[@data-tests-id='%s']");
 
         @Getter

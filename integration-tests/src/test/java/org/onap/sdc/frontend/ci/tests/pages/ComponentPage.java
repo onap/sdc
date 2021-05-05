@@ -91,6 +91,14 @@ public class ComponentPage extends AbstractPageObject {
         return resourceLeftSideMenu.clickOnAttributesOutputsMenuItem();
     }
 
+    public AttributesPage goToAttributes() {
+        return resourceLeftSideMenu.clickOnAttributesMenuItem();
+    }
+
+    public <T extends ComponentPage> T clickOnGeneralMenuItem(Class<? extends T> clazz) {
+        return resourceLeftSideMenu.clickOnGeneralMenuItem(clazz);
+    }
+
     public ResourcePropertiesAssignmentPage goToPropertiesAssignment() {
         return resourceLeftSideMenu.clickOnPropertiesAssignmentMenuItem();
     }

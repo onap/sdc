@@ -17,27 +17,27 @@
 
     <div class="action-bar-wrapper">
         <svg-icon-label
-                *ngIf="!(this.isViewOnly$ | async)"
-                class="add-attr-icon"
-                [name]="'plus'"
-                [mode]="'primary'"
-                [size]="'medium'"
-                [label]="'Add'"
-                [labelPlacement]="'right'"
-                [labelClassName]="'externalActionLabel'"
-                (click)="onAddAttribute()">
+            *ngIf="!(this.isViewOnly$ | async)"
+            class="add-attr-icon"
+            [name]="'plus'"
+            [mode]="'primary'"
+            [size]="'medium'"
+            [label]="'Add'"
+            [labelPlacement]="'right'"
+            [labelClassName]="'externalActionLabel'"
+            (click)="onAddAttribute()">
         </svg-icon-label>
     </div>
 
     <ngx-datatable
-            columnMode="flex"
-            [footerHeight]="0"
-            [limit]="50"
-            [headerHeight]="40"
-            [rowHeight]="35"
-            [rows]="attributes"
-            #componentAttributesTable
-            (activate)="onExpandRow($event)">
+        columnMode="flex"
+        [footerHeight]="0"
+        [limit]="50"
+        [headerHeight]="40"
+        [rowHeight]="35"
+        [rows]="attributes"
+        #componentAttributesTable
+        (activate)="onExpandRow($event)">
 
         <ngx-datatable-row-detail [rowHeight]="80">
             <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
@@ -48,9 +48,10 @@
         <ngx-datatable-column [resizeable]="false" name="Name" [flexGrow]="2">
 
             <ng-template ngx-datatable-cell-template let-row="row" let-expanded="expanded">
-                <div class="expand-collapse-cell">
+                <div class="expand-collapse-cell" [attr.data-tests-id]="'attrib-name_'+row.name">
                     <svg-icon [clickable]="true" class="expand-collapse-icon"
-                              [name]="expanded ? 'caret1-up-o': 'caret1-down-o'" [mode]="'primary'"
+                              [name]="expanded ? 'caret1-up-o': 'caret1-down-o'"
+                              [mode]="'primary'"
                               [size]="'medium'"></svg-icon>
                     <span>{{ row.name }}</span>
                 </div>
@@ -76,14 +77,16 @@
                     <svg-icon [clickable]="true"
                               [mode]="'primary2'"
                               [name]="'edit-o'"
+                              [testId]="'edit_'+row.name"
                               [size]="'medium'"
                               (click)="onEditAttribute($event, row)">
                     </svg-icon>
                     <svg-icon [clickable]="true"
                               [mode]="'primary2'"
                               [name]="'trash-o'"
-                              (click)="onDeleteAttribute($event, row)"
-                              [size]="'medium'">
+                              [testId]="'delete_'+row.name"
+                              [size]="'medium'"
+                              (click)="onDeleteAttribute($event, row)">
                     </svg-icon>
                 </div>
             </ng-template>
