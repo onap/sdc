@@ -77,6 +77,7 @@ public abstract class JerseySpringBaseTest extends JerseyTest {
             .register(jacksonJsonProvider);
     }
 
+    @Override
     protected ResourceConfig configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return configure(BaseTestConfig.class);

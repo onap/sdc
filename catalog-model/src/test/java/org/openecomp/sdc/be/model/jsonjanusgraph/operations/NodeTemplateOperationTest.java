@@ -29,12 +29,29 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Lists;
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraphVertex;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -43,45 +60,47 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
-import org.openecomp.sdc.be.datatypes.elements.*;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.RelationshipImpl;
+import org.openecomp.sdc.be.model.RelationshipInfo;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static org.codehaus.groovy.runtime.DefaultGroovyMethods.any;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -205,10 +224,8 @@ class NodeTemplateOperationTest extends ModelTestBase {
 
     @Test
     void testGetDefaultHeatTimeout() {
-        Integer result;
-
-        // default test
-        result = NodeTemplateOperation.getDefaultHeatTimeout();
+        assertEquals(ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout().getDefaultMinutes(),
+            NodeTemplateOperation.getDefaultHeatTimeout());
     }
 
     @Test
@@ -234,13 +251,8 @@ class NodeTemplateOperationTest extends ModelTestBase {
     }
 
     @Test
-    void testCreateCapPropertyKey() throws Exception {
-        String key = "";
-        String instanceId = "";
-        String result;
-
-        // default test
-        result = NodeTemplateOperation.createCapPropertyKey(key, instanceId);
+    void testCreateCapPropertyKey() {
+        assertEquals("instanceId#instanceId#key", NodeTemplateOperation.createCapPropertyKey("key", "instanceId"));
     }
 
     @Test
@@ -436,6 +448,119 @@ class NodeTemplateOperationTest extends ModelTestBase {
         verify((BaseOperation) testInstance, times(1))
             .updateToscaDataDeepElementsOfToscaElement(eq(COMPONENT_ID), eq(EdgeLabelEnum.INST_OUTPUTS), eq(VertexTypeEnum.INST_OUTPUTS),
                 eq(componentInstanceOutputList), ArgumentMatchers.anyList(), eq(JsonPresentationFields.NAME));
+    }
+
+    @Test
+    void updateComponentInstanceCapabilitiesSuccessTest() {
+        final var capabilityUniqueId = "capabilityUniqueId";
+        final var capabilityType = "capabilityType";
+        final var componentInstanceId = "componentInstanceId";
+
+        final var nodeTemplateOperation = spy(operation);
+        final var capabilityDefinitionDatabase = new CapabilityDataDefinition();
+        capabilityDefinitionDatabase.setUniqueId(capabilityUniqueId);
+        capabilityDefinitionDatabase.setType(capabilityType);
+        capabilityDefinitionDatabase.setExternal(false);
+        final var capabilityDefinitionToUpdate = new CapabilityDataDefinition();
+        capabilityDefinitionToUpdate.setUniqueId(capabilityUniqueId);
+        capabilityDefinitionToUpdate.setType(capabilityType);
+        capabilityDefinitionToUpdate.setExternal(true);
+        final Map<String, MapListCapabilityDataDefinition> capabilityByInstanceMap = new HashMap<>();
+        var mapListCapabilityDataDefinition = new MapListCapabilityDataDefinition();
+        mapListCapabilityDataDefinition.add(capabilityDefinitionDatabase.getType(), capabilityDefinitionDatabase);
+        capabilityByInstanceMap.put(componentInstanceId, mapListCapabilityDataDefinition);
+
+        final GraphVertex componentVertex = Mockito.mock(GraphVertex.class);
+        final GraphVertex capabilitiesVertex = Mockito.mock(GraphVertex.class);
+        doReturn(capabilityByInstanceMap).when(capabilitiesVertex).getJson();
+        when(janusGraphDao.getVertexById(COMPONENT_ID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(componentVertex));
+        when(janusGraphDao.getChildVertex(componentVertex, EdgeLabelEnum.CALCULATED_CAPABILITIES, JsonParseFlagEnum.ParseJson))
+            .thenReturn(Either.left(capabilitiesVertex));
+        when(janusGraphDao.updateVertex(componentVertex)).thenReturn(Either.left(componentVertex));
+        doReturn(Either.left(capabilitiesVertex))
+            .when(nodeTemplateOperation).updateOrCopyOnUpdate(capabilitiesVertex, componentVertex, EdgeLabelEnum.CALCULATED_CAPABILITIES);
+        final CapabilityDataDefinition actualCapabilityDataDefinition = nodeTemplateOperation
+            .updateComponentInstanceCapabilities(COMPONENT_ID, componentInstanceId, capabilityDefinitionToUpdate);
+        assertTrue(actualCapabilityDataDefinition.isExternal());
+    }
+
+    @Test
+    void updateComponentInstanceCapabilitiesTest_capabilityNotFound() {
+        final var componentInstanceId = "componentInstanceId";
+        var capabilityDataDefinition = new CapabilityDataDefinition();
+        capabilityDataDefinition.setType("aCapabilityType");
+        final GraphVertex componentVertex = Mockito.mock(GraphVertex.class);
+        final GraphVertex calculatedCapabilityVertex = Mockito.mock(GraphVertex.class);
+        //no capabilities found
+        when(janusGraphDao.getVertexById(COMPONENT_ID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(componentVertex));
+        when(janusGraphDao.getChildVertex(componentVertex, EdgeLabelEnum.CALCULATED_CAPABILITIES, JsonParseFlagEnum.ParseJson))
+            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        OperationException actualException = assertThrows(OperationException.class, () ->
+            operation.updateComponentInstanceCapabilities(COMPONENT_ID, componentInstanceId, capabilityDataDefinition));
+        assertEquals(ActionStatus.CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, actualException.getActionStatus());
+        assertEquals(actualException.getParams().length, 3);
+        assertEquals(capabilityDataDefinition.getName(), actualException.getParams()[0]);
+        assertEquals(capabilityDataDefinition.getOwnerName(), actualException.getParams()[1]);
+        assertEquals(COMPONENT_ID, actualException.getParams()[2]);
+
+        //found capabilities, but not for the provided instance id
+        when(janusGraphDao.getChildVertex(componentVertex, EdgeLabelEnum.CALCULATED_CAPABILITIES, JsonParseFlagEnum.ParseJson))
+            .thenReturn(Either.left(calculatedCapabilityVertex));
+        actualException = assertThrows(OperationException.class, () ->
+            operation.updateComponentInstanceCapabilities(COMPONENT_ID, "componentInstanceId", capabilityDataDefinition));
+        assertEquals(ActionStatus.CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, actualException.getActionStatus());
+        assertEquals(actualException.getParams().length, 3);
+        assertEquals(capabilityDataDefinition.getName(), actualException.getParams()[0]);
+        assertEquals(capabilityDataDefinition.getOwnerName(), actualException.getParams()[1]);
+        assertEquals(COMPONENT_ID, actualException.getParams()[2]);
+
+        //found capabilities for the instance id, but not with the provided capability type
+        final Map<String, MapListCapabilityDataDefinition> capabilityByInstanceMap = new HashMap<>();
+        var mapListCapabilityDataDefinition = new MapListCapabilityDataDefinition();
+        mapListCapabilityDataDefinition.add("anotherCapabilityType", new CapabilityDataDefinition());
+        capabilityByInstanceMap.put(componentInstanceId, mapListCapabilityDataDefinition);
+        doReturn(capabilityByInstanceMap).when(calculatedCapabilityVertex).getJson();
+        actualException = assertThrows(OperationException.class, () ->
+            operation.updateComponentInstanceCapabilities(COMPONENT_ID, "componentInstanceId", capabilityDataDefinition));
+        assertEquals(ActionStatus.CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, actualException.getActionStatus());
+        assertEquals(actualException.getParams().length, 3);
+        assertEquals(capabilityDataDefinition.getName(), actualException.getParams()[0]);
+        assertEquals(capabilityDataDefinition.getOwnerName(), actualException.getParams()[1]);
+        assertEquals(COMPONENT_ID, actualException.getParams()[2]);
+    }
+
+    @Test
+    void updateComponentInstanceCapabilitiesTest_capabilityFindError() {
+        final GraphVertex componentVertex = Mockito.mock(GraphVertex.class);
+        when(componentVertex.getUniqueId()).thenReturn(COMPONENT_ID);
+        when(janusGraphDao.getVertexById(COMPONENT_ID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(componentVertex));
+        when(janusGraphDao.getChildVertex(componentVertex, EdgeLabelEnum.CALCULATED_CAPABILITIES, JsonParseFlagEnum.ParseJson))
+            .thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
+        final OperationException actualException = assertThrows(OperationException.class, () ->
+            operation.updateComponentInstanceCapabilities(COMPONENT_ID, "componentInstanceId", new CapabilityDataDefinition()));
+        assertEquals(ActionStatus.COMPONENT_CAPABILITIES_FIND_ERROR, actualException.getActionStatus());
+        assertEquals(actualException.getParams().length, 1);
+        assertEquals(COMPONENT_ID, actualException.getParams()[0]);
+    }
+
+    @Test
+    void updateComponentInstanceCapabilitiesTest_componentNotFound() {
+        when(janusGraphDao.getVertexById(COMPONENT_ID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        final OperationException actualException = assertThrows(OperationException.class, () ->
+            operation.updateComponentInstanceCapabilities(COMPONENT_ID, "componentInstanceId", new CapabilityDataDefinition()));
+        assertEquals(ActionStatus.COMPONENT_NOT_FOUND, actualException.getActionStatus());
+        assertEquals(actualException.getParams().length, 1);
+        assertEquals(COMPONENT_ID, actualException.getParams()[0]);
+    }
+
+    @Test
+    void updateComponentInstanceCapabilitiesTest_componentFindError() {
+        when(janusGraphDao.getVertexById(COMPONENT_ID, JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
+        final OperationException actualException = assertThrows(OperationException.class, () ->
+            operation.updateComponentInstanceCapabilities(COMPONENT_ID, "componentInstanceId", new CapabilityDataDefinition()));
+        assertEquals(ActionStatus.COMPONENT_FIND_ERROR, actualException.getActionStatus());
+        assertEquals(actualException.getParams().length, 1);
+        assertEquals(COMPONENT_ID, actualException.getParams()[0]);
     }
 
     private ComponentInstance createCompInstance() {

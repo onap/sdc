@@ -45,6 +45,7 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
@@ -105,6 +106,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -115,7 +117,9 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.elements.ErrorLogOptionalData;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.enums.LogLevel;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
@@ -957,11 +961,13 @@ public class NodeTemplateOperation extends BaseOperation {
         MapListCapabilityDataDefinition allCalculatedCap = new MapListCapabilityDataDefinition();
         if (calculatedCapabilities != null) {
             calculatedCapabilities.forEach((key1, value1) -> {
-                Map<String, ListCapabilityDataDefinition> mapByType = value1.getMapToscaDataDefinition();
-                mapByType.forEach((key, value) -> value.getListToscaDataDefinition().forEach(cap -> {
-                    cap.addToPath(componentInstance.getUniqueId());
-                    allCalculatedCap.add(key, cap);
-                }));
+                final Map<String, ListCapabilityDataDefinition> mapByType = value1.getMapToscaDataDefinition();
+                mapByType.forEach((key, value) -> value.getListToscaDataDefinition().stream()
+                    .filter(CapabilityDataDefinition::isExternal)
+                    .forEach(cap -> {
+                        cap.addToPath(componentInstance.getUniqueId());
+                        allCalculatedCap.add(key, cap);
+                    }));
             });
         }
         MapListCapabilityDataDefinition allCaps;
@@ -1068,6 +1074,93 @@ public class NodeTemplateOperation extends BaseOperation {
         return StorageOperationStatus.OK;
     }
 
+    public CapabilityDataDefinition updateComponentInstanceCapabilities(final String componentId, final String componentInstanceUniqueId,
+                                                                        final CapabilityDataDefinition capabilityDataDefinition) {
+
+        final GraphVertex containerVertex = findComponentVertex(componentId).orElse(null);
+        if (containerVertex == null) {
+            throw new OperationException(ActionStatus.COMPONENT_NOT_FOUND, componentId);
+        }
+
+        final Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>> capabilityVertexAndDataPair =
+            findCapabilityVertex(containerVertex).orElse(null);
+        if (capabilityVertexAndDataPair == null) {
+            throw new OperationException(ActionStatus.CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, capabilityDataDefinition.getName(),
+                capabilityDataDefinition.getOwnerName(), componentId);
+        }
+        final GraphVertex capabilitiesVertex = capabilityVertexAndDataPair.getLeft();
+        final Map<String, MapListCapabilityDataDefinition> capabilityDataMap = capabilityVertexAndDataPair.getRight();
+
+        final CapabilityDataDefinition actualCapabilityDataDefinition =
+            findCapability(capabilityDataMap, componentInstanceUniqueId, capabilityDataDefinition.getType(), capabilityDataDefinition.getUniqueId())
+                .orElse(null);
+        if (actualCapabilityDataDefinition == null) {
+            throw new OperationException(ActionStatus.CAPABILITY_OF_INSTANCE_NOT_FOUND_ON_CONTAINER, capabilityDataDefinition.getName(),
+                capabilityDataDefinition.getOwnerName(), componentId);
+        }
+        bindCapabilityDefinition(capabilityDataDefinition, actualCapabilityDataDefinition);
+
+        var storageOperationStatus = updateCapabilityVertex(containerVertex, capabilitiesVertex);
+        if (storageOperationStatus != StorageOperationStatus.OK) {
+            throw new OperationException(ActionStatus.COMPONENT_INSTANCE_CAPABILITY_UPDATE_ERROR, capabilityDataDefinition.getName());
+        }
+        return new CapabilityDataDefinition(actualCapabilityDataDefinition);
+    }
+
+    private void bindCapabilityDefinition(final CapabilityDataDefinition fromCapabilityDefinition,
+                                          final CapabilityDataDefinition capabilityDefinitionToUpdate) {
+        capabilityDefinitionToUpdate.setExternal(fromCapabilityDefinition.isExternal());
+    }
+
+    private Optional<GraphVertex> findComponentVertex(final String componentId) {
+        final Either<GraphVertex, JanusGraphOperationStatus> componentEither = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseAll);
+        if (componentEither.isRight()) {
+            final JanusGraphOperationStatus error = componentEither.right().value();
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_FETCH_CONTAINER_VERTEX_ERROR, componentId, error);
+            if (error == JanusGraphOperationStatus.NOT_FOUND) {
+                return Optional.empty();
+            }
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, NodeTemplateOperation.class.getName(), (ErrorLogOptionalData) null,
+                FAILED_TO_FETCH_CONTAINER_VERTEX_ERROR, componentId, error);
+            throw new OperationException(ActionStatus.COMPONENT_FIND_ERROR, componentId);
+        }
+        return Optional.ofNullable(componentEither.left().value());
+    }
+
+    private Optional<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>> findCapabilityVertex(final GraphVertex containerVertex) {
+
+        final Either<Pair<GraphVertex, Map<String, MapListCapabilityDataDefinition>>, StorageOperationStatus> capabilitiesEither =
+            fetchContainerCalculatedCapability(containerVertex, EdgeLabelEnum.CALCULATED_CAPABILITIES);
+        if (capabilitiesEither.isRight()) {
+            final StorageOperationStatus error = capabilitiesEither.right().value();
+            if (error == StorageOperationStatus.NOT_FOUND) {
+                return Optional.empty();
+            }
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, NodeTemplateOperation.class.getName(), (ErrorLogOptionalData) null,
+                FAILED_TO_FETCH_CONTAINER_VERTEX_ERROR, containerVertex.getUniqueId(), error);
+            throw new OperationException(ActionStatus.COMPONENT_CAPABILITIES_FIND_ERROR, containerVertex.getUniqueId());
+        }
+        return Optional.ofNullable(capabilitiesEither.left().value());
+    }
+
+    private Optional<CapabilityDataDefinition> findCapability(final Map<String, MapListCapabilityDataDefinition> capabilityMap,
+                                                              final String componentInstanceUniqueId,
+                                                              final String capabilityType,
+                                                              final String capabilityUniqueId) {
+        var componentInstanceCapabilitiesMap = capabilityMap.get(componentInstanceUniqueId);
+        if (componentInstanceCapabilitiesMap == null || componentInstanceCapabilitiesMap.isEmpty()) {
+            return Optional.empty();
+        }
+        var listCapabilityDataDefinition = componentInstanceCapabilitiesMap.getMapToscaDataDefinition().get(capabilityType);
+        if (listCapabilityDataDefinition == null || listCapabilityDataDefinition.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return listCapabilityDataDefinition.getListToscaDataDefinition().stream()
+            .filter(e -> e.getUniqueId().equals(capabilityUniqueId))
+            .findFirst();
+    }
+
     public StorageOperationStatus updateComponentInstanceRequirement(String componentId, String componentInstanceUniqueId,
                                                                      RequirementDataDefinition requirementDataDefinition) {
         Either<GraphVertex, JanusGraphOperationStatus> containerVEither = janusGraphDao
@@ -1140,6 +1233,27 @@ public class NodeTemplateOperation extends BaseOperation {
                     error);
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(error);
         }
+        return StorageOperationStatus.OK;
+    }
+
+    private StorageOperationStatus updateCapabilityVertex(final GraphVertex containerVertex, final GraphVertex capabilitiesVertex) {
+        containerVertex.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
+        final Either<GraphVertex, JanusGraphOperationStatus> updateElement = janusGraphDao.updateVertex(containerVertex);
+        if (updateElement.isRight()) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update topology template '{}' with new capabilities. Error '{}'.",
+                containerVertex.getUniqueId(), updateElement.right().value());
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateElement.right().value());
+        }
+
+        final Either<GraphVertex, JanusGraphOperationStatus> statusEither =
+            updateOrCopyOnUpdate(capabilitiesVertex, containerVertex, EdgeLabelEnum.CALCULATED_CAPABILITIES);
+        if (statusEither.isRight()) {
+            JanusGraphOperationStatus error = statusEither.right().value();
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
+                "Failed to update calculated capability for container {} error {}", containerVertex.getUniqueId(), error);
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(error);
+        }
+        CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Updated calculated capability for container '{}'", containerVertex.getUniqueId());
         return StorageOperationStatus.OK;
     }
 

@@ -74,6 +74,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
+import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.ServiceFilterUtils;
@@ -108,6 +109,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
@@ -130,6 +132,8 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.elements.ErrorLogOptionalData;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -153,6 +157,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private static final String FAILED_TO_COPY_COMP_INSTANCE_TO_CANVAS = "Failed to copy the component instance to the canvas";
     private static final String COPY_COMPONENT_INSTANCE_OK = "Copy component instance OK";
     private static final String CANNOT_ATTACH_RESOURCE_INSTANCES_TO_CONTAINER_RESOURCE_OF_TYPE = "Cannot attach resource instances to container resource of type {}";
+    private static final String FAILED_TO_UPDATE_COMPONENT_INSTANCE_CAPABILITY = "Failed to update component instance capability on instance {} in "
+        + "container {}";
     private static final String SERVICE_PROXY = "serviceProxy";
     private static final String ASSOCIATE_RI_TO_RI = "associateRIToRI";
     private ComponentInstanceOperation componentInstanceOperation;
@@ -3235,6 +3241,69 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             // unlock resource
             graphLockOperation.unlockComponent(containerComponentId, componentTypeEnum.getNodeType());
+        }
+    }
+
+    public Either<CapabilityDefinition, ResponseFormat> updateInstanceCapability(final ComponentTypeEnum containerComponentType,
+                                                                                 final String containerComponentId,
+                                                                                 final String componentInstanceUniqueId,
+                                                                                 final CapabilityDefinition capabilityDefinition,
+                                                                                 final String userId) {
+        if (containerComponentType == null) {
+            BeEcompErrorManager.getInstance().logInvalidInputError("updateInstanceCapability", INVALID_COMPONENT_TYPE, ErrorSeverity.INFO);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED));
+        }
+        validateUserExists(userId);
+        final Either<Component, StorageOperationStatus> getResourceResult = toscaOperationFacade.getToscaFullElement(containerComponentId);
+        if (getResourceResult.isRight()) {
+            log.debug(FAILED_TO_RETRIEVE_COMPONENT_COMPONENT_ID, containerComponentId);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND, containerComponentId));
+        }
+        final Component containerComponent = getResourceResult.left().value();
+        if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
+            log.info("Restricted operation for user: {} on component {}", userId, containerComponentId);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
+        }
+        final Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus =
+            getResourceInstanceById(containerComponent, componentInstanceUniqueId);
+        if (resourceInstanceStatus.isRight()) {
+            return Either.right(componentsUtils
+                .getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceUniqueId, containerComponentId));
+        }
+        // lock resource
+        final StorageOperationStatus lockStatus = graphLockOperation.lockComponent(containerComponentId, containerComponentType.getNodeType());
+        if (lockStatus != StorageOperationStatus.OK) {
+            log.debug("Failed to lock component {}", containerComponentId);
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
+        }
+        var success = false;
+        try {
+            final CapabilityDataDefinition updatedCapabilityDefinition = toscaOperationFacade
+                .updateComponentInstanceCapability(containerComponentId, componentInstanceUniqueId, capabilityDefinition);
+            final Either<Component, StorageOperationStatus> updateContainerEither = toscaOperationFacade
+                .updateComponentInstanceMetadataOfTopologyTemplate(containerComponent);
+            if (updateContainerEither.isRight()) {
+                var actionStatus = componentsUtils.convertFromStorageResponse(updateContainerEither.right().value(), containerComponentType);
+                return Either.right(componentsUtils.getResponseFormat(actionStatus));
+            }
+            success = true;
+            return Either.left(new CapabilityDefinition(updatedCapabilityDefinition));
+        } catch (final BusinessException e) {
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, NodeTemplateOperation.class.getName(), (ErrorLogOptionalData) null,
+                FAILED_TO_UPDATE_COMPONENT_INSTANCE_CAPABILITY, componentInstanceUniqueId, containerComponentId);
+            throw e;
+        } catch (final Exception e) {
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, NodeTemplateOperation.class.getName(), (ErrorLogOptionalData) null,
+                FAILED_TO_UPDATE_COMPONENT_INSTANCE_CAPABILITY, componentInstanceUniqueId, containerComponentId);
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+        } finally {
+            if (success) {
+                janusGraphDao.commit();
+            } else {
+                janusGraphDao.rollback();
+            }
+            // unlock resource
+            graphLockOperation.unlockComponent(containerComponentId, containerComponentType.getNodeType());
         }
     }
 

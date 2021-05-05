@@ -307,6 +307,7 @@ public class CapabilityRequirementConverterTest {
         CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
         capabilityDefinition.setName(capabilityName);
         capabilityDefinition.setType("att.Node");
+        capabilityDefinition.setExternal(true);
         List<ComponentInstanceProperty> properties = new ArrayList<>();
         ComponentInstanceProperty prop = new ComponentInstanceProperty();
         prop.setName(PROPERTY_NAME);

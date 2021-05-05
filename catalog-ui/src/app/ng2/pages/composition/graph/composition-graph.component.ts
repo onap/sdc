@@ -25,7 +25,8 @@ import {
     ZoneInstanceAssignmentType,
     ZoneInstanceMode,
     ZoneInstanceType,
-    Requirement
+    Requirement,
+    Capability
 } from 'app/models';
 import { ForwardingPath } from 'app/models/forwarding-path';
 import { CompositionCiServicePathLink } from 'app/models/graph/graph-links/composition-graph-links/composition-ci-service-path-link';
@@ -648,6 +649,14 @@ export class CompositionGraphComponent implements AfterViewInit {
             this._cy.getElementById(uniqueId).data().componentInstance.requirements[requirement.capability]
                 .find(r => r.uniqueId === requirement.uniqueId).external = requirement.external;
         });
+
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED,
+            (uniqueId: string, capability: Capability) => {
+                const graphCapability = this._cy.getElementById(uniqueId).data()
+                    .componentInstance.capabilities[capability.type].find(cap => cap.uniqueId === capability.uniqueId);
+                graphCapability.external = capability.external;
+            }
+        );
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, (componentInstanceId: string) => {
             const nodeToDelete = this._cy.getElementById(componentInstanceId);

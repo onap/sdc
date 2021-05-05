@@ -19,6 +19,8 @@
  */
 package org.openecomp.sdc.exception;
 
+import lombok.Setter;
+
 /**
  * Nested POJOs to express required JSON format of the error
  * <p>
@@ -28,6 +30,7 @@ package org.openecomp.sdc.exception;
  */
 public class ResponseFormat {
 
+    @Setter
     private int status;
     private RequestErrorWrapper requestErrorWrapper;
 
@@ -37,10 +40,6 @@ public class ResponseFormat {
 
     public ResponseFormat(int status) {
         super();
-        this.status = status;
-    }
-
-    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -152,9 +151,6 @@ public class ResponseFormat {
         private ServiceException serviceException;
         @SuppressWarnings("unused")
         private OkResponseInfo okResponseInfo;
-
-        public RequestError() {
-        }
 
         public PolicyException getPolicyException() {
             return policyException;
