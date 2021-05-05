@@ -18,15 +18,25 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable, Inject} from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import {PropertyFEModel, PropertyBEModel, Requirement} from "app/models";
-import {CommonUtils, ComponentType, ServerTypeUrl, ComponentInstanceFactory} from "app/utils";
-import {Component, ComponentInstance, Capability, PropertyModel, ArtifactGroupModel, ArtifactModel, AttributeModel, IFileDownload} from "app/models";
-import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { InputBEModel } from '../../../models/properties-inputs/input-be-model';
-import { HttpHelperService } from '../http-hepler.service';
+import {Inject, Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {
+    ArtifactGroupModel,
+    ArtifactModel,
+    AttributeModel,
+    Capability,
+    Component,
+    ComponentInstance,
+    IFileDownload,
+    PropertyBEModel,
+    PropertyModel,
+    Requirement
+} from "app/models";
+import {CommonUtils, ComponentInstanceFactory, ComponentType, ServerTypeUrl} from "app/utils";
+import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {InputBEModel} from '../../../models/properties-inputs/input-be-model';
+import {HttpHelperService} from '../http-hepler.service';
 import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
 import {OutputBEModel} from "../../../models/attributes-outputs/output-be-model";
 
@@ -158,6 +168,11 @@ export class ComponentInstanceServiceNg2 {
             '/requirementName/' +  requirement.name, requirement);
     }
 
+    updateInstanceCapability(componentTypeUrl: string, componentId: string, componentInstanceId: string, capability: Capability): Observable<Capability> {
+        const url = `${this.baseUrl}${componentTypeUrl}${componentId}/componentInstances/${componentInstanceId}/capability/`;
+        return this.http.put<Capability>(url, capability);
+    }
+
     updateInstanceInputs(component: Component, componentInstanceId: string, inputs: PropertyBEModel[]): Observable<PropertyBEModel[]> {
 
         return this.http.post<Array<PropertyModel>>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstance/' + componentInstanceId + '/inputs', inputs)
@@ -203,7 +218,6 @@ export class ComponentInstanceServiceNg2 {
     }
 
     addInstanceArtifact = (componentType:string, componentId:string, instanceId:string, artifact:ArtifactModel):Observable<ArtifactModel> => {
-        // let deferred = this.$q.defer<ArtifactModel>();
         let headerObj = new HttpHeaders();
         if (artifact.payloadData) {
             headerObj = headerObj.set('Content-MD5', HttpHelperService.getHeaderMd5(artifact));
@@ -217,7 +231,7 @@ export class ComponentInstanceServiceNg2 {
     updateInstanceArtifact = (componentType:string, componentId:string, instanceId:string, artifact:ArtifactModel):Observable<ArtifactModel> => {
         return this.http.post<ArtifactModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/resourceInstance/' + instanceId + '/artifacts/' + artifact.uniqueId, artifact).map((res) => {
             return new ArtifactModel(res);
-        });;
+        });
     };
 
     deleteInstanceArtifact = (componentId:string, componentType:string, instanceId:string, artifactId:string, artifactLabel:string):Observable<ArtifactModel> => {

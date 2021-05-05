@@ -323,9 +323,11 @@ public class CapabilityRequirementConverter {
         Map<String, String[]> toscaCapabilities = new HashMap<>();
         Either<Map<String, String[]>, ToscaError> result = null;
         for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
-            Optional<CapabilityDefinition> failedToAddRequirement = entry.getValue().stream().filter(
-                c -> !addEntry(componentsCache, toscaCapabilities, component, new SubstitutionEntry(c.getName(), c.getParentName(), ""),
-                    c.getPreviousName(), c.getOwnerId(), c.getPath())).findAny();
+            Optional<CapabilityDefinition> failedToAddRequirement = entry.getValue().stream()
+                .filter(CapabilityDataDefinition::isExternal)
+                .filter( c -> !addEntry(componentsCache, toscaCapabilities, component, new SubstitutionEntry(c.getName(), c.getParentName(), "")
+                    , c.getPreviousName(), c.getOwnerId(), c.getPath()))
+                .findAny();
             if (failedToAddRequirement.isPresent()) {
                 logger.debug("Failed to convert capability {} for substitution mappings section of a tosca template of the component {}. ",
                     failedToAddRequirement.get().getName(), component.getName());

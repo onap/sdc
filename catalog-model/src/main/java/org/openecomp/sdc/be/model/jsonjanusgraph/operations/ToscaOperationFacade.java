@@ -112,6 +112,7 @@ import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -2961,6 +2962,12 @@ public class ToscaOperationFacade {
     public StorageOperationStatus updateComponentInstanceRequirement(String containerComponentId, String componentInstanceUniqueId,
                                                                      RequirementDataDefinition requirementDataDefinition) {
         return nodeTemplateOperation.updateComponentInstanceRequirement(containerComponentId, componentInstanceUniqueId, requirementDataDefinition);
+    }
+
+    public CapabilityDataDefinition updateComponentInstanceCapability(final String containerComponentId, final String componentInstanceUniqueId,
+                                                                      final CapabilityDataDefinition capabilityDataDefinition) {
+
+        return nodeTemplateOperation.updateComponentInstanceCapabilities(containerComponentId, componentInstanceUniqueId, capabilityDataDefinition);
     }
 
     public StorageOperationStatus updateComponentInstanceInterfaces(Component containerComponent, String componentInstanceUniqueId) {

@@ -62,6 +62,7 @@ export class Capability implements RequirementCapabilityModel {
     description: string;
     validSourceTypes: string[];
     properties: PropertyModel[];
+    external: boolean;
 
     // custom
     selected: boolean;
@@ -84,6 +85,7 @@ export class Capability implements RequirementCapabilityModel {
             this.description = capability.description;
             this.validSourceTypes = capability.validSourceTypes;
             this.selected = capability.selected;
+            this.external = capability.external;
             this.initFilterTerm();
 
         }

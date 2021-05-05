@@ -2266,3 +2266,31 @@ errors:
         message: "Error: Invalid content. Type name is not defined for policy %1",
         messageId: "SVC4802"
     }
+    #---------SVC4140------------------------------
+    # %1 - Component uid
+    COMPONENT_FIND_ERROR: {
+        code: 500,
+        message: "An unexpected error occurred while retrieving the component '%1'.",
+        messageId: "SVC4140"
+    }
+    #---------SVC4141------------------------------
+    # %1 - Component uid
+    COMPONENT_CAPABILITIES_FIND_ERROR: {
+        code: 500,
+        message: "An unexpected error occurred while retrieving the component '%1' capabilities.",
+        messageId: "SVC4141"
+    }
+    #---------SVC4142------------------------------
+    # %1 - Component uid or name
+    COMPONENT_NOT_FOUND: {
+        code: 404,
+        message: "Component '%1' was not found.",
+        messageId: "SVC4142"
+    }
+    #---------SVC4143------------------------------
+    # %1 - Capability name
+    COMPONENT_INSTANCE_CAPABILITY_UPDATE_ERROR: {
+        code: 500,
+        message: "An unexpected error occurred while updating the capability '%1'.",
+        messageId: "SVC4143"
+    }
