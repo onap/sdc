@@ -5,14 +5,14 @@
             <!-- ATTRIBUTE NAME - MANDATORY -->
             <div>
                 <sdc-input
-                        #attributeName
-                        label="Name"
-                        [required]="true"
-                        [(value)]="attributeToEdit.name"
-                        [disabled]="isEdit"
-                        name="attributeName"
-                        testId="attributeName"
-                        [maxLength]="255">
+                    #attributeName
+                    label="Name"
+                    [required]="true"
+                    [(value)]="attributeToEdit.name"
+                    [disabled]="isEdit"
+                    name="attributeName"
+                    testId="attributeName"
+                    [maxLength]="255">
                 </sdc-input>
                 <sdc-validation [validateElement]="attributeName" (validityChanged)="onValidityChange($event, 'name')">
                     <sdc-required-validator message="{{'VALIDATION_ERROR_REQUIRED' | translate : { 'field' : 'Name' } }}"></sdc-required-validator>
@@ -38,6 +38,7 @@
                 <!-- ATTRIBUTE TYPE - MANDATORY -->
                 <sdc-dropdown #attributeType [disabled]="false" label="Type" [required]="true"
                               [selectedOption]="toDropDownOption(this.attributeToEdit.type)" placeHolder="Choose Type"
+                              testId="attributeType"
                               [options]="types" (changed)="onTypeSelected($event)">
                     <sdc-validation [validateElement]="attributeType" (validityChanged)="onValidityChange($event, 'type')">
                         <sdc-required-validator message="'required field'"></sdc-required-validator>
@@ -48,15 +49,15 @@
             <!-- ATTRIBUTE DEFAULT VALUE TEXT - OPTIONAL -->
             <div *ngIf="attributeToEdit.type != 'boolean'">
                 <sdc-input
-                        #_default
-                        [required]="false"
-                        label="Default Value"
-                        [(value)]="attributeToEdit._default"
-                        [disabled]="false"
-                        name="_default"
-                        testId="defaultValue"
-                        [maxLength]="255"
-                        (valueChange)="defaultValueChanged()">
+                    #_default
+                    [required]="false"
+                    label="Default Value"
+                    [(value)]="attributeToEdit._default"
+                    [disabled]="false"
+                    name="_default"
+                    testId="defaultValue"
+                    [maxLength]="255"
+                    (valueChange)="defaultValueChanged()">
                 </sdc-input>
 
                 <sdc-validation [validateElement]="_default" (validityChanged)="onValidityChange($event, 'default')">

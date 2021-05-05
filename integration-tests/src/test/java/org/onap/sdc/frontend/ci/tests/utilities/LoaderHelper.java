@@ -79,7 +79,8 @@ public class LoaderHelper extends AbstractPageObject {
     @AllArgsConstructor
     @Getter
     public enum XpathSelector {
-        LOADER_WITH_LOADER_BACKGROUND("//*[contains(@class, 'sdc-loader-background')]");
+        LOADER_WITH_LOADER_BACKGROUND("//*[contains(@class, 'sdc-loader-background')]"),
+        SDC_LOADER_LARGE("//div[@data-tests-id='loader']");
 
         private final String xpath;
     }

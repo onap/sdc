@@ -19,11 +19,11 @@
 package org.onap.sdc.frontend.ci.tests.execute.sanity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -32,6 +32,7 @@ import com.aventstack.extentreports.Status;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.collections.MapUtils;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
@@ -46,7 +47,10 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
+import org.onap.sdc.frontend.ci.tests.pages.AttributeModal;
+import org.onap.sdc.frontend.ci.tests.pages.AttributesPage;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
+import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent.CompositionDetailTabName;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInformationTab;
@@ -69,6 +73,7 @@ public class ImportVfcUiTest extends SetupCDTest {
     private HomePage homePage;
     private ResourceCreateData vfcCreateData;
     private ResourceCreateData vfCreateData;
+    private ComponentInstance createdComponentInstance;
 
     @BeforeClass
     public void beforeClass() {
@@ -97,13 +102,15 @@ public class ImportVfcUiTest extends SetupCDTest {
         // TC - Import hierarchy of VFCs
         fileName = "org.openecomp.resource.VFC-child.yml";
         createVfcFlow = createVFC(fileName);
-        componentPage = createVfcFlow.getLandedPage()
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage.isLoaded();
+
+        componentPage = manageAttributes(componentPage);
         componentPage.isLoaded();
         componentPage.certifyComponent();
         componentPage.isLoaded();
 
-        yamlObject = downloadToscaArtifact(createVfcFlow.getLandedPage().get());
+        yamlObject = downloadToscaArtifact(componentPage);
         checkMetadata(yamlObject, vfcCreateData);
         checkNodeTypes(yamlObject);
         homePage.getTopNavComponent().clickOnHome();
@@ -126,6 +133,32 @@ public class ImportVfcUiTest extends SetupCDTest {
 
     }
 
+    private ComponentPage manageAttributes(final ComponentPage componentPage) {
+        final AttributesPage attributesPage = componentPage.goToAttributes();
+        attributesPage.isLoaded();
+
+        assertTrue(attributesPage.isAttributePresent("test_1"));
+        assertTrue(attributesPage.isAttributePresent("test_2"));
+        assertTrue(attributesPage.isAttributePresent("test_3"));
+        assertTrue(attributesPage.isAttributePresent("test_4"));
+
+        attributesPage.deleteAttribute("test_2");
+        assertFalse(attributesPage.isAttributePresent("test_2"));
+        ExtentTestActions.takeScreenshot(Status.INFO, "attributesPage.deleteAttribute", "Attribute 'test_2' successfully deleted");
+        attributesPage.addAttribute(new AttributeModal.AttributeData("test_9", "Additional attribute added from UI", "string", "one More Attribute"));
+        attributesPage.isLoaded();
+        assertTrue(attributesPage.isAttributePresent("test_9"));
+        ExtentTestActions.takeScreenshot(Status.INFO, "attributesPage.addAttribute", "Additional Attribute 'test_9' successfully added");
+
+        attributesPage.editAttribute(new AttributeModal.AttributeData("test_9", "Additional attribute added from UI".toUpperCase(), "string",
+            "one More Attribute".toUpperCase()));
+        attributesPage.isLoaded();
+        assertTrue(attributesPage.isAttributePresent("test_9"));
+        ExtentTestActions.takeScreenshot(Status.INFO, "attributesPage.editAttribute", "Additional Attribute 'test_9' successfully altered");
+
+        return attributesPage.clickOnGeneralMenuItem(ResourceCreatePage.class);
+    }
+
     private CompositionPage addInterfaceOperations(final ComponentPage componentPage) {
         final AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToCompositionFlow(componentPage);
         final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
@@ -133,7 +166,7 @@ public class ImportVfcUiTest extends SetupCDTest {
         final CompositionDetailSideBarComponent detailSideBar = compositionPage.getDetailSideBar();
         detailSideBar.isLoaded();
 
-        final ComponentInstance createdComponentInstance = addNodeToCompositionFlow.getCreatedComponentInstance()
+        createdComponentInstance = addNodeToCompositionFlow.getCreatedComponentInstance()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ComponentInstance"));
 
         compositionPage.selectNode(createdComponentInstance.getName());
@@ -288,32 +321,38 @@ public class ImportVfcUiTest extends SetupCDTest {
         final Map<String, Object> mapEntry = getMapEntry(map, "node_types");
         final Map<String, Object> nodeTypes = getMapEntry(mapEntry, mapEntry.keySet().iterator().next());
 
-        assertNotNull(nodeTypes);
+        assertFalse(MapUtils.isEmpty(nodeTypes));
         assertEquals("aDescription", nodeTypes.get("description"));
 
         final Map<String, Object> properties = getMapEntry(nodeTypes, "properties");
-        assertThat(properties, not(anEmptyMap()));
+        assertFalse(MapUtils.isEmpty(properties));
 
         final Map<String, Object> attributes = getMapEntry(nodeTypes, "attributes");
-        assertThat(attributes, not(anEmptyMap()));
+        assertFalse(MapUtils.isEmpty(attributes));
 
         final Map<String, Object> interfaces = getMapEntry(nodeTypes, "interfaces");
-        assertThat(interfaces, not(anEmptyMap()));
+        assertFalse(MapUtils.isEmpty(interfaces));
 
     }
 
     private void checkTopologyTemplate(final Map<String, Object> map) {
-        final Map<String, Object> mapEntry = getMapEntry(map, "topology_template");
-        assertNotNull(mapEntry);
+        final Map<String, Object> topologyTemplate = getMapEntry(map, "topology_template");
+        assertNotNull(topologyTemplate);
 
-        final Map<String, Object> properties = getMapEntry(mapEntry, "inputs");
-        assertThat(properties, not(anEmptyMap()));
+        final Map<String, Object> inputs = getMapEntry(topologyTemplate, "inputs");
+        assertFalse(MapUtils.isEmpty(inputs));
 
-        final Map<String, Object> attributes = getMapEntry(mapEntry, "node_templates");
-        assertThat(attributes, not(anEmptyMap()));
+        final Map<String, Object> nodeTemplates = getMapEntry(topologyTemplate, "node_templates");
+        assertFalse(MapUtils.isEmpty(nodeTemplates));
 
-        final Map<String, Object> interfaces = getMapEntry(mapEntry, "substitution_mappings");
-        assertThat(interfaces, not(anEmptyMap()));
+        final Map<String, Object> attributes = getMapEntry((Map<String, Object>) nodeTemplates.get(createdComponentInstance.getName()), "attributes");
+        assertFalse(MapUtils.isEmpty(attributes));
+        assertEquals(4, attributes.keySet().stream()
+            .filter(s -> (s.contains("test_1") || s.contains("test_3") || s.contains("test_4") || s.contains("test_9")) && !s.contains("test_2"))
+            .count());
+
+        final Map<String, Object> substitutionMappings = getMapEntry(topologyTemplate, "substitution_mappings");
+        assertFalse(MapUtils.isEmpty(substitutionMappings));
 
     }
 
