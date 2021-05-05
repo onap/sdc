@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
@@ -35,6 +37,10 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
     public static final String MIN_OCCURRENCES = "0";
     public static final String MAX_OCCURRENCES = "UNBOUNDED";
 
+    @Getter
+    @Setter
+    private boolean external = false;
+
     /**
      * The default constructor initializing limits of the occurrences
      */
@@ -45,11 +51,11 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
     }
 
     /**
-     * Deep copy constructor
+     * Deep copy constructor.
      *
-     * @param other
+     * @param other the capability data definition to copy
      */
-    public CapabilityDataDefinition(CapabilityDataDefinition other) {
+    public CapabilityDataDefinition(final CapabilityDataDefinition other) {
         this.setUniqueId(other.getUniqueId());
         this.setType(other.getType());
         this.setDescription(other.getDescription());
@@ -84,6 +90,7 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
 
         this.setSource(other.getSource());
         this.setOwnerType(other.getOwnerType());
+        this.setExternal(other.isExternal());
     }
 
     public CapabilityDataDefinition(CapabilityTypeDataDefinition other) {
@@ -422,11 +429,11 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         String maxOccurrences = this.getMaxOccurrences();
         String source = this.getSource();
 
-
         return "CapabilityDefinition [uniqueId=" + uniqueId + ", description=" + description + ", name=" + name
-                + ", type=" + type + ", validSourceTypes=" + validSourceTypes + ", capabilitySources="
-                + capabilitySources + ", ownerId=" + ownerId + ", ownerName=" + ownerName
-                + ", minOccurrences=" + minOccurrences + ", maxOccurrences=" + maxOccurrences + ", path=" + path + ", source=" + source + "]";
+            + ", type=" + type + ", validSourceTypes=" + validSourceTypes + ", capabilitySources="
+            + capabilitySources + ", ownerId=" + ownerId + ", ownerName=" + ownerName
+            + ", minOccurrences=" + minOccurrences + ", maxOccurrences=" + maxOccurrences + ", path=" + path + ", source=" + source
+            + ", external=" + external + "]";
     }
 
     public enum OwnerType {

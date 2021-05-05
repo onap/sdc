@@ -23,10 +23,12 @@ package org.openecomp.sdc.be.components.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -79,12 +81,12 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -111,6 +113,7 @@ import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
@@ -201,7 +204,7 @@ class ComponentInstanceBusinessLogicTest {
 
     @BeforeEach
     void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         stubMethods();
         createComponents();
     }
@@ -1948,6 +1951,216 @@ class ComponentInstanceBusinessLogicTest {
 
         });
 
+    }
+
+    @Test
+    void updateInstanceCapabilitySuccessTest() {
+        var containerComponentId = "containerComponentId";
+        var componentInstanceUniqueId = "componentInstanceUniqueId";
+        var capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setUniqueId("uniqueId");
+
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(USER_ID);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        var componentInstance = new ComponentInstance();
+        componentInstance.setUniqueId(componentInstanceUniqueId);
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        when(toscaOperationFacade.getToscaFullElement(containerComponentId))
+            .thenReturn(Either.left(component));
+        when(toscaOperationFacade.updateComponentInstanceCapability(containerComponentId, componentInstanceUniqueId, capabilityDefinition))
+            .thenReturn(capabilityDefinition);
+        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(component))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(containerComponentId, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+
+        final Either<CapabilityDefinition, ResponseFormat> resultEither = componentInstanceBusinessLogic
+            .updateInstanceCapability(ComponentTypeEnum.SERVICE, containerComponentId, componentInstanceUniqueId, capabilityDefinition, USER_ID);
+        assertTrue(resultEither.isLeft());
+        final CapabilityDefinition actualCapabilityDefinition = resultEither.left().value();
+        assertNotEquals(capabilityDefinition, actualCapabilityDefinition);
+        assertEquals(capabilityDefinition.getUniqueId(), actualCapabilityDefinition.getUniqueId());
+    }
+
+    @Test
+    void updateInstanceCapabilityNoContainerComponentTypeTest() {
+        var responseFormat = new ResponseFormat();
+        when(componentsUtils.getResponseFormat(ActionStatus.NOT_ALLOWED)).thenReturn(responseFormat);
+        final Either<CapabilityDefinition, ResponseFormat> resultEither = componentInstanceBusinessLogic
+            .updateInstanceCapability(null, "containerComponentId", "componentInstanceUniqueId", new CapabilityDefinition(), USER_ID);
+        assertTrue(resultEither.isRight(), "Either return should be right");
+        final ResponseFormat actualResponseFormat = resultEither.right().value();
+        assertEquals(responseFormat, actualResponseFormat);
+    }
+
+    @Test
+    void updateInstanceCapabilityContainerComponentNotFoundTest() {
+        var containerComponentId = "containerComponentId";
+        when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.right(null));
+        var responseFormat = new ResponseFormat();
+        when(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_NOT_FOUND, containerComponentId)).thenReturn(responseFormat);
+        final Either<CapabilityDefinition, ResponseFormat> resultEither = componentInstanceBusinessLogic
+            .updateInstanceCapability(ComponentTypeEnum.SERVICE, "containerComponentId", "componentInstanceUniqueId", new CapabilityDefinition(), USER_ID);
+        assertTrue(resultEither.isRight(), "Either return should be right");
+        final ResponseFormat actualResponseFormat = resultEither.right().value();
+        assertEquals(responseFormat, actualResponseFormat);
+    }
+
+    @Test
+    void updateInstanceCapabilityCannotWorkOnComponentTest() {
+        var containerComponentId = "containerComponentId";
+        var componentInstanceUniqueId = "componentInstanceUniqueId";
+
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId("anotherUse");
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        var expectedResponseFormat = new ResponseFormat();
+
+        when(toscaOperationFacade.getToscaFullElement(containerComponentId))
+            .thenReturn(Either.left(component));
+        when(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION))
+            .thenReturn(expectedResponseFormat);
+
+        final Either<CapabilityDefinition, ResponseFormat> resultEither = componentInstanceBusinessLogic
+            .updateInstanceCapability(ComponentTypeEnum.SERVICE, containerComponentId, componentInstanceUniqueId, new CapabilityDefinition(), USER_ID);
+        assertTrue(resultEither.isRight(), "Either return should be right");
+        final ResponseFormat actualResponseFormat = resultEither.right().value();
+        assertEquals(expectedResponseFormat, actualResponseFormat);
+    }
+
+    @Test
+    void updateInstanceCapabilityResourceInstanceNotFoundTest() {
+        var containerComponentId = "containerComponentId";
+        var componentInstanceUniqueId = "componentInstanceUniqueId";
+
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(USER_ID);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        var expectedResponseFormat = new ResponseFormat();
+
+        when(toscaOperationFacade.getToscaFullElement(containerComponentId))
+            .thenReturn(Either.left(component));
+        when(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_INSTANCE_NOT_FOUND_ON_SERVICE, componentInstanceUniqueId, containerComponentId))
+            .thenReturn(expectedResponseFormat);
+
+        final Either<CapabilityDefinition, ResponseFormat> resultEither = componentInstanceBusinessLogic
+            .updateInstanceCapability(ComponentTypeEnum.SERVICE, containerComponentId, componentInstanceUniqueId, new CapabilityDefinition(), USER_ID);
+        assertTrue(resultEither.isRight(), "Either return should be right");
+        final ResponseFormat actualResponseFormat = resultEither.right().value();
+        assertEquals(expectedResponseFormat, actualResponseFormat);
+    }
+
+    @Test
+    void updateInstanceCapabilityUpdateMetadataFailTest() {
+        var containerComponentId = "containerComponentId";
+        var componentInstanceUniqueId = "componentInstanceUniqueId";
+        var capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setUniqueId("uniqueId");
+
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(USER_ID);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        var componentInstance = new ComponentInstance();
+        componentInstance.setUniqueId(componentInstanceUniqueId);
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        var expectedResponseFormat = new ResponseFormat();
+
+        when(toscaOperationFacade.getToscaFullElement(containerComponentId))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(containerComponentId, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceCapability(containerComponentId, componentInstanceUniqueId, capabilityDefinition))
+            .thenReturn(capabilityDefinition);
+        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(component))
+            .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
+        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.GENERAL_ERROR, ComponentTypeEnum.SERVICE))
+            .thenReturn(ActionStatus.GENERAL_ERROR);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR))
+            .thenReturn(expectedResponseFormat);
+
+        final Either<CapabilityDefinition, ResponseFormat> resultEither = componentInstanceBusinessLogic
+            .updateInstanceCapability(ComponentTypeEnum.SERVICE, containerComponentId, componentInstanceUniqueId, capabilityDefinition, USER_ID);
+        assertTrue(resultEither.isRight(), "Either return should be right");
+        final ResponseFormat actualResponseFormat = resultEither.right().value();
+        assertEquals(expectedResponseFormat, actualResponseFormat);
+    }
+
+    @Test
+    void updateInstanceCapabilityBusinessExceptionHandlingTest() {
+        var containerComponentId = "containerComponentId";
+        var componentInstanceUniqueId = "componentInstanceUniqueId";
+        var capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setUniqueId("uniqueId");
+
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(USER_ID);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        var componentInstance = new ComponentInstance();
+        componentInstance.setUniqueId(componentInstanceUniqueId);
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+
+        when(toscaOperationFacade.getToscaFullElement(containerComponentId))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(containerComponentId, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceCapability(containerComponentId, componentInstanceUniqueId, capabilityDefinition))
+            .thenThrow(new OperationException(ActionStatus.GENERAL_ERROR));
+
+        final BusinessException businessException = assertThrows(BusinessException.class, () -> {
+            componentInstanceBusinessLogic
+                .updateInstanceCapability(ComponentTypeEnum.SERVICE, containerComponentId, componentInstanceUniqueId, capabilityDefinition, USER_ID);
+        });
+        assertTrue(businessException instanceof OperationException);
+        assertEquals(ActionStatus.GENERAL_ERROR, ((OperationException) businessException).getActionStatus());
+    }
+
+    @Test
+    void updateInstanceCapabilityUnknownExceptionHandlingTest() {
+        var containerComponentId = "containerComponentId";
+        var componentInstanceUniqueId = "componentInstanceUniqueId";
+        var capabilityDefinition = new CapabilityDefinition();
+        capabilityDefinition.setUniqueId("uniqueId");
+
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(USER_ID);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        var componentInstance = new ComponentInstance();
+        componentInstance.setUniqueId(componentInstanceUniqueId);
+        component.setComponentInstances(Collections.singletonList(componentInstance));
+
+        var expectedResponseFormat = new ResponseFormat();
+
+        when(toscaOperationFacade.getToscaFullElement(containerComponentId))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(containerComponentId, NodeTypeEnum.Service))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceCapability(containerComponentId, componentInstanceUniqueId, capabilityDefinition))
+            .thenThrow(new RuntimeException());
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR))
+            .thenReturn(expectedResponseFormat);
+
+        final Exception exception = assertThrows(BusinessException.class, () ->
+            componentInstanceBusinessLogic
+                .updateInstanceCapability(ComponentTypeEnum.SERVICE, containerComponentId, componentInstanceUniqueId, capabilityDefinition, USER_ID));
+        assertTrue(exception instanceof ByResponseFormatComponentException);
+        final ByResponseFormatComponentException actualException = (ByResponseFormatComponentException) exception;
+        assertEquals(expectedResponseFormat, actualException.getResponseFormat());
     }
 
     private ComponentInstance createServiceSubstitutionComponentInstance() {

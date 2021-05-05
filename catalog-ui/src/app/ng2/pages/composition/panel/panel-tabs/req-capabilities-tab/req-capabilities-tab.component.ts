@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { Component as TopologyTemplate, Capability, Requirement, CapabilitiesGroup, RequirementsGroup, ComponentInstance, FullComponentInstance } from "app/models";
+import { Component as TopologyTemplate, Capability, Requirement, CapabilitiesGroup, RequirementsGroup, FullComponentInstance } from "app/models";
 import { Store } from "@ngxs/store";
 import { GRAPH_EVENTS } from "app/utils";
 import { ComponentGenericResponse } from "app/ng2/services/responses/component-generic-response";
@@ -8,6 +8,7 @@ import { EventListenerService } from "app/services";
 import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
 import { CompositionService } from "app/ng2/pages/composition/composition.service";
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
+import {ComponentInstanceServiceNg2} from "../../../../../services/component-instance-services/component-instance.service";
 
 
 export class InstanceCapabilitiesMap {
@@ -42,7 +43,8 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
         private topologyTemplateService:TopologyTemplateService,
         private workspaceService: WorkspaceService,
         private compositionService: CompositionService,
-        private eventListenerService:EventListenerService) { }
+        private eventListenerService:EventListenerService,
+        private componentInstanceService: ComponentInstanceServiceNg2) { }
 
     ngOnInit(): void {
 
@@ -112,13 +114,19 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
     private initInstancesMap = ():void => {
 
         this.capabilitiesInstancesMap = new InstanceCapabilitiesMap();
-        _.forEach(this.capabilities, (capability:Capability) => {
-            if (this.capabilitiesInstancesMap[capability.ownerName]) {
-                this.capabilitiesInstancesMap[capability.ownerName] = this.capabilitiesInstancesMap[capability.ownerName].concat(capability);
-            } else {
-                this.capabilitiesInstancesMap[capability.ownerName] = new Array<Capability>(capability);
+        let capabilityList: Array<Capability> = this.capabilities;
+        if (capabilityList) {
+            if (!this.isComponentInstanceSelected) {
+                capabilityList = capabilityList.filter(value => value.external);
             }
-        });
+            capabilityList.forEach(capability => {
+                if (this.capabilitiesInstancesMap[capability.ownerName]) {
+                    this.capabilitiesInstancesMap[capability.ownerName] = this.capabilitiesInstancesMap[capability.ownerName].concat(capability);
+                } else {
+                    this.capabilitiesInstancesMap[capability.ownerName] = new Array<Capability>(capability);
+                }
+            });
+        }
 
         this.requirementsInstancesMap = new InstanceRequirementsMap();
         _.forEach(this.requirements, (requirement:Requirement) => {
@@ -161,7 +169,21 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
     }
 
 
-
-
+    onMarkCapabilityAsExternal(capability: Capability) {
+        this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
+        capability.external = !capability.external;
+        const componentId = this.workspaceService.metadata.uniqueId;
+        const componentInstanceId = this.component.uniqueId;
+        this.componentInstanceService
+        .updateInstanceCapability(this.workspaceService.metadata.getTypeUrl(), componentId, componentInstanceId, capability)
+        .subscribe(() => {
+            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED, componentInstanceId, capability);
+            this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+        } , (error) => {
+            console.error("An error has occurred while setting capability '" + capability.name + "' external", error);
+            capability.external = !capability.external;
+            this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+        });
+    }
 }
 

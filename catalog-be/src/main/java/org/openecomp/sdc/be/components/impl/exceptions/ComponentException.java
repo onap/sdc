@@ -22,10 +22,11 @@ package org.openecomp.sdc.be.components.impl.exceptions;
 import javax.annotation.Nullable;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-public class ComponentException extends RuntimeException {
+public class ComponentException extends BusinessException {
 
     /**
      * This class will be initialized either by action status and params or by ResponseFormat

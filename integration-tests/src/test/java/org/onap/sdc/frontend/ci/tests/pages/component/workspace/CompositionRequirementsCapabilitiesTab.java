@@ -67,11 +67,11 @@ public class CompositionRequirementsCapabilitiesTab extends AbstractPageObject {
     }
 
     private void loadRequirements() {
-        final List<WebElement> webElements = waitForAllElementsVisibility(By.xpath("//checkbox[@data-tests-id]"));
+        final List<WebElement> webElements = waitForAllElementsVisibility(By.xpath(XpathSelector.REQUIREMENT_EXTERNAL_CHECKBOX.getXPath()));
         checkboxExternalRequirementMap = new HashMap<>();
         webElements.forEach(webElement -> {
             final String dataTestsId = webElement.getAttribute("data-tests-id");
-            checkboxExternalRequirementMap.put(dataTestsId.substring("checkbox-mark-as-external-".length()), webElement);
+            checkboxExternalRequirementMap.put(dataTestsId.substring("checkbox-external-req-".length()), webElement);
         });
     }
 
@@ -94,7 +94,8 @@ public class CompositionRequirementsCapabilitiesTab extends AbstractPageObject {
     private enum XpathSelector {
         REQ_CAPABILITIES_TAB("//req-capabilities-tab"),
         CAPABILITIES_ACCORDION("//div[@data-tests-id='Capabilities-accordion']"),
-        REQUIREMENTS_ACCORDION("//div[@data-tests-id='Requirements-accordion']");
+        REQUIREMENTS_ACCORDION("//div[@data-tests-id='Requirements-accordion']"),
+        REQUIREMENT_EXTERNAL_CHECKBOX("//checkbox[starts-with(@data-tests-id, 'checkbox-external-req-')]");
 
         private final String xPath;
 

@@ -1046,7 +1046,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         try {
             log.debug(START_HANDLE_REQUEST_OF, url);
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
-            if (componentInstanceBusinessLogic == null) {
+            if (componentTypeEnum == null) {
                 log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
             }
