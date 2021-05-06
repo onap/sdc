@@ -74,6 +74,7 @@ import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.RelationshipWizardInterfaceOperation.InterfaceOperationsData;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
@@ -100,7 +101,13 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     private AddNodeToCompositionFlow addNodeToCompositionFlow;
     private ComponentPage componentPage;
     private Map<String, String> propertiesToBeAddedMap;
+    private ResourceCreatePage resourceCreatePage;
     private final List<ServiceDependencyProperty> substitutionFilterProperties = new ArrayList<>();
+    private final String interfaceName = "Standard";
+    private final String interfaceOperationName = "create";
+    private final String implementationName = "IntegrationTest";
+    private final String inputName = "InputName1";
+    private final String inputValue = "InputValue1";
 
     @BeforeMethod
     public void init() {
@@ -124,15 +131,11 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     @Test(dependsOnMethods = "importAndCertifyVfc")
-    public void createBaseService() throws UnzipException {
+    public void createBaseService() {
         final CreateVfFlow createVfFlow = createVF();
-        addNodeToCompositionFlow = addNodeToCompositionAndCreateRelationship(createVfFlow);
-        final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
-        compositionPage.isLoaded();
-        componentPage = compositionPage.goToGeneral();
-        componentPage.isLoaded();
-        downloadAndVerifyCsarPackageAfterBaseServiceCreation(componentPage);
+       resourceCreatePage = createVfFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ResourceCreatePage"));
+        resourceCreatePage.isLoaded();
     }
 
     @Test(dependsOnMethods = "createBaseService")
@@ -145,6 +148,20 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     @Test(dependsOnMethods = "createBaseService")
+    public void addRelationshipTemplate() throws UnzipException {
+        homePage.isLoaded();
+        resourceCreatePage = (ResourceCreatePage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        resourceCreatePage.isLoaded();
+        addNodeToCompositionFlow = addNodeToCompositionAndCreateRelationship();
+        final CompositionPage compositionPage = addNodeToCompositionFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return CompositionPage"));
+        compositionPage.isLoaded();
+        componentPage = compositionPage.goToGeneral();
+        componentPage.isLoaded();
+        downloadAndVerifyCsarPackage(componentPage);
+    }
+
+    @Test(dependsOnMethods = "addRelationshipTemplate")
     public void addOutputsToVF_test() throws UnzipException, IOException {
         homePage.isLoaded();
         final ComponentPage resourceCreatePage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
@@ -190,7 +207,6 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         checkMetadata(yamlObject, vfResourceCreateData);
         checkTopologyTemplate(yamlObject);
     }
-
 
     @Test(dependsOnMethods = "addComponentProperty")
     public void createSubstitutionFilter() throws Exception {
@@ -340,10 +356,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         return vfcCreateData;
     }
 
-    private AddNodeToCompositionFlow addNodeToCompositionAndCreateRelationship(final CreateVfFlow createVfFlow) {
-        final ResourceCreatePage resourceCreatePage = createVfFlow.getLandedPage()
-            .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a ResourceCreatePage"));
-        resourceCreatePage.isLoaded();
+    private AddNodeToCompositionFlow addNodeToCompositionAndCreateRelationship() {
         assertThat(vfcs, hasSize(2));
         final ComponentData parentComponent = new ComponentData();
         parentComponent.setName(vfResourceCreateData.getName());
@@ -355,7 +368,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         networkFunction.setName(vfcs.get(0).getName());
         networkFunction.setVersion("1.0");
         networkFunction.setComponentType(ComponentType.RESOURCE);
-        CompositionPage compositionPage = resourceCreatePage.goToComposition();
+        final CompositionPage compositionPage = resourceCreatePage.goToComposition();
         compositionPage.isLoaded();
         AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToComposition(parentComponent, networkFunction, compositionPage);
         networkFunctionInstance = addNodeToCompositionFlow.getCreatedComponentInstance()
@@ -401,7 +414,8 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
                                     final String fromCapability, final String toComponentInstanceName, final String toRequirement) {
         final RelationshipInformation relationshipInformation =
             new RelationshipInformation(fromComponentInstanceName, fromCapability, toComponentInstanceName, toRequirement);
-        CreateRelationshipFlow createRelationshipFlow = new CreateRelationshipFlow(webDriver, relationshipInformation);
+        final CreateRelationshipFlow createRelationshipFlow = new CreateRelationshipFlow(webDriver, relationshipInformation,
+            new InterfaceOperationsData(interfaceName, interfaceOperationName, implementationName, inputName, inputValue));
         createRelationshipFlow.run(compositionPage).orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a CompositionPage instance"));
         ExtentTestActions.takeScreenshot(Status.INFO, "relationship",
             String.format("Relationship from networkFunctionInstance '%s' to networkServiceInstanceResource '%s' was created",
@@ -433,7 +447,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
      * @param componentPage the component page
      * @throws UnzipException
      */
-    private void downloadAndVerifyCsarPackageAfterBaseServiceCreation(final ComponentPage componentPage) throws UnzipException {
+    private void downloadAndVerifyCsarPackage(final ComponentPage componentPage) throws UnzipException {
         checkCsarPackage(downloadCsarPackage(componentPage));
     }
 
@@ -537,6 +551,28 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
             .anyMatch(vfc -> s.startsWith(vfc.getName()))).collect(Collectors.toList());
         assertThat(String.format("'%s' should contain the node type definitions for the added VFCs '%s'", nodeTemplatesTosca, vfcs),
             nodeTemplateFound, hasSize(vfcs.size()));
+        verifyRelationshipTemplate(topologyTemplateTosca, generatedTemplateFile);
+    }
+
+    private void verifyRelationshipTemplate(final Map<String, Object> topologyTemplateToscaMap, final String generatedTemplateFile) {
+        final Map<String, Object> relationshipTemplateMap = getMapEntry(topologyTemplateToscaMap, "relationship_templates");
+        assertThat(String.format("'%s' should contain a topology_template entry", generatedTemplateFile), relationshipTemplateMap,
+            is(notNullValue()));
+        final String result = Arrays.asList(relationshipTemplateMap.values()).toString();
+        assertThat(String.format("'%s' should contain a DependsOn relationship", relationshipTemplateMap),
+            result.contains("tosca.relationships.DependsOn"), is(true));
+        assertThat(String.format("'%s' should contain interfaces entry", relationshipTemplateMap), result.contains("interfaces"), is(true));
+        assertThat(String.format("'%s' should contain a Interface Name entry '%s'", relationshipTemplateMap, interfaceName),
+            result.contains(interfaceName), is(true));
+        assertThat(String.format("'%s' should contain a Interface Operation Name '%s'", relationshipTemplateMap, interfaceOperationName),
+            result.contains(interfaceOperationName), is(true));
+        assertThat(String.format("'%s' should contain Implementation Name '%s'", relationshipTemplateMap, implementationName),
+            result.contains(interfaceOperationName), is(true));
+        assertThat(String.format("'%s' should contain inputs entry", relationshipTemplateMap), result.contains("inputs"), is(true));
+        assertThat(String.format("'%s' should contain Input Name '%s'", relationshipTemplateMap, inputName), result.contains(inputName),
+            is(true));
+        assertThat(String.format("'%s' should contain Input Value '%s'", relationshipTemplateMap, inputValue), result.contains(inputValue),
+            is(true));
     }
 
     private void verifyNodesRelationship(final Map<String, byte[]> expectedFilesFromZipMap, final String virtualFunctionName,

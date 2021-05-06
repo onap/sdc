@@ -56,6 +56,10 @@ public class RelationshipWizardComponent extends AbstractPageObject {
         waitToBeClickable(XpathSelector.FINISH_BUTTON.getXpath()).click();
     }
 
+    public void clickOnAddOperation() {
+        waitToBeClickable(XpathSelector.ADD_OPERATION_BUTTON.getXpath()).click();
+    }
+
     /**
      * Enum that contains identifiers and xpath expressions to elements related to the enclosing page object.
      */
@@ -66,7 +70,8 @@ public class RelationshipWizardComponent extends AbstractPageObject {
         CANCEL_BUTTON(WIZARD_FOOTER.getXpath() + "//button[text()='Cancel']"),
         NEXT_BUTTON(WIZARD_FOOTER.getXpath() + "//div[contains(@class, 'white-arrow-next')]/.."),
         BACK_BUTTON(WIZARD_FOOTER.getXpath() + "//div[contains(@class, 'blue-arrow-back')]/.."),
-        FINISH_BUTTON(WIZARD_FOOTER.getXpath() + "//button[contains(text(), 'Finish')]");
+        FINISH_BUTTON(WIZARD_FOOTER.getXpath() + "//button[contains(text(), 'Finish')]"),
+        ADD_OPERATION_BUTTON("//a[contains(@class,'add-param-link add-btn') and contains(text(), 'Add Operation')]");
 
         @Getter
         private final String xpath;
