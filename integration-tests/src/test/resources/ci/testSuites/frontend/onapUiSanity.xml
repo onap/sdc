@@ -38,6 +38,7 @@
         <methods>
           <include name="importAndCertifyVfc"/>
           <include name="createBaseService"/>
+          <include name="addRelationshipTemplate"/>
           <include name="addComponentProperty"/>
           <include name="addOutputsToVF_test"/>
           <include name="createSubstitutionFilter"/>

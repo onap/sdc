@@ -21,6 +21,7 @@
     <a
         class="add-param-link add-btn"
         *ngIf="!enableAddOperation"
+        data-tests-id="addInterfaceOperation"
         (click)="addOperation()">{{ 'OPERATION_ADD1' | translate }}</a>
   </div>
   <div id="operation-list-container" class="operation-list-container">
