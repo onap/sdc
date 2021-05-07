@@ -1,0 +1,349 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb99fa6a_c10ece7a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "remove unused/duplicated imports",
+      "range": {
+        "startLine": 63,
+        "startChar": 86,
+        "endLine": 66,
+        "endChar": 79
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7025af0_fbc3d758",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/pom.xml",
+        "patchSetId": 15
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "reuse \n        \u003chttpclient.version\u003e4.5.3\u003c/httpclient.version\u003e",
+      "range": {
+        "startLine": 224,
+        "startChar": 0,
+        "endLine": 224,
+        "endChar": 30
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "529b9764_e24fc2b5",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "merge ifs",
+      "range": {
+        "startLine": 170,
+        "startChar": 8,
+        "endLine": 171,
+        "endChar": 54
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc4fdbcc_25f9642c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfPackageValidator.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "unused import",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 29
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ccb15f5_03c755ce",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfPackageValidator.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "could be more simple\nreturn modules.stream().collect(Collectors.toMap(FileData::getFile, fd -\u003e packageContent.getFileContent(fd.getFile())));",
+      "range": {
+        "startLine": 82,
+        "startChar": 8,
+        "endLine": 83,
+        "endChar": 110
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7eb2ca7c_dd4d43fb",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfValidatorResult.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "replace with LOMBOK",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 5
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c5305be_12c90408",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfValidatorResult.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "replace with LOMBOK",
+      "range": {
+        "startLine": 44,
+        "startChar": 4,
+        "endLine": 46,
+        "endChar": 5
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bc7177e_6b5b507c",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfValidatorResult.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "replace with LOMBOK",
+      "range": {
+        "startLine": 60,
+        "startChar": 3,
+        "endLine": 62,
+        "endChar": 5
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b589db4_cf5ab40d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/types/helmvalidator/HelmValidatorConfig.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "replace with LOMBOK",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 62,
+        "endChar": 0
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c780925_6f91214d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/types/helmvalidator/HelmValidatorErrorResponse.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "replace with LOMBOK",
+      "range": {
+        "startLine": 29,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 5
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7289bfb_620d1b23",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/types/helmvalidator/HelmValidatorResponse.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "never used",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 37
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f247168a_c71ec45f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/types/helmvalidator/HelmValidatorResponse.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "replace with LOMBOK",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 89,
+        "endChar": 5
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b2de542_8b1f7e2a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/utils/HelmValidatorConfigReader.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "missing header",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 7
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2231ed3_adf8dff6",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/validation/CnfPackageValidatorTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "check for correct order of \u0027actual/excepted\u0027 values during assertions",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 38
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab44d2f0_42eca38a",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/utils/HelmValidatorConfigReaderTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-07T16:03:48Z",
+      "side": 1,
+      "message": "missing header",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 7
+      },
+      "revId": "32e9113efa347e3cfe7e070388304635cf80c92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
