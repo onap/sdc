@@ -20,7 +20,7 @@
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +48,7 @@ public class CompositionDetailSideBarComponent extends AbstractPageObject {
     }
 
     public void checkComponentIsSelected(final String componentName) {
-        assertThat("The selected component should be as expected", getSelectedComponentName(), is(componentName));
+        assertThat("The selected component should be as expected", getSelectedComponentName(), startsWith(componentName));
     }
 
     public Dimension getSize() {

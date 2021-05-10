@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -73,6 +74,11 @@ import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent.CompositionDetailTabName;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInformationTab;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsModal;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsTab;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.RelationshipWizardInterfaceOperation.InterfaceOperationsData;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
@@ -208,6 +214,24 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         checkTopologyTemplate(yamlObject);
     }
 
+    @Test(dependsOnMethods = "addRelationshipTemplate")
+    public void updateInterfaceOperation() throws Exception {
+        homePage.isLoaded();
+        componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        componentPage.isLoaded();
+        final CompositionPage compositionPage = componentPage.goToComposition();
+        compositionPage.isLoaded();
+        ExtentTestActions.addScreenshot(Status.INFO, "select-VFC-node", "Selecting Node on composition");
+        compositionPage.selectNode(vfcs.get(1).getName());
+        final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData =
+            new CompositionInterfaceOperationsModal.InterfaceOperationsData("IT for updating an Interface Operation",
+                "MyIntegrationTestImplementationName", "My_IT_InputName", "My_IT_InputValue");
+        updateInterfaceOperation(compositionPage, interfaceOperationsData);
+        componentPage = compositionPage.goToGeneral();
+        componentPage.isLoaded();
+        verifyToscaTemplateHasUpdatedInterfaceOperation(downloadToscaTemplate(), interfaceOperationsData);
+    }
+
     @Test(dependsOnMethods = "addComponentProperty")
     public void createSubstitutionFilter() throws Exception {
         componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
@@ -295,6 +319,98 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         final Map<String, Object> attributes = getMapEntry(substitutionMappings, "attributes");
         assertThat(attributes, not(anEmptyMap()));
         assertEquals(2, attributes.keySet().stream().filter(s -> (s.contains("_attr_1") || s.contains("_attr_3")) && !s.contains("_attr_2")).count());
+    }
+
+    /**
+     * Updates an Interface operation from a selected Node (VFC)
+     * @param compositionPage the composition page
+     * @param interfaceOperationsData the interface definition
+     * @throws IOException
+     */
+    private void updateInterfaceOperation(final CompositionPage compositionPage,
+        final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData) throws IOException {
+        final CompositionDetailSideBarComponent detailSideBar = compositionPage.getDetailSideBar();
+        detailSideBar.isLoaded();
+        final CompositionInterfaceOperationsTab compositionInterfaceOperationsTab =
+            (CompositionInterfaceOperationsTab) detailSideBar.selectTab(CompositionDetailTabName.INTERFACE_OPERATIONS);
+        compositionInterfaceOperationsTab.isLoaded();
+        ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsTab",
+            "Composition Interface Operations Tab loaded");
+        assertTrue(compositionInterfaceOperationsTab.isOperationPresent(interfaceOperationName));
+        final CompositionInterfaceOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab
+            .clickOnOperation(interfaceOperationName);
+        compositionInterfaceOperationsModal.isLoaded();
+        ExtentTestActions.takeScreenshot(Status.INFO, "update-interface-operation-modal", "Loading Interface Operations Modal");
+        compositionInterfaceOperationsModal.addInput();
+        compositionInterfaceOperationsModal.updateInterfaceOperation(interfaceOperationsData);
+        compositionInterfaceOperationsTab.isLoaded();
+        ExtentTestActions.addScreenshot(Status.INFO, "updated-interface-operation",
+            "The Interface operation from the selected Node was successfully updated");
+        // Gives time for UI to load the Updated Interface Operation
+        final CompositionInformationTab compositionInformationTab =
+            (CompositionInformationTab) detailSideBar.selectTab(CompositionDetailTabName.INFORMATION);
+        compositionInformationTab.isLoaded();
+        validateUpdatedInterfaceOperation(detailSideBar, interfaceOperationsData);
+    }
+
+    /**
+     * Validates if the Updated Interface Operation has the expected values
+     * @param detailSideBar The composition Page
+     * @param interfaceOperationsData The Updated Interface Definition
+     */
+    private void validateUpdatedInterfaceOperation(final CompositionDetailSideBarComponent detailSideBar,
+                                                   final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData) {
+        final CompositionInterfaceOperationsTab compositionInterfaceOperationsTab = (CompositionInterfaceOperationsTab) detailSideBar
+            .selectTab(CompositionDetailTabName.INTERFACE_OPERATIONS);
+        compositionInterfaceOperationsTab.isLoaded();
+        assertTrue(compositionInterfaceOperationsTab.isOperationPresent(interfaceOperationName));
+        assertTrue(compositionInterfaceOperationsTab.isDescriptionPresent());
+        final CompositionInterfaceOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab
+            .clickOnOperation(interfaceOperationName);
+        compositionInterfaceOperationsModal.isLoaded();
+        ExtentTestActions.takeScreenshot(Status.INFO, "validate-updated-interface-operation",
+            "Loading the Interface Operations Modal for validating");
+        assertThat("The Interface Operation Description should match", interfaceOperationsData.getDescription(),
+            equalToIgnoringCase(compositionInterfaceOperationsModal.getDescription()));
+        assertThat("The Interface Operation Implementation Name should match", interfaceOperationsData.getImplementationName(),
+            equalToIgnoringCase(compositionInterfaceOperationsModal.getImplementationName()));
+        assertThat("The Interface Operation Input key should match", interfaceOperationsData.getInputName(),
+            equalToIgnoringCase(compositionInterfaceOperationsModal.getInputName()));
+        assertThat("The Interface Operation Input Value should match", interfaceOperationsData.getInputValue(),
+            equalToIgnoringCase(compositionInterfaceOperationsModal.getInputValue()));
+        compositionInterfaceOperationsModal.clickOnCancel();
+    }
+
+    private void verifyToscaTemplateHasUpdatedInterfaceOperation(final Map<?, ?> toscaTemplateYaml,
+        final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData) {
+
+        assertNotNull(toscaTemplateYaml, "No contents in TOSCA Template");
+        final Map<String, Object> topologyTemplateTosca = getMapEntry((Map<String, Object>) toscaTemplateYaml, "topology_template");
+        assertThat("Should contain a topology_template entry", toscaTemplateYaml, is(notNullValue()));
+        final Map<String, Object> nodeTemplatesTosca = getMapEntry(topologyTemplateTosca, "node_templates");
+        assertThat("Should contain a node_templates entry", nodeTemplatesTosca, is(notNullValue()));
+        final Optional<Entry<String, Object>> nodeWithInterfaceOperation = nodeTemplatesTosca.entrySet().stream()
+            .filter(s -> s.getKey().startsWith(vfcs.get(1).getName())).findFirst();
+        assertThat("Should contain a node (VFC)", nodeWithInterfaceOperation.isPresent(), is(true));
+        final Map<String, Object> interfacesEntry = (Map<String, Object>) nodeWithInterfaceOperation.get().getValue();
+        assertThat("The Interfaces Entry should not be empty", interfacesEntry, not(anEmptyMap()));
+        final Map<String, Object> interfaceOperations = (Map<String, Object>) interfacesEntry.get("interfaces");
+        assertThat("The Interface Entry should have operations", interfaceOperations, not(anEmptyMap()));
+        final Map<String, Object> interfaceNameMap = (Map<String, Object>) interfaceOperations.get(interfaceName);
+        assertThat(String.format("'%s' should contain a Interface Name entry '%s'", interfaceNameMap, interfaceName),
+            interfaceOperations, not(anEmptyMap()));
+        final Map<String, Object> updatedInterfaceOperation = (Map<String, Object>) interfaceNameMap.get(interfaceOperationName);
+        assertThat(String.format("'%s' should contain a Interface Operation Name '%s'", updatedInterfaceOperation, interfaceOperationName),
+            updatedInterfaceOperation, not(anEmptyMap()));
+        assertThat("The Interface Operation Description should match",
+            updatedInterfaceOperation.get("description").equals(interfaceOperationsData.getDescription()));
+        assertThat("The Interface Operation Implementation Name should match",
+            updatedInterfaceOperation.get("implementation").equals(interfaceOperationsData.getImplementationName()));
+        final Map<String, Object> updatedInterfaceOperationInput = (Map<String, Object>) updatedInterfaceOperation.get("inputs");
+        assertThat("The Interface Operation Input Key should match",
+            updatedInterfaceOperationInput.containsKey(interfaceOperationsData.getInputName()));
+        assertThat("The Interface Operation Input Value should match",
+            updatedInterfaceOperationInput.containsValue(interfaceOperationsData.getInputValue()));
     }
 
     private Map<String, Object> downloadToscaArtifact(final ComponentPage resourceCreatePage) throws UnzipException {
@@ -567,7 +683,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         assertThat(String.format("'%s' should contain a Interface Operation Name '%s'", relationshipTemplateMap, interfaceOperationName),
             result.contains(interfaceOperationName), is(true));
         assertThat(String.format("'%s' should contain Implementation Name '%s'", relationshipTemplateMap, implementationName),
-            result.contains(interfaceOperationName), is(true));
+            result.contains(implementationName), is(true));
         assertThat(String.format("'%s' should contain inputs entry", relationshipTemplateMap), result.contains("inputs"), is(true));
         assertThat(String.format("'%s' should contain Input Name '%s'", relationshipTemplateMap, inputName), result.contains(inputName),
             is(true));

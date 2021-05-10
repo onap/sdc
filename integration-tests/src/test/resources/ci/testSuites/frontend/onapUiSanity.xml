@@ -43,6 +43,7 @@
           <include name="addOutputsToVF_test"/>
           <include name="createSubstitutionFilter"/>
           <include name="createDirectiveNodeFilterTest"/>
+          <include name="updateInterfaceOperation"/>
         </methods>
       </class>
     </classes>
