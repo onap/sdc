@@ -59,7 +59,7 @@ public class CompositionInterfaceOperationsModal extends AbstractPageObject {
     }
 
     public void clickOnDelete() {
-        waitToBeClickable(By.xpath(XpathSelector.DELELE_BTN.getXPath())).click();
+        waitToBeClickable(By.xpath(XpathSelector.DELETE_BTN.getXPath())).click();
     }
 
     public void updateInterfaceOperation(final InterfaceOperationsData interfaceOperationsData) {
@@ -130,7 +130,7 @@ public class CompositionInterfaceOperationsModal extends AbstractPageObject {
     private enum XpathSelector {
         TITLE_SPAN("//span[@class='title' and contains(text(), 'Edit Operation')]"),
         ADD_INPUT_BTN("//a[contains(@class,'add-param-link add-btn') and contains(text(), 'Add Input')]"),
-        DELELE_BTN("//svg-icon[@name='trash-o']"),
+        DELETE_BTN("//svg-icon[@name='trash-o']"),
         SAVE_BTN("//button[@data-tests-id='Save']"),
         CANCEL_BTN("//button[@data-tests-id='Cancel']"),
         INTERFACE_NAME_LABEL("//label[contains(@class,'sdc-input') and contains(text(), 'Interface Name')]"),

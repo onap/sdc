@@ -123,7 +123,7 @@ public class CompositionCanvasComponent extends AbstractPageObject {
 
     public void selectNode(final String elementName) {
         final Optional<CanvasNodeElement> canvasElementOptional = canvasElementList.stream()
-            .filter(canvasNodeElement -> canvasNodeElement.getName().equals(elementName))
+            .filter(canvasNodeElement -> canvasNodeElement.getName().startsWith(elementName))
             .findFirst();
         if (canvasElementOptional.isEmpty()) {
             throw new CompositionCanvasRuntimeException(String.format("Given element '%s' does not exist on the element list", elementName));
