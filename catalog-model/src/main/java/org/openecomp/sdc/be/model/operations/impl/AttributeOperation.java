@@ -54,7 +54,7 @@ public class AttributeOperation extends AbstractOperation {
     private static final String FAILED_TO_FETCH_ATTRIBUTES_OF_DATA_TYPE = "Failed to fetch attributes of data type {}";
     private static final String DATA_TYPE_CANNOT_BE_FOUND_IN_GRAPH_STATUS_IS = "Data type {} cannot be found in graph. status is {}";
     private static final String THE_VALUE_OF_ATTRIBUTE_FROM_TYPE_IS_INVALID = "The value {} of attribute from type {} is invalid";
-    private static Logger log = Logger.getLogger(AttributeOperation.class.getName());
+    private static final Logger log = Logger.getLogger(AttributeOperation.class.getName());
 
     @Autowired
     public AttributeOperation(HealingJanusGraphGenericDao janusGraphGenericDao) {
@@ -77,7 +77,7 @@ public class AttributeOperation extends AbstractOperation {
         return true;
     }
 
-    public Either<Boolean, JanusGraphOperationStatus> isDefinedInDataTypes(final String propertyType) {
+    private Either<Boolean, JanusGraphOperationStatus> isDefinedInDataTypes(final String propertyType) {
         final String dataTypeUid = UniqueIdBuilder.buildDataTypeUid(propertyType);
         final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid = getDataTypeByUid(dataTypeUid);
         if (dataTypeByUid.isRight()) {
@@ -93,7 +93,7 @@ public class AttributeOperation extends AbstractOperation {
     /**
      * Build Data type object from graph by unique id
      */
-    public Either<DataTypeDefinition, JanusGraphOperationStatus> getDataTypeByUid(final String uniqueId) {
+    private Either<DataTypeDefinition, JanusGraphOperationStatus> getDataTypeByUid(final String uniqueId) {
         final Either<DataTypeData, JanusGraphOperationStatus> dataTypesRes = janusGraphGenericDao
             .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, DataTypeData.class);
         if (dataTypesRes.isRight()) {
@@ -109,14 +109,12 @@ public class AttributeOperation extends AbstractOperation {
             return Either.right(propertiesStatus);
         }
         final Either<ImmutablePair<DataTypeData, GraphEdge>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
-            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType,
-                DataTypeData.class);
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.DataType, DataTypeData.class);
         log.debug("After retrieving DERIVED_FROM node of {}. status is {}", uniqueId, parentNode);
         if (parentNode.isRight()) {
             final JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
             if (janusGraphOperationStatus != JanusGraphOperationStatus.NOT_FOUND) {
-                log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, "Failed to find the parent data type of data type {}. status is {}", uniqueId,
-                    janusGraphOperationStatus);
+                log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, "Failed to find the parent data type of data type {}. status is {}", uniqueId, janusGraphOperationStatus);
                 return Either.right(janusGraphOperationStatus);
             }
         } else {
@@ -135,8 +133,7 @@ public class AttributeOperation extends AbstractOperation {
     }
 
     private JanusGraphOperationStatus fillProperties(final String uniqueId, final DataTypeDefinition dataTypeDefinition) {
-        final Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> findPropertiesOfNode = this
-            .findPropertiesOfNode(NodeTypeEnum.DataType, uniqueId);
+        final Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> findPropertiesOfNode = this.findPropertiesOfNode(NodeTypeEnum.DataType, uniqueId);
         if (findPropertiesOfNode.isRight()) {
             final JanusGraphOperationStatus janusGraphOperationStatus = findPropertiesOfNode.right().value();
             log.debug("After looking for properties of vertex {}. status is {}", uniqueId, janusGraphOperationStatus);
@@ -162,12 +159,11 @@ public class AttributeOperation extends AbstractOperation {
         }
     }
 
-    public Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> findPropertiesOfNode(final NodeTypeEnum nodeType,
-                                                                                                   final String uniqueId) {
+    private Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> findPropertiesOfNode(final NodeTypeEnum nodeType,
+                                                                                                    final String uniqueId) {
         final Map<String, PropertyDefinition> resourceProps = new HashMap<>();
         final Either<List<ImmutablePair<PropertyData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
-            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeType), uniqueId, GraphEdgeLabels.PROPERTY, NodeTypeEnum.Property,
-                PropertyData.class);
+            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(nodeType), uniqueId, GraphEdgeLabels.PROPERTY, NodeTypeEnum.Property, PropertyData.class);
         if (childrenNodes.isRight()) {
             final JanusGraphOperationStatus operationStatus = childrenNodes.right().value();
             return Either.right(operationStatus);
@@ -187,7 +183,7 @@ public class AttributeOperation extends AbstractOperation {
         return Either.left(resourceProps);
     }
 
-    public PropertyDefinition convertPropertyDataToPropertyDefinition(final PropertyData propertyDataResult, final String propertyName) {
+    private PropertyDefinition convertPropertyDataToPropertyDefinition(final PropertyData propertyDataResult, final String propertyName) {
         log.debug("The object returned after create property is {}", propertyDataResult);
         final PropertyDefinition propertyDefResult = new PropertyDefinition(propertyDataResult.getPropertyDataDefinition());
         propertyDefResult.setConstraints(convertConstraints(propertyDataResult.getConstraints()));
@@ -304,10 +300,7 @@ public class AttributeOperation extends AbstractOperation {
             return StorageOperationStatus.INVALID_VALUE;
         }
         final JsonElement jsonElement = validateResult.left;
-        if (log.isTraceEnabled()) {
-            log.trace("Going to update value in attribute definition {} {}", attributeDefinition.getName(),
-                (jsonElement != null ? jsonElement.toString() : null));
-        }
+        log.trace("Going to update value in attribute definition {} {}", attributeDefinition.getName(), (jsonElement != null ? jsonElement.toString() : null));
         updateAttributeValue(attributeDefinition, jsonElement);
         return StorageOperationStatus.OK;
     }
@@ -316,34 +309,30 @@ public class AttributeOperation extends AbstractOperation {
         attributeDefinition.set_default(jsonElement);
     }
 
-    public Either<Object, Boolean> validateAndUpdateAttributeValue(final String attributeType,
-                                                                   final String value,
-                                                                   final boolean isValidate,
+    public Either<Object, Boolean> validateAndUpdateAttributeValue(final AttributeDataDefinition attribute,
                                                                    final String innerType,
                                                                    final Map<String, DataTypeDefinition> dataTypes) {
+        final var attributeType = attribute.getType();
+        final var value = attribute.getValue();
         log.trace("Going to validate attribute value and its type. type = {}, value = {}", attributeType, value);
-        final ToscaPropertyType type = getType(attributeType);
-        if (isValidate) {
-            if (type == null) {
-                final DataTypeDefinition dataTypeDefinition = dataTypes.get(attributeType);
-                final ImmutablePair<JsonElement, Boolean> validateResult =
-                    dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
-                if (Boolean.FALSE.equals(validateResult.right)) {
-                    log.debug(THE_VALUE_OF_ATTRIBUTE_FROM_TYPE_IS_INVALID, value, attributeType);
-                    return Either.right(false);
-                }
-                return Either.left(getValueFromJsonElement(validateResult.left));
-            }
-            log.trace("before validating property type {}", attributeType);
-            if (!isValidValue(type, value, innerType, dataTypes)) {
-                log.debug(THE_VALUE_OF_ATTRIBUTE_FROM_TYPE_IS_INVALID, value, type);
+        final var type = getType(attributeType);
+        if (type == null) {
+            final var dataTypeDefinition = dataTypes.get(attributeType);
+            final var validateResult = dataTypeValidatorConverter.validateAndUpdate(value, dataTypeDefinition, dataTypes);
+            if (Boolean.FALSE.equals(validateResult.right)) {
+                log.debug(THE_VALUE_OF_ATTRIBUTE_FROM_TYPE_IS_INVALID, value, attributeType);
                 return Either.right(false);
             }
+            return Either.left(getValueFromJsonElement(validateResult.left));
+        }
+        log.trace("before validating property type {}", attributeType);
+        if (!isValidValue(type, value, innerType, dataTypes)) {
+            log.debug(THE_VALUE_OF_ATTRIBUTE_FROM_TYPE_IS_INVALID, value, type);
+            return Either.right(false);
         }
         Object convertedValue = value;
-        if (!isEmptyValue(value) && isValidate) {
-            PropertyValueConverter converter = type.getConverter();
-            convertedValue = converter.convert(value, innerType, dataTypes);
+        if (!isEmptyValue(value)) {
+            convertedValue = type.getConverter().convert(value, innerType, dataTypes);
         }
         return Either.left(convertedValue);
     }

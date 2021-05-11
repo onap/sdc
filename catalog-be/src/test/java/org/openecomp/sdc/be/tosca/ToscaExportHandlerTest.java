@@ -76,6 +76,7 @@ import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.exception.ToscaExportException;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
@@ -715,6 +716,15 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         componentInstancesAttributes.put("uuid", componentInstanceAttributes);
         component.setComponentInstancesAttributes(componentInstancesAttributes);
 
+        ComponentInstanceProperty cip = new ComponentInstanceProperty();
+        cip.setInstanceUniqueId("id");
+
+        List<ComponentInstanceProperty> list = new ArrayList<>();
+        list.add(cip);
+
+        componentInstancesProperties.put("id", list);
+        component.setComponentInstancesProperties(componentInstancesProperties);
+
         when(capabilityRequirementConverter.getOriginComponent(any(Map.class), any(ComponentInstance.class))).thenReturn(Either.left(component));
         when(capabilityRequirementConverter
             .convertComponentInstanceCapabilities(any(ComponentInstance.class), any(Map.class), any(ToscaNodeTemplate.class)))
@@ -769,7 +779,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         final ComponentInstance instance = new ComponentInstance();
         instance.setUniqueId("id");
         instance.setComponentUid("uid");
-        instance.setOriginType(OriginTypeEnum.ServiceProxy);
+        instance.setOriginType(OriginTypeEnum.VFC);
         final List<GroupInstance> groupInstances = new ArrayList<>();
         final GroupInstance groupInst = new GroupInstance();
         final List<String> artifacts = new ArrayList<>();
@@ -782,6 +792,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         final List<PropertyDefinition> properties = new ArrayList<>();
         properties.add(new PropertyDefinition());
         instance.setProperties(properties);
+        component.setProperties(properties);
 
         instance.setUniqueId("uuid");
         instance.setDescription("desc");
@@ -825,6 +836,18 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         component.setArtifacts(artifactList);
         component.setToscaArtifacts(artifactList);
+
+        final List<AttributeDefinition> attributes = new ArrayList<>();
+        final var attribute = new AttributeDefinition();
+        attribute.setName("mock");
+        attributes.add(attribute);
+        component.setAttributes(attributes);
+
+        List<ComponentInstanceInput> componentInstanceInputs = new ArrayList<>();
+        componentInstanceInputs.add(new ComponentInstanceInput());
+
+        componentInstancesInputs.put("id", componentInstanceInputs);
+        component.setComponentInstancesInputs(componentInstancesInputs);
 
         when(capabilityRequirementConverter.getOriginComponent(any(Map.class), any(ComponentInstance.class))).thenReturn(Either.left(component));
         when(capabilityRequirementConverter
@@ -935,6 +958,12 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         component.setUUID("uuid");
         component.setDescription("desc");
 
+        final List<AttributeDefinition> attributes = new ArrayList<>();
+        final var attribute = new AttributeDefinition();
+        attribute.setName("mock");
+        attributes.add(attribute);
+        component.setAttributes(attributes);
+
         componentCache.put("uid", component);
 
         when(capabilityRequirementConverter.getOriginComponent(any(Map.class), any(ComponentInstance.class))).thenReturn(Either.right(false));
@@ -1003,63 +1032,6 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         // default test
         final Either<ToscaRepresentation, ToscaError> result = testSubject.exportComponent(component);
         assertNotNull(result);
-    }
-
-    @Test
-    public void testAddComponentInstanceInputs() throws Exception {
-
-        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
-        Map<String, List<ComponentInstanceInput>> componentInstancesInputs = new HashMap<>();
-        ComponentInstance componentInstance = new ComponentInstance();
-        String instanceUniqueId = "id";
-        Map<String, Object> props = new HashMap<>();
-
-        List<ComponentInstanceInput> componentInstanceInputs = new ArrayList<>();
-        componentInstanceInputs.add(new ComponentInstanceInput());
-
-        componentInstancesInputs.put(instanceUniqueId, componentInstanceInputs);
-
-        // default test
-        Deencapsulation.invoke(testSubject, "addComponentInstanceInputs", dataTypes, componentInstancesInputs,
-            instanceUniqueId, props);
-    }
-
-    @Test
-    public void testAddPropertiesOfComponentInstance() throws Exception {
-        Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = new HashMap<>();
-        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
-        ComponentInstance componentInstance = new ComponentInstance();
-        String instanceUniqueId = "id";
-        Map<String, Object> props = new HashMap<>();
-
-        ComponentInstanceProperty cip = new ComponentInstanceProperty();
-        cip.setInstanceUniqueId("id");
-
-        List<ComponentInstanceProperty> list = new ArrayList<>();
-        list.add(cip);
-
-        componentInstancesProperties.put("id", list);
-
-        // default test
-        Deencapsulation.invoke(testSubject, "addPropertiesOfComponentInstance", componentInstancesProperties, dataTypes,
-            instanceUniqueId, props);
-    }
-
-    @Test
-    public void testAddPropertiesOfParentComponent() throws Exception {
-        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
-        ComponentInstance componentInstance = new ComponentInstance();
-        Component componentOfInstance = new Resource();
-        Map<String, Object> props = new HashMap<>();
-
-        List<PropertyDefinition> properties = new ArrayList<>();
-        properties.add(new PropertyDefinition());
-
-        ((Resource) componentOfInstance).setProperties(properties);
-
-        // default test
-        Deencapsulation.invoke(testSubject, "addPropertiesOfParentComponent", dataTypes,
-            componentOfInstance, props);
     }
 
     @Test
