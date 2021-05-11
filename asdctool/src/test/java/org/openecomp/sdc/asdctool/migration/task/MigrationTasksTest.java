@@ -22,7 +22,7 @@ package org.openecomp.sdc.asdctool.migration.task;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
