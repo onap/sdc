@@ -21,7 +21,7 @@ package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Network Service Descriptor known versions

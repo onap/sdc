@@ -24,7 +24,7 @@ import fj.data.Either;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
