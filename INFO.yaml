@@ -4,11 +4,11 @@ project_creation_date: '2017-01-31'
 lifecycle_state: 'Mature'
 project_category: ''
 project_lead: &onap_sdc_ptl
-  name: 'Christophe Closset'
-  email: 'christophe.closset@intl.att.com'
-  company: 'ATT'
-  id: 'ChrisC'
-  timezone: 'Europe/Brussels'
+  name: 'Michael Morris'
+  email: 'michael.morris@est.tech'
+  company: 'Ericsson Software Technology (EST)'
+  id: 'MichaelMorris'
+  timezone: 'Europe/Dublin'
 primary_contact: *onap_sdc_ptl
 mailing_list:
   type: 'groups.io'
