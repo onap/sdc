@@ -2360,12 +2360,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // Specific Update Logic
         String newValue = attribute.getValue();
 
-        final Either<Object, Boolean> isValid = attributeOperation
-            .validateAndUpdateAttributeValue(attributeType, attribute.getValue(), true, innerType, allDataTypesEither.left().value());
+        final var isValid = attributeOperation.validateAndUpdateAttributeValue(attribute, innerType, allDataTypesEither.left().value());
         if (isValid.isRight()) {
             final Boolean res = isValid.right().value();
             if (!Boolean.TRUE.equals(res)) {
-                log.debug("validate and update attribute value has failed with value: {}", attribute.getValue());
+                log.debug("validate and update attribute value has failed with value: {}", newValue);
                 throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(
                     DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
             }
