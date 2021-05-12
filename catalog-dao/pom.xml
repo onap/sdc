@@ -230,6 +230,12 @@ Modifications copyright (c) 2018 Nokia
       <artifactId>commons-jci-core</artifactId>
       <version>${commons-jci-core.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -264,6 +270,10 @@ Modifications copyright (c) 2018 Nokia
         <exclusion>
           <artifactId>groovy</artifactId>
           <groupId>org.codehaus.groovy</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

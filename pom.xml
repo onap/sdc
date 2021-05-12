@@ -57,7 +57,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <cadi.version>2.1.8</cadi.version>
         <lombok.version>1.18.18</lombok.version>
         <commons-beanutils>1.9.4</commons-beanutils>
-        <commons-configuration>2.3</commons-configuration>
+        <commons.io.version>2.7</commons.io.version>
+        <commons-configuration>2.7</commons-configuration>
         <apache-poi.version>4.1.0</apache-poi.version>
         <onap.logging.version>1.6.1</onap.logging.version>
         <apache-commons-text.version>1.9</apache-commons-text.version>
