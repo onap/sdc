@@ -19,7 +19,10 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
@@ -78,15 +81,56 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
         waitForElementInvisibility(By.xpath(XpathSelector.NO_DATA_MESSAGE.getXpath()));
     }
 
-    private void saveInputProperties() {
+    public void saveInputProperties() {
         findElement(By.xpath(XpathSelector.PROPERTY_SAVE_BTN.getXpath())).click();
         waitForElementVisibility(XpathSelector.PROPERTY_SAVE_MESSAGE.getXpath());
         waitForElementInvisibility(By.xpath(XpathSelector.PROPERTY_SAVE_MESSAGE.getXpath()));
     }
 
     /**
+     * Adds a input
+     * @param inputsMap the inputs map to be added
+     */
+    public void addInputs(final Map<String, String> inputsMap) {
+        isInputPropertiesTableLoaded();
+        inputsMap.forEach((inputName, inputType) -> {
+            WebElement inputAddButton = findElement(By.xpath(XpathSelector.INPUT_ADD_BTN.getXpath()));
+            assertTrue(inputAddButton.isDisplayed());
+            inputAddButton.click();
+            createInput(inputName, inputType);
+            waitForElementInvisibility(By.xpath(XpathSelector.MODAL_BACKGROUND.getXpath()), 5);
+            ExtentTestActions.takeScreenshot(Status.INFO, "added-input",
+                String.format("Input '%s' was created on component", inputName));
+        });
+    }
+
+    /**
+     * Fills the creation input modal.
+     * @param inputName the input name to be created
+     * @param inputType the input type to be selected
+     */
+    private void createInput(final String inputName, final String inputType) {
+        final AddPropertyModal addInputModal = new AddPropertyModal(webDriver);
+        addInputModal.isLoaded();
+        addInputModal.fillPropertyForm(inputName, inputType);
+        addInputModal.clickOnCreate();
+    }
+
+    /**
+     * Verifies if the added input is displayed on the UI.
+     * @param inputsMap the input name to be found
+     */
+    public void verifyInputs(final Map<String, String> inputsMap ) {
+        for (Map.Entry<String, String> input : inputsMap.entrySet()) {
+            assertTrue(this.getInputPropertyNames().contains(input.getKey()),
+                String.format("%s Input should be listed but found %s", input.getKey(),
+                    this.getInputPropertyNames().toString()));
+        }
+    }
+
+    /**
      * Checks if a input exists.
-     * @param inputName the property name
+     * @param inputName the input name
      * @return the value of the input
      */
     public boolean isInputPresent(final String inputName) {
@@ -114,7 +158,9 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
         INPUT_PROPERTY_NAME("//*[contains(@class, 'property-name')]"),
         INPUT_PROPERTY_TABLE_ROW("//div[contains(@class, 'table-row') and descendant::*[text() = '%s']]"),
         INPUT_PROPERTY_ADD_METADATA_BUTTON(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//a")),
-        INPUT_PROPERTY_METADATA_KEY_VALUE_PAIR(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//input"));
+        INPUT_PROPERTY_METADATA_KEY_VALUE_PAIR(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//input")),
+        INPUT_ADD_BTN("//div[contains(@class,'add-btn')]"),
+        MODAL_BACKGROUND("//div[@class='modal-background']");
 
         @Getter
         private final String xpath;

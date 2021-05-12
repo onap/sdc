@@ -90,8 +90,20 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
         resourcePropertiesAssignmentTab.saveProperties();
     }
 
+    public void saveInputs() {
+        resourcePropertiesAssignmentInputTab.saveInputProperties();
+    }
+
     public void addProperties(final Map<String, String> propertiesMap) {
         resourcePropertiesAssignmentTab.addProperties(propertiesMap);
+    }
+
+    public void addInputs(final Map<String, String> inputsMap) {
+        resourcePropertiesAssignmentInputTab.addInputs(inputsMap);
+    }
+
+    public void verifyInputs(final Map<String, String> inputsMap) {
+        resourcePropertiesAssignmentInputTab.verifyInputs(inputsMap);
     }
 
     public Map<String, String> getPropertyNamesAndTypes() {

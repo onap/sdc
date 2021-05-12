@@ -46,6 +46,7 @@
           <include name="createDirectiveNodeFilterTest"/>
           <include name="updateInterfaceOperation"/>
           <include name="createMetadataForServiceProperty"/>
+          <include name="addComponentInput"/>
         </methods>
       </class>
     </classes>
