@@ -58,6 +58,7 @@ import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
+import org.onap.sdc.frontend.ci.tests.flow.AddComponentInputFlow;
 import org.onap.sdc.frontend.ci.tests.flow.AddComponentPropertyFlow;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateDirectiveNodeFilterFlow;
@@ -108,6 +109,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     private ComponentPage componentPage;
     private Map<String, String> propertiesToBeAddedMap;
     private ResourceCreatePage resourceCreatePage;
+    private Map<String, String> inputsToBeAddedMap;
     private final List<ServiceDependencyProperty> substitutionFilterProperties = new ArrayList<>();
     private final String interfaceName = "Standard";
     private final String interfaceOperationName = "create";
@@ -319,6 +321,13 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         declareInputToBaseService(propertiesAssignmentPage, "property1");
         declareInputToInstanceProperties(propertiesAssignmentPage, "resourceSubtype");
         verifyToscaTemplateHasDeclareInput(downloadToscaTemplate());
+    }
+
+    @Test(dependsOnMethods = "createBaseService")
+    public void addComponentInputs() throws Exception {
+        inputsToBeAddedMap = loadInputsToAdd();
+        addInput(inputsToBeAddedMap);
+        verifyToscaTemplateAddInput(downloadToscaTemplate());
     }
 
     private void checkMetadata(final Map<String, Object> map, final ResourceCreateData createdData) {
@@ -602,6 +611,17 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     /**
+     * Adds a input to the base service
+     * @param inputMap map of inputs to be added
+     */
+    private void addInput(final Map<String, String> inputMap) {
+        componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
+        componentPage.isLoaded();
+        final AddComponentInputFlow addComponentInputFlow = new AddComponentInputFlow(webDriver, inputMap);
+        addComponentInputFlow.run(componentPage.goToPropertiesAssignment());
+    }
+
+    /**
      * Edits a property to add a value
      * @param propertyMap map of properties to be edited
      */
@@ -790,6 +810,19 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
             .filter(s -> (s.contains("resourceSubtype") || s.contains("property1"))).count());
     }
 
+    private void verifyToscaTemplateAddInput(Map<?, ?> yaml) {
+        final Map<String, String> inputMap = loadInputsToAdd();
+        assertNotNull(yaml, "No contents in TOSCA Template");
+        final Map<String, Object> toscaYaml = (Map<String, Object>) yaml;
+        final Map<String, Object> topologyTemplateTosca = getMapEntry(toscaYaml, "topology_template");
+        assertThat(String.format("'%s' should contain a topology_template entry", toscaYaml), topologyTemplateTosca,
+            notNullValue());
+        final Map<String, Object> inputsTosca = getMapEntry(topologyTemplateTosca, "inputs");
+        assertThat(String.format("'%s' should contain a inputs entry", toscaYaml), inputsTosca, notNullValue());
+        assertEquals(3, inputsTosca.keySet().stream()
+            .filter(s -> inputMap.containsKey(s)).count());
+    }
+
     private Map<String, Object> getMapEntry(final Map<?, ?> yamlObj, final String entryName) {
         try {
             return (Map<String, Object>) yamlObj.get(entryName);
@@ -829,6 +862,14 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         propertyMap.put("property5", stringMap);
         propertyMap.put("property6", 500);
         return propertyMap;
+    }
+
+    private Map<String, String> loadInputsToAdd() {
+        final Map<String, String> inputMap = new HashMap<>();
+        inputMap.put("input1", "string");
+        inputMap.put("input2", "integer");
+        inputMap.put("input3", "boolean");
+        return inputMap;
     }
 
     private void loadSubstitutionFilterProperties() {
