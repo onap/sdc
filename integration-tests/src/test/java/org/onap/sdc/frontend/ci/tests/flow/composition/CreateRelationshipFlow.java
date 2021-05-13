@@ -79,6 +79,8 @@ public class CreateRelationshipFlow extends AbstractUiTestFlow {
         }
         relationshipWizardComponent.clickOnFinish();
         compositionPage.isLoaded();
+        //To avoid the content tip to be handed over the composition view
+        compositionPage.selectNode(relationshipInformation.getFromNode());
         ExtentTestActions.takeScreenshot(Status.INFO, "relationship-created",
             String.format("Relationship from '%s' to '%s' created", relationshipInformation.getFromNode(), relationshipInformation.getToNode()));
         return Optional.of(compositionPage);
