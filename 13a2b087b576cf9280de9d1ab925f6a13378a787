@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fcac3f8f_ab7cfb79",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HelmValidatorHttpClient.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 6592
+      },
+      "writtenOn": "2021-05-13T11:56:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0758a513_13c4e4fb",
+      "range": {
+        "startLine": 36,
+        "startChar": 42,
+        "endLine": 36,
+        "endChar": 46
+      },
+      "revId": "13a2b087b576cf9280de9d1ab925f6a13378a787",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21f2645d_c5418825",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HelmValidator.java",
         "patchSetId": 22
@@ -36,6 +60,30 @@
       "writtenOn": "2021-05-13T11:32:20Z",
       "side": 1,
       "message": "Please verify usage of no arg constructor. I think it is unused.",
+      "range": {
+        "startLine": 50,
+        "startChar": 11,
+        "endLine": 50,
+        "endChar": 24
+      },
+      "revId": "13a2b087b576cf9280de9d1ab925f6a13378a787",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1acd0435_0a407e63",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HelmValidator.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6592
+      },
+      "writtenOn": "2021-05-13T11:56:38Z",
+      "side": 1,
+      "message": "No arg constructor is used in config-validaton.json",
+      "parentUuid": "21f2645d_c5418825",
       "range": {
         "startLine": 50,
         "startChar": 11,
