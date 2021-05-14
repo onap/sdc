@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d340ad10_b824792d",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HeatValidator.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-14T10:28:55Z",
+      "side": 1,
+      "message": "filters could be merged",
+      "range": {
+        "startLine": 458,
+        "startChar": 41,
+        "endLine": 459,
+        "endChar": 20
+      },
+      "revId": "0d1e122e9ad3cb2c177370771f7a1d0bc5b2c008",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56ff5465_9c709fa6",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/type/helmvalidator/HelmValidatorConfig.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-14T10:28:55Z",
+      "side": 1,
+      "message": "should be replaced with \n@AllArgsConstructor(access \u003d AccessLevel.PRIVATE)",
+      "range": {
+        "startLine": 32,
+        "startChar": 5,
+        "endLine": 40,
+        "endChar": 5
+      },
+      "revId": "0d1e122e9ad3cb2c177370771f7a1d0bc5b2c008",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "808e15a2_0a8b943c",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/type/helmvalidator/HelmValidatorErrorResponse.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-14T10:28:55Z",
+      "side": 1,
+      "message": "should be final with\n@AllArgsConstructor",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 27
+      },
+      "revId": "0d1e122e9ad3cb2c177370771f7a1d0bc5b2c008",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f49eda25_7bc25fe7",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/util/HelmValidatorHttpClientTest.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-14T10:28:55Z",
+      "side": 1,
+      "message": "could be private",
+      "range": {
+        "startLine": 65,
+        "startChar": 4,
+        "endLine": 77,
+        "endChar": 0
+      },
+      "revId": "0d1e122e9ad3cb2c177370771f7a1d0bc5b2c008",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e75209bd_6f5c3110",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/test/java/org/openecomp/sdc/validation/impl/validators/HelmValidatorTest.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-05-14T10:28:55Z",
+      "side": 1,
+      "message": "needless to use eq{}, value can be passed directly",
+      "range": {
+        "startLine": 69,
+        "startChar": 108,
+        "endLine": 71,
+        "endChar": 115
+      },
+      "revId": "0d1e122e9ad3cb2c177370771f7a1d0bc5b2c008",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
