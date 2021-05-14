@@ -26,6 +26,7 @@ import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.servlets.builder.ServletResponseBuilder;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,16 +36,22 @@ public class OperationExceptionMapper implements ExceptionMapper<OperationExcept
     private final ServletResponseBuilder servletResponseBuilder;
     private final ResponseFormatManager responseFormatManager;
 
-    private static final Logger log = Logger.getLogger(OperationExceptionMapper.class);
+    private static final Logger LOGGER = Logger.getLogger(OperationExceptionMapper.class);
 
+    @Autowired
     public OperationExceptionMapper(final ServletResponseBuilder servletResponseBuilder) {
         this.servletResponseBuilder = servletResponseBuilder;
         this.responseFormatManager = ResponseFormatManager.getInstance();
     }
 
+    public OperationExceptionMapper(final ServletResponseBuilder servletResponseBuilder, final ResponseFormatManager responseFormatManager) {
+        this.servletResponseBuilder = servletResponseBuilder;
+        this.responseFormatManager = responseFormatManager;
+    }
+
     @Override
     public Response toResponse(final OperationException exception) {
-        log.debug("Handling OperationException response", exception);
+        LOGGER.debug("Handling OperationException response", exception);
         return servletResponseBuilder.buildErrorResponse(responseFormatManager.getResponseFormat(exception.getActionStatus(), exception.getParams()));
     }
 }

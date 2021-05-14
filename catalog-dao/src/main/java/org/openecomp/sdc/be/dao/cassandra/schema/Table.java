@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.dao.cassandra.schema.tables.MigrationTasksTableDescr
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.OperationalEnvironmentsTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.ResAdminEventTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.SdcSchemaFilesTableDescription;
+import org.openecomp.sdc.be.dao.cassandra.schema.tables.ToscaImportByModelTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAccessEventTableDescription;
 import org.openecomp.sdc.be.dao.cassandra.schema.tables.UserAdminEventTableDescription;
 
@@ -61,7 +62,8 @@ public enum Table {
     SDC_REPO(new MigrationTasksTableDescription()),
     SDC_OPERATIONAL_ENVIRONMENT(new OperationalEnvironmentsTableDescription()),
     AUDIT_ECOMP_OPERATIONAL_ENVIRONMENT(new EcompOperationalEnvironmentEventTableDesc()),
-    FEATURE_TOGGLE_STATE(new FeatureToggleEventTableDesc());
+    FEATURE_TOGGLE_STATE(new FeatureToggleEventTableDesc()),
+    TOSCA_IMPORT_BY_MODEL(new ToscaImportByModelTableDescription());
     // @formatter:on
 
     ITableDescription tableDescription;

@@ -18,19 +18,28 @@
  */
 package org.openecomp.sdc.be.servlets;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.InputStream;
+import java.nio.file.Path;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.ConstraintViolationException;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
@@ -46,6 +55,7 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
@@ -55,6 +65,9 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Model;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.servlets.builder.ServletResponseBuilder;
+import org.openecomp.sdc.be.servlets.exception.OperationExceptionMapper;
 import org.openecomp.sdc.be.ui.model.ModelCreateRequest;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -100,13 +113,16 @@ class ModelServletTest extends JerseyTest {
     @Mock
     private UserValidations userValidations;
 
+    @Mock
+    private ResponseFormatManager responseFormatManager;
+
     private Model model;
-    private Response response;
     private ModelCreateRequest modelCreateRequest;
+    private final Path rootPath = Path.of("/v1/catalog/model");
+    private final Path importsPath = rootPath.resolve("imports");
 
     @BeforeAll
     public void initClass() {
-        MockitoAnnotations.openMocks(this);
         when(request.getSession()).thenReturn(session);
         when(session.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
@@ -145,6 +161,7 @@ class ModelServletTest extends JerseyTest {
 
     @Override
     protected ResourceConfig configure() {
+        MockitoAnnotations.openMocks(this);
         forceSet(TestProperties.CONTAINER_PORT, "0");
         final ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
         return new ResourceConfig(ModelServlet.class)
@@ -158,51 +175,132 @@ class ModelServletTest extends JerseyTest {
                     bind(servletUtils).to(ServletUtils.class);
                     bind(resourceImportManager).to(ResourceImportManager.class);
                     bind(modelBusinessLogic).to(ModelBusinessLogic.class);
+                    bind(userValidations).to(UserValidations.class);
                 }
             })
+            .register(new OperationExceptionMapper(new ServletResponseBuilder(), responseFormatManager))
+            .register(MultiPartFeature.class)
             .property("contextConfig", context);
     }
 
+    @Override
+    protected void configureClient(final ClientConfig config) {
+        config.register(MultiPartFeature.class);
+    }
+
     @Test
-    void createModelSuccessTest() {
+    void createModelSuccessTest() throws JsonProcessingException {
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
         when(componentsUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(responseFormat);
         when(modelBusinessLogic.createModel(any(Model.class))).thenReturn(model);
-        response = modelServlet.createModel(modelCreateRequest, USER_ID);
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+        final FormDataMultiPart formDataMultiPart = buildCreateFormDataMultiPart(new byte[0], parseToJsonString(modelCreateRequest));
+        final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .post(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
     }
 
     @Test
-    void createModelFailTest() {
+    void createModelFailTest() throws JsonProcessingException {
         when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
         when(modelBusinessLogic.createModel(any(Model.class))).thenReturn(model);
-        response = modelServlet.createModel(modelCreateRequest, USER_ID);
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        final FormDataMultiPart formDataMultiPart = buildCreateFormDataMultiPart(new byte[0], parseToJsonString(modelCreateRequest));
+        final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .post(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
     }
 
     @Test
-    void createModelFailWithModelNameEmptyTest() {
+    void createModelFailWithModelNameEmptyTest() throws JsonProcessingException {
         when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
         modelCreateRequest.setName(StringUtils.EMPTY);
-        final Exception exception = assertThrows(ConstraintViolationException.class, () -> modelServlet.createModel(modelCreateRequest, USER_ID));
-        assertThat(exception.getMessage()).isEqualTo("Model name cannot be empty");
+        final FormDataMultiPart formDataMultiPart = buildCreateFormDataMultiPart(new byte[0], parseToJsonString(modelCreateRequest));
+        final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .post(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
     @Test
-    void createModelFailWithModelNameNullTest() {
+    void createModelFailWithModelNameNullTest() throws JsonProcessingException {
         when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
         when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
         modelCreateRequest.setName(null);
-        final Exception exception = assertThrows(ConstraintViolationException.class, () -> modelServlet.createModel(modelCreateRequest, USER_ID));
-        assertThat(exception.getMessage()).isEqualTo("Model name cannot be null");
+        final var modelFile = new byte[0];
+        final FormDataMultiPart formDataMultiPart = buildCreateFormDataMultiPart(modelFile, parseToJsonString(modelCreateRequest));
+        final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .post(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
 
     @Test
-    void createModelThrowsBusinessExceptionTest() {
+    void createModelThrowsBusinessExceptionTest() throws JsonProcessingException {
+        final var modelFile = new byte[0];
+        final String modelCreateAsJson = parseToJsonString(modelCreateRequest);
+        final FormDataMultiPart formDataMultiPart = buildCreateFormDataMultiPart(modelFile, modelCreateAsJson);
         when(modelBusinessLogic.createModel(model)).thenThrow(new BusinessException() {});
-        assertThrows(BusinessException.class, () -> modelServlet.createModel(modelCreateRequest, USER_ID));
+
+        final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .post(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    void updateModelImportsSuccessTest() {
+        final FormDataMultiPart formDataMultiPart = buildUpdateFormDataMultiPart("model1", new byte[0]);
+
+        final var response = target(importsPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .put(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    void updateModelImports_businessException() {
+        final var modelId = "model1";
+        final FormDataMultiPart formDataMultiPart = buildUpdateFormDataMultiPart(modelId, new byte[0]);
+        final OperationException operationException = new OperationException(ActionStatus.INVALID_MODEL, modelId);
+        doThrow(operationException).when(modelBusinessLogic).createModelImports(eq(modelId), any(InputStream.class));
+        when(responseFormatManager.getResponseFormat(ActionStatus.INVALID_MODEL, modelId))
+            .thenReturn(new ResponseFormat(Status.BAD_REQUEST.getStatusCode()));
+        final var response = target(importsPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .put(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    void updateModelImports_unknownException() {
+        final var modelName = "model1";
+        final FormDataMultiPart formDataMultiPart = buildUpdateFormDataMultiPart(modelName, new byte[0]);
+        doThrow(new RuntimeException()).when(modelBusinessLogic).createModelImports(eq(modelName), any(InputStream.class));
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+        final var response = target(importsPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .put(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+    }
+
+    private FormDataMultiPart buildUpdateFormDataMultiPart(final String modelName, final byte[] importFilesZip) {
+        return new FormDataMultiPart()
+            .field("modelName", modelName)
+            .field("modelImportsZip", importFilesZip, MediaType.MULTIPART_FORM_DATA_TYPE);
+    }
+
+    private FormDataMultiPart buildCreateFormDataMultiPart(final byte[] modelFile, final String modelCreateAsJson) {
+        return new FormDataMultiPart()
+            .field("model", modelCreateAsJson, MediaType.APPLICATION_JSON_TYPE)
+            .field("modelImportsZip", modelFile, MediaType.MULTIPART_FORM_DATA_TYPE);
+    }
+
+    private String parseToJsonString(final Object object) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(object);
     }
 
 }

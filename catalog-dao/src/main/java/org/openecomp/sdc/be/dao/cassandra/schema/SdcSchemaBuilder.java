@@ -31,10 +31,12 @@ import com.datastax.driver.core.schemabuilder.Alter;
 import com.datastax.driver.core.schemabuilder.Create;
 import com.datastax.driver.core.schemabuilder.SchemaBuilder;
 import com.datastax.driver.core.schemabuilder.SchemaStatement;
+import com.datastax.oss.driver.shaded.guava.common.base.Function;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -112,17 +114,17 @@ public class SdcSchemaBuilder {
      * the method creats all the tables and indexes thet do not already exist
      *
      * @param iTableDescriptions:    a list of table description we want to create
-     * @param keyspaceMetadate:      the current tables that exist in the cassandra under this keyspace
+     * @param keyspaceMetadata:      the current tables that exist in the cassandra under this keyspace
      * @param session:               the session object used for the execution of the query.
      * @param existingTablesMetadata the current tables columns that exist in the cassandra under this keyspace
      */
-    private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadate, Session session,
+    private static void createTables(List<ITableDescription> iTableDescriptions, Map<String, List<String>> keyspaceMetadata, Session session,
                                      Map<String, List<String>> existingTablesMetadata) {
         for (ITableDescription tableDescription : iTableDescriptions) {
             String tableName = tableDescription.getTableName().toLowerCase();
             Map<String, ImmutablePair<DataType, Boolean>> columnDescription = tableDescription.getColumnDescription();
             log.info("creating tables:{}.", tableName);
-            if (keyspaceMetadate == null || !keyspaceMetadate.keySet().contains(tableName)) {
+            if (keyspaceMetadata == null || !keyspaceMetadata.containsKey(tableName)) {
                 Create create = SchemaBuilder.createTable(tableDescription.getKeyspace(), tableDescription.getTableName());
                 for (ImmutablePair<String, DataType> key : tableDescription.primaryKeys()) {
                     create.addPartitionKey(key.getLeft(), key.getRight());
@@ -132,9 +134,15 @@ public class SdcSchemaBuilder {
                         create.addClusteringColumn(key.getLeft(), key.getRight());
                     }
                 }
-                for (Map.Entry<String, ImmutablePair<DataType, Boolean>> entry : columnDescription.entrySet()) {
-                    create.addColumn(entry.getKey(), entry.getValue().getLeft());
-                }
+                final Function<Entry<String, ?>, Boolean> notPrimaryKeyFilter = (Entry<String, ?> entry) -> {
+                    if (entry == null) {
+                        return true;
+                    }
+                    return tableDescription.primaryKeys().stream().noneMatch(primaryKeyPair -> primaryKeyPair.getLeft().equals(entry.getKey()));
+                };
+                columnDescription.entrySet().stream()
+                    .filter(notPrimaryKeyFilter::apply)
+                    .forEach(entry -> create.addColumn(entry.getKey(), entry.getValue().getLeft()));
                 log.trace("exacuting :{}", create);
                 session.execute(create);
                 log.info("table:{} created successfully.", tableName);
@@ -142,8 +150,8 @@ public class SdcSchemaBuilder {
                 log.info("table:{} already exists, skipping.", tableName);
                 alterTable(session, existingTablesMetadata, tableDescription, tableName, columnDescription);
             }
-            log.info("keyspacemetadata:{}", keyspaceMetadate);
-            List<String> indexNames = (keyspaceMetadate != null && keyspaceMetadate.get(tableName) != null ? keyspaceMetadate.get(tableName)
+            log.info("keyspacemetadata:{}", keyspaceMetadata);
+            List<String> indexNames = (keyspaceMetadata != null && keyspaceMetadata.get(tableName) != null ? keyspaceMetadata.get(tableName)
                 : new ArrayList<>());
             log.info("table:{} creating indexes.", tableName);
             for (Map.Entry<String, ImmutablePair<DataType, Boolean>> description : columnDescription.entrySet()) {
