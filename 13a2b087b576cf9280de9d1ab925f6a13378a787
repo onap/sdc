@@ -93,6 +93,30 @@
       "revId": "13a2b087b576cf9280de9d1ab925f6a13378a787",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea2570c6_b9bc5aaa",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HelmValidator.java",
+        "patchSetId": 22
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6592
+      },
+      "writtenOn": "2021-05-14T11:44:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1acd0435_0a407e63",
+      "range": {
+        "startLine": 50,
+        "startChar": 11,
+        "endLine": 50,
+        "endChar": 24
+      },
+      "revId": "13a2b087b576cf9280de9d1ab925f6a13378a787",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
