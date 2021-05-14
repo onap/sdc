@@ -20,36 +20,22 @@
 package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
+@NoArgsConstructor
+@Getter
+@Setter
 public class EntrySchema implements Cloneable {
 
     private String description;
     private String type;
     private List<Constraint> constraints;
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
+    public EntrySchema(final String type) {
         this.type = type;
-    }
-
-    public List<Constraint> getConstraints() {
-        return constraints;
-    }
-
-    public void setConstraints(List<Constraint> constraints) {
-        this.constraints = constraints;
     }
 
     @Override

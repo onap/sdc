@@ -18,17 +18,25 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.model.Model;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 @Component("modelBusinessLogic")
 public class ModelBusinessLogic {
 
-    private static final Logger log = LoggerFactory.getLogger(ModelBusinessLogic.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelBusinessLogic.class);
     private final ModelOperation modelOperation;
 
     @Autowired
@@ -37,7 +45,56 @@ public class ModelBusinessLogic {
     }
 
     public Model createModel(final Model model) {
-        log.debug("createModel: creating model {}", model);
+        LOGGER.debug("createModel: creating model {}", model);
         return modelOperation.createModel(model, false);
+    }
+
+    public Optional<Model> findModel(final String modelName) {
+        if (StringUtils.isEmpty(modelName)) {
+            return Optional.empty();
+        }
+        return modelOperation.findModelByName(modelName);
+    }
+
+    public void createModelImports(final String modelName, final InputStream modelImportsZip) {
+        if (StringUtils.isEmpty(modelName)) {
+            throw ModelOperationExceptionSupplier.invalidModel(modelName).get();
+        }
+        if (modelImportsZip == null) {
+            throw ModelOperationExceptionSupplier.emptyModelImports().get();
+        }
+        if (findModel(modelName).isEmpty()) {
+            throw ModelOperationExceptionSupplier.invalidModel(modelName).get();
+        }
+
+        final var fileBytes = readBytes(modelImportsZip);
+        final Map<String, byte[]> zipFilesPathContentMap = unzipInMemory(fileBytes);
+        if (zipFilesPathContentMap.isEmpty()) {
+            throw ModelOperationExceptionSupplier.emptyModelImports().get();
+        }
+
+        modelOperation.createModelImports(modelName, zipFilesPathContentMap);
+    }
+
+    private Map<String, byte[]> unzipInMemory(final byte[] fileBytes) {
+        try {
+            return ZipUtils.readZip(fileBytes, false);
+        } catch (final ZipException e) {
+            throw ModelOperationExceptionSupplier.couldNotReadImports().get();
+        }
+    }
+
+    private byte[] readBytes(final InputStream modelImportsZip) {
+        try (final InputStream in = modelImportsZip; final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            final var buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+            }
+            return os.toByteArray();
+        } catch (final IOException e) {
+            LOGGER.debug("Could not read the model imports zip", e);
+            throw ModelOperationExceptionSupplier.couldNotReadImports().get();
+        }
     }
 }

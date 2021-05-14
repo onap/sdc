@@ -21,8 +21,12 @@ package org.onap.sdc.tosca.datatypes.model;
 
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.onap.sdc.tosca.services.DataModelCloneUtil;
 
+@Getter
+@Setter
 public class CapabilityDefinition implements Cloneable {
 
     private String type;
@@ -32,61 +36,12 @@ public class CapabilityDefinition implements Cloneable {
     private List<String> valid_source_types;
     private Object[] occurrences;
 
-    /**
-     * Constructor.
-     */
     public CapabilityDefinition() {
-        occurrences = new Object[2];
-        occurrences[0] = 1;
-        occurrences[1] = "UNBOUNDED";
+        occurrences = new Object[] {1, "UNBOUNDED"};
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
+    public CapabilityDefinition(final String type) {
         this.type = type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Map<String, PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
-    public Map<String, AttributeDefinition> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Map<String, AttributeDefinition> attributes) {
-        this.attributes = attributes;
-    }
-
-    public List<String> getValid_source_types() {
-        return valid_source_types;
-    }
-
-    public void setValid_source_types(List<String> valid_source_types) {
-        this.valid_source_types = valid_source_types;
-    }
-
-    public Object[] getOccurrences() {
-        return occurrences;
-    }
-
-    public void setOccurrences(Object[] occurrences) {
-        this.occurrences = occurrences;
     }
 
     @Override

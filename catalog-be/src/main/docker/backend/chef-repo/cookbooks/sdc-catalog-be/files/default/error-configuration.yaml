@@ -2473,3 +2473,25 @@ errors:
         message: "Error: Model name '%1' already exists.",
         messageId: "SVC4144"
     }
+
+    #---------SVC4145------------------------------
+    # %1 - "Model name"
+    INVALID_MODEL: {
+        code: 400,
+        message: "Invalid model '%1'.",
+        messageId: "SVC4145"
+    }
+
+    #---------SVC4146------------------------------
+    MODEL_IMPORTS_IS_EMPTY: {
+        code: 400,
+        message: "Given model imports zip is empty.",
+        messageId: "SVC4146"
+    }
+
+    #---------SVC4147------------------------------
+    COULD_NOT_READ_MODEL_IMPORTS: {
+        code: 400,
+        message: "Could not read imports zip.",
+        messageId: "SVC4147"
+    }
