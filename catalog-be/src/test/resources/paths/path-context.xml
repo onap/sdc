@@ -80,6 +80,7 @@ Modifications copyright (c) 2018 Nokia
   <bean id="userOperation" class="org.openecomp.sdc.be.facade.operations.UserOperation"/>
   <bean id="dmaapProducerHealth" class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth"/>
   <bean id="feature_toggle_dao" class="org.openecomp.sdc.be.components.path.beans.FeatureToggleDaoMock"/>
+  <bean id="tosca-model-import-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.ToscaModelImportCassandraDaoMock"/>
   <bean name="httpClient" class="org.apache.http.impl.client.HttpClients" factory-method="createDefault" />
   <bean class="org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator"/>
   <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceOutputAttributeDeclarator"/>

@@ -1195,8 +1195,7 @@
                                     </outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${project.parent.basedir}/catalog-be/target
-                                            </directory>
+                                            <directory>${project.build.directory}</directory>
                                             <includes>
                                                 <include>normatives.tar.gz</include>
                                             </includes>

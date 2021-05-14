@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.InputStream;
 import java.util.Arrays;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -35,10 +36,13 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -55,10 +59,10 @@ import org.openecomp.sdc.be.ui.model.ModelCreateRequest;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Root resource (exposed at "/" path)
@@ -85,34 +89,67 @@ public class ModelServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/model")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(description = "Create model", method = "POST", summary = "Returns created model", responses = {
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    @Operation(description = "Create a TOSCA model, along with its imports files", method = "POST", summary = "Create a TOSCA model", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Model created"),
-        @ApiResponse(responseCode = "403", description = "Restricted operation"),
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
-        @ApiResponse(responseCode = "409", description = "Resource already exists")})
-    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "409", description = "Model already exists")})
     public Response createModel(@Parameter(description = "model to be created", required = true)
-                                    @Valid @RequestBody @NotNull final ModelCreateRequest modelCreateRequest,
-                                @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
-        validateUser(userId);
+                                    @NotNull @Valid @FormDataParam("model") final ModelCreateRequest modelCreateRequest,
+                                @Parameter(description = "the model TOSCA imports zipped", required = true)
+                                    @NotNull @FormDataParam("modelImportsZip") final InputStream modelImportsZip,
+                                @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
+        validateUser(ValidationUtils.sanitizeInputString(userId));
+        final var modelName = ValidationUtils.sanitizeInputString(modelCreateRequest.getName().trim());
         try {
-            final Model modelCreateResponse = modelBusinessLogic
+            final Model createdModel = modelBusinessLogic
                 .createModel(new JMapper<>(Model.class, ModelCreateRequest.class).getDestination(modelCreateRequest));
+            modelBusinessLogic.createModelImports(modelName, modelImportsZip);
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED),
-                RepresentationUtils.toRepresentation(modelCreateResponse));
+                RepresentationUtils.toRepresentation(createdModel));
         } catch (final BusinessException e) {
             throw e;
         } catch (final Exception e) {
-            var errorMsg = String
-                .format("Unexpected error while creating model '%s'", modelCreateRequest.getName());
+            var errorMsg = String.format("Unexpected error while creating model '%s' imports", modelName);
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
             log.error(errorMsg, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
+    }
+
+    @PUT
+    @Path("/model/imports")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    @Operation(description = "Update a model TOSCA imports", method = "PUT", summary = "Update a model TOSCA imports", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "204", description = "Model imports updated"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Model not found")})
+    public Response updateModelImports(@Parameter(description = "model to be created", required = true)
+                                           @NotNull @FormDataParam("modelName") String modelName,
+                                       @Parameter(description = "the model TOSCA imports zipped", required = true)
+                                           @NotNull @FormDataParam("modelImportsZip") final InputStream modelImportsZip,
+                                       @HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
+        validateUser(ValidationUtils.sanitizeInputString(userId));
+        modelName = ValidationUtils.sanitizeInputString(modelName);
+        try {
+            modelBusinessLogic.createModelImports(modelName, modelImportsZip);
+        } catch (final BusinessException e) {
+            throw e;
+        } catch (final Exception e) {
+            var errorMsg = String.format("Unexpected error while creating model '%s' imports", modelName);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
+            log.error(errorMsg, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        return Response.status(Status.NO_CONTENT).build();
     }
 
     private void validateUser(final String userId) {

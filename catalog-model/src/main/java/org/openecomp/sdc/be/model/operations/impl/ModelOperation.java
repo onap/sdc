@@ -19,12 +19,27 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
+import java.nio.charset.StandardCharsets;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.data.model.ToscaImportByModel;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -32,28 +47,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("model-operation")
-public class ModelOperation extends AbstractOperation {
+public class ModelOperation {
 
     private static final Logger log = Logger.getLogger(ModelOperation.class);
 
-    private final JanusGraphGenericDao genericDao;
+    private final JanusGraphGenericDao janusGraphGenericDao;
+    private final JanusGraphDao janusGraphDao;
+    private final ToscaModelImportCassandraDao toscaModelImportCassandraDao;
 
     @Autowired
-    public ModelOperation(final JanusGraphGenericDao janusGraphGenericDao) {
-        this.genericDao = janusGraphGenericDao;
+    public ModelOperation(final JanusGraphGenericDao janusGraphGenericDao,
+                          final JanusGraphDao janusGraphDao,
+                          final ToscaModelImportCassandraDao toscaModelImportCassandraDao) {
+        this.janusGraphGenericDao = janusGraphGenericDao;
+        this.janusGraphDao = janusGraphDao;
+        this.toscaModelImportCassandraDao = toscaModelImportCassandraDao;
     }
 
     public Model createModel(final Model model, final boolean inTransaction) {
         Model result = null;
-        final ModelData modelData = new ModelData(model.getName(), UniqueIdBuilder.buildModelUid(model.getName()));
+        final var modelData = new ModelData(model.getName(), UniqueIdBuilder.buildModelUid(model.getName()));
         try {
-            final Either<ModelData, JanusGraphOperationStatus> createNode = genericDao.createNode(modelData, ModelData.class);
+            final Either<ModelData, JanusGraphOperationStatus> createNode = janusGraphGenericDao.createNode(modelData, ModelData.class);
             if (createNode.isRight()) {
-                final JanusGraphOperationStatus janusGraphOperationStatus = createNode.right().value();
+                final var janusGraphOperationStatus = createNode.right().value();
                 log.error(EcompLoggerErrorCode.DATA_ERROR, ModelOperation.class.getName(), "Problem while creating model, reason {}",
                     janusGraphOperationStatus);
                 if (janusGraphOperationStatus == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
-                    throw new OperationException(ActionStatus.MODEL_ALREADY_EXISTS, model.getName());
+                    throw ModelOperationExceptionSupplier.modelAlreadyExists(model.getName()).get();
                 }
                 throw new OperationException(ActionStatus.GENERAL_ERROR,
                     String.format("Failed to create model %s on JanusGraph with %s error", model, janusGraphOperationStatus));
@@ -63,14 +84,66 @@ public class ModelOperation extends AbstractOperation {
         } finally {
             if (!inTransaction) {
                 if (Objects.nonNull(result)) {
-                    genericDao.commit();
+                    janusGraphGenericDao.commit();
                 } else {
-                    genericDao.rollback();
+                    janusGraphGenericDao.rollback();
                 }
             }
         }
     }
 
+    public Optional<GraphVertex> findModelVertexByName(final String name) {
+        if (StringUtils.isEmpty(name)) {
+            return Optional.empty();
+        }
+        final Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
+        props.put(GraphPropertyEnum.NAME, name);
+        props.put(GraphPropertyEnum.UNIQUE_ID, UniqueIdBuilder.buildModelUid(name));
+        final Either<List<GraphVertex>, JanusGraphOperationStatus> result = janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, props);
+        if (result.isRight()) {
+            final JanusGraphOperationStatus janusGraphOperationStatus = result.right().value();
+            if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
+                return Optional.empty();
+            }
+            log.error(EcompLoggerErrorCode.DATA_ERROR, this.getClass().getName(),
+                String.format("Problem while getting model %s. reason %s", name, janusGraphOperationStatus));
+            throw new OperationException(ActionStatus.GENERAL_ERROR,
+                String.format("Failed to get model %s on JanusGraph with %s error", name, janusGraphOperationStatus));
+        }
+        return Optional.ofNullable(result.left().value().get(0));
+    }
+
+    public Optional<Model> findModelByName(final String name) {
+        if (StringUtils.isEmpty(name)) {
+            return Optional.empty();
+        }
+        final Optional<GraphVertex> modelVertexOpt = findModelVertexByName(name);
+        if (modelVertexOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final GraphVertex graphVertex = modelVertexOpt.get();
+        final var model = new Model((String) graphVertex.getMetadataProperty(GraphPropertyEnum.NAME));
+        return Optional.of(model);
+    }
+
+    public void createModelImports(final String modelId, final Map<String, byte[]> zipContent) {
+        if (MapUtils.isEmpty(zipContent)) {
+            return;
+        }
+        final List<ToscaImportByModel> toscaImportByModelList = zipContent.entrySet().stream()
+            .map(entry -> {
+                final String path = entry.getKey();
+                final byte[] bytes = entry.getValue();
+                final String content = new String(bytes, StandardCharsets.UTF_8);
+                final var toscaImportByModel = new ToscaImportByModel();
+                toscaImportByModel.setModelId(modelId);
+                toscaImportByModel.setFullPath(path);
+                toscaImportByModel.setContent(content);
+                return toscaImportByModel;
+            }).collect(Collectors.toList());
+        toscaModelImportCassandraDao.importAll(modelId, toscaImportByModelList);
+    }
 }
 
 

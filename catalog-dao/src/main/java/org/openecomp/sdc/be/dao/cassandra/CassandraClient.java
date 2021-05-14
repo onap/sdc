@@ -34,6 +34,7 @@ import java.util.List;
 import javax.annotation.PreDestroy;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
@@ -155,7 +156,7 @@ public class CassandraClient {
             Mapper<T> mapper = manager.mapper(clazz);
             mapper.save(entity);
         } catch (Exception e) {
-            logger.debug("Failed to save entity [{}], error :", entity, e);
+            logger.error(EcompLoggerErrorCode.DATA_ERROR, CassandraClient.class.getName(), "Failed to save entity [{}], error :", entity, e);
             return CassandraOperationStatus.GENERAL_ERROR;
         }
         return CassandraOperationStatus.OK;
