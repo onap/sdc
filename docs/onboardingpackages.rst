@@ -61,6 +61,8 @@ Basic Helm package support for CNF
 The helm package support is new since Guilin release, helm chart packaged as tgz file can be onboarded and distributed.
 The support is limited for this first release.
 
+Since Istanbul release there is also an additional helm chart validation step during package onboarding process. More information: :ref:`SDC Helm Validator <sdc_helm_validator>`.
+
 Package Types applicable to Resource Types
 ------------------------------------------
 VF

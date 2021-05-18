@@ -81,6 +81,14 @@ environment.json
             "VnfRepo": {
                 "vnfRepoPort": "8702",
                 "vnfRepoHost": "10.0.14.1"
+            }, 
+            "HelmValidator": {
+                "validator_enabled": true,
+                "helm_version": "3.5.2",
+                "deployable": true,
+                "lintable": false,
+                "strict_lintable": false,
+                "validator_url": "http://sdc-helm-validator:8080/validate"
             }
         },
         "override_attributes": {
