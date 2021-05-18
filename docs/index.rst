@@ -23,3 +23,4 @@ SDC Documentation
    sdcsdks.rst
    dcaedesigner.rst
    workflow.rst
+   sdc-helm-validator.rst
