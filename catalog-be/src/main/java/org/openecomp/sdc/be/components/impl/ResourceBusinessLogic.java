@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
@@ -44,6 +43,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -1314,6 +1314,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         resourceMetaData.setContactId(user.getUserId());
         resourceMetaData.setVendorName(resourceVf.getVendorName());
         resourceMetaData.setVendorRelease(resourceVf.getVendorRelease());
+        resourceMetaData.setModel(resourceVf.getModel());
         // Setting tag
         final List<String> tags = new ArrayList<>();
         tags.add(resourceMetaData.getName());
@@ -1346,6 +1347,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         cvfc.setCreatorUserId(csarInfo.getModifier().getUserId());
         cvfc.setVendorName(resourceVf.getVendorName());
         cvfc.setVendorRelease(resourceVf.getVendorRelease());
+        cvfc.setModel(resourceVf.getModel());
         cvfc.setResourceVendorModelNumber(resourceVf.getResourceVendorModelNumber());
         cvfc.setToscaResourceName(buildNestedToscaResourceName(ResourceTypeEnum.CVFC.name(), csarInfo.getVfResourceName(), nodeName).getLeft());
         cvfc.setInvariantUUID(UniqueIdBuilder.buildInvariantUUID());
@@ -1892,7 +1894,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             throw e;
         }
     }
-    
+
     private boolean nodeTypeAlreadyExists(final String toscaResourceName) {
         return toscaOperationFacade.getLatestByToscaResourceName(toscaResourceName).isLeft();
     }
@@ -3277,10 +3279,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         ImmutablePair<Resource, ActionStatus> result = null;
         // check if resource already exists (search by tosca name = type)
         final boolean isNestedResource = isNestedResourceUpdate(csarInfo, nodeName);
+        final String resourceName = resource.getToscaResourceName();
         final Either<Resource, StorageOperationStatus> latestByToscaName = toscaOperationFacade
-            .getLatestByToscaResourceName(resource.getToscaResourceName());
-        if (latestByToscaName.isLeft()) {
-            Resource foundResource = latestByToscaName.left().value();
+            .getLatestByToscaResourceNameAndModel(resourceName, resource.getModel());
+        if (latestByToscaName.isLeft() && Objects.nonNull(latestByToscaName.left().value())) {
+            final Resource foundResource = latestByToscaName.left().value();
             // we don't allow updating names of top level types
             if (!isNestedResource && !StringUtils.equals(resource.getName(), foundResource.getName())) {
                 BeEcompErrorManager.getInstance()
@@ -3349,7 +3352,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     public boolean isResourceExist(String resourceName) {
-        Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByName(resourceName);
+        Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByName(resourceName, null);
         return latestByName.isLeft();
     }
 
@@ -3463,6 +3466,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         if (newResource.getResourceVendorModelNumber() == null) {
             newResource.setResourceVendorModelNumber(oldResource.getResourceVendorModelNumber());
+        }
+        if (newResource.getModel() == null) {
+            newResource.setModel(oldResource.getModel());
         }
         if (newResource.getContactId() == null) {
             newResource.setContactId(oldResource.getContactId());
@@ -3749,10 +3755,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Resource createResourceTransaction(Resource resource, User user, boolean isNormative) {
-        // validate resource name uniqueness
-        log.debug("validate resource name");
-        Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade
-            .validateComponentNameExists(resource.getName(), resource.getResourceType(), resource.getComponentType());
+        final String resourceName = resource.getName();
+        final String modelName = resource.getModel();
+        final ResourceTypeEnum resourceType = resource.getResourceType();
+        final ComponentTypeEnum componentType = resource.getComponentType();
+        final Either<Boolean, StorageOperationStatus> eitherValidation = toscaOperationFacade
+            .validateComponentNameAndModelExists(resourceName, modelName, resourceType, componentType);
         if (eitherValidation.isRight()) {
             loggerSupportability.log(LoggerSupportabilityActions.VALIDATE_NAME, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
                 "ERROR while validate component name {} Status is: {}", resource.getName(), eitherValidation.right().value());

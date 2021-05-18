@@ -55,15 +55,16 @@ public enum GraphPropertyEnum {
     ICONS("icons", String.class, false, false),
     METADATA_KEYS("metadataKeys", String.class, false, false),
     USE_SUBSTITUTION_FOR_NESTED_SERVICES("useServiceSubstitutionForNestedServices", Boolean.class, false, false),
-
     DATA_TYPES("data_types", Map.class, false, false),
-
     //Archive/Restore
-    IS_ARCHIVED("isArchived", Boolean.class, false, true), IS_VSP_ARCHIVED("isVspArchived", Boolean.class, false, true), ARCHIVE_TIME("archiveTime",
-        Long.class, false, true), PREV_CATALOG_UPDATE_TIME("previousUpdateTime", Long.class, false, true), CURRENT_CATALOG_UPDATE_TIME(
-        "currentUpdateTime", Long.class, false, true),
+    IS_ARCHIVED("isArchived", Boolean.class, false, true),
+    IS_VSP_ARCHIVED("isVspArchived", Boolean.class, false, true),
+    ARCHIVE_TIME("archiveTime", Long.class, false, true),
+    PREV_CATALOG_UPDATE_TIME("previousUpdateTime", Long.class, false, true),
+    CURRENT_CATALOG_UPDATE_TIME("currentUpdateTime", Long.class, false, true),
     //Healing
-    HEALING_VERSION("healVersion", Integer.class, false, true);
+    HEALING_VERSION("healVersion", Integer.class, false, true),
+    MODEL("model", String.class, false, false);
     // @formatter:on
 
     private final String property;

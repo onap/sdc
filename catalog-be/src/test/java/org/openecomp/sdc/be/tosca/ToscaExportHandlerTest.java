@@ -735,7 +735,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
             .thenReturn(Either.left(new ToscaNodeType()));
         when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getToscaFullElement("sourceModelUid")).thenReturn(Either.left(component));
-        when(toscaOperationFacade.getLatestByName("serviceProxy")).thenReturn(Either.left(new Resource()));
+        when(toscaOperationFacade.getLatestByName("serviceProxy", null)).thenReturn(Either.left(new Resource()));
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(new Resource()));
 
         final Map<String, String[]> substitutionMappingMap = new HashMap<>();
@@ -859,7 +859,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
             .thenReturn(Either.left(new ToscaNodeType()));
         when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getToscaFullElement("sourceModelUid")).thenReturn(Either.left(component));
-        when(toscaOperationFacade.getLatestByName("serviceProxy")).thenReturn(Either.left(new Resource()));
+        when(toscaOperationFacade.getLatestByName("serviceProxy", null)).thenReturn(Either.left(new Resource()));
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(new Resource()));
 
         final Map<String, String[]> substitutionMappingMap = new HashMap<>();
@@ -1135,7 +1135,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         componentInstances.add(instance);
         container.setComponentInstances(componentInstances);
 
-        when(toscaOperationFacade.getLatestByName("serviceProxy"))
+        when(toscaOperationFacade.getLatestByName("serviceProxy", null))
             .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
         // test when getLatestByName return is right
@@ -1188,7 +1188,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         componentInstances.add(instance);
         container.setComponentInstances(componentInstances);
 
-        when(toscaOperationFacade.getLatestByName("serviceProxy")).thenReturn(Either.left(new Resource()));
+        when(toscaOperationFacade.getLatestByName("serviceProxy", null)).thenReturn(Either.left(new Resource()));
 
         ComponentParametersView parameterView = new ComponentParametersView();
         parameterView.disableAll();

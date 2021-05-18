@@ -2495,3 +2495,27 @@ errors:
         message: "Could not read imports zip.",
         messageId: "SVC4147"
     }
+
+    #---------SVC4148------------------------------
+    # %1 - "Model name"
+    MODEL_NOT_FOUND: {
+        code: 404,
+        message: "Error: Model name '%1' not found. Please, make sure the model is created.",
+        messageId: "SVC4148"
+    }
+
+    #---------SVC4149------------------------------
+    MODEL_NAME_CANNOT_BE_EMPTY: {
+        code: 409,
+        message: "Error: Model name cannot be empty.",
+        messageId: "SVC4149"
+    }
+
+    #-----------SVC4150---------------------------
+    # %1 - "Component name"
+    # %2 - "Model name"
+    COMPONENT_WITH_MODEL_ALREADY_EXIST: {
+        code: 409,
+        message: "Error: Component %1 with Model %2 already exist.",
+        messageId: "SVC4150"
+    }

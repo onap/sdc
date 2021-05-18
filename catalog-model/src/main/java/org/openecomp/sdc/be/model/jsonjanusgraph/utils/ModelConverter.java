@@ -718,6 +718,9 @@ public class ModelConverter {
         component.setSystemName((String) toscaElement.getMetadataValue(JsonPresentationFields.SYSTEM_NAME));
         component.setDerivedFromGenericType(toscaElement.getDerivedFromGenericType());
         component.setDerivedFromGenericVersion(toscaElement.getDerivedFromGenericVersion());
+        if(toscaElement.getModel() != null) {
+            component.setModel(toscaElement.getModel());
+        }
         Map<String, PropertyDataDefinition> properties = toscaElement.getProperties();
         if (MapUtils.isNotEmpty(properties)) {
             List<PropertyDefinition> propertiesMap = properties.values().stream().map(x -> new PropertyDefinition(x)).collect(Collectors.toList());
@@ -733,6 +736,7 @@ public class ModelConverter {
             resource.setToscaResourceName((String) toscaElement.getMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME));
             resource.setVendorName((String) toscaElement.getMetadataValue(JsonPresentationFields.VENDOR_NAME));
             resource.setVendorRelease((String) toscaElement.getMetadataValue(JsonPresentationFields.VENDOR_RELEASE));
+            resource.setModel((String) toscaElement.getMetadataValue(JsonPresentationFields.MODEL));
             // field isn't mandatory , but shouldn't be null(should be an empty string instead)
             if (((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER)) != null) {
                 resource.setResourceVendorModelNumber((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER));
@@ -1292,6 +1296,7 @@ public class ModelConverter {
             toscaElement.setMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME, ((Resource) component).getToscaResourceName());
             toscaElement.setMetadataValue(JsonPresentationFields.VENDOR_NAME, ((Resource) component).getVendorName());
             toscaElement.setMetadataValue(JsonPresentationFields.VENDOR_RELEASE, ((Resource) component).getVendorRelease());
+            toscaElement.setMetadataValue(JsonPresentationFields.MODEL, component.getModel());
             // field isn't mandatory , but shouldn't be null(should be an empty string instead)
             if (((Resource) component).getResourceVendorModelNumber() != null) {
                 toscaElement

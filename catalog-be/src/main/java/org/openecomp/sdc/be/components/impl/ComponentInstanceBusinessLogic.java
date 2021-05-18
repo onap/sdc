@@ -425,7 +425,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private Component getOrigComponentForServiceProxy(org.openecomp.sdc.be.model.Component containerComponent, ComponentInstance resourceInstance) {
-        Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName(SERVICE_PROXY);
+        Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName(SERVICE_PROXY, null);
         if (isServiceProxyOrigin(serviceProxyOrigin)) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
         }
@@ -527,7 +527,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 validateInstanceName(resourceInstance);
                 if (originType == OriginTypeEnum.ServiceProxy) {
                     log.debug("enter createRealComponentInstance,originType equals ServiceProxy");
-                    Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName(SERVICE_PROXY);
+                    Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade.getLatestByName(SERVICE_PROXY, null);
                     if (isServiceProxyOrigin(serviceProxyOrigin)) {
                         throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
                     }
@@ -2839,7 +2839,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 newComponentInstance.setOriginType(originType);
                 if (originType == OriginTypeEnum.ServiceProxy) {
                     Either<Component, StorageOperationStatus> serviceProxyOrigin = toscaOperationFacade
-                        .getLatestByName(SERVICE_PROXY);
+                        .getLatestByName(SERVICE_PROXY, null);
                     if (isServiceProxyOrigin(serviceProxyOrigin)) {
                         throw new ByActionStatusComponentException(
                             componentsUtils.convertFromStorageResponse(serviceProxyOrigin.right().value()));
