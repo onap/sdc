@@ -92,7 +92,8 @@ public enum VertexTypeEnum {
 	NODE_FILTER_TEMPLATE		("NodeTemplateFilter",        CINodeFilterDataDefinition.class),
 	SUBSTITUTION_FILTER_TEMPLATE ("substitution_mapping",     SubstitutionFilterDataDefinition.class),
 	INST_INTERFACES             ("InstInterfaces",            MapInterfaceDataDefinition.class),
-	DATA_TYPES					("data_types", 				DataTypeDataDefinition.class);
+	DATA_TYPES					("data_types", 				DataTypeDataDefinition.class),
+	MODEL                       ("model",                   null);
     // @formatter:on
 
     private final String name;

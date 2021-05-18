@@ -202,4 +202,8 @@ public class UniqueIdBuilder {
     public static String buildGroupPropertyValueUid(String groupUniqueId, Integer index) {
         return groupUniqueId + DOT + "property" + DOT + index;
     }
+
+    public static String buildModelUid(final String modelName) {
+        return NodeTypeEnum.Model.getName() + DOT + modelName;
+    }
 }
