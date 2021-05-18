@@ -88,13 +88,11 @@ public class OnboardingPackageProcessor {
     }
 
     public boolean hasErrors() {
-        return errorMessages.stream()
-            .anyMatch(error -> error.getLevel() == ErrorLevel.ERROR);
+        return !errorMessages.isEmpty();
     }
 
     public boolean hasNoErrors() {
-        return errorMessages.stream()
-            .noneMatch(error -> error.getLevel() == ErrorLevel.ERROR);
+        return errorMessages.isEmpty();
     }
 
     public Set<ErrorMessage> getErrorMessages() {

@@ -38,6 +38,14 @@
       "VnfRepo": {
          "vnfRepoPort": "8702",
          "vnfRepoHost": "10.0.14.1"
+      },
+      "HelmValidator": {
+         "validator_enabled": false,
+         "validator_url": "http://localhost:8082/validate",
+         "helm_version": "v3",
+         "deployable": true,
+         "lintable": false,
+         "strict_lintable": false
       }
    },
    "override_attributes": {
