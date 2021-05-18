@@ -165,4 +165,9 @@ public class JsonPresentationFieldsExtractor {
     public String getServiceFunction() {
         return (String) properties.get(JsonPresentationFields.SERVICE_FUNCTION.getPresentation());
     }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getModels() {
+        return (List<String>) properties.get(JsonPresentationFields.MODELS.getPresentation());
+    }
 }

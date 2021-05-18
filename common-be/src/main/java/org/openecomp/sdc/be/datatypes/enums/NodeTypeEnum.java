@@ -63,7 +63,8 @@ public enum NodeTypeEnum {
     Input("input"),
     GroupInstance("groupInstance"),
     AnnotationType("annotationType"),
-    Component("component");
+    Component("component"),
+    Model("model");
     // @formatter:on
 
     private final String name;
