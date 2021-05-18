@@ -364,6 +364,12 @@
       <version>3.1.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.googlecode.jmapper-framework</groupId>
+      <artifactId>jmapper-core</artifactId>
+      <version>${jMapper.version}</version>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>

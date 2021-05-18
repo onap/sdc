@@ -2465,3 +2465,11 @@ errors:
         message: "An unexpected error occurred while updating the capability '%1'.",
         messageId: "SVC4143"
     }
+
+    #---------SVC4144------------------------------
+    # %1 - "Model name"
+    MODEL_ALREADY_EXISTS: {
+        code: 409,
+        message: "Error: Model name '%1' already exists.",
+        messageId: "SVC4144"
+    }

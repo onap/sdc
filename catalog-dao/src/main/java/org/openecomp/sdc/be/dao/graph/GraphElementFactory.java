@@ -46,6 +46,7 @@ import org.openecomp.sdc.be.resources.data.HeatParameterValueData;
 import org.openecomp.sdc.be.resources.data.InputValueData;
 import org.openecomp.sdc.be.resources.data.InputsData;
 import org.openecomp.sdc.be.resources.data.InterfaceData;
+import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.be.resources.data.OperationData;
 import org.openecomp.sdc.be.resources.data.PolicyTypeData;
 import org.openecomp.sdc.be.resources.data.ProductMetadataData;
@@ -255,6 +256,10 @@ public class GraphElementFactory {
                     break;
                 case AnnotationType:
                     element = clazz.cast(new AnnotationTypeData(properties));
+                    break;
+                case Model:
+                    element = clazz.cast(new ModelData(properties));
+                    break;
                 default:
                     break;
             }

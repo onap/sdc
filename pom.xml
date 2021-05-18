@@ -133,6 +133,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <hamcrest-all.version>1.3</hamcrest-all.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+        <jMapper.version>1.6.0.1</jMapper.version>
 
         <!-- sonar -->
         <sonar.projectVersion>${project.version}</sonar.projectVersion>
@@ -735,6 +736,8 @@ Modifications copyright (c) 2018-2019 Nokia
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
                 <jacoco.skip>true</jacoco.skip>
+
+
                 <docker.skip.run>true</docker.skip.run>
             </properties>
             <modules>
