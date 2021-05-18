@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d63bb7f_8f47663e",
+        "filename": "docs/sdc-helm-validator.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-05-18T16:20:47Z",
+      "side": 1,
+      "message": "add here a reference to this page, sth like \".. _helmvalidator\".\nThis will help to refer to this page later on.",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 3
+      },
+      "revId": "97e169d09466089e8bba75432999f40ecc5afbf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06ef469c_2e5ced27",
+        "filename": "docs/sdc-helm-validator.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-05-18T16:20:47Z",
+      "side": 1,
+      "message": "allows",
+      "range": {
+        "startLine": 12,
+        "startChar": 68,
+        "endLine": 12,
+        "endChar": 73
+      },
+      "revId": "97e169d09466089e8bba75432999f40ecc5afbf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8cc91b93_ce266405",
+        "filename": "docs/sdc-helm-validator.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-05-18T16:20:47Z",
+      "side": 1,
+      "message": "\"This application can be used to validate CNF Helm charts using a Helm Client.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 63
+      },
+      "revId": "97e169d09466089e8bba75432999f40ecc5afbf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4b580ca_eb8ecd3e",
+        "filename": "docs/sdc-helm-validator.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-05-18T16:20:47Z",
+      "side": 1,
+      "message": "execute",
+      "range": {
+        "startLine": 12,
+        "startChar": 120,
+        "endLine": 12,
+        "endChar": 124
+      },
+      "revId": "97e169d09466089e8bba75432999f40ecc5afbf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "246453af_bb861cc9",
+        "filename": "docs/sdc-helm-validator.rst",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-05-18T16:20:47Z",
+      "side": 1,
+      "message": "We can add here \"Usage within SDC\", with content like:\n\"The CNF Helm validator is triggered by SDC-BE in CNF package onboarding use-cases.\"",
+      "revId": "97e169d09466089e8bba75432999f40ecc5afbf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
