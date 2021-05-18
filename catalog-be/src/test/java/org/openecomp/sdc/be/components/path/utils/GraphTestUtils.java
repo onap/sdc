@@ -73,6 +73,7 @@ public final class GraphTestUtils {
         vertex.addMetadataProperty(GraphPropertyEnum.UNIQUE_ID, uuid);
         vertex.addMetadataProperty(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
         vertex.addMetadataProperty(GraphPropertyEnum.RESOURCE_TYPE, type.name());
+        vertex.addMetadataProperty(GraphPropertyEnum.MODEL, type.name());
         vertex.addMetadataProperty(GraphPropertyEnum.IS_ABSTRACT, false);
         for (Map.Entry<GraphPropertyEnum, Object> prop : metadataProps.entrySet()) {
             vertex.addMetadataProperty(prop.getKey(), prop.getValue());

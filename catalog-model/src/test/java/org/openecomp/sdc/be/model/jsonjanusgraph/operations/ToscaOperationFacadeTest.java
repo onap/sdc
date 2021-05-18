@@ -263,6 +263,7 @@ public class ToscaOperationFacadeTest {
         Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, "toscaResourceName");
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        propertiesToMatch.put(GraphPropertyEnum.MODEL, null);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
         when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll))
@@ -441,6 +442,7 @@ public class ToscaOperationFacadeTest {
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        propertiesToMatch.put(GraphPropertyEnum.MODEL, null);
         Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 

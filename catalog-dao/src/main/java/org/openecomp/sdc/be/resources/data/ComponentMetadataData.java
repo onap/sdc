@@ -62,6 +62,7 @@ public abstract class ComponentMetadataData extends GraphNode {
         metadataDataDefinition.setCsarVersion(extractor.getCsarVersion());
         metadataDataDefinition.setImportedToscaChecksum(extractor.getImportedToscaChecksum());
         metadataDataDefinition.setInvariantUUID(extractor.getInvariantUuid());
+        metadataDataDefinition.setModel(extractor.getModel());
         componentInstanceCounter = extractor.getInstanceCounter();
     }
 
@@ -90,6 +91,7 @@ public abstract class ComponentMetadataData extends GraphNode {
         addIfExists(map, GraphPropertiesDictionary.CSAR_VERSION, metadataDataDefinition.getCsarVersion());
         addIfExists(map, GraphPropertiesDictionary.IMPORTED_TOSCA_CHECKSUM, metadataDataDefinition.getImportedToscaChecksum());
         addIfExists(map, GraphPropertiesDictionary.INVARIANT_UUID, metadataDataDefinition.getInvariantUUID());
+        addIfExists(map, GraphPropertiesDictionary.MODEL, metadataDataDefinition.getModel());
         return map;
     }
 

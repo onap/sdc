@@ -136,6 +136,10 @@ public class GraphPropertiesDictionaryExtractor {
         return (String) properties.get(GraphPropertiesDictionary.VENDOR_RELEASE.getProperty());
     }
 
+    public String getModel() {
+        return (String) properties.get(GraphPropertiesDictionary.MODEL.getProperty());
+    }
+
     public Boolean isAbstract() {
         return (Boolean) properties.get(GraphPropertiesDictionary.IS_ABSTRACT.getProperty());
     }

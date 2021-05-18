@@ -132,6 +132,9 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
     @Getter
     @Setter
     private Map<String, String> categorySpecificMetadata;
+    @Getter
+    @Setter
+    private String model;
 
     public ComponentMetadataDataDefinition(ComponentMetadataDataDefinition other) {
         this.uniqueId = other.getUniqueId();
@@ -159,6 +162,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.isVspArchived = other.isVspArchived;
         this.archiveTime = other.getArchiveTime();
         this.categorySpecificMetadata = other.getCategorySpecificMetadata();
+        this.model = other.getModel();
     }
 
     public ComponentMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
@@ -185,6 +189,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.isArchived = extractor.isArchived();
         this.isVspArchived = extractor.isVspArchived();
         this.archiveTime = extractor.getArchiveTime();
+        this.model = extractor.getModel();
     }
 
     public void setUniqueId(String uniqueId) {

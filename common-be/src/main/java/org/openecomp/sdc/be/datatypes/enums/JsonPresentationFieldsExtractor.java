@@ -165,4 +165,8 @@ public class JsonPresentationFieldsExtractor {
     public String getServiceFunction() {
         return (String) properties.get(JsonPresentationFields.SERVICE_FUNCTION.getPresentation());
     }
+
+    public String getModel() {
+        return (String) properties.get(JsonPresentationFields.MODEL.getPresentation());
+    }
 }
