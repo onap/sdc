@@ -27,11 +27,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.File;
-import java.io.FileNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -48,19 +45,23 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.zip.exception.ZipException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -68,8 +69,8 @@ import org.springframework.stereotype.Controller;
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog/upload")
-@Tags({@Tag(name = "SDCE-2 APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@Tag(name = "SDCE-2 APIs")
+@Server(url = "/sdc2/rest")
 @Controller
 public class ResourceUploadServlet extends AbstractValidationsServlet {
 
@@ -77,12 +78,16 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     public static final String CSAR_TYPE_RESOURCE = "csar";
     public static final String USER_TYPE_RESOURCE = "user-resource";
     public static final String USER_TYPE_RESOURCE_UI_IMPORT = "user-resource-ui-import";
-    private static final Logger log = Logger.getLogger(ResourceUploadServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(ResourceUploadServlet.class);
+
+    private ModelBusinessLogic modelBusinessLogic;
 
     @Inject
     public ResourceUploadServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
-                                 ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager) {
+                                 ComponentsUtils componentsUtils, ServletUtils servletUtils, ResourceImportManager resourceImportManager,
+                                 ModelBusinessLogic modelBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+        this.modelBusinessLogic = modelBusinessLogic;
     }
 
     @POST
@@ -103,8 +108,8 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
         @Parameter(description = "ContentDisposition") @FormDataParam("resourceZip") FormDataContentDisposition contentDispositionHeader,
         @Parameter(description = "resourceMetadata") @FormDataParam("resourceMetadata") String resourceInfoJsonString,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-        // updateResourse Query Parameter if false checks if already exist
-        @DefaultValue("true") @QueryParam("createNewVersion") boolean createNewVersion) throws FileNotFoundException, ZipException {
+        // updateResource Query Parameter if false checks if already exist
+        @DefaultValue("true") @QueryParam("createNewVersion") boolean createNewVersion) {
         try {
             Wrapper<Response> responseWrapper = new Wrapper<>();
             Wrapper<User> userWrapper = new Wrapper<>();
@@ -112,12 +117,14 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             Wrapper<String> yamlStringWrapper = new Wrapper<>();
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {}", url);
-            // When we get an errorResponse it will be filled into the
-
-            // responseWrapper
+            // When we get an errorResponse it will be filled into the responseWrapper
             validateAuthorityType(responseWrapper, resourceAuthority);
             ResourceAuthorityTypeEnum resourceAuthorityEnum = ResourceAuthorityTypeEnum.findByUrlPath(resourceAuthority);
             commonGeneralValidations(responseWrapper, userWrapper, uploadResourceInfoWrapper, resourceAuthorityEnum, userId, resourceInfoJsonString);
+            final String modelNameToBeAssociated = uploadResourceInfoWrapper.getInnerElement().getModel();
+            if (modelNameToBeAssociated != null) {
+                validateModel(modelNameToBeAssociated);
+            }
             fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), resourceInfoJsonString,
                 resourceAuthorityEnum, file);
             // PayLoad Validations
@@ -132,10 +139,23 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
                     yamlStringWrapper.getInnerElement(), resourceAuthorityEnum, createNewVersion, null);
             }
             return responseWrapper.getInnerElement();
-        } catch (Exception e) {
-            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Upload Resource");
-            log.debug("upload resource failed with exception", e);
+        } catch (final BusinessException e) {
             throw e;
+        } catch (final Exception e) {
+            var errorMsg = String.format("Unexpected error while uploading Resource '%s'", resourceInfoJsonString);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
+            log.error(errorMsg, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+
+    /**
+     * The Model field is an optional entry when uploading a resource. If the field is present, it validates if the Model name exists.
+     * @param modelName Model names declared on the resource json representation
+     */
+    private void validateModel(final String modelName) {
+        if (modelBusinessLogic.findModel(modelName).isEmpty()) {
+            throw ModelOperationExceptionSupplier.invalidModel(modelName).get();
         }
     }
 
@@ -148,7 +168,8 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
         // @formatter:on
 
         private String urlPath;
-        private boolean isBackEndImport, isUserTypeResource;
+        private boolean isBackEndImport;
+        private boolean isUserTypeResource;
 
         public static ResourceAuthorityTypeEnum findByUrlPath(String urlPath) {
             ResourceAuthorityTypeEnum found = null;
@@ -161,7 +182,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             return found;
         }
 
-        private ResourceAuthorityTypeEnum(String urlPath, boolean isBackEndImport, boolean isUserTypeResource) {
+        ResourceAuthorityTypeEnum(String urlPath, boolean isBackEndImport, boolean isUserTypeResource) {
             this.urlPath = urlPath;
             this.isBackEndImport = isBackEndImport;
             this.isUserTypeResource = isUserTypeResource;

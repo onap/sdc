@@ -171,19 +171,7 @@ public class ResourceImportManager {
             setMetaDataFromJson(resourceMetaData, resource);
             populateResourceFromYaml(resourceYml, resource);
             validationFunction.apply(resource);
-            if (!createNewVersion) {
-                Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByName(resource.getName());
-                if (latestByName.isLeft()) {
-                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, resource.getName());
-                }
-            } else if (!isCsarPresent(csarInfo)) {
-                final Either<Resource, StorageOperationStatus> component = toscaOperationFacade
-                    .getComponentByNameAndVendorRelease(resource.getComponentType(), resource.getName(), resource.getVendorRelease(),
-                        JsonParseFlagEnum.ParseAll);
-                if (component.isLeft()) {
-                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_VERSION_ALREADY_EXIST, resource.getName());
-                }
-            }
+            checkResourceExistsBeforeCreate(createNewVersion, csarInfo, resource);
             resource = resourceBusinessLogic
                 .createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock, csarInfo, nodeName, isNested).left;
             Resource changeStateResponse;
@@ -208,6 +196,35 @@ public class ResourceImportManager {
             }
         }
         return responsePair;
+    }
+
+    private void checkResourceExistsBeforeCreate(final boolean createNewVersion, final CsarInfo csarInfo, final Resource resource) {
+        final String resourceName = resource.getName();
+        final String model = resource.getModel();
+        final Either<Resource, StorageOperationStatus> latestByToscaName = toscaOperationFacade
+            .getLatestByToscaResourceNameAndModel(resourceName, model);
+        if (latestByToscaName.isLeft()) {
+            final Resource foundResource = latestByToscaName.left().value();
+            validateComponentWithModelExist(resourceName, model, foundResource);
+            if (!createNewVersion) {
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, resourceName);
+            }
+            if (!isCsarPresent(csarInfo)) {
+                final Either<Resource, StorageOperationStatus> component = toscaOperationFacade
+                    .getComponentByNameAndVendorRelease(resource.getComponentType(), resource.getName(), resource.getVendorRelease(),
+                        JsonParseFlagEnum.ParseAll);
+                if (component.isLeft()) {
+                    validateComponentWithModelExist(resourceName, model, foundResource);
+                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_VERSION_ALREADY_EXIST, resource.getName());
+                }
+            }
+        }
+    }
+
+    private void validateComponentWithModelExist(final String resourceName, final String model, final Resource foundResource) {
+        if (model != null && toscaOperationFacade.isNodeAssociatedToModel(model, foundResource).isPresent()) {
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_WITH_MODEL_ALREADY_EXIST, resourceName, model);
+        }
     }
 
     private boolean isCsarPresent(final CsarInfo csarInfo) {
@@ -245,6 +262,9 @@ public class ResourceImportManager {
             }
             if (resourceMetaData.getVendorRelease() != null) {
                 resource.setVendorRelease(resourceMetaData.getVendorRelease());
+            }
+            if (resourceMetaData.getModel() != null) {
+                resource.setModel(resourceMetaData.getModel());
             }
         }
     }

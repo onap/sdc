@@ -994,7 +994,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private Component getForwardingPathOriginComponent() {
         Either<Component, StorageOperationStatus> forwardingPathOrigin = toscaOperationFacade
-            .getLatestByName(ForwardingPathUtils.FORWARDING_PATH_NODE_NAME);
+            .getLatestByName(ForwardingPathUtils.FORWARDING_PATH_NODE_NAME, null);
         if (forwardingPathOrigin.isRight()) {
             StorageOperationStatus errorStatus = forwardingPathOrigin.right().value();
             log.debug("Failed to fetch normative forwarding path resource by tosca name, error {}", errorStatus);

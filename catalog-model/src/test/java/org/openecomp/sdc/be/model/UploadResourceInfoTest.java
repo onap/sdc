@@ -36,8 +36,8 @@ public class UploadResourceInfoTest {
 
 	@Test
 	public void testCtor() throws Exception {
-		new UploadResourceInfo("mock", "mock", "mock", "mock/mock/mock", new LinkedList<>(), new LinkedList<>());
-
+		new UploadResourceInfo("mock", "mock", "mock", "mock/mock/mock", new LinkedList<>(), new LinkedList<>(),
+			"modelName");
 	}
 
 	@Test

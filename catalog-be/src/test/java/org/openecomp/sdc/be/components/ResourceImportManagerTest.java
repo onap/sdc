@@ -28,9 +28,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import fj.data.Either;
 import java.io.IOException;
@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,7 +58,6 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -106,6 +106,7 @@ public class ResourceImportManagerTest {
         importManager = new ResourceImportManager(componentsUtils, capabilityTypeOperation, interfaceDefinitionHandler);
         importManager.setAuditingManager(auditingManager);
         when(toscaOperationFacade.getLatestByToscaResourceName(Mockito.anyString())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(Mockito.anyString(), Mockito.any())).thenReturn(Either.left(null));
         importManager.setResponseFormatManager(responseFormatManager);
         importManager.setResourceBusinessLogic(resourceBusinessLogic);
         importManager.setToscaOperationFacade(toscaOperationFacade);
@@ -123,7 +124,8 @@ public class ResourceImportManagerTest {
     public void beforeTest() {
         Mockito.reset(auditingManager, responseFormatManager, resourceBusinessLogic, userAdmin);
         Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
-        when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(), any(JsonParseFlagEnum.class))).thenReturn(notFound);
+        when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
+            any(JsonParseFlagEnum.class))).thenReturn(notFound);
     }
 
     @Test
@@ -301,12 +303,15 @@ public class ResourceImportManagerTest {
         setResourceBusinessLogicMock();
 
         Either<Component, StorageOperationStatus> notFound = Either.left(Mockito.mock(Resource.class));
-        when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(), any(JsonParseFlagEnum.class))).thenReturn(notFound);
+        when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
+            any(JsonParseFlagEnum.class))).thenReturn(notFound);
         
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
         
         ComponentException errorInfoFromTest = null;
         try {
+            when(toscaOperationFacade
+                .getLatestByToscaResourceNameAndModel(resourceMD.getName(), StringUtils.EMPTY)).thenReturn(Either.left(new Resource()));
             importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
         }catch (ComponentException e){
             errorInfoFromTest = e;
