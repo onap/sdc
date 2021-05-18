@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.path.beans;
 
 import fj.data.Either;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.Resource;
@@ -44,13 +45,13 @@ public class ForwardingPathToscaOperationFacade extends ToscaOperationFacade {
     }
 
     @Override
-    public <T extends Component> Either<T, StorageOperationStatus> getLatestByName(String resourceName) {
+    public <T extends Component> Either<T, StorageOperationStatus> getLatestByName(String resourceName, String model) {
         if(resourceName.equals(ForwardingPathUtils.FORWARDING_PATH_NODE_NAME) || resourceName.equals(ForwardingPathUtils.FORWARDER_CAPABILITY)){
             Resource component = new Resource();
             component.setToscaResourceName(GENERIC_SERVICE_NAME);
             return Either.left((T)component);
         }
-        return super.getLatestByName(resourceName);
+        return super.getLatestByName(resourceName, null);
     }
 
     @Override

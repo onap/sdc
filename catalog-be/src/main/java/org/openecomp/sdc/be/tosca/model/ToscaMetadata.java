@@ -44,6 +44,7 @@ public class ToscaMetadata implements IToscaMetadata {
     private String sourceModelName;
     private String sourceModelUuid;
     private String serviceFunction;
+    private String model;
 
     public String getName() {
         return name;
@@ -231,5 +232,13 @@ public class ToscaMetadata implements IToscaMetadata {
 
     public void setEnvironmentContext(String environmentContext) {
         this.environmentContext = environmentContext;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 }

@@ -59,6 +59,7 @@ public abstract class ToscaElement {
     private Map<String, MapPropertiesDataDefinition> capabilitiesProperties;
     private Map<String, ListRequirementDataDefinition> requirements;
     private Map<String, DataTypeDataDefinition> dataTypes;
+    private String model;
     // User
     private String creatorUserId;
     private String creatorFullName;

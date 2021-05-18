@@ -73,8 +73,10 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
@@ -95,6 +97,8 @@ public abstract class ToscaElementOperation extends BaseOperation {
     private static Logger log = Logger.getLogger(ToscaElementOperation.class.getName());
     @Autowired
     protected CategoryOperation categoryOperation;
+    @Autowired
+    protected ModelOperation modelOperation;
 
     public static DataTypeDefinition createDataType(final String dataTypeName) {
         final DataTypeDefinition dataType = new DataTypeDefinition();
@@ -339,6 +343,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.IS_ARCHIVED, toscaElement.getMetadataValue(JsonPresentationFields.IS_ARCHIVED));
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.ARCHIVE_TIME, toscaElement.getMetadataValue(JsonPresentationFields.ARCHIVE_TIME));
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.IS_VSP_ARCHIVED, toscaElement.getMetadataValue(JsonPresentationFields.IS_VSP_ARCHIVED));
+        nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.MODEL, toscaElement.getMetadataValue(JsonPresentationFields.MODEL));
         toscaElement.getMetadata().entrySet().stream().filter(e -> e.getValue() != null)
             .forEach(e -> nodeTypeVertex.setJsonMetadataField(e.getKey(), e.getValue()));
         nodeTypeVertex.setUniqueId(toscaElement.getUniqueId());
@@ -418,6 +423,29 @@ public abstract class ToscaElementOperation extends BaseOperation {
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createEdge);
         }
         return StorageOperationStatus.OK;
+    }
+
+    protected StorageOperationStatus associateResourceMetadataToModel(final GraphVertex nodeTypeVertex, final ToscaElement nodeType) {
+        if (nodeType.getMetadataValue(JsonPresentationFields.MODEL) == null) {
+            return StorageOperationStatus.OK;
+        }
+        final String model = ((String) nodeType.getMetadataValue(JsonPresentationFields.MODEL));
+        final JanusGraphOperationStatus createEdge = janusGraphDao
+            .createEdge(getModelVertex(model), nodeTypeVertex, EdgeLabelEnum.MODEL_ELEMENT, new HashMap<>());
+        if (createEdge != JanusGraphOperationStatus.OK) {
+            log.trace("Failed to associate resource {} to model {}", nodeType.getUniqueId(), model);
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createEdge);
+        }
+        return StorageOperationStatus.OK;
+    }
+
+    private GraphVertex getModelVertex(final String modelName) {
+        log.debug("getModelVertex: fetching model {}", modelName);
+        final Optional<GraphVertex> modelVertexByNameOptional = modelOperation.findModelVertexByName(modelName);
+        if (modelVertexByNameOptional.isEmpty()) {
+            throw ModelOperationExceptionSupplier.invalidModel(modelName).get();
+        }
+        return modelVertexByNameOptional.get();
     }
 
     protected Either<GraphVertex, StorageOperationStatus> getResourceCategoryVertex(String elementId, String subcategoryName, String categoryName) {

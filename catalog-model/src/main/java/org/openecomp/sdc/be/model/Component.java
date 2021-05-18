@@ -105,6 +105,14 @@ public abstract class Component implements PropertiesOwner {
         componentMetadataDefinition.getMetadataDataDefinition().setCategorySpecificMetadata(categorySpecificMetadata);
     }
 
+    public String getModel() {
+        return getComponentMetadataDefinition().getMetadataDataDefinition().getModel();
+    }
+
+    public void setModel(final String model) {
+        getComponentMetadataDefinition().getMetadataDataDefinition().setModel(model);
+    }
+
     @JsonIgnore
     public ComponentMetadataDefinition getComponentMetadataDefinition() {
         return componentMetadataDefinition;

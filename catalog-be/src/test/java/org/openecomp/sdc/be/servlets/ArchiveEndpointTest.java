@@ -92,6 +92,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.StorageExceptionMapper;
@@ -259,6 +260,11 @@ class ArchiveEndpointTest extends JerseyTest {
         @Bean
         ContainerInstanceTypesData containerInstanceTypesData() {
             return new ContainerInstanceTypesData();
+        }
+
+        @Bean
+        ModelOperation modelOperation() {
+            return new ModelOperation(null, null, null);
         }
 
         private void initGraphForTest() {

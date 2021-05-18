@@ -45,7 +45,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.servlet.ServletContext;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -90,7 +89,18 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -455,6 +465,9 @@ public class ResourceBusinessLogicTest {
 		Resource resource = createResourceObject(false);
 		Resource createdResource = null;
 		try {
+			when(toscaOperationFacade
+				.validateComponentNameAndModelExists(resource.getName(), null,  ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+				.thenReturn(Either.left(false));
 			createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 			assertThat(createResourceObject(true)).isEqualTo(createdResource);
 		} catch (ComponentException e) {
@@ -561,6 +574,9 @@ public class ResourceBusinessLogicTest {
 		resourceExist.getTags()
 				.add(resourceName);
 		validateUserRoles(Role.ADMIN, Role.DESIGNER);
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resourceName, null,  ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(true));
 		try {
 			bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		} catch (ComponentException e) {
@@ -673,7 +689,9 @@ public class ResourceBusinessLogicTest {
 	private void testResourceIconMissing() {
 		Resource resourceExist = createResourceObject(false);
 		resourceExist.setIcon(null);
-
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resourceExist.getName(), null,  ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(false));
 		try {
 			bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		} catch (ComponentException e) {
@@ -1541,6 +1559,9 @@ public class ResourceBusinessLogicTest {
 		createRoot();
 		Resource resourceExist = createResourceObject(false);
 		validateUserRoles(Role.ADMIN, Role.DESIGNER);
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resourceExist.getName(), null,  ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(false));
 		Resource createdResource = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null,
 				null);
 		createdResource.setLastUpdaterUserId(user.getUserId());
@@ -1549,6 +1570,8 @@ public class ResourceBusinessLogicTest {
 		Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(createdResource);
 		when(toscaOperationFacade.getLatestByToscaResourceName(resourceExist.getToscaResourceName()))
 				.thenReturn(getCompLatestResult);
+		when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(resourceExist.getToscaResourceName(), null))
+			.thenReturn(getCompLatestResult);
 		when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class)))
 				.thenReturn(getLatestResult);
 
@@ -1570,6 +1593,9 @@ public class ResourceBusinessLogicTest {
 	public void createOrUpdateResourceCertified() {
 		createRoot();
 		Resource resourceExist = createResourceObject(false);
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resourceExist.getName(), null,  ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(false));
 		validateUserRoles(Role.ADMIN, Role.DESIGNER);
 		Resource createdResource = bl.createResource(resourceExist, AuditingActionEnum.CREATE_RESOURCE, user, null,
 				null);
@@ -1580,8 +1606,8 @@ public class ResourceBusinessLogicTest {
 
 		Either<Resource, StorageOperationStatus> getLatestResult = Either.left(createdResource);
 		Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(createdResource);
-		when(toscaOperationFacade.getLatestByToscaResourceName(resourceExist.getToscaResourceName()))
-				.thenReturn(getCompLatestResult);
+		when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(resourceExist.getToscaResourceName(), null))
+			.thenReturn(getCompLatestResult);
 		when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class)))
 				.thenReturn(getLatestResult);
 
@@ -1608,12 +1634,12 @@ public class ResourceBusinessLogicTest {
 		Resource resourceToUpdtae = createResourceObject(false);
 
 		Either<Component, StorageOperationStatus> getLatestResult = Either.right(StorageOperationStatus.NOT_FOUND);
-		when(toscaOperationFacade.getLatestByName(resourceToUpdtae.getName())).thenReturn(getLatestResult);
-
-		Either<Component, StorageOperationStatus> getLatestToscaNameResult = Either
-				.right(StorageOperationStatus.NOT_FOUND);
-		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdtae.getToscaResourceName()))
-				.thenReturn(getLatestToscaNameResult);
+		when(toscaOperationFacade.getLatestByName(resourceToUpdtae.getName(), null)).thenReturn(getLatestResult);
+		when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(resourceToUpdtae.getToscaResourceName(), null))
+			.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resourceToUpdtae.getName(), null,  ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(false));
 
 		ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl
 				.createOrUpdateResourceByImport(resourceToUpdtae, user, false, false, false, null, null, false);
@@ -1651,12 +1677,18 @@ public class ResourceBusinessLogicTest {
 		String nestedResourceName = bl.buildNestedToscaResourceName(resourceToUpdate.getResourceType()
 				.name(), csarInfo.getVfResourceName(), nodeName)
 				.getRight();
-		when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName()))
+		when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName(), null))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName()))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 		when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+		when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(resourceToUpdate.getToscaResourceName(), null))
+			.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resourceToUpdate.getName(), null,  ResourceTypeEnum.VFC, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(false));
 
 		ImmutablePair<Resource, ActionStatus> createOrUpdateResource = bl
 				.createOrUpdateResourceByImport(resourceToUpdate, user, false, false, false, csarInfo, nodeName, false);
@@ -1683,10 +1715,12 @@ public class ResourceBusinessLogicTest {
 		String nestedResourceName = bl.buildNestedToscaResourceName(resourceToUpdate.getResourceType()
 				.name(), csarInfo.getVfResourceName(), nodeName)
 				.getRight();
-		when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName()))
+		when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName(), null))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName()))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+		when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(resourceToUpdate.getToscaResourceName(), null))
+			.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 		when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName))
 				.thenReturn(Either.left(resourceResponse));
 		when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class)))
@@ -2067,6 +2101,9 @@ public class ResourceBusinessLogicTest {
 		when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericVF)).thenCallRealMethod();
 		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericVF.getProperties(),
 				resource.getUniqueId())).thenCallRealMethod();
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resource.getName(), null,  ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(false));
 		Resource createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertThat(createdResource).isNotNull();
 		return createdResource;
@@ -2092,6 +2129,9 @@ public class ResourceBusinessLogicTest {
 		when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericCR)).thenCallRealMethod();
 		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericCR.getProperties(),
 				resource.getUniqueId())).thenCallRealMethod();
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resource.getName(), null,  ResourceTypeEnum.CR, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(false));
 		Resource createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertThat(createdResource).isNotNull();
 		return createdResource;
@@ -2110,6 +2150,9 @@ public class ResourceBusinessLogicTest {
 		when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericPNF)).thenCallRealMethod();
 		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericPNF.getProperties(),
 				resource.getUniqueId())).thenCallRealMethod();
+		when(toscaOperationFacade
+			.validateComponentNameAndModelExists(resource.getName(), null,  ResourceTypeEnum.PNF, ComponentTypeEnum.RESOURCE))
+			.thenReturn(Either.left(false));
 		Resource createdResource = bl.createResource(resource, AuditingActionEnum.CREATE_RESOURCE, user, null, null);
 		assertThat(createdResource).isNotNull();
 		return createdResource;

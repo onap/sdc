@@ -35,15 +35,17 @@ public class UploadResourceInfo {
     private List<UploadArtifactInfo> artifactList;
     private String contactId, name, resourceIconPath, icon, vendorName, vendorRelease, resourceVendorModelNumber;
     private String resourceType = "VFC";
+    private String model;
 
     public UploadResourceInfo(String payload, String payloadName, String description, String category, List<String> tags,
-                              List<UploadArtifactInfo> artifactsList) {
+                              List<UploadArtifactInfo> artifactsList, String modelName) {
         super();
         this.payloadData = payload;
         this.payloadName = payloadName;
         this.description = description;
         this.tags = tags;
         this.artifactList = artifactsList;
+        this.model = modelName;
         if (category != null) {
             String[] arr = category.split("/");
             if (arr.length >= 2) {
@@ -101,6 +103,14 @@ public class UploadResourceInfo {
         this.artifactList = artifactsList;
     }
 
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(final String model) {
+        this.model = model;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -116,6 +126,7 @@ public class UploadResourceInfo {
         result = prime * result + ((tags == null) ? 0 : tags.hashCode());
         result = prime * result + ((vendorName == null) ? 0 : vendorName.hashCode());
         result = prime * result + ((vendorRelease == null) ? 0 : vendorRelease.hashCode());
+        result = prime * result + ((model == null) ? 0 : model.hashCode());
         result = prime * result + ((resourceVendorModelNumber == null) ? 0 : resourceVendorModelNumber.hashCode());
         return result;
     }
@@ -193,6 +204,13 @@ public class UploadResourceInfo {
                 return false;
             }
         } else if (!tags.equals(other.tags)) {
+            return false;
+        }
+        if (model == null) {
+            if (other.model != null) {
+                return false;
+            }
+        } else if (!model.equals(other.model)) {
             return false;
         }
         if (vendorName == null) {

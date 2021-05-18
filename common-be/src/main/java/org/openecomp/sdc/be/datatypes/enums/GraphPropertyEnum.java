@@ -63,8 +63,8 @@ public enum GraphPropertyEnum {
         Long.class, false, true), PREV_CATALOG_UPDATE_TIME("previousUpdateTime", Long.class, false, true), CURRENT_CATALOG_UPDATE_TIME(
         "currentUpdateTime", Long.class, false, true),
     //Healing
-    HEALING_VERSION("healVersion", Integer.class, false, true);
-    // @formatter:on
+    HEALING_VERSION("healVersion", Integer.class, false, true),
+    MODEL("model", String.class, false, false);
 
     private final String property;
     private final Class<?> clazz;
