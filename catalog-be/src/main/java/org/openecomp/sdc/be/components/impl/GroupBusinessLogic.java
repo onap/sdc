@@ -802,17 +802,13 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                                                                                               GroupInstance oldGroupInstance,
                                                                                               List<GroupInstanceProperty> newProperties) {
         Either<GroupInstance, ResponseFormat> actionResult = null;
-        Either<GroupInstance, StorageOperationStatus> updateGroupInstanceResult = null;
-        List<GroupInstanceProperty> validateRes = validateReduceGroupInstancePropertiesBeforeUpdate(oldGroupInstance, newProperties);
-        if (actionResult == null) {
-            List<GroupInstanceProperty> validatedReducedNewProperties = validateRes;
-            updateGroupInstanceResult = groupsOperation
-                .updateGroupInstancePropertyValuesOnGraph(componentId, instanceId, oldGroupInstance, validatedReducedNewProperties);
-            if (updateGroupInstanceResult.isRight()) {
-                log.debug("Failed to update group instance {} property values. ", oldGroupInstance.getName());
-                actionResult = Either
-                    .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateGroupInstanceResult.right().value())));
-            }
+        List<GroupInstanceProperty> validatedReducedNewProperties = validateReduceGroupInstancePropertiesBeforeUpdate(oldGroupInstance, newProperties);
+        Either<GroupInstance, StorageOperationStatus> updateGroupInstanceResult = groupsOperation
+            .updateGroupInstancePropertyValuesOnGraph(componentId, instanceId, oldGroupInstance, validatedReducedNewProperties);
+        if (updateGroupInstanceResult.isRight()) {
+            log.debug("Failed to update group instance {} property values. ", oldGroupInstance.getName());
+            actionResult = Either
+                .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateGroupInstanceResult.right().value())));
         }
         if (actionResult == null) {
             actionResult = Either.left(updateGroupInstanceResult.left().value());

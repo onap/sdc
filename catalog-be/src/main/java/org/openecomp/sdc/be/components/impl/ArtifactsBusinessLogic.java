@@ -2947,7 +2947,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         }
         sb.append(ConfigurationManager.getConfigurationManager().getConfiguration().getHeatEnvArtifactFooter());
         // DE265919 fix
-        return sb.toString().replaceAll("\\\\n", "\n");
+        return sb.toString().replace("\\\\n", "\n");
     }
 
     /**

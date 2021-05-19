@@ -95,15 +95,15 @@ public class DmaapHealth {
         log.trace("Enter init method of Dmaap health");
         synchronized (DmaapHealth.class) {
             this.configuration = ConfigurationManager.getConfigurationManager().getConfiguration().getDmaapConsumerConfiguration();
-            Integer pollingInterval = configuration.getPollingInterval();
+            Integer pollingInterval = this.configuration.getPollingInterval();
             if (pollingInterval != null && pollingInterval != 0) {
                 reconnectInterval = pollingInterval;
             }
-            Integer healthCheckReadTimeoutConfig = configuration.getTimeoutMs();
+            Integer healthCheckReadTimeoutConfig = this.configuration.getTimeoutMs();
             if (healthCheckReadTimeoutConfig != null) {
                 this.healthCheckReadTimeout = healthCheckReadTimeoutConfig;
             }
-            this.healthCheckScheduledTask = new HealthCheckScheduledTask(configuration); //what is the representation? csv? delimiter? json or other
+            this.healthCheckScheduledTask = new HealthCheckScheduledTask(this.configuration); //what is the representation? csv? delimiter? json or other
             startHealthCheckTask(true);
         }
         log.trace("Exit init method of DistributionEngineClusterHealth");

@@ -69,6 +69,12 @@ public class CsarValidationUtils {
     private static final Pattern floatPattern = Pattern.compile("^\\d{1}[.]\\d{1}$");
 
     /**
+     * Utility classes, which are collections of static members, are not meant to be instantiated
+     */
+    private CsarValidationUtils() {
+    }
+
+    /**
      * Validates Csar
      *
      * @param csar

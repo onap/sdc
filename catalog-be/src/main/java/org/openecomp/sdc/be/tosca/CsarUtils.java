@@ -135,7 +135,7 @@ public class CsarUtils {
     private static final String TOSCA_META_VERSION = "1.0";
     private static final String CSAR_VERSION = "1.1";
     // add manifest
-    private static final String Service_Manifest = "NS.mf";
+    private static final String SERVICE_MANIFEST = "NS.mf";
     private static final String DEFINITION = "Definitions";
     private static final String DEL_PATTERN = "([/\\\\]+)";
     private static final String WORD_PATTERN = "\\w\\_\\@\\-\\.\\s]+)";
@@ -173,7 +173,8 @@ public class CsarUtils {
 
     public CsarUtils() {
         if (SDC_VERSION != null && !SDC_VERSION.isEmpty()) {
-            Matcher matcher = Pattern.compile("(?!\\.)(\\d+(\\.\\d+)+)(?![\\d\\.])").matcher(SDC_VERSION);
+            // change regex to avoid DoS sonar issue
+            Matcher matcher = Pattern.compile("(?!\\.)(\\d{1,9}(\\.\\d{1,9}){1,9})(?![\\d\\.])").matcher(SDC_VERSION);
             matcher.find();
             setVersionFirstThreeOctets(matcher.group(0));
         } else {
@@ -478,7 +479,7 @@ public class CsarUtils {
             String nsMfBlock0 = createNsMfBlock0(serviceName, createdBy, serviceVersion, releaseTime, serviceType, description, serviceTemplate,
                 hash);
             byte[] nsMfBlock0Byte = nsMfBlock0.getBytes();
-            zip.putNextEntry(new ZipEntry(Service_Manifest));
+            zip.putNextEntry(new ZipEntry(SERVICE_MANIFEST));
             zip.write(nsMfBlock0Byte);
         }
     }

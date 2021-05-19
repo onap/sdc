@@ -136,7 +136,8 @@ public class CheckinTransition extends LifeCycleTransition {
                     owner.getUserId());
             return Either.right(error);
         }
-        if (oldState.equals(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT) && !modifier.getUserId().equals(owner.getUserId()) && !modifier.getRole()
+        // here oldState == NOT_CERTIFIED_CHECKOUT because of previous if with a return
+        if (!modifier.getUserId().equals(owner.getUserId()) && !modifier.getRole()
             .equals(Role.ADMIN.name())) {
             ResponseFormat error = componentUtils
                 .getResponseFormat(ActionStatus.COMPONENT_CHECKOUT_BY_ANOTHER_USER, componentName, componentType.name().toLowerCase(),

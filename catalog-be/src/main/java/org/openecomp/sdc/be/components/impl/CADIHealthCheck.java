@@ -47,7 +47,9 @@ public class CADIHealthCheck {
     }
 
     public void setIsCADIUp(HealthCheckInfo.HealthCheckStatus cadiStatus) {
-        log.debug("Setting cadiHealthCheckInstance status to: {}", cadiStatus.toString());
+        if (log.isDebugEnabled()) {
+            log.debug("Setting cadiHealthCheckInstance status to: {}", cadiStatus.toString());
+        }
         isCADIUpOrDown = cadiStatus;
     }
 }

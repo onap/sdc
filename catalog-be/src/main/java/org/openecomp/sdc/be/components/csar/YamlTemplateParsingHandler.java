@@ -189,7 +189,8 @@ public class YamlTemplateParsingHandler {
         String policyName = policyNameValue.getKey();
         emptyPolicyDef.setName(policyName);
         try {
-            if (policyNameValue.getValue() != null && policyNameValue.getValue() instanceof Map) {
+            // There's no need to null test in conjunction with an instanceof test. null is not an instanceof anything, so a null check is redundant.
+            if (policyNameValue.getValue() instanceof Map) {
                 Map<String, Object> policyTemplateJsonMap = (Map<String, Object>) policyNameValue.getValue();
                 validateAndFillPolicy(emptyPolicyDef, policyTemplateJsonMap);
             } else {
@@ -346,7 +347,7 @@ public class YamlTemplateParsingHandler {
         GroupDefinition group = new GroupDefinition();
         group.setName(groupNameValue.getKey());
         try {
-            if (groupNameValue.getValue() != null && groupNameValue.getValue() instanceof Map) {
+            if (groupNameValue.getValue() instanceof Map) {
                 Map<String, Object> groupTemplateJsonMap = (Map<String, Object>) groupNameValue.getValue();
                 validateAndFillGroup(group, groupTemplateJsonMap);
                 validateUpdateGroupProperties(group, groupTemplateJsonMap);
@@ -534,8 +535,10 @@ public class YamlTemplateParsingHandler {
 
     private void verifyMissingProperties(ActionStatus actionStatus, String name, String type, List<String> missingProperties) {
         if (CollectionUtils.isNotEmpty(missingProperties)) {
-            log.debug("#validateProperties - Failed to validate properties. The properties {} are missing on {} of the type {}. ",
-                missingProperties.toString(), name, type);
+            if (log.isDebugEnabled()) {
+                log.debug("#validateProperties - Failed to validate properties. The properties {} are missing on {} of the type {}. ",
+                        missingProperties.toString(), name, type);
+            }
             rollbackWithException(actionStatus, missingProperties.toString(), missingProperties.toString(), name, type);
         }
     }
@@ -725,17 +728,17 @@ public class YamlTemplateParsingHandler {
     @SuppressWarnings("unchecked")
     private Map<String, Map<String, UploadArtifactInfo>> createArtifactsModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
         Map<String, Map<String, UploadArtifactInfo>> moduleArtifacts = new HashMap<>();
-        Either<List<Object>, ResultStatusEnum> ArtifactsListRes = findFirstToscaListElement(nodeTemplateJsonMap, ARTIFACTS);
-        if (ArtifactsListRes.isLeft()) {
-            for (Object jsonArtifactObj : ArtifactsListRes.left().value()) {
+        Either<List<Object>, ResultStatusEnum> artifactsListRes = findFirstToscaListElement(nodeTemplateJsonMap, ARTIFACTS);
+        if (artifactsListRes.isLeft()) {
+            for (Object jsonArtifactObj : artifactsListRes.left().value()) {
                 String key = ((Map<String, Object>) jsonArtifactObj).keySet().iterator().next();
                 Object artifactJson = ((Map<String, Object>) jsonArtifactObj).get(key);
                 addModuleNodeTemplateArtifacts(moduleArtifacts, artifactJson, key);
             }
         } else {
-            Either<Map<String, Map<String, Object>>, ResultStatusEnum> ArtifactsMapRes = findFirstToscaMapElement(nodeTemplateJsonMap, ARTIFACTS);
-            if (ArtifactsMapRes.isLeft()) {
-                for (Map.Entry<String, Map<String, Object>> entry : ArtifactsMapRes.left().value().entrySet()) {
+            Either<Map<String, Map<String, Object>>, ResultStatusEnum> artifactsMapRes = findFirstToscaMapElement(nodeTemplateJsonMap, ARTIFACTS);
+            if (artifactsMapRes.isLeft()) {
+                for (Map.Entry<String, Map<String, Object>> entry : artifactsMapRes.left().value().entrySet()) {
                     String artifactName = entry.getKey();
                     Object artifactJson = entry.getValue();
                     addModuleNodeTemplateArtifacts(moduleArtifacts, artifactJson, artifactName);
@@ -979,8 +982,9 @@ public class YamlTemplateParsingHandler {
 
     @SuppressWarnings("unchecked")
     private void findAndFillInputRecursively(Map<String, Object> propValue, UploadPropInfo propertyDef) {
-        for (String propName : propValue.keySet()) {
-            Object value = propValue.get(propName);
+        for (Map.Entry<String,Object> entry : propValue.entrySet()) {
+            String propName = entry.getKey();
+            Object value = entry.getValue();
             if (value instanceof Map) {
                 fillInputRecursively(propName, (Map<String, Object>) value, propertyDef);
             } else if (value instanceof List) {
@@ -990,7 +994,9 @@ public class YamlTemplateParsingHandler {
     }
 
     private void fillInputsRecursively(UploadPropInfo propertyDef, String propName, List<Object> inputs) {
-        inputs.stream().filter(o -> o instanceof Map).forEach(o -> fillInputRecursively(propName, (Map<String, Object>) o, propertyDef));
+        inputs.stream()
+                .filter(Map.class::isInstance)
+                .forEach(o -> fillInputRecursively(propName, (Map<String, Object>) o, propertyDef));
     }
 
     @SuppressWarnings("unchecked")
@@ -1036,18 +1042,22 @@ public class YamlTemplateParsingHandler {
     }
 
     private void failOnMissingCapabilityTypes(GroupDefinition groupDefinition, List<String> missingCapTypes) {
-        log.debug(
-            "#failOnMissingCapabilityTypes - Failed to validate the capabilities of the group {}. The capability types {} are missing on the group type {}. ",
-            groupDefinition.getName(), missingCapTypes.toString(), groupDefinition.getType());
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    "#failOnMissingCapabilityTypes - Failed to validate the capabilities of the group {}. The capability types {} are missing on the group type {}. ",
+                    groupDefinition.getName(), missingCapTypes.toString(), groupDefinition.getType());
+        }
         if (CollectionUtils.isNotEmpty(missingCapTypes)) {
             rollbackWithException(ActionStatus.MISSING_CAPABILITY_TYPE, missingCapTypes.toString());
         }
     }
 
     private void failOnMissingCapabilityNames(GroupDefinition groupDefinition, List<String> missingCapNames) {
-        log.debug(
-            "#failOnMissingCapabilityNames - Failed to validate the capabilities of the group {}. The capabilities with the names {} are missing on the group type {}. ",
-            groupDefinition.getName(), missingCapNames.toString(), groupDefinition.getType());
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    "#failOnMissingCapabilityNames - Failed to validate the capabilities of the group {}. The capabilities with the names {} are missing on the group type {}. ",
+                    groupDefinition.getName(), missingCapNames.toString(), groupDefinition.getType());
+        }
         rollbackWithException(ActionStatus.MISSING_CAPABILITIES, missingCapNames.toString(), CapabilityDataDefinition.OwnerType.GROUP.getValue(),
             groupDefinition.getName());
     }

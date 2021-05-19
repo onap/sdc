@@ -741,18 +741,23 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
         }
         ResourceCommonInfo resourceCommonInfo = new ResourceCommonInfo(componentTypeValue);
-        try {
-            if (responseWrapper.isEmpty()) {
-                byte[] value = artifactsBusinessLogic.downloadComponentArtifactByUUIDs(componentType, uuid, artifactUUID, resourceCommonInfo);
-                InputStream is = new ByteArrayInputStream(value);
-                Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));
-                responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
-            }
+        if (!responseWrapper.isEmpty()) {
+            getComponentsUtils().auditExternalDownloadArtifact(responseFormat,
+                    resourceCommonInfo, new DistributionData(instanceIdHeader, requestURI),
+                    requestId, artifactUUID, userId);
+            return responseWrapper.getInnerElement();
+        }
+        byte[] value = artifactsBusinessLogic.downloadComponentArtifactByUUIDs(componentType, uuid, artifactUUID, resourceCommonInfo);
+        try (InputStream is = new ByteArrayInputStream(value)) {
+            Map<String, String> headers = new HashMap<>();
+            headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+            responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
         } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
+        } catch (IOException e) {
+            log.debug("close ByteArrayInputStream error");
         } finally {
             getComponentsUtils()
                 .auditExternalDownloadArtifact(responseFormat, resourceCommonInfo, new DistributionData(instanceIdHeader, requestURI), requestId,
@@ -805,19 +810,23 @@ public class ArtifactExternalServlet extends AbstractValidationsServlet {
             responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID);
             responseWrapper.setInnerElement(buildErrorResponse(responseFormat));
         }
-        try {
-            if (responseWrapper.isEmpty()) {
-                byte[] value = artifactsBusinessLogic
-                    .downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID);
-                InputStream is = new ByteArrayInputStream(value);
-                Map<String, String> headers = new HashMap<>();
-                headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));
-                responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
-                responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
-            }
+        if (!responseWrapper.isEmpty()) {
+            getComponentsUtils().auditExternalDownloadArtifact(responseFormat, new ResourceCommonInfo(resourceInstanceName, componentTypeValue),
+                    new DistributionData(instanceIdHeader, requestURI), requestId, artifactUUID, userId);
+            return responseWrapper.getInnerElement();
+        }
+        byte[] value = artifactsBusinessLogic
+                .downloadResourceInstanceArtifactByUUIDs(componentType, uuid, resourceInstanceName, artifactUUID);
+        try (InputStream is = new ByteArrayInputStream(value)) {
+            Map<String, String> headers = new HashMap<>();
+            headers.put(Constants.MD5_HEADER, GeneralUtility.calculateMD5Base64EncodedByByteArray(value));
+            responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.OK);
+            responseWrapper.setInnerElement(buildOkResponse(responseFormat, is, headers));
         } catch (ComponentException e) {
             responseFormat = getComponentsUtils().getResponseFormat(e);
             throw e;
+        } catch (IOException e) {
+            log.debug("close ByteArrayInputStream error");
         } finally {
             getComponentsUtils().auditExternalDownloadArtifact(responseFormat, new ResourceCommonInfo(resourceInstanceName, componentTypeValue),
                 new DistributionData(instanceIdHeader, requestURI), requestId, artifactUUID, userId);

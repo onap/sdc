@@ -489,7 +489,7 @@ public class EnvironmentsEngine implements INotificationHandler {
     }
 
     public OperationalEnvironmentEntry getEnvironmentByDmaapUebAddress(List<String> dmaapUebAddress) {
-        return environments.values().stream().filter(e -> e.getDmaapUebAddress().stream().filter(dmaapUebAddress::contains).findAny().isPresent())
+        return environments.values().stream().filter(e -> e.getDmaapUebAddress().stream().anyMatch(dmaapUebAddress::contains))
             .findFirst()
             .orElseThrow(() -> new ByActionStatusComponentException(ActionStatus.DISTRIBUTION_ENV_DOES_NOT_EXIST, dmaapUebAddress.toString()));
     }

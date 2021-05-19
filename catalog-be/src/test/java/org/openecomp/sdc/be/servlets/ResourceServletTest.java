@@ -33,11 +33,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fj.data.Either;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -76,7 +72,10 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.be.ui.model.UiResourceMetadata;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -188,6 +187,86 @@ class ResourceServletTest extends JerseyTest {
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
     }
+/*
+{
+    "artifacts": {},
+    "attributes": [],
+    "capabilities": {},
+      "categories": [
+    {
+      "normalizedName": "generic",
+      "name": "Generic",
+      "uniqueId": "resourceNewCategory.generic",
+      "subcategories": [{"empty": false, "groupings": null, "icons": ["objectStorage", "compute"], "metadataKeys": [], "name": "Abstract", "normalizedName": "abstract", "ownerId": null, "type": null, "uniqueId": "resourceNewCategory.generic.abstract", "version": null}],
+      "version": null,
+      "ownerId": null,
+      "empty": false,
+      "type": null,
+      "icons": null
+    }
+  ],
+    "componentInstances": [],
+    "componentInstancesAttributes": {},
+    "componentInstancesProperties": {},
+**    "componentType": "RESOURCE",
+**    "contactId": "cs0008",
+**    "csarUUID": "6aa6d1fb943a412f8df51ab9187cd8cb",
+**    "csarVersion": "1.0",
+    "deploymentArtifacts": {},
+**    "description": "VF",
+**    "icon": "defaulticon",
+**    "name": "basic_vm",
+    "properties": [],
+    "groups": [],
+    "requirements": {},
+**    "resourceType": "VF",
+**    "tags": ["basic_vm"],
+    "toscaArtifacts": {},
+**    "vendorName": "basicvm_vendor",
+**    "vendorRelease": "1.0"
+}
+ */
+
+
+    @Test
+    void testHappyScenarioTestV2() {
+        when(componentUtils.getResponseFormat(ActionStatus.OK)).thenReturn(createdResponseFormat);
+
+        SubCategoryDefinition subCat = new SubCategoryDefinition();
+        subCat.setIcons(List.of("objectStorage", "compute"));
+        subCat.setMetadataKeys(new ArrayList<>());
+        subCat.setName("Abstract");
+        subCat.setNormalizedName("abstract");
+        subCat.setUniqueId("resourceNewCategory.generic.abstract");
+
+        CategoryDefinition cat = new CategoryDefinition();
+        cat.setNormalizedName("generic");
+        cat.setName("Generic");
+        cat.setUniqueId("resourceNewCategory.generic");
+        cat.setSubcategories(List.of(subCat));
+
+        UiResourceMetadata validJson = new UiResourceMetadata();
+        validJson.setComponentType(ComponentTypeEnum.RESOURCE);
+        validJson.setContactId("cs0008");
+        validJson.setCsarUUID("6aa6d1fb943a412f8df51ab9187cd8cb");
+        validJson.setCsarVersion("1.0");
+        validJson.setDescription("VF");
+        validJson.setIcon("defaulticon");
+        validJson.setName("basic_vm");
+        validJson.setResourceType(ResourceTypeEnum.VF);
+        validJson.setTags(List.of("basic_vm"));
+        validJson.setVendorName("basicvm_vendor");
+        validJson.setVendorRelease("1.0");
+        validJson.setCategories(List.of(cat));
+
+        Response response = target().path("/v1/catalog/resources").request(MediaType.APPLICATION_JSON)
+                .post(Entity.json(gson.toJson(validJson)), Response.class);
+        Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(Mockito.any(ActionStatus.class));
+        Mockito.verify(componentUtils, Mockito.times(1)).getResponseFormat(ActionStatus.OK);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+
+    }
+
 
     @Test
     void testNonValidMd5Fail() {

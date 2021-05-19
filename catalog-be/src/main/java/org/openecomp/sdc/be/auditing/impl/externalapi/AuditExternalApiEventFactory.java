@@ -34,7 +34,7 @@ public abstract class AuditExternalApiEventFactory extends AuditBaseEventFactory
 
     protected final ExternalApiEvent event;
 
-    public AuditExternalApiEventFactory(AuditingActionEnum action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo,
+    protected AuditExternalApiEventFactory(AuditingActionEnum action, CommonAuditData commonAuditData, ResourceCommonInfo resourceCommonInfo,
                                         DistributionData distributionData, ResourceVersionInfo prevParams, ResourceVersionInfo currParams,
                                         String invariantUuid, User modifier, String artifactData) {
         super(action);

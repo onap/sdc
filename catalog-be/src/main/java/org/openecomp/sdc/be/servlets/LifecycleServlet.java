@@ -156,7 +156,7 @@ public class LifecycleServlet extends BeGenericServlet {
             try {
                 value = RepresentationUtils.toRepresentation(componentMetatdata);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.debug("toRepresentation of componentMetatdata error :", e);
             }
             response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), value);
             loggerSupportability

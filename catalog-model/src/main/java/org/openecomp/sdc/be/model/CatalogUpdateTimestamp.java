@@ -26,12 +26,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @EqualsAndHashCode
-public class CatalogUpdateTimestamp {
+public class CatalogUpdateTimestamp implements Serializable {
 
     @JsonProperty("previousUpdateTime")
     private long previousUpdateTime;
