@@ -45,8 +45,8 @@ end
 template "HelmValidatorConfiguration" do
    path "#{ENV['JETTY_BASE']}/config/onboarding-be/config-helmvalidator.yaml"
    source "helmvalidator-configuration.yaml.erb"
-   owner "jetty"
-   group "jetty"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
    mode "0755"
    variables({
       :HVALIDATOR_ENABLED           => node['HelmValidator']['validator_enabled'],
