@@ -52,7 +52,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "cors": "2.7.1",
     "css-loader": "^0.26.1",
-    "cypress": "^3.8.0",
+    "cypress": "^7.3.0",
     "exports-loader": "^0.6.3",
     "express": "^4.14.0",
     "extract-text-webpack-plugin": "^2.1.0",
@@ -79,7 +79,11 @@
     "url-loader": "^0.5.7",
     "webpack-dev-middleware": "^1.10.1"
   },
-  "engines": {},
+  "engines": {
+    "node": "14.16.1",
+    "npm": "6.14.12",
+    "yarn": "^1.7.0"
+  },
   "dependencies": {
     "@angular/animations": "^5.0.0",
     "@angular/cli": "^1.0.0",
@@ -96,9 +100,6 @@
     "@angular/upgrade": "^5.0.0",
     "@bardit/cytoscape-expand-collapse": "^2.0.3",
     "@bardit/cytoscape-qtip": "^2.5.1",
-    "@ngrx/core": "^1.2.0",
-    "@ngrx/effects": "^5.2.0",
-    "@ngrx/store": "^5.0.0",
     "@ngxs/devtools-plugin": "3.3.4",
     "@ngxs/logger-plugin": "3.3.4",
     "@ngxs/store": "^2.1.0-dev.d538580",
@@ -142,7 +143,7 @@
     "cytoscape": "^2.7.15",
     "cytoscape.js-undo-redo": "^1.0.1",
     "grunt": "^0.4.0",
-    "jquery": "^2.2.4",
+    "jquery": "^3.6.0",
     "jqueryui": "^1.11.1",
     "js-md5": "^0.4.2",
     "less": "~3.9.0",
@@ -153,6 +154,7 @@
     "ngx-pagination": "^5.0.0",
     "onap-ui-angular": "5.2.5",
     "perfect-scrollbar": "^0.6.16",
+    "protractor": "7.0.0",
     "qtip2": "^3.0.3",
     "reflect-metadata": "^0.1.10",
     "restangular": "^1.6.1",
@@ -171,6 +173,6 @@
     "zone.js": "0.8.5"
   },
   "resolutions": {
-    "cypress": "3.8.0"
+    "cypress": "7.3.0"
   }
 }
