@@ -21,7 +21,7 @@
 package org.onap.sdc.frontend.ci.tests.pages;
 
 import com.aventstack.extentreports.Status;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.ArtifactInfo;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;

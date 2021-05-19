@@ -19,7 +19,7 @@
 package org.openecomp.sdc.be.config;
 
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 public class NonManoFolderType {

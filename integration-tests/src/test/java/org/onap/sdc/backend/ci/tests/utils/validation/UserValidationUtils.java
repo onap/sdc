@@ -21,7 +21,7 @@
 package org.onap.sdc.backend.ci.tests.utils.validation;
 
 import com.google.gson.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ErrorInfo;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;

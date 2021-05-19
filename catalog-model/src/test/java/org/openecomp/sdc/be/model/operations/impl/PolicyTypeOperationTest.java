@@ -32,7 +32,7 @@ import fj.data.Either;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;

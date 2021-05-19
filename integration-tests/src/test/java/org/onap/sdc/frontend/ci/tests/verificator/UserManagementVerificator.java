@@ -21,7 +21,7 @@
 package org.onap.sdc.frontend.ci.tests.verificator;
 
 import com.aventstack.extentreports.Status;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
 import org.onap.sdc.frontend.ci.tests.pages.AdminGeneralPage;
 import org.onap.sdc.backend.ci.tests.utils.validation.ErrorValidationUtils;

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.onap.sdc.tosca.datatypes.model.ScalarUnitValidator;
 

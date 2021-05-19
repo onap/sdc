@@ -38,7 +38,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.portalsdk.core.onboarding.exception.CipherUtilException;
 import org.onap.portalsdk.core.onboarding.util.PortalApiProperties;
 import org.openecomp.sdc.be.config.Configuration;

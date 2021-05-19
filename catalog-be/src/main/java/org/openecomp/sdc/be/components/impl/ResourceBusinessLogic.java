@@ -53,7 +53,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;

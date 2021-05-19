@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.sdc.generator.datatypes.tosca.ComputeFlavor;
 import org.openecomp.sdc.generator.datatypes.tosca.DeploymentFlavorModel;

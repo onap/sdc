@@ -20,7 +20,7 @@
 package org.openecomp.sdc.be.components.validation.component;
 
 import fj.data.Either;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;

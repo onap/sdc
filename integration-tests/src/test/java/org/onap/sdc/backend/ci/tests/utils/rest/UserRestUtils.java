@@ -21,7 +21,7 @@
 package org.onap.sdc.backend.ci.tests.utils.rest;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;

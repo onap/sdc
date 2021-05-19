@@ -23,7 +23,7 @@ import fj.data.Either;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ActivationRequestInformation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;

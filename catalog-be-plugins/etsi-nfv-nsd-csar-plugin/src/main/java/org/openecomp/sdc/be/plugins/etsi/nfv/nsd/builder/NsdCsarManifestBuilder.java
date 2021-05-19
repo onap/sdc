@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Builder for the manifest (.mf) file in a NSD CSAR

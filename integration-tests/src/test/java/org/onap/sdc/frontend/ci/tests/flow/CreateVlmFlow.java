@@ -24,7 +24,7 @@ import static org.hamcrest.core.Is.is;
 
 import com.aventstack.extentreports.Status;
 import java.util.Optional;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.OnboardHomePage;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;

@@ -21,7 +21,7 @@
 package org.openecomp.sdc.securityutil;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

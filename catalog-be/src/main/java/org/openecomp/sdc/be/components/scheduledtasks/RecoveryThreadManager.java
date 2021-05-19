@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.openecomp.sdc.be.components.distribution.engine.EnvironmentsEngine;
 import org.openecomp.sdc.be.config.ConfigurationManager;

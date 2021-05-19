@@ -22,7 +22,7 @@ package org.onap.sdc.frontend.ci.tests.execute.AmdocsComplexService;
 
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.HeatMetaFirstLevelDefinition;

@@ -15,7 +15,7 @@
  */
 package org.openecomp.sdc.be.tosca.utils;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
