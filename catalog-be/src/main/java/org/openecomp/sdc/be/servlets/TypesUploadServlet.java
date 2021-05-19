@@ -76,6 +76,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerThreeParam;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerTwoParam;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -145,8 +146,9 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "Relationship Type already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadRelationshipType(@Parameter(description = "FileInputStream") @FormDataParam("relationshipTypeZip") File file,
-                                           @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        return uploadElementTypeServletLogic(this::createRelationshipTypes, file, request, creator, NodeTypeEnum.RelationshipType.getName());
+                                           @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                           @Parameter(description = "model") @FormDataParam("model") String modelName) {
+        return uploadElementTypeServletLogic(this::createRelationshipTypes, file, request, creator, NodeTypeEnum.RelationshipType.getName(), modelName);
     }
 
     @POST
@@ -234,7 +236,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     private Response uploadElementTypeServletLogic(ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod, File file,
-                                                   final HttpServletRequest request, String creator, String elementTypeName) {
+            final HttpServletRequest request, String creator, String elementTypeName) {
         init();
         String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
         try {
@@ -250,6 +252,29 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             }
             return responseWrapper.getInnerElement();
         } catch (Exception e) {
+            log.debug("create {} failed with exception:", elementTypeName, e);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+    
+    private Response uploadElementTypeServletLogic(final ConsumerThreeParam<Wrapper<Response>, String, String> createElementsMethod,
+            final File file, final HttpServletRequest request, final String creator, final String elementTypeName, final String modelName) {
+        init();
+        final String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
+        try {
+            final Wrapper<String> yamlStringWrapper = new Wrapper<>();
+            final String url = request.getMethod() + " " + request.getRequestURI();
+            log.debug("Start handle request of {}", url);
+            final Wrapper<Response> responseWrapper = doUploadTypeValidations(request, userId, file);
+            if (responseWrapper.isEmpty()) {
+                fillZipContents(yamlStringWrapper, file);
+            }
+            if (responseWrapper.isEmpty()) {
+                createElementsMethod.accept(responseWrapper, yamlStringWrapper.getInnerElement(), modelName);
+            }
+            return responseWrapper.getInnerElement();
+        } catch (final Exception e) {
             log.debug("create {} failed with exception:", elementTypeName, e);
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -384,9 +409,9 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     // relationship types
-    private void createRelationshipTypes(Wrapper<Response> responseWrapper, String relationshipTypesYml) {
+    private void createRelationshipTypes(final Wrapper<Response> responseWrapper, final String relationshipTypesYml, final String modelName) {
         final Supplier<Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> relationshipTypeImportManager
-            .createRelationshipTypes(relationshipTypesYml);
+            .createRelationshipTypes(relationshipTypesYml, modelName);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.RELATIONSHIP_TYPE_ALREADY_EXIST,
             NodeTypeEnum.RelationshipType.name());
     }

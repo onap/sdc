@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model.operations.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -92,8 +93,8 @@ public class UniqueIdBuilder {
         return type;
     }
 
-    static String buildRelationshipTypeUid(String type) {
-        return type;
+    public static String buildRelationshipTypeUid(final String modelName, final String type) {
+        return StringUtils.isEmpty(modelName) ? type : modelName + DOT + type;
     }
 
     public static String buildAttributeUid(String resourceId, String attName) {

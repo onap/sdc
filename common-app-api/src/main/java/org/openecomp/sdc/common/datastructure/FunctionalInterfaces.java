@@ -79,6 +79,19 @@ public class FunctionalInterfaces {
          */
         void accept(T1 t1, T2 t2);
     }
+    
+    @FunctionalInterface
+    public interface ConsumerThreeParam<T1, T2, T3> {
+
+        /**
+         * Same Accept method, but takes three parameters
+         *
+         * @param t1
+         * @param t2
+         * @param t3
+         */
+        void accept(T1 t1, T2 t2, T3 t3);
+    }
 
     /**
      * @param <T1>
