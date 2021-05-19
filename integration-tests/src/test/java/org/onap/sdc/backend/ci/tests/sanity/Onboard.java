@@ -81,6 +81,7 @@ public class Onboard extends ComponentBaseTest {
 		runOnboardToDistributionFlow(filePath, pnfFile, ResourceTypeEnum.PNF);
 	}
 
+	@Ignore
 	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "CNF_List")
 	public void onboardCNFFlow(String filePath, String cnfFile) throws Exception {
 		setLog(cnfFile);

@@ -87,10 +87,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 public class OnboardingFlowsUi extends SetupCDTest {
 
@@ -465,6 +462,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, vnfFile);
     }
 
+    @Ignore
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_List")
     public void onboardCNFTest(String filePath, String cnfFile) throws Exception {
         setLog(cnfFile);
