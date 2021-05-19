@@ -732,7 +732,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         }
         // convert property
         ToscaPropertyType type = getType(newInputDefinition.getType());
-        if (type != null && newInputDefinition != null) {
+        if (type != null) {
             PropertyValueConverter converter = type.getConverter();
             // get inner type
             SchemaDefinition schema = newInputDefinition.getSchema();

@@ -32,10 +32,6 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 
 public class AuditResourceEventFactoryManangerTest {
 
-	private AuditResourceEventFactoryManager createTestSubject() {
-		return new AuditResourceEventFactoryManager();
-	}
-
 	@Test
 	public void testCreateResourceEventFactory() throws Exception {
 		AuditingActionEnum action = null;

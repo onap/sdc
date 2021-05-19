@@ -21,6 +21,8 @@ package org.openecomp.sdc.exception;
 
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * Nested POJOs to express required JSON format of the error
  * <p>
@@ -28,7 +30,7 @@ import lombok.Setter;
  *
  * @author paharoni
  */
-public class ResponseFormat {
+public class ResponseFormat implements Serializable {
 
     @Setter
     private int status;
@@ -110,7 +112,7 @@ public class ResponseFormat {
         return this.requestErrorWrapper.requestError.policyException.getMessageId();
     }
 
-    public class RequestErrorWrapper {
+    public class RequestErrorWrapper implements Serializable {
 
         private RequestError requestError;
 
@@ -143,7 +145,7 @@ public class ResponseFormat {
         }
     }
 
-    public class RequestError {
+    public class RequestError implements Serializable {
 
         @SuppressWarnings("unused")
         private PolicyException policyException;

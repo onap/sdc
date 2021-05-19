@@ -27,6 +27,12 @@ import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 
 public class AuditDistributionEngineEventFactoryManager {
 
+    /**
+     * Utility classes, which are collections of static members, are not meant to be instantiated
+     */
+    private AuditDistributionEngineEventFactoryManager() {
+    }
+
     public static AuditEventFactory createDistributionEngineEventFactory(AuditingActionEnum action, String environmentName,
                                                                          DistributionTopicData distributionTopicData, String role, String apiKey,
                                                                          String status) {

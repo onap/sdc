@@ -168,8 +168,8 @@ public class HealthCheckBusinessLogic {
             dmaapProducerHealth.getHealthCheckInfo().setVersion(appVersion);
             return dmaapProducerHealth.getHealthCheckInfo();
         } else {
-            log.debug("Dmaap health check disabled");
-            String description = ("Dmaap health check disabled");
+            String description = "Dmaap health check disabled";
+            log.debug(description);
             return new HealthCheckInfo(HC_COMPONENT_DMAAP_PRODUCER, DOWN, null, description);
         }
     }
@@ -210,12 +210,10 @@ public class HealthCheckBusinessLogic {
         }
         if (isCassandraUp) {
             description = "OK";
-//            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CASSANDRA, UP, null, description));
             healthCheckInfo.setHealthCheckStatus(HealthCheckStatus.UP);
             healthCheckInfo.setDescription(description);
         } else {
             description = "Cassandra is down";
-//            healthCheckInfos.add(new HealthCheckInfo(HC_COMPONENT_CASSANDRA, DOWN, null, description));
             healthCheckInfo.setDescription(description);
         }
         return healthCheckInfo;
