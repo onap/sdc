@@ -34,7 +34,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.securityutil.AuthenticationCookieUtils;
 import org.openecomp.sdc.securityutil.CipherUtilException;

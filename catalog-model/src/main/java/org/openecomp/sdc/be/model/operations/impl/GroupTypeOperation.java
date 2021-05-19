@@ -34,7 +34,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
