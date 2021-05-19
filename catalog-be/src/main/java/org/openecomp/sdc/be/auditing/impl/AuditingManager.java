@@ -23,10 +23,12 @@ package org.openecomp.sdc.be.auditing.impl;
 
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
+import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingGenericEvent;
 import org.openecomp.sdc.common.log.elements.LogFieldsMdcHandler;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.enums.LogLevel;
 import org.openecomp.sdc.common.log.enums.Severity;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -71,7 +73,7 @@ public class AuditingManager {
     private void saveEventToCassandra(AuditingGenericEvent event) {
         CassandraOperationStatus result = cassandraDao.saveRecord(event);
         if (result != CassandraOperationStatus.OK) {
-            log.warn("Failed to persist to cassandra auditing event: {}", result.name());
+            log.warn(EcompLoggerErrorCode.SCHEMA_ERROR, "AuditingManager", "catalog-be", "Failed to persist to cassandra auditing event: {}", result.name());
         }
     }
 

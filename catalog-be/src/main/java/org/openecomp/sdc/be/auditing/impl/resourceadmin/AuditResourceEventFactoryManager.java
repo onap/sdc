@@ -29,6 +29,12 @@ import org.openecomp.sdc.be.resources.data.auditing.model.ResourceVersionInfo;
 
 public class AuditResourceEventFactoryManager {
 
+    /**
+     * Utility classes, which are collections of static members, are not meant to be instantiated
+     */
+    private AuditResourceEventFactoryManager() {
+    }
+
     public static AuditEventFactory createResourceEventFactory(AuditingActionEnum action, CommonAuditData commonFields,
                                                                ResourceCommonInfo resourceCommonInfo, ResourceVersionInfo prevParams,
                                                                ResourceVersionInfo currParams, String invariantUuid, User modifier,

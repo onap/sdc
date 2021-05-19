@@ -308,22 +308,23 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
      *        @return mutated @param toscaElement , where empty maps are deleted , return null for empty map.
      **/
     private Object cleanEmptyNestedValuesInMap(final Object toscaElement, short loopProtectionLevel) {
-        if (loopProtectionLevel <= 0 || toscaElement == null || !(toscaElement instanceof Map)) {
+        if (loopProtectionLevel <= 0 || !(toscaElement instanceof Map)) {
             return toscaElement;
         }
-        if (MapUtils.isNotEmpty((Map) toscaElement)) {
+        Map<Object, Object> toscaMap = (Map<Object, Object>) toscaElement;
+        if (MapUtils.isNotEmpty(toscaMap)) {
             Object ret;
             final Set<Object> keysToRemove = new HashSet<>();                                                                 // use different set to avoid ConcurrentModificationException
-            for (final Object key : ((Map) toscaElement).keySet()) {
-                final Object value = ((Map) toscaElement).get(key);
+            for (final Object key : toscaMap.keySet()) {
+                final Object value = toscaMap.get(key);
                 ret = cleanEmptyNestedValuesInMap(value, --loopProtectionLevel);
                 if (ret == null) {
                     keysToRemove.add(key);
                 }
             }
-            final Collection set = ((Map) toscaElement).keySet();
-            if (CollectionUtils.isNotEmpty(set)) {
-                set.removeAll(keysToRemove);
+            final Set<Object> keySet = toscaMap.keySet();
+            if (CollectionUtils.isNotEmpty(keySet)) {
+                keySet.removeAll(keysToRemove);
             }
             if (isEmptyNestedMap(toscaElement)) {
                 return null;

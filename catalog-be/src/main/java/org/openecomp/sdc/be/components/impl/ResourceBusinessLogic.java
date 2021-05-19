@@ -393,10 +393,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             csarBusinessLogic.validateCsarBeforeCreate(resource, auditingAction, user, csarUUID);
             log.debug("CsarUUID is {} - going to create resource from CSAR", csarUUID);
             Resource createResourceFromCsar = createResourceFromCsar(resource, user, csarUIPayload, csarUUID);
-            return updateCatalog(createResourceFromCsar, ChangeTypeEnum.LIFECYCLE).left().map(r -> (Resource) r).left().value();
+            return updateCatalog(createResourceFromCsar, ChangeTypeEnum.LIFECYCLE).left().map(Resource.class::cast).left().value();
         }
         final Resource createResourceByDao = createResourceByDao(resource, user, auditingAction, false, false);
-        return updateCatalog(createResourceByDao, ChangeTypeEnum.LIFECYCLE).left().map(r -> (Resource) r).left().value();
+        return updateCatalog(createResourceByDao, ChangeTypeEnum.LIFECYCLE).left().map(Resource.class::cast).left().value();
     }
 
     public Resource validateAndUpdateResourceFromCsar(Resource resource, User user, Map<String, byte[]> csarUIPayload, String payloadName,
@@ -832,7 +832,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                   List<ArtifactDefinition> artifactsToUpdate, List<ArtifactDefinition> artifactsToDelete,
                                                   Map<String, ArtifactDefinition> existingArtifacts) {
         if (!existingArtifacts.isEmpty()) {
-            extractedArtifacts.stream().forEach(a -> processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, a));
+            extractedArtifacts.forEach(a -> processNodeTypeArtifact(artifactsToUpload, artifactsToUpdate, existingArtifacts, a));
             artifactsToDelete.addAll(existingArtifacts.values());
         }
     }
@@ -953,9 +953,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     handledNodeTypeArtifacts.addAll(handleNodeTypeArtifactsRequestRes);
                 }
             }
-            if (handleNodeTypeArtifactsRes == null) {
-                handleNodeTypeArtifactsRes = Either.left(handledNodeTypeArtifacts);
-            }
+            handleNodeTypeArtifactsRes = Either.left(handledNodeTypeArtifacts);
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             handleNodeTypeArtifactsRes = Either.right(responseFormat);
@@ -969,11 +967,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         final Map<String, ImmutablePair<String, String>> vfcToscaNames = new HashMap<>();
         final Map<String, Object> nodes = extractAllNodes(nodeTypesInfo, csarInfo);
         if (!nodes.isEmpty()) {
-            final Iterator<Entry<String, Object>> nodesNameEntry = nodes.entrySet().iterator();
-            while (nodesNameEntry.hasNext()) {
-                final Entry<String, Object> nodeType = nodesNameEntry.next();
+            for (Entry<String, Object> nodeType : nodes.entrySet()) {
                 final ImmutablePair<String, String> toscaResourceName = buildNestedToscaResourceName(ResourceTypeEnum.VFC.name(), vfResourceName,
-                    nodeType.getKey());
+                        nodeType.getKey());
                 vfcToscaNames.put(nodeType.getKey(), toscaResourceName);
             }
         }
@@ -1309,7 +1305,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, resourceMetaData.getName(), nodeName);
         }
         // Setting name
-        resourceMetaData.setName(new StringBuilder(resourceVf.getSystemName()).append(actualName).toString());
+        resourceMetaData.setName(resourceVf.getSystemName() + actualName);
         // Setting type from name
         final String type = resourceType.toUpperCase();
         resourceMetaData.setResourceType(type);
@@ -1598,7 +1594,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             return rollbackWithEither(ActionStatus.INPUTS_NOT_FOUND, inputName);
         } else {
             Optional<InputDefinition> inputOpt = inputs.stream().filter(p -> p.getName().equals(inputName)).findFirst();
-            if (!inputOpt.isPresent()) {
+            if (inputOpt.isEmpty()) {
                 log.debug("#findInputByName - Failed to find the input {} ", inputName);
                 return rollbackWithEither(ActionStatus.INPUTS_NOT_FOUND, inputName);
             } else {
@@ -1655,7 +1651,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         for (GroupDefinition group : groupsFromResource) {
             Optional<GroupDefinition> op = groupsAsList.stream().filter(p -> p.getInvariantName().equalsIgnoreCase(group.getInvariantName()))
                 .findAny();
-            if (!op.isPresent() && (group.getArtifacts() == null || group.getArtifacts().isEmpty())) {
+            if (op.isEmpty() && (group.getArtifacts() == null || group.getArtifacts().isEmpty())) {
                 groupsToDelete.add(group);
             }
         }
@@ -1719,7 +1715,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                     List<ComponentInstance> componentInstances, String groupName, Map<String, String> members) {
         Set<String> compInstancesNames = members.keySet();
         if (CollectionUtils.isEmpty(componentInstances)) {
-            String membersAstString = compInstancesNames.stream().collect(joining(","));
+            String membersAstString = String.join(",", compInstancesNames);
             log.debug("The members: {}, in group: {}, cannot be found in component {}. There are no component instances.", membersAstString,
                 groupName, component.getNormalizedName());
             throw new ByActionStatusComponentException(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
@@ -1730,13 +1726,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         memberNames.putAll(groups.keySet().stream().collect(toMap(g -> g, g -> "")));
         Map<String, String> relevantInstances = memberNames.entrySet().stream().filter(n -> compInstancesNames.contains(n.getKey()))
             .collect(toMap(Entry::getKey, Entry::getValue));
-        if (relevantInstances == null || relevantInstances.size() != compInstancesNames.size()) {
-            List<String> foundMembers = new ArrayList<>();
-            if (relevantInstances != null) {
-                foundMembers = relevantInstances.keySet().stream().collect(toList());
-            }
-            compInstancesNames.removeAll(foundMembers);
-            String membersAstString = compInstancesNames.stream().collect(joining(","));
+        if (relevantInstances.size() != compInstancesNames.size()) {
+            List<String> foundMembers = new ArrayList<>(relevantInstances.keySet());
+            foundMembers.forEach(compInstancesNames::remove);
+            String membersAstString = String.join(",", compInstancesNames);
             log.debug("The members: {}, in group: {}, cannot be found in component: {}", membersAstString, groupName, component.getNormalizedName());
             throw new ByActionStatusComponentException(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
                 component.getNormalizedName(), getComponentTypeForResponse(component));
@@ -1809,11 +1802,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private boolean isfillGroupMemebersRecursivlyStopCondition(String groupName, Map<String, GroupDefinition> allGroups,
                                                                Set<String> allGroupMembers) {
-        boolean stop = false;
+        boolean stop = !allGroups.containsKey(groupName);
         // In Case Not Group Stop
-        if (!allGroups.containsKey(groupName)) {
-            stop = true;
-        }
         // In Case Group Has no members stop
         if (!stop) {
             GroupDefinition groupDefinition = allGroups.get(groupName);
@@ -1859,7 +1849,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private void handleAndAddExtractedVfcsArtifacts(List<ArtifactDefinition> vfcArtifacts, List<ArtifactDefinition> artifactsToAdd) {
         List<String> vfcArtifactNames = vfcArtifacts.stream().map(ArtifactDataDefinition::getArtifactName).collect(toList());
-        artifactsToAdd.stream().forEach(a -> {
+        artifactsToAdd.forEach(a -> {
             if (!vfcArtifactNames.contains(a.getArtifactName())) {
                 vfcArtifacts.add(a);
             } else {
@@ -2158,7 +2148,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         List<String> artifactsToIgnore = new ArrayList<>();
         // collect IDs of Artifacts of VF which belongs to any group
         if (resource.getGroups() != null) {
-            resource.getGroups().stream().forEach(g -> {
+            resource.getGroups().forEach(g -> {
                 if (g.getArtifacts() != null && !g.getArtifacts().isEmpty()) {
                     artifactsToIgnore.addAll(g.getArtifacts());
                 }
@@ -2171,20 +2161,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private boolean isNonMetaArtifact(ArtifactDefinition artifact) {
-        boolean result = true;
-        if (artifact.getMandatory() || artifact.getArtifactName() == null || !isValidArtifactType(artifact)) {
-            result = false;
-        }
-        return result;
+        return !artifact.getMandatory() && artifact.getArtifactName() != null && isValidArtifactType(artifact);
     }
 
     private boolean isValidArtifactType(ArtifactDefinition artifact) {
-        boolean result = true;
-        if (artifact.getArtifactType() == null || ArtifactTypeEnum.parse(artifact.getArtifactType()) == ArtifactTypeEnum.VENDOR_LICENSE
-            || ArtifactTypeEnum.parse(artifact.getArtifactType()) == ArtifactTypeEnum.VF_LICENSE) {
-            result = false;
-        }
-        return result;
+        return artifact.getArtifactType() != null && ArtifactTypeEnum.parse(artifact.getArtifactType()) != ArtifactTypeEnum.VENDOR_LICENSE
+                && ArtifactTypeEnum.parse(artifact.getArtifactType()) != ArtifactTypeEnum.VF_LICENSE;
     }
 
     private Resource createResourceInstancesRelations(User user, String yamlName, Resource resource, Resource oldResource,
@@ -2455,7 +2437,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                           UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
             .filter(i -> i.getName().equals(uploadComponentInstanceInfo.getName())).findFirst();
-        if (!currentCompInstanceOpt.isPresent()) {
+        if (currentCompInstanceOpt.isEmpty()) {
             log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(), resource.getUniqueId());
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, resource.getUniqueId(),
@@ -2602,7 +2584,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                          Map<String, UploadComponentInstanceInfo> uploadResInstancesMap,
                                                          Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> updatedInstCapabilities,
                                                          Map<ComponentInstance, Map<String, List<RequirementDefinition>>> updatedInstRequirements) {
-        componentInstances.stream().forEach(i -> {
+        componentInstances.forEach(i -> {
             fillUpdatedInstCapabilities(updatedInstCapabilities, i, uploadResInstancesMap.get(i.getName()).getCapabilitiesNamesToUpdate());
             fillUpdatedInstRequirements(updatedInstRequirements, i, uploadResInstancesMap.get(i.getName()).getRequirementsNamesToUpdate());
         });
@@ -2670,26 +2652,24 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         String resourceInstanceId = currentCompInstance.getUniqueId();
         Map<String, List<UploadReqInfo>> regMap = nodesInfoValue.getRequirements();
         if (regMap != null) {
-            Iterator<Entry<String, List<UploadReqInfo>>> nodesRegValue = regMap.entrySet().iterator();
-            while (nodesRegValue.hasNext()) {
-                Entry<String, List<UploadReqInfo>> nodesRegInfoEntry = nodesRegValue.next();
+            for (Entry<String, List<UploadReqInfo>> nodesRegInfoEntry : regMap.entrySet()) {
                 List<UploadReqInfo> uploadRegInfoList = nodesRegInfoEntry.getValue();
                 for (UploadReqInfo uploadRegInfo : uploadRegInfoList) {
                     log.debug("Going to create  relation {}", uploadRegInfo.getName());
                     loggerSupportability
-                        .log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,
-                            "Started to create relations on instance: {}", uploadRegInfo.getName());
+                            .log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,
+                                    "Started to create relations on instance: {}", uploadRegInfo.getName());
                     String regName = uploadRegInfo.getName();
                     RequirementCapabilityRelDef regCapRelDef = new RequirementCapabilityRelDef();
                     regCapRelDef.setFromNode(resourceInstanceId);
                     log.debug("try to find available requirement {} ", regName);
                     Either<RequirementDefinition, ResponseFormat> eitherReqStatus = findAviableRequiremen(regName, yamlName, nodesInfoValue,
-                        currentCompInstance, uploadRegInfo.getCapabilityName());
+                            currentCompInstance, uploadRegInfo.getCapabilityName());
                     if (eitherReqStatus.isRight()) {
                         log.debug("failed to find available requirement {} status is {}", regName, eitherReqStatus.right().value());
                         loggerSupportability
-                            .log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
-                                "ERROR while search available requirement {} status is: {}", regName, eitherReqStatus.right().value());
+                                .log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
+                                        "ERROR while search available requirement {} status is: {}", regName, eitherReqStatus.right().value());
                         return eitherReqStatus.right().value();
                     }
                     RequirementDefinition validReq = eitherReqStatus.left().value();
@@ -2714,11 +2694,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     if (currentCapCompInstance == null) {
                         log.debug("The component instance  with name {} not found on resource {} ", uploadRegInfo.getNode(), resource.getUniqueId());
                         loggerSupportability
-                            .log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
-                                "ERROR component instance  with name: {} not found on resource: {}", uploadRegInfo.getNode(), resource.getUniqueId());
+                                .log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
+                                        "ERROR component instance  with name: {} not found on resource: {}", uploadRegInfo.getNode(), resource.getUniqueId());
                         BeEcompErrorManager.getInstance()
-                            .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadRegInfo.getNode() + IN_RESOURCE, resource.getUniqueId(),
-                                ErrorSeverity.ERROR);
+                                .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadRegInfo.getNode() + IN_RESOURCE, resource.getUniqueId(),
+                                        ErrorSeverity.ERROR);
                         return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
                     }
                     regCapRelDef.setToNode(currentCapCompInstance.getUniqueId());
@@ -2726,14 +2706,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     CapabilityDefinition aviableCapForRel = findAvailableCapabilityByTypeOrName(validReq, currentCapCompInstance, uploadRegInfo);
                     if (aviableCapForRel == null) {
                         log.debug("aviable capability was not found. req name is {} component instance is {}", validReq.getName(),
-                            currentCapCompInstance.getUniqueId());
-                        loggerSupportability
-                            .log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
-                                "ERROR available capability was not found. req name is: {} component instance is: {}", validReq.getName(),
                                 currentCapCompInstance.getUniqueId());
+                        loggerSupportability
+                                .log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
+                                        "ERROR available capability was not found. req name is: {} component instance is: {}", validReq.getName(),
+                                        currentCapCompInstance.getUniqueId());
                         BeEcompErrorManager.getInstance().logInternalDataError(
-                            "aviable capability was not found. req name is " + validReq.getName() + " component instance is " + currentCapCompInstance
-                                .getUniqueId(), resource.getUniqueId(), ErrorSeverity.ERROR);
+                                "aviable capability was not found. req name is " + validReq.getName() + " component instance is " + currentCapCompInstance
+                                        .getUniqueId(), resource.getUniqueId(), ErrorSeverity.ERROR);
                         return componentsUtils.getResponseFormat(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
                     }
                     reqAndRelationshipPair.setCapability(aviableCapForRel.getName());
@@ -2815,7 +2795,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
                 }
                 Optional<InputDefinition> optional = inputs.stream().filter(p -> p.getName().equals(getInput.getInputName())).findAny();
-                if (!optional.isPresent()) {
+                if (optional.isEmpty()) {
                     loggerSupportability.log(LoggerSupportabilityActions.PROPERTY, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
                         "ERROR Failed to find input: " + getInput.getInputName());
                     log.debug("Failed to find input {} ", getInput.getInputName());
@@ -2840,7 +2820,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Optional<InputDefinition> optional;
         if (getInputIndex != null) {
             optional = inputs.stream().filter(p -> p.getName().equals(getInputIndex.getInputName())).findAny();
-            if (!optional.isPresent()) {
+            if (optional.isEmpty()) {
                 log.debug("Failed to find input {} ", getInputIndex.getInputName());
                 // @@TODO error message
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
@@ -2981,7 +2961,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         Optional<CapabilityDefinition> capByName = capMap.get(validReq.getCapability()).stream()
             .filter(p -> p.getName().equals(uploadReqInfo.getCapabilityName())).findAny();
-        if (!capByName.isPresent()) {
+        if (capByName.isEmpty()) {
             return null;
         }
         cap = capByName.get();
@@ -3169,7 +3149,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             Map<String, ToscaArtifactDataDefinition> toscaArtifacts = new HashMap<>();
             Map<String, Map<String, UploadArtifactInfo>> arts = artifacts.entrySet().stream()
                 .filter(e -> e.getKey().contains(TypeUtils.ToscaTagNamesEnum.ARTIFACTS.getElementName()))
-                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
             Map<String, UploadArtifactInfo> artifact = arts.get(TypeUtils.ToscaTagNamesEnum.ARTIFACTS.getElementName());
             for (Map.Entry<String, UploadArtifactInfo> entry : artifact.entrySet()) {
                 ToscaArtifactDataDefinition to = new ToscaArtifactDataDefinition();
@@ -3180,7 +3160,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             componentInstance.setToscaArtifacts(toscaArtifacts);
         }
         if (!existingnodeTypeMap.containsKey(uploadComponentInstanceInfo.getType())) {
-            log.debug("createResourceInstances - not found lates version for resource instance with name {} and type ",
+            log.debug("createResourceInstances - not found lates version for resource instance with name {} and type {}",
                 uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
             throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(),
                 uploadComponentInstanceInfo.getType());
@@ -3196,13 +3176,13 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                          Map<String, List<UploadCapInfo>> uploadedCapabilities) {
         for (Entry<String, List<UploadCapInfo>> currEntry : uploadedCapabilities.entrySet()) {
             if (originCapabilities.containsKey(currEntry.getKey())) {
-                currEntry.getValue().stream().forEach(cap -> cap.setType(currEntry.getKey()));
+                currEntry.getValue().forEach(cap -> cap.setType(currEntry.getKey()));
             }
         }
         for (Map.Entry<String, List<CapabilityDefinition>> capabilities : originCapabilities.entrySet()) {
-            capabilities.getValue().stream().forEach(cap -> {
+            capabilities.getValue().forEach(cap -> {
                 if (uploadedCapabilities.containsKey(cap.getName())) {
-                    uploadedCapabilities.get(cap.getName()).stream().forEach(c -> {
+                    uploadedCapabilities.get(cap.getName()).forEach(c -> {
                         c.setName(cap.getName());
                         c.setType(cap.getType());
                     });
@@ -3239,7 +3219,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 refResource.getName(), componentState);
         }
         if (!ModelConverter.isAtomicComponent(refResource) && refResource.getResourceType() != ResourceTypeEnum.CVFC) {
-            log.debug("validateResourceInstanceBeforeCreate -  ref resource type is  ", refResource.getResourceType());
+            log.debug("validateResourceInstanceBeforeCreate -  ref resource type is {} ", refResource.getResourceType());
             throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TEMPLATE, yamlName, uploadComponentInstanceInfo.getName(),
                 uploadComponentInstanceInfo.getType());
         }
@@ -3493,8 +3473,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         List<GroupDefinition> oldForUpdate = oldResource.getGroups();
         if (CollectionUtils.isNotEmpty(oldForUpdate)) {
-            List<GroupDefinition> groupForUpdate = oldForUpdate.stream().map(group -> new GroupDefinition(group)).collect(Collectors.toList());
-            groupForUpdate.stream().filter(group -> group.isVspOriginated()).forEach(group -> group.setName(group.getInvariantName()));
+            List<GroupDefinition> groupForUpdate = oldForUpdate.stream().map(GroupDefinition::new).collect(Collectors.toList());
+            groupForUpdate.stream().filter(GroupDataDefinition::isVspOriginated).forEach(group -> group.setName(group.getInvariantName()));
             newResource.setGroups(groupForUpdate);
         }
         if (newResource.getResourceType().isAtomicType() && !newResource.getName().equals("Root")
@@ -3917,7 +3897,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
             return responseFormat;
         } finally {
-            if (result == null || result != StorageOperationStatus.OK) {
+            if (!StorageOperationStatus.OK.equals(result)) {
                 janusGraphDao.rollback();
             } else {
                 janusGraphDao.commit();
@@ -3957,7 +3937,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 failed = true;
                 throw e;
             } finally {
-                if (failed || result == null || result != StorageOperationStatus.OK) {
+                if (failed || !StorageOperationStatus.OK.equals(result)) {
                     janusGraphDao.rollback();
                 } else {
                     janusGraphDao.commit();
@@ -3978,7 +3958,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             return Either.right(
                 componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(storageStatus.right().value()), resourceId));
         }
-        if (!(storageStatus.left().value() instanceof Resource)) {
+        if (storageStatus.left().value() == null) {
             return Either.right(componentsUtils
                 .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND), resourceId));
         }
@@ -4541,13 +4521,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
             List<CategoryDefinition> categoryList = categories.left().value();
             Optional<CategoryDefinition> foundCategory = categoryList.stream().filter(cat -> cat.getName().equals(category.getName())).findFirst();
-            if (!foundCategory.isPresent()) {
+            if (foundCategory.isEmpty()) {
                 log.debug("Category {} is not part of resource category group. Resource category valid values are {}", category, categoryList);
                 failOnInvalidCategory(user, resource, actionEnum);
+                return; // explisite output even if failOnInvalidCategory throw an exception
             }
             Optional<SubCategoryDefinition> foundSubcategory = foundCategory.get().getSubcategories().stream()
                 .filter(subcat -> subcat.getName().equals(subcategory.getName())).findFirst();
-            if (!foundSubcategory.isPresent()) {
+            if (foundSubcategory.isEmpty()) {
                 log.debug("SubCategory {} is not part of resource category group. Resource subcategory valid values are {}", subcategory,
                     foundCategory.get().getSubcategories());
                 failOnInvalidCategory(user, resource, actionEnum);
@@ -4789,7 +4770,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         ResponseFormat responseFormat = null;
         ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, allDataTypes);
         innerType = propertyInnerTypeValid.getLeft();
-        if (!propertyInnerTypeValid.getRight().booleanValue()) {
+        if (!propertyInnerTypeValid.getRight()) {
             log.info("Invalid inner type for property {}", property);
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
         }

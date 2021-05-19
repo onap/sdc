@@ -30,9 +30,6 @@ public class ToscaCapability {
     private List<String> valid_source_types;
     private Map<String, ToscaProperty> properties;
 
-    public ToscaCapability() {
-    }
-
     public List<String> getValid_source_types() {
         return valid_source_types;
     }

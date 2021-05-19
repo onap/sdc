@@ -53,7 +53,7 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
     public IStatus pushMessage(ITypeMessage message) {
         try {
             DmaapProducerConfiguration producerConfiguration = configurationManager.getConfiguration().getDmaapProducerConfiguration();
-            if (!producerConfiguration.getActive()) {
+            if (Boolean.FALSE.equals(producerConfiguration.getActive())) { // avoid NPE
                 LOG.info("[Microservice DMAAP] producer is disabled [re-enable in configuration->isActive],message not sent.");
                 dmaapHealth.report(false);
                 return IStatus.getServiceDisabled();
@@ -87,7 +87,7 @@ public class DmaapProducer implements IMessageQueueHandlerProducer {
     public IStatus init() {
         LOG.debug("MessageQueueHandlerProducer:: Start initializing");
         DmaapProducerConfiguration configuration = configurationManager.getConfiguration().getDmaapProducerConfiguration();
-        if (configuration.getActive()) {
+        if (Boolean.TRUE.equals(configuration.getActive())) { // avoid NPE
             try {
                 publisher = dmaapClientFactory.createProducer(configuration);
                 if (publisher == null) {

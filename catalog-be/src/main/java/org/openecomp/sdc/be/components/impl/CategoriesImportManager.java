@@ -140,8 +140,7 @@ public class CategoriesImportManager {
                 }
             }
             log.debug("Failed to create groupingcategory for {}  category {} subcategory {} grouping {} error {}", entry.getKey(), category.getName(),
-                subcategory.getName(), grouping != null ? grouping.getName() : null,
-                createdGrouping != null && createdGrouping.right() != null ? createdGrouping.right().value() : null);
+                subcategory.getName(), grouping != null ? grouping.getName() : null, createdGrouping.right().value());
             return Either.right(componentsUtils.getResponseFormat(createdGrouping.right().value()));
         } else {
             log.debug("createGroupingDeo: create Grouping was successful {}", createdGrouping.left().value());

@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString
-public class Resource extends Component {
+public class Resource extends Component implements Serializable {
 
     /**
      * Please note that more than one "derivedFrom" resource is not currently supported by the app. The first list element is always addressed.
