@@ -41,7 +41,7 @@ public class RelationshipTypeImportManagerTest {
     public void shouldInvokeCreateElementTypes() {
         RelationshipTypeImportManager relationshipTypeImportManager =
             new RelationshipTypeImportManager(relationshipTypeOperation, commonImportManager, componentsUtils);
-        relationshipTypeImportManager.createRelationshipTypes("anyYaml");
+        relationshipTypeImportManager.createRelationshipTypes("anyYaml", "anyModel");
         Mockito.verify(commonImportManager).createElementTypes(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 
     }

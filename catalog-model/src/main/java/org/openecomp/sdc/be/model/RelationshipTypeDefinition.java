@@ -18,14 +18,21 @@ package org.openecomp.sdc.be.model;
 import java.util.Map;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.resources.data.RelationshipTypeData;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Specifies the capabilities that the Node Type exposes.
  */
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class RelationshipTypeDefinition extends RelationshipInstDataDefinition {
 
     private String derivedFrom;
     private Map<String, PropertyDefinition> properties;
+    private String model;
 
     public RelationshipTypeDefinition() {
         super();
@@ -42,24 +49,4 @@ public class RelationshipTypeDefinition extends RelationshipInstDataDefinition {
         this.setValidSourceTypes(relationshipTypeData.getRelationshipTypeDataDefinition().getValidSourceTypes());
     }
 
-    public String getDerivedFrom() {
-        return derivedFrom;
-    }
-
-    public void setDerivedFrom(String derivedFrom) {
-        this.derivedFrom = derivedFrom;
-    }
-
-    public Map<String, PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " [ derivedFrom=" + derivedFrom + ", properties=" + properties + " ]";
-    }
 }

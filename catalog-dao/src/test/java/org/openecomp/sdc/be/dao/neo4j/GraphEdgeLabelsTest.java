@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class GraphEdgeLabelsTest {
 	@Test
 	public void testGetAllProperties() throws Exception {
-		assertEquals(55, GraphEdgeLabels.getAllProperties().size());
+		assertEquals(56, GraphEdgeLabels.getAllProperties().size());
 	}
 
 	@Test

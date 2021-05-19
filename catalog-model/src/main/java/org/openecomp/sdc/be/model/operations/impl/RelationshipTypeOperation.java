@@ -19,24 +19,31 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
+
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.RelationshipTypeData;
+import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,19 +60,6 @@ public class RelationshipTypeOperation extends AbstractOperation {
     @Autowired
     private DerivedFromOperation derivedFromOperation;
 
-    public Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeByName(String name) {
-        String uid = UniqueIdBuilder.buildRelationshipTypeUid(name);
-        Either<RelationshipTypeDefinition, JanusGraphOperationStatus> result = getRelationshipTypeByUid(uid);
-        if (result.isRight()) {
-            JanusGraphOperationStatus status = result.right().value();
-            if (status != JanusGraphOperationStatus.NOT_FOUND) {
-                logger.error("Failed to get information on relationship type {} status is {}", name, status);
-            }
-            return Either.right(status);
-        }
-        return Either.left(result.left().value());
-    }
-
     public Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeByUid(String uniqueId) {
         Either<RelationshipTypeDefinition, JanusGraphOperationStatus> result;
         Either<RelationshipTypeData, JanusGraphOperationStatus> relationshipTypesRes = janusGraphGenericDao
@@ -75,28 +69,30 @@ public class RelationshipTypeOperation extends AbstractOperation {
             logger.debug("Relationship type {} cannot be found in graph. status is {}", uniqueId, status);
             return Either.right(status);
         }
-        RelationshipTypeData relationshipTypeData = relationshipTypesRes.left().value();
+        return getRelationshipTypeDefinition(relationshipTypesRes.left().value());
+    }
+    
+    public Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeDefinition(final RelationshipTypeData relationshipTypeData) {
         RelationshipTypeDefinition relationshipTypeDefinition = new RelationshipTypeDefinition(
             relationshipTypeData.getRelationshipTypeDataDefinition());
         Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> propertiesStatus = OperationUtils
-            .fillProperties(uniqueId, propertyOperation, NodeTypeEnum.RelationshipType);
+            .fillProperties(relationshipTypeData.getUniqueId(), propertyOperation, NodeTypeEnum.RelationshipType);
         if (propertiesStatus.isRight() && propertiesStatus.right().value() != JanusGraphOperationStatus.OK) {
-            logger.error("Failed to fetch properties of relationship type {}", uniqueId);
+            logger.error(BUSINESS_PROCESS_ERROR, "Failed to fetch properties of relationship type {}", relationshipTypeData.getUniqueId());
             return Either.right(propertiesStatus.right().value());
         }
         if (propertiesStatus.isLeft()) {
             relationshipTypeDefinition.setProperties(propertiesStatus.left().value());
         }
         Either<ImmutablePair<RelationshipTypeData, GraphEdge>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
-            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipType), uniqueId, GraphEdgeLabels.DERIVED_FROM,
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipType), relationshipTypeData.getUniqueId(), GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.RelationshipType, RelationshipTypeData.class);
-        logger.debug("After retrieving DERIVED_FROM node of {}. status is {}", uniqueId, parentNode);
+        logger.debug("After retrieving DERIVED_FROM node of {}. status is {}", relationshipTypeData.getUniqueId(), parentNode);
         if (parentNode.isRight()) {
             JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
             if (janusGraphOperationStatus != JanusGraphOperationStatus.NOT_FOUND) {
-                logger.error("Failed to find the parent relationship of relationship type {}. status is {}", uniqueId, janusGraphOperationStatus);
-                result = Either.right(janusGraphOperationStatus);
-                return result;
+                logger.error(BUSINESS_PROCESS_ERROR, "Failed to find the parent relationship of relationship type {}. status is {}", relationshipTypeData.getUniqueId(), janusGraphOperationStatus);
+                return Either.right(janusGraphOperationStatus);
             }
         } else {
             // derived from node was found
@@ -104,16 +100,28 @@ public class RelationshipTypeOperation extends AbstractOperation {
             RelationshipTypeData parentCT = immutablePair.getKey();
             relationshipTypeDefinition.setDerivedFrom(parentCT.getRelationshipTypeDataDefinition().getType());
         }
-        result = Either.left(relationshipTypeDefinition);
-        return result;
+        
+        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> model = janusGraphGenericDao.getParentNode(
+            UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.RelationshipType), relationshipTypeData.getUniqueId(), GraphEdgeLabels.MODEL_ELEMENT, 
+            NodeTypeEnum.Model, ModelData.class);
+        if (model.isLeft()) {
+            relationshipTypeDefinition.setModel(model.left().value().getLeft().getName());
+        }
+        return Either.left(relationshipTypeDefinition);
     }
 
     private Either<RelationshipTypeDefinition, StorageOperationStatus> validateUpdateProperties(
         RelationshipTypeDefinition relationshipTypeDefinition) {
         JanusGraphOperationStatus error = null;
         if (MapUtils.isNotEmpty(relationshipTypeDefinition.getProperties()) && relationshipTypeDefinition.getDerivedFrom() != null) {
+            final Either<RelationshipTypeData, JanusGraphOperationStatus> derivedFromNode = janusGraphGenericDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), 
+                relationshipTypeDefinition.getDerivedFrom(), RelationshipTypeData.class, relationshipTypeDefinition.getModel());
+            if (derivedFromNode.isRight()) {
+                logger.error(BUSINESS_PROCESS_ERROR, "Failed to find the derived from type for  {}. status is {}", relationshipTypeDefinition.getUniqueId(), derivedFromNode.right().value());
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(derivedFromNode.right().value()));
+            }
             Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> allPropertiesRes = getAllRelationshipTypePropertiesFromAllDerivedFrom(
-                relationshipTypeDefinition.getDerivedFrom());
+                derivedFromNode.left().value().getUniqueId());
             if (allPropertiesRes.isRight() && !JanusGraphOperationStatus.NOT_FOUND.equals(allPropertiesRes.right().value())) {
                 error = allPropertiesRes.right().value();
                 logger.debug("Couldn't fetch derived from property nodes for relationship type {}, error: {}", relationshipTypeDefinition.getType(),
@@ -146,8 +154,8 @@ public class RelationshipTypeOperation extends AbstractOperation {
     }
 
     private Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> getAllRelationshipTypePropertiesFromAllDerivedFrom(
-        String firstParentType) {
-        return propertyOperation.getAllTypePropertiesFromAllDerivedFrom(firstParentType, NodeTypeEnum.RelationshipType, RelationshipTypeData.class);
+        String firstParentUid) {
+        return propertyOperation.getAllTypePropertiesFromAllDerivedFrom(firstParentUid, NodeTypeEnum.RelationshipType, RelationshipTypeData.class);
     }
 
     public Either<RelationshipTypeDefinition, StorageOperationStatus> addRelationshipType(RelationshipTypeDefinition relationshipTypeDefinition,
@@ -204,7 +212,7 @@ public class RelationshipTypeOperation extends AbstractOperation {
 
     private Either<RelationshipTypeData, StorageOperationStatus> addRelationshipTypeToGraph(RelationshipTypeDefinition relationshipTypeDefinition) {
         logger.debug("Got relationship type {}", relationshipTypeDefinition);
-        String ctUniqueId = UniqueIdBuilder.buildRelationshipTypeUid(relationshipTypeDefinition.getType());
+        String ctUniqueId = UniqueIdBuilder.buildRelationshipTypeUid(relationshipTypeDefinition.getModel(), relationshipTypeDefinition.getType());
         RelationshipTypeData relationshipTypeData = buildRelationshipTypeData(relationshipTypeDefinition, ctUniqueId);
         logger.debug("Before adding relationship type to graph. relationshipTypeData = {}", relationshipTypeData);
         Either<RelationshipTypeData, JanusGraphOperationStatus> createCTResult = janusGraphGenericDao
@@ -223,6 +231,11 @@ public class RelationshipTypeOperation extends AbstractOperation {
             logger.error("Failed add properties {} to relationship {}", propertiesMap, relationshipTypeDefinition.getType());
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(addPropertiesToRelationshipType.right().value()));
         }
+        final Either<GraphRelation, StorageOperationStatus> modelRelationship = addRelationshipToModel(relationshipTypeDefinition);
+        if (modelRelationship.isRight()) {
+            return Either.right(modelRelationship.right().value());
+        }
+
         return addDerivedFromRelation(relationshipTypeDefinition, ctUniqueId).left().map(updatedDerivedFrom -> createCTResult.left().value());
     }
 
@@ -246,14 +259,31 @@ public class RelationshipTypeOperation extends AbstractOperation {
         }
         logger.debug("#addDerivedFromRelation - adding derived from relation between relationship type {} to its parent " + "{}",
             relationshipTypeDefinition.getType(), derivedFrom);
-        return getRelationshipTypeByType(derivedFrom).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left().bind(
+        return getRelationshipTypeByTypeAndModel(derivedFrom, relationshipTypeDefinition.getModel()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left().bind(
             derivedFromRelationship -> derivedFromOperation
                 .addDerivedFromRelation(relationshipTypeUniqueId, derivedFromRelationship.getUniqueId(), NodeTypeEnum.RelationshipType));
     }
+    
+    private Either<GraphRelation, StorageOperationStatus> addRelationshipToModel(final RelationshipTypeDefinition relationshipTypeDefinition) {
+        final String model = relationshipTypeDefinition.getModel();
+        if (model == null) {
+            return Either.left(null);
+        }
+        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
+        final GraphNode to = new UniqueIdData(NodeTypeEnum.RelationshipType, relationshipTypeDefinition.getUniqueId());
+        logger.info("Connecting model {} to type {}", from, to);
+        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+    }
 
-    private Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeByType(String relationshipType) {
-        // Optimization: In case of Relationship Type its unique ID is the same as type
-        return getRelationshipTypeByUid(relationshipType);
+    private Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeByTypeAndModel(final String relationshipType, final String model) {
+        final Either<RelationshipTypeData, JanusGraphOperationStatus> relationshipTypesRes = janusGraphGenericDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), relationshipType, RelationshipTypeData.class, model);
+        if (relationshipTypesRes.isRight()) {
+            final JanusGraphOperationStatus status = relationshipTypesRes.right().value();
+            logger.debug("Relationship type {} cannot be found in graph. status is {}", relationshipType, status);
+            return Either.right(status);
+        }
+        return getRelationshipTypeDefinition(relationshipTypesRes.left().value());
     }
 
     public Either<RelationshipTypeDefinition, StorageOperationStatus> updateRelationshipType(RelationshipTypeDefinition newRelationshipTypeDefinition,
@@ -300,7 +330,7 @@ public class RelationshipTypeOperation extends AbstractOperation {
         logger.debug("#updateRelationshipTypeDerivedFrom - updating relationship derived from relation for relationship "
                 + "type with id {}. old derived type {}. new derived type {}", relationshipTypeId, currDerivedFromRelationshipType,
             newRelationshipTypeDefinition.getDerivedFrom());
-        StorageOperationStatus deleteDerivedRelationStatus = deleteDerivedFromRelationshipType(relationshipTypeId, currDerivedFromRelationshipType);
+        StorageOperationStatus deleteDerivedRelationStatus = deleteDerivedFromRelationshipType(relationshipTypeId, newRelationshipTypeDefinition.getModel(), currDerivedFromRelationshipType);
         if (deleteDerivedRelationStatus != StorageOperationStatus.OK) {
             return Either.right(deleteDerivedRelationStatus);
         }
@@ -322,14 +352,14 @@ public class RelationshipTypeOperation extends AbstractOperation {
             .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
-    private StorageOperationStatus deleteDerivedFromRelationshipType(String relationshipTypeId, String derivedFromType) {
+    private StorageOperationStatus deleteDerivedFromRelationshipType(final String relationshipTypeId, final String modelName, final String derivedFromType) {
         if (derivedFromType == null) {
             return StorageOperationStatus.OK;
         }
         logger
             .debug("#deleteDerivedFromRelationshipType - deleting derivedFrom relation for relationship type with id " + "{} and its derived type {}",
                 relationshipTypeId, derivedFromType);
-        return getRelationshipTypeByType(derivedFromType).either(derivedFromNode -> derivedFromOperation
+        return getRelationshipTypeByTypeAndModel(derivedFromType, modelName).either(derivedFromNode -> derivedFromOperation
                 .removeDerivedFromRelation(relationshipTypeId, derivedFromNode.getUniqueId(), NodeTypeEnum.RelationshipType),
             DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }

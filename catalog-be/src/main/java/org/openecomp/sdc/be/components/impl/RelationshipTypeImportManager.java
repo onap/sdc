@@ -25,6 +25,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.RelationshipTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,27 +46,31 @@ public class RelationshipTypeImportManager {
         this.componentsUtils = componentsUtils;
     }
 
-    public Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(String relationshipYml) {
-        return createRelationshipTypes(relationshipYml, false);
+    public Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(final String relationshipYml, final String modelName) {
+        return createRelationshipTypes(relationshipYml, modelName, false);
     }
 
-    private Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(String relationshipTypeYml,
-                                                                                                                     boolean inTransaction) {
+    private Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(final String relationshipTypeYml,
+                                                                                                                     final String modelName, final boolean inTransaction) {
         return commonImportManager
-            .createElementTypes(relationshipTypeYml, relationshipTypesFromYml -> createRelationshipTypesFromYml(relationshipTypeYml),
+            .createElementTypes(relationshipTypeYml, relationshipTypesFromYml -> createRelationshipTypesFromYml(relationshipTypeYml, modelName),
                 relationshipTypesToCreate -> createRelationshipTypesByDao(relationshipTypesToCreate, inTransaction),
                 ElementTypeEnum.RELATIONSHIP_TYPE);
     }
 
-    private Either<List<RelationshipTypeDefinition>, ActionStatus> createRelationshipTypesFromYml(String relationshipTypeYml) {
-        return commonImportManager.createElementTypesFromYml(relationshipTypeYml, this::createRelationshipType);
+    private Either<List<RelationshipTypeDefinition>, ActionStatus> createRelationshipTypesFromYml(final String relationshipTypeYml, final String modelName) {
+        final Either<List<RelationshipTypeDefinition>, ActionStatus> relationshipTypes =  commonImportManager.createElementTypesFromYml(relationshipTypeYml, this::createRelationshipType);
+        if (relationshipTypes.isLeft()){
+            relationshipTypes.left().value().forEach(relationshipType -> relationshipType.setModel(modelName));
+        }
+        return relationshipTypes;
     }
 
     private Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypesByDao(
         List<RelationshipTypeDefinition> relationshipTypesToCreate, boolean inTransaction) {
         return commonImportManager.createElementTypesByDao(relationshipTypesToCreate, this::validateRelationshipType,
-            relationshipType -> new ImmutablePair<>(ElementTypeEnum.RELATIONSHIP_TYPE, relationshipType.getType()),
-            relationshipTypeName -> relationshipTypeOperation.getRelationshipTypeByName(relationshipTypeName).right()
+            relationshipType -> new ImmutablePair<>(ElementTypeEnum.RELATIONSHIP_TYPE, UniqueIdBuilder.buildRelationshipTypeUid(relationshipType.getModel(), relationshipType.getType())),
+            relationshipTypeUid -> relationshipTypeOperation.getRelationshipTypeByUid(relationshipTypeUid).right()
                 .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus),
             relationshipType -> relationshipTypeOperation.addRelationshipType(relationshipType, inTransaction),
             (newRelationshipType, oldRelationshipType) -> relationshipTypeOperation
