@@ -64,8 +64,8 @@ public class ArtifactInfoImpl implements IArtifactInfo {
     public static List<ArtifactInfoImpl> convertToArtifactInfoImpl(Service service, ComponentInstance resourceInstance,
                                                                    Collection<ArtifactDefinition> list) {
         List<ArtifactInfoImpl> ret = new ArrayList<>();
-        Map<String, List<ArtifactDefinition>> artifactIdToDef = list.stream().collect(Collectors.groupingBy(ArtifactDefinition::getUniqueId));
         if (list != null) {
+            Map<String, List<ArtifactDefinition>> artifactIdToDef = list.stream().collect(Collectors.groupingBy(ArtifactDefinition::getUniqueId));
             for (ArtifactDefinition artifactDef : list) {
                 String generatedFromUUID = null;
                 if (artifactDef.getGeneratedFromId() != null && !artifactDef.getGeneratedFromId().isEmpty()) {
@@ -85,8 +85,8 @@ public class ArtifactInfoImpl implements IArtifactInfo {
 
     public static List<ArtifactInfoImpl> convertServiceArtifactToArtifactInfoImpl(Service service, Collection<ArtifactDefinition> list) {
         List<ArtifactInfoImpl> ret = new ArrayList<>();
-        Map<String, List<ArtifactDefinition>> artifactIdToDef = list.stream().collect(Collectors.groupingBy(ArtifactDefinition::getUniqueId));
         if (list != null) {
+            Map<String, List<ArtifactDefinition>> artifactIdToDef = list.stream().collect(Collectors.groupingBy(ArtifactDefinition::getUniqueId));
             for (ArtifactDefinition artifactDef : list) {
                 String generatedFromUUID = null;
                 if (artifactDef.getGeneratedFromId() != null && !artifactDef.getGeneratedFromId().isEmpty()) {

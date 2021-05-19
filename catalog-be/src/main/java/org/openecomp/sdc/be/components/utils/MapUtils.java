@@ -28,7 +28,7 @@ public class MapUtils {
         if (source == null && target == null) {
             return true;
         }
-        if ((source == null && target != null) || source != null && target == null || source.keySet().size() != target.keySet().size()) {
+        if (source == null || target == null || source.keySet().size() != target.keySet().size()) {
             return false;
         }
         for (Map.Entry<String, Object> entry : source.entrySet()) {
@@ -48,7 +48,7 @@ public class MapUtils {
         if (source == null && target == null) {
             return true;
         }
-        if ((source == null && target != null) || source != null && target == null || source.size() != target.size()) {
+        if (source == null || target == null || source.size() != target.size()) {
             return false;
         }
         for (int i = 0; i < source.size(); i++) {
@@ -68,7 +68,7 @@ public class MapUtils {
         if (sourceObj == null && targetObj == null) {
             return true;
         }
-        if (sourceObj == null && targetObj != null) {
+        if (sourceObj == null) {
             return false;
         }
         if (sourceObj.getClass().equals(targetObj.getClass())) {
@@ -81,9 +81,6 @@ public class MapUtils {
                     return false;
                 }
             } else {
-                if (sourceObj.getClass() != targetObj.getClass()) {
-                    return false;
-                }
                 if (!sourceObj.equals(targetObj)) {
                     return false;
                 }

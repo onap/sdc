@@ -84,7 +84,7 @@ export class InterfaceOperationHandlerComponent {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         const charactersLength = characters.length;
         for (let i = 0; i < 36; i++ ) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            result += characters.charAt(Math.floor(Math.random() * charactersLength * 1));
         }
         return result;
     }

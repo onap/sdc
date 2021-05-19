@@ -47,7 +47,7 @@ public class DistributionEngineClusterHealth {
 
     private static final String UEB_HEALTH_CHECK_STR = "uebHealthCheck";
     private static final Logger logger = Logger.getLogger(DistributionEngineClusterHealth.class.getName());
-    protected static String UEB_HEALTH_LOG_CONTEXT = "ueb.healthcheck";
+    protected static final String UEB_HEALTH_LOG_CONTEXT = "ueb.healthcheck";
     //TODO use LoggerMetric instead
     private static final Logger healthLogger = Logger.getLogger(UEB_HEALTH_LOG_CONTEXT);
     boolean lastHealthState = false;
@@ -212,10 +212,10 @@ public class DistributionEngineClusterHealth {
             }
         });
 
-        public HealthCheckScheduledTask(List<String> uebServers) {
-            logger.debug("Create health check calls for servers {}", uebServers);
-            if (uebServers != null) {
-                for (String server : uebServers) {
+        public HealthCheckScheduledTask(List<String> localUebServers) {
+            logger.debug("Create health check calls for servers {}", localUebServers);
+            if (localUebServers != null) {
+                for (String server : localUebServers) {
                     healthCheckCalls.add(new UebHealthCheckCall(server, publicApiKey));
                 }
             }

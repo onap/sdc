@@ -139,7 +139,7 @@ public class ArchiveBusinessLogic {
                 return comps.stream().collect(Collectors.groupingBy(cmpt -> ComponentTypeEnum.findParamByType(cmpt.getComponentType())));
             } else {
                 log.info("No components found");
-                return new HashMap();
+                return new HashMap<>();
             }
         } catch (Exception e) {
             log.error("Error fetching archived elements", e);
@@ -182,7 +182,9 @@ public class ArchiveBusinessLogic {
     }
 
     protected Either<Component, ResponseFormat> sendNotificationToFacade(String componentId, ChangeTypeEnum changeStatus) {
-        log.debug("build {} notification for facade start", changeStatus.name());
+        if (log.isDebugEnabled()) {
+            log.debug("build {} notification for facade start", changeStatus.name());
+        }
         Either<Component, StorageOperationStatus> toscaElement = toscaOperationFacade.getToscaElement(componentId);
         Component component = toscaElement.left().value();
         ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);

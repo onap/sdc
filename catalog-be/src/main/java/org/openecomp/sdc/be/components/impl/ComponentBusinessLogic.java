@@ -111,7 +111,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     protected ComponentProjectCodeValidator componentProjectCodeValidator;
     protected CatalogOperation catalogOperations;
     protected ComponentIconValidator componentIconValidator;
-    protected ComponentValidator componentValidator;
     protected ComponentTagsValidator componentTagsValidator;
     protected ComponentNameValidator componentNameValidator;
     protected ComponentContactIdValidator componentContactIdValidator;
@@ -131,7 +130,6 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         this.componentContactIdValidator = componentContactIdValidator;
         this.componentNameValidator = componentNameValidator;
         this.componentTagsValidator = componentTagsValidator;
-        this.componentValidator = componentValidator;
         this.componentIconValidator = componentIconValidator;
         this.componentProjectCodeValidator = componentProjectCodeValidator;
         this.componentDescriptionValidator = componentDescriptionValidator;
@@ -887,16 +885,20 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         Either<Map<String, PropertyDefinition>, String> validPropertiesMerge = validateNoConflictingProperties(genericTypeProps,
             ((Resource) componentToCheckOut).getProperties());
         if (validPropertiesMerge.isRight()) {
-            log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic",
-                validPropertiesMerge.right().value());
+            if (log.isDebugEnabled()) {
+                log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic",
+                        validPropertiesMerge.right().value());
+            }
             return false;
         }
         List<AttributeDefinition> genericTypeAttributes = latestGeneric.getAttributes();
         final Either<Map<String, AttributeDefinition>, String> validAttributesMerge = validateNoConflictingProperties(genericTypeAttributes,
             ((Resource) componentToCheckOut).getAttributes());
         if (validAttributesMerge.isRight()) {
-            log.debug("attribute {} cannot be overriden, check out performed without upgrading to latest generic",
-                validAttributesMerge.right().value());
+            if (log.isDebugEnabled()) {
+                log.debug("attribute {} cannot be overriden, check out performed without upgrading to latest generic",
+                        validAttributesMerge.right().value());
+            }
             return false;
         }
         return true;
@@ -925,7 +927,9 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
         Either<Map<String, InputDefinition>, String> eitherMerged = validateNoConflictingProperties(genericTypeInputs, currentList);
         if (eitherMerged.isRight()) {
-            log.debug("input {} cannot be overriden, check out performed without upgrading to latest generic", eitherMerged.right().value());
+            if (log.isDebugEnabled()) {
+                log.debug("input {} cannot be overriden, check out performed without upgrading to latest generic", eitherMerged.right().value());
+            }
             return false;
         }
         componentToCheckOut.setInputs(new ArrayList<>(eitherMerged.left().value().values()));
@@ -963,8 +967,10 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     protected Either<Component, ResponseFormat> updateCatalog(Component component, ChangeTypeEnum changeStatus) {
-        log.debug("update Catalog start with Component Type {} And Componet Name {} with change status {}", component.getComponentType().name(),
-            component.getName(), changeStatus.name());
+        if (log.isDebugEnabled()) {
+            log.debug("update Catalog start with Component Type {} And Componet Name {} with change status {}",
+                    component.getComponentType().name(),component.getName(), changeStatus.name());
+        }
         ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);
         if (status != ActionStatus.OK) {
             return Either.right(componentsUtils.getResponseFormat(status));

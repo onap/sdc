@@ -43,7 +43,6 @@ public class DmaapProducerHealth {
     private static final Logger logHealth = Logger.getLogger(DMAAP_HEALTH_LOG_CONTEXT);
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private HealthCheckInfo healthCheckInfo = DmaapProducerHealth.HealthCheckInfoResult.UNAVAILABLE.getHealthCheckInfo();
-    private long healthCheckReadTimeout = 20;
     private long reconnectInterval = 5;
     private HealthCheckScheduledTask healthCheckScheduledTask = null;
     private ScheduledFuture<?> scheduledFuture = null;
@@ -59,10 +58,6 @@ public class DmaapProducerHealth {
             Integer pollingInterval = configuration.getPollingInterval();
             if (pollingInterval != null && pollingInterval != 0) {
                 reconnectInterval = pollingInterval;
-            }
-            Integer healthCheckReadTimeoutConfig = configuration.getTimeoutMs();
-            if (healthCheckReadTimeoutConfig != null) {
-                this.healthCheckReadTimeout = healthCheckReadTimeoutConfig;
             }
             this.healthCheckScheduledTask = new HealthCheckScheduledTask(configuration); //what is the representation? csv? delimiter? json or other
             startHealthCheckTask(true);
@@ -149,7 +144,6 @@ public class DmaapProducerHealth {
      */
     public class HealthCheckScheduledTask implements Runnable {
 
-        private static final int TIMEOUT = 8192;
         private final DmaapProducerConfiguration config;
 
         HealthCheckScheduledTask(final DmaapProducerConfiguration config) {

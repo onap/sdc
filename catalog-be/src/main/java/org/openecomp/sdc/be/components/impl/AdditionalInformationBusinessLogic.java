@@ -156,10 +156,8 @@ public class AdditionalInformationBusinessLogic extends BaseBusinessLogic {
             result = valueValidRes.right().value();
         } else {
             String newValue = valueValidRes.left().value();
-            if (log.isTraceEnabled()) {
-                if (value != null && !value.equals(newValue)) {
-                    log.trace("The additional information value was normalized from {} to {}", value, newValue);
-                }
+            if (log.isTraceEnabled() && (value != null && !value.equals(newValue))) {
+                log.trace("The additional information value was normalized from {} to {}", value, newValue);
             }
             additionalInfoParameterInfo.setValue(newValue);
         }
