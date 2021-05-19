@@ -52,7 +52,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "cors": "2.7.1",
     "css-loader": "^0.26.1",
-    "cypress": "^3.8.0",
+    "cypress": "^7.3.0",
     "exports-loader": "^0.6.3",
     "express": "^4.14.0",
     "extract-text-webpack-plugin": "^2.1.0",
@@ -171,6 +171,6 @@
     "zone.js": "0.8.5"
   },
   "resolutions": {
-    "cypress": "3.8.0"
+    "cypress": "7.3.0"
   }
 }
