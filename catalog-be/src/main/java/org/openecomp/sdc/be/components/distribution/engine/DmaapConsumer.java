@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 public class DmaapConsumer {
 
     private static final String LOG_PARTNER_NAME = "SDC.BE";
-    private static final Logger logger = Logger.getLogger(DmaapClientFactory.class.getName());
+    private static final Logger logger = Logger.getLogger(DmaapConsumer.class.getName());
     private static LogFieldsMdcHandler mdcFieldsHandler = new LogFieldsMdcHandler();
     private final ExecutorFactory executorFactory;
     private final DmaapClientFactory dmaapClientFactory;

@@ -161,6 +161,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         + "container {}";
     private static final String SERVICE_PROXY = "serviceProxy";
     private static final String ASSOCIATE_RI_TO_RI = "associateRIToRI";
+    private static final String COMPONENT_ARCHIVED = "Component is archived. Component id: {}";
+    private static final String RESTRICTED_OPERATION_ON_SERVIVE = "Restricted operation for user: {} on service {}";
+    private static final String FAILED_TO_LOCK_COMPONENT = "Failed to lock component {}";
+    private static final String RESTRICTED_OPERATION_ON_COMPONENT = "Restricted operation for user: {} on component {}";
+    private static final String RESOURCE_INSTANCE = "resource instance";
+    private static final String SERVICE = "service";
+    private static final String UPDATE_PROPERTY_CONTEXT = "UpdatePropertyValueOnComponentInstance";
+
     private ComponentInstanceOperation componentInstanceOperation;
     private ArtifactsBusinessLogic artifactBusinessLogic;
     private ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
@@ -1919,17 +1927,17 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
             if (Boolean.TRUE.equals(containerComponent.isArchived())) {
-                log.info("Component is archived. Component id: {}", componentId);
+                log.info(COMPONENT_ARCHIVED, componentId);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_IS_ARCHIVED, containerComponent.getName()));
             }
-            log.info("Restricted operation for user: {} on service {}", userId, componentId);
+            log.info(RESTRICTED_OPERATION_ON_SERVIVE, userId, componentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
 
         Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, resourceInstanceId);
         if (resourceInstanceStatus.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
-                resourceInstanceId, "resource instance", "service", componentId));
+                resourceInstanceId, RESOURCE_INSTANCE, SERVICE, componentId));
         }
         ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
 
@@ -2019,10 +2027,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
             if (Boolean.TRUE.equals(containerComponent.isArchived())) {
-                log.info("Component is archived. Component id: {}", componentId);
+                log.info(COMPONENT_ARCHIVED, componentId);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_IS_ARCHIVED, containerComponent.getName()));
             }
-            log.info("Restricted operation for user: {} on service {}", userId, componentId);
+            log.info(RESTRICTED_OPERATION_ON_SERVIVE, userId, componentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
 
@@ -2030,7 +2038,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             resourceInstanceId);
         if (resourceInstanceStatus.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
-                resourceInstanceId, "resource instance", "service", componentId));
+                resourceInstanceId, RESOURCE_INSTANCE, SERVICE, componentId));
         }
         final ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
 
@@ -2223,7 +2231,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (allDataTypesEither.isRight()) {
             JanusGraphOperationStatus status = allDataTypesEither.right().value();
             BeEcompErrorManager.getInstance()
-                .logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status,
+                .logInternalFlowError(UPDATE_PROPERTY_CONTEXT, "Failed to update property value on instance. Status is " + status,
                     ErrorSeverity.ERROR);
             return Either.right(componentsUtils
                 .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
@@ -2271,7 +2279,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (allDataTypesEither.isRight()) {
             JanusGraphOperationStatus status = allDataTypesEither.right().value();
             BeEcompErrorManager.getInstance()
-                .logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status,
+                .logInternalFlowError(UPDATE_PROPERTY_CONTEXT, "Failed to update property value on instance. Status is " + status,
                     ErrorSeverity.ERROR);
             return Either.right(componentsUtils
                 .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
@@ -2337,7 +2345,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (allDataTypesEither.isRight()) {
             JanusGraphOperationStatus status = allDataTypesEither.right().value();
             BeEcompErrorManager.getInstance()
-                .logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update attribute value on instance. Status is " + status,
+                .logInternalFlowError(UPDATE_PROPERTY_CONTEXT, "Failed to update attribute value on instance. Status is " + status,
                     ErrorSeverity.ERROR);
             return Either.right(componentsUtils
                 .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
@@ -2446,17 +2454,17 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
             if (Boolean.TRUE.equals(containerComponent.isArchived())) {
-                log.info("Component is archived. Component id: {}", componentId);
+                log.info(COMPONENT_ARCHIVED, componentId);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_IS_ARCHIVED, containerComponent.getName()));
             }
-            log.info("Restricted operation for user: {} on service {}", userId, componentId);
+            log.info(RESTRICTED_OPERATION_ON_SERVIVE, userId, componentId);
             resultOp = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
             return resultOp;
         }
         Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent, resourceInstanceId);
         if (resourceInstanceStatus.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER,
-                resourceInstanceId, "resource instance", "service", componentId));
+                resourceInstanceId, RESOURCE_INSTANCE, SERVICE, componentId));
         }
 
         ComponentInstance foundResourceInstance = resourceInstanceStatus.left().value();
@@ -3200,7 +3208,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         Component containerComponent = getResourceResult.left().value();
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
-            log.info("Restricted operation for user: {} on component {}", userId, containerComponentId);
+            log.info(RESTRICTED_OPERATION_ON_COMPONENT, userId, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
         Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent,
@@ -3212,7 +3220,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(containerComponentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock component {}", containerComponentId);
+            log.debug(FAILED_TO_LOCK_COMPONENT, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
         try {
@@ -3260,7 +3268,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         final Component containerComponent = getResourceResult.left().value();
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
-            log.info("Restricted operation for user: {} on component {}", userId, containerComponentId);
+            log.info(RESTRICTED_OPERATION_ON_COMPONENT, userId, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
         final Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus =
@@ -3272,7 +3280,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         final StorageOperationStatus lockStatus = graphLockOperation.lockComponent(containerComponentId, containerComponentType.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock component {}", containerComponentId);
+            log.debug(FAILED_TO_LOCK_COMPONENT, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
         var success = false;
@@ -3325,7 +3333,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         Component containerComponent = getResourceResult.left().value();
         if (!ComponentValidationUtils.canWorkOnComponent(containerComponent, userId)) {
-            log.info("Restricted operation for user: {} on component {}", userId, containerComponentId);
+            log.info(RESTRICTED_OPERATION_ON_COMPONENT, userId, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
         }
         Either<ComponentInstance, StorageOperationStatus> resourceInstanceStatus = getResourceInstanceById(containerComponent,
@@ -3338,7 +3346,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // lock resource
         StorageOperationStatus lockStatus = graphLockOperation.lockComponent(containerComponentId, componentTypeEnum.getNodeType());
         if (lockStatus != StorageOperationStatus.OK) {
-            log.debug("Failed to lock component {}", containerComponentId);
+            log.debug(FAILED_TO_LOCK_COMPONENT, containerComponentId);
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(lockStatus)));
         }
         try {

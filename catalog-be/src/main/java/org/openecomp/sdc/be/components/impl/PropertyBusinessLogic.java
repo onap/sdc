@@ -136,19 +136,17 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
                     PropertyValueConverter converter = type.getConverter();
                     // get inner type
                     String innerType = null;
-                    if (newPropertyDefinition != null) {
-                        SchemaDefinition schema = newPropertyDefinition.getSchema();
-                        if (schema != null) {
-                            PropertyDataDefinition prop = schema.getProperty();
-                            if (prop != null) {
-                                innerType = prop.getType();
-                            }
+                    SchemaDefinition schema = newPropertyDefinition.getSchema();
+                    if (schema != null) {
+                        PropertyDataDefinition prop = schema.getProperty();
+                        if (prop != null) {
+                            innerType = prop.getType();
                         }
-                        String convertedValue = null;
-                        if (newPropertyDefinition.getDefaultValue() != null) {
-                            convertedValue = converter.convert(newPropertyDefinition.getDefaultValue(), innerType, allDataTypes);
-                            newPropertyDefinition.setDefaultValue(convertedValue);
-                        }
+                    }
+                    String convertedValue = null;
+                    if (newPropertyDefinition.getDefaultValue() != null) {
+                        convertedValue = converter.convert(newPropertyDefinition.getDefaultValue(), innerType, allDataTypes);
+                        newPropertyDefinition.setDefaultValue(convertedValue);
                     }
                 }
                 Either<PropertyDefinition, StorageOperationStatus> addPropertyEither = toscaOperationFacade

@@ -34,11 +34,11 @@ public abstract class AuditBaseEventFactory implements AuditEventFactory {
 
     private AuditingActionEnum action;
 
-    public AuditBaseEventFactory(AuditingActionEnum action) {
+    protected AuditBaseEventFactory(AuditingActionEnum action) {
         this.action = Objects.requireNonNull(action);
     }
 
-    public AuditBaseEventFactory() {
+    protected AuditBaseEventFactory() {
     }
 
     public static String buildUserNameExtended(User user) {
