@@ -22,6 +22,30 @@
       "revId": "6161730b6a72bc57a044b8ba3625b0fe805c5a4d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e559a424_306e5068",
+        "filename": "docs/sdc-helm-validator.rst",
+        "patchSetId": 5
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-05-20T14:16:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68df2617_2c0eab79",
+      "range": {
+        "startLine": 122,
+        "startChar": 39,
+        "endLine": 122,
+        "endChar": 45
+      },
+      "revId": "6161730b6a72bc57a044b8ba3625b0fe805c5a4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
