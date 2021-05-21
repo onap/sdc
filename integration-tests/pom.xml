@@ -51,6 +51,8 @@ limitations under the License.
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
         <it.docker.version>latest</it.docker.version>
         <it.ui.firefox.version>86.0</it.ui.firefox.version>
+        <it.helm-validator.disabled>true</it.helm-validator.disabled>
+        <it.helm-validator.version>1.2.0</it.helm-validator.version>
 
         <!-- parser-->
         <sdc-tosca-parser.version>1.6.5</sdc-tosca-parser.version>
@@ -656,7 +658,7 @@ limitations under the License.
                                     </bind>
                                 </volumes>
                                 <wait>
-                                    <time>660000</time>
+                                    <time>1660000</time>
                                     <log>Chef Client finished</log>
                                 </wait>
                                 <network>
@@ -799,6 +801,32 @@ limitations under the License.
                                 </volumes>
                             </run>
                         </image>
+                      <image>
+                        <name>onap/org.onap.sdc.sdc-helm-validator:${it.helm-validator.version}</name>
+                        <alias>helm-validator</alias>
+                        <run>
+                          <skip>${it.helm-validator.disabled}</skip>
+                          <hostname>helm-validator</hostname>
+                          <wait>
+                            <time>20000</time>
+                            <tcp>
+                              <host>helm-validator</host>
+                              <mode>direct</mode>
+                              <ports>
+                                <port>8080</port>
+                              </ports>
+                            </tcp>
+                          </wait>
+                          <ports>
+                            <port>8085:8080</port>
+                          </ports>
+                          <network>
+                            <mode>custom</mode>
+                            <name>sdc-network</name>
+                            <alias>helm-validator</alias>
+                          </network>
+                        </run>
+                      </image>
                     </images>
                 </configuration>
                 <executions>
@@ -875,6 +903,34 @@ limitations under the License.
                 <surefire.skip.tests>true</surefire.skip.tests>
                 <skipTest>false</skipTest>
             </properties>
+        </profile>
+        <profile>
+            <id>integration-tests-with-helm-validator</id>
+            <properties>
+                <it.helm-validator.disabled>false</it.helm-validator.disabled>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+                            <systemProperties>
+                                <property>
+                                    <name>testng.dtd.http</name>
+                                    <value>true</value>
+                                </property>
+                            </systemProperties>
+                            <suiteXmlFiles>
+                                <file>src/test/resources/ci/testSuites/backend/helmValidatorTests.xml</file>
+                                <file>src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml</file>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
