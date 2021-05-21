@@ -162,7 +162,15 @@ There are 2 options to start them:
   The test suites are located here:
   * BE: `integration-tests/src/test/resources/ci/testSuites/backend`
   * FE: `integration-tests/src/test/resources/ci/testSuites/frontend`
-  
+
+#### Integration tests with Helm Validator
+
+Those tests use container built externally in other ONAP repository: [sdc/sdc-helm-validator](https://gerrit.onap.org/r/admin/repos/sdc/sdc-helm-validator)
+
+You can run those tests same as default integration tests by adding additional profile to maven commands:
+`integration-tests-with-helm-validator`
+* To start SDC with Helm Validator run: `mvn clean install -P start-sdc,integration-tests-with-helm-validator`
+* To execute tests that use Helm Validator use: `mvn clean install -P run-integration-tests,integration-tests-with-helm-validator`
 ## Accessing SDC UI in Dev Mode (Legacy way)
 
 In order to access the SDC UI from your dev environment you need to do the following:
