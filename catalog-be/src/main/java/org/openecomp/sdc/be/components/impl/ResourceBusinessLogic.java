@@ -4736,7 +4736,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         String type = null;
         String innerType = null;
         for (PropertyDefinition property : properties) {
-            if (!propertyOperation.isPropertyTypeValid(property)) {
+            if (!propertyOperation.isPropertyTypeValid(property, null)) {
                 log.info("Invalid type for property {}", property);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
             }

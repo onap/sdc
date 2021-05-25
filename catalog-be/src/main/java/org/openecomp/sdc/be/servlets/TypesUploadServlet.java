@@ -193,9 +193,9 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "Data types already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
-                                    @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = this::createDataTypes;
-        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.DataType.getName());
+                                    @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                    @Parameter(description = "model") @FormDataParam("model") String modelName) {
+        return uploadElementTypeServletLogic(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName);
     }
 
     @POST
@@ -338,9 +338,9 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     // data types
-    private void createDataTypes(Wrapper<Response> responseWrapper, String dataTypesYml) {
+    private void createDataTypes(Wrapper<Response> responseWrapper, String dataTypesYml, final String modelName) {
         final Supplier<Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> dataTypeImportManager
-            .createDataTypes(dataTypesYml);
+            .createDataTypes(dataTypesYml, modelName);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.DATA_TYPE_ALREADY_EXIST,
             NodeTypeEnum.DataType.name());
     }

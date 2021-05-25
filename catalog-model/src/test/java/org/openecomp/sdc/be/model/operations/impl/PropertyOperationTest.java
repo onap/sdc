@@ -26,11 +26,15 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -44,7 +48,6 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
-
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -774,7 +777,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		// test 1
 		testSubject = createTestSubject();
 		property = null;
-		result = testSubject.isPropertyTypeValid(property);
+		result = testSubject.isPropertyTypeValid(property, null);
 		Assert.assertEquals(false, result);
 	}
 
@@ -852,52 +855,71 @@ public class PropertyOperationTest extends ModelTestBase {
 
 	
 	@Test
-	public void testAddDataType() throws Exception {
-		PropertyOperation testSubject;
+	public void testAddAndGetDataType() throws Exception {
+	    final String dataTypeName = "myDataType";
 		DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+		dataTypeDefinition.setName("myDataType");
 		Either<DataTypeDefinition, StorageOperationStatus> result;
+		
+        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
+            .createNode(Mockito.any(), Mockito.eq(DataTypeData.class));
+        
+        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
+            .getNode(GraphPropertiesDictionary.NAME.getProperty(), dataTypeName, DataTypeData.class, null);
+        
+        Mockito.doReturn(Either.left(Collections.EMPTY_LIST)).when(janusGraphGenericDao)
+            .getChildrenNodes(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.PROPERTY), Mockito.eq(NodeTypeEnum.Property), Mockito.eq(PropertyData.class));
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.addDataType(dataTypeDefinition);
+		result = propertyOperation.addDataType(dataTypeDefinition);
+        assertTrue(result.isLeft());
+        
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao)
+            .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.DERIVED_FROM), Mockito.eq(NodeTypeEnum.DataType), Mockito.eq(DataTypeData.class));
+		
+	    result = propertyOperation.getDataTypeByName(dataTypeName, null, false);
+	    assertTrue(result.isLeft());
+	    
+	    result = propertyOperation.getDataTypeByName(dataTypeName, null);
+	    assertTrue(result.isLeft());
+	    
+        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
+            .getNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), dataTypeName + ".datatype", DataTypeData.class);
+	    
+	    Either<DataTypeDefinition, JanusGraphOperationStatus> resultGetByUid = propertyOperation.getDataTypeByUid("myDataType.datatype");
+	    assertTrue(resultGetByUid.isLeft());
+	    
+	    Either<Boolean, JanusGraphOperationStatus> resultIsDefinedDataType = propertyOperation.isDefinedInDataTypes(dataTypeName, null);
+        assertTrue(resultIsDefinedDataType.isLeft());
 	}
-
 	
-	@Test
-	public void testGetDataTypeByName() throws Exception {
-		PropertyOperation testSubject;
-		String name = "";
-		boolean inTransaction = false;
-		Either<DataTypeDefinition, StorageOperationStatus> result;
+	   @Test
+	    public void testAddDataTypeToModel() throws Exception {
+	        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+	        dataTypeDefinition.setName("testName");
+	        dataTypeDefinition.setModel("testModel");
+	        Either<DataTypeDefinition, StorageOperationStatus> result;
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDataTypeByName(name, inTransaction);
-	}
+	        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
+                .createNode(Mockito.any(), Mockito.eq(DataTypeData.class));
+	        
+	        Mockito.doReturn(Either.left(new GraphRelation())).when(janusGraphGenericDao)
+                .createRelation(Mockito.any(), Mockito.any(), Mockito.eq(GraphEdgeLabels.MODEL_ELEMENT), Mockito.any());
 
-	
-	@Test
-	public void testGetDataTypeByName_1() throws Exception {
-		PropertyOperation testSubject;
-		String name = "";
-		Either<DataTypeDefinition, StorageOperationStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDataTypeByName(name);
-	}
-
-	
-	@Test
-	public void testGetDataTypeByNameWithoutDerived() throws Exception {
-		PropertyOperation testSubject;
-		String name = "";
-		Either<DataTypeDefinition, StorageOperationStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getDataTypeByNameWithoutDerived(name);
-	}
+	        result = propertyOperation.addDataType(dataTypeDefinition);
+	        assertTrue(result.isLeft());
+	        
+	        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
+	            .getNode(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), "testModel.testName.datatype", DataTypeData.class);
+	        
+	        Mockito.doReturn(Either.left(Collections.EMPTY_LIST)).when(janusGraphGenericDao)
+	            .getChildrenNodes(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.PROPERTY), Mockito.eq(NodeTypeEnum.Property), Mockito.eq(PropertyData.class));
+	        
+	        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao)
+	            .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.eq(GraphEdgeLabels.DERIVED_FROM), Mockito.eq(NodeTypeEnum.DataType), Mockito.eq(DataTypeData.class));
+	        
+	        Either<DataTypeDefinition, JanusGraphOperationStatus> resultGetByUid = propertyOperation.getDataTypeByUid("testModel.testName.datatype");
+	        assertTrue(resultGetByUid.isLeft());
+	    }
 
 	
 	@Test
@@ -909,18 +931,6 @@ public class PropertyOperationTest extends ModelTestBase {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.getDataTypeByUidWithoutDerivedDataTypes(uniqueId);
-	}
-
-	
-	@Test
-	public void testIsDefinedInDataTypes() throws Exception {
-		PropertyOperation testSubject;
-		String propertyType = "";
-		Either<Boolean, JanusGraphOperationStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.isDefinedInDataTypes(propertyType);
 	}
 
 	

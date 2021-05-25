@@ -176,8 +176,8 @@ public class UniqueIdBuilder {
         return resourceUniqueId + DOT + "additionalinformation";
     }
 
-    static String buildDataTypeUid(String name) {
-        return name + DOT + "datatype";
+    public static String buildDataTypeUid(final String modelName, final String name) {
+        return StringUtils.isEmpty(modelName) ? name + DOT + "datatype" : modelName + DOT + name + DOT + "datatype";
     }
 
     public static String buildInvariantUUID() {
