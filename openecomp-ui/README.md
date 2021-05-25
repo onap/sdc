@@ -3,7 +3,7 @@
 ## Setup
 
 ##### Install `nodejs`:
-			
+
 download nodejs from here: https://nodejs.org/en/ (take the "current" version with latest features) & install it.
 ##### Install `gulp`
 
@@ -18,12 +18,12 @@ install gulp by running the following command `npm install --global gulp-cli`
 * run `npm install`
 * create a copy of `devConfig.defaults.json` file and name it `devConfig.json` (we already configured git to ignore it so it will not be pushed)
 in that file.
-  
-  populate the fields of the IP addresses of your BE machine you'd like to connect (**pay attention, it is a JSON file**):
-  
-  For example *http://\<host>:\<port>* 
+
+  set "proxyCatalogTarget" to the URL of the sdc-frontend; set "proxyTarget" to the URL of the sdc-onboard-backend (**pay attention, it is a JSON file**):
+
+  For example *http://\<host>:\<port>*
 * run `npm start`
-* your favorite UI will wait for you at: `http://localhost:9000/sdc1/proxy-designer1#/onboardVendor`
+* your favorite UI will wait for you at: `http://localhost:9000/sdc1/#!/onboardVendor`
 
 
 
