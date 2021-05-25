@@ -469,7 +469,7 @@ public class InputsBusinessLogicTest {
         // for BaseOperation.getAllDataTypes:
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
         // for BaseOperation.validatePropertyDefaultValue:
-        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(true);
+        when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(true);
         when(propertyOperation.isPropertyInnerTypeValid(any(),any())).thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
         when(propertyOperation.isPropertyDefaultValueValid(any(), any())).thenReturn(true);
         // for createListInputsInGraph:
@@ -565,12 +565,12 @@ public class InputsBusinessLogicTest {
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
         // for BaseOperation.validatePropertyDefaultValue:
-        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(false);
+        when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(false);
 
         Either<List<InputDefinition>, ResponseFormat> result =
                 testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
         assertThat(result.isRight()).isTrue();
-        verify(propertyOperation, times(1)).isPropertyTypeValid(any());
+        verify(propertyOperation, times(1)).isPropertyTypeValid(any(), any());
     }
 
     @Test
@@ -585,7 +585,7 @@ public class InputsBusinessLogicTest {
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
         when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
         // for BaseOperation.validatePropertyDefaultValue:
-        when(propertyOperation.isPropertyTypeValid(any())).thenReturn(true);
+        when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(true);
         when(propertyOperation.isPropertyInnerTypeValid(any(),any())).thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
         when(propertyOperation.isPropertyDefaultValueValid(any(), any())).thenReturn(true);
         when(toscaOperationFacadeMock.addInputsToComponent(anyMap(), eq(COMPONENT_ID))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));

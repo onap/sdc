@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -34,8 +35,10 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -53,20 +56,24 @@ public class DataTypeImportManager {
     @Resource
     private CommonImportManager commonImportManager;
 
-    public Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypes(String dataTypeYml) {
+    public Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypes(final String dataTypeYml, final String modelName) {
         return commonImportManager
-            .createElementTypes(dataTypeYml, this::createDataTypesFromYml, this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
+            .createElementTypes(dataTypeYml, dataTypesFromYml -> createDataTypesFromYml(dataTypeYml, modelName), this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
     }
-
-    private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(String dataTypesYml) {
-        return commonImportManager.createElementTypesFromYml(dataTypesYml, this::createDataType);
+    
+    private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName) {
+        final Either<List<DataTypeDefinition>, ActionStatus> dataTypes = commonImportManager.createElementTypesFromYml(dataTypesYml, this::createDataType);
+        if (dataTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+            dataTypes.left().value().forEach(dataType -> dataType.setModel(modelName));
+        }
+        return dataTypes;
     }
 
     private Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypesByDao(
         List<DataTypeDefinition> dataTypesToCreate) {
         return commonImportManager.createElementTypesByDao(dataTypesToCreate, this::validateDataType,
-            dataType -> new ImmutablePair<>(ElementTypeEnum.DATA_TYPE, dataType.getName()),
-            dataTypeName -> propertyOperation.getDataTypeByNameWithoutDerived(dataTypeName), dataType -> propertyOperation.addDataType(dataType),
+            dataType -> new ImmutablePair<>(ElementTypeEnum.DATA_TYPE, UniqueIdBuilder.buildDataTypeUid(dataType.getModel(), dataType.getName())),
+            dataTypeUid -> propertyOperation.getDataTypeByUidWithoutDerived(dataTypeUid, true), dataType -> propertyOperation.addDataType(dataType),
             (newDataType, oldDataType) -> propertyOperation.updateDataType(newDataType, oldDataType));
     }
 
@@ -119,7 +126,7 @@ public class DataTypeImportManager {
         }
         String derivedDataType = dataType.getDerivedFromName();
         if (derivedDataType != null) {
-            Either<DataTypeDefinition, StorageOperationStatus> derivedDataTypeByName = propertyOperation.getDataTypeByName(derivedDataType, true);
+            Either<DataTypeDefinition, StorageOperationStatus> derivedDataTypeByName = propertyOperation.getDataTypeByName(derivedDataType, dataType.getModel());
             if (derivedDataTypeByName.isRight()) {
                 StorageOperationStatus status = derivedDataTypeByName.right().value();
                 if (status == StorageOperationStatus.NOT_FOUND) {

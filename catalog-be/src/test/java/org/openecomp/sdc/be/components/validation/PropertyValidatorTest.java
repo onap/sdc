@@ -59,8 +59,7 @@ public class PropertyValidatorTest {
         Mockito.when(propertyOperation.validateAndUpdatePropertyValue(
             Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(Either.left(""));
 
-        PropertyValidator propertyValidator = new PropertyValidator(propertyOperation, componentsUtils,
-            applicationDataTypeCache, exceptionUtils);
+        PropertyValidator propertyValidator = new PropertyValidator(propertyOperation, componentsUtils, exceptionUtils);
         List<PropertyDefinition> props = new ArrayList<>();
         List<PropertyDefinition> dbProps = new ArrayList<>();
         PropertyDefinition prop = new PropertyDefinition();
@@ -72,20 +71,5 @@ public class PropertyValidatorTest {
         propertyValidator.thinPropertiesValidator(props, dbProps, Collections.emptyMap());
 
         Mockito.verify(propertyOperation).validateAndUpdatePropertyValue(TYPE, VALUE, null, Collections.emptyMap());
-    }
-
-    @Test
-    public void shouldIterateOverPropertiesOnInvalidType() {
-        PropertyValidator propertyValidator = new PropertyValidator(propertyOperation, componentsUtils,
-            applicationDataTypeCache, exceptionUtils);
-        List<PropertyDefinition> props = new ArrayList<>();
-        PropertyDefinition prop = new PropertyDefinition();
-        prop.setName(TEST);
-        prop.setValue(VALUE);
-        prop.setType(TYPE);
-        props.add(prop);
-        Either<Boolean, ResponseFormat> booleanResponseFormatEither = propertyValidator.iterateOverProperties(props);
-
-        assertTrue(booleanResponseFormatEither.isRight());
     }
 }
