@@ -821,7 +821,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         if (ToscaPropertyType.isScalarType(propertyType)) {
             return false;
         }
-        Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameRes = propertyOperation.getDataTypeByName(propertyType);
+        Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameRes = propertyOperation.getDataTypeByName(propertyType, null);
         if (getDataTypeByNameRes.isRight()) {
             return false;
         }

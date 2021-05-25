@@ -36,6 +36,7 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
     private DataTypeDefinition derivedFrom;
     private List<PropertyConstraint> constraints;
     private List<PropertyDefinition> properties;
+    private String model;
 
     public DataTypeDefinition(final DataTypeDataDefinition dataTypeDataDefinition) {
         super(dataTypeDataDefinition);
@@ -49,6 +50,7 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
         this.setUniqueId(dataTypeDefinition.getUniqueId());
         this.setConstraints(dataTypeDefinition.getConstraints());
         this.setDescription(dataTypeDefinition.getDescription());
+        this.setModel(dataTypeDefinition.getModel());
     }
 
     public List<PropertyConstraint> safeGetConstraints() {

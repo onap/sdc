@@ -50,7 +50,7 @@ public interface IPropertyOperation {
 
     public boolean isPropertyDefaultValueValid(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes);
 
-    public boolean isPropertyTypeValid(IComplexDefaultValue propertyDefinition);
+    public boolean isPropertyTypeValid(IComplexDefaultValue propertyDefinition, String model);
 
     public ImmutablePair<String, Boolean> isPropertyInnerTypeValid(IComplexDefaultValue propertyDefinition,
                                                                    Map<String, DataTypeDefinition> dataTypes);
@@ -65,11 +65,9 @@ public interface IPropertyOperation {
      * @param name
      * @return
      */
-    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name);
+    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name, String validForModel);
 
-    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name, boolean inTransaction);
-
-    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByNameWithoutDerived(String name);
+    public Either<DataTypeDefinition, StorageOperationStatus> getDataTypeByName(String name, String validForModel, boolean inTransaction);
 
     public StorageOperationStatus validateAndUpdateProperty(IComplexDefaultValue propertyDefinition, Map<String, DataTypeDefinition> dataTypes);
 

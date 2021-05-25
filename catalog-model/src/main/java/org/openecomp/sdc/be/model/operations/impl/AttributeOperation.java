@@ -78,7 +78,7 @@ public class AttributeOperation extends AbstractOperation {
     }
 
     private Either<Boolean, JanusGraphOperationStatus> isDefinedInDataTypes(final String propertyType) {
-        final String dataTypeUid = UniqueIdBuilder.buildDataTypeUid(propertyType);
+        final String dataTypeUid = UniqueIdBuilder.buildDataTypeUid(null, propertyType);
         final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid = getDataTypeByUid(dataTypeUid);
         if (dataTypeByUid.isRight()) {
             final JanusGraphOperationStatus status = dataTypeByUid.right().value();
