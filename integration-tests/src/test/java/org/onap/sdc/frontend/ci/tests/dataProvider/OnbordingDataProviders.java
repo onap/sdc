@@ -44,34 +44,36 @@ public class OnbordingDataProviders {
         int randomElementNumber = NUMBER_OF_RANDOMLY_ONBOARD_VNF; //how many VNFs to onboard randomly
         List<String> fileNamesFromFolder = OnboardingUtils.getVnfNamesFileListExcludeToscaParserFailure();
         List<String> newRandomFileNamesFromFolder = getRandomElements(randomElementNumber, fileNamesFromFolder);
-        System.out.println(String.format("There are %s zip file(s) to test", newRandomFileNamesFromFolder.size()));
         return provideData(newRandomFileNamesFromFolder, filepath);
     }
 
     @DataProvider(name = "VNF_List", parallel = true)
     private static Object[][] VnfList() throws Exception {
-
         List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
-
-        System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
         return provideData(fileNamesFromFolder, filepath);
     }
 
     @DataProvider(name = "CNF_List", parallel = true)
     private static Object[][] cnfList() {
-
         List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF);
+        return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
+    }
 
-        System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
+    @DataProvider(name = "CNF_Helm_Validator_List", parallel = true)
+    private static Object[][] cnfForHelmValidatorList() {
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        return provideData(fileNamesFromFolder, FileHandling.getCnfForHelmValidatorRepositoryPath());
+    }
+
+    @DataProvider(name = "Invalid_CNF_Helm_Validator_List", parallel = true)
+    private static Object[][] invalidCnfForHelmValidatorList() {
+        List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF_HELM);
         return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
     }
 
     @DataProvider(name = "Invalid_CNF_List", parallel = true)
     private static Object[][] invalidCnfList() {
-
         List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF);
-
-        System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
         return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
     }
 
@@ -106,7 +108,7 @@ public class OnbordingDataProviders {
 
     //	-----------------------methods-----------------------------------------
     static Object[][] provideData(List<String> fileNamesFromFolder, String filepath) {
-
+        System.out.println(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
         Object[][] arObject = new Object[fileNamesFromFolder.size()][];
         int index = 0;
         for (Object obj : fileNamesFromFolder) {

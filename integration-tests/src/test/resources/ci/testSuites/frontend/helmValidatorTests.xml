@@ -6,6 +6,12 @@
 
   <test name="helmValidatorTests">
     <classes>
+      <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.OnboardingFlowsUi">
+        <methods>
+          <include name="onboardCNFWithHelmValidatorTest"/>
+          <include name="onboardCNFWithHelmValidatorShouldFailTest"/>
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>

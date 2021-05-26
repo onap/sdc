@@ -40,11 +40,12 @@
          "vnfRepoHost": "10.0.14.1"
       },
       "HelmValidator": {
-         "validator_enabled": false,
+         "validator_enabled": true,
          "helm_version": "v3",
          "deployable": true,
          "lintable": false,
-         "strict_lintable": false
+         "strict_lintable": false,
+         "validator_url": "http://helm-validator:8080/validate"
       }
    },
    "override_attributes": {
