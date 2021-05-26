@@ -141,6 +141,7 @@ class HeatScreenView extends Component {
                     <Tab
                         tabId={tabsMapping.SETUP}
                         title="Setup"
+                        data-test-id="attachments-tab-setup"
                         disabled={
                             onboardingOrigin === onboardingOriginTypes.CSAR
                         }>
@@ -162,6 +163,7 @@ class HeatScreenView extends Component {
                     <Tab
                         tabId={tabsMapping.VALIDATION}
                         title="Validation"
+                        data-test-id="attachments-tab-validation"
                         disabled={
                             goToOverview &&
                             (!isValidationAvailable || candidateInProcess)

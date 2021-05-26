@@ -473,6 +473,62 @@ public class OnboardingFlowsUi extends SetupCDTest {
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile);
     }
 
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_Helm_Validator_List")
+    public void onapOnboardVSPWithHelmValidationSuccessfulWithoutErrorsAndWarnings(String filePath, String cnfFile) throws Exception {
+
+        setLog(cnfFile);
+        String vspName = createNewVSP(filePath, cnfFile);
+        goToVspScreen(true, vspName);
+
+        boolean isVspAttachmentValidationPage = VspValidationPage.isVspAttachmentsValidationPage();
+        if (!isVspAttachmentValidationPage) {
+            VspValidationPage.navigateToVspAttachmentsValidationPage();
+        }
+
+        assertTrue("Submit button should be enabled for correct helm chart",
+            VspValidationPage.isSubmitButtonEnabled());
+        assertFalse("Attachment should not have any warnings for correct helm chart",
+            VspValidationPage.hasHelmAttachmentsAnyWarnings());
+        assertFalse("Attachment should not have any error for correct helm chart",
+            VspValidationPage.hasHelmAttachmentsAnyError());
+    }
+
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_With_Warning_Helm_Validator_List")
+    public void onapOnboardVSPWithHelmValidationSuccessfulWithWarnings(String filePath, String cnfFile) throws Exception {
+        setLog(cnfFile);
+        String vspName = createNewVSP(filePath, cnfFile);
+        goToVspScreen(true, vspName);
+
+        boolean isVspAttachmentValidationPage = VspValidationPage.isVspAttachmentsValidationPage();
+        if (!isVspAttachmentValidationPage) {
+            VspValidationPage.navigateToVspAttachmentsValidationPage();
+        }
+
+        assertTrue("Submit button should be enabled for helm chart with warning",
+            VspValidationPage.isSubmitButtonEnabled());
+        assertTrue("Attachment should have warnings for helm chart with warning",
+            VspValidationPage.hasHelmAttachmentsAnyWarnings());
+        assertFalse("Attachment should not have error for helm chart with warning",
+            VspValidationPage.hasHelmAttachmentsAnyError());
+    }
+
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Invalid_CNF_Helm_Validator_List")
+    public void onapOnboardVSPWithHelmValidationUnsuccessfulWithErrors(String filePath, String cnfFile) throws Exception {
+        setLog(cnfFile);
+        String vspName = createNewVSP(filePath, cnfFile);
+        goToVspScreen(true, vspName);
+
+        boolean isVspAttachmentValidationPage = VspValidationPage.isVspAttachmentsValidationPage();
+        if (!isVspAttachmentValidationPage) {
+            VspValidationPage.navigateToVspAttachmentsValidationPage();
+        }
+
+        assertFalse("Submit button should be disabled for helm chart with error",
+            VspValidationPage.isSubmitButtonEnabled());
+        assertTrue("Attachment should have error for helm chart with error",
+            VspValidationPage.hasHelmAttachmentsAnyError());
+    }
+
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Invalid_CNF_List")
     public void onboardCNFTestShouldFailForInvalidHelmPackage(String filePath, String cnfFile) {
         setLog(cnfFile);
