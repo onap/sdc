@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,8 +151,21 @@ public class FileHandling {
     public static String getVnfRepositoryPath() {
         return getFilePath("VNFs");
     }
+
     public static String getCnfRepositoryPath() {
         return getFilePath("CNFs");
+    }
+
+    public static String getCnfForHelmValidatorRepositoryPath() {
+        return getFilePath("CNFs/helm_validator");
+    }
+
+    public static String getCnfWithWarningForHelmValidatorRepositoryPath() {
+        return getFilePath("CNFs/helm_validator/with_warnings");
+    }
+
+    public static String getInvalidCnfForHelmValidatorRepositoryPath() {
+        return getFilePath("CNFs/helm_validator/with_warnings");
     }
 
     public static String getUpdateVSPVnfRepositoryPath() {
