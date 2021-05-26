@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10f2561d_2c0f02db",
+        "filename": "integration-tests/src/test/resources/ci/testSuites/backend/helmValidatorTests.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-05-26T11:58:45Z",
+      "side": 1,
+      "message": "What is the reason for commenting out the test class?",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 73
+      },
+      "revId": "7c6d1c902cda68e8cbf9d9ea827e665ef87a3277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99d0a980_83e10126",
+        "filename": "integration-tests/src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-05-26T11:58:45Z",
+      "side": 1,
+      "message": "What is the reason for commenting out the test class?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 21
+      },
+      "revId": "7c6d1c902cda68e8cbf9d9ea827e665ef87a3277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
