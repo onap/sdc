@@ -23,6 +23,8 @@ package org.onap.sdc.backend.ci.tests.utils.general;
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
 import com.google.gson.Gson;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -58,6 +60,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
 
 public class VendorSoftwareProductRestUtils {
 
@@ -128,6 +131,13 @@ public class VendorSoftwareProductRestUtils {
 
         RestResponse validateUpload = validateUpload(createNewVspPair.right, user);
         assertEquals("did not succeed to validate upload process, reason: " + validateUpload.getResponse(), 200, validateUpload.getErrorCode().intValue());
+
+        Path expectPath =  FileSystems.getDefault().getPath(filepath + File.separator + heatFileName.substring(0, heatFileName.indexOf('.')) + "_expect");
+
+        if(Files.exists(expectPath)) {
+            String content = Files.readString(expectPath);
+            assertTrue(validateUpload.getResponse().contains(content.trim().replaceAll("[\n\r]", "")));
+        }
 
         return createNewVspPair.right;
     }

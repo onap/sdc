@@ -22,6 +22,7 @@ package org.onap.sdc.backend.ci.tests.data.providers;
 
 import static org.testng.Assert.fail;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -82,7 +83,28 @@ public final class OnboardingDataProviders {
     private static Object[][] invalidCnfList() {
         final List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF);
         LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
-        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF));
+        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF) + File.separator + OnboardingUtils.INVALID_XNFS_SUBPATH);
+    }
+
+    @DataProvider(name = "CNF_Helm_Validator_List", parallel = true)
+    private static Object[][] cnfForHelmValidatorList() {
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF_HELM));
+    }
+
+    @DataProvider(name = "CNF_With_Warning_Helm_Validator_List", parallel = true)
+    private static Object[][] cnfWithWarningForHelmValidatorList() {
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesWithWarningsFileList(XnfTypeEnum.CNF_HELM);
+        LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF_HELM) + File.separator + OnboardingUtils.WITH_WARNINGS_XNFS_SUBPATH);
+    }
+
+    @DataProvider(name = "Invalid_CNF_Helm_Validator_List", parallel = true)
+    private static Object[][] invalidCnfForHelmValidatorList() {
+        final List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF_HELM) + File.separator + OnboardingUtils.INVALID_XNFS_SUBPATH);
     }
 
     @DataProvider(name = "Single_VNF", parallel = true)

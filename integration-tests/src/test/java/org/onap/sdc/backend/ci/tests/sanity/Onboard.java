@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,11 +53,11 @@ public class Onboard extends ComponentBaseTest {
 	private String makeToscaValidationValue;
 	@Rule
 	public static final TestName name = new TestName();
-	
+
 	@Parameters({ "makeDistribution" })
 	@BeforeMethod
 	public void beforeTestReadParams(@Optional("true") String makeDistributionReadValue) {
-		makeDistributionValue = makeDistributionReadValue;                             
+		makeDistributionValue = makeDistributionReadValue;
 		logger.info("makeDistributionReadValue - > " + makeDistributionValue);
 	}
 
@@ -67,7 +67,7 @@ public class Onboard extends ComponentBaseTest {
 		makeToscaValidationValue = makeToscaValidationReadValue;
 		logger.info("makeToscaValidationReadValue - > " + makeToscaValidationValue);
 	}
-	
+
 
 	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "VNF_List")
 	public void onboardVNFShotFlow(String filePath, String vnfFile) throws Exception {
@@ -89,6 +89,24 @@ public class Onboard extends ComponentBaseTest {
 
 	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Invalid_CNF_List")
 	public void onboardCNFFlowShouldFailForInvalidHelmPackage(String filePath, String cnfFile) {
+		setLog(cnfFile);
+		assertThrows(() -> runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF));
+	}
+
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "CNF_Helm_Validator_List")
+	public void onboardCNFWithHelmValidatorFlow(String filePath, String cnfFile) throws Exception {
+		setLog(cnfFile);
+		runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF);
+	}
+
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "CNF_With_Warning_Helm_Validator_List")
+	public void onboardCNFWithHelmValidatorFlowWithWarning(String filePath, String cnfFile) throws Exception {
+		setLog(cnfFile);
+		runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF);
+	}
+
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "Invalid_CNF_Helm_Validator_List")
+	public void onboardCNFWithHelmValidatorShouldFailTest(String filePath, String cnfFile) {
 		setLog(cnfFile);
 		assertThrows(() -> runOnboardToDistributionFlow(filePath, cnfFile, ResourceTypeEnum.VF));
 	}

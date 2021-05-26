@@ -24,6 +24,7 @@ package org.onap.sdc.backend.ci.tests.utils.general;
 import static org.onap.sdc.backend.ci.tests.utils.general.FileHandling.filterFileNamesListFromFolder;
 
 import java.io.File;
+import java.nio.file.Paths;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
@@ -109,7 +110,8 @@ public class OnboardingUtils {
 		"1-2017389vtsbc4vf-(VOIP)_v11.0.zip"
 	);
 
-	private static final String INVALID_XNFS_SUBPATH = "invalid";
+	public static final String INVALID_XNFS_SUBPATH = "invalid";
+	public static final String WITH_WARNINGS_XNFS_SUBPATH = "with_warnings";
 
 	public static String handleFilename(String heatFileName) {
 		final String namePrefix = String.format("%sVF%s", ElementFactory.getResourcePrefix(), "Onboarded-");
@@ -201,6 +203,15 @@ public class OnboardingUtils {
 	 */
 	public static List<String> getInvalidXnfNamesFileList(XnfTypeEnum xnfTypeEnum) {
 		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum) + File.separator + INVALID_XNFS_SUBPATH;
+		return FileHandling.getZipFileNamesFromFolder(filepath);
+	}
+
+	/**
+	 * @return
+	 * The method returns names list of XNF packages with warnings from Files directory under sdc repository
+	 */
+	public static List<String> getXnfNamesWithWarningsFileList(XnfTypeEnum xnfTypeEnum) {
+		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum) + File.separator + WITH_WARNINGS_XNFS_SUBPATH;
 		return FileHandling.getZipFileNamesFromFolder(filepath);
 	}
 
