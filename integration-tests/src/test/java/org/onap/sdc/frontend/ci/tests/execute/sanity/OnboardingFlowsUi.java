@@ -473,6 +473,22 @@ public class OnboardingFlowsUi extends SetupCDTest {
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile);
     }
 
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_Helm_Validator_List")
+    public void onboardCNFWithHelmValidatorTest(String filePath, String cnfFile) throws Exception {
+        setLog(cnfFile);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile);
+    }
+
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Invalid_CNF_Helm_Validator_List")
+    public void onboardCNFWithHelmValidatorShouldFailTest(String filePath, String cnfFile) {
+        setLog(cnfFile);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        Assert.assertThrows(() -> runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile));
+    }
+
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Invalid_CNF_List")
     public void onboardCNFTestShouldFailForInvalidHelmPackage(String filePath, String cnfFile) {
         setLog(cnfFile);
