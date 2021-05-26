@@ -473,6 +473,82 @@ public class OnboardingFlowsUi extends SetupCDTest {
         runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile);
     }
 
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_Helm_Validator_List")
+    public void onboardCNFWithHelmValidatorTest(String filePath, String cnfFile) throws Exception {
+        setLog(cnfFile);
+        ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
+        ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
+        runOnboardToDistributionFlow(resourceReqDetails, serviceReqDetails, filePath, cnfFile);
+    }
+
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_Helm_Validator_List")
+    public void onapOnboardVSPWithHelmValidationSuccessfulWithoutErrorsAndWarnings(String filePath, String cnfFile) throws Exception {
+
+        setLog(cnfFile);
+        String vspName = createNewVSP(filePath, cnfFile);
+        goToVspScreen(true, vspName);
+
+        //DONE
+        boolean isVspAttachmentValidationPage = VspValidationPage.isVspAttachmentsValidationPage();
+        if (!isVspAttachmentValidationPage) {
+            VspValidationPage.navigateToVspAttachmentsValidationPage();
+        }
+
+//        boolean isSubmitButtonEnabled = VspValidationPage.isSubmitButtonEnabled(); //Assert True
+//
+//        boolean resultOfWarnings = VspValidationPage.hasHelmAttachmentsAnyWarnings();
+//        boolean resultOfError = VspValidationPage.hasHelmAttachmentsAnyError();
+        assertTrue("", VspValidationPage.isSubmitButtonEnabled());
+        assertFalse("", VspValidationPage.hasHelmAttachmentsAnyWarnings());
+        assertFalse("", VspValidationPage.hasHelmAttachmentsAnyError());
+//        System.out.println();
+
+    }
+
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "CNF_With_Warning_Helm_Validator_List")
+    public void onapOnboardVSPWithHelmValidationSuccessfulWithWarnings(String filePath, String cnfFile) throws Exception {
+        setLog(cnfFile);
+        String vspName = createNewVSP(filePath, cnfFile);
+        goToVspScreen(true, vspName);
+
+        //DONE
+        boolean isVspAttachmentValidationPage = VspValidationPage.isVspAttachmentsValidationPage();
+        if (!isVspAttachmentValidationPage) {
+            VspValidationPage.navigateToVspAttachmentsValidationPage();
+        }
+
+        boolean isSubmitButtonEnabled = VspValidationPage.isSubmitButtonEnabled(); //Assert True
+
+        boolean resultOfWarnings = VspValidationPage.hasHelmAttachmentsAnyWarnings();
+        boolean resultOfError = VspValidationPage.hasHelmAttachmentsAnyError();
+        assertTrue("", VspValidationPage.isSubmitButtonEnabled());
+        assertTrue("", VspValidationPage.hasHelmAttachmentsAnyWarnings());
+        assertFalse("", VspValidationPage.hasHelmAttachmentsAnyError());
+        System.out.println();
+    }
+
+    @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Invalid_CNF_Helm_Validator_List")
+    public void onapOnboardVSPWithHelmValidationUnsuccessfulWithErrors(String filePath, String cnfFile) throws Exception {
+        setLog(cnfFile);
+        String vspName = createNewVSP(filePath, cnfFile);
+        goToVspScreen(true, vspName);
+
+        //DONE
+        boolean isVspAttachmentValidationPage = VspValidationPage.isVspAttachmentsValidationPage();
+        if (!isVspAttachmentValidationPage) {
+            VspValidationPage.navigateToVspAttachmentsValidationPage();
+        }
+
+//        boolean isSubmitButtonEnabled = VspValidationPage.isSubmitButtonEnabled(); //Assert True
+//
+//        boolean resultOfWarnings = VspValidationPage.hasHelmAttachmentsAnyWarnings();
+//        boolean resultOfError = VspValidationPage.hasHelmAttachmentsAnyError();
+
+        assertFalse("", VspValidationPage.isSubmitButtonEnabled());
+        assertTrue("", VspValidationPage.hasHelmAttachmentsAnyError());
+        System.out.println();
+    }
+
     @Test(dataProviderClass = OnbordingDataProviders.class, dataProvider = "Invalid_CNF_List")
     public void onboardCNFTestShouldFailForInvalidHelmPackage(String filePath, String cnfFile) {
         setLog(cnfFile);

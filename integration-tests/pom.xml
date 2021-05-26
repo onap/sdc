@@ -664,7 +664,7 @@ limitations under the License.
                                     </bind>
                                 </volumes>
                                 <wait>
-                                    <time>660000</time>
+                                    <time>1660000</time>
                                     <log>Chef Client finished</log>
                                 </wait>
                                 <network>

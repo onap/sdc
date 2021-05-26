@@ -110,6 +110,7 @@ public class OnboardingUtils {
 	);
 
 	private static final String INVALID_XNFS_SUBPATH = "invalid";
+	private static final String WITH_WARNINGS_XNFS_SUBPATH = "with_warnings";
 
 	public static String handleFilename(String heatFileName) {
 		final String namePrefix = String.format("%sVF%s", ElementFactory.getResourcePrefix(), "Onboarded-");
@@ -201,6 +202,15 @@ public class OnboardingUtils {
 	 */
 	public static List<String> getInvalidXnfNamesFileList(XnfTypeEnum xnfTypeEnum) {
 		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum) + File.separator + INVALID_XNFS_SUBPATH;
+		return FileHandling.getZipFileNamesFromFolder(filepath);
+	}
+
+	/**
+	 * @return
+	 * The method returns names list of XNF packages with warnings from Files directory under sdc repository
+	 */
+	public static List<String> getXnfNamesWithWarningsFileList(XnfTypeEnum xnfTypeEnum) {
+		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum) + File.separator + WITH_WARNINGS_XNFS_SUBPATH;
 		return FileHandling.getZipFileNamesFromFolder(filepath);
 	}
 

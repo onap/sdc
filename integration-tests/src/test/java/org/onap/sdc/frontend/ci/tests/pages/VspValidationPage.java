@@ -22,6 +22,7 @@ import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
@@ -125,6 +126,68 @@ public class VspValidationPage extends GeneralPageElements {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Clicking on %s", elementTestId.name()));
         GeneralUIUtils.getWebElementByTestID(elementTestId.getValue()).click();
         GeneralUIUtils.ultimateWait();
+    }
+
+
+    public static boolean isSubmitButtonEnabled() {
+        String submitButtonId = "vc-submit-btn";
+        return !GeneralUIUtils.isElementDisabled(submitButtonId);
+    }
+
+    public static boolean hasHelmAttachmentsAnyWarnings(){
+        String attachmentsNodeId = "validation-tree-node";
+        String extension = ".tgz";
+        return GeneralUIUtils.getWebElementsListByTestID(attachmentsNodeId)
+            .stream()
+            .filter(webElement -> hasAttachmentFileExtension(webElement, extension))
+            .anyMatch(VspValidationPage::elementHasWarningCount);
+    }
+
+
+    public static boolean hasHelmAttachmentsAnyError(){
+        String attachmentsNodeId = "validation-tree-node";
+        String extension = ".tgz";
+        return GeneralUIUtils.getWebElementsListByTestID(attachmentsNodeId)
+            .stream()
+            .filter(webElement -> hasAttachmentFileExtension(webElement, extension))
+            .anyMatch(VspValidationPage::elementHasErrorCount);
+    }
+
+    private static boolean elementHasWarningCount(WebElement webElement) {
+        try {
+            webElement.findElement(By.xpath(".//*[@data-test-id='validation-warning-count']"));
+            return true;
+        }catch (NoSuchElementException ex){
+            return false;
+        }
+    }
+
+    private static boolean elementHasErrorCount(WebElement webElement) {
+        try {
+            webElement.findElement(By.xpath(".//*[@data-test-id='validation-error-count']"));
+            return true;
+        }catch (NoSuchElementException ex){
+            return false;
+        }
+    }
+
+    private static boolean hasAttachmentFileExtension(WebElement webElement, String extension) {
+        return webElement
+            .findElement(By.xpath(".//*[@data-test-id='validation-tree-node-name']"))
+            .getText()
+            .endsWith(extension);
+    }
+
+    public static boolean isVspAttachmentsValidationPage(){
+        WebElement webElementByTestID = GeneralUIUtils.getWebElementByTestID("attachments-tab-validation", 2);
+        return webElementByTestID != null && webElementByTestID.getAttribute("class").contains("sdc-tab-active");
+    }
+
+    public static void navigateToVspAttachmentsValidationPage() {
+        String softwareAttachmentsTestId = "navbar-group-item-SOFTWARE_PRODUCT_ATTACHMENTS";
+        String attachmentsValidationTestId = "attachments-tab-validation";
+        GeneralUIUtils.clickOnElementByTestId(softwareAttachmentsTestId);
+        GeneralUIUtils.clickOnElementByTestId(attachmentsValidationTestId);
     }
 
     private static List<WebElement> getChildElements(WebElement webElement) throws Exception {
