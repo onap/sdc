@@ -5,7 +5,12 @@
   <parameter name="makeToscaValidation" value="true"/>
   <test name="HelmValidatorTests">
     <classes>
-<!--      <class name="org.onap.sdc.backend.ci.tests.sanity.Onboard"/>-->
+      <class name="org.onap.sdc.backend.ci.tests.sanity.Onboard">
+        <methods>
+          <include name="onboardCNFWithHelmValidatorTest"/>
+          <include name="onboardCNFWithHelmValidatorShouldFailTest"/>
+        </methods>
+      </class>
     </classes>
   </test>
 </suite>

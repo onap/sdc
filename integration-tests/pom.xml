@@ -810,7 +810,7 @@ limitations under the License.
                           <wait>
                             <time>20000</time>
                             <tcp>
-                              <host>helm-validatore</host>
+                              <host>helm-validator</host>
                               <mode>direct</mode>
                               <ports>
                                 <port>8080</port>
