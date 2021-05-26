@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "625de91c_3a823f80",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-05-26T13:28:14Z",
+      "side": 1,
+      "message": "Using the profile allows us to perform different test cases on the SDC environments (one with helm validator and one without), which in turn allows us to show that everything is still working as expected with or without the helm validator container (which was supposed to be optional).\n\nThere may be test cases then that would pass when container is disabled and fail when it\u0027s enabled and vice versa. I\u0027m not sure how that should be controlled in the tests, unless we\u0027d wan\u0027t to skip the tests without helm validator.",
+      "parentUuid": "53b84660_5601571d",
+      "revId": "7c6d1c902cda68e8cbf9d9ea827e665ef87a3277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "09a49bce_476e1016",
         "filename": "integration-tests/pom.xml",
         "patchSetId": 2
@@ -117,6 +135,30 @@
     },
     {
       "key": {
+        "uuid": "6832771d_6185902b",
+        "filename": "integration-tests/src/test/resources/ci/testSuites/backend/helmValidatorTests.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-05-26T13:28:14Z",
+      "side": 1,
+      "message": "Yes no tests yet, those are being worked on in next commit in relationship.\n\nI\u0027ll remove the commented parts in next patchset.",
+      "parentUuid": "086f40e4_201275de",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 73
+      },
+      "revId": "7c6d1c902cda68e8cbf9d9ea827e665ef87a3277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "99d0a980_83e10126",
         "filename": "integration-tests/src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml",
         "patchSetId": 2
@@ -128,6 +170,30 @@
       "writtenOn": "2021-05-26T11:58:45Z",
       "side": 1,
       "message": "What is the reason for commenting out the test class?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 21
+      },
+      "revId": "7c6d1c902cda68e8cbf9d9ea827e665ef87a3277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f16cd76_97c49771",
+        "filename": "integration-tests/src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-05-26T13:28:14Z",
+      "side": 1,
+      "message": "I\u0027ll remove comment in the next patchset.",
+      "parentUuid": "99d0a980_83e10126",
       "range": {
         "startLine": 9,
         "startChar": 0,
