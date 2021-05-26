@@ -28,6 +28,7 @@ import lombok.Getter;
 public enum XnfTypeEnum {
 
     CNF("CNF"),
+    CNF_HELM("CNF_HELM"),
     ETSI("ETSI"),
     PNF("PNF"),
     VFC("VFC"),

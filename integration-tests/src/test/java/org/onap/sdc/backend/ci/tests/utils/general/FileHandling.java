@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,6 +136,7 @@ public class FileHandling {
 	private static EnumMap<XnfTypeEnum, String> XNF_REPOSITORY_PATHS_MAP = new EnumMap<>(Map.of(
 		XnfTypeEnum.PNF, getPnfRepositoryPath(),
 		XnfTypeEnum.CNF, getCnfRepositoryPath(),
+		XnfTypeEnum.CNF_HELM, getCnfRepositoryForHelmValidatorPath(),
 		XnfTypeEnum.VNF, getVnfRepositoryPath(),
 		XnfTypeEnum.ETSI, getEtsiRepositoryPath(),
 		XnfTypeEnum.VFC, getVfcRepositoryPath()
@@ -150,6 +152,10 @@ public class FileHandling {
 
 	private static String getCnfRepositoryPath() {
 		return getFilePath("CNFs");
+	}
+
+	private static String getCnfRepositoryForHelmValidatorPath() {
+		return getFilePath("CNFs/helm_validator");
 	}
 
 	private static String getEtsiRepositoryPath() { return getFilePath("ETSI"); }
