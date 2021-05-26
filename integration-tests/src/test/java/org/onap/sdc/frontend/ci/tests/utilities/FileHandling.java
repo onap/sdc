@@ -150,8 +150,21 @@ public class FileHandling {
     public static String getVnfRepositoryPath() {
         return getFilePath("VNFs");
     }
+
     public static String getCnfRepositoryPath() {
         return getFilePath("CNFs");
+    }
+
+    public static String getCnfForHelmValidatorRepositoryPath() {
+        return getFilePath("CNFs/helm_validator");
+    }
+
+    public static String getCnfWithWarningForHelmValidatorRepositoryPath() {
+        return getFilePath("CNFs/helm_validator/with_warnings");
+    }
+
+    public static String getInvalidCnfForHelmValidatorRepositoryPath() {
+        return getFilePath("CNFs/helm_validator/with_warnings");
     }
 
     public static String getUpdateVSPVnfRepositoryPath() {

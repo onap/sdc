@@ -85,6 +85,20 @@ public final class OnboardingDataProviders {
         return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF));
     }
 
+    @DataProvider(name = "CNF_Helm_Validator_List", parallel = true)
+    private static Object[][] cnfForHelmValidatorList() {
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF_HELM));
+    }
+
+    @DataProvider(name = "Invalid_CNF_Helm_Validator_List", parallel = true)
+    private static Object[][] invalidCnfForHelmValidatorList() {
+        final List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
+        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF_HELM));
+    }
+
     @DataProvider(name = "Single_VNF", parallel = true)
     private static Object[][] singleVNF() {
         final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
