@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "90cba5be_5b77b1fa",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-05-26T14:11:53Z",
+      "side": 1,
+      "message": "We should keep the profile as agreed when this was discussed at SDC weekly meeting to allow local building without needing the helm validator and to support testing of new helm validator versions to ensure any changes will not cause the SDC integration tests to fail",
+      "parentUuid": "625de91c_3a823f80",
+      "revId": "7c6d1c902cda68e8cbf9d9ea827e665ef87a3277",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "09a49bce_476e1016",
         "filename": "integration-tests/pom.xml",
         "patchSetId": 2
