@@ -19,7 +19,10 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
+
 import fj.data.Either;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +31,12 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -40,7 +45,9 @@ import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.api.TypeOperations;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
+import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
+import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -100,15 +107,21 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
     }
 
     public Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> getAllCapabilityTypePropertiesFromAllDerivedFrom(
-        String firstParentType) {
-        return propertyOperation.getAllTypePropertiesFromAllDerivedFrom(firstParentType, NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
+        final String firstParentUid) {
+        return propertyOperation.getAllTypePropertiesFromAllDerivedFrom(firstParentUid, NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
     }
 
     public Either<CapabilityTypeDefinition, StorageOperationStatus> validateUpdateProperties(CapabilityTypeDefinition capabilityTypeDefinition) {
         JanusGraphOperationStatus error = null;
         if (MapUtils.isNotEmpty(capabilityTypeDefinition.getProperties()) && capabilityTypeDefinition.getDerivedFrom() != null) {
+            final Either<CapabilityTypeData, JanusGraphOperationStatus> derivedFromNode = janusGraphGenericDao.getNode(GraphPropertiesDictionary.TYPE.getProperty(), 
+                capabilityTypeDefinition.getDerivedFrom(), CapabilityTypeData.class, capabilityTypeDefinition.getModel());
+            if (derivedFromNode.isRight()) {
+                log.error(BUSINESS_PROCESS_ERROR, "Failed to find the derived from type for  {}. status is {}", capabilityTypeDefinition.getType(), derivedFromNode.right().value());
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(derivedFromNode.right().value()));
+            }
             Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> allPropertiesRes = getAllCapabilityTypePropertiesFromAllDerivedFrom(
-                capabilityTypeDefinition.getDerivedFrom());
+                derivedFromNode.left().value().getUniqueId());
             if (allPropertiesRes.isRight() && !allPropertiesRes.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 error = allPropertiesRes.right().value();
                 log.debug("Couldn't fetch derived from property nodes for capability type {}, error: {}", capabilityTypeDefinition.getType(), error);
@@ -146,7 +159,7 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
      */
     private Either<CapabilityTypeData, StorageOperationStatus> addCapabilityTypeToGraph(CapabilityTypeDefinition capabilityTypeDefinition) {
         log.debug("Got capability type {}", capabilityTypeDefinition);
-        String ctUniqueId = UniqueIdBuilder.buildCapabilityTypeUid(capabilityTypeDefinition.getType());
+        String ctUniqueId = UniqueIdBuilder.buildCapabilityTypeUid(capabilityTypeDefinition.getModel(), capabilityTypeDefinition.getType());
         CapabilityTypeData capabilityTypeData = buildCapabilityTypeData(capabilityTypeDefinition, ctUniqueId);
         log.debug("Before adding capability type to graph. capabilityTypeData = {}", capabilityTypeData);
         Either<CapabilityTypeData, JanusGraphOperationStatus> createCTResult = janusGraphGenericDao
@@ -165,7 +178,24 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
             log.error("Failed add properties {} to capability {}", propertiesMap, capabilityTypeDefinition.getType());
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(addPropertiesToCapablityType.right().value()));
         }
+        
+        final Either<GraphRelation, StorageOperationStatus> modelRelationship = addCapabilityTypeToModel(capabilityTypeDefinition);
+        if (modelRelationship.isRight()) {
+            return Either.right(modelRelationship.right().value());
+        } 
+        
         return addDerivedFromRelation(capabilityTypeDefinition, ctUniqueId).left().map(updatedDerivedFrom -> createCTResult.left().value());
+    }
+    
+    private Either<GraphRelation, StorageOperationStatus> addCapabilityTypeToModel(final CapabilityTypeDefinition capabilityTypeDefinition) {
+        final String model = capabilityTypeDefinition.getModel();
+        if (model == null) {
+            return Either.left(null);
+        }
+        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
+        final GraphNode to = new UniqueIdData(NodeTypeEnum.CapabilityType, capabilityTypeDefinition.getUniqueId());
+        log.info("Connecting model {} to type {}", from, to);
+        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     private CapabilityTypeData buildCapabilityTypeData(CapabilityTypeDefinition capabilityTypeDefinition, String ctUniqueId) {
@@ -207,6 +237,17 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         // Optimization: In case of Capability Type its unique ID is the same as type
         return getCapabilityTypeByUid(capabilityType);
     }
+    
+    public Either<CapabilityTypeDefinition, JanusGraphOperationStatus> getCapabilityTypeByType(final String capabilityType, final String model) {
+        final Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypesRes = janusGraphGenericDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityType, CapabilityTypeData.class, model);
+        if (capabilityTypesRes.isRight()) {
+            final JanusGraphOperationStatus status = capabilityTypesRes.right().value();
+            log.debug("Capability type {} cannot be found in graph. status is {}", capabilityType, status);
+            return Either.right(status);
+        }
+        return getCapabilityTypeDefinition(capabilityTypesRes.left().value());
+    }
 
     /**
      * Build Capability type object from graph by unique id
@@ -223,27 +264,29 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
             log.debug("Capability type {} cannot be found in graph. status is {}", uniqueId, status);
             return Either.right(status);
         }
-        CapabilityTypeData ctData = capabilityTypesRes.left().value();
+        return getCapabilityTypeDefinition(capabilityTypesRes.left().value());
+    }
+    
+    private Either<CapabilityTypeDefinition, JanusGraphOperationStatus> getCapabilityTypeDefinition(final CapabilityTypeData ctData) {
         CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition(ctData.getCapabilityTypeDataDefinition());
         Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> propertiesStatus = OperationUtils
-            .fillProperties(uniqueId, propertyOperation, NodeTypeEnum.CapabilityType);
+            .fillProperties(ctData.getUniqueId(), propertyOperation, NodeTypeEnum.CapabilityType);
         if (propertiesStatus.isRight() && propertiesStatus.right().value() != JanusGraphOperationStatus.OK) {
-            log.error("Failed to fetch properties of capability type {}", uniqueId);
+            log.error(BUSINESS_PROCESS_ERROR, "Failed to fetch properties of capability type {}", ctData.getUniqueId());
             return Either.right(propertiesStatus.right().value());
         }
         if (propertiesStatus.isLeft()) {
             capabilityTypeDefinition.setProperties(propertiesStatus.left().value());
         }
         Either<ImmutablePair<CapabilityTypeData, GraphEdge>, JanusGraphOperationStatus> parentNode = janusGraphGenericDao
-            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), uniqueId, GraphEdgeLabels.DERIVED_FROM,
+            .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), ctData.getUniqueId(), GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
-        log.debug("After retrieving DERIVED_FROM node of {}. status is {}", uniqueId, parentNode);
+        log.debug("After retrieving DERIVED_FROM node of {}. status is {}", ctData.getUniqueId(), parentNode);
         if (parentNode.isRight()) {
             JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
             if (janusGraphOperationStatus != JanusGraphOperationStatus.NOT_FOUND) {
-                log.error("Failed to find the parent capability of capability type {}. status is {}", uniqueId, janusGraphOperationStatus);
-                result = Either.right(janusGraphOperationStatus);
-                return result;
+                log.error(BUSINESS_PROCESS_ERROR, "Failed to find the parent capability of capability type {}. status is {}", ctData.getUniqueId(), janusGraphOperationStatus);
+                return Either.right(janusGraphOperationStatus);
             }
         } else {
             // derived from node was found
@@ -251,8 +294,15 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
             CapabilityTypeData parentCT = immutablePair.getKey();
             capabilityTypeDefinition.setDerivedFrom(parentCT.getCapabilityTypeDataDefinition().getType());
         }
-        result = Either.left(capabilityTypeDefinition);
-        return result;
+        
+        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> model = janusGraphGenericDao.getParentNode(
+            UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), ctData.getUniqueId(), GraphEdgeLabels.MODEL_ELEMENT, 
+            NodeTypeEnum.Model, ModelData.class);
+        if (model.isLeft()) {
+            capabilityTypeDefinition.setModel(model.left().value().getLeft().getName());
+        }
+        
+        return Either.left(capabilityTypeDefinition);
     }
 
     public Either<Boolean, StorageOperationStatus> isCapabilityTypeDerivedFrom(String childCandidateType, String parentCandidateType) {
@@ -319,8 +369,10 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         }
         log.debug("#addDerivedFromRelationBefore - adding derived from relation between capability type {} to its parent {}",
             capabilityTypeDef.getType(), derivedFrom);
-        return this.getCapabilityType(derivedFrom, true).left().bind(derivedFromCapabilityType -> derivedFromOperation
-            .addDerivedFromRelation(ptUniqueId, derivedFromCapabilityType.getUniqueId(), NodeTypeEnum.CapabilityType));
+        return this.getCapabilityTypeByType(derivedFrom, capabilityTypeDef.getModel())
+            .right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus)
+            .left().bind(derivedFromCapabilityType -> derivedFromOperation
+                .addDerivedFromRelation(ptUniqueId, derivedFromCapabilityType.getUniqueId(), NodeTypeEnum.CapabilityType));
     }
 
     private StorageOperationStatus deleteDerivedFromCapabilityType(String capabilityTypeId, String derivedFromType) {

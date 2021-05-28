@@ -130,10 +130,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "Capability Type already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCapabilityType(@Parameter(description = "FileInputStream") @FormDataParam("capabilityTypeZip") File file,
-                                         @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper,
-            () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload));
-        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name());
+                                         @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                         @Parameter(description = "model") @FormDataParam("model") String modelName) {
+        ConsumerThreeParam<Wrapper<Response>, String, String> createElementsMethod = (responseWrapper, ymlPayload, model) -> createElementsType(responseWrapper,
+            () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload, modelName));
+        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name(), modelName);
     }
 
     @POST

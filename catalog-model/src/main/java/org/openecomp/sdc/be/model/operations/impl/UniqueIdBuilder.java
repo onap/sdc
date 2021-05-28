@@ -89,8 +89,8 @@ public class UniqueIdBuilder {
         return generateUUID();
     }
 
-    static String buildCapabilityTypeUid(String type) {
-        return type;
+    public static String buildCapabilityTypeUid(final String modelName, String type) {
+        return StringUtils.isEmpty(modelName) ? type : modelName + DOT + type;
     }
 
     public static String buildRelationshipTypeUid(final String modelName, final String type) {
