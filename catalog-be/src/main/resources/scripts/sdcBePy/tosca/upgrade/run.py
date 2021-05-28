@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
 import os
+from pathlib import Path
 
 from sdcBePy.common import logger
 from sdcBePy.common.logger import print_and_exit
 from sdcBePy.common.normative.main import process_element_list, process_type_list
 from sdcBePy.tosca.main import parse_and_create_proxy
+from sdcBePy.tosca.models.model_client import ModelClient
+from sdcBePy.tosca.models.model_import_manager import ModelImportManager
 from sdcBePy.tosca.models.normativeElementsList import get_normative_element_candidate_list, \
     get_normative_element_with_metadata_list
 from sdcBePy.tosca.models.normativeToUpdateList import TypesToUpdate, get_heat_and_normative_to_update_list, \
@@ -21,6 +24,14 @@ def main(sdc_be_proxy):
     # base_file_location = os.getcwd() + "/../../../../import/tosca/"
     base_file_location = os.getcwd() + "/"
     logger.debug("working directory =" + base_file_location)
+
+    model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy))
+    try:
+        model_import_manager.update_models()
+    except Exception as ex:
+        logger.log("An error has occurred while uploading the models: ", str(ex))
+        raise ex
+
     process_element_list(get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
 
     all_types = get_all_types()

@@ -21,7 +21,7 @@ class SdcBeProxy:
             raise AttributeError("The be_host, be_port, scheme or admin_user are missing")
         url = get_url(be_ip, be_port, scheme)
         self.con = connector if connector \
-            else CurlConnector(url, user_id, header, scheme=scheme, debug=debug)
+            else CurlConnector(url, user_id, header, protocol=scheme, debug=debug)
 
     def check_backend(self):
         return self.con.get('/sdc2/rest/v1/user/jh0003')
@@ -52,8 +52,11 @@ class SdcBeProxy:
     def get_normatives(self):
         return self.con.get("/sdc2/rest/v1/screen", with_buffer=True)
 
-    def post_file(self, path, multi_part_form_data):
-        return self.con.post_file(path, multi_part_form_data)
+    def post_file(self, path, multi_part_form_data, buffer=None):
+        return self.con.post_file(path, multi_part_form_data, buffer)
+
+    def put_file(self, path, multi_part_form_data, buffer=None):
+        return self.con.put_file(path, multi_part_form_data, buffer)
 
     def get_response_from_buffer(self):
         value = self.con.buffer.getvalue()
@@ -68,17 +71,13 @@ class CurlConnector:
     CONTENT_TYPE_HEADER = "Content-Type: application/json"
     ACCEPT_HEADER = "Accept: application/json; charset=UTF-8"
 
-    def __init__(self, url, user_id_header, header, buffer=None, scheme="http", debug=False):
-        self.c = pycurl.Curl()
-        self.c.setopt(pycurl.HEADER, True)
+    def __init__(self, url, user_id_header, header, buffer=None, protocol="http", debug=False):
+        self.__debug = debug
+        self.__protocol = protocol
+        self.c = self.__build_default_curl()
 
         self.user_header = "USER_ID: " + user_id_header
-
-        if not debug:
-            # disable printing not necessary logs in the terminal
-            self.c.setopt(pycurl.WRITEFUNCTION, lambda x: None)
-        else:
-            self.c.setopt(pycurl.VERBOSE, 1)
+        self.url = url
 
         if not buffer:
             self.buffer = BytesIO()
@@ -88,9 +87,6 @@ class CurlConnector:
         else:
             self.basicauth_header = "Authorization: Basic " + header
 
-        self.url = url
-        self._check_schema(scheme)
-
     def get(self, path, buffer=None, with_buffer=False):
         try:
             self.c.setopt(pycurl.URL, self.url + path)
@@ -98,7 +94,6 @@ class CurlConnector:
                                               CurlConnector.CONTENT_TYPE_HEADER,
                                               CurlConnector.ACCEPT_HEADER,
                                               self.basicauth_header])
-
 
             if with_buffer:
                 write = self.buffer.write if not buffer else buffer.write
@@ -115,9 +110,9 @@ class CurlConnector:
             self.c.setopt(pycurl.POST, 1)
 
             self.c.setopt(pycurl.HTTPHEADER, [self.user_header,
-                                           CurlConnector.CONTENT_TYPE_HEADER,
-                                           CurlConnector.ACCEPT_HEADER,
-                                           self.basicauth_header])
+                                              CurlConnector.CONTENT_TYPE_HEADER,
+                                              CurlConnector.ACCEPT_HEADER,
+                                              self.basicauth_header])
 
             self.c.setopt(pycurl.POSTFIELDS, data)
 
@@ -132,9 +127,7 @@ class CurlConnector:
         try:
             self.c.setopt(pycurl.URL, self.url + path)
             self.c.setopt(pycurl.POST, 1)
-            self.c.setopt(pycurl.HTTPHEADER, [self.user_header,
-                                           self.basicauth_header])
-
+            self.c.setopt(pycurl.HTTPHEADER, [self.user_header, self.basicauth_header])
 
             self.c.setopt(pycurl.HTTPPOST, post_body)
 
@@ -143,15 +136,40 @@ class CurlConnector:
 
             self.c.perform()
             self.c.setopt(pycurl.POST, 0)
-
             return self.c.getinfo(pycurl.RESPONSE_CODE)
-        except pycurl.error:
+        except pycurl.error as ex:
+            print(ex)
             return 111
 
-    def _check_schema(self, scheme):
-        if scheme == 'https':
-            self.c.setopt(pycurl.SSL_VERIFYPEER, 0)
-            self.c.setopt(pycurl.SSL_VERIFYHOST, 0)
+    def put_file(self, path, post_body, response_write_buffer=None):
+        curl = self.__build_default_curl()
+        curl.setopt(pycurl.URL, self.url + path)
+        curl.setopt(pycurl.HTTPHEADER, [self.user_header, self.basicauth_header])
+        curl.setopt(pycurl.CUSTOMREQUEST, "PUT")
+
+        curl.setopt(pycurl.HTTPPOST, post_body)
+
+        write = self.buffer.write if not response_write_buffer else response_write_buffer.write
+        curl.setopt(pycurl.WRITEFUNCTION, write)
+
+        curl.perform()
+        response_code = curl.getinfo(pycurl.RESPONSE_CODE)
+        curl.close()
+        return response_code
+
+    def __build_default_curl(self):
+        curl = pycurl.Curl()
+        if not self.__debug:
+            # disable printing not necessary logs in the terminal
+            curl.setopt(pycurl.WRITEFUNCTION, lambda x: None)
+        else:
+            curl.setopt(pycurl.VERBOSE, 1)
+
+        if self.__protocol == 'https':
+            curl.setopt(pycurl.SSL_VERIFYPEER, 0)
+            curl.setopt(pycurl.SSL_VERIFYHOST, 0)
+        curl.setopt(pycurl.HEADER, True)
+        return curl
 
     def __del__(self):
         self.c.close()

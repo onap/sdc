@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
 import os
+from pathlib import Path
 
 import sdcBePy.common.logger as logger
 from sdcBePy.common.normative.main import process_element_list, process_type_list
 from sdcBePy.tosca.main import parse_and_create_proxy
-from sdcBePy.tosca.models.normativeElementsList import get_normative_element_candidate_list, \
-    get_normative_element_with_metadata_list
-from sdcBePy.tosca.models.normativeTypesList import get_normative_type_candidate_list
+from sdcBePy.tosca.models import normativeElementsList
+from sdcBePy.tosca.models import normativeTypesList
+from sdcBePy.tosca.models.model_client import ModelClient
+from sdcBePy.tosca.models.model_import_manager import ModelImportManager
 
 
 def main(sdc_be_proxy, update_version):
@@ -16,9 +18,16 @@ def main(sdc_be_proxy, update_version):
     base_file_location = os.getcwd() + os.path.sep
     logger.debug("working directory =" + base_file_location)
 
-    process_element_list(get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
-    process_type_list(get_normative_type_candidate_list(base_file_location), sdc_be_proxy, update_version)
-    process_element_list(get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
+    model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy))
+    try:
+        model_import_manager.create_models()
+    except Exception as ex:
+        logger.log("An error has occurred while uploading the models: ", str(ex))
+        raise ex
+
+    process_element_list(normativeElementsList.get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
+    process_type_list(normativeTypesList.get_normative_type_candidate_list(base_file_location), sdc_be_proxy, update_version)
+    process_element_list(normativeElementsList.get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
 
     logger.log("Script end ->", "All normatives imported successfully!")
     logger.print_and_exit(0, None)
