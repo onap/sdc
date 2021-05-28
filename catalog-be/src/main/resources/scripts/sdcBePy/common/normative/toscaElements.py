@@ -47,6 +47,7 @@ def _send_request(sdc_be_proxy, file_dir, url_suffix, element_name,
         multi_part_form_data = _create_multipart_form_data(element_form_name, type_file_name, with_metadata,
                                                            element_name)
 
+        debug("http request url =", url_suffix)
         http_res = sdc_be_proxy.post_file(url_suffix, multi_part_form_data)
         if http_res is not None:
             debug("http response =", http_res)
