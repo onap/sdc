@@ -81,7 +81,7 @@ public class CapabilityTypeImportManagerTest {
     @Test
     public void testCreateCapabilityTypes() throws IOException {
         String ymlContent = getCapabilityTypesYml();
-        Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes = manager.createCapabilityTypes(ymlContent);
+        Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes = manager.createCapabilityTypes(ymlContent, "testModel");
         assertTrue(createCapabilityTypes.isLeft());
 
         List<ImmutablePair<CapabilityTypeDefinition, Boolean>> capabilityTypesList = createCapabilityTypes.left().value();

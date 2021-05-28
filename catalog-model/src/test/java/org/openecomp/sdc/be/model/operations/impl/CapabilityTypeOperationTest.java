@@ -49,6 +49,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -73,6 +74,9 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
     @Resource(name = "capability-type-operation")
     private CapabilityTypeOperation capabilityTypeOperation;
+    
+    @Resource(name = "model-operation")
+    private ModelOperation modelOperation;
 
     @BeforeClass
     public static void setupBeforeClass() {
@@ -121,6 +125,40 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
         assertTrue("check capability type failed", addCapabilityType2.isRight());
         assertEquals("check returned error", StorageOperationStatus.SCHEMA_VIOLATION, addCapabilityType2.right().value());
+
+    }
+    
+    @Test
+    public void testAddCapabilityTypeWithModel() {
+
+        CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition();
+        capabilityTypeDefinition.setDescription("desc1");
+        capabilityTypeDefinition.setType("tosca.capabilities.Container1");
+        capabilityTypeDefinition.setModel("testModel");
+        
+        Model model = new Model("testModel");
+        modelOperation.createModel(model , true);
+
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        assertTrue("check capability type added", addCapabilityType1.isLeft());
+
+        CapabilityTypeDefinition capabilityTypeAdded = addCapabilityType1.left().value();
+        compareBetweenCreatedToSent(capabilityTypeDefinition, capabilityTypeAdded);
+
+        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypeByUid = capabilityTypeOperation.getCapabilityTypeByUid(capabilityTypeAdded.getUniqueId());
+        compareBetweenCreatedToSent(capabilityTypeByUid.left().value(), capabilityTypeDefinition);
+        
+        CapabilityTypeDefinition capabilityTypeWithDerivedFrom = new CapabilityTypeDefinition();
+        capabilityTypeWithDerivedFrom.setDescription("desc2");
+        capabilityTypeWithDerivedFrom.setType("tosca.capabilities.Container2");
+        capabilityTypeWithDerivedFrom.setDerivedFrom("tosca.capabilities.Container1");
+        capabilityTypeWithDerivedFrom.setModel("testModel");
+
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation.addCapabilityType(capabilityTypeWithDerivedFrom, true);
+        assertTrue("check capability type added", addCapabilityType2.isLeft());
+        
+        capabilityTypeAdded = addCapabilityType2.left().value();
+        compareBetweenCreatedToSent(capabilityTypeWithDerivedFrom, capabilityTypeAdded);
 
     }
 
@@ -500,6 +538,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         assertTrue(compareValue(x.getDerivedFrom(), y.getDerivedFrom()));
         assertTrue(compareValue(x.getType(), y.getType()));
         assertTrue(compareValue(x.getDescription(), y.getDescription()));
+        assertTrue(compareValue(x.getModel(), y.getModel()));
 
     }
 

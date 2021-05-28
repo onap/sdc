@@ -39,6 +39,7 @@ public class CapabilityTypeDefinition extends CapabilityTypeDataDefinition {
 
     private String derivedFrom;
     private Map<String, PropertyDefinition> properties;
+    private String model;
 
     public CapabilityTypeDefinition(CapabilityTypeDataDefinition p) {
         super(p);
