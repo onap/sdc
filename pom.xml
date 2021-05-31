@@ -46,10 +46,10 @@ Modifications copyright (c) 2018-2019 Nokia
         <bean-matcher.version>0.11</bean-matcher.version>
         <lang3.version>3.10</lang3.version>
         <guava.version>30.1-jre</guava.version>
-        <janusgraph.version>0.3.1</janusgraph.version>
+        <janusgraph.version>0.3.3</janusgraph.version>
         <spring.version>5.2.10.RELEASE</spring.version>
         <jersey-bom.version>2.27</jersey-bom.version>
-        <netty.version>4.1.48.Final</netty.version>
+        <netty.version>4.1.65.Final</netty.version>
         <servlet-api.version>3.1.0</servlet-api.version>
         <wire-mock.version>2.26.3</wire-mock.version>
         <ecomp.version>2.6.0</ecomp.version>
@@ -67,11 +67,12 @@ Modifications copyright (c) 2018-2019 Nokia
         <groovy.version>3.0.7</groovy.version>
         <swagger-core-mvn-plugin.version>2.1.7</swagger-core-mvn-plugin.version>
         <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
+        <hibernate.validator.version>5.3.6.Final</hibernate.validator.version>
 
         <commons.collections.version>4.1</commons.collections.version>
         <ws.rs.version>2.1</ws.rs.version>
 
-        <jetty.version>9.4.36.v20210114</jetty.version>
+        <jetty.version>9.4.41.v20210516</jetty.version>
 
         <!-- JSON and YAML Parsing -->
         <jackson.version>2.12.1</jackson.version>

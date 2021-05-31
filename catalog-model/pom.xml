@@ -125,7 +125,7 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>5.3.6.Final</version>
+      <version>${hibernate.validator.version}</version>
     </dependency>
 
     <!-- Gson -->
@@ -182,6 +182,14 @@
         <exclusion>
           <artifactId>slf4j-log4j12</artifactId>
           <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.thrift</groupId>
+          <artifactId>libthrift</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-mapper-asl</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -368,6 +376,12 @@
       <groupId>com.googlecode.jmapper-framework</groupId>
       <artifactId>jmapper-core</artifactId>
       <version>${jMapper.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.thoughtworks.xstream</groupId>
+          <artifactId>xstream</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>
