@@ -65,10 +65,9 @@
     <commons.codec.version>1.10</commons.codec.version>
     <commons.digester.version>2.1</commons.digester.version>
     <commons.lang3.version>${lang3.version}</commons.lang3.version>
-    <cxf.version>3.3.6</cxf.version>
+    <cxf.version>3.4.3</cxf.version>
     <datastax.cassandra.version>3.8.0</datastax.cassandra.version>
     <groovy.minimal.version>1.5.8</groovy.minimal.version>
-    <hibernate.validator.version>5.3.6.Final</hibernate.validator.version>
     <http.client.version>4.5.3</http.client.version>
     <http.core.version>4.4.1</http.core.version>
     <httpasyncclient.version>4.1.2</httpasyncclient.version>

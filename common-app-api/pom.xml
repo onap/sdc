@@ -30,6 +30,14 @@
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.owasp.esapi</groupId>
+          <artifactId>esapi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-validator</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
