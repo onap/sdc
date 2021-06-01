@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7e622809_762c6527",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-06-01T20:48:24Z",
+      "side": 1,
+      "message": "Thanks for catching that, the change got in by mistake.",
+      "parentUuid": "6a7cba30_90ee4023",
+      "range": {
+        "startLine": 661,
+        "startChar": 42,
+        "endLine": 661,
+        "endChar": 49
+      },
+      "revId": "31f8a9a4530586631b8c42323ce4ff31a319bfd3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "12c923d0_74794c40",
         "filename": "integration-tests/src/test/resources/ci/testSuites/backend/helmValidatorTests.xml",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "8a89dd48_9728f414",
+        "filename": "integration-tests/src/test/resources/ci/testSuites/backend/helmValidatorTests.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-06-01T20:48:24Z",
+      "side": 1,
+      "message": "Yes, no tests yet, they are being worked on separately here (https://gerrit.onap.org/r/c/sdc/+/121540/3)",
+      "parentUuid": "12c923d0_74794c40",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 14
+      },
+      "revId": "31f8a9a4530586631b8c42323ce4ff31a319bfd3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4b06868f_b8b0f1c3",
         "filename": "integration-tests/src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml",
         "patchSetId": 4
@@ -59,6 +107,30 @@
       "writtenOn": "2021-06-01T19:51:42Z",
       "side": 1,
       "message": "As far as I understand, no test are contained in this suite.\nWhat is the meaning of it?",
+      "range": {
+        "startLine": 8,
+        "startChar": 4,
+        "endLine": 9,
+        "endChar": 14
+      },
+      "revId": "31f8a9a4530586631b8c42323ce4ff31a319bfd3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f326282_d4e71f55",
+        "filename": "integration-tests/src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-06-01T20:48:24Z",
+      "side": 1,
+      "message": "Yes, no tests yet, they are being worked on separately here (https://gerrit.onap.org/r/c/sdc/+/121540/3)",
+      "parentUuid": "4b06868f_b8b0f1c3",
       "range": {
         "startLine": 8,
         "startChar": 4,
