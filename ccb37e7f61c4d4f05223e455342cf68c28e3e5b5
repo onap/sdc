@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0c9be8f_44daa02c",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HelmValidatorHttpClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-02T11:54:30Z",
+      "side": 1,
+      "message": "could log also the exception\nLOGGER.error(\"Exception during call to Helm validator {}\", e.getMessage(), e);\n\nor just the exception:\nLOGGER.error(\"Exception during call to Helm validator\", e);\n\nThe logger will handle to print the stack trace, along with the message, and you don\u0027t loose the cause of the problem.",
+      "range": {
+        "startLine": 64,
+        "startChar": 12,
+        "endLine": 64,
+        "endChar": 87
+      },
+      "revId": "ccb37e7f61c4d4f05223e455342cf68c28e3e5b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
