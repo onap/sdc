@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6e922c1d_7ae51a7a",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HelmValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6592
+      },
+      "writtenOn": "2021-06-02T13:49:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d83207e8_29d987df",
+      "revId": "0b83b4e8745168f5e7b7986d67d9acff25395132",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b99bd89_bf0113dd",
         "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HelmValidator.java",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "0b83b4e8745168f5e7b7986d67d9acff25395132",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "640ac297_b9e9bffd",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HelmValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 6592
+      },
+      "writtenOn": "2021-06-02T13:49:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b99bd89_bf0113dd",
+      "revId": "0b83b4e8745168f5e7b7986d67d9acff25395132",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
