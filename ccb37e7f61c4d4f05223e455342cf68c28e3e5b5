@@ -22,6 +22,30 @@
       "revId": "ccb37e7f61c4d4f05223e455342cf68c28e3e5b5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "394b6979_0eb04fd2",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/util/HelmValidatorHttpClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 6592
+      },
+      "writtenOn": "2021-06-02T12:37:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0c9be8f_44daa02c",
+      "range": {
+        "startLine": 64,
+        "startChar": 12,
+        "endLine": 64,
+        "endChar": 87
+      },
+      "revId": "ccb37e7f61c4d4f05223e455342cf68c28e3e5b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
