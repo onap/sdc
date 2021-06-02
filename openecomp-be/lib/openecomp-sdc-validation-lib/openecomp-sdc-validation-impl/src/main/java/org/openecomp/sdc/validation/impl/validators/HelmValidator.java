@@ -42,7 +42,7 @@ public class HelmValidator implements Validator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HelmValidator.class);
     private static final ErrorMessageCode VALIDATOR_ERROR_CODE = new ErrorMessageCode("HELM VALIDATOR");
-    private static final String EXCEPTION_MESSAGE = "Could not execute file %s validation using Helm";
+    private static final String EXCEPTION_MESSAGE = "Could not execute validation of file %s. Helm validator service is unavailable";
 
     private final HelmValidatorHttpClient helmValidatorHttpClient;
     private final HelmValidatorConfig helmValidatorConfig;
@@ -72,7 +72,7 @@ public class HelmValidator implements Validator {
                 validateSingleHelmChart(fileName, fileContent.get().readAllBytes(), globalContext);
             } catch (Exception exception) {
                 String validationErrorMessage = String.format(EXCEPTION_MESSAGE, fileName);
-                LOGGER.error(validationErrorMessage + " exception: " + exception.getMessage());
+                LOGGER.error(validationErrorMessage + " exception: " + exception.getMessage(), exception);
                 addError(fileName, globalContext, validationErrorMessage, ErrorLevel.WARNING);
             }
         } else {
@@ -94,7 +94,7 @@ public class HelmValidator implements Validator {
                 addError(fileName, globalContext, lintWarning, ErrorLevel.WARNING));
         } else {
             var errorResponse = new Gson().fromJson(httpResponse.getResponse(), HelmValidatorErrorResponse.class);
-            addError(fileName, globalContext, errorResponse.getMessage(), ErrorLevel.WARNING);
+            addError(fileName, globalContext, "Message from Helm validator service: " + errorResponse.getMessage(), ErrorLevel.WARNING);
         }
     }
 
