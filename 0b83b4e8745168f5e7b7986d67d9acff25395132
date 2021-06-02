@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d83207e8_29d987df",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HelmValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-06-02T12:53:11Z",
+      "side": 1,
+      "message": "Consider. \"Could not execute validation of file \u0027%s\u0027 . Helm Validator service is unavailable\"",
+      "revId": "0b83b4e8745168f5e7b7986d67d9acff25395132",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b99bd89_bf0113dd",
+        "filename": "openecomp-be/lib/openecomp-sdc-validation-lib/openecomp-sdc-validation-impl/src/main/java/org/openecomp/sdc/validation/impl/validators/HelmValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-06-02T12:53:11Z",
+      "side": 1,
+      "message": "Consider:\naddError(fileName, globalContext,\"Message from Helm Validator Service: \"+  errorResponse.getMessage(), ErrorLevel.WARNING);\n\nUser will be sure that message is from Helm Validator Service.",
+      "revId": "0b83b4e8745168f5e7b7986d67d9acff25395132",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
