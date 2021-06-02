@@ -135,7 +135,7 @@ class HelmValidatorTest {
         var chartErrors = messages.get("chart.tgz").getErrorMessageList();
         assertEquals(1, chartErrors.size());
         assertEquals(ErrorLevel.WARNING, chartErrors.get(0).getLevel());
-        assertEquals("WARNING: [HELM VALIDATOR]: Error response message", chartErrors.get(0).getMessage());
+        assertEquals("WARNING: [HELM VALIDATOR]: Message from Helm validator service: Error response message", chartErrors.get(0).getMessage());
     }
 
 }
