@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "9b87989c_544c2d86",
+        "filename": "integration-tests/src/test/resources/ci/testSuites/backend/helmValidatorTests.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-02T09:20:05Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "8a89dd48_9728f414",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 14
+      },
+      "revId": "31f8a9a4530586631b8c42323ce4ff31a319bfd3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4b06868f_b8b0f1c3",
         "filename": "integration-tests/src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml",
         "patchSetId": 4
@@ -140,6 +164,30 @@
       "revId": "31f8a9a4530586631b8c42323ce4ff31a319bfd3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4f5cebd_719c822d",
+        "filename": "integration-tests/src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-02T09:20:05Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "3f326282_d4e71f55",
+      "range": {
+        "startLine": 8,
+        "startChar": 4,
+        "endLine": 9,
+        "endChar": 14
+      },
+      "revId": "31f8a9a4530586631b8c42323ce4ff31a319bfd3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
