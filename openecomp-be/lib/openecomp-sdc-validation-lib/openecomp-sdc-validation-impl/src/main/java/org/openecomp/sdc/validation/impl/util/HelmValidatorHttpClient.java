@@ -61,7 +61,7 @@ public class HelmValidatorHttpClient {
 
             return httpResponse;
         } catch (HttpExecuteException e) {
-            LOGGER.info("Exception during call to Helm validator {}", e.getMessage());
+            LOGGER.error("Exception during call to Helm validator {}", e.getMessage(), e);
         }
         throw new Exception("Http response is invalid.");
     }
