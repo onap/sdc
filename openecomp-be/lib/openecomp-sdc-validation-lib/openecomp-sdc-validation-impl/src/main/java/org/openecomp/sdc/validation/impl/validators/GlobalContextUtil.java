@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.openecomp.core.validation.types.GlobalValidationContext;
+import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData.Type;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
@@ -44,7 +45,7 @@ class GlobalContextUtil {
     }
 
     private static boolean isManifestMissing(GlobalValidationContext globalContext) {
-        return globalContext.getFileContent("MANIFEST.json").isEmpty();
+        return globalContext.getFileContent(SdcCommon.MANIFEST_NAME).isEmpty();
     }
 
     private static Set<String> filterFilesByType(Map<String, FileData.Type> filesWithTypes,
