@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017, 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,32 +22,21 @@ package org.onap.sdc.frontend.ci.tests.execute.AmdocsComplexService;
 
 import com.aventstack.extentreports.Status;
 import com.clearspring.analytics.util.Pair;
-import org.apache.commons.lang3.RandomStringUtils;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import org.apache.commons.lang.RandomStringUtils;
 import org.json.JSONObject;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.HeatMetaFirstLevelDefinition;
 import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
-import org.onap.sdc.backend.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
-import org.onap.sdc.backend.ci.tests.execute.devCI.ArtifactFromCsar;
-import org.onap.sdc.frontend.ci.tests.pages.DeploymentArtifactPage;
-import org.onap.sdc.frontend.ci.tests.utilities.DownloadManager;
-import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
-import org.onap.sdc.frontend.ci.tests.utilities.OnboardingUiUtils;
-import org.onap.sdc.frontend.ci.tests.execute.setup.ArtifactsCorrelationManager;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
-import org.onap.sdc.frontend.ci.tests.pages.ResourceGeneralPage;
 import org.openqa.selenium.WebElement;
-
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotSame;
-
 
 public class PathValidations {
 
@@ -55,46 +44,6 @@ public class PathValidations {
     public static final int NUMBER_OF_LINKS = 5;
     public static final int NUMBER_OF_LINES = 3;
     public static final int NUMBER_OF_LINES_TO_DELETE = 1;
-
-    public static String[] validateServiceExtendedPath(String vspName) throws Exception {
-        PathUtilities.linkVFs(vspName, NUMBER_OF_LINKS);
-        PathUtilities.openCreatePath();
-        String pathName = "name1";
-        PathUtilities.insertValues(pathName, "pathProtocol1", "pathPortNumbers1");
-        PathUtilities.selectFirstLineParam();
-        PathValidations.extendPath(NUMBER_OF_LINES);
-        //delete line
-        PathUtilities.deleteLines(NUMBER_OF_LINES_TO_DELETE, NUMBER_OF_LINES);
-        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.CREATE_BUTTON.getValue());
-        ExtentTestActions.log(Status.INFO, "path has been created");
-        PathValidations.checkPathFilter(pathName, true);
-        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.PATH_MENU_BUTTON.getValue() + "']/parent::*").get(0).click();
-        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.PATH_LIST_BUTTON.getValue());
-        String PathListName1 = GeneralUIUtils.findByText(pathName).getText();
-        // edit path
-        String newPathName = "name2";
-        PathUtilities.editPathName(pathName, newPathName);
-
-        GeneralUIUtils.findElementsByXpath("//*[@data-tests-id='" + DataTestIdEnum.ComplexServiceAmdocs.PATH_MENU_BUTTON.getValue() + "']/parent::*").get(0).click();
-        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ComplexServiceAmdocs.PATH_LIST_BUTTON.getValue());
-        String PathListName2 = GeneralUIUtils.findByText(newPathName).getText();
-
-        // assert names changed
-        assertNotSame("path name expected to change after edit but did not", PathListName1, PathListName2);
-
-        // delete path
-        int paths_before_deletion = GeneralUIUtils.findElementsByXpath("//*[text()='" + newPathName + "']/parent::*//span").size();
-        GeneralUIUtils.findElementsByXpath(newPathName).get(1).click();
-        GeneralUIUtils.ultimateWait();
-        int paths_after_deletion = GeneralUIUtils.findElementsByXpath("//*[text()='" + newPathName + "']/parent::*//span").size();
-        assertNotSame("path expected to be deleted but did not", paths_after_deletion, paths_before_deletion);
-
-        GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.PropertiesAssignmentScreen.INPUT_DELETE_DIALOG_CLOSE.getValue());
-        SetupCDTest.getExtendTest().log(Status.INFO, "Path has been created");
-        // check that path got deleted in the path filter list
-        PathValidations.checkPathFilter(newPathName, false);
-        return new String[]{pathName, newPathName};
-    }
 
     public static String[] validateComplexExtendedPath(String[] services) throws Exception {
         PathUtilities.linkServices(services[0], services[1], NUMBER_OF_LINKS);
@@ -333,28 +282,4 @@ public class PathValidations {
         PathUtilities.openPathList();
         PathUtilities.editPathName(pathName, "newName2");
     }
-
-    public static void importAndVerifyVSP(VendorSoftwareProductObject createVendorSoftwareProduct, String filepath, String vnfFile) throws Exception {
-        DownloadManager.downloadCsarByNameFromVSPRepository(createVendorSoftwareProduct.getName(), createVendorSoftwareProduct.getVspId());
-        File latestFilefromDir = FileHandling.getLastModifiedFileNameFromDir();
-
-        OnboardingUiUtils.importVSP(createVendorSoftwareProduct);
-
-        ResourceGeneralPage.getLeftMenu().moveToDeploymentArtifactScreen();
-
-        // Verify deployment artifacts
-        Map<String, Object> combinedMap = ArtifactFromCsar.combineHeatArtifacstWithFolderArtifacsToMap(latestFilefromDir.getAbsolutePath());
-
-        LinkedList<HeatMetaFirstLevelDefinition> deploymentArtifacts = ((LinkedList<HeatMetaFirstLevelDefinition>) combinedMap.get("Deployment"));
-        ArtifactsCorrelationManager.addVNFartifactDetails(vnfFile, deploymentArtifacts);
-
-        List<String> heatEnvFilesFromCSAR = deploymentArtifacts.stream().filter(e -> e.getType().equals("HEAT_ENV")).
-                map(e -> e.getFileName()).
-                collect(Collectors.toList());
-
-        OnboardingUiUtils.validateDeploymentArtifactsVersion(deploymentArtifacts, heatEnvFilesFromCSAR);
-
-        DeploymentArtifactPage.verifyArtifactsExistInTable(filepath, vnfFile);
-    }
-
 }
