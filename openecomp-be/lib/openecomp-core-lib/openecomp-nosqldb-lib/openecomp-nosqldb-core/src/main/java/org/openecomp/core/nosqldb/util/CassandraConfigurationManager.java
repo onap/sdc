@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017, 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,31 +19,21 @@
  */
 package org.openecomp.core.nosqldb.util;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import org.apache.commons.collections4.CollectionUtils;
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
  * The type Configuration manager.
  */
-public class ConfigurationManager {
+public class CassandraConfigurationManager extends CommonConfigurationManager {
 
-    static final String CONFIGURATION_YAML_FILE = "configuration.yaml";
-    static private final Integer DEFAULT_CASSANDRA_PORT = 9042;
     private static final String CASSANDRA = "cassandra";
     private static final String CASSANDRA_KEY = CASSANDRA + "Config";
-    private static final String DEFAULT_KEYSPACE_NAME = "dox";
     private static final String CASSANDRA_ADDRESSES = CASSANDRA + ".addresses";
     private static final String CASSANDRA_DOX_KEY_STORE = CASSANDRA + ".dox.keystore";
     private static final String CASSANDRA_AUTHENTICATE = CASSANDRA + ".authenticate";
@@ -65,39 +55,23 @@ public class ConfigurationManager {
     private static final String CASSANDRA_TRUSTSTORE_PASSWORD_KEY = "truststorePassword";
     private static final String CONSISTENCY_LEVEL = CASSANDRA + ".consistencyLevel";
     private static final String CONSISTENCY_LEVEL_KEY = "consistencyLevel";
+    private static final String DEFAULT_KEYSPACE_NAME = "dox";
+    private static final Integer DEFAULT_CASSANDRA_PORT = 9042;
     private static final String LOCAL_DATA_CENTER_KEY = "localDataCenter";
     private static final String LOCAL_DATA_CENTER = CASSANDRA + ".localDataCenter";
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationManager.class);
-    private static ConfigurationManager instance = null;
-    private final LinkedHashMap<String, Object> cassandraConfiguration;
+    private static final Logger LOG = LoggerFactory.getLogger(CassandraConfigurationManager.class);
 
-    private ConfigurationManager() {
-        String configurationYamlFile = System.getProperty(CONFIGURATION_YAML_FILE);
-        Function<InputStream, Map<String, LinkedHashMap<String, Object>>> reader = is -> {
-            YamlUtil yamlUtil = new YamlUtil();
-            return yamlUtil.yamlToMap(is);
-        };
-        try {
-            Map<String, LinkedHashMap<String, Object>> configurationMap = configurationYamlFile != null
-                ? readFromFile(configurationYamlFile, reader) // load from file
+    private static CassandraConfigurationManager singletonInstance;
 
-                : FileUtils.readViaInputStream(CONFIGURATION_YAML_FILE, reader); // or from resource
-            cassandraConfiguration = configurationMap.get(CASSANDRA_KEY);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read configuration", e);
-        }
+    private CassandraConfigurationManager() {
+        super(CASSANDRA_KEY);
     }
 
-    /**
-     * Gets instance.
-     *
-     * @return the instance
-     */
-    public static ConfigurationManager getInstance() {
-        if (Objects.isNull(instance)) {
-            instance = new ConfigurationManager();
+    public static synchronized CassandraConfigurationManager getInstance() {
+        if (singletonInstance == null) {
+            singletonInstance = new CassandraConfigurationManager();
         }
-        return instance;
+        return singletonInstance;
     }
 
     /**
@@ -110,12 +84,12 @@ public class ConfigurationManager {
         if (Objects.nonNull(addresses)) {
             return addresses.split(",");
         }
-        List lsAddresses = (ArrayList) cassandraConfiguration.get(CASSANDRA_HOSTS_KEY);
+        List<String> lsAddresses = this.getConfigValue(CASSANDRA_HOSTS_KEY, Collections.emptyList());
         if (CollectionUtils.isEmpty(lsAddresses)) {
             LOG.info("No Cassandra hosts are defined.");
         }
         String[] addressesArray;
-        addressesArray = (String[]) lsAddresses.toArray(new String[lsAddresses.size()]);
+        addressesArray = lsAddresses.toArray(new String[lsAddresses.size()]);
         return addressesArray;
     }
 
@@ -125,7 +99,7 @@ public class ConfigurationManager {
      * @return the port
      */
     public int getCassandraPort() {
-        Integer cassandraPort = (Integer) cassandraConfiguration.get(CASSANDRA_PORT_KEY);
+        Integer cassandraPort = this.getConfigValue(CASSANDRA_PORT_KEY, null);
         if (Objects.isNull(cassandraPort)) {
             cassandraPort = DEFAULT_CASSANDRA_PORT;
         }
@@ -138,7 +112,7 @@ public class ConfigurationManager {
      * @return
      */
     public Long getReconnectTimeout() {
-        Integer cassandraReconnectTimeout = (Integer) cassandraConfiguration.get(CASSANDRA_RECONNECT_TIMEOUT);
+        Integer cassandraReconnectTimeout = this.getConfigValue(CASSANDRA_RECONNECT_TIMEOUT, null);
         if (Objects.isNull(cassandraReconnectTimeout)) {
             LOG.info("No Cassandra reconnect timeout are defined.");
             return null;
@@ -167,7 +141,7 @@ public class ConfigurationManager {
     public String getUsername() {
         String username = System.getProperty(CASSANDRA_USER);
         if (Objects.isNull(username)) {
-            username = (String) cassandraConfiguration.get(CASSANDRA_USERNAME_KEY);
+            username = this.getConfigValue(CASSANDRA_USERNAME_KEY, null);
         }
         return username;
     }
@@ -180,7 +154,7 @@ public class ConfigurationManager {
     public String getPassword() {
         String password = System.getProperty(CASSANDRA_PASSWORD);
         if (Objects.isNull(password)) {
-            password = (String) cassandraConfiguration.get(CASSANDRA_PASSWORD_KEY);
+            password = this.getConfigValue(CASSANDRA_PASSWORD_KEY, null);
         }
         return password;
     }
@@ -193,7 +167,7 @@ public class ConfigurationManager {
     public String getTruststorePath() {
         String truststorePath = System.getProperty(CASSANDRA_TRUSTSTORE);
         if (Objects.isNull(truststorePath)) {
-            truststorePath = (String) cassandraConfiguration.get(CASSANDRA_TRUSTSTORE_PATH_KEY);
+            truststorePath = this.getConfigValue(CASSANDRA_TRUSTSTORE_PATH_KEY, null);
         }
         return truststorePath;
     }
@@ -206,7 +180,7 @@ public class ConfigurationManager {
     public String getTruststorePassword() {
         String truststorePassword = System.getProperty(CASSANDRA_TRUSTSTORE_PASSWORD);
         if (Objects.isNull(truststorePassword)) {
-            truststorePassword = (String) cassandraConfiguration.get(CASSANDRA_TRUSTSTORE_PASSWORD_KEY);
+            truststorePassword = this.getConfigValue(CASSANDRA_TRUSTSTORE_PASSWORD_KEY, null);
         }
         return truststorePassword;
     }
@@ -230,27 +204,14 @@ public class ConfigurationManager {
     }
 
     private Boolean getBooleanResult(String property, String key) {
-        Boolean res;
-        String value;
-        if (System.getProperty(property) == null) {
-            value = String.valueOf(cassandraConfiguration.get(key));
-        } else {
-            value = System.getProperty(property);
-        }
-        res = Boolean.valueOf(value);
-        return res;
-    }
-
-    private <T> T readFromFile(String file, Function<InputStream, T> reader) throws IOException {
-        try (InputStream is = new FileInputStream(file)) {
-            return reader.apply(is);
-        }
+        String value = System.getProperty(property);
+        return Boolean.valueOf(value == null ? String.valueOf(this.getConfigValue(key, false)) : value);
     }
 
     public String getConsistencyLevel() {
         String consistencyLevel = System.getProperty(CONSISTENCY_LEVEL);
         if (Objects.isNull(consistencyLevel)) {
-            consistencyLevel = (String) cassandraConfiguration.get(CONSISTENCY_LEVEL_KEY);
+            consistencyLevel = this.getConfigValue(CONSISTENCY_LEVEL_KEY, null);
         }
         if (Objects.isNull(consistencyLevel)) {
             consistencyLevel = "LOCAL_QUORUM";
@@ -261,7 +222,7 @@ public class ConfigurationManager {
     public String getLocalDataCenter() {
         String localDataCenter = System.getProperty(LOCAL_DATA_CENTER);
         if (Objects.isNull(localDataCenter)) {
-            localDataCenter = (String) cassandraConfiguration.get(LOCAL_DATA_CENTER_KEY);
+            localDataCenter = this.getConfigValue(LOCAL_DATA_CENTER_KEY, null);
         }
         return localDataCenter;
     }
