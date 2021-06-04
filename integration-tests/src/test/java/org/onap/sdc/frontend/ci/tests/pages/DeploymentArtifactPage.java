@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017, 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,6 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.collections.Lists;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,10 +67,6 @@ public class DeploymentArtifactPage extends GeneralPageElements {
         addNewArtifact(ArtifactGroupTypeEnum.DEPLOYMENT);
     }
 
-    public static void clickAddAnotherArtifact() {
-        GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.ADD_ANOTHER_ARTIFACT.getValue()).click();
-    }
-
     public static void clickEditArtifact(String artifactLabel) {
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.EDIT_ARTIFACT.getValue() + artifactLabel).click();
     }
@@ -90,12 +84,6 @@ public class DeploymentArtifactPage extends GeneralPageElements {
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.DELETE_ARTIFACT.getValue() + artifactLabel).click();
     }
 
-    public static WebElement clickDownloadArtifact(String artifactLabel) {
-        WebElement downloadButton = GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.DOWNLOAD_ARTIFACT.getValue() + artifactLabel);
-
-        return downloadButton;
-    }
-
     public static void clickDownloadEnvArtifact(String envFileNameToDownload) {
         ExtentTestActions.log(Status.INFO, String.format("Downloading the updated  %s artifact for validate parameters with the response after the update...", envFileNameToDownload));
         GeneralUIUtils.clickOnElementByTestId(DataTestIdEnum.ArtifactPageEnum.DOWNLOAD_ARTIFACT_ENV.getValue() + envFileNameToDownload);
@@ -110,10 +98,6 @@ public class DeploymentArtifactPage extends GeneralPageElements {
     public static void clickCloseEnvParameters() {
         GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPopup.CANCEL_BUTTON.getValue()).click();
         GeneralUIUtils.ultimateWait();
-    }
-
-    public static WebElement getAddOtherArtifactButton() {
-        return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.ADD_ANOTHER_ARTIFACT.getValue());
     }
 
     public static void clickOK() {
@@ -257,17 +241,6 @@ public class DeploymentArtifactPage extends GeneralPageElements {
     //Get Artifact Type by Artifact Name.
     public static String getArtifactType(String artifactName) {
         return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ArtifactPageEnum.TYPE.getValue() + artifactName).getText();
-    }
-
-    public static List<String> getHeatParametersInUI(String dataTestId) {
-        List<WebElement> elements;
-        List<String> Names = new ArrayList<>();
-        elements = GeneralUIUtils.getWebElementsListByContainTestID(dataTestId);
-        for (WebElement webElement : elements) {
-            String attributevalue = webElement.getAttribute("data-tests-id");
-            Names.add(attributevalue.replace("heatParameterName_", ""));
-        }
-        return Names;
     }
 
     public static void searchBoxEnv(String parameterName) {
