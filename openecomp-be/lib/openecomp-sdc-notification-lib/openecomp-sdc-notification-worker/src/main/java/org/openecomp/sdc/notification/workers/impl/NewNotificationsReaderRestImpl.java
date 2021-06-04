@@ -30,7 +30,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.notification.config.ConfigurationManager;
+import org.openecomp.sdc.notification.config.NotificationConfigurationManager;
 import org.openecomp.sdc.notification.types.NotificationsStatusDto;
 import org.openecomp.sdc.notification.workers.NewNotificationsReader;
 
@@ -50,7 +50,7 @@ public class NewNotificationsReaderRestImpl implements NewNotificationsReader {
     private static int bePort;
 
     public NewNotificationsReaderRestImpl() {
-        ConfigurationManager cm = ConfigurationManager.getInstance();
+        NotificationConfigurationManager cm = NotificationConfigurationManager.getInstance();
         bePort = cm.getConfigValue(BE_PORT, DEFAULT_BE_PORT);
         beHost = cm.getConfigValue(BE_HOST, DEFAULT_BE_HOST);
     }
