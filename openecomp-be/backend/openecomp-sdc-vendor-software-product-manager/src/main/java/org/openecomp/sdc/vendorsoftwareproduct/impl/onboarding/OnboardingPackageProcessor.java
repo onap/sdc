@@ -49,6 +49,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.common.zip.exception.ZipException;
@@ -145,19 +146,27 @@ public class OnboardingPackageProcessor {
         return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.CSAR);
     }
 
+    private OnboardPackageInfo createOnboardPackageInfoForZip(String packageName, String packageExtension) {
+        return new OnboardPackageInfo(
+                new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
+                        packageContent), OnboardingTypesEnum.ZIP);
+    }
+
     private OnboardPackageInfo processOnapNativeZipPackage(String packageName, String packageExtension) {
+        if (CommonConfigurationManager.getInstance().getConfigValue("zipValidation", "ignoreManifest", false)) {
+            return createOnboardPackageInfoForZip(packageName, packageExtension);
+        }
         ManifestContent manifest = getManifest();
         if (manifest != null) {
             List<String> errors = validateZipPackage(manifest);
             if (errors.isEmpty()) {
-                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
-                    packageContent);
-                return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
+                return createOnboardPackageInfoForZip(packageName, packageExtension);
             } else {
                 errors.forEach(message -> reportError(ErrorLevel.ERROR, message));
             }
         } else {
-            reportError(ErrorLevel.ERROR, COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName));
+            reportError(ErrorLevel.ERROR,
+                    COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName));
         }
         return null;
     }
