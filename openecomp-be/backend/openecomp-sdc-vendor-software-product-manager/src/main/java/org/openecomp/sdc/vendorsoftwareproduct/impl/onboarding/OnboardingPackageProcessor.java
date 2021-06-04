@@ -49,6 +49,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.common.zip.exception.ZipException;
@@ -146,13 +147,15 @@ public class OnboardingPackageProcessor {
     }
 
     private OnboardPackageInfo processOnapNativeZipPackage(String packageName, String packageExtension) {
+        boolean manifestValidationRequired =
+                CommonConfigurationManager.getInstance().getConfigValue("zipValidation", "enabled", true);
         ManifestContent manifest = getManifest();
-        if (manifest != null) {
+        if (!manifestValidationRequired || manifest != null) {
             List<String> errors = validateZipPackage(manifest);
-            if (errors.isEmpty()) {
-                final OnboardPackage onboardPackage = new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
-                    packageContent);
-                return new OnboardPackageInfo(onboardPackage, OnboardingTypesEnum.ZIP);
+            if (!manifestValidationRequired || errors.isEmpty()) {
+                return new OnboardPackageInfo(
+                        new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),
+                                packageContent), OnboardingTypesEnum.ZIP);
             } else {
                 errors.forEach(message -> reportError(ErrorLevel.ERROR, message));
             }
