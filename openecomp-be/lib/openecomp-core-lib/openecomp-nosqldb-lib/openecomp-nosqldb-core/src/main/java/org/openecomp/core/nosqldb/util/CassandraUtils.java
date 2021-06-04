@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * SDC
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017, 2021 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,15 +30,15 @@ public class CassandraUtils {
     private static Map<String, String> statementMap = new HashMap<>();
 
     public static String[] getAddresses() {
-        return ConfigurationManager.getInstance().getAddresses();
+        return CassandraConfigurationManager.getInstance().getAddresses();
     }
 
     public static Long getReconnectTimeout() {
-        return ConfigurationManager.getInstance().getReconnectTimeout();
+        return CassandraConfigurationManager.getInstance().getReconnectTimeout();
     }
 
     public static String getKeySpace() {
-        return ConfigurationManager.getInstance().getKeySpace();
+        return CassandraConfigurationManager.getInstance().getKeySpace();
     }
 
     /**
@@ -55,38 +55,38 @@ public class CassandraUtils {
     }
 
     public static String getUser() {
-        return ConfigurationManager.getInstance().getUsername();
+        return CassandraConfigurationManager.getInstance().getUsername();
     }
 
     public static String getPassword() {
-        return ConfigurationManager.getInstance().getPassword();
+        return CassandraConfigurationManager.getInstance().getPassword();
     }
 
     public static String getTruststore() {
-        return ConfigurationManager.getInstance().getTruststorePath();
+        return CassandraConfigurationManager.getInstance().getTruststorePath();
     }
 
     public static String getTruststorePassword() {
-        return ConfigurationManager.getInstance().getTruststorePassword();
+        return CassandraConfigurationManager.getInstance().getTruststorePassword();
     }
 
     public static int getCassandraPort() {
-        return ConfigurationManager.getInstance().getCassandraPort();
+        return CassandraConfigurationManager.getInstance().getCassandraPort();
     }
 
     public static boolean isSsl() {
-        return ConfigurationManager.getInstance().isSsl();
+        return CassandraConfigurationManager.getInstance().isSsl();
     }
 
     public static boolean isAuthenticate() {
-        return ConfigurationManager.getInstance().isAuthenticate();
+        return CassandraConfigurationManager.getInstance().isAuthenticate();
     }
 
     public static String getConsistencyLevel() {
-        return ConfigurationManager.getInstance().getConsistencyLevel();
+        return CassandraConfigurationManager.getInstance().getConsistencyLevel();
     }
 
     public static String getLocalDataCenter() {
-        return ConfigurationManager.getInstance().getLocalDataCenter();
+        return CassandraConfigurationManager.getInstance().getLocalDataCenter();
     }
 }

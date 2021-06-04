@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.notification.config.ConfigurationManager;
+import org.openecomp.sdc.notification.config.NotificationConfigurationManager;
 import org.openecomp.sdc.notification.types.NotificationsStatusDto;
 
 public class NotificationWorker {
@@ -45,7 +45,7 @@ public class NotificationWorker {
     private NewNotificationsReader news = null;
 
     public NotificationWorker(NewNotificationsReader news) {
-        ConfigurationManager cm = ConfigurationManager.getInstance();
+        NotificationConfigurationManager cm = NotificationConfigurationManager.getInstance();
         pollingSleepInterval = cm.getConfigValue(POLLING_INTERVAL, DEFAULT_POLLING_INTERVAL);
         selectionLimit = cm.getConfigValue(SELECTION_SIZE, DEFAULT_SELECTION_LIMIT);
         Objects.requireNonNull(news, "NotificationNews object is not initialized.");
