@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "728fdbb9_9b9afd17",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2021-06-08T16:07:10Z",
+      "side": 1,
+      "message": "wow my bad...\nDo , undo, do, undo ... \nLet me rework that... not sure what i have done but that\u0027s awful ...",
+      "parentUuid": "a0f7c386_d859d4f2",
+      "range": {
+        "startLine": 62,
+        "startChar": 17,
+        "endLine": 62,
+        "endChar": 31
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "36186e5c_9aea56fe",
         "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
         "patchSetId": 3
