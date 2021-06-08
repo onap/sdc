@@ -284,8 +284,10 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         componentPage.isLoaded();
         final ResourcePropertiesPage vfcPropertiesPage = componentPage.goToProperties();
         vfcPropertiesPage.isLoaded();
-        final List<String> propertyNames = vfcPropertiesPage.getPropertyNames();
-        final ServiceDependencyProperty serviceDependencyProperty = new ServiceDependencyProperty(propertyNames.get(0), value, operator);
+        final Map<String, String> propertyNamesAndTypes = vfcPropertiesPage.getPropertyNamesAndTypes();
+        final List<String> propertyNames = propertyNamesAndTypes.keySet().stream().collect(Collectors.toList());
+        final ServiceDependencyProperty serviceDependencyProperty =
+                new ServiceDependencyProperty(propertyNames.get(0), propertyNamesAndTypes.get(propertyNames.get(0)), value, operator);
 
         homePage.getTopNavComponent().clickOnHome();
         homePage.isLoaded();
@@ -881,7 +883,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         assertThat(String.format("The Component '%s' should have properties", vfResourceCreateData.getName()), propertyNamesAndTypes,
             not(anEmptyMap()));
         propertyNamesAndTypes.forEach((name, type)
-            -> substitutionFilterProperties.add(new ServiceDependencyProperty(name, getPropertyValueByType(type), LogicalOperator.EQUALS)));
+            -> substitutionFilterProperties.add(new ServiceDependencyProperty(name, type, getPropertyValueByType(type), LogicalOperator.EQUALS)));
     }
 
     private String getPropertyValueByType(final String type) {
@@ -895,9 +897,9 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
             case "boolean":
                 return "TRUE";
             case "list":
-                return "[value1, value2]";
+                return "[\"value1\", \"value2\"]";
             case "map":
-                return "MyKey: MyValue";
+                return "{\"MyKey\": \"MyValue\"}";
             default:
                 throw new UnsupportedOperationException("Not yet implemented for " + type);
         }

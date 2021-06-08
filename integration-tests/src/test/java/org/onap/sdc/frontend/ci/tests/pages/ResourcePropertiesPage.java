@@ -19,11 +19,13 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -52,13 +54,19 @@ public class ResourcePropertiesPage extends AbstractPageObject {
     }
 
     /**
-     * Returns a list based on property names
-     * @return list of names from the properties table
+     * Creates a map based on property names and data types
      */
-    public List<String> getPropertyNames() {
+    public Map<String, String> getPropertyNamesAndTypes() {
         waitPropertiesToLoad();
-        return findElements(By.xpath(XpathSelector.PROPERTY_NAMES.getXpath())).stream()
-                .map(ele -> ele.getAttribute("innerText")).collect(Collectors.toList());
+        final Map<String, String> namesAndTypes = new HashMap<>();
+        final List<WebElement> names = findElements(By.xpath(XpathSelector.PROPERTY_NAMES.getXpath()));
+        final List<WebElement> types = findElements(By.xpath(XpathSelector.PROPERTY_TYPES.getXpath()));
+
+        for (int i = 0;i < names.size();i++) {
+            namesAndTypes.put(names.get(i).getAttribute("innerText"), types.get(i).getAttribute("innerText"));
+        }
+
+        return namesAndTypes;
     }
 
     @AllArgsConstructor

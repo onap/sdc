@@ -21,6 +21,7 @@
   .rule-builder-content {
     display: flex;
     align-items: flex-end;
+    flex-wrap: wrap;
     .rule-input-field {
       flex: 1;
       &:not(:last-of-type) {
@@ -38,6 +39,9 @@
         height: 30px;
       }
     }
-
+    .complex-input-field {
+      flex-basis: 100%;
+      display: block;
+    }
   }
 }
