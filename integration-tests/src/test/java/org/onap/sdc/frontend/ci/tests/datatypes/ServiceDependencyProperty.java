@@ -32,12 +32,14 @@ public class ServiceDependencyProperty {
     private final String name;
     private final String value;
     private final String source;
+    private final String type;
     private final LogicalOperator logicalOperator;
 
-    public ServiceDependencyProperty(String name, String value, LogicalOperator logicalOperator) {
+    public ServiceDependencyProperty(String name, String type, String value, LogicalOperator logicalOperator) {
         this.name = name;
         this.value = value;
         this.source = "Static";
+        this.type = type;
         this.logicalOperator = logicalOperator;
     }
 }

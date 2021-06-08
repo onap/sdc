@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 import {Component} from '@angular/core';
-import {InputBEModel, PropertyBEModel} from 'app/models';
+import {InputBEModel, PropertyBEModel, PropertyFEModel} from 'app/models';
 import {
   ConstraintObjectUI,
   OPERATOR_TYPES
@@ -23,6 +23,7 @@ import {DropdownValue} from 'app/ng2/components/ui/form-components/dropdown/ui-e
 import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
 import {PROPERTY_DATA} from 'app/utils';
 import {ServiceInstanceObject} from '../../../models/service-instance-properties-and-interfaces';
+import { PropertiesUtils } from '../properties-assignment/services/properties.utils';
 
 export class UIDropDownSourceTypesElement extends DropdownValue {
   options: any[];
@@ -61,7 +62,7 @@ export class ServiceDependenciesEditorComponent {
   };
   currentServiceName: string;
   selectedServiceProperties: PropertyBEModel[];
-  selectedPropertyObj: PropertyBEModel;
+  selectedPropertyObj: PropertyFEModel;
   ddValueSelectedServicePropertiesNames: DropdownValue[];
   operatorTypes: DropdownValue[];
   sourceTypes: UIDropDownSourceTypesElement[] = [];
@@ -76,6 +77,8 @@ export class ServiceDependenciesEditorComponent {
     STATIC: {label: 'Static', value: 'static'},
     SERVICE_PROPERTY: {label: 'Service Property', value: 'property'}
   };
+
+  constructor(private propertiesUtils: PropertiesUtils) {}
 
   ngOnInit() {
     this.currentIndex = this.input.serviceRuleIndex;
@@ -124,10 +127,11 @@ export class ServiceDependenciesEditorComponent {
   }
 
   syncRuleData() {
-    if (!this.currentRule.sourceName && this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value) {
+    if (!this.currentRule.sourceName || this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value) {
       this.currentRule.sourceName = this.SOURCE_TYPES.STATIC.value;
+      this.currentRule.sourceType = this.SOURCE_TYPES.STATIC.value;
     }
-    this.selectedPropertyObj = _.find(this.selectedServiceProperties, (prop) => prop.name === this.currentRule.servicePropertyName);
+    this.updateSelectedPropertyObj();
     this.updateOperatorTypesList();
     this.updateSourceTypesRelatedValues();
   }
@@ -154,7 +158,7 @@ export class ServiceDependenciesEditorComponent {
     }
   }
 
-  onChangePage(newIndex) {
+  onChangePage(newIndex:any) {
     if (newIndex >= 0 && newIndex < this.input.serviceRules.length) {
       this.currentIndex = newIndex;
       this.currentRule = this.serviceRulesList[newIndex];
@@ -163,18 +167,18 @@ export class ServiceDependenciesEditorComponent {
   }
 
   onServicePropertyChanged() {
-    this.selectedPropertyObj = _.find(this.selectedServiceProperties, (prop) => prop.name === this.currentRule.servicePropertyName);
+    this.currentRule.value = '';
+    this.updateSelectedPropertyObj();
     this.updateOperatorTypesList();
     this.filterOptionsByType();
-    this.currentRule.value = '';
   }
 
   onSelectSourceType() {
+    this.currentRule.value = '';
     this.currentRule.sourceType = this.currentRule.sourceName === this.SOURCE_TYPES.STATIC.value ?
         this.SOURCE_TYPES.STATIC.value :
         this.SOURCE_TYPES.SERVICE_PROPERTY.value;
     this.updateSourceTypesRelatedValues();
-    this.currentRule.value = '';
   }
 
   filterOptionsByType() {
@@ -190,7 +194,7 @@ export class ServiceDependenciesEditorComponent {
     }, []);
   }
 
-  onValueChange(isValidValue) {
+  onValueChange(isValidValue:any) {
     this.currentRule.updateValidity(isValidValue);
   }
 
@@ -201,5 +205,30 @@ export class ServiceDependenciesEditorComponent {
     }
     // for update all rules
     return this.serviceRulesList.every((rule) => rule.isValidRule(rule.sourceName === this.SOURCE_TYPES.STATIC.value));
+  }
+
+  updateSelectedPropertyObj(): void {
+    this.selectedPropertyObj = null;
+    if (this.currentRule.servicePropertyName) {
+      let newProp = new PropertyFEModel(_.find(this.selectedServiceProperties, (prop) => prop.name === this.currentRule.servicePropertyName));
+      newProp.value = JSON.stringify(this.currentRule.value);
+      this.propertiesUtils.initValueObjectRef(newProp);
+      console.log("TEST" + newProp.value);
+      setTimeout(() => {this.selectedPropertyObj = newProp})
+    }
+  }
+
+  isStaticSource(): boolean {
+    return this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value
+  }
+
+  isComplexListMapType(): boolean {
+    return this.selectedPropertyObj && this.selectedPropertyObj.derivedDataType > 0;
+  }
+
+  updateComplexListMapTypeRuleValue(): void {
+    let value = PropertyFEModel.cleanValueObj(this.selectedPropertyObj.valueObj);
+    this.currentRule.value = JSON.stringify(value);
+    this.onValueChange(this.selectedPropertyObj.valueObjIsValid);
   }
 }
