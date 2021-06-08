@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a0f7c386_d859d4f2",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "if this one is static, make method static too, and remove \u0027this\u0027",
+      "range": {
+        "startLine": 62,
+        "startChar": 17,
+        "endLine": 62,
+        "endChar": 31
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36186e5c_9aea56fe",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "avoid using deprecated method",
+      "range": {
+        "startLine": 64,
+        "startChar": 23,
+        "endLine": 64,
+        "endChar": 27
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "370668a8_3a372ac0",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "avoid using deprecated method",
+      "range": {
+        "startLine": 69,
+        "startChar": 23,
+        "endLine": 69,
+        "endChar": 27
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a10e61b_d6f82216",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "if this one is static, make method static too, and remove \u0027this\u0027",
+      "range": {
+        "startLine": 72,
+        "startChar": 21,
+        "endLine": 72,
+        "endChar": 34
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3523f6a_75ab5288",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "avoid using deprecated method",
+      "range": {
+        "startLine": 90,
+        "startChar": 19,
+        "endLine": 90,
+        "endChar": 24
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d9f646a_f55399fb",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "\"static\" members should be accessed statically",
+      "range": {
+        "startLine": 105,
+        "startChar": 43,
+        "endLine": 105,
+        "endChar": 56
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0544482b_8a95a769",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "avoid using deprecated method",
+      "range": {
+        "startLine": 107,
+        "startChar": 19,
+        "endLine": 107,
+        "endChar": 24
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cdcee4df_5d21682e",
+        "filename": "openecomp-be/lib/openecomp-common-lib/src/main/java/org/openecomp/sdc/common/CommonConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "avoid using deprecated method",
+      "range": {
+        "startLine": 115,
+        "startChar": 19,
+        "endLine": 115,
+        "endChar": 23
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bca3ccb0_f012ff52",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/CassandraConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "could be List\u003cString\u003e",
+      "range": {
+        "startLine": 89,
+        "startChar": 10,
+        "endLine": 89,
+        "endChar": 13
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b91bdce_90eb55a8",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/CassandraConfigurationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "unused private method",
+      "range": {
+        "startLine": 213,
+        "startChar": 4,
+        "endLine": 217,
+        "endChar": 5
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5214fa1f_d55dc429",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/test/java/org/openecomp/core/nosqldb/util/CassandraConfigurationManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "junit 5",
+      "range": {
+        "startLine": 22,
+        "startChar": 38,
+        "endLine": 26,
+        "endChar": 22
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a9e4430_1164280b",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/test/java/org/openecomp/core/nosqldb/util/CassandraConfigurationManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-06-08T09:01:14Z",
+      "side": 1,
+      "message": "??",
+      "range": {
+        "startLine": 29,
+        "startChar": 1,
+        "endLine": 32,
+        "endChar": 3
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
