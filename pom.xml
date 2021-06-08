@@ -47,7 +47,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <lang3.version>3.10</lang3.version>
         <guava.version>30.1-jre</guava.version>
         <janusgraph.version>0.3.3</janusgraph.version>
-        <spring.version>5.2.10.RELEASE</spring.version>
+        <spring.version>5.2.15.RELEASE</spring.version>
         <jersey-bom.version>2.27</jersey-bom.version>
         <netty.version>4.1.65.Final</netty.version>
         <servlet-api.version>3.1.0</servlet-api.version>
@@ -73,6 +73,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <ws.rs.version>2.1</ws.rs.version>
 
         <jetty.version>9.4.41.v20210516</jetty.version>
+
+        <dom4j.version>1.6</dom4j.version>
 
         <!-- JSON and YAML Parsing -->
         <jackson.version>2.12.1</jackson.version>
