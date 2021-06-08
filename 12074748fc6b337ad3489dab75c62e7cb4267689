@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "172c8c4c_671abfb0",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/OnboardingFlowsUi.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2021-06-08T09:13:58Z",
+      "side": 1,
+      "message": "helm",
+      "range": {
+        "startLine": 498,
+        "startChar": 73,
+        "endLine": 498,
+        "endChar": 76
+      },
+      "revId": "12074748fc6b337ad3489dab75c62e7cb4267689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e4158b1_e0242802",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/OnboardingFlowsUi.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2021-06-08T09:13:58Z",
+      "side": 1,
+      "message": "helm",
+      "range": {
+        "startLine": 500,
+        "startChar": 70,
+        "endLine": 500,
+        "endChar": 73
+      },
+      "revId": "12074748fc6b337ad3489dab75c62e7cb4267689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
