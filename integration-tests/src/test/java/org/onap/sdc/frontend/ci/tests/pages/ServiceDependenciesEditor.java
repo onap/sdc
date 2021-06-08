@@ -19,7 +19,11 @@
 
 package org.onap.sdc.frontend.ci.tests.pages;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceDependencyProperty;
@@ -27,6 +31,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -61,16 +67,56 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
         logicalOperator.selectByVisibleText(property.getLogicalOperator().getOperator());
         final Select sourceType = new Select(webDriver.findElement(By.xpath(XpathSelector.SOURCE_TYPE.xPath)));
         sourceType.selectByVisibleText(property.getSource());
-        addRuleAssignedValue(webDriver.findElement(
-                By.xpath(XpathSelector.RULE_ASSIGNED_VALUE.xPath)), property.getValue());
+        try {
+            addRuleAssignedValue(property);
+        } catch (Exception e) {
+            fail("Failed to add property due to exception while adding rule value :: {}", e);
+        }
         webDriver.findElement(By.xpath(XpathSelector.CREATE_BUTTON.xPath)).click();
     }
 
-    private void addRuleAssignedValue(final WebElement element, final String value) {
+    private void addRuleAssignedValue(final ServiceDependencyProperty property) throws Exception {
+        final var type = property.getType();
+        final var value = property.getValue();
+        switch (type) {
+            case "list":
+                addListInput(property.getName(), value);
+                break;
+            case "map":
+                addMapInput(property.getName(), value);
+                break;
+            default:
+                addStringInput(waitForElementVisibility(By.xpath(XpathSelector.RULE_ASSIGNED_VALUE.xPath)), value);
+                break;
+        }
+    }
+
+    private void addStringInput(WebElement element, Object value) {
         if ("select".equals(element.getTagName())) {
-            new Select(element).selectByVisibleText(value);
+            new Select(element).selectByVisibleText(value.toString());
         } else {
-            element.sendKeys(value);
+            element.sendKeys(value.toString());
+        }
+    }
+
+    private void addListInput(final String name, final String value) throws Exception {
+        final List<?> values = new JsonMapper().readValue(value, List.class);
+        final WebElement addToListElement = waitForElementVisibility(By.xpath(XpathSelector.RULE_ASSIGNED_VALUE_ADD_TO_LIST.formatXpath(name)));
+        for (int i=0;i<values.size();i++) {
+            addToListElement.click();
+            addStringInput(waitForElementVisibility(By.xpath(XpathSelector.RULE_ASSIGNED_LIST_VALUE.formatXpath(name, i))), values.get((i)));
+        }
+    }
+
+    private void addMapInput(final String name, final String value) throws Exception {
+        final Map<?, ?> values = new JsonMapper().readValue(value, Map.class);
+        int i = 0;
+        final WebElement addToListElement = waitForElementVisibility(By.xpath(XpathSelector.RULE_ASSIGNED_VALUE_ADD_TO_LIST.formatXpath(name)));
+        for(Entry<?, ?> entry : values.entrySet()) {
+            addToListElement.click();
+            final List<WebElement> KeyValueInputs = waitForAllElementsVisibility(By.xpath(XpathSelector.RULE_ASSIGNED_MAP_KEY_VALUE.formatXpath(name, i++)));
+            addStringInput(KeyValueInputs.get(0), entry.getKey());
+            addStringInput(KeyValueInputs.get(1), entry.getValue());
         }
     }
 
@@ -82,9 +128,15 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
         CONSTRAINT_OPERATOR("//*[@data-tests-id='constraintOperator']/select"),
         SOURCE_TYPE("//*[@data-tests-id='sourceType']/select"),
         RULE_ASSIGNED_VALUE("//*[@data-tests-id='ruleAssignedValue']//*[self::input or self::select]"),
+        RULE_ASSIGNED_VALUE_ADD_TO_LIST("//a[@data-tests-id = 'add-to-list-%s']"),
+        RULE_ASSIGNED_LIST_VALUE("//*[@data-tests-id='value-prop-%s.%d']"),
+        RULE_ASSIGNED_MAP_KEY_VALUE("//*[contains(@data-tests-id, 'value-prop') and contains(@data-tests-id, '%s.%d')]"),
         CREATE_BUTTON("//button[text()='Create']");
 
         private final String xPath;
 
+        public String formatXpath(Object... values) {
+            return String.format(xPath, values);
+        }
     }
 }
