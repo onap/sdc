@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fd8c984_431a9584",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/OnboardingFlowsUi.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 477,
+      "author": {
+        "id": 6592
+      },
+      "writtenOn": "2021-06-08T13:24:09Z",
+      "side": 1,
+      "message": "This method looks to be unused. I think we can delete it.",
+      "range": {
+        "startLine": 477,
+        "startChar": 16,
+        "endLine": 477,
+        "endChar": 47
+      },
+      "revId": "cfe698e3faed375c61baac1553351679ef6a145d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
