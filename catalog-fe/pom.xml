@@ -281,6 +281,10 @@
           <artifactId>commons-io</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.apache.xmlgraphics</groupId>
+          <artifactId>xmlgraphics-commons</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>commons-fileupload</groupId>
           <artifactId>commons-fileupload</artifactId>
         </exclusion>

@@ -307,6 +307,10 @@
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>dom4j</groupId>
+          <artifactId>dom4j</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -334,6 +338,10 @@
         <exclusion>
           <groupId>org.codehaus.jackson</groupId>
           <artifactId>jackson-mapper-asl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cassandra</groupId>
+          <artifactId>cassandra-all</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
