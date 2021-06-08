@@ -299,6 +299,30 @@
       "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "becb62c7_fa8bf27b",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/test/java/org/openecomp/core/nosqldb/util/CassandraConfigurationManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2021-06-08T16:11:22Z",
+      "side": 1,
+      "message": "Initially it was not my test class, i modified it.",
+      "parentUuid": "5a9e4430_1164280b",
+      "range": {
+        "startLine": 29,
+        "startChar": 1,
+        "endLine": 32,
+        "endChar": 3
+      },
+      "revId": "17d9f2ab20dedef4d575a32ff1aaf6a739b6acad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
