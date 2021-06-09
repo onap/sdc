@@ -46,6 +46,30 @@
       "revId": "2847100dc3904bbf160d4e5ec3ab89aee6c4ffd5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd1ee285_5040ea6b",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-09T16:19:27Z",
+      "side": 1,
+      "message": "Ok...\nSo if the manifestValidationRequired is not required, you will always return the new OnboardPackageInfo. You don\u0027t need to go through the validation or anything else.\n\nI believe you just need to add this before the previous logic:\n\nif (!manifestValidationRequired) {\n            return new OnboardPackageInfo(\n                new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),\n                    packageContent), OnboardingTypesEnum.ZIP);\n}\n\n//leave the previous logic\nif (manifest !\u003d null) {\n[...]\n\n\nThe way it is, when manifestValidationRequired is false, you still call the validation for nothing.\n\nAlso, if you have a manifestValidationRequired as false and the manifest is null, I believe it will give a NullPointerException in the validation logic:\n\norg.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor#validateZipPackage\norg.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.ManifestAnalyzer#hasHelmEntries\n\nbecause the manifest will be null but you are still calling the validation.\n\nPlease, check if that solution suits your need. If so, I believe the code will be more clear.",
+      "parentUuid": "b43d1435_e05770c7",
+      "range": {
+        "startLine": 150,
+        "startChar": 8,
+        "endLine": 164,
+        "endChar": 9
+      },
+      "revId": "2847100dc3904bbf160d4e5ec3ab89aee6c4ffd5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
