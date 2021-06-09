@@ -22,6 +22,30 @@
       "revId": "2e685a520ec6d785818b13e725c4167474942702",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71c9e8d9_185c96ec",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/CassandraConfigurationManager.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2021-06-09T13:36:13Z",
+      "side": 1,
+      "message": "Pardon me, sure\nI rollbacked the intelliJ CTRL+Shift + F because it messed the entire file and i did not pay attention to this.\n\nThanks",
+      "parentUuid": "2a26f58b_05494949",
+      "range": {
+        "startLine": 210,
+        "startChar": 8,
+        "endLine": 210,
+        "endChar": 99
+      },
+      "revId": "2e685a520ec6d785818b13e725c4167474942702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
