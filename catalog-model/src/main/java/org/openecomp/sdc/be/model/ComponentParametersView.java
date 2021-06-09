@@ -263,7 +263,7 @@ public class ComponentParametersView {
             component.setNodeFilterComponents(null);
         }
         if (ignoreSubstitutionFilter) {
-            component.setSubstitutionFilterComponents(null);
+            component.setSubstitutionFilter(null);
         }
         if (ignoreDataType) {
             component.setDataTypes(null);

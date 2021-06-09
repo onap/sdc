@@ -19,7 +19,10 @@
 package org.openecomp.sdc.be.datamodel;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.hibernate.validator.internal.util.CollectionHelper.asSet;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +46,8 @@ import org.openecomp.sdc.be.components.utils.ServiceBuilder;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
@@ -53,6 +58,7 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
 import org.openecomp.sdc.be.ui.model.UiServiceDataTransfer;
@@ -322,7 +328,7 @@ public class UiComponentDataConverterTest {
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("substitutionFilter"));
 
-        assertThat(uiComponentDataTransfer.getSubstitutionFilter()).isNull();
+        assertThat(uiComponentDataTransfer.getSubstitutionFilters()).isNull();
     }
 
     @Test
@@ -330,13 +336,39 @@ public class UiComponentDataConverterTest {
         SubstitutionFilterDataDefinition substitutionFilter = new SubstitutionFilterDataDefinition();
         substitutionFilter.setID(SUBSTITUTION_FILTER_UID);
 
+        final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> expectedPropertyFilters = new ListDataDefinition<>();
+        var filter1 = new RequirementSubstitutionFilterPropertyDataDefinition();
+        filter1.setName("filter1");
+        filter1.setConstraints(Collections.singletonList("constraint1: {equal: testvalue1}\n"));
+        expectedPropertyFilters.add(filter1);
+
+        var filter2 = new RequirementSubstitutionFilterPropertyDataDefinition();
+        filter2.setName("filter2");
+        filter2.setConstraints(Collections.singletonList("constraint2: {equal: testvalue2}\n"));
+        expectedPropertyFilters.add(filter2);
+
+        substitutionFilter.setProperties(expectedPropertyFilters);
+
         Resource resource = new ResourceBuilder().build();
         resource.setSubstitutionFilter(substitutionFilter);
 
         UiComponentDataTransfer uiComponentDataTransfer = uiComponentDataConverter.getUiDataTransferFromResourceByParams(resource,
                 Collections.singletonList("substitutionFilter"));
+        assertThat(uiComponentDataTransfer.getSubstitutionFilters()).isNotNull();
 
-        assertThat(uiComponentDataTransfer.getSubstitutionFilterForTopologyTemplate()).isNotEmpty();
+        List<UIConstraint> propertyFilters = uiComponentDataTransfer.getSubstitutionFilters().getProperties();
+        assertFalse(propertyFilters.isEmpty());
+        assertEquals(propertyFilters.size(), substitutionFilter.getProperties().getListToscaDataDefinition().size());
+
+        verifyPropertyFilters(propertyFilters.get(0), "constraint1", "testvalue1", "static", "equal");
+        verifyPropertyFilters(propertyFilters.get(1), "constraint2", "testvalue2", "static", "equal");
+    }
+
+    private void verifyPropertyFilters(UIConstraint uiConstraint, String propertyName, String value, String sourceType, String operator){
+        assertEquals(propertyName, uiConstraint.getServicePropertyName());
+        assertEquals(value, uiConstraint.getValue());
+        assertEquals(sourceType, uiConstraint.getSourceType());
+        assertEquals(operator, uiConstraint.getConstraintOperator());
     }
 
     private Resource buildResourceWithGroups() {

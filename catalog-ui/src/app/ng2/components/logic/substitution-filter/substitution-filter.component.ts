@@ -157,9 +157,8 @@ export class SubstitutionFilterComponent {
   private loadSubstitutionFilter = (): void => {
     this.topologyTemplateService.getSubstitutionFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId)
     .subscribe((response) => {
-      if (response.substitutionFilterForTopologyTemplate && response.substitutionFilterForTopologyTemplate[this.compositeService.uniqueId]) {
-             this.constraintProperties = response.
-                 substitutionFilterForTopologyTemplate[this.compositeService.uniqueId].properties;
+      if(response.substitutionFilters) {
+        this.constraintProperties = response.substitutionFilters.properties;
       }
     });
   }

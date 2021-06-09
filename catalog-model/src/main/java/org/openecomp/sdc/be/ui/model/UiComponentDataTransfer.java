@@ -73,9 +73,8 @@ public class UiComponentDataTransfer {
     private List<GroupDefinition> groups;
     private Map<String, InterfaceDefinition> interfaces;
     private Map<String, CINodeFilterDataDefinition> nodeFilter;
-    private Map<String, SubstitutionFilterDataDefinition> substitutionFilter;
+    private UINodeFilter substitutionFilters;
     private Map<String, UINodeFilter> nodeFilterforNode;
-    private Map<String, UINodeFilter> substitutionFilterForTopologyTemplate;
     private List<PropertyDefinition> properties;
     private List<AttributeDefinition> attributes;
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;

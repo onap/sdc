@@ -71,7 +71,7 @@ export class SubstitutionFilterTabComponent {
 
     public loadConstraints = (): void => {
         this.topologyTemplateService.getSubstitutionFilterConstraints(this.metaData.componentType, this.metaData.uniqueId).subscribe((response) => {
-            this.componentInstancesConstraints = response.substitutionFilterForTopologyTemplate;
+            this.componentInstancesConstraints = response.substitutionFilters;
         });
     }
 
