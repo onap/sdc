@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46be21dd_62367a39",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-09T11:33:04Z",
+      "side": 1,
+      "message": "I find the logic a little confusing, also is changing the previous behaviour. There is a mix with validation need and manifest read problems.\n\nI suggest to change to:\n\nif(manifest \u003d\u003d null){\nreportError(ErrorLevel.ERROR, COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName));\nreturn null;\n}\n\nif (manifestValidationRequired) {\n\n  List\u003cString\u003e errors \u003d validateZipPackage(manifest);\n  if (!errors.isEmpty()) {\n    errors.forEach(message -\u003e reportError(ErrorLevel.ERROR, message));\n    return null;\n  }\n}\n\nreturn return new OnboardPackageInfo(\n  new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),                               packageContent), OnboardingTypesEnum.ZIP);",
+      "range": {
+        "startLine": 150,
+        "startChar": 8,
+        "endLine": 164,
+        "endChar": 9
+      },
+      "revId": "2847100dc3904bbf160d4e5ec3ab89aee6c4ffd5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
