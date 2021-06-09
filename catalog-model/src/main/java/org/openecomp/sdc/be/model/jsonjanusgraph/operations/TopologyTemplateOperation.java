@@ -88,6 +88,9 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
+import org.openecomp.sdc.common.log.elements.ErrorLogOptionalData;
+import org.openecomp.sdc.common.log.enums.EcompErrorSeverity;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -971,7 +974,16 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         final Either<Map<String, SubstitutionFilterDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV,
             EdgeLabelEnum.SUBSTITUTION_FILTER_TEMPLATE);
         if (result.isLeft()) {
-            topologyTemplate.setSubstitutionFilterDataDefinitionMap(result.left().value());
+            final Map<String, SubstitutionFilterDataDefinition> filters = result.left().value();
+            if (MapUtils.isEmpty(filters)) {
+                return JanusGraphOperationStatus.OK;
+            }
+            if(filters.values().size() > 1) {
+                log.error(EcompLoggerErrorCode.DATA_ERROR, TopologyTemplateOperation.class.getName(),
+                    (ErrorLogOptionalData) null, "Only a single substitution filter is expected, but got '{}'", filters.values().size());
+                return JanusGraphOperationStatus.GENERAL_ERROR;
+            }
+            topologyTemplate.setSubstitutionFilters(new SubstitutionFilterDataDefinition(filters.values().iterator().next()));
         } else {
             if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 return result.right().value();

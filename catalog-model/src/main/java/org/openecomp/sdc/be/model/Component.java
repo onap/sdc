@@ -87,7 +87,6 @@ public abstract class Component implements PropertiesOwner {
     private String derivedFromGenericVersion;
     private String toscaType;
     private Map<String, CINodeFilterDataDefinition> nodeFilterComponents;
-    private Map<String, SubstitutionFilterDataDefinition> substitutionFilterComponents;
     private Map<String, InterfaceDefinition> interfaces;
     private List<DataTypeDefinition> dataTypes;
     private SubstitutionFilterDataDefinition substitutionFilter;

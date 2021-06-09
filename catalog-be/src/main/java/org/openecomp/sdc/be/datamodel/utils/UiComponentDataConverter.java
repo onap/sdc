@@ -50,7 +50,6 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.tosca.utils.NodeFilterConverter;
 import org.openecomp.sdc.be.tosca.utils.SubstitutionFilterConverter;
-import org.openecomp.sdc.be.ui.model.UINodeFilter;
 import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.ui.model.UiComponentMetadata;
 import org.openecomp.sdc.be.ui.model.UiResourceDataTransfer;
@@ -177,10 +176,11 @@ public class UiComponentDataConverter {
     }
 
     private void setSubstitutionFilter(final UiComponentDataTransfer dataTransfer, final Component component) {
-        if (component.getSubstitutionFilterComponents() == null) {
-            dataTransfer.setSubstitutionFilter(null);
+        if (component.getSubstitutionFilter() == null) {
+            dataTransfer.setSubstitutionFilters(null);
         } else {
-            dataTransfer.setSubstitutionFilter(component.getSubstitutionFilterComponents());
+            final SubstitutionFilterConverter substitutionFilterConverter = new SubstitutionFilterConverter();
+            dataTransfer.setSubstitutionFilters(substitutionFilterConverter.convertToUi(component.getSubstitutionFilter()));
         }
     }
 
@@ -387,12 +387,10 @@ public class UiComponentDataConverter {
                     break;
                 case SUBSTITUTION_FILTER:
                     if (resource.getSubstitutionFilter() == null) {
-                        dataTransfer.setSubstitutionFilterForTopologyTemplate(null);
+                        dataTransfer.setSubstitutionFilters(null);
                     } else {
                         final SubstitutionFilterConverter substitutionFilterConverter = new SubstitutionFilterConverter();
-                        final Map<String, UINodeFilter> filterUiMap = new HashMap<>();
-                        filterUiMap.put(resource.getUniqueId(), substitutionFilterConverter.convertToUi(resource.getSubstitutionFilter()));
-                        dataTransfer.setSubstitutionFilterForTopologyTemplate(filterUiMap);
+                        dataTransfer.setSubstitutionFilters(substitutionFilterConverter.convertToUi(resource.getSubstitutionFilter()));
                     }
                     break;
                 case NODE_FILTER:
@@ -458,12 +456,10 @@ public class UiComponentDataConverter {
                     break;
                 case SUBSTITUTION_FILTER:
                     if (service.getSubstitutionFilter() == null) {
-                        dataTransfer.setSubstitutionFilterForTopologyTemplate(null);
+                        dataTransfer.setSubstitutionFilters(null);
                     } else {
                         final SubstitutionFilterConverter substitutionFilterConverter = new SubstitutionFilterConverter();
-                        final Map<String, UINodeFilter> filterUiMap = new HashMap<>();
-                        filterUiMap.put(service.getUniqueId(), substitutionFilterConverter.convertToUi(service.getSubstitutionFilter()));
-                        dataTransfer.setSubstitutionFilterForTopologyTemplate(filterUiMap);
+                        dataTransfer.setSubstitutionFilters(substitutionFilterConverter.convertToUi(service.getSubstitutionFilter()));
                     }
                     break;
                 default:

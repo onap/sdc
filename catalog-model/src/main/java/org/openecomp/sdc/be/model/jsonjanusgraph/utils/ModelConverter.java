@@ -902,10 +902,12 @@ public class ModelConverter {
     }
 
     private static void convertSubstitutionFiltersComponents(final TopologyTemplate topologyTemplate, final Component component) {
-        final Map<String, SubstitutionFilterDataDefinition> filters = topologyTemplate.getSubstitutionFilterDataDefinitionMap();
-        if (MapUtils.isNotEmpty(filters)) {
-            component.setSubstitutionFilter(filters.get(component.getUniqueId()));
+        final SubstitutionFilterDataDefinition filters = topologyTemplate.getSubstitutionFilters();
+        if (filters == null){
+            component.setSubstitutionFilter(null);
+            return;
         }
+        component.setSubstitutionFilter(new SubstitutionFilterDataDefinition(filters));
     }
 
     private static void convertServiceApiArtifacts(TopologyTemplate topologyTemplate, Service service) {
