@@ -46,6 +46,30 @@
       "revId": "2e685a520ec6d785818b13e725c4167474942702",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bdb3196_45f38935",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/CassandraConfigurationManager.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2021-06-09T13:42:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71c9e8d9_185c96ec",
+      "range": {
+        "startLine": 210,
+        "startChar": 8,
+        "endLine": 210,
+        "endChar": 99
+      },
+      "revId": "2e685a520ec6d785818b13e725c4167474942702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
