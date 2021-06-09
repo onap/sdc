@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a26f58b_05494949",
+        "filename": "openecomp-be/lib/openecomp-core-lib/openecomp-nosqldb-lib/openecomp-nosqldb-core/src/main/java/org/openecomp/core/nosqldb/util/CassandraConfigurationManager.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-09T11:22:10Z",
+      "side": 1,
+      "message": "if you can, please fix the format.",
+      "range": {
+        "startLine": 210,
+        "startChar": 8,
+        "endLine": 210,
+        "endChar": 99
+      },
+      "revId": "2e685a520ec6d785818b13e725c4167474942702",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
