@@ -22,6 +22,30 @@
       "revId": "2847100dc3904bbf160d4e5ec3ab89aee6c4ffd5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b43d1435_e05770c7",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2021-06-09T15:02:03Z",
+      "side": 1,
+      "message": "That\u0027s wanted, and i think i know why it\u0027s confusing.\nIt\u0027s due to my commit message, it\u0027s not only the zip validation that we would like to disable but the Manifest.json enforcement.\n\nValidation is done with the manifest (so validation \u003d manifest check), here what we want to achieve is a way to ingest the zip even if the manifest is not there and when the new Flag is set to false in the onboarding config\nIt works because the manifest nullity is verified in the validateZipPackage method (and below calls cf. ManifestAnalyzer...)\n\nSo when the flag is set to true (which is the default), the behavior is not changed.\nWhen it\u0027s false the manifest check + validation are just not used, what matters is the return code         \nreturn new OnboardPackageInfo(\n                        new OnboardPackage(packageName, packageExtension, ByteBuffer.wrap(packageFileContent),\n                                packageContent), OnboardingTypesEnum.ZIP);\n\n\nI can\u0027t do something like you suggested:\nif(manifest \u003d\u003d null){\nreportError(ErrorLevel.ERROR, COULD_NOT_READ_MANIFEST_FILE.formatMessage(SdcCommon.MANIFEST_NAME, packageFileName));\nreturn null;\n}\nBecause that won\u0027t fit my need\n\nI could make the code less concise to be more explicit (or obviously different) if it\u0027s still not clear to you (I could have missed something!)\nwhat do you think ?",
+      "parentUuid": "46be21dd_62367a39",
+      "range": {
+        "startLine": 150,
+        "startChar": 8,
+        "endLine": 164,
+        "endChar": 9
+      },
+      "revId": "2847100dc3904bbf160d4e5ec3ab89aee6c4ffd5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
