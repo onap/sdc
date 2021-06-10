@@ -70,6 +70,30 @@
       "revId": "2847100dc3904bbf160d4e5ec3ab89aee6c4ffd5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f257e81_30827f97",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/onboarding/OnboardingPackageProcessor.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 23
+      },
+      "writtenOn": "2021-06-10T16:27:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dd1ee285_5040ea6b",
+      "range": {
+        "startLine": 150,
+        "startChar": 8,
+        "endLine": 164,
+        "endChar": 9
+      },
+      "revId": "2847100dc3904bbf160d4e5ec3ab89aee6c4ffd5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
