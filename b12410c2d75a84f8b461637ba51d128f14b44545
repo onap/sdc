@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a2d75d5_62c94308",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/dataProvider/OnbordingDataProviders.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-11T13:48:11Z",
+      "side": 1,
+      "message": "better to use loggers instead of sysout",
+      "range": {
+        "startLine": 119,
+        "startChar": 8,
+        "endLine": 119,
+        "endChar": 106
+      },
+      "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c776f123_55a93109",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/OnboardingFlowsUi.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-11T13:48:11Z",
+      "side": 1,
+      "message": "we are avoiding to use the old UI test code and moving to use the new Flow and Page Objects.\nThis code also have a mix of UI and API calls, which is not the idea of UI tests.\n\nThere is already some flows and examples for the creation of a VLM and VSP, which could be improved if needed:\n\norg.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow\norg.onap.sdc.frontend.ci.tests.flow.CreateVspFlow\n\nYou can look for the usages of the flow to understand how it works.\n\nFor the pages, like the VspValidationPage, it should be represented by a extension of the extends org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject, which should have a method to check if the page is ready to work (isLoaded) and methods to interact with the page.\n\nWe are avoiding static methods and any explicit waits. We should base our flows in the current state of the UI itself, making sure the UI you want to work is available (isLoaded). Also trying to decompose the pages in small reusable components. The component actions should return you the next page when it do so, for example, when you click on a button/link that loads a dialog or a new page.\n\nI know those other classes and methods were not deprecated. This is a recommendation for a better maintainable and reusable UI test, if you could follow the idea and rework this commit would be great. But I understand if you intend to keep that way for now.\n\nWhat do you think?",
+      "range": {
+        "startLine": 481,
+        "startChar": 8,
+        "endLine": 487,
+        "endChar": 0
+      },
+      "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
