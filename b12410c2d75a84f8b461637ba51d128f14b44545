@@ -45,6 +45,30 @@
       "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4148358_f477a42c",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/OnboardingFlowsUi.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-06-14T06:44:39Z",
+      "side": 1,
+      "message": "I will check your solution, if it will be easy to introduce I will do it, if it be very complicated - I would like to keep current solution. \nIt will be ok?",
+      "parentUuid": "c776f123_55a93109",
+      "range": {
+        "startLine": 481,
+        "startChar": 8,
+        "endLine": 487,
+        "endChar": 0
+      },
+      "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
