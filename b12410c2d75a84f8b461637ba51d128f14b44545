@@ -117,6 +117,30 @@
       "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d224202f_905dac64",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/OnboardingFlowsUi.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-06-15T16:27:53Z",
+      "side": 1,
+      "message": "Ok, no problem. I understand that it requires a lot of changes in the provided solution.",
+      "parentUuid": "078aeea3_8e67fa26",
+      "range": {
+        "startLine": 481,
+        "startChar": 8,
+        "endLine": 487,
+        "endChar": 0
+      },
+      "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
