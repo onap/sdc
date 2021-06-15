@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ecefb79a_161b5e99",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/dataProvider/OnbordingDataProviders.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-06-15T13:41:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a2d75d5_62c94308",
+      "range": {
+        "startLine": 119,
+        "startChar": 8,
+        "endLine": 119,
+        "endChar": 106
+      },
+      "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c776f123_55a93109",
         "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/OnboardingFlowsUi.java",
         "patchSetId": 11
@@ -69,6 +93,30 @@
       "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "078aeea3_8e67fa26",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/OnboardingFlowsUi.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-06-15T13:41:08Z",
+      "side": 1,
+      "message": "I was trying to use flow (based on CreateVspFlow.java). Unfortunately, HelmValidator test cases break this flow (Test verify status of helm validation, which is in the middle of flow) and some VSP cannot be successful created (Method CreateVspFlow.run(PageObbjects..) required to click submit button - it is disabled for some validation cases). \n\nVspValidationPage currently extends GeneralPageElement, Creating new VspValidationPage with other base class could be confusing. \n\nSo I would like to keep helm-validator tests in current solution",
+      "parentUuid": "d4148358_f477a42c",
+      "range": {
+        "startLine": 481,
+        "startChar": 8,
+        "endLine": 487,
+        "endChar": 0
+      },
+      "revId": "b12410c2d75a84f8b461637ba51d128f14b44545",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
