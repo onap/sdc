@@ -33,7 +33,7 @@ import {
     ValidationUtils
 } from "app/utils";
 import {EventListenerService, ProgressService} from "app/services";
-import {CacheService, ElementService, ImportVSPService, OnboardingService} from "app/services-ng2";
+import {CacheService, ElementService, ModelService, ImportVSPService, OnboardingService} from "app/services-ng2";
 import {Component, IAppConfigurtaion, ICsarComponent, IMainCategory, IMetadataKey, ISubCategory, IValidate, Resource, Service} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {CATEGORY_SERVICE_METADATA_KEYS, PREVIOUS_CSAR_COMPONENT} from "../../../../utils/constants";
@@ -51,6 +51,10 @@ export class Validation {
 
 export class componentCategories {//categories field bind to this obj in order to solve this bug: DE242059
     selectedCategory:string;
+}
+
+export class componentModel {
+    selectedModel:string;
 }
 
 export interface IEnvironmentContext {
@@ -73,6 +77,7 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     importCsarProProgressKey:string;
     browseFileLabel:string;
     componentCategories:componentCategories;
+    componentModel:componentModel;
     instantiationTypes:Array<instantiationType>;
     isHiddenCategorySelected: boolean;
 
@@ -95,6 +100,7 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     onInstantiationTypeChange():void;
     updateIcon():void;
     possibleToUpdateIcon():boolean;
+    initModel():void;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -124,6 +130,7 @@ export class GeneralViewModel {
         'ComponentFactory',
         'ImportVSPService',
         'ElementService',
+        'ModelService',
         '$stateParams'
     ];
 
@@ -150,6 +157,7 @@ export class GeneralViewModel {
                 private ComponentFactory:ComponentFactory,
                 private importVSPService: ImportVSPService,
                 private elementService: ElementService,
+                private modelService: ModelService,
                 private $stateParams: any) {
 
         this.initScopeValidation();
@@ -270,6 +278,7 @@ export class GeneralViewModel {
             // Init Instantiation types
             this.$scope.initInstantiationTypes();
             this.$scope.initBaseTypes();
+            this.$scope.initModel();
         }
 
         if (this.cacheService.get(PREVIOUS_CSAR_COMPONENT)) { //keep the old component in the cache until checkout, so we dont need to pass it around
@@ -448,6 +457,15 @@ export class GeneralViewModel {
 	                         baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
                      }});
                  })
+            }
+        };
+
+        this.$scope.initModel = ():void => {
+            if (this.$scope.componentType === ComponentType.SERVICE) {
+                this.$scope.models = new Array();
+                this.modelService.getModels().subscribe((modelsFound: Model[]) => {
+                    modelsFound.forEach(model => {this.$scope.models.push(model.name)});})
+                this.$scope.models.filter(model => model.name === (<Service>this.$scope.component).model);
             }
         };
 

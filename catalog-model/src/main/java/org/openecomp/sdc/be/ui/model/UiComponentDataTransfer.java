@@ -80,5 +80,6 @@ public class UiComponentDataTransfer {
     private Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces;
     private String derivedFromGenericType;
     private String derivedFromGenericVersion;
+    private String model;
 
 }

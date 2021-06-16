@@ -44,6 +44,7 @@ import { HomeService } from '../ng2/services/home.service';
 import { ModalService } from '../ng2/services/modal.service';
 import { OnboardingService } from '../ng2/services/onboarding.service';
 import { ElementService } from '../ng2/services/element.service';
+import { ModelService } from '../ng2/services/model.service';
 import { PluginsService } from '../ng2/services/plugins.service';
 import { PoliciesService as PoliciesServiceNg2 } from '../ng2/services/policies.service';
 import { SharingService } from '../ng2/services/sharing.service';
@@ -128,4 +129,5 @@ serviceModule.factory('ReqAndCapabilitiesService', downgradeInjectable(ReqAndCap
 serviceModule.factory('NodesFactory', downgradeInjectable(NodesFactory));
 serviceModule.service('OnboardingService', downgradeInjectable(OnboardingService));
 serviceModule.service('ElementService', downgradeInjectable(ElementService));
+serviceModule.service('ModelService', downgradeInjectable(ModelService));
 serviceModule.service('ImportVSPService', downgradeInjectable(ImportVSPService));

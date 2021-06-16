@@ -70,7 +70,8 @@ public enum EdgeLabelEnum {
     NODE_FILTER_TEMPLATE,
     SUBSTITUTION_FILTER_TEMPLATE,
     DATA_TYPES,
-    MODEL_ELEMENT;
+    MODEL_ELEMENT,
+    MODEL;
     // @formatter:on
 
     /**

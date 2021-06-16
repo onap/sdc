@@ -146,6 +146,7 @@ export abstract class Component implements IComponent {
     public categorySpecificMetadata: Metadata = new Metadata();
     public derivedFromGenericType: string;
     public derivedFromGenericVersion: string;
+    public model: Model;
 
     constructor(componentService:IComponentService, protected $q:ng.IQService, component?:Component) {
         if (component) {
@@ -210,6 +211,7 @@ export abstract class Component implements IComponent {
 
             this.derivedFromGenericType = component.derivedFromGenericType;
             this.derivedFromGenericVersion = component.derivedFromGenericVersion;
+            this.model = component.model;
         }
 
         //custom properties

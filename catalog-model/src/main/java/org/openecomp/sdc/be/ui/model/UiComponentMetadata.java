@@ -63,6 +63,7 @@ public abstract class UiComponentMetadata {
     private Boolean isArchived;
     private Long archiveTime;
     private Boolean isVspArchived;
+    private String model;
 
     public UiComponentMetadata() {
     }
@@ -98,5 +99,6 @@ public abstract class UiComponentMetadata {
         this.isArchived = metadata.isArchived();
         this.archiveTime = metadata.getArchiveTime();
         this.isVspArchived = metadata.isVspArchived();
+        this.model = metadata.getModel();
     }
 }
