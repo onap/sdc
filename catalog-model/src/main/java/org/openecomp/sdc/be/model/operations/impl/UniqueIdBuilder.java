@@ -97,6 +97,10 @@ public class UniqueIdBuilder {
         return StringUtils.isEmpty(modelName) ? type : modelName + DOT + type;
     }
 
+    public static String buildInterfaceTypeUid(final String modelName, String type) {
+        return StringUtils.isEmpty(modelName) ? type : modelName + DOT + type;
+    }
+
     public static String buildAttributeUid(String resourceId, String attName) {
         return buildTypeUid(NodeTypeEnum.Attribute.getName(), resourceId, attName);
     }

@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,8 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -37,10 +39,13 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
+
+import fj.data.Either;
 
 @Component("interfaceLifecycleTypeImportManager")
 public class InterfaceLifecycleTypeImportManager {
@@ -53,8 +58,8 @@ public class InterfaceLifecycleTypeImportManager {
     @Resource
     private CommonImportManager commonImportManager;
 
-    public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml) {
-        Either<List<InterfaceDefinition>, ActionStatus> interfaces = createInterfaceTypeFromYml(interfaceLifecycleTypesYml);
+    public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml, final String modelName) {
+        Either<List<InterfaceDefinition>, ActionStatus> interfaces = createInterfaceTypeFromYml(interfaceLifecycleTypesYml, modelName);
         if (interfaces.isRight()) {
             ActionStatus status = interfaces.right().value();
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByGroupType(status, null);
@@ -63,8 +68,12 @@ public class InterfaceLifecycleTypeImportManager {
         return createInterfacesByDao(interfaces.left().value());
     }
 
-    private Either<List<InterfaceDefinition>, ActionStatus> createInterfaceTypeFromYml(final String interfaceTypesYml) {
-        return commonImportManager.createElementTypesFromYml(interfaceTypesYml, this::createInterfaceDefinition);
+    private Either<List<InterfaceDefinition>, ActionStatus> createInterfaceTypeFromYml(final String interfaceTypesYml, final String modelName) {
+        final Either<List<InterfaceDefinition>, ActionStatus> interfaceTypes = commonImportManager.createElementTypesFromYml(interfaceTypesYml, this::createInterfaceDefinition);
+        if (interfaceTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+            interfaceTypes.left().value().forEach(interfaceType -> interfaceType.setModel(modelName));
+        }
+        return interfaceTypes;
     }
 
     private Either<List<InterfaceDefinition>, ResponseFormat> createInterfacesByDao(List<InterfaceDefinition> interfacesToCreate) {
