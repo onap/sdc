@@ -185,6 +185,10 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (associateCapProperties != StorageOperationStatus.OK) {
             return Either.right(associatePathProperties);
         }
+        final StorageOperationStatus associateServiceToModel = associateComponentMetadataToModel(topologyTemplateVertex, topologyTemplate);
+        if (associateServiceToModel != StorageOperationStatus.OK) {
+            return Either.right(associateServiceToModel);
+        }
         return Either.left(topologyTemplate);
     }
 

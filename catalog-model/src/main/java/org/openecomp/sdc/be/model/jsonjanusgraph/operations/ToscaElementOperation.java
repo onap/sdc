@@ -425,7 +425,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return StorageOperationStatus.OK;
     }
 
-    protected StorageOperationStatus associateResourceMetadataToModel(final GraphVertex nodeTypeVertex, final ToscaElement nodeType) {
+    protected StorageOperationStatus associateComponentMetadataToModel(final GraphVertex nodeTypeVertex, final ToscaElement nodeType) {
         if (nodeType.getMetadataValue(JsonPresentationFields.MODEL) == null) {
             return StorageOperationStatus.OK;
         }

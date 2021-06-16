@@ -39,6 +39,7 @@ public class UiServiceMetadata extends UiComponentMetadata {
     private String instantiationType;
     private String serviceFunction;
     private Map<String, String> categorySpecificMetadata;
+    private String model;
 
     public UiServiceMetadata(List<CategoryDefinition> categories, ServiceMetadataDataDefinition metadata) {
         super(categories, metadata);
@@ -51,5 +52,6 @@ public class UiServiceMetadata extends UiComponentMetadata {
         this.instantiationType = metadata.getInstantiationType();
         this.serviceFunction = metadata.getServiceFunction();
         this.categorySpecificMetadata = metadata.getCategorySpecificMetadata();
+        this.model = metadata.getModel();
     }
 }
