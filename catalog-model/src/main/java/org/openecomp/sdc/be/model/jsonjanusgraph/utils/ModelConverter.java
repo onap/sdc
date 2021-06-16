@@ -736,7 +736,6 @@ public class ModelConverter {
             resource.setToscaResourceName((String) toscaElement.getMetadataValue(JsonPresentationFields.TOSCA_RESOURCE_NAME));
             resource.setVendorName((String) toscaElement.getMetadataValue(JsonPresentationFields.VENDOR_NAME));
             resource.setVendorRelease((String) toscaElement.getMetadataValue(JsonPresentationFields.VENDOR_RELEASE));
-            resource.setModel((String) toscaElement.getMetadataValue(JsonPresentationFields.MODEL));
             // field isn't mandatory , but shouldn't be null(should be an empty string instead)
             if (((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER)) != null) {
                 resource.setResourceVendorModelNumber((String) toscaElement.getMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER));
@@ -769,6 +768,7 @@ public class ModelConverter {
         component.setContactId((String) toscaElement.getMetadataValue(JsonPresentationFields.CONTACT_ID));
         component.setUUID((String) toscaElement.getMetadataValue(JsonPresentationFields.UUID));
         component.setIsDeleted((Boolean) toscaElement.getMetadataValue(JsonPresentationFields.IS_DELETED));
+        component.setModel((String) toscaElement.getMetadataValue(JsonPresentationFields.MODEL));
         component.setToscaType(toscaElement.getToscaType().getValue());
         final List<MetadataKeyDataDefinition> metadataKeys = getCategorySpecificMetadataKeys(toscaElement);
         if (CollectionUtils.isNotEmpty(metadataKeys)) {
@@ -1331,6 +1331,8 @@ public class ModelConverter {
         toscaElement.setMetadataValue(JsonPresentationFields.TAGS, component.getTags());
         toscaElement.setMetadataValue(JsonPresentationFields.INVARIANT_UUID, component.getInvariantUUID());
         toscaElement.setMetadataValue(JsonPresentationFields.CONTACT_ID, component.getContactId());
+        toscaElement.setMetadataValue(JsonPresentationFields.MODEL, component.getModel());
+        toscaElement.setModel(component.getModel());
         for (final String key : component.getCategorySpecificMetadata().keySet()) {
             toscaElement.setMetadataValue(key, component.getCategorySpecificMetadata().get(key));
         }

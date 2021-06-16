@@ -425,13 +425,13 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return StorageOperationStatus.OK;
     }
 
-    protected StorageOperationStatus associateResourceMetadataToModel(final GraphVertex nodeTypeVertex, final ToscaElement nodeType) {
+    protected StorageOperationStatus associateComponentToModel(final GraphVertex nodeTypeVertex, final ToscaElement nodeType,
+                                                               final EdgeLabelEnum edgeLabelEnum) {
         if (nodeType.getMetadataValue(JsonPresentationFields.MODEL) == null) {
             return StorageOperationStatus.OK;
         }
         final String model = ((String) nodeType.getMetadataValue(JsonPresentationFields.MODEL));
-        final JanusGraphOperationStatus createEdge = janusGraphDao
-            .createEdge(getModelVertex(model), nodeTypeVertex, EdgeLabelEnum.MODEL_ELEMENT, new HashMap<>());
+        final JanusGraphOperationStatus createEdge = janusGraphDao.createEdge(getModelVertex(model), nodeTypeVertex, edgeLabelEnum, new HashMap<>());
         if (createEdge != JanusGraphOperationStatus.OK) {
             log.trace("Failed to associate resource {} to model {}", nodeType.getUniqueId(), model);
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(createEdge);

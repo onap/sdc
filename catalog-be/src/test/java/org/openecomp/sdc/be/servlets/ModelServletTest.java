@@ -49,7 +49,6 @@ import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -105,8 +104,6 @@ class ModelServletTest extends JerseyTest {
     private ResourceImportManager resourceImportManager;
     @Mock
     private ModelBusinessLogic modelBusinessLogic;
-    @InjectMocks
-    private ModelServlet modelServlet;
     @Mock
     private ResponseFormat responseFormat;
     @Mock

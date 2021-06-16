@@ -89,7 +89,6 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.elements.ErrorLogOptionalData;
-import org.openecomp.sdc.common.log.enums.EcompErrorSeverity;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
@@ -187,6 +186,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         StorageOperationStatus associatePathProperties = associateForwardingPathToResource(topologyTemplateVertex, topologyTemplate);
         if (associateCapProperties != StorageOperationStatus.OK) {
             return Either.right(associatePathProperties);
+        }
+        final StorageOperationStatus associateServiceToModel = associateComponentToModel(topologyTemplateVertex, topologyTemplate,
+            EdgeLabelEnum.MODEL);
+        if (associateServiceToModel != StorageOperationStatus.OK) {
+            return Either.right(associateServiceToModel);
         }
         return Either.left(topologyTemplate);
     }

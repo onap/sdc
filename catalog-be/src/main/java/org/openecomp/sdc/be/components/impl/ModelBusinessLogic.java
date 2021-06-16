@@ -50,7 +50,7 @@ public class ModelBusinessLogic {
     }
 
     public Model createModel(final Model model) {
-        LOGGER.debug("createModel: creating model {}", model);
+        LOGGER.debug("creating model {}", model);
         return modelOperation.createModel(model, false);
     }
 

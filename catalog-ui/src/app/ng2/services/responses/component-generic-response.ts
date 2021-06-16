@@ -61,6 +61,7 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
     public substitutionFilters: any;
     public derivedFromGenericType;
     public derivedFromGenericVersion;
+    public model:Model;
 
     deserialize (response): ComponentGenericResponse {
 
@@ -137,6 +138,9 @@ export class ComponentGenericResponse  implements Serializable<ComponentGenericR
         }
         if(response.derivedFromGenericVersion) {
             this.derivedFromGenericVersion = response.derivedFromGenericVersion;
+        }
+        if(response.model) {
+            this.model = response.model;
         }
         return this;
     }

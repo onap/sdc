@@ -2451,6 +2451,9 @@ public class ServiceImportBusinessLogic {
         if (CollectionUtils.isEmpty(newResource.getProperties())) {
             newResource.setProperties(oldResource.getProperties());
         }
+        if (newResource.getModel() == null) {
+            newResource.setModel(oldResource.getModel());
+        }
     }
 
     protected Map<String, Resource> createResourcesFromYamlNodeTypesList(String yamlName, Service service, Map<String, Object> mappedToscaTemplate,

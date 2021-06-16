@@ -100,6 +100,7 @@ import {CapabilitiesFilterPropertiesEditorComponentModule} from "./pages/composi
 import {InterfaceOperationHandlerModule} from "./pages/composition/interface-operatons/operation-creator/interface-operation-handler.module";
 import {AttributesOutputsModule} from "./pages/attributes-outputs/attributes-outputs.module";
 import { ElementService } from "./services/element.service";
+import { ModelService } from "./services/model.service";
 
 
 declare const __ENV__: string;
@@ -199,6 +200,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ImportVSPService,
     OnboardingService,
     ElementService,
+    ModelService,
     ServiceServiceNg2,
     AutomatedUpgradeService,
     WorkflowServiceNg2,

@@ -137,7 +137,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         if (addAdditionalInformation != StorageOperationStatus.OK) {
             return Either.right(addAdditionalInformation);
         }
-        final StorageOperationStatus associateNodeTypeToModel = associateResourceMetadataToModel(nodeTypeVertex, nodeType);
+        final StorageOperationStatus associateNodeTypeToModel = associateComponentToModel(nodeTypeVertex, nodeType, EdgeLabelEnum.MODEL_ELEMENT);
         if (associateNodeTypeToModel != StorageOperationStatus.OK) {
             return Either.right(associateNodeTypeToModel);
         }
