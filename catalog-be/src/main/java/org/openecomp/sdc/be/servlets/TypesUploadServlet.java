@@ -162,9 +162,10 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "Interface Lifecycle Type already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadInterfaceLifecycleType(@Parameter(description = "FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file,
-                                                 @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+                                                 @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                                 @Parameter(description = "model") @FormDataParam("model") String modelName) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper,
-            () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload));
+            () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload, modelName));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "Interface Types");
     }
 
