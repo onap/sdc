@@ -19,23 +19,30 @@
  */
 package org.openecomp.sdc.be.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Definition of the operations that can be performed on (instances of) a Node Type.
  *
  * @author esofer
  */
+@NoArgsConstructor
 public class InterfaceDefinition extends InterfaceDataDefinition implements IOperationParameter {
 
-    public InterfaceDefinition() {
-        super();
-    }
+    @Getter
+    @Setter
+    private String model;
 
     public InterfaceDefinition(String type, String description, Map<String, Operation> operations) {
         super(type, description);
