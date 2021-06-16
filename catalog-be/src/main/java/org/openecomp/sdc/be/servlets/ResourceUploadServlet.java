@@ -123,6 +123,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             commonGeneralValidations(responseWrapper, userWrapper, uploadResourceInfoWrapper, resourceAuthorityEnum, userId, resourceInfoJsonString);
             final String modelNameToBeAssociated = uploadResourceInfoWrapper.getInnerElement().getModel();
             if (modelNameToBeAssociated != null) {
+                log.debug("Model Name to be validated", modelNameToBeAssociated);
                 validateModel(modelNameToBeAssociated);
             }
             fillPayload(responseWrapper, uploadResourceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), resourceInfoJsonString,
@@ -155,6 +156,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
      */
     private void validateModel(final String modelName) {
         if (modelBusinessLogic.findModel(modelName).isEmpty()) {
+            log.error("Could not find model name", modelName);
             throw ModelOperationExceptionSupplier.invalidModel(modelName).get();
         }
     }

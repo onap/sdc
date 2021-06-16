@@ -20,6 +20,8 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -125,6 +127,25 @@ public class ModelOperation {
         final GraphVertex graphVertex = modelVertexOpt.get();
         final var model = new Model((String) graphVertex.getMetadataProperty(GraphPropertyEnum.NAME));
         return Optional.of(model);
+    }
+
+    public List<Model> findAll() {
+        final List<Model> modelsFound = new ArrayList<>();
+        final Either<List<GraphVertex>, JanusGraphOperationStatus> modelsVertex =
+            janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, MapUtils.EMPTY_SORTED_MAP);
+        if (modelsVertex.isRight()) {
+            final JanusGraphOperationStatus janusGraphOperationStatus = modelsVertex.right().value();
+            if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
+                return Collections.EMPTY_LIST;
+            }
+            log.error(EcompLoggerErrorCode.DATA_ERROR, this.getClass().getName(),
+                String.format("Problem while fetching all models", janusGraphOperationStatus));
+            throw new OperationException(ActionStatus.GENERAL_ERROR,
+                String.format("Failed to fetch all models on JanusGraph with %s error", janusGraphOperationStatus));
+        }
+        modelsVertex.left().value().forEach(graphVertex ->  modelsFound.add(new Model(
+            (String) graphVertex.getMetadataProperty(GraphPropertyEnum.NAME))));
+        return modelsFound;
     }
 
     public void createModelImports(final String modelId, final Map<String, byte[]> zipContent) {

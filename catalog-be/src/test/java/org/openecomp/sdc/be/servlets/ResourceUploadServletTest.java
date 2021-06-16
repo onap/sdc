@@ -122,7 +122,6 @@ class ResourceUploadServletTest extends JerseyTest {
     private final String modelName = "ETSI-SOL001-331";
 
     private final String rootPath = "/v1/catalog/upload/multipart";
-    private Response response;
     private User user;
 
     @BeforeAll
@@ -203,7 +202,7 @@ class ResourceUploadServletTest extends JerseyTest {
         when(resourceImportManager.importNormativeResource(anyString(), any(), any(), anyBoolean(), anyBoolean()))
             .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.CREATED));
         when(modelBusinessLogic.findModel(modelName)).thenReturn(Optional.of(new Model(modelName)));
-        response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
+        final var response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
             .post(Entity.entity(buildFormDataMultiPart("node-types/TestNodeType001.zip",
                 "src/test/resources/node-types/nodeTypeWithModelsField.json"), MediaType.MULTIPART_FORM_DATA), Response.class);
@@ -219,7 +218,7 @@ class ResourceUploadServletTest extends JerseyTest {
         when(resourceBusinessLogic.validatePropertiesDefaultValues(any())).thenReturn(true);
         when(resourceImportManager.importNormativeResource(anyString(), any(), any(), anyBoolean(), anyBoolean()))
             .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.CREATED));
-        response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
+        final var response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
             .post(Entity.entity(buildFormDataMultiPart("node-types/TestNodeType002.zip",
                 "src/test/resources/node-types/nodeTypeWithoutModelsField.json"), MediaType.MULTIPART_FORM_DATA), Response.class);
@@ -228,11 +227,13 @@ class ResourceUploadServletTest extends JerseyTest {
 
     @Test
     void uploadMultipartFailWithEmptyModelsTest() throws IOException, ParseException, URISyntaxException {
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
         when(servletUtils.getUserAdmin()).thenReturn(userBusinessLogic);
         when(userBusinessLogic.getUser(anyString())).thenReturn(user);
         when(resourceBusinessLogic.validatePropertiesDefaultValues(any())).thenReturn(true);
         when(modelBusinessLogic.findModel("")).thenReturn(Optional.empty());
-        response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
+        final Response response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
             .post(Entity.entity(buildFormDataMultiPart("node-types/TestNodeType002.zip",
                 "src/test/resources/node-types/nodeTypeWithEmptyModels.json"), MediaType.MULTIPART_FORM_DATA), Response.class);
@@ -245,7 +246,7 @@ class ResourceUploadServletTest extends JerseyTest {
         when(userBusinessLogic.getUser(anyString())).thenReturn(user);
         when(resourceBusinessLogic.validatePropertiesDefaultValues(any())).thenReturn(true);
         when(modelBusinessLogic.findModel(modelName)).thenReturn(Optional.empty());
-        response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
+        final var response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
             .post(Entity.entity(buildFormDataMultiPart("node-types/TestNodeType001.zip",
                 "src/test/resources/node-types/nodeTypeWithModelsField.json"), MediaType.MULTIPART_FORM_DATA), Response.class);
@@ -254,10 +255,12 @@ class ResourceUploadServletTest extends JerseyTest {
 
     @Test
     void uploadMultipartThrowsBusinessExceptionTest() throws IOException, ParseException, URISyntaxException {
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
         when(servletUtils.getUserAdmin()).thenReturn(userBusinessLogic);
         when(userBusinessLogic.getUser(anyString())).thenReturn(user);
         when(resourceBusinessLogic.validatePropertiesDefaultValues(any())).thenReturn(true);
-        response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
+        final var response = target().path(rootPath).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
             .post(Entity.entity(buildFormDataMultiPart("node-types/TestNodeType001.zip",
                 "src/test/resources/node-types/invalid.json"), MediaType.MULTIPART_FORM_DATA), Response.class);

@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -49,7 +50,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -106,8 +106,6 @@ class ModelServletTest extends JerseyTest {
     private ResourceImportManager resourceImportManager;
     @Mock
     private ModelBusinessLogic modelBusinessLogic;
-    @InjectMocks
-    private ModelServlet modelServlet;
     @Mock
     private ResponseFormat responseFormat;
     @Mock
@@ -120,6 +118,7 @@ class ModelServletTest extends JerseyTest {
     private ModelCreateRequest modelCreateRequest;
     private final Path rootPath = Path.of("/v1/catalog/model");
     private final Path importsPath = rootPath.resolve("imports");
+    private final String getModelsEndpoint = "/v1/catalog/models";
 
     @BeforeAll
     public void initClass() {
@@ -253,7 +252,6 @@ class ModelServletTest extends JerseyTest {
     @Test
     void updateModelImportsSuccessTest() {
         final FormDataMultiPart formDataMultiPart = buildUpdateFormDataMultiPart("model1", new byte[0]);
-
         final var response = target(importsPath.toString()).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
             .put(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
@@ -284,6 +282,27 @@ class ModelServletTest extends JerseyTest {
         final var response = target(importsPath.toString()).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
             .put(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    void getModelsSuccessTest() {
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        final var response = target(getModelsEndpoint).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .get(Response.class);
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    void getModelsUnknownExceptionTest() {
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+        when(modelBusinessLogic.findAll()).thenThrow(new OperationException(ActionStatus.GENERAL_ERROR));
+        final var response = target(getModelsEndpoint).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .get(Response.class);
         assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
     }
 
