@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.components.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -78,6 +79,10 @@ public class ModelBusinessLogic {
         }
 
         modelOperation.createModelImports(modelName, zipFilesPathContentMap);
+    }
+
+    public List<Model> findAll() {
+        return modelOperation.findAll();
     }
 
     private Map<String, byte[]> unzipInMemory(final byte[] fileBytes) {

@@ -28,12 +28,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -47,6 +50,7 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
+import org.openecomp.sdc.be.components.impl.aaf.AafPermission.PermNames;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -150,6 +154,28 @@ public class ModelServlet extends AbstractValidationsServlet {
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @GET
+    @Path("/models")
+    @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed(PermNames.INTERNAL_ALL_VALUE)
+    @Operation(description = "Get all models", method = "PUT", summary = "Get all models created", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "403", description = "Restricted operation")})
+    public Response getModels(@HeaderParam(value = Constants.USER_ID_HEADER) final String userId) throws IOException {
+        validateUser(ValidationUtils.sanitizeInputString(userId));
+        List<Model> models;
+        try {
+            models = modelBusinessLogic.findAll();
+        } catch (final Exception e) {
+            var errorMsg = String.format("Unexpected error while fetching all models");
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
+            log.error(errorMsg, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+        return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
+            RepresentationUtils.toRepresentation(models));
     }
 
     private void validateUser(final String userId) {

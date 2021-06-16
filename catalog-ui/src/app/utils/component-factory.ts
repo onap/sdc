@@ -199,6 +199,7 @@ export class ComponentFactory {
             component.setComponentMetadata(response.metadata);
             component.derivedFromGenericType = response.derivedFromGenericType;
             component.derivedFromGenericVersion = response.derivedFromGenericVersion;
+            component.model = response.model;
             deferred.resolve(component);
         });
         return deferred.promise;
