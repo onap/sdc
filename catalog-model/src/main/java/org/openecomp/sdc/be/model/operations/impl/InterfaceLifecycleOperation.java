@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
-import fj.data.Either;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,8 +27,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -45,10 +46,14 @@ import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
 import org.openecomp.sdc.be.resources.data.InterfaceData;
+import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.be.resources.data.OperationData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
+import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
+
+import fj.data.Either;
 
 @Component("interface-operation")
 public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation {
@@ -96,7 +101,9 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
 
     private InterfaceDefinition convertInterfaceDataToInterfaceDefinition(InterfaceData interfaceData) {
         log.debug("The object returned after create interface is {}", interfaceData);
-        return new InterfaceDefinition(interfaceData.getInterfaceDataDefinition());
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(interfaceData.getInterfaceDataDefinition());
+        interfaceDefinition.setModel(getModelAssociatedToInterface(interfaceData.getUniqueId()));
+        return interfaceDefinition;
     }
 
     private Operation convertOperationDataToOperation(OperationData operationData) {
@@ -743,8 +750,8 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
     public Either<InterfaceDefinition, StorageOperationStatus> createInterfaceType(InterfaceDefinition interf, boolean inTransaction) {
         Either<InterfaceDefinition, StorageOperationStatus> result = null;
         try {
+            interf.setUniqueId(UniqueIdBuilder.buildInterfaceTypeUid(interf.getModel(), interf.getType()));
             InterfaceData interfaceData = new InterfaceData(interf);
-            interf.setUniqueId(interf.getType().toLowerCase());
             Either<InterfaceData, JanusGraphOperationStatus> existInterface = janusGraphGenericDao
                 .getNode(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), InterfaceData.class);
             if (existInterface.isLeft()) {
@@ -753,7 +760,6 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                 result = Either.right(StorageOperationStatus.ENTITY_ALREADY_EXISTS);
                 return result;
             }
-            log.debug("Before adding interface type to graph {}", interfaceData);
             Either<InterfaceData, JanusGraphOperationStatus> createNodeResult = janusGraphGenericDao.createNode(interfaceData, InterfaceData.class);
             log.debug("After adding property type to graph {}", interfaceData);
             if (createNodeResult.isRight()) {
@@ -782,6 +788,11 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                 }
                 interfaceDefResult.setOperationsMap(newOperations);
             }
+            final Either<GraphRelation, StorageOperationStatus> modelRelationship = addInterfaceTypeToModel(interf);
+            if (modelRelationship.isRight()) {
+                return Either.right(modelRelationship.right().value());
+            }
+
             result = Either.left(interfaceDefResult);
             return result;
         } finally {
@@ -795,6 +806,17 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
                 }
             }
         }
+    }
+
+    private Either<GraphRelation, StorageOperationStatus> addInterfaceTypeToModel(final InterfaceDefinition interfaceDefinition) {
+        final String model = interfaceDefinition.getModel();
+        if (model == null) {
+            return Either.left(null);
+        }
+        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
+        final GraphNode to = new UniqueIdData(NodeTypeEnum.Interface, interfaceDefinition.getUniqueId());
+        log.info("Connecting model {} to type {}", from, to);
+        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     @Override
@@ -837,8 +859,9 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
         Map<String, InterfaceDefinition> interfaceTypes = new HashMap<>();
         List<InterfaceData> interfaceDataList = allInterfaceLifecycleTypes.left().value();
         List<InterfaceDefinition> interfaceDefinitions = interfaceDataList.stream().map(this::convertInterfaceDataToInterfaceDefinition)
-            .filter(interfaceDefinition -> interfaceDefinition.getUniqueId().equalsIgnoreCase((interfaceDefinition.getType())))
-            .collect(Collectors.toList());
+            .filter(interfaceDefinition -> interfaceDefinition.getUniqueId()
+                    .equalsIgnoreCase(UniqueIdBuilder.buildInterfaceTypeUid(interfaceDefinition.getModel(), interfaceDefinition.getType()))
+            ).collect(Collectors.toList());
         for (InterfaceDefinition interfaceDefinition : interfaceDefinitions) {
             Either<List<ImmutablePair<OperationData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
                 .getChildrenNodes(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), interfaceDefinition.getUniqueId(),
@@ -854,5 +877,15 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
             interfaceTypes.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
         }
         return Either.left(interfaceTypes);
+    }
+
+    private String getModelAssociatedToInterface(String uid) {
+        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> model = janusGraphGenericDao.getParentNode(
+                UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Interface), uid, GraphEdgeLabels.MODEL_ELEMENT,
+                NodeTypeEnum.Model, ModelData.class);
+        if (model.isLeft()) {
+            return model.left().value().getLeft().getName();
+        }
+        return null;
     }
 }

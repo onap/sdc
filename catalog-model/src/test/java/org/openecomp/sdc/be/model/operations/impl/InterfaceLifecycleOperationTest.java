@@ -20,7 +20,17 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import fj.data.Either;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,6 +41,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -42,6 +53,7 @@ import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
 import org.openecomp.sdc.be.resources.data.InterfaceData;
+import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.be.resources.data.OperationData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UserData;
@@ -49,22 +61,15 @@ import org.openecomp.sdc.be.resources.data.category.CategoryData;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
 public class InterfaceLifecycleOperationTest {
     private static String USER_ID = "muUserId";
     private static String CATEGORY_NAME = "category/mycategory";
+    private static String MODEL_NAME = "Test";
+    private static String INTERFACE_TYPE = "tosca.interfaces.standard";
 
     JanusGraphGenericDao janusGraphGenericDao = Mockito.mock(JanusGraphGenericDao.class);
     @InjectMocks
@@ -91,9 +96,9 @@ public class InterfaceLifecycleOperationTest {
 
     private InterfaceDefinition buildInterfaceDefinition() {
         InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
-        interfaceDefinition.setType("tosca.interfaces.standard");
+        interfaceDefinition.setType(INTERFACE_TYPE);
         interfaceDefinition.setCreationDate(101232L);
-
+        interfaceDefinition.setModel(MODEL_NAME);
         return interfaceDefinition;
     }
 
@@ -173,9 +178,32 @@ public class InterfaceLifecycleOperationTest {
         List<ImmutablePair<OperationData, GraphEdge>> list = new ArrayList<>();
         Either<List<ImmutablePair<OperationData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = Either.left(list);
         when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(childrenNodes);
-
+        when(janusGraphGenericDao.getParentNode(any(), any(), any(), any(), any()))
+        .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
         Assert.assertEquals(types.left().value().size(),1);
+    }
+
+    @Test
+    public void testGetAllInterfaceLifecycleTypesWithModel() {
+        final var uid = UniqueIdBuilder.buildInterfaceTypeUid(MODEL_NAME, INTERFACE_TYPE);
+        final var modelData = new ModelData(MODEL_NAME, uid);
+        final ImmutablePair<GraphNode, GraphEdge> modelNode = new ImmutablePair<>(modelData, Mockito.mock(GraphEdge.class));
+
+        final InterfaceData interfaceData = new InterfaceData();
+        interfaceData.getInterfaceDataDefinition().setUniqueId(uid);
+        interfaceData.getInterfaceDataDefinition().setType(INTERFACE_TYPE);
+
+        final List<InterfaceData> interfaceTypes = new ArrayList<InterfaceData>();
+        interfaceTypes.add(interfaceData);
+
+        when(janusGraphGenericDao.getParentNode(any(), any(), any(), any(), any()))
+        .thenReturn(Either.left(modelNode));
+        when(janusGraphGenericDao
+            .getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class)).thenReturn(Either.left(interfaceTypes));
+        when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(Either.left(Collections.emptyList()));
+
+        Assert.assertEquals(1, interfaceLifecycleOperation.getAllInterfaceLifecycleTypes().left().value().size());
     }
 
 }

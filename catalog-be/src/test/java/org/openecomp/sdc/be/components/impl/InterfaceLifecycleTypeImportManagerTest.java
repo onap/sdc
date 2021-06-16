@@ -84,7 +84,7 @@ public class InterfaceLifecycleTypeImportManagerTest {
     public void createLifecycleTypesTest() throws IOException {
         final String ymlContent = getYmlContent();
         final Either<List<InterfaceDefinition>, ResponseFormat> createCapabilityTypes =
-            importManager.createLifecycleTypes(ymlContent);
+            importManager.createLifecycleTypes(ymlContent, "test");
         assertTrue(createCapabilityTypes.isLeft());
         final List<InterfaceDefinition> interfaceDefinitionList = createCapabilityTypes.left().value();
         assertThat("Interface definitions should not be empty", interfaceDefinitionList, is(not(empty())));
