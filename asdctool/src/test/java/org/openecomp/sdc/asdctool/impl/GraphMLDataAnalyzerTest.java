@@ -20,37 +20,37 @@
 
 package org.openecomp.sdc.asdctool.impl;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer.EXCEL_EXTENSION;
 import static org.openecomp.sdc.asdctool.impl.GraphMLDataAnalyzer.GRAPH_ML_EXTENSION;
 
-public class GraphMLDataAnalyzerTest {
+import org.junit.jupiter.api.Test;
 
-    public static final String FILE_NAME = "export";
+class GraphMLDataAnalyzerTest {
+
+    private static final String FILE_NAME = "export";
 
     @Test
-    public void testAnalyzeGraphMLDataNoFile() {
-        String[] args = new String[]{"noExistFile"};
+    void testAnalyzeGraphMLDataNoFile() {
+        final String[] args = new String[]{"noExistFile"};
 
         // default test
-        GraphMLDataAnalyzer graph = new GraphMLDataAnalyzer();
-        String result = graph.analyzeGraphMLData(args);
+        final GraphMLDataAnalyzer graph = new GraphMLDataAnalyzer();
+        final String result = graph.analyzeGraphMLData(args);
 
         assertNull(result);
     }
 
     @Test
-    public void testAnalyzeGraphMLData() {
-        String path = getClass().getClassLoader().getResource(FILE_NAME + GRAPH_ML_EXTENSION).getPath();
-        String[] args = new String[]{path};
+    void testAnalyzeGraphMLData() {
+        final String path = getClass().getClassLoader().getResource(FILE_NAME + GRAPH_ML_EXTENSION).getPath();
+        final String[] args = new String[]{path};
 
         // default test
-        GraphMLDataAnalyzer graph = new GraphMLDataAnalyzer();
-        String result = graph.analyzeGraphMLData(args);
+        final GraphMLDataAnalyzer graph = new GraphMLDataAnalyzer();
+        final String result = graph.analyzeGraphMLData(args);
 
         assertNotNull(result);
         assertTrue(result.endsWith(EXCEL_EXTENSION));
