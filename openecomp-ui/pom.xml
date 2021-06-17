@@ -15,7 +15,6 @@
   </parent>
 
   <properties>
-    <maven.war.plugin.version>3.0.0</maven.war.plugin.version>
     <app.context.path>onboarding</app.context.path>
     <jest.command/>
   </properties>
@@ -40,8 +39,8 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>2.6.1</version>
         <executions>
           <execution>
             <id>clean.dist.folder</id>
@@ -58,8 +57,7 @@
                   <directory>${basedir}/coverage</directory>
                 </fileset>
                 <fileset>
-                  <directory>${basedir}/../dox-sequence-diagram-ui/dist
-                  </directory>
+                  <directory>${basedir}/../dox-sequence-diagram-ui/dist</directory>
                 </fileset>
               </filesets>
             </configuration>
@@ -92,7 +90,6 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-
         <configuration>
           <installDirectory>${project.parent.parent.basedir}</installDirectory>
         </configuration>
@@ -116,8 +113,7 @@
               <goal>yarn</goal>
             </goals>
             <configuration>
-              <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
-              </workingDirectory>
+              <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui</workingDirectory>
               <arguments>install</arguments>
             </configuration>
           </execution>
@@ -127,8 +123,7 @@
               <goal>yarn</goal>
             </goals>
             <configuration>
-              <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui
-              </workingDirectory>
+              <workingDirectory>${project.basedir}/../dox-sequence-diagram-ui</workingDirectory>
               <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
               <arguments>build</arguments>
             </configuration>
@@ -173,7 +168,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>${maven.war.plugin.version}</version>
         <configuration>
           <webResources>
             <resource>
