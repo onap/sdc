@@ -70,3 +70,11 @@ template "ExternalTestingConfiguration" do
       :EP2_CONFIG => node['EXTTEST']['ep2_config']
    })
 end
+
+template "FeaturesProperties" do
+   path "#{ENV['JETTY_BASE']}/config/onboarding-be/features.properties"
+   source "features.properties.erb"
+   owner "#{ENV['JETTY_USER']}"
+   group "#{ENV['JETTY_GROUP']}"
+   mode "0755"
+end

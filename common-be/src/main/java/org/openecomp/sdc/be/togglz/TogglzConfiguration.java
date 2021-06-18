@@ -29,7 +29,10 @@ import org.togglz.core.user.UserProvider;
 
 public class TogglzConfiguration implements TogglzConfig {
 
-    private static final String TOGGLZ_FILE_LOCATION = "/tmp/features.properties";
+    private String togglzFileLocation;
+    public TogglzConfiguration(){
+        this.togglzFileLocation = System.getProperty("features.properties");
+    }
 
     @Override
     public Class<? extends Feature> getFeatureClass() {
@@ -38,7 +41,7 @@ public class TogglzConfiguration implements TogglzConfig {
 
     @Override
     public StateRepository getStateRepository() {
-        return new FileBasedStateRepository(new File(TOGGLZ_FILE_LOCATION));
+        return new FileBasedStateRepository(new File(togglzFileLocation));
     }
 
     @Override
