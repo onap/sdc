@@ -25,7 +25,7 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum ToggleableFeature implements Feature {
-    @Label("Default Feature") DEFAULT_FEATURE, @Label("Healing") HEALING;
+    @Label("Default Feature") DEFAULT_FEATURE, @Label("Healing") HEALING, @Label("External License") EXTERNAL_LICENSE;
 
     public static Feature getFeatureByName(String featureName) {
         return Arrays.stream(values()).filter(e -> e.name().equals(featureName)).findFirst().orElse(null);
