@@ -52,6 +52,13 @@ class SoftwareProductLandingPageView extends React.Component {
         files: []
     };
 
+    constructor(props) {
+        super(props);
+        this.getExternalLicenceFeature = this.getExternalLicenceFeature.bind(
+            this
+        );
+    }
+
     static propTypes = {
         currentSoftwareProduct: SoftwareProductPropType,
         isReadOnlyMode: PropTypes.bool,
@@ -79,6 +86,12 @@ class SoftwareProductLandingPageView extends React.Component {
         currentSoftwareProduct.licenseType = e.target.value;
         onLicenseChange(currentSoftwareProduct);
     };
+
+    getExternalLicenceFeature() {
+        return this.props.features.find(
+            feature => feature.name === 'EXTERNAL_LICENCE'
+        );
+    }
 
     render() {
         let {
@@ -115,6 +128,7 @@ class SoftwareProductLandingPageView extends React.Component {
                                     }
                                     licenceChange={licenceChange}
                                     onLicenseChange={onLicenseChange}
+                                    externalLicenceEnabled={this.getExternalLicenceFeature()}
                                 />
                                 {this.renderProductDetails(
                                     isManual,
@@ -234,7 +248,8 @@ class SoftwareProductLandingPageView extends React.Component {
 const ProductSummary = ({
     currentSoftwareProduct,
     licenceChange,
-    onLicenseChange
+    onLicenseChange,
+    externalLicenceEnabled
 }) => {
     let {
         name = '',
@@ -277,6 +292,9 @@ const ProductSummary = ({
                                             currentSoftwareProduct
                                         }
                                         onLicenseChange={onLicenseChange}
+                                        externalLicenceEnabled={
+                                            externalLicenceEnabled
+                                        }
                                     />
                                 </div>
                             </div>
@@ -292,7 +310,7 @@ const ProductSummary = ({
     );
 };
 
-const LicenseAgreement = ({
+const LicenseAgreementWithExternal = ({
     licenceChange,
     currentSoftwareProduct,
     onLicenseChange
@@ -339,5 +357,32 @@ const LicenseAgreement = ({
         </div>
     );
 };
+
+const LicenseAgreementWithoutExternal = ({
+    licenceChange,
+    currentSoftwareProduct,
+    onLicenseChange
+}) => {
+    if (!licenseAgreementName) {
+        return (
+            <div className="missing-license">
+                <SVGIcon color="warning" name="exclamationTriangleFull" />
+                <div className="warning-text">{i18n('Missing')}</div>
+            </div>
+        );
+    }
+    return <div>{licenseAgreementName}</div>;
+}
+
+const LicenseAgreement = ({
+    licenceChange,
+    currentSoftwareProduct,
+    onLicenseChange,
+    externalLicenceEnabled
+}) => {
+    return externalLicenceEnabled ? LicenseAgreementWithExternal(licenceChange,currentSoftwareProduct,onLicenseChange) :
+        LicenseAgreementWithoutExternal(licenceChange,currentSoftwareProduct,onLicenseChange);
+};
+
 
 export default SoftwareProductLandingPageView;
