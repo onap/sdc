@@ -24,6 +24,7 @@ import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 import VNFImportActionHelper from '../vnfMarketPlace/VNFImportActionHelper.js';
 
 export const mapStateToProps = ({
+    features,
     softwareProduct,
     licenseModel: { licenseAgreement },
     currentScreen: { itemPermission: { isCertified } }
@@ -63,6 +64,7 @@ export const mapStateToProps = ({
     fullCategoryDisplayName = `${subCategoryName} (${categoryName})`;
 
     return {
+        features,
         currentSoftwareProduct: {
             ...currentSoftwareProduct,
             licenseAgreementName,

@@ -23,6 +23,7 @@ import Configuration from 'sdc-app/config/Configuration.js';
 import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import VnfRepositorySearchBox from 'nfvo-components/vnfMarketPlace/VnfRepositorySearchBox.jsx';
 
+import { SVGIcon } from 'onap-ui-react';
 import SoftwareProductComponentsList from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponents.js';
 
 const SoftwareProductPropType = PropTypes.shape({
@@ -52,6 +53,13 @@ class SoftwareProductLandingPageView extends React.Component {
         files: []
     };
 
+    constructor(props) {
+        super(props);
+        this.getExternalLicenceFeatureState = this.getExternalLicenceFeatureState.bind(
+            this
+        );
+    }
+
     static propTypes = {
         currentSoftwareProduct: SoftwareProductPropType,
         isReadOnlyMode: PropTypes.bool,
@@ -76,9 +84,18 @@ class SoftwareProductLandingPageView extends React.Component {
     }
 
     licenceChange = (e, currentSoftwareProduct, onLicenseChange) => {
-        currentSoftwareProduct.licenseType = e.target.value;
+        currentSoftwareProduct.licenseType = e.target.value
+            ? e.target.value
+            : 'INTERNAL';
         onLicenseChange(currentSoftwareProduct);
     };
+
+    getExternalLicenceFeatureState() {
+        var licenseFeature = this.props.features.find(
+            feature => feature.name === 'EXTERNAL_LICENCE'
+        );
+        return licenseFeature ? licenseFeature.active : true;
+    }
 
     render() {
         let {
@@ -115,6 +132,7 @@ class SoftwareProductLandingPageView extends React.Component {
                                     }
                                     licenceChange={licenceChange}
                                     onLicenseChange={onLicenseChange}
+                                    externalLicenceEnabled={this.getExternalLicenceFeatureState()}
                                 />
                                 {this.renderProductDetails(
                                     isManual,
@@ -234,7 +252,8 @@ class SoftwareProductLandingPageView extends React.Component {
 const ProductSummary = ({
     currentSoftwareProduct,
     licenceChange,
-    onLicenseChange
+    onLicenseChange,
+    externalLicenceEnabled
 }) => {
     let {
         name = '',
@@ -277,6 +296,9 @@ const ProductSummary = ({
                                             currentSoftwareProduct
                                         }
                                         onLicenseChange={onLicenseChange}
+                                        externalLicenceEnabled={
+                                            externalLicenceEnabled
+                                        }
                                     />
                                 </div>
                             </div>
@@ -292,7 +314,7 @@ const ProductSummary = ({
     );
 };
 
-const LicenseAgreement = ({
+const LicenseAgreementWithExternal = ({
     licenceChange,
     currentSoftwareProduct,
     onLicenseChange
@@ -338,6 +360,55 @@ const LicenseAgreement = ({
             </form>
         </div>
     );
+};
+
+const LicenseAgreementWithoutExternal = ({
+    licenceChange,
+    currentSoftwareProduct,
+    onLicenseChange
+}) => {
+    if (!currentSoftwareProduct.licenseAgreementName) {
+        return (
+            <div
+                className="missing-license clickable"
+                onClick={event =>
+                    licenceChange(
+                        event,
+                        currentSoftwareProduct,
+                        onLicenseChange
+                    )
+                }>
+                <SVGIcon color="warning" name="exclamationTriangleFull" />
+                <div className="warning-text">{i18n('Missing')}</div>
+            </div>
+        );
+    }
+    return <div>{currentSoftwareProduct.licenseAgreementName}</div>;
+};
+
+const LicenseAgreement = ({
+    licenceChange,
+    currentSoftwareProduct,
+    onLicenseChange,
+    externalLicenceEnabled
+}) => {
+    if (externalLicenceEnabled) {
+        return (
+            <LicenseAgreementWithExternal
+                licenceChange={licenceChange}
+                currentSoftwareProduct={currentSoftwareProduct}
+                onLicenseChange={onLicenseChange}
+            />
+        );
+    } else {
+        return (
+            <LicenseAgreementWithoutExternal
+                licenceChange={licenceChange}
+                currentSoftwareProduct={currentSoftwareProduct}
+                onLicenseChange={onLicenseChange}
+            />
+        );
+    }
 };
 
 export default SoftwareProductLandingPageView;
