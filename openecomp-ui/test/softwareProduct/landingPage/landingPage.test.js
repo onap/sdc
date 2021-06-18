@@ -95,7 +95,8 @@ describe('Software Product Landing Page: ', function () {
 		const params = {
 			...currentScreen.props,
 			currentSoftwareProduct,
-			componentsList: VSPComponentsFactory.buildList(2)
+			componentsList: VSPComponentsFactory.buildList(2),
+			features: [{name:'EXTERNAL_LICENCE', active: true}]
 		};
 
 		const store = storeCreator();
@@ -111,7 +112,8 @@ describe('Software Product Landing Page: ', function () {
 		const params = {
 			...currentScreen.props,
 			currentSoftwareProduct,
-			componentsList: VSPComponentsFactory.buildList(2)
+			componentsList: VSPComponentsFactory.buildList(2),
+			features: [{name:'EXTERNAL_LICENCE', active: true}]
 		};
 		const e = { target: {
 			value: 'INTERNAL'
@@ -140,7 +142,8 @@ describe('Software Product Landing Page: ', function () {
 		const params = {
 			currentSoftwareProduct,
 			...currentScreen.props,
-			componentsList: VSPComponentsFactory.buildList(2)
+			componentsList: VSPComponentsFactory.buildList(2),
+			features: [{name:'EXTERNAL_LICENCE', active: true}]
 		};
 
 		const store = storeCreator();
@@ -167,7 +170,8 @@ describe('Software Product Landing Page: ', function () {
 			componentsList: VSPComponentsFactory.buildList(2),
 			onUploadConfirmation:  dummyFunc,
 			onUpload: dummyFunc,
-			onInvalidFileSizeUpload: dummyFunc
+			onInvalidFileSizeUpload: dummyFunc,
+			features: [{name:'EXTERNAL_LICENCE', active: true}]
 		};
 
 		const files = [
@@ -210,7 +214,8 @@ describe('Software Product Landing Page: ', function () {
 			componentsList: VSPComponentsFactory.buildList(2),
 			onUploadConfirmation:  dummyFunc,
 			onUpload: dummyFunc,
-			onInvalidFileSizeUpload: dummyFunc
+			onInvalidFileSizeUpload: dummyFunc,
+			features: [{name:'EXTERNAL_LICENCE', active: true}]
 		};
 
 		const store = storeCreator();
