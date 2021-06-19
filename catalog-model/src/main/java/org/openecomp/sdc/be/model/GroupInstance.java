@@ -40,7 +40,7 @@ public class GroupInstance extends GroupInstanceDataDefinition {
         super();
     }
 
-    public GroupInstance(GroupInstanceDataDefinition r) {
+    public GroupInstance(final GroupInstanceDataDefinition r) {
         super(r);
     }
 
@@ -50,12 +50,11 @@ public class GroupInstance extends GroupInstanceDataDefinition {
      * @return
      */
     public List<GroupInstanceProperty> convertToGroupInstancesProperties() {
-        List<GroupInstanceProperty> groupInstancesProperties = null;
-        List<PropertyDataDefinition> propertiesList = super.getProperties();
-        if (propertiesList != null && !propertiesList.isEmpty()) {
-            groupInstancesProperties = propertiesList.stream().map(GroupInstanceProperty::new).collect(Collectors.toList());
+        final List<PropertyDataDefinition> propertiesList = super.getProperties();
+        if (CollectionUtils.isNotEmpty(propertiesList)) {
+            return propertiesList.stream().map(GroupInstanceProperty::new).collect(Collectors.toList());
         }
-        return groupInstancesProperties;
+        return null;
     }
 
     /**
@@ -64,23 +63,22 @@ public class GroupInstance extends GroupInstanceDataDefinition {
      *
      * @param groupInstancesProperties
      */
-    public void convertFromGroupInstancesProperties(List<GroupInstanceProperty> groupInstancesProperties) {
+    public void convertFromGroupInstancesProperties(final List<GroupInstanceProperty> groupInstancesProperties) {
         if (groupInstancesProperties != null && !groupInstancesProperties.isEmpty()) {
-            List<PropertyDataDefinition> propList = groupInstancesProperties.stream().map(PropertyDataDefinition::new).collect(Collectors.toList());
-            super.setProperties(propList);
+            super.setProperties(groupInstancesProperties.stream().map(PropertyDataDefinition::new).collect(Collectors.toList()));
         }
     }
 
     private void removeArtifactsDuplicates() {
-        List<String> artifacts = getArtifacts();
-        Set<String> artifactsSet = new HashSet<>();
+        final List<String> artifacts = getArtifacts();
+        final Set<String> artifactsSet = new HashSet<>();
         if (artifacts != null && !artifacts.isEmpty()) {
             artifactsSet.addAll(artifacts);
             artifacts.clear();
             artifacts.addAll(artifactsSet);
         }
-        List<String> giArtifacts = getGroupInstanceArtifacts();
-        Set<String> giArtifactsSet = new HashSet<>();
+        final List<String> giArtifacts = getGroupInstanceArtifacts();
+        final Set<String> giArtifactsSet = new HashSet<>();
         if (giArtifacts != null && !giArtifacts.isEmpty()) {
             giArtifactsSet.addAll(giArtifacts);
             giArtifacts.clear();
@@ -89,16 +87,16 @@ public class GroupInstance extends GroupInstanceDataDefinition {
     }
 
     private void clearArtifactsUuid() {
-        List<String> artifactsUuid = getArtifactsUuid();
+        final List<String> artifactsUuid = getArtifactsUuid();
         if (CollectionUtils.isNotEmpty(artifactsUuid)) {
             artifactsUuid.clear();
         } else if (artifactsUuid == null) {
             setArtifactsUuid(new ArrayList<>());
         }
-        List<String> giartifactsUuid = this.getGroupInstanceArtifactsUuid();
-        if (CollectionUtils.isNotEmpty(giartifactsUuid)) {
-            giartifactsUuid.clear();
-        } else if (giartifactsUuid == null) {
+        final List<String> groupInstanceArtifactsUuid = this.getGroupInstanceArtifactsUuid();
+        if (CollectionUtils.isNotEmpty(groupInstanceArtifactsUuid)) {
+            groupInstanceArtifactsUuid.clear();
+        } else if (groupInstanceArtifactsUuid == null) {
             setGroupInstanceArtifactsUuid(new ArrayList<>());
         }
     }
@@ -108,19 +106,19 @@ public class GroupInstance extends GroupInstanceDataDefinition {
      *
      * @param deploymentArtifacts
      */
-    public void alignArtifactsUuid(Map<String, ArtifactDefinition> deploymentArtifacts) {
-        List<String> artifactIds = getArtifacts();
+    public void alignArtifactsUuid(final Map<String, ArtifactDefinition> deploymentArtifacts) {
+        final List<String> artifactIds = getArtifacts();
         log.debug("the artifacts Id's are: {}, and the deployment artifacts Id's are: {}", artifactIds, deploymentArtifacts);
         if (CollectionUtils.isNotEmpty(artifactIds) && deploymentArtifacts != null) {
             removeArtifactsDuplicates();
             clearArtifactsUuid();
-            List<String> artifactUuids = getArtifactsUuid();
-            List<String> giArtifactUuids = getGroupInstanceArtifactsUuid();
-            for (String artifactId : artifactIds) {
-                String label = artifactId.substring(artifactId.lastIndexOf('.') + 1);
-                ArtifactDefinition artifact = deploymentArtifacts.get(label);
+            final List<String> artifactUuids = getArtifactsUuid();
+            final List<String> giArtifactUuids = getGroupInstanceArtifactsUuid();
+            for (final String artifactId : artifactIds) {
+                final var label = artifactId.substring(artifactId.lastIndexOf('.') + 1);
+                final ArtifactDefinition artifact = deploymentArtifacts.get(label);
                 log.debug("current artifact id: {}, current artifact definition: {}", artifactId, artifact);
-                ArtifactTypeEnum artifactType = ArtifactTypeEnum.parse(artifact.getArtifactType());
+                final var artifactType = ArtifactTypeEnum.parse(artifact.getArtifactType());
                 if (artifactType != ArtifactTypeEnum.HEAT_ENV) {
                     addArtifactsIdToCollection(artifactUuids, artifact);
                 } else {
@@ -130,8 +128,8 @@ public class GroupInstance extends GroupInstanceDataDefinition {
         }
     }
 
-    private void addArtifactsIdToCollection(List<String> artifactUuids, ArtifactDefinition artifact) {
-        if (!artifactUuids.contains(artifact.getArtifactUUID()) && StringUtils.isNotEmpty(artifact.getArtifactUUID())) {
+    private void addArtifactsIdToCollection(final List<String> artifactUuids, final ArtifactDefinition artifact) {
+        if (StringUtils.isNotEmpty(artifact.getArtifactUUID()) && !artifactUuids.contains(artifact.getArtifactUUID())) {
             artifactUuids.add(artifact.getArtifactUUID());
         }
     }

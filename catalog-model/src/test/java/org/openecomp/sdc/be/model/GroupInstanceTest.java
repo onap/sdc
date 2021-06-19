@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,107 +20,117 @@
 
 package org.openecomp.sdc.be.model;
 
-import mockit.Deencapsulation;
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.elements.GroupInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
-public class GroupInstanceTest {
+class GroupInstanceTest {
 
-	private GroupInstance createTestSubject() {
-		return new GroupInstance();
-	}
+    private GroupInstance createTestSubject() {
+        return new GroupInstance();
+    }
 
-	@Test
-	public void testCtor() throws Exception {
-		new GroupInstance(new GroupInstanceDataDefinition());
-	}
-	
-	@Test
-	public void testConvertToGroupInstancesProperties() throws Exception {
-		GroupInstance testSubject;
-		List<GroupInstanceProperty> result;
+    @Test
+    void testCtor() throws Exception {
+        Assertions.assertNotNull(new GroupInstance(new GroupInstanceDataDefinition()));
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.convertToGroupInstancesProperties();
-		List<PropertyDataDefinition> properties = new LinkedList<>();
-		properties.add(new PropertyDataDefinition());
-		testSubject.setProperties(properties);
-		result = testSubject.convertToGroupInstancesProperties();
-	}
+    @Test
+    void testConvertToGroupInstancesProperties() throws Exception {
+        final GroupInstance testSubject = createTestSubject();
+        List<GroupInstanceProperty> result;
 
-	@Test
-	public void testConvertFromGroupInstancesProperties() throws Exception {
-		GroupInstance testSubject;
-		List<GroupInstanceProperty> groupInstancesProperties = null;
+        result = testSubject.convertToGroupInstancesProperties();
+        Assertions.assertNull(result);
 
-		// test 1
-		testSubject = createTestSubject();
-		groupInstancesProperties = null;
-		testSubject.convertFromGroupInstancesProperties(groupInstancesProperties);
-		groupInstancesProperties = new LinkedList<>();
-		groupInstancesProperties.add(new GroupInstanceProperty());
-		testSubject.convertFromGroupInstancesProperties(groupInstancesProperties);
-	}
+        final List<PropertyDataDefinition> properties = new LinkedList<>();
+        properties.add(new PropertyDataDefinition());
+        testSubject.setProperties(properties);
+        result = testSubject.convertToGroupInstancesProperties();
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
+    }
 
-	@Test
-	public void testRemoveArtifactsDuplicates() throws Exception {
-		GroupInstance testSubject;
+    @Test
+    void testConvertFromGroupInstancesProperties() throws Exception {
+        final GroupInstance testSubject = createTestSubject();
+        List<GroupInstanceProperty> groupInstancesProperties = null;
 
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "removeArtifactsDuplicates");
-		LinkedList<String> artifacts = new LinkedList<>();
-		artifacts.add("mock");
-		testSubject.setArtifacts(artifacts);
-		LinkedList<String> groupInstanceArtifacts = new LinkedList<>();
-		groupInstanceArtifacts.add("mock");
-		testSubject.setGroupInstanceArtifacts(groupInstanceArtifacts);
-		Deencapsulation.invoke(testSubject, "removeArtifactsDuplicates");
-	}
+        groupInstancesProperties = null;
+        testSubject.convertFromGroupInstancesProperties(groupInstancesProperties);
+        List<PropertyDataDefinition> properties = testSubject.getProperties();
+        Assertions.assertNull(properties);
 
-	@Test
-	public void testClearArtifactsUuid() throws Exception {
-		GroupInstance testSubject;
+        groupInstancesProperties = new LinkedList<>();
+        groupInstancesProperties.add(new GroupInstanceProperty());
+        testSubject.convertFromGroupInstancesProperties(groupInstancesProperties);
+        properties = testSubject.getProperties();
+        Assertions.assertNotNull(properties);
+        Assertions.assertFalse(properties.isEmpty());
+    }
 
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "clearArtifactsUuid");
-	}
+    @Test
+    void testAlignArtifactsUuid() throws Exception {
+        final GroupInstance testSubject = createTestSubject();
+        Map<String, ArtifactDefinition> deploymentArtifacts = null;
 
-	@Test
-	public void testAlignArtifactsUuid() throws Exception {
-		GroupInstance testSubject;
-		Map<String, ArtifactDefinition> deploymentArtifacts = null;
+        testSubject.alignArtifactsUuid(deploymentArtifacts);
+        Assertions.assertNull(testSubject.getArtifacts());
 
-		// default test
-		testSubject = createTestSubject();
-		testSubject.alignArtifactsUuid(deploymentArtifacts);
-		LinkedList<String> artifacts = new LinkedList<>();
-		artifacts.add("mock");
-		testSubject.setArtifacts(artifacts);
-		testSubject.alignArtifactsUuid(deploymentArtifacts);
-		deploymentArtifacts = new HashMap<>();
-		deploymentArtifacts.put("mock", new ArtifactDefinition());
-		testSubject.alignArtifactsUuid(deploymentArtifacts);
-	}
+        deploymentArtifacts = new HashMap<>();
 
-	@Test
-	public void testAddArtifactsIdToCollection() throws Exception {
-		GroupInstance testSubject;
-		List<String> artifactUuids = new LinkedList<>();
-		ArtifactDefinition artifact = new ArtifactDefinition();
+        final List<String> artifacts = new ArrayList<>();
+        artifacts.add("mock1");
+        testSubject.setArtifacts(artifacts);
 
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "addArtifactsIdToCollection", artifactUuids, artifact);
-		artifact.setArtifactUUID("mock");
-		Deencapsulation.invoke(testSubject, "addArtifactsIdToCollection", artifactUuids, artifact);
-	}
+        final List<String> artifactUuids = new ArrayList<>();
+        artifactUuids.add("mock1");
+        testSubject.setArtifactsUuid(artifactUuids);
+        final var artifactDefinition = new ArtifactDefinition();
+        artifactDefinition.setArtifactUUID("mock1");
+        deploymentArtifacts.put("mock1", artifactDefinition);
+        testSubject.alignArtifactsUuid(deploymentArtifacts);
+        List<String> groupInstanceArtifactsUuid = testSubject.getGroupInstanceArtifactsUuid();
+        Assertions.assertNotNull(groupInstanceArtifactsUuid);
+        Assertions.assertTrue(groupInstanceArtifactsUuid.isEmpty());
+
+        artifactDefinition.setArtifactUUID("mock2");
+        artifactDefinition.setArtifactType("HEAT_ENV");
+        deploymentArtifacts.put("mock2", artifactDefinition);
+        testSubject.alignArtifactsUuid(deploymentArtifacts);
+        groupInstanceArtifactsUuid = testSubject.getGroupInstanceArtifactsUuid();
+        Assertions.assertNotNull(groupInstanceArtifactsUuid);
+        Assertions.assertFalse(groupInstanceArtifactsUuid.isEmpty());
+        List<String> artifactsUuid = testSubject.getArtifactsUuid();
+        Assertions.assertNotNull(artifactsUuid);
+        Assertions.assertTrue(artifactsUuid.isEmpty());
+
+        testSubject.setArtifactsUuid(null);
+        testSubject.alignArtifactsUuid(deploymentArtifacts);
+        artifactsUuid = testSubject.getArtifactsUuid();
+        Assertions.assertNotNull(artifactsUuid);
+        Assertions.assertTrue(artifactsUuid.isEmpty());
+
+        List<String> groupInstanceArtifacts = new ArrayList<>();
+        groupInstanceArtifacts.add("mock1");
+        testSubject.setGroupInstanceArtifacts(groupInstanceArtifacts);
+        testSubject.setGroupInstanceArtifactsUuid(null);
+        testSubject.alignArtifactsUuid(deploymentArtifacts);
+        groupInstanceArtifactsUuid = testSubject.getGroupInstanceArtifactsUuid();
+        Assertions.assertNotNull(groupInstanceArtifactsUuid);
+        Assertions.assertFalse(groupInstanceArtifactsUuid.isEmpty());
+
+        testSubject.setGroupInstanceArtifactsUuid(groupInstanceArtifacts);
+        testSubject.alignArtifactsUuid(deploymentArtifacts);
+        groupInstanceArtifactsUuid = testSubject.getGroupInstanceArtifactsUuid();
+        Assertions.assertNotNull(groupInstanceArtifactsUuid);
+        Assertions.assertFalse(groupInstanceArtifactsUuid.isEmpty());
+    }
+
 }
