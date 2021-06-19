@@ -139,10 +139,4 @@ public final class JsonUtil {
         return mapper.readValue(json, type);
     }
 
-    public static <T> List<T> toList(String json, Class<T> elementClass, Class<?> elementGenericClass) throws IOException {
-        ObjectMapper mapper = getOneObjectMapper();
-        JavaType elementType = mapper.getTypeFactory().constructParametricType(elementClass, elementGenericClass);
-        JavaType listType = mapper.getTypeFactory().constructCollectionType(List.class, elementType);
-        return mapper.readValue(json, listType);
-    }
 }

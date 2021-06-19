@@ -21,82 +21,65 @@
  */
 package org.openecomp.sdc.be.dao.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import mockit.Deencapsulation;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class JsonUtilTest {
-	
-	@Test
-	public void testGetOneObjectMapper() throws Exception {
-		ObjectMapper result;
+class JsonUtilTest {
 
-		// default test
-		result = Deencapsulation.invoke(JsonUtil.class, "getOneObjectMapper");
-	}
+    @Test
+    void testReadObject_1() throws Exception {
+        final String objectText = "{}";
+        final Class objectClass = Object.class;
+        final Object result = JsonUtil.readObject(objectText, objectClass);
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result instanceof Map);
+        Assertions.assertEquals(0, ((Map) result).size());
+    }
 
-	@Test
-	public void testReadObject() throws Exception {
-		String objectText = "{}";
-		Class objectClass = Object.class;
-		Object result;
+    @Test
+    void testReadObject_2() throws Exception {
+        final String objectText = "{}";
+        final Object result = JsonUtil.readObject(objectText);
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result instanceof Map);
+        Assertions.assertEquals(0, ((Map) result).size());
+    }
 
-		// default test
-		result = JsonUtil.readObject(objectText, objectClass);
-	}
+    @Test
+    void testToMap_1() throws Exception {
+        final String json = "{\"name\":\"mock\",\"age\":0}";
+        final Map<String, Object> result = JsonUtil.toMap(json);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+    }
 
-	@Test
-	public void testReadObject_2() throws Exception {
-		String objectText = "{}";
-		Object result;
+    @Test
+    void testToMap_2() throws Exception {
+        final String json = "{\"name\":\"mock\",\"age\":0}";
+        final Class keyTypeClass = Object.class;
+        final Class valueTypeClass = Object.class;
+        final Map result = JsonUtil.toMap(json, keyTypeClass, valueTypeClass);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+    }
 
-		// default test
-		result = JsonUtil.readObject(objectText);
-	}
+    @Test
+    void testToArray() throws Exception {
+        final String json = "[]";
+        final Class valueTypeClass = Object.class;
+        final Object[] result = JsonUtil.toArray(json, valueTypeClass);
+        Assertions.assertNotNull(result);
+    }
 
-	@Test
-	public void testToMap() throws Exception {
-		String json = "{\"name\":\"mock\",\"age\":0}";
-		Map<String, Object> result;
+    @Test
+    void testToList_1() throws Exception {
+        final String json = "[]";
+        final Class clazz = Object.class;
+        final List result = JsonUtil.toList(json, clazz);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(0, result.size());
+    }
 
-		// default test
-		result = JsonUtil.toMap(json);
-	}
-
-	@Test
-	public void testToMap_1() throws Exception {
-		String json = "{\"name\":\"mock\",\"age\":0}";
-		Class keyTypeClass = Object.class;
-		Class valueTypeClass = Object.class;
-		Map result;
-
-		// default test
-		result = JsonUtil.toMap(json, keyTypeClass, valueTypeClass);
-	}
-
-	@Test
-	public void testToArray() throws Exception {
-		String json = "[]";
-		Class valueTypeClass = Object.class;
-		Object[] result;
-
-		// default test
-		result = JsonUtil.toArray(json, valueTypeClass);
-	}
-
-	@Test
-	public void testToList() throws Exception {
-		String json = "[]";
-		Class clazz = Object.class;
-		List result;
-
-		// default test
-		result = JsonUtil.toList(json, clazz);
-	}
 }
