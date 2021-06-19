@@ -21,14 +21,16 @@ package org.openecomp.sdc.be.dao.cassandra.schema.tables;
 
 import com.datastax.driver.core.DataType;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingTypesConstants;
 
 public class DistribStatusEventTableDesc extends DistribBaseEventTableDesc {
 
     @Override
-    protected void updateColumnDistribDescription(Map<String, ImmutablePair<DataType, Boolean>> columns) {
-        for (DSEFieldsDescription field : DSEFieldsDescription.values()) {
+    protected void updateColumnDistribDescription(final Map<String, ImmutablePair<DataType, Boolean>> columns) {
+        for (final DSEFieldsDescription field : DSEFieldsDescription.values()) {
             columns.put(field.getName(), new ImmutablePair<>(field.type, field.indexed));
         }
     }
@@ -38,7 +40,9 @@ public class DistribStatusEventTableDesc extends DistribBaseEventTableDesc {
         return AuditingTypesConstants.DISTRIBUTION_STATUS_EVENT_TYPE;
     }
 
-    enum DSEFieldsDescription {
+    @Getter
+    @AllArgsConstructor
+    private enum DSEFieldsDescription {
         // @formatter:off
         DID("did", DataType.varchar(), true),
         CONSUMER_ID("consumer_id", DataType.varchar(), false),
@@ -47,26 +51,9 @@ public class DistribStatusEventTableDesc extends DistribBaseEventTableDesc {
         STATUS_TIME("status_time", DataType.varchar(), false);
         // @formatter:on
 
-        private String name;
-        private DataType type;
-        private boolean indexed;
+        private final String name;
+        private final DataType type;
+        private final boolean indexed;
 
-        DSEFieldsDescription(String name, DataType type, boolean indexed) {
-            this.name = name;
-            this.type = type;
-            this.indexed = indexed;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public DataType getType() {
-            return type;
-        }
-
-        public boolean isIndexed() {
-            return indexed;
-        }
     }
 }
