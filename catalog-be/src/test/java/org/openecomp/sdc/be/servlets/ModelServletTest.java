@@ -26,12 +26,15 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import org.apache.commons.lang3.StringUtils;
@@ -44,11 +47,8 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -79,7 +79,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-@TestInstance(Lifecycle.PER_CLASS)
 class ModelServletTest extends JerseyTest {
 
     private static final String USER_ID = "cs0008";
@@ -121,8 +120,20 @@ class ModelServletTest extends JerseyTest {
     private final Path rootPath = Path.of("/v1/catalog/model");
     private final Path importsPath = rootPath.resolve("imports");
 
-    @BeforeAll
-    public void initClass() {
+    @BeforeEach
+    void resetMock() throws Exception {
+        super.setUp();
+        initMocks();
+        initConfig();
+        initTestData();
+    }
+
+    @AfterEach
+    void after() throws Exception {
+        super.tearDown();
+    }
+
+    private void initMocks() {
         when(request.getSession()).thenReturn(session);
         when(session.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
@@ -132,6 +143,9 @@ class ModelServletTest extends JerseyTest {
         when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(USER_ID);
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
+    }
+
+    private void initConfig() {
         final String appConfigDir = "src/test/resources/config/catalog-be";
         final ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         final ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
@@ -139,17 +153,6 @@ class ModelServletTest extends JerseyTest {
         configuration.setJanusGraphInMemoryGraph(true);
         configurationManager.setConfiguration(configuration);
         ExternalConfiguration.setAppName("catalog-be");
-    }
-
-    @BeforeEach
-    void resetMock() throws Exception {
-        super.setUp();
-        initTestData();
-    }
-
-    @AfterEach
-    void after() throws Exception {
-        super.tearDown();
     }
 
     private void initTestData() {
@@ -284,6 +287,40 @@ class ModelServletTest extends JerseyTest {
         final var response = target(importsPath.toString()).request(MediaType.APPLICATION_JSON)
             .header(Constants.USER_ID_HEADER, USER_ID)
             .put(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    void listModelSuccessTest() throws IOException {
+        var model1 = new Model("model1");
+        var model2 = new Model("model2");
+        var model3 = new Model("model3");
+        final List<Model> modelList = List.of(model1, model2, model3);
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+        when(modelBusinessLogic.listModels()).thenReturn(modelList);
+
+        final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .get();
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaderString(HttpHeaders.CONTENT_TYPE));
+        final String responseBody = response.readEntity(String.class);
+        final String toRepresentation = (String) RepresentationUtils.toRepresentation(modelList);
+        assertEquals(toRepresentation, responseBody);
+    }
+
+    @Test
+    void listModelErrorTest() {
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR_500);
+        when(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(responseFormat);
+        doThrow(new RuntimeException()).when(modelBusinessLogic).listModels();
+
+        final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .get();
+
         assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
     }
 

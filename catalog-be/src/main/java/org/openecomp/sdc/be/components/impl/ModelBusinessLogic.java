@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.components.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -54,6 +55,15 @@ public class ModelBusinessLogic {
             return Optional.empty();
         }
         return modelOperation.findModelByName(modelName);
+    }
+
+    /**
+     * Loads the list of models.
+     *
+     * @return the list of models
+     */
+    public List<Model> listModels() {
+        return modelOperation.findAllModels();
     }
 
     public void createModelImports(final String modelName, final InputStream modelImportsZip) {

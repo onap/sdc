@@ -20,6 +20,7 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,6 +56,7 @@ import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.resources.data.ModelData;
 import org.springframework.test.context.ContextConfiguration;
@@ -225,4 +227,38 @@ class ModelOperationTest extends ModelTestBase {
         assertTrue(modelOperation.findModelByName(null).isEmpty());
     }
 
+    @Test
+    void findAllModelsSuccessTest() {
+        final GraphVertex expectedVertex = mock(GraphVertex.class);
+        when(expectedVertex.getMetadataProperty(GraphPropertyEnum.NAME)).thenReturn(modelName);
+        when(janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, Collections.emptyMap())).thenReturn(Either.left(List.of(expectedVertex)));
+        final List<Model> actualModelList = modelOperation.findAllModels();
+        assertFalse(actualModelList.isEmpty());
+        assertEquals(1, actualModelList.size());
+        assertEquals(modelName, actualModelList.get(0).getName());
+    }
+
+    @Test
+    void findAllModelsTest_noModelsFound() {
+        when(janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, Collections.emptyMap())).thenReturn(Either.left(Collections.emptyList()));
+        final List<Model> actualModelList = modelOperation.findAllModels();
+        assertTrue(actualModelList.isEmpty());
+    }
+
+    @Test
+    void findAllModelsTest_janusGraphNotFound() {
+        when(janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, Collections.emptyMap()))
+            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        final List<Model> actualModelList = modelOperation.findAllModels();
+        assertTrue(actualModelList.isEmpty());
+    }
+
+    @Test
+    void findAllModelsTest_janusGraphError() {
+        when(janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, Collections.emptyMap()))
+            .thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
+        final var actualException = assertThrows(OperationException.class, () -> modelOperation.findAllModels());
+        final var expectedException = ModelOperationExceptionSupplier.failedToRetrieveModels(JanusGraphOperationStatus.GENERAL_ERROR).get();
+        assertEquals(expectedException.getMessage(), actualException.getMessage());
+    }
 }

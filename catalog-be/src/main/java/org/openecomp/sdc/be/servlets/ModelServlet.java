@@ -30,10 +30,12 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.List;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -115,6 +117,32 @@ public class ModelServlet extends AbstractValidationsServlet {
             throw e;
         } catch (final Exception e) {
             var errorMsg = String.format("Unexpected error while creating model '%s' imports", modelName);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
+            log.error(errorMsg, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+
+    @GET
+    @Path("/model")
+    @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    @Operation(method = "GET", summary = "List TOSCA models", description = "List all the existing TOSCA models",
+        responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Model.class)))),
+            @ApiResponse(responseCode = "200", description = "Listing successful"),
+            @ApiResponse(responseCode = "403", description = "Restricted operation")
+        }
+    )
+    public Response listModels(@HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
+        validateUser(ValidationUtils.sanitizeInputString(userId));
+        try {
+            final List<Model> modelList = modelBusinessLogic.listModels();
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(modelList));
+        } catch (final BusinessException e) {
+            throw e;
+        } catch (final Exception e) {
+            var errorMsg = "Unexpected error while listing the models";
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
             log.error(errorMsg, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));

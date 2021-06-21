@@ -33,6 +33,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -189,5 +191,20 @@ class ModelBusinessLogicTest {
         assertTrue(actualModel.isEmpty());
         actualModel = modelBusinessLogic.findModel(null);
         assertTrue(actualModel.isEmpty());
+    }
+
+    @Test
+    void listModelsSuccessTest() {
+        final List<Model> expectedModelList = List.of(new Model());
+        when(modelOperation.findAllModels()).thenReturn(expectedModelList);
+        final List<Model> actualModelList = modelBusinessLogic.listModels();
+        assertEquals(expectedModelList, actualModelList, "The model list should be as expected");
+    }
+
+    @Test
+    void listModelsTest_emptyList() {
+        when(modelOperation.findAllModels()).thenReturn(Collections.emptyList());
+        final List<Model> actualModelList = modelBusinessLogic.listModels();
+        assertTrue(actualModelList.isEmpty(), "The model list should be empty");
     }
 }
