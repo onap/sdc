@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception;
 
 import java.util.function.Supplier;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 
 /**
  * Supplies operation exception needed by the the Model logic
@@ -45,6 +46,11 @@ public class ModelOperationExceptionSupplier {
 
     public static Supplier<OperationException> modelAlreadyExists(final String modelName) {
         return () -> new OperationException(ActionStatus.MODEL_ALREADY_EXISTS, modelName);
+    }
+
+    public static Supplier<OperationException> failedToRetrieveModels(final JanusGraphOperationStatus janusGraphOperationStatus) {
+        var errorMsg = String.format("Failed to retrieve models. Status '%s'", janusGraphOperationStatus);
+        return () -> new OperationException(ActionStatus.GENERAL_ERROR, errorMsg);
     }
 
 }

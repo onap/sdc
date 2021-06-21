@@ -20,6 +20,7 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -99,18 +100,11 @@ public class ModelOperation {
         final Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
         props.put(GraphPropertyEnum.NAME, name);
         props.put(GraphPropertyEnum.UNIQUE_ID, UniqueIdBuilder.buildModelUid(name));
-        final Either<List<GraphVertex>, JanusGraphOperationStatus> result = janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, props);
-        if (result.isRight()) {
-            final JanusGraphOperationStatus janusGraphOperationStatus = result.right().value();
-            if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
-                return Optional.empty();
-            }
-            log.error(EcompLoggerErrorCode.DATA_ERROR, this.getClass().getName(),
-                String.format("Problem while getting model %s. reason %s", name, janusGraphOperationStatus));
-            throw new OperationException(ActionStatus.GENERAL_ERROR,
-                String.format("Failed to get model %s on JanusGraph with %s error", name, janusGraphOperationStatus));
+        final List<GraphVertex> modelVerticesList = findModelVerticesByCriteria(props);
+        if (modelVerticesList.isEmpty()) {
+            return Optional.empty();
         }
-        return Optional.ofNullable(result.left().value().get(0));
+        return Optional.ofNullable(modelVerticesList.get(0));
     }
 
     public Optional<Model> findModelByName(final String name) {
@@ -123,8 +117,7 @@ public class ModelOperation {
         }
 
         final GraphVertex graphVertex = modelVertexOpt.get();
-        final var model = new Model((String) graphVertex.getMetadataProperty(GraphPropertyEnum.NAME));
-        return Optional.of(model);
+        return Optional.of(convertToModel(graphVertex));
     }
 
     public void createModelImports(final String modelId, final Map<String, byte[]> zipContent) {
@@ -143,6 +136,42 @@ public class ModelOperation {
                 return toscaImportByModel;
             }).collect(Collectors.toList());
         toscaModelImportCassandraDao.importAll(modelId, toscaImportByModelList);
+    }
+
+    /**
+     * Finds all the models.
+     *
+     * @return the list of models
+     */
+    public List<Model> findAllModels() {
+        return findModelsByCriteria(Collections.emptyMap());
+    }
+
+    private List<Model> findModelsByCriteria(final Map<GraphPropertyEnum, Object> propertyCriteria) {
+        final List<GraphVertex> modelVerticesByCriteria = findModelVerticesByCriteria(propertyCriteria);
+        if (modelVerticesByCriteria.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return modelVerticesByCriteria.stream().map(this::convertToModel).collect(Collectors.toList());
+    }
+
+    private List<GraphVertex> findModelVerticesByCriteria(final Map<GraphPropertyEnum, Object> propertyCriteria) {
+        final Either<List<GraphVertex>, JanusGraphOperationStatus> result = janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, propertyCriteria);
+        if (result.isRight()) {
+            final var janusGraphOperationStatus = result.right().value();
+            if (janusGraphOperationStatus == JanusGraphOperationStatus.NOT_FOUND) {
+                return Collections.emptyList();
+            }
+            final var operationException = ModelOperationExceptionSupplier.failedToRetrieveModels(janusGraphOperationStatus).get();
+            log.error(EcompLoggerErrorCode.DATA_ERROR, this.getClass().getName(), operationException.getMessage());
+            throw operationException;
+        }
+        return result.left().value();
+    }
+
+    private Model convertToModel(final GraphVertex modelGraphVertex) {
+        return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME));
     }
 }
 
