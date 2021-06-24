@@ -18,7 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 package org.openecomp.sdc.be.model.operations.impl;
-
 import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
 
 import fj.data.Either;
@@ -95,12 +94,11 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         return updatePolicyTypeOnGraph(updatedPolicyType, currPolicyType);
     }
 
-    @Override
-    public List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes) {
+    public List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes, String modelName) {
         Map<String, Map.Entry<JanusGraphPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(),
             excludedPolicyTypes);
-        return janusGraphGenericDao.getByCriteriaWithPredicate(NodeTypeEnum.PolicyType, predicateCriteria, PolicyTypeData.class).left()
-            .map(this::convertPolicyTypesToDefinition).left().on(operationUtils::onJanusGraphOperationFailure);
+        return janusGraphGenericDao.getByCriteriaWithPredicate(NodeTypeEnum.PolicyType, predicateCriteria, PolicyTypeData.class, modelName).left()
+            .map(this::convertPolicyTypesToDefinition).left().on(operationUtils::validateJanusGraphOperationFailure);
     }
 
     private List<PolicyTypeDefinition> convertPolicyTypesToDefinition(List<PolicyTypeData> policiesTypes) {

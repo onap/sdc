@@ -47,6 +47,7 @@ import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
@@ -75,7 +76,14 @@ public class GroupTypesEndpoint extends BeGenericServlet {
     @ResponseView(mixin = {GroupTypeMixin.class})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<GroupTypeDefinition> getGroupTypes(@HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-                                                   @Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed") @QueryParam("internalComponentType") String internalComponentType) {
-        return groupTypeBusinessLogic.getAllGroupTypes(userId, internalComponentType);
+                                                   @Parameter(description =
+                                                       "An optional parameter to indicate the type of the container from where this call is executed")
+                                                   @QueryParam("internalComponentType") String internalComponentType,
+                                                   @QueryParam("componentModel") String internalComponentModel) {
+        if (internalComponentModel != null) {
+            internalComponentModel = ValidationUtils.sanitizeInputString(internalComponentModel.trim());
+        }
+        return groupTypeBusinessLogic
+            .getAllGroupTypes(userId, internalComponentType, internalComponentModel);
     }
 }

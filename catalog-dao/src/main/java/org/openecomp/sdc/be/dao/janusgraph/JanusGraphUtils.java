@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdc.be.dao.janusgraph;
 
-import static java.util.Collections.emptyMap;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.janusgraph.core.attribute.Contain.NOT_IN;
 
@@ -36,7 +35,7 @@ public class JanusGraphUtils {
 
     public static <T> Map<String, Entry<JanusGraphPredicate, Object>> buildNotInPredicate(String propKey, Collection<T> notInCollection) {
         if (isEmpty(notInCollection)) {
-            return emptyMap();
+            return new HashMap<>();
         }
         Map<String, Entry<JanusGraphPredicate, Object>> predicateCriteria = new HashMap<>();
         predicateCriteria.put(propKey, new HashMap.SimpleEntry<>(NOT_IN, notInCollection));

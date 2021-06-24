@@ -20,6 +20,8 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
@@ -59,5 +61,12 @@ public class OperationUtils {
     public <T> T onJanusGraphOperationFailure(JanusGraphOperationStatus status) {
         janusGraphDao.rollback();
         throw new StorageException(status);
+    }
+
+    public <T> List<T> validateJanusGraphOperationFailure(final JanusGraphOperationStatus status) {
+        if (JanusGraphOperationStatus.NOT_FOUND.equals(status)) {
+            return Collections.emptyList();
+        }
+        return onJanusGraphOperationFailure(status);
     }
 }

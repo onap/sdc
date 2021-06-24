@@ -54,10 +54,10 @@ public class PolicyTypeBusinessLogic {
     }
 
     @Transactional
-    public List<PolicyTypeDefinition> getAllPolicyTypes(String userId, String internalComponentType) {
+    public List<PolicyTypeDefinition> getAllPolicyTypes(String userId, String internalComponentType, String modelName) {
         Set<String> excludedPolicyTypes = getExcludedPolicyTypes(internalComponentType);
         userValidations.validateUserExists(userId);
-        return getPolicyTypes(excludedPolicyTypes);
+        return getPolicyTypes(excludedPolicyTypes, modelName);
     }
 
     public PolicyTypeDefinition getLatestPolicyTypeByType(String policyTypeName) {
@@ -74,8 +74,8 @@ public class PolicyTypeBusinessLogic {
         return excludedTypes == null ? emptySet() : excludedTypes;
     }
 
-    private List<PolicyTypeDefinition> getPolicyTypes(Set<String> excludedTypes) {
-        return policyTypeOperation.getAllPolicyTypes(excludedTypes);
+    private List<PolicyTypeDefinition> getPolicyTypes(Set<String> excludedTypes, String modelName) {
+        return policyTypeOperation.getAllPolicyTypes(excludedTypes, modelName);
     }
 
     private PolicyTypeDefinition failOnPolicyType(StorageOperationStatus status, String policyType) {

@@ -43,7 +43,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -531,8 +533,12 @@ public class ToscaOperationFacade {
         if (vertex.isRight() || Objects.isNull(vertex.left().value())) {
             return Optional.empty();
         }
+        return getElementModelVertex(model, vertex.left().value());
+    }
+
+    private Optional<GraphVertex> getElementModelVertex(final String model, final GraphVertex vertex) {
         final Either<List<GraphVertex>, JanusGraphOperationStatus> nodeModelVertices = janusGraphDao
-            .getParentVertices(vertex.left().value(), EdgeLabelEnum.MODEL_ELEMENT, JsonParseFlagEnum.NoParse);
+            .getParentVertices(vertex, EdgeLabelEnum.MODEL_ELEMENT, JsonParseFlagEnum.NoParse);
         if (nodeModelVertices.isRight() || Objects.isNull(nodeModelVertices.left().value())) {
             return Optional.empty();
         }
@@ -1884,7 +1890,8 @@ public class ToscaOperationFacade {
     }
 
     private Either<List<Service>, StorageOperationStatus> getLatestVersionNonCheckoutServicesMetadataOnly(Map<GraphPropertyEnum, Object> hasProps,
-                                                                                                          Map<GraphPropertyEnum, Object> hasNotProps) {
+                                                                                                          Map<GraphPropertyEnum, Object> hasNotProps,
+                                                                                                          String modelName) {
         List<Service> services = new ArrayList<>();
         List<LifecycleStateEnum> states = new ArrayList<>();
         // include props
@@ -1895,30 +1902,27 @@ public class ToscaOperationFacade {
         hasNotProps.put(GraphPropertyEnum.STATE, states);
         hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
         hasNotProps.put(GraphPropertyEnum.IS_ARCHIVED, true);
-        return fetchServicesByCriteria(services, hasProps, hasNotProps);
+        return fetchServicesByCriteria(services, hasProps, hasNotProps, modelName);
     }
 
     private Either<List<Component>, StorageOperationStatus> getLatestVersionNotAbstractToscaElementsMetadataOnly(boolean isAbstract,
                                                                                                                  ComponentTypeEnum componentTypeEnum,
                                                                                                                  String internalComponentType,
-                                                                                                                 VertexTypeEnum vertexType) {
+                                                                                                                 VertexTypeEnum vertexType,
+                                                                                                                 String modelName) {
         List<Service> services = null;
         Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
         Map<GraphPropertyEnum, Object> hasNotProps = new EnumMap<>(GraphPropertyEnum.class);
         fillPropsMap(hasProps, hasNotProps, internalComponentType, componentTypeEnum, isAbstract, vertexType);
         Either<List<GraphVertex>, JanusGraphOperationStatus> getRes = janusGraphDao
             .getByCriteria(vertexType, hasProps, hasNotProps, JsonParseFlagEnum.ParseMetadata);
-        if (getRes.isRight()) {
-            if (getRes.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
-                return Either.left(new ArrayList<>());
-            } else {
-                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getRes.right().value()));
-            }
+        if (getRes.isRight() && !JanusGraphOperationStatus.NOT_FOUND.equals(getRes.right().value())) {
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getRes.right().value()));
         }
         // region -> Fetch non checked-out services
         if (internalComponentType != null && internalComponentType.toLowerCase().trim().equals(SERVICE) && VertexTypeEnum.NODE_TYPE == vertexType) {
             Either<List<Service>, StorageOperationStatus> result = getLatestVersionNonCheckoutServicesMetadataOnly(
-                new EnumMap<>(GraphPropertyEnum.class), new EnumMap<>(GraphPropertyEnum.class));
+                new EnumMap<>(GraphPropertyEnum.class), new EnumMap<>(GraphPropertyEnum.class), modelName);
             if (result.isRight()) {
                 log.debug("Failed to fetch services for");
                 return Either.right(result.right().value());
@@ -1932,15 +1936,17 @@ public class ToscaOperationFacade {
         List<Component> nonAbstractLatestComponents = new ArrayList<>();
         ComponentParametersView params = new ComponentParametersView(true);
         params.setIgnoreAllVersions(false);
-        for (GraphVertex vertexComponent : getRes.left().value()) {
-            Either<ToscaElement, StorageOperationStatus> componentRes = topologyTemplateOperation
-                .getLightComponent(vertexComponent, componentTypeEnum, params);
-            if (componentRes.isRight()) {
-                log.debug("Failed to fetch light element for {} error {}", vertexComponent.getUniqueId(), componentRes.right().value());
-                return Either.right(componentRes.right().value());
-            } else {
-                Component component = ModelConverter.convertFromToscaElement(componentRes.left().value());
-                nonAbstractLatestComponents.add(component);
+        if (getRes.isLeft()) {
+            for (GraphVertex vertexComponent : getVerticesForModel(modelName, getRes.left().value())) {
+                Either<ToscaElement, StorageOperationStatus> componentRes = topologyTemplateOperation
+                    .getLightComponent(vertexComponent, componentTypeEnum, params);
+                if (componentRes.isRight()) {
+                    log.debug("Failed to fetch light element for {} error {}", vertexComponent.getUniqueId(), componentRes.right().value());
+                    return Either.right(componentRes.right().value());
+                } else {
+                    Component component = ModelConverter.convertFromToscaElement(componentRes.left().value());
+                    nonAbstractLatestComponents.add(component);
+                }
             }
         }
         if (CollectionUtils.isNotEmpty(services)) {
@@ -2034,7 +2040,7 @@ public class ToscaOperationFacade {
     private Either<List<String>, StorageOperationStatus> getComponentUids(boolean isAbstract, ComponentTypeEnum componentTypeEnum,
                                                                           String internalComponentType) {
         Either<List<Component>, StorageOperationStatus> getToscaElementsRes = getLatestVersionNotAbstractMetadataOnly(isAbstract, componentTypeEnum,
-            internalComponentType);
+            internalComponentType, null);
         if (getToscaElementsRes.isRight()) {
             return Either.right(getToscaElementsRes.right().value());
         }
@@ -2178,12 +2184,13 @@ public class ToscaOperationFacade {
 
     public Either<List<Component>, StorageOperationStatus> getLatestVersionNotAbstractMetadataOnly(boolean isAbstract,
                                                                                                    ComponentTypeEnum componentTypeEnum,
-                                                                                                   String internalComponentType) {
+                                                                                                   String internalComponentType,
+                                                                                                   String modelName) {
         List<VertexTypeEnum> internalVertexTypes = getInternalVertexTypes(componentTypeEnum, internalComponentType);
         List<Component> result = new ArrayList<>();
         for (VertexTypeEnum vertexType : internalVertexTypes) {
             Either<List<Component>, StorageOperationStatus> listByVertexType = getLatestVersionNotAbstractToscaElementsMetadataOnly(isAbstract,
-                componentTypeEnum, internalComponentType, vertexType);
+                componentTypeEnum, internalComponentType, vertexType, modelName);
             if (listByVertexType.isRight()) {
                 return listByVertexType;
             }
@@ -2533,7 +2540,7 @@ public class ToscaOperationFacade {
             for (DistributionStatusEnum state : distStatus) {
                 propertiesToMatch.put(GraphPropertyEnum.DISTRIBUTION_STATUS, state.name());
                 Either<List<Service>, StorageOperationStatus> fetchServicesByCriteria = fetchServicesByCriteria(servicesAll, propertiesToMatch,
-                    propertiesNotToMatch);
+                    propertiesNotToMatch, null);
                 if (fetchServicesByCriteria.isRight()) {
                     return fetchServicesByCriteria;
                 } else {
@@ -2542,13 +2549,14 @@ public class ToscaOperationFacade {
             }
             return Either.left(servicesAll);
         } else {
-            return fetchServicesByCriteria(servicesAll, propertiesToMatch, propertiesNotToMatch);
+            return fetchServicesByCriteria(servicesAll, propertiesToMatch, propertiesNotToMatch, null);
         }
     }
 
     private Either<List<Service>, StorageOperationStatus> fetchServicesByCriteria(List<Service> servicesAll,
                                                                                   Map<GraphPropertyEnum, Object> propertiesToMatch,
-                                                                                  Map<GraphPropertyEnum, Object> propertiesNotToMatch) {
+                                                                                  Map<GraphPropertyEnum, Object> propertiesNotToMatch,
+                                                                                  String modelName) {
         Either<List<GraphVertex>, JanusGraphOperationStatus> getRes = janusGraphDao
             .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll);
         if (getRes.isRight()) {
@@ -2559,7 +2567,7 @@ public class ToscaOperationFacade {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getRes.right().value()));
             }
         } else {
-            for (GraphVertex vertex : getRes.left().value()) {
+            for (final GraphVertex vertex : getVerticesForModel(modelName, getRes.left().value())) {
                 Either<ToscaElement, StorageOperationStatus> getServiceRes = topologyTemplateOperation
                     .getLightComponent(vertex, ComponentTypeEnum.SERVICE, new ComponentParametersView(true));
                 if (getServiceRes.isRight()) {
@@ -2572,6 +2580,27 @@ public class ToscaOperationFacade {
             }
         }
         return Either.left(servicesAll);
+    }
+
+    private List<GraphVertex> getVerticesForModel(final String modelName, final List<GraphVertex> graphVertexList) {
+        final Predicate<? super GraphVertex> filterPredicate =
+            StringUtils.isEmpty(modelName) ? this::vertexNotConnectedToAnyModel
+                : graphVertex -> vertexValidForModel(graphVertex, modelName).isPresent();
+        return StreamSupport.stream(graphVertexList.spliterator(), false).filter(filterPredicate).collect(Collectors.toList());
+    }
+
+    private boolean vertexNotConnectedToAnyModel(final GraphVertex vertex) {
+        return !vertex.getVertex().edges(Direction.OUT, EdgeLabelEnum.MODEL.name()).hasNext();
+    }
+
+    private Optional<GraphVertex> vertexValidForModel(final GraphVertex vertex, final String model) {
+        final Either<List<GraphVertex>, JanusGraphOperationStatus> nodeModelVertices = janusGraphDao
+            .getParentVertices(vertex, EdgeLabelEnum.MODEL, JsonParseFlagEnum.NoParse);
+        if (nodeModelVertices.isRight() || Objects.isNull(nodeModelVertices.left().value())) {
+            return Optional.empty();
+        }
+        return nodeModelVertices.left().value().stream().filter(graphVertex -> graphVertex.getMetadataProperty(GraphPropertyEnum.MODEL).equals(model))
+            .findFirst();
     }
 
     public void rollback() {

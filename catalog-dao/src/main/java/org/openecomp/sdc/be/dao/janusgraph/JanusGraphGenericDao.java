@@ -851,7 +851,7 @@ public class JanusGraphGenericDao {
 
     public <T extends GraphNode> Either<List<T>, JanusGraphOperationStatus> getByCriteriaWithPredicate(NodeTypeEnum type,
                                                                                                        Map<String, Entry<JanusGraphPredicate, Object>> props,
-                                                                                                       Class<T> clazz) {
+                                                                                                       Class<T> clazz, String modelName) {
         Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
         if (graph.isLeft()) {
             try {
@@ -871,7 +871,11 @@ public class JanusGraphGenericDao {
                 if (vertices == null) {
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
-                Iterator<JanusGraphVertex> iterator = vertices.iterator();
+                final Predicate<? super JanusGraphVertex> filterPredicate =
+                    StringUtils.isEmpty(modelName) ? this::vertexNotConnectedToAnyModel : vertex -> vertexValidForModel(vertex, modelName);
+                final List<JanusGraphVertex> verticesForModel = StreamSupport.stream(vertices.spliterator(), false).filter(filterPredicate)
+                    .collect(Collectors.toList());
+                Iterator<JanusGraphVertex> iterator = verticesForModel.iterator();
                 List<T> result = new ArrayList<>();
                 while (iterator.hasNext()) {
                     Vertex vertex = iterator.next();

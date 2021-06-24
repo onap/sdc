@@ -472,7 +472,6 @@ public class ToscaExportHandler {
                 toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR.getPresentation(), resource.getVendorName());
                 toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR_RELEASE.getPresentation(), resource.getVendorRelease());
                 toscaMetadata.put(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER.getPresentation(), resource.getResourceVendorModelNumber());
-                toscaMetadata.put(JsonPresentationFields.MODEL.getPresentation(), resource.getModel());
                 break;
             case SERVICE:
                 Service service = (Service) component;

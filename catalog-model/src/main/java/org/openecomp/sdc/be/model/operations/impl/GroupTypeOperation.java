@@ -273,13 +273,11 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         return janusGraphGenericDao.createRelation(groupTypeData, capabilityData, GraphEdgeLabels.GROUP_TYPE_CAPABILITY, properties);
     }
 
-    public List<GroupTypeDefinition> getAllGroupTypes(Set<String> excludedGroupTypes) {
+    public List<GroupTypeDefinition> getAllGroupTypes(Set<String> excludedGroupTypes, String modelName) {
         Map<String, Map.Entry<JanusGraphPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(),
             excludedGroupTypes);
-        List<GroupTypeData> groupTypes = janusGraphGenericDao
-            .getByCriteriaWithPredicate(NodeTypeEnum.GroupType, predicateCriteria, GroupTypeData.class).left()
-            .on(operationUtils::onJanusGraphOperationFailure);
-        return convertGroupTypesToDefinition(groupTypes);
+        return janusGraphGenericDao.getByCriteriaWithPredicate(NodeTypeEnum.GroupType, predicateCriteria, GroupTypeData.class, modelName).left()
+            .map(this::convertGroupTypesToDefinition).left().on(operationUtils::validateJanusGraphOperationFailure);
     }
 
     private List<GroupTypeDefinition> convertGroupTypesToDefinition(List<GroupTypeData> groupTypes) {
