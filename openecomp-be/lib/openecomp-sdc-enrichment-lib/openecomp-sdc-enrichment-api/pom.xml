@@ -54,11 +54,6 @@
       <artifactId>openecomp-sdc-versioning-api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.jmockit</groupId>
-      <artifactId>jmockit</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
 </project>

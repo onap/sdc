@@ -32,11 +32,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +61,7 @@ import org.openecomp.sdc.versioning.types.VersionableEntityMetadata;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ActionVersioningManagerImplTest {
+
     @Mock
     private VersionInfoDao versionInfoDao;
     @Mock
@@ -76,7 +77,7 @@ public class ActionVersioningManagerImplTest {
     private VersionInfoEntity versionInfoEntity;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         actionVersioningManager = createSUT();
 
         versionInfoEntity = new VersionInfoEntity();
@@ -87,11 +88,11 @@ public class ActionVersioningManagerImplTest {
 
     private ActionVersioningManager createSUT() {
         return new ActionVersioningManagerImpl(
-                versionInfoDao,
-                versionInfoDeletedDao,
-                versionDao,
-                versionCalculator,
-                asdcItemManager
+            versionInfoDao,
+            versionInfoDeletedDao,
+            versionDao,
+            versionCalculator,
+            asdcItemManager
         );
     }
 
@@ -105,9 +106,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDeletedDao.list(any(VersionInfoDeletedEntity.class))).thenReturn(new ArrayList<>());
 
         Map<String, VersionInfo> result = actionVersioningManager.listDeletedEntitiesVersionInfo(
-                "mock-type",
-                "mock-user",
-                VersionableEntityAction.Read
+            "mock-type",
+            "mock-user",
+            VersionableEntityAction.Read
         );
 
         assertThat(result, notNullValue());
@@ -136,9 +137,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.list(any(VersionInfoEntity.class))).thenReturn(new ArrayList<>());
 
         Map<String, VersionInfo> result = actionVersioningManager.listEntitiesVersionInfo(
-                "mock-type",
-                "mock-user",
-                VersionableEntityAction.Read
+            "mock-type",
+            "mock-user",
+            VersionableEntityAction.Read
         );
 
         assertThat(result, notNullValue());
@@ -149,10 +150,10 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         VersionInfo result = actionVersioningManager.getEntityVersionInfo(
-                "mock-type",
-                "mock-id",
-                "mock-user",
-                VersionableEntityAction.Read
+            "mock-type",
+            "mock-id",
+            "mock-user",
+            VersionableEntityAction.Read
         );
 
         assertThat(result, notNullValue());
@@ -163,9 +164,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(null);
 
         Version result = actionVersioningManager.create(
-                "mock-type",
-                "mock-id",
-                "mock-user"
+            "mock-type",
+            "mock-id",
+            "mock-user"
         );
 
         assertThat(result, notNullValue());
@@ -176,9 +177,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(new VersionInfoEntity());
 
         actionVersioningManager.create(
-                "mock-type",
-                "mock-id",
-                "mock-user"
+            "mock-type",
+            "mock-id",
+            "mock-user"
         );
 
         fail("Should throw CoreException");
@@ -187,9 +188,9 @@ public class ActionVersioningManagerImplTest {
     @Test
     public void testCreateAlt() {
         Version result = actionVersioningManager.create(
-                "mock-type",
-                new Version(),
-                VersionCreationMethod.minor
+            "mock-type",
+            new Version(),
+            VersionCreationMethod.minor
         );
 
         assertThat(result, notNullValue());
@@ -197,17 +198,16 @@ public class ActionVersioningManagerImplTest {
 
     @Test
     public void testRegister() {
-        actionVersioningManager.register(
-                "mock-type",
-                new VersionableEntityMetadata(
-                        "mock-name",
-                        "mock-id-name",
-                        "mock-ver-id-name"
-                )
+        final VersionableEntityMetadata entityMetadata = new VersionableEntityMetadata(
+            "mock-name",
+            "mock-id-name",
+            "mock-ver-id-name"
         );
-        Map<String, Set<VersionableEntityMetadata>> entities = Deencapsulation.getField(actionVersioningManager, "VERSIONABLE_ENTITIES");
-        assertThat(entities, notNullValue());
-        assertThat(entities.size(), is(1));
+        Map<String, Set<VersionableEntityMetadata>> map = new HashMap<>();
+        var action = new ActionVersioningManagerImpl(map);
+        action.register("mock-type", entityMetadata);
+        assertThat(map, notNullValue());
+        assertThat(map.size(), is(1));
     }
 
     @Test
@@ -217,9 +217,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         actionVersioningManager.delete(
-                "moct-type",
-                "mock-id",
-                "mock-user"
+            "moct-type",
+            "mock-id",
+            "mock-user"
         );
 
         verify(versionInfoDeletedDao).create(any(VersionInfoDeletedEntity.class));
@@ -235,9 +235,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         actionVersioningManager.delete(
-                "moct-type",
-                "mock-id",
-                "mock-user"
+            "moct-type",
+            "mock-id",
+            "mock-user"
         );
         fail("Should throw CoreException");
     }
@@ -247,9 +247,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDeletedDao.get(any(VersionInfoDeletedEntity.class))).thenReturn(new VersionInfoDeletedEntity());
 
         actionVersioningManager.undoDelete(
-                "mock-type",
-                "mock-id",
-                "mock-user"
+            "mock-type",
+            "mock-id",
+            "mock-user"
         );
 
         verify(versionInfoDao).create(any(VersionInfoEntity.class));
@@ -261,9 +261,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDeletedDao.get(any(VersionInfoDeletedEntity.class))).thenReturn(null);
 
         actionVersioningManager.undoDelete(
-                "mock-type",
-                "mock-id",
-                "mock-user"
+            "mock-type",
+            "mock-id",
+            "mock-user"
         );
 
         fail("Should throw CoreException");
@@ -276,9 +276,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         Version result = actionVersioningManager.checkout(
-                "moct-type",
-                "mock-id",
-                "mock-user"
+            "moct-type",
+            "mock-id",
+            "mock-user"
         );
 
         assertThat(result, notNullValue());
@@ -290,9 +290,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(null);
 
         actionVersioningManager.checkout(
-                "moct-type",
-                "mock-id",
-                "mock-user"
+            "moct-type",
+            "mock-id",
+            "mock-user"
         );
 
         fail("Should throw CoreException");
@@ -305,9 +305,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         actionVersioningManager.checkout(
-                "mock-type",
-                "mock-id",
-                "mock-user"
+            "mock-type",
+            "mock-id",
+            "mock-user"
         );
 
         fail("Should throw CoreException");
@@ -320,9 +320,9 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         Version result = actionVersioningManager.undoCheckout(
-                "mock-type",
-                "mock-id",
-                "mock-user"
+            "mock-type",
+            "mock-id",
+            "mock-user"
         );
         assertThat(result, notNullValue(Version.class));
     }
@@ -334,10 +334,10 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         Version result = actionVersioningManager.checkin(
-                "mock-type",
-                "mock-id",
-                "mock-user",
-                "mock-desc"
+            "mock-type",
+            "mock-id",
+            "mock-user",
+            "mock-desc"
         );
         assertThat(result, notNullValue(Version.class));
     }
@@ -349,10 +349,10 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         Version result = actionVersioningManager.checkin(
-                "mock-type",
-                "mock-id",
-                "mock-user",
-                "mock-desc"
+            "mock-type",
+            "mock-id",
+            "mock-user",
+            "mock-desc"
         );
         assertThat(result, notNullValue(Version.class));
     }
@@ -367,9 +367,9 @@ public class ActionVersioningManagerImplTest {
         when(versionDao.get(anyString(), any(Version.class))).thenReturn(Optional.of(new Version()));
 
         actionVersioningManager.submit(
-                "mock-type",
-                new Version(),
-                "mock-desc"
+            "mock-type",
+            new Version(),
+            "mock-desc"
         );
         verify(versionDao).update(anyString(), any(Version.class));
         verify(asdcItemManager).updateVersionStatus(anyString(), any(VersionStatus.class), any(VersionStatus.class));
@@ -381,10 +381,10 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         Version result = actionVersioningManager.submit(
-                "mock-type",
-                "mock-id",
-                "mock-user",
-                "mock-desc"
+            "mock-type",
+            "mock-id",
+            "mock-user",
+            "mock-desc"
         );
         assertThat(result, notNullValue(Version.class));
     }
@@ -394,10 +394,10 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(null);
 
         actionVersioningManager.submit(
-                "mock-type",
-                "mock-id",
-                "mock-user",
-                "mock-desc"
+            "mock-type",
+            "mock-id",
+            "mock-user",
+            "mock-desc"
         );
 
         fail("Should throw CoreException");
@@ -409,10 +409,10 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         actionVersioningManager.submit(
-                "mock-type",
-                "mock-id",
-                "mock-user",
-                "mock-desc"
+            "mock-type",
+            "mock-id",
+            "mock-user",
+            "mock-desc"
         );
 
         fail("Should throw CoreException");
@@ -424,10 +424,10 @@ public class ActionVersioningManagerImplTest {
         when(versionInfoDao.get(any(VersionInfoEntity.class))).thenReturn(versionInfoEntity);
 
         actionVersioningManager.submit(
-                "mock-type",
-                "mock-id",
-                "mock-user",
-                "mock-desc"
+            "mock-type",
+            "mock-id",
+            "mock-user",
+            "mock-desc"
         );
 
         fail("Should throw CoreException");

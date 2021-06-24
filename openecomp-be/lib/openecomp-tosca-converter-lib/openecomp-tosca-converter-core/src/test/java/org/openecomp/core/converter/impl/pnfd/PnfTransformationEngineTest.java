@@ -19,65 +19,46 @@
 
 package org.openecomp.core.converter.impl.pnfd;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.spy;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import mockit.Deencapsulation;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.converter.ServiceTemplateReaderService;
-import org.openecomp.core.converter.impl.pnfd.parser.PnfdCustomNodeTypeBlockParser;
 import org.openecomp.core.converter.pnfd.PnfdTransformationEngine;
-import org.openecomp.core.converter.pnfd.model.ConversionDefinition;
 import org.openecomp.core.impl.services.ServiceTemplateReaderServiceImpl;
 
-@RunWith(Parameterized.class)
-public class PnfTransformationEngineTest {
+class PnfTransformationEngineTest {
 
-    public static final String INPUT_DIR = "pnfDescriptor/in/";
-    public static final String OUTPUT_DIR = "pnfDescriptor/out/";
-    private String inputFilename;
+    private static final String INPUT_DIR = "pnfDescriptor/in/";
+    private static final String OUTPUT_DIR = "pnfDescriptor/out/";
     private final YamlUtil yamlUtil = new YamlUtil();
     private final ToscaExtensionYamlUtil toscaExtensionYamlUtil = new ToscaExtensionYamlUtil();
 
-    public PnfTransformationEngineTest(final String inputFilename) {
-        this.inputFilename = inputFilename;
-    }
-
-    @Parameterized.Parameters(name = "{index}: {0}")
-    public static Collection<String> input() throws IOException {
+    private static List<String> input() throws IOException {
         try (final Stream<Path> files = Files.list(getPathFromClasspath(INPUT_DIR))) {
-            return files.map(path -> path.getFileName().toString())
-                    .collect(Collectors.toList());
+            return files.map(path -> path.getFileName().toString()).collect(Collectors.toList());
         }
     }
 
-    @Test
-    public void testTopologyTemplateConversions() throws IOException {
+    @ParameterizedTest(name = "{index}: {0}")
+    @MethodSource("input")
+    void testTopologyTemplateConversions(final String inputFilename) throws IOException {
         final byte[] descriptor = getInputFileResource(inputFilename);
         final ServiceTemplateReaderService serviceTemplateReaderService = new ServiceTemplateReaderServiceImpl(descriptor);
         final ServiceTemplate serviceTemplate = new ServiceTemplate();
 
-        PnfdTransformationEngine pnfdTransformationEngine = new PnfdNodeTypeTransformationEngine(
-            serviceTemplateReaderService, serviceTemplate);
+        PnfdTransformationEngine pnfdTransformationEngine = new PnfdNodeTypeTransformationEngine(serviceTemplateReaderService, serviceTemplate);
         pnfdTransformationEngine.transform();
         pnfdTransformationEngine = new PnfdNodeTemplateTransformationEngine(serviceTemplateReaderService, serviceTemplate);
         pnfdTransformationEngine.transform();
@@ -85,26 +66,18 @@ public class PnfTransformationEngineTest {
         final String yamlContent = yamlUtil.objectToYaml(serviceTemplate);
         final String result = yamlUtil.objectToYaml(yamlUtil.yamlToObject(yamlContent, ServiceTemplate.class));
         final String expectedResult = getExpectedResultFor(inputFilename);
-        assertEquals(expectedResult, result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
-    @Test
-    public void testBuildParseBlock() {
-        final PnfdCustomNodeTypeBlockParser blockParser = spy(new PnfdCustomNodeTypeBlockParser(null));
-        final ConversionDefinition conversionDefinition = Mockito.mock(ConversionDefinition.class);
-        final Map<String, Object> stringObjectMap = new HashMap<>();
-        stringObjectMap.put("type", null);
-        stringObjectMap.put("name", null);
-        assertEquals(Optional.empty(), Deencapsulation.invoke(blockParser, "buildParsedBlock",
-            stringObjectMap, stringObjectMap, conversionDefinition));
-    }
-
-    @Test
-    public void testReadDefinition() {
-        final PnfdTransformationEngine engine = spy(
-            new PnfdNodeTemplateTransformationEngine(null, null, "test.txt"));
-        Deencapsulation.invoke(engine, "readDefinition");
-        assertNull(Deencapsulation.getField(engine, "transformationDescription"));
+    @ParameterizedTest(name = "{index}: {0}")
+    @MethodSource("input")
+    void testReadDefinition(final String inputFilename) throws IOException {
+        final byte[] descriptor = getInputFileResource(inputFilename);
+        final ServiceTemplateReaderService serviceTemplateReaderService = new ServiceTemplateReaderServiceImpl(descriptor);
+        final ServiceTemplate serviceTemplate = new ServiceTemplate();
+        AbstractPnfdTransformationEngine engine = new PnfdNodeTemplateTransformationEngine(serviceTemplateReaderService, serviceTemplate, "test.txt");
+        engine.transform();
+        Assertions.assertNotNull(engine.getDescriptorResourcePath());
     }
 
     private String getExpectedResultFor(final String inputFilename) throws IOException {
