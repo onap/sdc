@@ -30,7 +30,10 @@ export class CompositionPaletteService {
 
         let params = new HttpParams();
         params = params.append('internalComponentType', this.workspaceService.getMetadataType());
-
+      let model = this.workspaceService.metadata.model
+        if (model) {
+          params = params.append('componentModel', model);
+        }
         const loadInstances = this.http.get(this.facadeUrl, {params});
         const loadGroups = this.http.get(this.baseUrl + 'groupTypes', {params});
         const loadPolicies = this.http.get(this.baseUrl + 'policyTypes', {params});

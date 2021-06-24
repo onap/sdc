@@ -426,11 +426,13 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponentsMetadata(boolean isAbstractAbstract,
                                                                                                  HighestFilterEnum highestFilter,
                                                                                                  ComponentTypeEnum componentTypeEnum,
-                                                                                                 String internalComponentType, String userId) {
+                                                                                                 String internalComponentType, String userId,
+                                                                                                 String modelName) {
+        Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = null;
         try {
             validateUserExists(userId);
-            Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = toscaOperationFacade
-                .getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType);
+           nonCheckoutCompResponse = toscaOperationFacade
+                .getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType, modelName);
             if (nonCheckoutCompResponse.isLeft()) {
                 log.debug("Retrieved Resource successfully.");
                 return Either.left(nonCheckoutCompResponse.left().value());
@@ -438,7 +440,9 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return Either
                 .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value())));
         } finally {
-            janusGraphDao.commit();
+            if(nonCheckoutCompResponse != null && nonCheckoutCompResponse.isLeft() ) {
+                janusGraphDao.commit();
+            }
         }
     }
 

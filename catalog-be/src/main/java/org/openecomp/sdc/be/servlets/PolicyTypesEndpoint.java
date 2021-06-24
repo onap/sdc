@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
@@ -78,9 +79,15 @@ public class PolicyTypesEndpoint extends BeGenericServlet {
     @ResponseView(mixin = {PolicyTypeMixin.class})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public List<PolicyTypeDefinition> getPolicyTypes(
-        @Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed") @QueryParam("internalComponentType") String internalComponentType,
-        @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+        @Parameter(description = "An optional parameter to indicate the type of the container from where this call is executed")
+        @QueryParam("internalComponentType") String internalComponentType,
+        @QueryParam("componentModel") String internalComponentModel,
+    @Parameter(description = "The user id", required = true) @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         log.debug("(get) Start handle request of GET policyTypes");
-        return policyTypeBusinessLogic.getAllPolicyTypes(userId, internalComponentType);
+        if (internalComponentModel != null) {
+            internalComponentModel = ValidationUtils.sanitizeInputString(internalComponentModel.trim());
+        }
+        return policyTypeBusinessLogic
+            .getAllPolicyTypes(userId, internalComponentType, internalComponentModel);
     }
 }
