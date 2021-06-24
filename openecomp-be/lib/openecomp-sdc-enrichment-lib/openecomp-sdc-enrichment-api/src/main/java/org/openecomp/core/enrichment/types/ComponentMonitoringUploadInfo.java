@@ -17,6 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.core.enrichment.types;
 
 import static org.openecomp.core.enrichment.types.MonitoringUploadType.SNMP_POLL;
@@ -25,10 +26,12 @@ import static org.openecomp.core.enrichment.types.MonitoringUploadType.VES_EVENT
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class ComponentMonitoringUploadInfo {
 
-    private Map<MonitoringUploadType, MonitoringArtifactInfo> infoByType = new HashMap<>();
+    private final Map<MonitoringUploadType, MonitoringArtifactInfo> infoByType = new HashMap<>();
 
     public MonitoringArtifactInfo getSnmpTrap() {
         return infoByType.get(SNMP_TRAP);
@@ -42,7 +45,8 @@ public class ComponentMonitoringUploadInfo {
         return infoByType.get(VES_EVENTS);
     }
 
-    public void setMonitoringArtifactFile(MonitoringUploadType type, MonitoringArtifactInfo monitoringArtifactInfo) {
+    public void setMonitoringArtifactFile(final MonitoringUploadType type,
+                                          final MonitoringArtifactInfo monitoringArtifactInfo) {
         infoByType.put(type, monitoringArtifactInfo);
     }
 }

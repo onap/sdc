@@ -15,6 +15,7 @@
  */
 package org.openecomp.sdc.versioning.impl;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,7 +63,7 @@ public class ActionVersioningManagerImpl implements ActionVersioningManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActionVersioningManagerImpl.class);
     private static final Version INITIAL_ACTIVE_VERSION = new Version(0, 0);
-    private static final Map<String, Set<VersionableEntityMetadata>> VERSIONABLE_ENTITIES = new HashMap<>();
+    private static Map<String, Set<VersionableEntityMetadata>> VERSIONABLE_ENTITIES = new HashMap<>();
     private final VersionInfoDao versionInfoDao;
     private final VersionInfoDeletedDao versionInfoDeletedDao;
     private VersionDao versionDao;
@@ -76,6 +77,13 @@ public class ActionVersioningManagerImpl implements ActionVersioningManager {
         this.versionDao = versionDao;
         this.versionCalculator = versionCalculator;
         this.asdcItemManager = asdcItemManager;
+    }
+
+    @VisibleForTesting
+    ActionVersioningManagerImpl(Map<String, Set<VersionableEntityMetadata>> map) {
+        this.versionInfoDao = null;
+        this.versionInfoDeletedDao = null;
+        VERSIONABLE_ENTITIES = map;
     }
 
     private static VersionInfo getVersionInfo(VersionInfoEntity versionInfoEntity, String user, VersionableEntityAction action) {
