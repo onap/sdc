@@ -26,6 +26,7 @@ import static java.util.Collections.emptySet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -54,13 +55,17 @@ public class GroupTypeBusinessLogic {
         this.componentsUtils = componentsUtils;
     }
 
-    public List<GroupTypeDefinition> getAllGroupTypes(String userId, String internalComponentType) {
+    public List<GroupTypeDefinition> getAllGroupTypes(String userId, String internalComponentType, String internalComponentModel) {
+        List<GroupTypeDefinition> groupTypes = null;
         try {
             userValidations.validateUserExists(userId);
             Set<String> excludeGroupTypes = getExcludedGroupTypes(internalComponentType);
-            return groupTypeOperation.getAllGroupTypes(excludeGroupTypes);
+            groupTypes = groupTypeOperation.getAllGroupTypes(excludeGroupTypes, internalComponentModel);
+            return groupTypes;
         } finally {
-            janusGraphDao.commit();
+            if (CollectionUtils.isNotEmpty(groupTypes)) {
+                janusGraphDao.commit();
+            }
         }
     }
 

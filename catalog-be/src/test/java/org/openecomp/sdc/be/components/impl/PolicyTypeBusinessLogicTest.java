@@ -21,8 +21,16 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.ImmutableMap;
 import fj.data.Either;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,17 +51,6 @@ import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyTypeBusinessLogicTest {
@@ -89,7 +86,7 @@ public class PolicyTypeBusinessLogicTest {
         ResponseFormat userNotExistResponse = new ResponseFormat();
         when(userValidations.validateUserExists(eq(USER_ID))).thenThrow(new ByResponseFormatComponentException(userNotExistResponse));
         try{
-            testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE);
+            testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE, null);
         }catch(ByResponseFormatComponentException e){
             assertThat(e.getResponseFormat()).isSameAs(userNotExistResponse);
         }
@@ -98,8 +95,7 @@ public class PolicyTypeBusinessLogicTest {
     @Test
     public void getAllPolicyTypes_whenExcludePolicyTypesSetIsNull_passNullExcludedTypesSet() {
         when(ConfigurationManager.getConfigurationManager().getConfiguration().getExcludedPolicyTypesMapping()).thenCallRealMethod();
-        when(policyTypeOperation.getAllPolicyTypes(anySet())).thenReturn(emptyList());
-        List<PolicyTypeDefinition> allPolicyTypes = testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE);
+        List<PolicyTypeDefinition> allPolicyTypes = testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE, null);
         assertThat(allPolicyTypes).isEmpty();
     }
 
@@ -108,16 +104,16 @@ public class PolicyTypeBusinessLogicTest {
         List<PolicyTypeDefinition> policyTypes = Arrays.asList(new PolicyTypeBuilder().setUniqueId("id1").build(),
                 new PolicyTypeBuilder().setUniqueId("id2").build(),
                 new PolicyTypeBuilder().setUniqueId("id3").build());
-        when(policyTypeOperation.getAllPolicyTypes(EXCLUDED_POLICY_TYPES)).thenReturn(policyTypes);
-        List<PolicyTypeDefinition> allPolicyTypes = testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE);
+        when(policyTypeOperation.getAllPolicyTypes(EXCLUDED_POLICY_TYPES, null)).thenReturn(policyTypes);
+        List<PolicyTypeDefinition> allPolicyTypes = testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE, null);
         assertThat(allPolicyTypes).isSameAs(policyTypes);
     }
 
     @Test
     public void getAllPolicyTypes_noPolicyTypes() {
-        when(policyTypeOperation.getAllPolicyTypes(EXCLUDED_POLICY_TYPES)).thenThrow(new StorageException(StorageOperationStatus.NOT_FOUND));
+        when(policyTypeOperation.getAllPolicyTypes(EXCLUDED_POLICY_TYPES, null)).thenThrow(new StorageException(StorageOperationStatus.NOT_FOUND));
         try {
-            testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE);
+            testInstance.getAllPolicyTypes(USER_ID, COMPONENT_TYPE, null);
         }catch(StorageException e){
             assertThat(e.getStorageOperationStatus()).isSameAs(StorageOperationStatus.NOT_FOUND);
         }

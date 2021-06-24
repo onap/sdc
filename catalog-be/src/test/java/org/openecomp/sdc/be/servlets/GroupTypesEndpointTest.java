@@ -35,7 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
@@ -134,9 +133,9 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
     @BeforeEach
     public void before() throws Exception {
         super.setUp();
-        when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
+        when(userValidations.validateUserExists(USER_ID)).thenReturn(user);
         when(
-            janusGraphGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class)))
+            janusGraphGenericDao.getByCriteriaWithPredicate(eq(NodeTypeEnum.GroupType), any(), eq(GroupTypeData.class), any()))
             .thenReturn(Either.left(buildGroupTypeDataList()));
     }
 
@@ -171,16 +170,15 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
     void getGroupTypes_validUser_Success() {
         List<GroupTypeDefinition> testConfigGroupTypes = buildGroupTypesList();
         List<GroupTypeDefinition> fetchedGroupTypes = buildGetGroupTypesCall(USER_ID, COMPONENT_TYPE)
-            .get(new GenericType<List<GroupTypeDefinition>>() {
-            });
+            .get(new GenericType<>() {});
         verifyGroupTypesList(testConfigGroupTypes, fetchedGroupTypes);
     }
 
     @Test
-    void getGroupTypes_whenNoInteranlComponentType_passEmptyAsExcludedTypes() {
+    void getGroupTypes_whenNoInternalComponentType_passEmptyAsExcludedTypes() {
         List<GroupTypeDefinition> testConfigGroupTypes = buildGroupTypesList();
         List<GroupTypeDefinition> fetchedGroupTypes = buildGetGroupTypesCallNoInternalComponent(USER_ID)
-            .get(new GenericType<List<GroupTypeDefinition>>() {
+            .get(new GenericType<>() {
             });
         verifyGroupTypesList(testConfigGroupTypes, fetchedGroupTypes);
     }
@@ -260,10 +258,5 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
         GroupTypeData gt2 = new GroupTypeData(d2);
         return asList(gt1, gt2);
     }
-
-    private GroupTypeDefinition[] listOfEmptyGroupTypes(int size) {
-        return Stream.generate(GroupTypeDefinition::new).limit(size).toArray(GroupTypeDefinition[]::new);
-    }
-
 
 }

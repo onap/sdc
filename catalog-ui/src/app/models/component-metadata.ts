@@ -85,6 +85,9 @@ export interface IComponentMetadata {
     capabilities: CapabilitiesGroup;
     requirements: RequirementsGroup;
 
+    // Model
+    model: string;
+
 }
 
 export class ComponentMetadata implements IComponentMetadata {
@@ -141,6 +144,7 @@ export class ComponentMetadata implements IComponentMetadata {
     public serviceRole: string;
     public environmentContext: string;
     public instantiationType: string;
+    public model: string;
 
     // backend lifecycleState
     public state: string;
@@ -196,6 +200,7 @@ export class ComponentMetadata implements IComponentMetadata {
         this.capabilities = response.capabilities;
         this.requirements = response.requirements;
         this.categorySpecificMetadata = response.categorySpecificMetadata;
+        this.model = response.model;
         return this;
     }
 

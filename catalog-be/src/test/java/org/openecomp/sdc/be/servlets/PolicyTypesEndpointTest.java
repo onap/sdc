@@ -75,7 +75,7 @@ class PolicyTypesEndpointTest extends JerseySpringBaseTest {
     @Test
     void getPolicyTypes() {
         List<PolicyTypeDefinition> policyTypes = buildPolicyTypesList();
-        when(policyTypeBusinessLogic.getAllPolicyTypes(USER_ID, COMPONENT_TYPE)).thenReturn(policyTypes);
+        when(policyTypeBusinessLogic.getAllPolicyTypes(USER_ID, COMPONENT_TYPE, null)).thenReturn(policyTypes);
         when(componentUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.SC_OK));
         List<PolicyTypeDefinition> fetchedPolicyTypes = buildGetPolicyTypesCall()
             .get(new GenericType<List<PolicyTypeDefinition>>() {
@@ -86,7 +86,7 @@ class PolicyTypesEndpointTest extends JerseySpringBaseTest {
     @Test
     void getPolicyTypes_whenNoInternalComponent_passNullAsComponentType() {
         List<PolicyTypeDefinition> policyTypes = buildPolicyTypesList();
-        when(policyTypeBusinessLogic.getAllPolicyTypes(USER_ID, null)).thenReturn(policyTypes);
+        when(policyTypeBusinessLogic.getAllPolicyTypes(USER_ID, null, null)).thenReturn(policyTypes);
         when(componentUtils.getResponseFormat(ActionStatus.OK)).thenReturn(new ResponseFormat(HttpStatus.SC_OK));
         List<PolicyTypeDefinition> fetchedPolicyTypes = buildGetPolicyTypesCallNoInternalComponent()
             .get(new GenericType<List<PolicyTypeDefinition>>() {
