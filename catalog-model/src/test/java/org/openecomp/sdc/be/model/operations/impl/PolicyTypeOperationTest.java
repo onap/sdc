@@ -26,29 +26,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
-import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.PolicyTypeData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,9 +155,10 @@ public class PolicyTypeOperationTest extends ModelTestBase {
                 .containsExactlyInAnyOrder(prop1, prop2, prop3);
     }
 
-    @Test(expected = StorageException.class)
+    @Test
     public void getAllPolicyTypes_noPolicies() {
-        policyTypeOperation.getAllPolicyTypes(null);
+        final List<PolicyTypeDefinition> result = policyTypeOperation.getAllPolicyTypes(null, null);
+        assertThat(result).isEmpty();
     }
 
     @Test
@@ -166,7 +166,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         PolicyTypeDefinition policyType1 = createPolicyTypeDef();
         PolicyTypeDefinition policyType2 = createPolicyTypeDef("tosca.policies.test1", "desc1", "tosca.policies.Root");
         addPolicyTypesToDB(policyType1, policyType2);
-        List<PolicyTypeDefinition> allPolicyTypesWithNoExcluded = policyTypeOperation.getAllPolicyTypes(null);
+        List<PolicyTypeDefinition> allPolicyTypesWithNoExcluded = policyTypeOperation.getAllPolicyTypes(null, null);
         assertThat(allPolicyTypesWithNoExcluded).hasSize(2);
         assertThat(allPolicyTypesWithNoExcluded).usingElementComparatorOnFields("uniqueId", "description", "version", "type")
                 .containsExactlyInAnyOrder(policyType1, policyType2);
@@ -180,7 +180,8 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         policyTypeOperation.addPolicyType(policyType1);
         policyTypeOperation.addPolicyType(policyType2);
         policyTypeOperation.addPolicyType(policyType3);
-        List<PolicyTypeDefinition> allPolicyTypes = policyTypeOperation.getAllPolicyTypes(newHashSet("tosca.policies.test1", "tosca.policies.test2"));
+        List<PolicyTypeDefinition> allPolicyTypes = policyTypeOperation.getAllPolicyTypes(newHashSet("tosca.policies.test1", "tosca.policies.test2"),
+            null);
         assertThat(allPolicyTypes).hasSize(1);
         assertThat(allPolicyTypes).usingElementComparatorOnFields("type")
                                                  .containsExactly(policyType1);

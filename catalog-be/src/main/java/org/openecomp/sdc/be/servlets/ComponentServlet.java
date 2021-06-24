@@ -75,6 +75,7 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.view.ResponseView;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
@@ -248,6 +249,7 @@ public class ComponentServlet extends BeGenericServlet {
     public Response getLatestVersionNotAbstractCheckoutComponentsIdesOnly(@PathParam("componentType") final String componentType,
                                                                           @Context final HttpServletRequest request,
                                                                           @QueryParam("internalComponentType") String internalComponentType,
+                                                                          @QueryParam("componentModel") String internalComponentModel,
                                                                           @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                                                           @Parameter(description = "uid list", required = true) String data)
         throws IOException {
@@ -256,9 +258,12 @@ public class ComponentServlet extends BeGenericServlet {
         try {
             ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
             ComponentBusinessLogic businessLogic = componentBusinessLogicProvider.getInstance(componentTypeEnum);
+            if (internalComponentModel != null) {
+                internalComponentModel = ValidationUtils.sanitizeInputString(internalComponentModel.trim());
+            }
             Either<List<Component>, ResponseFormat> actionResponse = businessLogic
-                .getLatestVersionNotAbstractComponentsMetadata(false, HighestFilterEnum.HIGHEST_ONLY, componentTypeEnum, internalComponentType,
-                    userId);
+                .getLatestVersionNotAbstractComponentsMetadata(false, HighestFilterEnum.HIGHEST_ONLY, componentTypeEnum,
+                    internalComponentType, userId, internalComponentModel);
             if (actionResponse.isRight()) {
                 log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, componentType);
                 return buildErrorResponse(actionResponse.right().value());

@@ -20,11 +20,24 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphVertex;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,25 +49,18 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
 import org.openecomp.sdc.be.resources.data.GroupTypeData;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -92,7 +98,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         groupTypeOperation.addGroupType(type1);
         groupTypeOperation.addGroupType(type2);
 
-        List<GroupTypeDefinition> allGroupTypesNoExclusion = groupTypeOperation.getAllGroupTypes(null);
+        List<GroupTypeDefinition> allGroupTypesNoExclusion = groupTypeOperation.getAllGroupTypes(null, null);
         assertThat(allGroupTypesNoExclusion)
                 .usingElementComparatorOnFields("type", "icon", "name")
                 .containsExactlyInAnyOrder(rootGroupDefinition, type1, type2);
@@ -107,7 +113,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         groupTypeOperation.addGroupType(type1);
         groupTypeOperation.addGroupType(type2);
 
-        List<GroupTypeDefinition> allGroupTypes = groupTypeOperation.getAllGroupTypes(newHashSet("type1", "type2"));
+        List<GroupTypeDefinition> allGroupTypes = groupTypeOperation.getAllGroupTypes(newHashSet("type1", "type2"), null);
         assertThat(allGroupTypes)
                 .usingElementComparatorOnFields("type")
                 .containsExactly(rootGroupDefinition);

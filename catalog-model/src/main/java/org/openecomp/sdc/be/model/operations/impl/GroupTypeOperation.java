@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.janusgraph.core.attribute.Text.REGEX;
 import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
 
 import com.google.common.base.Strings;
@@ -46,6 +47,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgePropertiesDictionary;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -273,13 +275,14 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         return janusGraphGenericDao.createRelation(groupTypeData, capabilityData, GraphEdgeLabels.GROUP_TYPE_CAPABILITY, properties);
     }
 
-    public List<GroupTypeDefinition> getAllGroupTypes(Set<String> excludedGroupTypes) {
+    public List<GroupTypeDefinition> getAllGroupTypes(Set<String> excludedGroupTypes, String modelName) {
         Map<String, Map.Entry<JanusGraphPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(),
             excludedGroupTypes);
-        List<GroupTypeData> groupTypes = janusGraphGenericDao
-            .getByCriteriaWithPredicate(NodeTypeEnum.GroupType, predicateCriteria, GroupTypeData.class).left()
-            .on(operationUtils::onJanusGraphOperationFailure);
-        return convertGroupTypesToDefinition(groupTypes);
+        if (modelName != null) {
+            predicateCriteria.put(GraphPropertyEnum.MODEL.getProperty(), new HashMap.SimpleEntry<>(REGEX, "/^"+modelName+"$/"));
+        }
+        return janusGraphGenericDao.getByCriteriaWithPredicate(NodeTypeEnum.GroupType, predicateCriteria, GroupTypeData.class).left()
+            .map(this::convertGroupTypesToDefinition).left().on(operationUtils::validateJanusGraphOperationFailure);
     }
 
     private List<GroupTypeDefinition> convertGroupTypesToDefinition(List<GroupTypeData> groupTypes) {

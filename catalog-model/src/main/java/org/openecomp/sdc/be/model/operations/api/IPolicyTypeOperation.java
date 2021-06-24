@@ -33,5 +33,5 @@ public interface IPolicyTypeOperation {
     Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition updatedPolicyType,
                                                                           PolicyTypeDefinition currPolicyType);
 
-    List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes);
+    List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes, String modelName);
 }

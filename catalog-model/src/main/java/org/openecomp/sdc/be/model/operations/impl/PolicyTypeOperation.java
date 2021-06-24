@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.janusgraph.core.attribute.Text.REGEX;
 import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
 
 import fj.data.Either;
@@ -34,6 +35,7 @@ import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -95,12 +97,14 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         return updatePolicyTypeOnGraph(updatedPolicyType, currPolicyType);
     }
 
-    @Override
-    public List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes) {
+    public List<PolicyTypeDefinition> getAllPolicyTypes(Set<String> excludedPolicyTypes, String modelName) {
         Map<String, Map.Entry<JanusGraphPredicate, Object>> predicateCriteria = buildNotInPredicate(GraphPropertiesDictionary.TYPE.getProperty(),
             excludedPolicyTypes);
+        if (modelName != null) {
+            predicateCriteria.put(GraphPropertyEnum.MODEL.getProperty(), new HashMap.SimpleEntry<>(REGEX, "/^"+modelName+"$/"));
+        }
         return janusGraphGenericDao.getByCriteriaWithPredicate(NodeTypeEnum.PolicyType, predicateCriteria, PolicyTypeData.class).left()
-            .map(this::convertPolicyTypesToDefinition).left().on(operationUtils::onJanusGraphOperationFailure);
+            .map(this::convertPolicyTypesToDefinition).left().on(operationUtils::validateJanusGraphOperationFailure);
     }
 
     private List<PolicyTypeDefinition> convertPolicyTypesToDefinition(List<PolicyTypeData> policiesTypes) {
