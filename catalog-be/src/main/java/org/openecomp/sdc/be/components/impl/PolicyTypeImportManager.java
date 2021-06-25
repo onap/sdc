@@ -23,11 +23,13 @@ import fj.data.Either;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.components.impl.utils.PolicyTypeImportUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
@@ -36,6 +38,7 @@ import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Component;
@@ -61,18 +64,23 @@ public class PolicyTypeImportManager {
         this.groupTypeOperation = groupTypeOperation;
     }
 
-    public Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> createPolicyTypes(ToscaTypeImportData toscaTypeImportData) {
-        return commonImportManager.createElementTypes(toscaTypeImportData, this::createPolicyTypesFromYml, this::upsertPolicyTypesByDao);
+    public Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> createPolicyTypes(ToscaTypeImportData toscaTypeImportData, String modelName) {
+        return commonImportManager.createElementTypes(toscaTypeImportData, this::createPolicyTypesFromYml, this::upsertPolicyTypesByDao, modelName);
     }
 
-    private Either<List<PolicyTypeDefinition>, ActionStatus> createPolicyTypesFromYml(String policyTypesYml) {
-        return commonImportManager.createElementTypesFromYml(policyTypesYml, this::createPolicyType);
+    private Either<List<PolicyTypeDefinition>, ActionStatus> createPolicyTypesFromYml(String policyTypesYml, String modelName) {
+        Either<List<PolicyTypeDefinition>, ActionStatus> policyTypes = commonImportManager.createElementTypesFromYml(policyTypesYml, this::createPolicyType);
+        if (policyTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+            policyTypes.left().value().forEach(policyType -> policyType.setModel(modelName));
+        }
+        return policyTypes;
     }
 
     private Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> upsertPolicyTypesByDao(
         List<PolicyTypeDefinition> policyTypesToCreate) {
         return commonImportManager.createElementTypesByDao(policyTypesToCreate, this::validatePolicyType,
-            policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, policyType.getType()), policyTypeOperation::getLatestPolicyTypeByType,
+            policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, UniqueIdBuilder.buildPolicyTypeUid(policyType.getModel(),
+                policyType.getType(), policyType.getVersion(), NodeTypeEnum.PolicyType.getName()).toLowerCase()), policyTypeOperation::getLatestPolicyTypeByType,
             policyTypeOperation::addPolicyType, this::updatePolicyType);
     }
 

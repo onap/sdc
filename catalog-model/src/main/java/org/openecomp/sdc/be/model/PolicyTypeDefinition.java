@@ -20,33 +20,25 @@
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 
 /**
  * Specifies the policy type that the Node Type exposes.
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(callSuper = true)
 public class PolicyTypeDefinition extends PolicyTypeDataDefinition {
 
     private List<PropertyDefinition> properties;
-
-    public PolicyTypeDefinition() {
-        super();
-    }
+    private String model;
 
     public PolicyTypeDefinition(PolicyTypeDataDefinition p) {
         super(p);
-    }
-
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " [ properties=" + properties + " ]";
     }
 }

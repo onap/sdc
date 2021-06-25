@@ -19,18 +19,24 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
+import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -39,8 +45,10 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.be.resources.data.PolicyTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
+import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,6 +72,29 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);
         mapCriteria.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
         return getPolicyTypeByCriteria(type, mapCriteria);
+    }
+
+    public Either<PolicyTypeDefinition, StorageOperationStatus> getLatestPolicyTypeByType(String type, String model) {
+        final Either<PolicyTypeData, JanusGraphOperationStatus> policyTypesRes = janusGraphGenericDao
+            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), type, PolicyTypeData.class, model);
+        if (policyTypesRes.isRight()) {
+            final StorageOperationStatus status = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(policyTypesRes.right().value());
+            log.error("PolicyTypeData cannot be found in graph. status is {}", status);
+            return Either.right(status);
+        }
+        Either<PolicyTypeDefinition, StorageOperationStatus> policyTypeDefinition = getPolicyTypeByUid(policyTypesRes.left().value().getUniqueId());
+        if (policyTypeDefinition.isRight()) {
+            final StorageOperationStatus status = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(policyTypesRes.right().value());
+            log.error("PolicyTypeDefinition cannot be found in graph. status is {}", status);
+            return Either.right(status);
+        }
+        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> modelName = janusGraphGenericDao.getParentNode(
+            UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), policyTypesRes.left().value().getUniqueId(), GraphEdgeLabels.MODEL_ELEMENT,
+            NodeTypeEnum.Model, ModelData.class);
+        if (modelName.isLeft()) {
+            policyTypeDefinition.left().value().setModel(modelName.left().value().getLeft().getName());
+        }
+        return policyTypeDefinition;
     }
 
     @Override
@@ -107,7 +138,7 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
 
     private Either<PolicyTypeData, StorageOperationStatus> addPolicyTypeToGraph(PolicyTypeDefinition policyTypeDef) {
         log.debug("Got policy type {}", policyTypeDef);
-        String ptUniqueId = UniqueIdBuilder.buildPolicyTypeUid(policyTypeDef.getType(), policyTypeDef.getVersion(), "policytype");
+        String ptUniqueId = UniqueIdBuilder.buildPolicyTypeUid(policyTypeDef.getModel(), policyTypeDef.getType(), policyTypeDef.getVersion(), "policytype");
         PolicyTypeData policyTypeData = buildPolicyTypeData(policyTypeDef, ptUniqueId);
         log.debug("Before adding policy type to graph. policyTypeData = {}", policyTypeData);
         Either<PolicyTypeData, JanusGraphOperationStatus> eitherPolicyTypeData = janusGraphGenericDao
@@ -125,7 +156,24 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
             log.error("Failed add properties {} to policy {}", properties, policyTypeDef.getType());
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(addPropertiesToPolicyType.right().value()));
         }
+
+        final Either<GraphRelation, StorageOperationStatus> modelRelationship = addPolicyTypeToModel(policyTypeDef);
+        if (modelRelationship.isRight()) {
+            return Either.right(modelRelationship.right().value());
+        }
+
         return addDerivedFromRelation(policyTypeDef, ptUniqueId).left().map(updatedDerivedFrom -> eitherPolicyTypeData.left().value());
+    }
+
+    private Either<GraphRelation, StorageOperationStatus> addPolicyTypeToModel(final PolicyTypeDefinition policyTypeDefinition) {
+        final String model = policyTypeDefinition.getModel();
+        if (model == null) {
+            return Either.left(null);
+        }
+        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
+        final GraphNode to = new UniqueIdData(NodeTypeEnum.PolicyType, policyTypeDefinition.getUniqueId());
+        log.info("Connecting model {} to type {}", from, to);
+        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     private Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeByCriteria(String type, Map<String, Object> properties) {
@@ -253,14 +301,14 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         return addDerivedFromRelation(updatedPolicyType, policyTypeId);
     }
 
-    private Either<GraphRelation, StorageOperationStatus> addDerivedFromRelation(PolicyTypeDataDefinition policyTypeDef, String ptUniqueId) {
+    private Either<GraphRelation, StorageOperationStatus> addDerivedFromRelation(PolicyTypeDefinition policyTypeDef, String ptUniqueId) {
         String derivedFrom = policyTypeDef.getDerivedFrom();
         if (derivedFrom == null) {
             return Either.left(null);
         }
         log.debug("#addDerivedFromRelationBefore - adding derived from relation between policy type {} to its parent {}", policyTypeDef.getType(),
             derivedFrom);
-        return this.getLatestPolicyTypeByType(derivedFrom).left().bind(
+        return this.getLatestPolicyTypeByType(derivedFrom, policyTypeDef.getModel()).left().bind(
             derivedFromPolicy -> derivedFromOperation.addDerivedFromRelation(ptUniqueId, derivedFromPolicy.getUniqueId(), NodeTypeEnum.PolicyType));
     }
 

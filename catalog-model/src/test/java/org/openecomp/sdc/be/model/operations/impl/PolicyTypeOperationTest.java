@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,6 +45,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -61,6 +62,8 @@ public class PolicyTypeOperationTest extends ModelTestBase {
     private static final String NULL_STRING = null;
     @Autowired
     private PolicyTypeOperation policyTypeOperation;
+    @Autowired
+    private ModelOperation modelOperation;
 
     @Autowired
     private HealingJanusGraphGenericDao janusGraphGenericDao;
@@ -98,7 +101,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         PolicyTypeDefinition policyTypePostCreate = addPolicyType.left().value();
         assertThat(policyTypePostCreate.getUniqueId()).isNotEmpty();
         assertThat(policyTypePostCreate)
-                .isEqualToComparingOnlyGivenFields(policyTypePreCreate, "name", "icon", "description", "type");
+            .isEqualToComparingOnlyGivenFields(policyTypePreCreate, "name", "icon", "description", "type");
     }
 
     @Test
@@ -108,6 +111,21 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         assertTrue(eitherPolicyTypeFetched.isLeft());
         PolicyTypeDefinition policyTypeFetched = eitherPolicyTypeFetched.left().value();
         assertEquals(policyTypeFetched.toString(), policyTypeCreated.toString());
+    }
+
+    @Test
+    public void testAddPolicyTypeWithModel() {
+        PolicyTypeDefinition policyTypeDefinition = createPolicyTypeDef();
+        policyTypeDefinition.setModel("testModel");
+        Model model = new Model("testModel");
+        modelOperation.createModel(model , true);
+
+        Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType = policyTypeOperation.addPolicyType(policyTypeDefinition);
+        assertTrue(addPolicyType.isLeft());
+        Either<PolicyTypeDefinition, StorageOperationStatus> eitherPolicyTypeFetched =
+            policyTypeOperation.getLatestPolicyTypeByType(policyTypeDefinition.getType(), policyTypeDefinition.getModel());
+        assertTrue(eitherPolicyTypeFetched.isLeft());
+        assertEquals(policyTypeDefinition.getModel(), eitherPolicyTypeFetched.left().value().getModel());
     }
 
     @Test
@@ -130,8 +148,8 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType2 = policyTypeOperation.getLatestPolicyTypeByType(policyType2.getType());
         assertThat(latestPolicyType2.isLeft()).isTrue();
         assertThat(latestPolicyType2.left().value().getProperties())
-                .usingElementComparatorOnFields("defaultValue", "name", "type")
-                .containsExactlyInAnyOrder(prop1, prop2);
+            .usingElementComparatorOnFields("defaultValue", "name", "type")
+            .containsExactlyInAnyOrder(prop1, prop2);
     }
 
     @Test
@@ -151,8 +169,8 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType3 = policyTypeOperation.getLatestPolicyTypeByType(policyType4.getType());
         assertThat(latestPolicyType3.isLeft()).isTrue();
         assertThat(latestPolicyType3.left().value().getProperties())
-                .usingElementComparatorOnFields("defaultValue", "name", "type")
-                .containsExactlyInAnyOrder(prop1, prop2, prop3);
+            .usingElementComparatorOnFields("defaultValue", "name", "type")
+            .containsExactlyInAnyOrder(prop1, prop2, prop3);
     }
 
     @Test
@@ -169,7 +187,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         List<PolicyTypeDefinition> allPolicyTypesWithNoExcluded = policyTypeOperation.getAllPolicyTypes(null, null);
         assertThat(allPolicyTypesWithNoExcluded).hasSize(2);
         assertThat(allPolicyTypesWithNoExcluded).usingElementComparatorOnFields("uniqueId", "description", "version", "type")
-                .containsExactlyInAnyOrder(policyType1, policyType2);
+            .containsExactlyInAnyOrder(policyType1, policyType2);
     }
 
     @Test
@@ -184,7 +202,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
             null);
         assertThat(allPolicyTypes).hasSize(1);
         assertThat(allPolicyTypes).usingElementComparatorOnFields("type")
-                                                 .containsExactly(policyType1);
+            .containsExactly(policyType1);
     }
 
     @Test
@@ -231,7 +249,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         PolicyTypeDefinition fetchedPolicyType = fetchedUpdatedType.left().value();
         assertThat(fetchedPolicyType.getProperties()).isEmpty();
         assertThat(fetchedPolicyType)
-                .isEqualToIgnoringGivenFields(updatedType, "properties");
+            .isEqualToIgnoringGivenFields(updatedType, "properties");
 
     }
 
@@ -250,8 +268,8 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
         Either<PolicyTypeDefinition, StorageOperationStatus> fetchedUpdatedType = policyTypeOperation.getLatestPolicyTypeByType(policyType.getType());
         assertThat(fetchedUpdatedType.left().value().getProperties())
-                .usingElementComparatorOnFields("name", "defaultValue", "type")
-                .containsExactlyInAnyOrder(updatedProp1, prop3);
+            .usingElementComparatorOnFields("name", "defaultValue", "type")
+            .containsExactlyInAnyOrder(updatedProp1, prop3);
 
     }
 
@@ -312,16 +330,16 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
     private void verifyDerivedFromNodeEqualsToRootPolicyType(PolicyTypeDefinition rootPolicyType, String parentPolicyId) {
         Either<ImmutablePair<PolicyTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), parentPolicyId, GraphEdgeLabels.DERIVED_FROM,
-                NodeTypeEnum.PolicyType, PolicyTypeData.class);
+            NodeTypeEnum.PolicyType, PolicyTypeData.class);
         assertThat(derivedFromRelation.left().value().getLeft().getPolicyTypeDataDefinition())
-                .isEqualToComparingFieldByField(rootPolicyType);
+            .isEqualToComparingFieldByField(rootPolicyType);
     }
 
     private void verifyDerivedFromRelationDoesntExist(String parentPolicyId) {
         Either<ImmutablePair<PolicyTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), parentPolicyId, GraphEdgeLabels.DERIVED_FROM,
-                NodeTypeEnum.PolicyType, PolicyTypeData.class);
+            NodeTypeEnum.PolicyType, PolicyTypeData.class);
         assertThat(derivedFromRelation.right().value())
-                .isEqualTo(JanusGraphOperationStatus.NOT_FOUND);
+            .isEqualTo(JanusGraphOperationStatus.NOT_FOUND);
     }
 
     private PolicyTypeDefinition createRootPolicyTypeOnGraph() {
@@ -349,7 +367,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         return createPolicyTypeDef(type, description, derivedFrom, null);
     }
 
-    private PolicyTypeDefinition createPolicyTypeDef(String type, String description, String derivedFrom,  PropertyDefinition ... props) {
+    private PolicyTypeDefinition createPolicyTypeDef(String type, String description, String derivedFrom, PropertyDefinition ... props) {
         PolicyTypeDataDefinition policyTypeDataDefinition = new PolicyTypeDataDefinition();
         policyTypeDataDefinition.setDescription(description);
         policyTypeDataDefinition.setType(type);
@@ -368,6 +386,4 @@ public class PolicyTypeOperationTest extends ModelTestBase {
     private void addPolicyTypesToDB(PolicyTypeDefinition ... policyTypeDefinitions) {
         Stream.of(policyTypeDefinitions).forEach(policyTypeOperation::addPolicyType);
     }
-
-
 }

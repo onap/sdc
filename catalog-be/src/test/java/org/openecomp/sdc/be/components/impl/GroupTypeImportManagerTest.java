@@ -47,7 +47,7 @@ public class GroupTypeImportManagerTest {
     public void shouldInvokeCreateElementTypes() {
         GroupTypeImportManager groupTypeImportManager = new GroupTypeImportManager(groupTypeOperation, componentsUtils,
             toscaOperationFacade, commonImportManager);
-        groupTypeImportManager.createGroupTypes(data);
-        Mockito.verify(commonImportManager).createElementTypes(Mockito.any(ToscaTypeImportData.class), Mockito.any(), Mockito.any());
+        groupTypeImportManager.createGroupTypes(data, null);
+        Mockito.verify(commonImportManager).createElementTypes(Mockito.any(ToscaTypeImportData.class), Mockito.any(), Mockito.any(), Mockito.any());
     }
 }
