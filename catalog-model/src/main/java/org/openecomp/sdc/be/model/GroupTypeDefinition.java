@@ -21,42 +21,27 @@ package org.openecomp.sdc.be.model;
 
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
 
 /**
  * Specifies the group type that the Node Type exposes.
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString(callSuper = true)
 public class GroupTypeDefinition extends GroupTypeDataDefinition {
 
     private List<PropertyDefinition> properties;
     private Map<String, CapabilityDefinition> capabilities;
-
-    public GroupTypeDefinition() {
-        super();
-    }
+    private String model;
 
     public GroupTypeDefinition(GroupTypeDataDefinition p) {
         super(p);
     }
 
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
-    public Map<String, CapabilityDefinition> getCapabilities() {
-        return capabilities;
-    }
-
-    public void setCapabilities(Map<String, CapabilityDefinition> capabilies) {
-        this.capabilities = capabilies;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " [properties=" + properties + ", capabilities=" + capabilities + "]";
-    }
 }

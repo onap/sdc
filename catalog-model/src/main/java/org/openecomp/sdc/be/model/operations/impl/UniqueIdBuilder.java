@@ -184,12 +184,19 @@ public class UniqueIdBuilder {
         return generateUUID();
     }
 
-    static String buildGroupTypeUid(String type, String version, String resourceName) {
-        return buildTypeUid(type, version, resourceName);
+    public static String buildGroupTypeUid(String modelName, String type, String version, String resourceName) {
+        return buildTypeUidWithModel(modelName, type, version, resourceName);
     }
 
-    static String buildPolicyTypeUid(String type, String version, String resourceName) {
-        return buildTypeUid(type, version, resourceName);
+    public static String buildPolicyTypeUid(String modelName, String type, String version, String resourceName) {
+        return buildTypeUidWithModel(modelName, type, version, resourceName);
+    }
+
+    static String buildTypeUidWithModel(String modelName, String type, String version, String resourceName) {
+        if (StringUtils.isEmpty(modelName)){
+            return buildTypeUid(type, version, resourceName);
+        }
+        return modelName + DOT + buildTypeUid(type, version, resourceName);
     }
 
     static String buildTypeUid(String type, String version, String resourceName) {

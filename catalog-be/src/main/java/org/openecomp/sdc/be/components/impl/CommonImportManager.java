@@ -380,9 +380,9 @@ public class CommonImportManager {
     }
 
     public <T extends ToscaTypeDataDefinition> Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> createElementTypes(
-        ToscaTypeImportData toscaTypeImportData, Function<String, Either<List<T>, ActionStatus>> elementTypeFromYmlCreater,
-        Function<List<T>, Either<List<ImmutablePair<T, Boolean>>, ResponseFormat>> elementTypeDaoCreater) {
-        Either<List<T>, ActionStatus> elementTypes = elementTypeFromYmlCreater.apply(toscaTypeImportData.getToscaTypesYml());
+        ToscaTypeImportData toscaTypeImportData, BiFunction<String, String, Either<List<T>, ActionStatus>> elementTypeFromYmlCreater,
+        Function<List<T>, Either<List<ImmutablePair<T, Boolean>>, ResponseFormat>> elementTypeDaoCreater, String modelName) {
+        Either<List<T>, ActionStatus> elementTypes = elementTypeFromYmlCreater.apply(toscaTypeImportData.getToscaTypesYml(), modelName);
         return elementTypes
             .right()
             .map(err -> componentsUtils.getResponseFormat(err, ""))

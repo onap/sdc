@@ -24,11 +24,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -37,6 +39,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.utils.TypeCompareUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
@@ -61,18 +64,23 @@ public class GroupTypeImportManager {
         this.commonImportManager = commonImportManager;
     }
 
-    public Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypes(ToscaTypeImportData toscaTypeImportData) {
-        return commonImportManager.createElementTypes(toscaTypeImportData, this::createGroupTypesFromYml, this::upsertGroupTypesByDao);
+    public Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypes(ToscaTypeImportData toscaTypeImportData, String modelName) {
+        return commonImportManager.createElementTypes(toscaTypeImportData, this::createGroupTypesFromYml, this::upsertGroupTypesByDao, modelName);
     }
 
-    private Either<List<GroupTypeDefinition>, ActionStatus> createGroupTypesFromYml(String groupTypesYml) {
-        return commonImportManager.createElementTypesFromYml(groupTypesYml, this::createGroupType);
+    private Either<List<GroupTypeDefinition>, ActionStatus> createGroupTypesFromYml(String groupTypesYml, String modelName) {
+        Either<List<GroupTypeDefinition>, ActionStatus> groupTypes = commonImportManager.createElementTypesFromYml(groupTypesYml, this::createGroupType);
+        if (groupTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+            groupTypes.left().value().forEach(groupType -> groupType.setModel(modelName));
+        }
+        return groupTypes;
     }
 
     private Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> upsertGroupTypesByDao(
         List<GroupTypeDefinition> groupTypesToCreate) {
         return commonImportManager.createElementTypesByDao(groupTypesToCreate, this::validateGroupType,
-            groupType -> new ImmutablePair<>(ElementTypeEnum.GROUP_TYPE, groupType.getType()), groupTypeOperation::getLatestGroupTypeByType,
+            groupType -> new ImmutablePair<>(ElementTypeEnum.GROUP_TYPE, UniqueIdBuilder.buildGroupTypeUid(groupType.getModel(),
+                groupType.getType(), groupType.getVersion(), NodeTypeEnum.GroupType.getName()).toLowerCase()), groupTypeOperation::getLatestGroupTypeByType,
             groupTypeOperation::addGroupType, this::updateGroupType);
     }
 

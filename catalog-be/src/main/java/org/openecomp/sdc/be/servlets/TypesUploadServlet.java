@@ -209,10 +209,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "group types already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadGroupTypes(@Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
+                                     @Parameter(description = "model") @FormDataParam("model") String modelName,
                                      @Parameter(description = "FileInputStream") @FormDataParam("groupTypesZip") File file,
                                      @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         Map<String, ToscaTypeMetadata> typesMetadata = getTypesMetadata(toscaTypesMetaData);
-        return uploadTypesWithMetaData(this::createGroupTypes, typesMetadata, file, request, creator, NodeTypeEnum.GroupType.getName());
+        return uploadTypesWithMetaData(this::createGroupTypes, typesMetadata, file, request, creator, NodeTypeEnum.GroupType.getName(), modelName);
     }
 
     @POST
@@ -225,10 +226,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "policy types already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadPolicyTypes(@Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
+                                      @Parameter(description = "model") @FormDataParam("model") String modelName,
                                       @Parameter(description = "FileInputStream") @FormDataParam("policyTypesZip") File file,
                                       @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         Map<String, ToscaTypeMetadata> typesMetadata = getTypesMetadata(toscaTypesMetaData);
-        return uploadTypesWithMetaData(this::createPolicyTypes, typesMetadata, file, request, creator, NodeTypeEnum.PolicyType.getName());
+        return uploadTypesWithMetaData(this::createPolicyTypes, typesMetadata, file, request, creator, NodeTypeEnum.PolicyType.getName(), modelName);
     }
 
     private Map<String, ToscaTypeMetadata> getTypesMetadata(String toscaTypesMetaData) {
@@ -297,9 +299,9 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         return responseWrapper;
     }
 
-    private Response uploadTypesWithMetaData(ConsumerTwoParam<Wrapper<Response>, ToscaTypeImportData> createElementsMethod,
+    private Response uploadTypesWithMetaData(ConsumerThreeParam<Wrapper<Response>, ToscaTypeImportData, String> createElementsMethod,
                                              Map<String, ToscaTypeMetadata> typesMetaData, File file, final HttpServletRequest request,
-                                             String creator, String elementTypeName) {
+                                             String creator, String elementTypeName, String modelName) {
         init();
         String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
         Wrapper<String> yamlStringWrapper = new Wrapper<>();
@@ -310,7 +312,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             }
             if (responseWrapper.isEmpty()) {
                 ToscaTypeImportData toscaTypeImportData = new ToscaTypeImportData(yamlStringWrapper.getInnerElement(), typesMetaData);
-                createElementsMethod.accept(responseWrapper, toscaTypeImportData);
+                createElementsMethod.accept(responseWrapper, toscaTypeImportData, modelName);
             }
             return responseWrapper.getInnerElement();
         } catch (Exception e) {
@@ -347,17 +349,17 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     // group types
-    private void createGroupTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData) {
+    private void createGroupTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData, String modelName) {
         final Supplier<Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> groupTypeImportManager
-            .createGroupTypes(toscaTypeImportData);
+            .createGroupTypes(toscaTypeImportData, modelName);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.GROUP_TYPE_ALREADY_EXIST,
             NodeTypeEnum.GroupType.name());
     }
 
     // policy types
-    private void createPolicyTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData) {
+    private void createPolicyTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData, String modelName) {
         final Supplier<Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> policyTypeImportManager
-            .createPolicyTypes(toscaTypeImportData);
+            .createPolicyTypes(toscaTypeImportData, modelName);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.POLICY_TYPE_ALREADY_EXIST,
             NodeTypeEnum.PolicyType.name());
     }

@@ -53,6 +53,7 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -77,7 +78,10 @@ public class GroupTypeOperationTest extends ModelTestBase {
     
     @Resource(name = "group-type-operation")
     private GroupTypeOperation groupTypeOperation;
-    
+
+    @Resource(name = "model-operation")
+    private ModelOperation modelOperation;
+
     @BeforeClass
     public static void setupBeforeClass() {
         ModelTestBase.init();
@@ -534,7 +538,27 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertTrue(upgradeResult.isLeft());
         assertThat(groupTypeDefinition).isEqualToIgnoringGivenFields(upgradeResult.left().value(), "properties", "capabilities");
     }
-    
+
+    @Test
+    public void testAddGroupTypeWithModel() {
+        createRootGroupTypeNode();
+
+        GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
+        groupTypeDefinition.setDescription("groups l2-networks in network collection");
+        groupTypeDefinition.setType("org.openecomp.groups.PrivateCollection");
+        groupTypeDefinition.setVersion("1.0");
+        groupTypeDefinition.setModel("testModel");
+        Model model = new Model("testModel");
+        modelOperation.createModel(model , true);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupType = groupTypeOperation.addGroupType(groupTypeDefinition);
+        assertTrue(addGroupType.isLeft());
+        Either<GroupTypeDefinition, StorageOperationStatus> eitherGroupTypeFetched =
+            groupTypeOperation.getLatestGroupTypeByType(groupTypeDefinition.getType(), groupTypeDefinition.getModel());
+        assertTrue(eitherGroupTypeFetched.isLeft());
+        assertEquals(groupTypeDefinition.getModel(), eitherGroupTypeFetched.left().value().getModel());
+    }
+
     
     private GroupTypeData getOrCreateRootGroupTypeNode() {
         Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
@@ -850,5 +874,4 @@ public class GroupTypeOperationTest extends ModelTestBase {
         }
         return groupTypeDefinition;
     }
-
 }
