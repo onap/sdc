@@ -35,7 +35,6 @@ import static org.openecomp.sdc.common.impl.ExternalConfiguration.getAppVersion;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -382,8 +381,7 @@ public class HealthCheckBusinessLogic {
         }
     }
 
-    @VisibleForTesting
-    String buildOnBoardingHealthCheckUrl() {
+    private String buildOnBoardingHealthCheckUrl() {
         Configuration.OnboardingConfig onboardingConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getOnboarding();
         if (onboardingConfig != null) {
             return String.format(hcUrl, onboardingConfig.getProtocol(), onboardingConfig.getHost(), onboardingConfig.getPort(),
