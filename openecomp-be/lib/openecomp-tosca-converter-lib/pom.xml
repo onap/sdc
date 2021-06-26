@@ -23,6 +23,12 @@
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-tosca-lib</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.openecomp.sdc.core</groupId>
