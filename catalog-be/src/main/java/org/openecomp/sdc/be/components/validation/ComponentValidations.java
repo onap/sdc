@@ -62,7 +62,7 @@ public class ComponentValidations {
             .filter(instancesIds -> instancesIds.contains(instanceId)).isPresent();
     }
 
-    public static String getNormalizedName(ToscaDataDefinition toscaDataDefinition) {
+    private static String getNormalizedName(ToscaDataDefinition toscaDataDefinition) {
         String name = (String) toscaDataDefinition.getToscaPresentationValue(JsonPresentationFields.NAME);
         return org.openecomp.sdc.common.util.ValidationUtils.normalizeComponentInstanceName(name);
     }

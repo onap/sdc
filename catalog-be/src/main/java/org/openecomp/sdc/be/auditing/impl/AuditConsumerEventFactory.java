@@ -35,18 +35,13 @@ public class AuditConsumerEventFactory extends AuditBaseEventFactory {
         this(action, commonFields, buildConsumerName(ecompUser), buildUserName(modifier));
     }
 
-    public AuditConsumerEventFactory(AuditingActionEnum action, CommonAuditData commonFields, String ecompUser, String modifier, String timestamp) {
-        this(action, commonFields, ecompUser, modifier);
-        this.event.setTimestamp1(timestamp);
-    }
-
     private AuditConsumerEventFactory(AuditingActionEnum action, CommonAuditData commonFields, String ecompUser, String modifier) {
         super(action);
         event = new ConsumerEvent(getAction().getName(), commonFields, ecompUser, modifier);
     }
 
-    static String buildConsumerName(ConsumerDefinition consumer) {
-        StringBuilder ecompUser = new StringBuilder();
+    private static String buildConsumerName(ConsumerDefinition consumer) {
+        final var ecompUser = new StringBuilder();
         if (consumer != null) {
             appendIfNotEmpty(consumer.getConsumerName(), ecompUser, ",");
             appendIfNotEmpty(consumer.getConsumerSalt(), ecompUser, ",");

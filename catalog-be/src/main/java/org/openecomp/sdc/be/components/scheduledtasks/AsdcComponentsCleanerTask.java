@@ -66,9 +66,9 @@ public class AsdcComponentsCleanerTask extends AbstractScheduleTaskRunner implem
         }
         for (String component : components) {
             NodeTypeEnum typeEnum = NodeTypeEnum.getByNameIgnoreCase(component);
-         if (typeEnum != null) {
-          componentsToClean.add(typeEnum);
-         }
+            if (typeEnum != null) {
+                componentsToClean.add(typeEnum);
+            }
         }
         long intervalInMinutes = cleanComponentsConfiguration.getCleanIntervalInMinutes();
         if (intervalInMinutes < 1) {
