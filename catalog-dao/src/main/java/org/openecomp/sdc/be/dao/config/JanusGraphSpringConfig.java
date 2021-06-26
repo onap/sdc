@@ -34,7 +34,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan({"org.openecomp.sdc.be.dao.jsongraph",})
+@ComponentScan({"org.openecomp.sdc.be.dao.janusgraph",})
 @EnableTransactionManagement
 public class JanusGraphSpringConfig {
 
