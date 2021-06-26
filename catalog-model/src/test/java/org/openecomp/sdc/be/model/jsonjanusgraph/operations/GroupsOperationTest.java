@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;

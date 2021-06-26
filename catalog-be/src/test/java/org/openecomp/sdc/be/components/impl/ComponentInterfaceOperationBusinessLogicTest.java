@@ -43,7 +43,7 @@ import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;

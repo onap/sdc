@@ -68,7 +68,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.HealingJanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
 import org.openecomp.sdc.be.impl.ComponentsUtils;

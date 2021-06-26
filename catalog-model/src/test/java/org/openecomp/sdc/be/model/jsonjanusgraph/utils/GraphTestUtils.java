@@ -25,7 +25,7 @@ import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.jsongraph.utils.IdBuilderUtils;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
