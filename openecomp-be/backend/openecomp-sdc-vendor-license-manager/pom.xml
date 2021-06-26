@@ -53,6 +53,12 @@
       <groupId>org.openecomp.sdc</groupId>
       <artifactId>openecomp-sdc-vendor-software-product-manager</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
