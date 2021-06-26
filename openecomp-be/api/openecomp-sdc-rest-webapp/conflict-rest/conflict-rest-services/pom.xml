@@ -39,6 +39,16 @@
       <groupId>org.openecomp.sdc.onboarding</groupId>
       <artifactId>vendor-software-products-rest-services</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.openecomp.sdc.onboarding</groupId>

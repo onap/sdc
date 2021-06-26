@@ -26,6 +26,12 @@
       <artifactId>common-be</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.openecomp.sdc</groupId>
@@ -106,6 +112,14 @@
         <exclusion>
           <artifactId>slf4j-log4j12</artifactId>
           <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-webmvc</artifactId>
         </exclusion>
 
       </exclusions>
@@ -405,6 +419,16 @@
       <artifactId>spring-context</artifactId>
       <version>${spring.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-expression</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -426,6 +450,12 @@
       <artifactId>spring-aop</artifactId>
       <version>${spring.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Spring 4 dependencies end -->
