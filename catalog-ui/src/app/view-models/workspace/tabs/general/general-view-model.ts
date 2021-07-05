@@ -254,6 +254,9 @@ export class GeneralViewModel {
         // Init Environment Context
         this.$scope.initEnvironmentContext();
 
+        // Init Models
+        this.$scope.initModel();
+
         // Init the decision if to show file browse.
         this.$scope.isShowFileBrowse = false;
         if (this.$scope.component.isResource()) {
@@ -278,7 +281,6 @@ export class GeneralViewModel {
             // Init Instantiation types
             this.$scope.initInstantiationTypes();
             this.$scope.initBaseTypes();
-            this.$scope.initModel();
         }
 
         if (this.cacheService.get(PREVIOUS_CSAR_COMPONENT)) { //keep the old component in the cache until checkout, so we dont need to pass it around
@@ -461,12 +463,10 @@ export class GeneralViewModel {
         };
 
         this.$scope.initModel = ():void => {
-            if (this.$scope.componentType === ComponentType.SERVICE) {
-                this.$scope.models = new Array();
-                this.modelService.getModels().subscribe((modelsFound: Model[]) => {
-                    modelsFound.forEach(model => {this.$scope.models.push(model.name)});})
-                this.$scope.models.filter(model => model.name === (<Service>this.$scope.component).model);
-            }
+            this.$scope.models = new Array();
+            this.modelService.getModels().subscribe((modelsFound: Model[]) => {
+                modelsFound.forEach(model => {this.$scope.models.push(model.name)});})
+            this.$scope.models.filter(model => model.name === this.$scope.component).model;
         };
 
         this.$scope.initEnvironmentContext = ():void => {
