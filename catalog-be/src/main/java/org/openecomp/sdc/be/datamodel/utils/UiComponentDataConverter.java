@@ -384,6 +384,7 @@ public class UiComponentDataConverter {
                     UiResourceMetadata metadata = new UiResourceMetadata(resource.getCategories(), resource.getDerivedFrom(),
                         (ResourceMetadataDataDefinition) resource.getComponentMetadataDefinition().getMetadataDataDefinition());
                     dataTransfer.setMetadata(metadata);
+                    dataTransfer.setModel(resource.getModel());
                     break;
                 case SUBSTITUTION_FILTER:
                     if (resource.getSubstitutionFilter() == null) {

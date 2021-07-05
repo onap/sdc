@@ -27,20 +27,16 @@ export class CompositionPaletteService {
     }
 
     public subscribeToLeftPaletteElements(next, error) {
-
         let params = new HttpParams();
         params = params.append('internalComponentType', this.workspaceService.getMetadataType());
-      let model = this.workspaceService.metadata.model
+        let model = this.workspaceService.metadata.model
         if (model) {
           params = params.append('componentModel', model);
         }
         const loadInstances = this.http.get(this.facadeUrl, {params});
         const loadGroups = this.http.get(this.baseUrl + 'groupTypes', {params});
         const loadPolicies = this.http.get(this.baseUrl + 'policyTypes', {params});
-
-        Observable.forkJoin(
-            loadInstances, loadGroups, loadPolicies
-        ).subscribe( ([resInstances, resGrouops, resPolicies]) => {
+        Observable.forkJoin(loadInstances, loadGroups, loadPolicies).subscribe( ([resInstances, resGrouops, resPolicies]) => {
             const combinedDictionary = this.combineResoponses(resInstances, resGrouops, resPolicies);
             this.leftPaletteComponents = combinedDictionary;
             next(this.leftPaletteComponents);
