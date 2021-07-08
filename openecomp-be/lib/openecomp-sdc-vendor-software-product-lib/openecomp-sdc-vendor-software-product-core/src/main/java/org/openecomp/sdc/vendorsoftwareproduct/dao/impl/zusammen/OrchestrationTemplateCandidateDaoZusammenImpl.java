@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ============LICENSE_END=========================================================
+ * Modifications copyright (c) 2021 Nordix Foundation
+ * ================================================================================
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
@@ -27,10 +30,21 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.utils.fileutils.FileUtils;
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageConfig;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
+import org.openecomp.sdc.be.csar.storage.PersistentVolumeArtifactStorageConfig;
+import org.openecomp.sdc.be.csar.storage.PersistentVolumeArtifactStorageManager;
+import org.openecomp.sdc.common.CommonConfigurationManager;
+import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.logging.api.Logger;
@@ -44,10 +58,13 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
 
     private static final Logger logger = LoggerFactory.getLogger(OrchestrationTemplateCandidateDaoZusammenImpl.class);
     private static final String EMPTY_DATA = "{}";
+    private static final String EXTERNAL_CSAR_STORE = "externalCsarStore";
     private final ZusammenAdaptor zusammenAdaptor;
+    private final ArtifactStorageManager artifactStorageManager;
 
-    public OrchestrationTemplateCandidateDaoZusammenImpl(ZusammenAdaptor zusammenAdaptor) {
+    public OrchestrationTemplateCandidateDaoZusammenImpl(final ZusammenAdaptor zusammenAdaptor) {
         this.zusammenAdaptor = zusammenAdaptor;
+        this.artifactStorageManager = new PersistentVolumeArtifactStorageManager(readArtifactStorageConfiguration());
     }
 
     @Override
@@ -139,11 +156,24 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         candidateContentElement.setData(new ByteArrayInputStream(candidateData.getContentData().array()));
         candidateContentElement.getInfo().addProperty(InfoPropertyName.FILE_SUFFIX.getVal(), candidateData.getFileSuffix());
         candidateContentElement.getInfo().addProperty(InfoPropertyName.FILE_NAME.getVal(), candidateData.getFileName());
+        final String versionId = version.getId();
         if (OnboardingTypesEnum.CSAR.toString().equalsIgnoreCase(candidateData.getFileSuffix())) {
             final ZusammenElement originalPackageElement = buildStructuralElement(ElementType.ORIGINAL_ONBOARDED_PACKAGE, Action.UPDATE);
-            originalPackageElement.getInfo().addProperty(InfoPropertyName.ORIGINAL_FILE_NAME.getVal(), candidateData.getOriginalFileName());
-            originalPackageElement.getInfo().addProperty(InfoPropertyName.ORIGINAL_FILE_SUFFIX.getVal(), candidateData.getOriginalFileSuffix());
-            originalPackageElement.setData(new ByteArrayInputStream(candidateData.getOriginalFileContentData().array()));
+            final String originalFileName = candidateData.getOriginalFileName();
+            final String originalFileSuffix = candidateData.getOriginalFileSuffix();
+            originalPackageElement.getInfo().addProperty(InfoPropertyName.ORIGINAL_FILE_NAME.getVal(), originalFileName);
+            originalPackageElement.getInfo().addProperty(InfoPropertyName.ORIGINAL_FILE_SUFFIX.getVal(), originalFileSuffix);
+            originalPackageElement.getInfo().addProperty("storeCsarsExternally", artifactStorageManager.isEnabled());
+            if (artifactStorageManager.isEnabled()) {
+                final ArtifactInfo candidateArtifactInfo = candidateData.getArtifactInfo();
+                if (candidateArtifactInfo == null) {
+                    throw new OrchestrationTemplateCandidateDaoZusammenException("No artifact info provided");
+                }
+                final ArtifactInfo artifactInfo = artifactStorageManager.persist(vspId, versionId, candidateArtifactInfo);
+                originalPackageElement.setData(new ByteArrayInputStream(artifactInfo.getPath().toString().getBytes(StandardCharsets.UTF_8)));
+            } else {
+                originalPackageElement.setData(new ByteArrayInputStream(candidateData.getOriginalFileContentData().array()));
+            }
             candidateElement.addSubElement(originalPackageElement);
         }
         final ZusammenElement validationData = buildStructuralElement(ElementType.OrchestrationTemplateCandidateValidationData, Action.UPDATE);
@@ -152,8 +182,8 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         }
         candidateElement.addSubElement(validationData);
         candidateElement.addSubElement(candidateContentElement);
-        SessionContext context = createSessionContext();
-        ElementContext elementContext = new ElementContext(vspId, version.getId());
+        final var context = createSessionContext();
+        final var elementContext = new ElementContext(vspId, versionId);
         zusammenAdaptor.saveElement(context, elementContext, candidateElement, "Update Orchestration Template Candidate");
         logger.info("Finished uploading candidate data entity for vsp id {}", vspId);
     }
@@ -197,16 +227,24 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         return Optional.empty();
     }
 
-    public enum InfoPropertyName {
+    private ArtifactStorageConfig readArtifactStorageConfiguration() {
+        final var commonConfigurationManager = CommonConfigurationManager.getInstance();
+        final boolean isEnabled = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "storeCsarsExternally", false);
+        logger.info("ArtifactConfig.isEnabled: '{}'", isEnabled);
+        final String storagePathString = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "fullPath", null);
+        logger.info("ArtifactConfig.storagePath: '{}'", storagePathString);
+        if (isEnabled && storagePathString == null) {
+            throw new OrchestrationTemplateCandidateDaoZusammenException(
+                Messages.EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING_FULL_PATH.getErrorMessage());
+        }
+        final var storagePath = storagePathString == null ? null : Path.of(storagePathString);
+        return new PersistentVolumeArtifactStorageConfig(isEnabled, storagePath);
+    }
+
+    @Getter
+    @AllArgsConstructor
+    private enum InfoPropertyName {
         FILE_SUFFIX("fileSuffix"), FILE_NAME("fileName"), ORIGINAL_FILE_NAME("originalFilename"), ORIGINAL_FILE_SUFFIX("originalFileSuffix");
         private final String val;
-
-        InfoPropertyName(String val) {
-            this.val = val;
-        }
-
-        private String getVal() {
-            return val;
-        }
     }
 }

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,21 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,14 +46,17 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
+import org.openecomp.sdc.be.csar.storage.PackageSizeReducer;
+import org.openecomp.sdc.be.csar.storage.PersistentStorageArtifactInfo;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -62,17 +71,20 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplateActionResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 
-public class OrchestrationTemplateCandidateImplTest {
+class OrchestrationTemplateCandidateImplTest {
 
-    private Logger logger = LoggerFactory.getLogger(OrchestrationTemplateCandidateImplTest.class);
+    private final Logger logger = LoggerFactory.getLogger(OrchestrationTemplateCandidateImplTest.class);
 
     @Mock
     private OrchestrationTemplateCandidateManager candidateManager;
     @Mock
     private VendorSoftwareProductManager vendorSoftwareProductManager;
-
     @Mock
     private ActivityLogManager activityLogManager;
+    @Mock
+    private ArtifactStorageManager artifactStorageManager;
+    @Mock
+    private PackageSizeReducer packageSizeReducer;
 
     private OrchestrationTemplateCandidateImpl orchestrationTemplateCandidate;
 
@@ -82,64 +94,59 @@ public class OrchestrationTemplateCandidateImplTest {
 
     private final String user = "cs0008";
 
-    @Before
-    public void setUp(){
+    @BeforeEach
+    public void setUp() {
         try {
-            initMocks(this);
+            MockitoAnnotations.openMocks(this);
             UploadFileResponse uploadFileResponse = new UploadFileResponse();
             uploadFileResponse.setOnboardingType(OnboardingTypesEnum.ZIP);
             uploadFileResponse.setNetworkPackageName("test");
             when(candidateManager.upload(any(), any())).thenReturn(uploadFileResponse);
 
-
             // get using the candidate manager.
-            Optional<Pair<String,byte[]>> zipFile =
-                    Optional.of(Pair.of("Hello", "World".getBytes()));
+            Optional<Pair<String, byte[]>> zipFile = Optional.of(Pair.of("Hello", "World".getBytes()));
 
             when(candidateManager.get(
-                    ArgumentMatchers.eq(candidateId),
-                    ArgumentMatchers.any())).thenReturn(zipFile);
+                ArgumentMatchers.eq(candidateId),
+                ArgumentMatchers.any())).thenReturn(zipFile);
 
             when(vendorSoftwareProductManager.get(
-                    ArgumentMatchers.eq(softwareProductId),
-                    ArgumentMatchers.any())).thenReturn(zipFile);
+                ArgumentMatchers.eq(softwareProductId),
+                ArgumentMatchers.any())).thenReturn(zipFile);
 
-
-            OrchestrationTemplateActionResponse processResponse =
-                    new OrchestrationTemplateActionResponse();
+            OrchestrationTemplateActionResponse processResponse = new OrchestrationTemplateActionResponse();
             processResponse.setStatus(UploadFileStatus.Success);
             when(candidateManager.process(
-                    ArgumentMatchers.eq(candidateId),
-                    ArgumentMatchers.any())).thenReturn(processResponse);
-
+                ArgumentMatchers.eq(candidateId),
+                ArgumentMatchers.any())).thenReturn(processResponse);
 
             ValidationResponse vr = new ValidationResponse();
             when(candidateManager.updateFilesDataStructure(
-                    ArgumentMatchers.eq(candidateId),
-                    ArgumentMatchers.any(),
-                    ArgumentMatchers.any())).thenReturn(vr);
+                ArgumentMatchers.eq(candidateId),
+                ArgumentMatchers.any(),
+                ArgumentMatchers.any())).thenReturn(vr);
 
             FilesDataStructure fds = new FilesDataStructure();
-            fds.setArtifacts(Arrays.asList("a","b"));
+            fds.setArtifacts(Arrays.asList("a", "b"));
             fds.setNested(Arrays.asList("foo", "bar"));
             fds.setUnassigned(Arrays.asList("c", "d"));
             fds.setModules(Arrays.asList(new Module(), new Module()));
 
             when(candidateManager.getFilesDataStructure(
-                    ArgumentMatchers.eq(candidateId),
-                    ArgumentMatchers.any())).thenReturn(Optional.of(fds));
+                ArgumentMatchers.eq(candidateId),
+                ArgumentMatchers.any())).thenReturn(Optional.of(fds));
 
             orchestrationTemplateCandidate =
-                new OrchestrationTemplateCandidateImpl(candidateManager, vendorSoftwareProductManager, activityLogManager);
+                new OrchestrationTemplateCandidateImpl(candidateManager, vendorSoftwareProductManager, activityLogManager,
+                    artifactStorageManager, packageSizeReducer);
 
-
-        }catch (Exception e){
-           logger.error(e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
     @Test
-    public void uploadSignedTest() {
+    void uploadSignedTest() {
         Response response = orchestrationTemplateCandidate
             .upload("1", "1", mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")),
                 "1");
@@ -148,7 +155,21 @@ public class OrchestrationTemplateCandidateImplTest {
     }
 
     @Test
-    public void uploadNotSignedTest() {
+    void uploadNotSignedTest() throws IOException {
+        Response response = orchestrationTemplateCandidate.upload("1", "1",
+            mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), "1");
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+    }
+
+    @Test
+    void uploadNotSignedArtifactStorageManagerIsEnabledTest() throws IOException {
+        when(artifactStorageManager.isEnabled()).thenReturn(true);
+        final Path path = Path.of("src/test/resources/files/sample-not-signed.csar");
+        when(artifactStorageManager.upload(anyString(), anyString(), any())).thenReturn(new PersistentStorageArtifactInfo(path));
+        final byte[] bytes = Files.readAllBytes(path);
+        when(packageSizeReducer.reduce(any())).thenReturn(bytes);
+
         Response response = orchestrationTemplateCandidate.upload("1", "1",
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), "1");
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -167,7 +188,7 @@ public class OrchestrationTemplateCandidateImplTest {
                 bytes = IOUtils.toByteArray(fileToUpload);
             } catch (final IOException e) {
                 logger.error("unexpected exception", e);
-                Assert.fail("Not able to convert file to byte array");
+                fail("Not able to convert file to byte array");
             }
         }
         when(attachment.getObject(ArgumentMatchers.any())).thenReturn(bytes);
@@ -175,7 +196,7 @@ public class OrchestrationTemplateCandidateImplTest {
     }
 
     @Test
-    public void uploadSignNotValidTest() {
+    void uploadSignNotValidTest() {
         Response response = orchestrationTemplateCandidate
             .upload("1", "1", mockAttachment("filename.zip", null), "1");
         assertEquals(Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatus());
@@ -183,82 +204,78 @@ public class OrchestrationTemplateCandidateImplTest {
     }
 
     @Test
-    public void testCandidateGet() throws IOException {
+    void testCandidateGet() throws IOException {
         Response rsp = orchestrationTemplateCandidate.get(candidateId, versionId, user);
-        Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
-        Assert.assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Candidate"),-1);
-        byte[] content = (byte[])rsp.getEntity();
-        Assert.assertEquals("World", new String(content));
+        assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
+        assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Candidate"), -1);
+        byte[] content = (byte[]) rsp.getEntity();
+        assertEquals("World", new String(content));
     }
 
     @Test
-    public void testVendorSoftwareProductGet() throws IOException {
+    void testVendorSoftwareProductGet() throws IOException {
         Response rsp = orchestrationTemplateCandidate.get(softwareProductId, versionId, user);
-        Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
-        Assert.assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Processed"),-1);
-        byte[] content = (byte[])rsp.getEntity();
-        Assert.assertEquals("World", new String(content));
+        assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
+        assertNotEquals(rsp.getHeaderString("Content-Disposition").indexOf("Processed"), -1);
+        byte[] content = (byte[]) rsp.getEntity();
+        assertEquals("World", new String(content));
     }
 
     @Test
-    public void testMissingGet() throws IOException {
+    void testMissingGet() throws IOException {
         Response rsp = orchestrationTemplateCandidate.get(UUID.randomUUID().toString(), versionId, user);
-        Assert.assertEquals("Response status equals", Response.Status.NOT_FOUND.getStatusCode(), rsp.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), rsp.getStatus(), "Response status equals");
     }
 
     @Test
-    public void testAbort() {
+    void testAbort() {
         try {
             Response rsp = orchestrationTemplateCandidate.abort(candidateId, versionId);
-            Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
-            Assert.assertNull(rsp.getEntity());
-        }
-        catch (Exception ex) {
+            assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
+            assertNull(rsp.getEntity());
+        } catch (Exception ex) {
             logger.error("unexpected exception", ex);
-            Assert.fail("abort should not throw an exception");
+            fail("abort should not throw an exception");
         }
     }
 
     @Test
-    public void testProcess() {
+    void testProcess() {
         try {
             Response rsp = orchestrationTemplateCandidate.process(candidateId, versionId, user);
-            Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
-            Assert.assertNotNull(rsp.getEntity());
-            OrchestrationTemplateActionResponseDto dto = (OrchestrationTemplateActionResponseDto)rsp.getEntity();
-            Assert.assertEquals("status check", UploadFileStatus.Success, dto.getStatus());
-        }
-        catch (Exception ex) {
+            assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
+            assertNotNull(rsp.getEntity());
+            OrchestrationTemplateActionResponseDto dto = (OrchestrationTemplateActionResponseDto) rsp.getEntity();
+            assertEquals(UploadFileStatus.Success, dto.getStatus(), "status check");
+        } catch (Exception ex) {
             logger.error("unexpected exception", ex);
-            Assert.fail("abort should not throw an exception");
+            fail("abort should not throw an exception");
         }
     }
 
     @Test
-    public void testFilesDataStructureUpload() {
+    void testFilesDataStructureUpload() {
         try {
             FileDataStructureDto dto = new FileDataStructureDto();
             dto.setArtifacts(Arrays.asList("a", "b", "c"));
             Response rsp = orchestrationTemplateCandidate.updateFilesDataStructure(candidateId, versionId, dto, user);
-            Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
-        }
-        catch (Exception ex) {
+            assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
+        } catch (Exception ex) {
             logger.error("unexpected exception", ex);
-            Assert.fail("abort should not throw an exception");
+            fail("abort should not throw an exception");
         }
     }
 
     @Test
-    public void testFilesDataStructureGet() {
+    void testFilesDataStructureGet() {
         try {
             FileDataStructureDto dto = new FileDataStructureDto();
             dto.setArtifacts(Arrays.asList("a", "b", "c"));
             Response rsp = orchestrationTemplateCandidate.getFilesDataStructure(candidateId, versionId, user);
-            Assert.assertEquals("Response status equals", Response.Status.OK.getStatusCode(), rsp.getStatus());
-        }
-        catch (Exception ex) {
+            assertEquals(Response.Status.OK.getStatusCode(), rsp.getStatus(), "Response status equals");
+        } catch (Exception ex) {
             logger.error("unexpected exception", ex);
-            Assert.fail("abort should not throw an exception");
+            fail("abort should not throw an exception");
         }
     }
 

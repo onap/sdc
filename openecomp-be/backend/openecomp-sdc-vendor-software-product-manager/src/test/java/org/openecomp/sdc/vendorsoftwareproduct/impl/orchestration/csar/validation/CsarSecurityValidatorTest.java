@@ -90,7 +90,7 @@ public class CsarSecurityValidatorTest {
     private OnboardSignedPackage loadSignedPackage(final String packageName, final byte[] packageBytes,
         CnfPackageValidator cnfPackageValidator) {
         final OnboardingPackageProcessor onboardingPackageProcessor =
-            new OnboardingPackageProcessor(packageName, packageBytes, cnfPackageValidator);
+            new OnboardingPackageProcessor(packageName, packageBytes, cnfPackageValidator, null);
         final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
         if (onboardPackageInfo == null) {
             fail("Unexpected error. Could not load original package");

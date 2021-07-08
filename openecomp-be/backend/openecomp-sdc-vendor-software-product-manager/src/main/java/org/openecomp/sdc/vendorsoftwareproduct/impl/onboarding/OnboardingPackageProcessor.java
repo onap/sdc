@@ -49,6 +49,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
 import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.common.utils.CommonUtil;
 import org.openecomp.sdc.common.utils.SdcCommon;
@@ -76,12 +77,15 @@ public class OnboardingPackageProcessor {
     private final CnfPackageValidator cnfPackageValidator;
     private FileContentHandler packageContent;
 
-    public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent,
-        final CnfPackageValidator cnfPackageValidator) {
+    public OnboardingPackageProcessor(final String packageFileName, final byte[] packageFileContent, final CnfPackageValidator cnfPackageValidator,
+                                      final ArtifactInfo artifactInfo) {
         this.packageFileName = packageFileName;
         this.packageFileContent = packageFileContent;
         this.cnfPackageValidator = cnfPackageValidator;
         onboardPackageInfo = processPackage();
+        if (onboardPackageInfo != null) {
+            onboardPackageInfo.setArtifactInfo(artifactInfo);
+        }
     }
 
     public Optional<OnboardPackageInfo> getOnboardPackageInfo() {

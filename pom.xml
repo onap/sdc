@@ -73,6 +73,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <ws.rs.version>2.1</ws.rs.version>
 
         <jetty.version>9.4.41.v20210516</jetty.version>
+        <cxf.version>3.4.3</cxf.version>
 
         <!-- JSON and YAML Parsing -->
         <jackson.version>2.12.1</jackson.version>

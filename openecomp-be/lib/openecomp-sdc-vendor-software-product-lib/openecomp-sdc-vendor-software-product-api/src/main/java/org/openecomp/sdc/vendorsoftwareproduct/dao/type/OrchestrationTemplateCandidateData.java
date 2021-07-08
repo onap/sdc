@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.openecomp.core.utilities.json.JsonUtil;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 
 @Getter
@@ -35,17 +36,19 @@ public class OrchestrationTemplateCandidateData {
     private ByteBuffer originalFileContentData;
     private String originalFileName;
     private String originalFileSuffix;
+    private ArtifactInfo artifactInfo;
 
-    public OrchestrationTemplateCandidateData(final ByteBuffer contentData, final String dataStructureJson, final String fileSuffix,
-                                              final String fileName, final String originalFileName, final String originalFileSuffix,
-                                              final ByteBuffer originalFileContentData) {
+    public OrchestrationTemplateCandidateData(final ByteBuffer contentData, final String fileSuffix, final String fileName,
+                                              final String originalFileName, final String originalFileSuffix,
+                                              final ByteBuffer originalFileContentData, final ArtifactInfo artifactInfo) {
         this.contentData = contentData;
-        this.filesDataStructure = dataStructureJson;
+        this.filesDataStructure = "";
         this.fileSuffix = fileSuffix;
         this.fileName = fileName;
         this.originalFileName = originalFileName;
         this.originalFileSuffix = originalFileSuffix;
         this.originalFileContentData = originalFileContentData;
+        this.artifactInfo = artifactInfo;
     }
 
     public ValidationStructureList getValidationDataStructure() {

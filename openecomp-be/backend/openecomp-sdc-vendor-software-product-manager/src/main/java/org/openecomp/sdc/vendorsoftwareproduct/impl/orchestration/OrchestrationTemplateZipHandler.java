@@ -34,7 +34,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
-public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHandler implements OrchestrationTemplateFileHandler {
+public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHandler {
 
     @Override
     public UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo) {
@@ -55,6 +55,7 @@ public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHa
                     uploadFileResponse.getErrors());
             candidateData.setFileName(zipPackage.getFilename());
             candidateData.setFileSuffix(zipPackage.getFileExtension());
+            candidateData.setArtifactInfo(onboardPackageInfo.getArtifactInfo());
             candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(), candidateData);
         } catch (final Exception exception) {
             logger.error(getErrorWithParameters(Messages.FILE_LOAD_CONTENT_ERROR.getErrorMessage(), getHandlerType().toString()), exception);
