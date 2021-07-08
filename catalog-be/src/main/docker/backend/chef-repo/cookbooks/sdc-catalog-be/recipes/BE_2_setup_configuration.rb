@@ -31,8 +31,11 @@ template "janusgraph.properties" do
                 :DC_NAME_WITH_REP => janusgraph_dcname_with_rep,
                 :janus_connection_timeout => node['cassandra']['janusgraph_connection_timeout'],
                 :cassandra_truststore_password => node['cassandra'][:truststore_password],
-                :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}"
-            })
+                :cassandra_ssl_enabled => "#{ENV['cassandra_ssl_enabled']}",
+                :cassandra_read_consistency_level => node['cassandra'][:read_consistency_level],
+                :cassandra_write_consistency_level => node['cassandra'][:write_consistency_level],
+                :cassandra_db_cache => node['cassandra'][:db_cache]
+             })
 end
 
 template "catalog-be-config" do
