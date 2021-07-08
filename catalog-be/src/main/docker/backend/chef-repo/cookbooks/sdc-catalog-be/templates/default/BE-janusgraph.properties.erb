@@ -10,14 +10,14 @@ storage.cql.ssl.enabled=<%= @cassandra_ssl_enabled %>
 storage.cql.ssl.truststore.location=<%= @cassandra_truststore_path %>
 storage.cql.ssl.truststore.password=<%= @cassandra_truststore_password %>
 
-storage.cql.read-consistency-level=LOCAL_QUORUM
-storage.cql.write-consistency-level=LOCAL_QUORUM
+storage.cql.read-consistency-level=<%= @cassandra_local_quorum %>
+storage.cql.write-consistency-level=<%= @cassandra_local_quorum %>
 storage.cql.replication-strategy-class=NetworkTopologyStrategy
 storage.cql.replication-strategy-options=<%= @DC_NAME_WITH_REP %>
 storage.cql.local-datacenter=<%= @DC_NAME %>
 
 
-cache.db-cache = false
+cache.db-cache = <%= @cassandra_cache_db_cache %>
 cache.db-cache-clean-wait = 20
 cache.db-cache-time = 180000
 cache.db-cache-size = 0.5
