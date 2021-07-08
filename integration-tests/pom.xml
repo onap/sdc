@@ -543,7 +543,7 @@ limitations under the License.
                             <name>onap/sdc-onboard-backend:${it.docker.version}</name>
                             <alias>sdc-onboard-backend</alias>
                             <run>
-                                <dependsOn>
+                               <dependsOn>
                                     <container>sdc-cassandra-onboard-init</container>
                                 </dependsOn>
                                 <env>
@@ -752,7 +752,7 @@ limitations under the License.
                                 </wait>
                                 <ports>
                                     <!-- http://localhost:8285/login to access SDC -->
-                                    <port>8285:8080</port>
+                                   <port>8285:8080</port>
                                     <port>8286:8443</port>
                                 </ports>
                                 <network>
