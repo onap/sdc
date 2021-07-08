@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7d30332e_144795a7",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/attributes/default.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-07-08T11:54:53Z",
+      "side": 1,
+      "message": "This line should be removed.It duplicate line 40",
+      "revId": "18be28419ba6bbc56f834a0796c99e660774c594",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fe0952e_db2ba4c0",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/attributes/default.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-07-08T11:54:53Z",
+      "side": 1,
+      "message": "To be cosistent with values defined in BE_2_setup_configuration.rb, it is better defined as:\ndefault[\u0027cassandra\u0027][:db_cache] \u003d true\ndefault[\u0027cassandra\u0027][:read_consistency_level] \u003d ONE\ndefault[\u0027cassandra\u0027][:write_consistency_level] \u003d ALL",
+      "revId": "18be28419ba6bbc56f834a0796c99e660774c594",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4abf855_81b991c3",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/recipes/BE_2_setup_configuration.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-07-08T11:54:53Z",
+      "side": 1,
+      "message": "The variable name should be changed to cassandra_read_consistency_level.\nAnd need to create another variable as the cassandra_write_consistency_level\n\nFor example:\n:cassandra_read_consistency_level \u003d\u003e node[\u0027cassandra\u0027][:read_consistency_level],\n:cassandra_read_consistency_level \u003d\u003e node[\u0027cassandra\u0027][:write_consistency_level],",
+      "revId": "18be28419ba6bbc56f834a0796c99e660774c594",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd7248b1_e7a05ee8",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/recipes/BE_2_setup_configuration.rb",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2021-07-08T11:54:53Z",
+      "side": 1,
+      "message": "the variable name should be cassandra_db_cache, it should be consistent with the one defined in BE-janusgraph.properties.erb\n\n:cassandra_db_cache \u003d\u003e node[\u0027cassandra\u0027][:db_cache]",
+      "revId": "18be28419ba6bbc56f834a0796c99e660774c594",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
