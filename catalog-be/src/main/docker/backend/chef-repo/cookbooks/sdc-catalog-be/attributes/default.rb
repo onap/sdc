@@ -35,6 +35,10 @@ default['cassandra']['socket_connect_timeout'] = 20000
 default['cassandra']['janusgraph_connection_timeout'] = 10000
 default['cassandra'][:truststore_password] = "Aa123456"
 default['cassandra']['janusgraph_config_file'] = "#{ENV['JETTY_BASE']}/config/catalog-be/janusgraph.properties"
+default['cassandra'][:cassandra_read_consistency_level] = LOCAL_QUORUM
+default['cassandra'][:cache_db_cache] = true
+default['cassandra'][:cassandra_read_consistency_level] = ONE
+default['cassandra'][:cassandra_write_consistency_level] = ALL
 
 
 #Onboard
