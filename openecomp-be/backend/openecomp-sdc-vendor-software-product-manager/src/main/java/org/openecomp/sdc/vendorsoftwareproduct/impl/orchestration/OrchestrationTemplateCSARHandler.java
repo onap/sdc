@@ -42,7 +42,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
-public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler implements OrchestrationTemplateFileHandler {
+public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler {
 
     @Override
     public UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo) {
@@ -100,9 +100,10 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         final OnboardPackage csarPackage = onboardPackageInfo.getOnboardPackage();
         final OnboardPackage originalOnboardPackage = onboardPackageInfo.getOriginalOnboardPackage();
         try {
-            candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(),
-                new OrchestrationTemplateCandidateData(csarPackage.getFileContent(), "", csarPackage.getFileExtension(), csarPackage.getFilename(),
-                    originalOnboardPackage.getFilename(), originalOnboardPackage.getFileExtension(), originalOnboardPackage.getFileContent()));
+            final var candidateData = new OrchestrationTemplateCandidateData(csarPackage.getFileContent(), csarPackage.getFileExtension(),
+                csarPackage.getFilename(), originalOnboardPackage.getFilename(), originalOnboardPackage.getFileExtension(),
+                originalOnboardPackage.getFileContent(), onboardPackageInfo.getArtifactInfo());
+            candidateService.updateCandidateUploadData(vspDetails.getId(), vspDetails.getVersion(), candidateData);
         } catch (final Exception exception) {
             logger.error(getErrorWithParameters(Messages.FILE_LOAD_CONTENT_ERROR.getErrorMessage(), getHandlerType().toString()), exception);
             uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, exception.getMessage()));

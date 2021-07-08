@@ -118,7 +118,7 @@ public class OnboardingPackageProcessorTest {
     @Test
     public void processPackage() {
         final OnboardingPackageProcessor onboardingPackageProcessor = new OnboardingPackageProcessor(packageName,
-            packageBytes, cnfPackageValidator);
+            packageBytes, cnfPackageValidator, null);
         assertThat("Should contains errors", onboardingPackageProcessor.hasErrors(), is(!expectedErrorSet.isEmpty()));
         assertThat("Should have the same number of errors", onboardingPackageProcessor.getErrorMessages().size(),
             equalTo(expectedErrorSet.size()));

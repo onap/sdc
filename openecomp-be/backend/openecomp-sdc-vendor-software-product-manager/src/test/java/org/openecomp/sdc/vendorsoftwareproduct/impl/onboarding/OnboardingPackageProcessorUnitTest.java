@@ -34,8 +34,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPac
 
 public class OnboardingPackageProcessorUnitTest {
 
-    private OnboardingPackageProcessor processor = new OnboardingPackageProcessor("unitTestPackage",
-        null, new CnfPackageValidator());
+    private final OnboardingPackageProcessor processor = new OnboardingPackageProcessor("unitTestPackage", null, new CnfPackageValidator(), null);
 
     @Test
     public void shouldValidateZipPackage_helmWithoutHeat() {

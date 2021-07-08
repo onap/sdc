@@ -20,7 +20,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.types;
 
 import java.nio.ByteBuffer;
 import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.exception.OnboardPackageException;
 
 @Getter
@@ -29,6 +31,8 @@ public class OnboardPackageInfo {
     private final OnboardingTypesEnum packageType;
     private final OnboardPackage originalOnboardPackage;
     private final OnboardPackage onboardPackage;
+    @Setter
+    private ArtifactInfo artifactInfo;
 
     public OnboardPackageInfo(final OnboardPackage onboardPackage, final OnboardingTypesEnum packageType) {
         this(onboardPackage, onboardPackage, packageType);

@@ -1,8 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * SDC
- * ================================================================================
- * Copyright (C) 2019, Nordix Foundation. All rights reserved.
+ *  Copyright (C) 2021 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +13,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdcrests.vsp.rest.services;
 
-public class OrchestrationTemplateCandidateException extends RuntimeException {
+package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
-    public OrchestrationTemplateCandidateException(final String message) {
+public class OrchestrationTemplateCandidateDaoZusammenException extends RuntimeException {
+
+    public OrchestrationTemplateCandidateDaoZusammenException(final String message) {
         super(message);
     }
 }
