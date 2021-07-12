@@ -67,8 +67,8 @@ describe('Software Product Details Module Tests', function () {
 		await SoftwareProductActionHelper.fetchSoftwareProductList(store.dispatch);
 		await SoftwareProductActionHelper.fetchFinalizedSoftwareProductList(store.dispatch);
 		await SoftwareProductActionHelper.fetchArchivedSoftwareProductList(store.dispatch);
-		
-		expect(store.getState()).toEqual(expectedStore);		
+
+		expect(store.getState()).toEqual(expectedStore);
 	});
 
 	it('Add Software Product', () => {
@@ -116,7 +116,7 @@ describe('Software Product Details Module Tests', function () {
 			'description': {
 				isValid: true,
 				errorText: '',
-				validations: [{type: 'required', data: true}]
+				validations: [{type: 'validateName', data: true}, {type: 'required', data: true}]
 			}
 		};
 		const expectedFormName = forms.VENDOR_SOFTWARE_PRODUCT_DETAILS;

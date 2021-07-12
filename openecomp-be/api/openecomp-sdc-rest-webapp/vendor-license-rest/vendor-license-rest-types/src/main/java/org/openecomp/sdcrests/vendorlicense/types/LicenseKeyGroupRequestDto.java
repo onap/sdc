@@ -22,10 +22,13 @@ package org.openecomp.sdcrests.vendorlicense.types;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseKeyType;
 import org.openecomp.sdc.vendorlicense.dao.types.OperationalScope;
 import org.openecomp.sdc.vendorlicense.dao.types.ThresholdUnit;
 
+@Data
 public class LicenseKeyGroupRequestDto {
 
     @NotNull
@@ -46,83 +49,19 @@ public class LicenseKeyGroupRequestDto {
     @Size(max = 120)
     private String increments;
 
-    public String getName() {
-        return name;
+    public void setName(final String name) {
+        this.name = ValidationUtils.sanitizeInputString(name);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setManufacturerReferenceNumber(final String manufacturerReferenceNumber) {
+        this.manufacturerReferenceNumber = ValidationUtils.sanitizeInputString(manufacturerReferenceNumber);
     }
 
-    public String getManufacturerReferenceNumber() {
-        return manufacturerReferenceNumber;
+    public void setDescription(final String description) {
+        this.description = ValidationUtils.sanitizeInputString(description);
     }
 
-    public void setManufacturerReferenceNumber(String manufacturerReferenceNumber) {
-        this.manufacturerReferenceNumber = manufacturerReferenceNumber;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LicenseKeyType getType() {
-        return type;
-    }
-
-    public void setType(LicenseKeyType type) {
-        this.type = type;
-    }
-
-    public MultiChoiceOrOtherDto<OperationalScope> getOperationalScope() {
-        return operationalScope;
-    }
-
-    public void setOperationalScope(MultiChoiceOrOtherDto<OperationalScope> operationalScope) {
-        this.operationalScope = operationalScope;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public Integer getThresholdValue() {
-        return thresholdValue;
-    }
-
-    public void setThresholdValue(Integer thresholdValue) {
-        this.thresholdValue = thresholdValue;
-    }
-
-    public ThresholdUnit getThresholdUnits() {
-        return thresholdUnits;
-    }
-
-    public void setThresholdUnits(ThresholdUnit thresholdUnits) {
-        this.thresholdUnits = thresholdUnits;
-    }
-
-    public String getIncrements() {
-        return increments;
-    }
-
-    public void setIncrements(String increments) {
-        this.increments = increments;
+    public void setIncrements(final String increments) {
+        this.increments = ValidationUtils.sanitizeInputString(increments);
     }
 }

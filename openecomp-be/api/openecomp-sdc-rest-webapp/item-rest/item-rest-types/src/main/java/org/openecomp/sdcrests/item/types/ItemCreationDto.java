@@ -19,24 +19,17 @@
  */
 package org.openecomp.sdcrests.item.types;
 
+import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
+
+@Data
 public class ItemCreationDto {
 
     private String itemId;
     private VersionDto version;
 
-    public String getItemId() {
-        return itemId;
+    public void setItemId(final String itemId) {
+        this.itemId = ValidationUtils.sanitizeInputString(itemId);
     }
 
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
-    }
-
-    public VersionDto getVersion() {
-        return version;
-    }
-
-    public void setVersion(VersionDto version) {
-        this.version = version;
-    }
 }

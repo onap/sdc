@@ -232,6 +232,7 @@ export const EntitlementPoolsFormContent = ({
                     onChange={increments =>
                         onDataChanged({ increments }, SP_ENTITLEMENT_POOL_FORM)
                     }
+                    errorText={genericFieldInfo.increments.errorText}
                     label={i18n('Increments')}
                     value={increments}
                     data-test-id="create-ep-increments"

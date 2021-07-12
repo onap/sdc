@@ -17,6 +17,7 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.LicenseType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
 
@@ -36,8 +37,19 @@ public class VspDescriptionDto {
     private String vendorName;
     @NotNull
     private String vendorId;            // this will be populated with vlm id
-
     private String licensingVersion;    // this will be populated with vlm version
     private LicenseType licenseType;
     private LicensingData licensingData;
+
+    public void setName(final String name) {
+        this.name = ValidationUtils.sanitizeInputString(name);
+    }
+
+    public void setVendorName(final String vendorName) {
+        this.vendorName = ValidationUtils.sanitizeInputString(vendorName);
+    }
+
+    public void setDescription(final String description) {
+        this.description = ValidationUtils.sanitizeInputString(description);
+    }
 }

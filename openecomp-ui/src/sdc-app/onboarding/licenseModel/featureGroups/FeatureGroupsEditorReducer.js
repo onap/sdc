@@ -32,7 +32,10 @@ export default (state = {}, action) => {
                     description: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'maxLength', data: 1000 }],
+                        validations: [
+                            { type: 'maxLength', data: 1000 },
+                            { type: 'validateName', data: true }
+                        ],
                         tabId:
                             FeatureGroupStateConstants
                                 .SELECTED_FEATURE_GROUP_TAB.GENERAL
@@ -40,7 +43,10 @@ export default (state = {}, action) => {
                     partNumber: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'required', data: true }],
+                        validations: [
+                            { type: 'required', data: true },
+                            { type: 'validateName', data: true }
+                        ],
                         tabId:
                             FeatureGroupStateConstants
                                 .SELECTED_FEATURE_GROUP_TAB.GENERAL
@@ -50,7 +56,8 @@ export default (state = {}, action) => {
                         errorText: '',
                         validations: [
                             { type: 'required', data: true },
-                            { type: 'maxLength', data: 120 }
+                            { type: 'maxLength', data: 120 },
+                            { type: 'validateName', data: true }
                         ],
                         tabId:
                             FeatureGroupStateConstants

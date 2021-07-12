@@ -49,14 +49,18 @@ export default (state = {}, action) => {
                     description: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'maxLength', data: 1000 }]
+                        validations: [
+                            { type: 'maxLength', data: 1000 },
+                            { type: 'validateName', data: true }
+                        ]
                     },
                     name: {
                         isValid: true,
                         errorText: '',
                         validations: [
                             { type: 'required', data: true },
-                            { type: 'maxLength', data: 120 }
+                            { type: 'maxLength', data: 120 },
+                            { type: 'validateName', data: true }
                         ]
                     },
                     type: {
@@ -77,7 +81,10 @@ export default (state = {}, action) => {
                     increments: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'maxLength', data: 120 }]
+                        validations: [
+                            { type: 'maxLength', data: 120 },
+                            { type: 'validateName', data: true }
+                        ]
                     },
                     startDate: {
                         isValid: true,
@@ -92,7 +99,10 @@ export default (state = {}, action) => {
                     manufacturerReferenceNumber: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'maxLength', data: 100 }]
+                        validations: [
+                            { type: 'maxLength', data: 100 },
+                            { type: 'validateName', data: true }
+                        ]
                     }
                 }
             };

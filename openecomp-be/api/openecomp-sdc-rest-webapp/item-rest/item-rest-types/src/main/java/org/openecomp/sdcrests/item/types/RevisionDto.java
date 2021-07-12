@@ -20,7 +20,10 @@
 package org.openecomp.sdcrests.item.types;
 
 import java.util.Date;
+import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
+@Data
 public class RevisionDto {
 
     private String id;
@@ -28,35 +31,15 @@ public class RevisionDto {
     private Date time;
     private String user;
 
-    public String getId() {
-        return id;
+    public void setId(final String id) {
+        this.id = ValidationUtils.sanitizeInputString(id);
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setMessage(final String message) {
+        this.message = ValidationUtils.sanitizeInputString(message);
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
-        this.time = time;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
+    public void setUser(final String user) {
+        this.user = ValidationUtils.sanitizeInputString(user);
     }
 }

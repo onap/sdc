@@ -19,15 +19,15 @@
  */
 package org.openecomp.sdcrests.item.types;
 
+import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
+
+@Data
 public class CommitRequestDto {
 
     private String message;
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(final String message) {
+        this.message = ValidationUtils.sanitizeInputString(message);
     }
 }

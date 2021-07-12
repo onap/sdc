@@ -32,7 +32,8 @@ export default (state = {}, action) => {
                         errorText: '',
                         validations: [
                             { type: 'required', data: true },
-                            { type: 'maxLength', data: 1000 }
+                            { type: 'maxLength', data: 1000 },
+                            { type: 'validateName', data: true }
                         ]
                     },
                     vendorName: {

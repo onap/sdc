@@ -22,7 +22,10 @@ package org.openecomp.sdcrests.vendorlicense.types;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
+@Data
 @Schema(description = "VendorLicenseModelRequest")
 public class VendorLicenseModelRequestDto {
 
@@ -35,27 +38,11 @@ public class VendorLicenseModelRequestDto {
     @NotNull
     private String iconRef;
 
-    public String getVendorName() {
-        return vendorName;
+    public void setVendorName(final String vendorName) {
+        this.vendorName = ValidationUtils.sanitizeInputString(vendorName);
     }
 
-    public void setVendorName(String vendorName) {
-        this.vendorName = vendorName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getIconRef() {
-        return iconRef;
-    }
-
-    public void setIconRef(String iconRef) {
-        this.iconRef = iconRef;
+    public void setDescription(final String description) {
+        this.description = ValidationUtils.sanitizeInputString(description);
     }
 }

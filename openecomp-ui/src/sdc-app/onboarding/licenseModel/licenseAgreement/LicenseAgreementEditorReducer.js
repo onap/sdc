@@ -32,7 +32,10 @@ export default (state = {}, action) => {
                     description: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'maxLength', data: 1000 }],
+                        validations: [
+                            { type: 'maxLength', data: 1000 },
+                            { type: 'validateName', data: true }
+                        ],
                         tabId:
                             LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB
                                 .GENERAL
@@ -56,7 +59,8 @@ export default (state = {}, action) => {
                         errorText: '',
                         validations: [
                             { type: 'required', data: true },
-                            { type: 'maxLength', data: 25 }
+                            { type: 'maxLength', data: 25 },
+                            { type: 'validateName', data: true }
                         ],
                         tabId:
                             LicenseAgreementEnums.SELECTED_LICENSE_AGREEMENT_TAB
