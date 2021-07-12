@@ -19,6 +19,10 @@
  */
 package org.openecomp.sdcrests.vendorlicense.types;
 
+import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
+
+@Data
 public class LimitEntityDto {
 
     private String id;
@@ -31,75 +35,39 @@ public class LimitEntityDto {
     private String aggregationFunction;
     private String time;
 
-    public String getId() {
-        return id;
+    public void setId(final String id) {
+        this.id = ValidationUtils.sanitizeInputString(id);
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setName(final String name) {
+        this.name = ValidationUtils.sanitizeInputString(name);
     }
 
-    public String getName() {
-        return name;
+    public void setType(final String type) {
+        this.type = ValidationUtils.sanitizeInputString(type);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(final String description) {
+        this.description = ValidationUtils.sanitizeInputString(description);
     }
 
-    public String getType() {
-        return type;
+    public void setMetric(final String metric) {
+        this.metric = ValidationUtils.sanitizeInputString(metric);
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setUnit(final String unit) {
+        this.unit = ValidationUtils.sanitizeInputString(unit);
     }
 
-    public String getDescription() {
-        return description;
+    public void setAggregationFunction(final String aggregationFunction) {
+        this.aggregationFunction = ValidationUtils.sanitizeInputString(aggregationFunction);
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTime(final String time) {
+        this.time = ValidationUtils.sanitizeInputString(time);
     }
 
-    public String getMetric() {
-        return metric;
-    }
-
-    public void setMetric(String metric) {
-        this.metric = metric;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public String getAggregationFunction() {
-        return aggregationFunction;
-    }
-
-    public void setAggregationFunction(String aggregationFunction) {
-        this.aggregationFunction = aggregationFunction;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public void setValue(final String value) {
+        this.value = ValidationUtils.sanitizeInputString(value);
     }
 }

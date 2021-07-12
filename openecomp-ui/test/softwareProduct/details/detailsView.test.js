@@ -77,7 +77,7 @@ describe('Software Product Details: ', function () {
 			'description': {
 				isValid: true,
 				errorText: '',
-				validations: [{type: 'required', data: true}]
+				validations: [{type: 'validateName', data: true}, {type: 'required', data: true}]
 			}
 		};
 		qGenericFieldInfo = SchemaGenericFieldInfoFactory.build();
@@ -151,7 +151,7 @@ describe('Software Product Details: ', function () {
 					dataMap
 				}
 			},
-			finalizedLicenseModelList: finalizedLicenseModelList,			
+			finalizedLicenseModelList: finalizedLicenseModelList,
 			archivedLicenseModelList: [],
 			archivedSoftwareProductList: [],
 			licenseModel: {

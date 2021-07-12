@@ -20,7 +20,12 @@
 package org.openecomp.sdcrests.item.types;
 
 import java.util.Date;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
+@Data
+@NoArgsConstructor
 public class ActivityLogDto {
 
     private String id;
@@ -30,54 +35,20 @@ public class ActivityLogDto {
     private String user;
     private ActivityStatus status;
 
-    public ActivityLogDto() {
+    public void setId(final String id) {
+        this.id = ValidationUtils.sanitizeInputString(id);
     }
 
-    public String getId() {
-        return id;
+    public void setType(final String type) {
+        this.type = ValidationUtils.sanitizeInputString(type);
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setComment(final String comment) {
+        this.comment = ValidationUtils.sanitizeInputString(comment);
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public void setUser(final String user) {
+        this.user = ValidationUtils.sanitizeInputString(user);
     }
 
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public ActivityStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ActivityStatus status) {
-        this.status = status;
-    }
 }

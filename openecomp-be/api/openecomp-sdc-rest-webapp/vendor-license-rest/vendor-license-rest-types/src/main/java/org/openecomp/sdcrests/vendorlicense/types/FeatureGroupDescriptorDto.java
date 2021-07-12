@@ -21,7 +21,10 @@ package org.openecomp.sdcrests.vendorlicense.types;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
 
+@Data
 public class FeatureGroupDescriptorDto {
 
     @NotNull
@@ -32,27 +35,15 @@ public class FeatureGroupDescriptorDto {
     @NotNull
     private String partNumber;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
+    public void setName(final String name) {
+        this.name = ValidationUtils.sanitizeInputString(name);
     }
 
     public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getPartNumber() {
-        return partNumber;
+        this.description = ValidationUtils.sanitizeInputString(description);
     }
 
     public void setPartNumber(String partNumber) {
-        this.partNumber = partNumber;
+        this.partNumber = ValidationUtils.sanitizeInputString(partNumber);
     }
 }

@@ -42,7 +42,10 @@ export default (state = {}, action) => {
                     description: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'required', data: true }]
+                        validations: [
+                            { type: 'validateName', data: true },
+                            { type: 'required', data: true }
+                        ]
                     }
                 },
                 data: action.response

@@ -22,8 +22,11 @@ package org.openecomp.sdcrests.vendorlicense.types;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.Data;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.vendorlicense.dao.types.LicenseTerm;
 
+@Data
 public class LicenseAgreementDescriptorDto {
 
     @NotNull
@@ -37,35 +40,11 @@ public class LicenseAgreementDescriptorDto {
     @Size(max = 1000)
     private String requirementsAndConstrains;
 
-    public String getName() {
-        return name;
+    public void setName(final String name) {
+        this.name = ValidationUtils.sanitizeInputString(name);
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public ChoiceOrOtherDto<LicenseTerm> getLicenseTerm() {
-        return licenseTerm;
-    }
-
-    public void setLicenseTerm(ChoiceOrOtherDto<LicenseTerm> licenseTerm) {
-        this.licenseTerm = licenseTerm;
-    }
-
-    public String getRequirementsAndConstrains() {
-        return requirementsAndConstrains;
-    }
-
-    public void setRequirementsAndConstrains(String requirementsAndConstrains) {
-        this.requirementsAndConstrains = requirementsAndConstrains;
+    public void setDescription(final String description) {
+        this.description = ValidationUtils.sanitizeInputString(description);
     }
 }

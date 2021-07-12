@@ -21,35 +21,13 @@ package org.openecomp.sdcrests.vendorlicense.types;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Set;
+import lombok.Data;
 
 @Schema(description = "EntitlementPoolEntity")
+@Data
 public class EntitlementPoolEntityDto extends EntitlementPoolRequestDto {
 
     private String id;
     private Set<String> referencingFeatureGroups;
     private String versionUUID;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Set<String> getReferencingFeatureGroups() {
-        return referencingFeatureGroups;
-    }
-
-    public void setReferencingFeatureGroups(Set<String> referencingFeatureGroups) {
-        this.referencingFeatureGroups = referencingFeatureGroups;
-    }
-
-    public String getversionUUID() {
-        return versionUUID;
-    }
-
-    public void setVersionUUID(String versionUUID) {
-        this.versionUUID = versionUUID;
-    }
 }

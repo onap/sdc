@@ -207,6 +207,9 @@ const LicenseKeyGroupFormContent = ({
                             LKG_FORM_NAME
                         )
                     }
+                    errorText={
+                        genericFieldInfo.manufacturerReferenceNumber.errorText
+                    }
                     label={i18n('Manufacturer Reference Number')}
                     value={manufacturerReferenceNumber}
                     data-test-id="create-ep-mrn"
@@ -219,6 +222,7 @@ const LicenseKeyGroupFormContent = ({
                     onChange={increments =>
                         onDataChanged({ increments }, LKG_FORM_NAME)
                     }
+                    errorText={genericFieldInfo.increments.errorText}
                     label={i18n('Increments')}
                     value={increments}
                     data-test-id="create-ep-increments"

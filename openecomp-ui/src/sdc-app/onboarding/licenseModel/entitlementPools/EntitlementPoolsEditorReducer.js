@@ -48,13 +48,17 @@ export default (state = {}, action) => {
                         errorText: '',
                         validations: [
                             { type: 'required', data: true },
-                            { type: 'maxLength', data: 120 }
+                            { type: 'maxLength', data: 120 },
+                            { type: 'validateName', data: true }
                         ]
                     },
                     description: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'maxLength', data: 1000 }]
+                        validations: [
+                            { type: 'maxLength', data: 1000 },
+                            { type: 'validateName', data: true }
+                        ]
                     },
                     type: {
                         isValid: true,
@@ -64,7 +68,10 @@ export default (state = {}, action) => {
                     increments: {
                         isValid: true,
                         errorText: '',
-                        validations: [{ type: 'maxLength', data: 120 }]
+                        validations: [
+                            { type: 'maxLength', data: 120 },
+                            { type: 'validateName', data: true }
+                        ]
                     },
                     thresholdUnits: {
                         isValid: true,
@@ -91,7 +98,8 @@ export default (state = {}, action) => {
                         errorText: '',
                         validations: [
                             { type: 'required', data: true },
-                            { type: 'maxLength', data: 100 }
+                            { type: 'maxLength', data: 100 },
+                            { type: 'validateName', data: true }
                         ]
                     }
                 },
