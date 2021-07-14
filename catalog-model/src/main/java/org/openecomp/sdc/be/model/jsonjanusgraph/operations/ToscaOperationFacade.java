@@ -523,27 +523,26 @@ public class ToscaOperationFacade {
         return predicateCriteria;
     }
 
-    public Optional<GraphVertex> isNodeAssociatedToModel(final String model, Resource resource) {
-        return getNodeModelVertices(resource, model);
+    public boolean isNodeAssociatedToModel(final String model, final Resource resource) {
+        final List<GraphVertex> modelElementVertices = getResourceModelElementVertices(resource);
+        if (model == null) {
+            return modelElementVertices.isEmpty();
+        }
+        return modelElementVertices.stream().anyMatch(graphVertex -> graphVertex.getMetadataProperty(GraphPropertyEnum.NAME).equals(model));
     }
 
-    public Optional<GraphVertex> getNodeModelVertices(final Resource resource, final String model) {
-        final Either<GraphVertex, JanusGraphOperationStatus> vertex = janusGraphDao
-            .getVertexById(resource.getUniqueId(), JsonParseFlagEnum.NoParse);
+    public List<GraphVertex> getResourceModelElementVertices(final Resource resource) {
+        final Either<GraphVertex, JanusGraphOperationStatus> vertex =
+            janusGraphDao.getVertexById(resource.getUniqueId(), JsonParseFlagEnum.NoParse);
         if (vertex.isRight() || Objects.isNull(vertex.left().value())) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
-        return getElementModelVertex(model, vertex.left().value());
-    }
-
-    private Optional<GraphVertex> getElementModelVertex(final String model, final GraphVertex vertex) {
-        final Either<List<GraphVertex>, JanusGraphOperationStatus> nodeModelVertices = janusGraphDao
-            .getParentVertices(vertex, EdgeLabelEnum.MODEL_ELEMENT, JsonParseFlagEnum.NoParse);
-        if (nodeModelVertices.isRight() || Objects.isNull(nodeModelVertices.left().value())) {
-            return Optional.empty();
+        final Either<List<GraphVertex>, JanusGraphOperationStatus> nodeModelVertices =
+            janusGraphDao.getParentVertices(vertex.left().value(), EdgeLabelEnum.MODEL_ELEMENT, JsonParseFlagEnum.NoParse);
+        if (nodeModelVertices.isRight() || nodeModelVertices.left().value() == null) {
+            return Collections.emptyList();
         }
-        return nodeModelVertices.left().value().stream().filter(graphVertex -> graphVertex.getMetadataProperty(GraphPropertyEnum.NAME).equals(model))
-            .findFirst();
+        return nodeModelVertices.left().value();
     }
 
     private boolean isValidForVendorRelease(final GraphVertex resource, final String vendorRelease) {
