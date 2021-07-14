@@ -2519,3 +2519,20 @@ errors:
         message: "Error: Component %1 with Model %2 already exist.",
         messageId: "SVC4150"
     }
+    #-----------SVC4151---------------------------
+    # %1 - "Component name"
+    # %2 - "Vendor release"
+    # %3 - "Model name"
+    COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS_IN_MODEL: {
+        code: 409,
+        message: "Error: Component '%1' with Vendor Release '%2' already exists in Model '%3'.",
+        messageId: "SVC4151"
+    }
+    #-----------SVC4152---------------------------
+    # %1 - "Component name"
+    # %2 - "Vendor release"
+    COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS: {
+        code: 409,
+        message: "Error: Component '%1' with Vendor Release '%2' already exists.",
+        messageId: "SVC4152"
+    }

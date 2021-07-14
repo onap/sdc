@@ -171,7 +171,7 @@ public class ResourceImportManager {
             setMetaDataFromJson(resourceMetaData, resource);
             populateResourceFromYaml(resourceYml, resource);
             validationFunction.apply(resource);
-            checkResourceExistsBeforeCreate(createNewVersion, csarInfo, resource);
+            checkResourceExists(createNewVersion, csarInfo, resource);
             resource = resourceBusinessLogic
                 .createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock, csarInfo, nodeName, isNested).left;
             Resource changeStateResponse;
@@ -198,32 +198,39 @@ public class ResourceImportManager {
         return responsePair;
     }
 
-    private void checkResourceExistsBeforeCreate(final boolean createNewVersion, final CsarInfo csarInfo, final Resource resource) {
-        final String resourceName = resource.getName();
-        final String model = resource.getModel();
-        final Either<Resource, StorageOperationStatus> latestByToscaName = toscaOperationFacade
-            .getLatestByToscaResourceNameAndModel(resourceName, model);
-        if (latestByToscaName.isLeft()) {
-            final Resource foundResource = latestByToscaName.left().value();
-            validateComponentWithModelExist(resourceName, model, foundResource);
-            if (!createNewVersion) {
-                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, resourceName);
-            }
-            if (!isCsarPresent(csarInfo)) {
-                final Either<Resource, StorageOperationStatus> component = toscaOperationFacade
-                    .getComponentByNameAndVendorRelease(resource.getComponentType(), resource.getName(), resource.getVendorRelease(),
-                        JsonParseFlagEnum.ParseAll);
-                if (component.isLeft()) {
-                    validateComponentWithModelExist(resourceName, model, foundResource);
-                    throw new ByActionStatusComponentException(ActionStatus.COMPONENT_VERSION_ALREADY_EXIST, resource.getName());
-                }
-            }
+    private void checkResourceExists(final boolean isCreate, final CsarInfo csarInfo, final Resource resource) {
+        if (isCreate) {
+            checkResourceExistsOnCreate(resource, csarInfo);
+        } else {
+            checkResourceExistsOnUpdate(resource);
         }
     }
 
-    private void validateComponentWithModelExist(final String resourceName, final String model, final Resource foundResource) {
-        if (model != null && toscaOperationFacade.isNodeAssociatedToModel(model, foundResource).isPresent()) {
-            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_WITH_MODEL_ALREADY_EXIST, resourceName, model);
+    private void checkResourceExistsOnCreate(final Resource resource, final CsarInfo csarInfo) {
+        if (isCsarPresent(csarInfo)) {
+            return;
+        }
+        final Either<Resource, StorageOperationStatus> resourceEither =
+            toscaOperationFacade.getComponentByNameAndVendorRelease(resource.getComponentType(), resource.getName(),
+                resource.getVendorRelease(), JsonParseFlagEnum.ParseAll);
+        if (resourceEither.isLeft() && toscaOperationFacade.isNodeAssociatedToModel(resource.getModel(), resource)) {
+            if (resource.getModel() == null) {
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS,
+                    resource.getName(), resource.getVendorRelease());
+            }
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS_IN_MODEL,
+                resource.getName(), resource.getVendorRelease(), resource.getModel());
+        }
+    }
+
+    private void checkResourceExistsOnUpdate(final Resource resource) {
+        final String model = resource.getModel();
+        final Either<Resource, StorageOperationStatus> latestByName = toscaOperationFacade.getLatestByName(resource.getName(), model);
+        if (latestByName.isLeft() && toscaOperationFacade.isNodeAssociatedToModel(model, resource)) {
+            if (model == null) {
+                throw new ByActionStatusComponentException(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, resource.getName());
+            }
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_WITH_MODEL_ALREADY_EXIST, resource.getName(), model);
         }
     }
 

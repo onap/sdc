@@ -28,8 +28,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -53,6 +55,7 @@ import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
@@ -152,7 +155,7 @@ public class ResourceImportManagerTest {
         testSetDerivedFrom(resource);
         testSetProperties(resource);
 
-        Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
+        Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(eq(user), eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
     }
 
     @Test()
@@ -176,8 +179,8 @@ public class ResourceImportManagerTest {
         assertNotNull(errorInfoFromTest);
         assertEquals(errorInfoFromTest.getActionStatus(), ActionStatus.GENERAL_ERROR);
 
-        Mockito.verify(resourceBusinessLogic, Mockito.times(0)).createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.eq(user), Mockito.eq(true), Mockito.eq(false), Mockito.eq(true), Mockito.eq(null), Mockito.eq(null), Mockito.eq(false));
-        Mockito.verify(resourceBusinessLogic, Mockito.times(0)).propagateStateToCertified(Mockito.eq(user), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
+        Mockito.verify(resourceBusinessLogic, Mockito.times(0)).createOrUpdateResourceByImport(Mockito.any(Resource.class), eq(user), eq(true), eq(false), eq(true), eq(null), eq(null), eq(false));
+        Mockito.verify(resourceBusinessLogic, Mockito.times(0)).propagateStateToCertified(eq(user), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
     }
 
     @Test
@@ -195,7 +198,7 @@ public class ResourceImportManagerTest {
         Resource resource = createResource.left;
         testSetCapabilities(resource);
 
-        Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(Mockito.eq(user), Mockito.eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false));
+        Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(eq(user), eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
         Mockito.verify(resourceBusinessLogic, Mockito.times(1)).createOrUpdateResourceByImport(resource, user, true, false, true, null, null, false);
 
     }
@@ -301,34 +304,27 @@ public class ResourceImportManagerTest {
         when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
-
-        Either<Component, StorageOperationStatus> notFound = Either.left(Mockito.mock(Resource.class));
+        final Either<Component, StorageOperationStatus> foundResourceEither = Either.left(Mockito.mock(Resource.class));
         when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
-            any(JsonParseFlagEnum.class))).thenReturn(notFound);
-        
+            any(JsonParseFlagEnum.class))).thenReturn(foundResourceEither);
+        when(toscaOperationFacade.isNodeAssociatedToModel(eq(null), any(Resource.class))).thenReturn(true);
+
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
-        
-        ComponentException errorInfoFromTest = null;
-        try {
-            when(toscaOperationFacade
-                .getLatestByToscaResourceNameAndModel(resourceMD.getName(), StringUtils.EMPTY)).thenReturn(Either.left(new Resource()));
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
-        }catch (ComponentException e){
-            errorInfoFromTest = e;
-        }
-        assertNotNull(errorInfoFromTest);
-        assertEquals(ActionStatus.COMPONENT_VERSION_ALREADY_EXIST, errorInfoFromTest.getActionStatus());
+
+        var actualException = assertThrows(ByActionStatusComponentException.class,
+            () -> importManager.importNormativeResource(jsonContent, resourceMD, user, true, true));
+        assertEquals(ActionStatus.COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS, actualException.getActionStatus());
     }
 
     private void setResourceBusinessLogicMock() {
         when(resourceBusinessLogic.getUserAdmin()).thenReturn(userAdmin);
-        when(resourceBusinessLogic.createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.eq(null), Mockito.eq(null), Mockito.eq(false)))
+        when(resourceBusinessLogic.createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), eq(null), eq(null), eq(false)))
                 .thenAnswer((Answer<ImmutablePair<Resource, ActionStatus>>) invocation -> {
                     Object[] args = invocation.getArguments();
                     return new ImmutablePair<>((Resource) args[0], ActionStatus.CREATED);
 
                 });
-        when(resourceBusinessLogic.propagateStateToCertified(Mockito.any(User.class), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), Mockito.eq(false), Mockito.eq(true), Mockito.eq(false)))
+        when(resourceBusinessLogic.propagateStateToCertified(Mockito.any(User.class), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false)))
                 .thenAnswer((Answer<Resource>) invocation -> {
                     Object[] args = invocation.getArguments();
                     return (Resource) args[1];
@@ -339,7 +335,7 @@ public class ResourceImportManagerTest {
             return Either.left((Resource) args[0]);
 
         });
-        when(resourceBusinessLogic.validateResourceBeforeCreate(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), Mockito.eq(false), Mockito.eq(null))).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
+        when(resourceBusinessLogic.validateResourceBeforeCreate(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), eq(false), eq(null))).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
             Object[] args = invocation.getArguments();
             return Either.left((Resource) args[0]);
 
