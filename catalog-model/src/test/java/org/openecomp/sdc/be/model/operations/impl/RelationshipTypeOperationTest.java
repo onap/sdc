@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
@@ -155,9 +156,9 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
     @Test
     public void testGetAllRelationshipTypesNotFound() {
         Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(
-            janusGraphGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
+            janusGraphGenericDao).getByCriteriaForModel(NodeTypeEnum.RelationshipType, null, null,
                 RelationshipTypeData.class);
-        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> either = relationshipTypeOperation.getAllRelationshipTypes();
+        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> either = relationshipTypeOperation.getAllRelationshipTypes(null);
 
         assertTrue(either.isLeft() && MapUtils.isEmpty(either.left().value()));
     }
@@ -165,9 +166,9 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
     @Test
     public void testGetAllRelationshipTypesNotConnnected() {
         Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_CONNECTED)).when(
-            janusGraphGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
+            janusGraphGenericDao).getByCriteriaForModel(NodeTypeEnum.RelationshipType, null, null,
                 RelationshipTypeData.class);
-        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> either = relationshipTypeOperation.getAllRelationshipTypes();
+        Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> either = relationshipTypeOperation.getAllRelationshipTypes(null);
 
         assertTrue(either.isRight() && JanusGraphOperationStatus.NOT_CONNECTED == either.right().value());
     }
@@ -185,7 +186,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         relationshipTypeDataList.add(relationshipTypeData1);
 
         Mockito.doReturn(Either.left(relationshipTypeDataList))
-                .when(janusGraphGenericDao).getByCriteria(NodeTypeEnum.RelationshipType, null,
+                .when(janusGraphGenericDao).getByCriteriaForModel(NodeTypeEnum.RelationshipType, null, null,
                 RelationshipTypeData.class);
 
         Mockito.doReturn(Either.left(relationshipTypeData1)).when(janusGraphGenericDao)
@@ -203,11 +204,18 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
                 .getDerivedFromChild("tosca.relationships.Root1", NodeTypeEnum.RelationshipType, RelationshipTypeData.class);
 
         Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> either =
-                                            relationshipTypeOperation.getAllRelationshipTypes();
+                                            relationshipTypeOperation.getAllRelationshipTypes(null);
 
         assertTrue(either.isLeft());
         RelationshipTypeDefinition relationshipTypeDefinition = either.left().value().get("tosca.relationships.Root1");
         assertEquals("tosca.relationships.Parent", relationshipTypeDefinition.getDerivedFrom());
+        
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND))
+            .when(janusGraphGenericDao).getByCriteriaForModel(NodeTypeEnum.RelationshipType, null, "modelA",
+        RelationshipTypeData.class);        
+        either = relationshipTypeOperation.getAllRelationshipTypes("modelA");
+        assertTrue(either.isLeft());
+        assertTrue(MapUtils.isEmpty(either.left().value()));
     }
 
     public RelationshipTypeDefinition createRelationship(String relationshipTypeName) {

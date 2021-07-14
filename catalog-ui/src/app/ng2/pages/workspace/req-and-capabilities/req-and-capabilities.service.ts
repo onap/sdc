@@ -52,7 +52,7 @@ export class ReqAndCapabilitiesService {
         if (initInputsFor === 'INPUTS_FOR_REQUIREMENTS') {
             if (!this.requirementsListUpdated){
                 this.relationshipTypesList = [];
-                let relationshipTypesResult = await this.toscaTypesServiceNg2.fetchRelationshipTypes();
+                let relationshipTypesResult = await this.toscaTypesServiceNg2.fetchRelationshipTypes(this.workspaceService.metadata.model);
                 Object.keys(relationshipTypesResult).forEach(key => {this.relationshipTypesList.push(relationshipTypesResult[key])});
                 this.requirementsListUpdated = true;
             }
