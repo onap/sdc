@@ -805,10 +805,47 @@ public class JanusGraphGenericDao {
 
     public <T extends GraphNode> Either<List<T>, JanusGraphOperationStatus> getByCriteria(NodeTypeEnum type, Map<String, Object> props,
                                                                                           Class<T> clazz) {
-        Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
+        return getByCriteriaForModel(type, props, null, clazz);
+    }
+    
+    public <T extends GraphNode> Either<List<T>, JanusGraphOperationStatus> getByCriteriaForModel(final NodeTypeEnum type, final Map<String, Object> props,
+            final String model, final Class<T> clazz) {
+        try {
+            final Either<Iterable<JanusGraphVertex>, JanusGraphOperationStatus> vertices = getVerticesByCriteria(type, props);
+            
+            if (vertices.isLeft()) {
+                final Predicate<? super JanusGraphVertex> filterPredicate = StringUtils.isEmpty(model) ? this::vertexNotConnectedToAnyModel : vertex -> vertexValidForModel(vertex, model);
+                final List<JanusGraphVertex> verticesForModel = StreamSupport.stream(vertices.left().value().spliterator(), false).filter(filterPredicate).collect(Collectors.toList());
+            
+                if (CollectionUtils.isEmpty(verticesForModel)) {
+                    log.debug("No vertex in graph for props ={} ", props);
+                    return Either.right(JanusGraphOperationStatus.NOT_FOUND);
+                }
+  
+                final Iterator<JanusGraphVertex> iterator = verticesForModel.iterator();
+                final List<T> result = new ArrayList<>();
+                while (iterator.hasNext()) {
+                    Vertex vertex = iterator.next();
+                    Map<String, Object> newProp = getProperties(vertex);
+                    T element = GraphElementFactory.createElement(type.getName(), GraphElementTypeEnum.Node, newProp, clazz);
+                    result.add(element);
+                }
+                log.debug("Number of fetced nodes in graph for criteria : from type = {} and properties = {} is {}", type, props, result.size());
+                return Either.left(result);
+
+            }
+            return Either.right(vertices.right().value());
+        } catch (Exception e) {
+            log.debug("Failed  get by  criteria for type = {} and properties = {}", type, props, e);
+            return Either.right(JanusGraphClient.handleJanusGraphException(e));
+        }
+    }
+    
+    private Either<Iterable<JanusGraphVertex>, JanusGraphOperationStatus> getVerticesByCriteria(final NodeTypeEnum type, final Map<String, Object> props) {
+        final Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
         if (graph.isLeft()) {
             try {
-                JanusGraph tGraph = graph.left().value();
+                final JanusGraph tGraph = graph.left().value();
                 JanusGraphQuery<? extends JanusGraphQuery> query = tGraph.query();
                 query = query.has(GraphPropertiesDictionary.LABEL.getProperty(), type.getName());
                 if (props != null && !props.isEmpty()) {
@@ -816,25 +853,11 @@ public class JanusGraphGenericDao {
                         query = query.has(entry.getKey(), entry.getValue());
                     }
                 }
-                Iterable<JanusGraphVertex> vertices = query.vertices();
-                if (vertices == null) {
+                final Iterable<JanusGraphVertex> vertices = query.vertices();
+                if (vertices == null || !vertices.iterator().hasNext()) {
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
                 }
-                Iterator<JanusGraphVertex> iterator = vertices.iterator();
-                List<T> result = new ArrayList<>();
-                while (iterator.hasNext()) {
-                    Vertex vertex = iterator.next();
-                    Map<String, Object> newProp = getProperties(vertex);
-                    T element = GraphElementFactory.createElement(type.getName(), GraphElementTypeEnum.Node, newProp, clazz);
-                    result.add(element);
-                }
-                if (log.isDebugEnabled()) {
-                    log.debug("Number of fetced nodes in graph for criteria : from type = {} and properties = {} is {}", type, props, result.size());
-                }
-                if (result.size() == 0) {
-                    return Either.right(JanusGraphOperationStatus.NOT_FOUND);
-                }
-                return Either.left(result);
+                return Either.left(vertices);
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed  get by  criteria for type = {} and properties = {}", type, props, e);

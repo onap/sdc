@@ -14,18 +14,18 @@
  * permissions and limitations under the License.
  */
 
-import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
-import { Response } from '@angular/http';
+import {HttpClient} from '@angular/common/http';
+import {Inject, Injectable} from '@angular/core';
+import {Response} from '@angular/http';
 import {
-    CapabilityTypeModel,
-    CapabilityTypesMap,
-    IComponentsArray,
-    NodeTypesMap,
-    RelationshipTypesMap
+  CapabilityTypeModel,
+  CapabilityTypesMap,
+  IComponentsArray,
+  NodeTypesMap,
+  RelationshipTypesMap
 } from 'app/models';
-import { Observable } from 'rxjs/Observable';
-import { ISdcConfig, SdcConfigToken } from '../config/sdc-config.config';
+import {Observable} from 'rxjs/Observable';
+import {ISdcConfig, SdcConfigToken} from '../config/sdc-config.config';
 import 'rxjs/add/operator/toPromise';
 
 declare var angular: angular.IAngularStatic;
@@ -33,22 +33,22 @@ declare var angular: angular.IAngularStatic;
 @Injectable()
 export class ToscaTypesServiceNg2 {
 
-    protected baseUrl;
+  protected baseUrl;
 
-    constructor(protected http: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
-        this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
-    }
+  constructor(protected http: HttpClient, @Inject(SdcConfigToken) sdcConfig: ISdcConfig) {
+    this.baseUrl = sdcConfig.api.root + sdcConfig.api.component_api_root;
+  }
 
-    async fetchRelationshipTypes(): Promise<RelationshipTypesMap> {
-        return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes').toPromise();
-    }
+  async fetchRelationshipTypes(modelName: string): Promise<RelationshipTypesMap> {
+    return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes', {params: {model: modelName}}).toPromise();
+  }
 
-    async fetchNodeTypes(): Promise<NodeTypesMap> {
-        return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes').toPromise();
-    }
+  async fetchNodeTypes(): Promise<NodeTypesMap> {
+    return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes').toPromise();
+  }
 
-    async fetchCapabilityTypes(): Promise<CapabilityTypesMap>{
-        return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes').toPromise();
-    }
+  async fetchCapabilityTypes(): Promise<CapabilityTypesMap> {
+    return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes').toPromise();
+  }
 }
 

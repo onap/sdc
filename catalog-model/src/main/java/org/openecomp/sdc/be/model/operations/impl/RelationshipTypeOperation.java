@@ -20,8 +20,6 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
-
-import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,6 +45,7 @@ import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import fj.data.Either;
 
 @Component("relationship-type-operation")
 public class RelationshipTypeOperation extends AbstractOperation {
@@ -72,7 +71,7 @@ public class RelationshipTypeOperation extends AbstractOperation {
         return getRelationshipTypeDefinition(relationshipTypesRes.left().value());
     }
     
-    public Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeDefinition(final RelationshipTypeData relationshipTypeData) {
+    private Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeDefinition(final RelationshipTypeData relationshipTypeData) {
         RelationshipTypeDefinition relationshipTypeDefinition = new RelationshipTypeDefinition(
             relationshipTypeData.getRelationshipTypeDataDefinition());
         Either<Map<String, PropertyDefinition>, JanusGraphOperationStatus> propertiesStatus = OperationUtils
@@ -364,11 +363,11 @@ public class RelationshipTypeOperation extends AbstractOperation {
             DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
-    public Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> getAllRelationshipTypes() {
+    public Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> getAllRelationshipTypes(final String model) {
         Map<String, RelationshipTypeDefinition> relationshipTypeDefinitionMap = new HashMap<>();
         Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> result = Either.left(relationshipTypeDefinitionMap);
         Either<List<RelationshipTypeData>, JanusGraphOperationStatus> getAllRelationshipTypes = janusGraphGenericDao
-            .getByCriteria(NodeTypeEnum.RelationshipType, null, RelationshipTypeData.class);
+            .getByCriteriaForModel(NodeTypeEnum.RelationshipType, null, model, RelationshipTypeData.class);
         if (getAllRelationshipTypes.isRight()) {
             JanusGraphOperationStatus status = getAllRelationshipTypes.right().value();
             if (status != JanusGraphOperationStatus.NOT_FOUND) {

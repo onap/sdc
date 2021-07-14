@@ -39,9 +39,9 @@ public class RelationshipTypeBusinessLogic {
         this.componentsUtils = componentsUtils;
     }
 
-    public Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> getAllRelationshipTypes() {
+    public Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> getAllRelationshipTypes(final String model) {
         Either<Map<String, RelationshipTypeDefinition>, JanusGraphOperationStatus> allRelationshipTypes = relationshipTypeOperation
-            .getAllRelationshipTypes();
+            .getAllRelationshipTypes(model);
         if (allRelationshipTypes.isRight()) {
             JanusGraphOperationStatus operationStatus = allRelationshipTypes.right().value();
             if (JanusGraphOperationStatus.NOT_FOUND == operationStatus) {

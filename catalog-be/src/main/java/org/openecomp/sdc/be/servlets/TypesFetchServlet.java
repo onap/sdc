@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.servlets;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,10 +43,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.ListUtils;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -223,7 +226,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "404", description = "Relationship types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllRelationshipTypesServlet(@Context final HttpServletRequest request,
-                                                   @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                                   @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                                   @Parameter(description = "model", required = false) @QueryParam("model") String modelName) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         try {
@@ -233,7 +237,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
                 Either<Map<String, RelationshipTypeDefinition>, ResponseFormat> allDataTypes = relationshipTypeBusinessLogic
-                    .getAllRelationshipTypes();
+                    .getAllRelationshipTypes(modelName);
                 if (allDataTypes.isRight()) {
                     log.info("Failed to get all relationship types. Reason - {}", allDataTypes.right().value());
                     Response errorResponse = buildErrorResponse(allDataTypes.right().value());
