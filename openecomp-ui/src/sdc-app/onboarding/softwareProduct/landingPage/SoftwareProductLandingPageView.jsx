@@ -55,7 +55,7 @@ class SoftwareProductLandingPageView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.getExternalLicenceFeatureState = this.getExternalLicenceFeatureState.bind(
+        this.getExternalLicenseFeatureState = this.getExternalLicenseFeatureState.bind(
             this
         );
     }
@@ -83,16 +83,16 @@ class SoftwareProductLandingPageView extends React.Component {
         }
     }
 
-    licenceChange = (e, currentSoftwareProduct, onLicenseChange) => {
+    licenseChange = (e, currentSoftwareProduct, onLicenseChange) => {
         currentSoftwareProduct.licenseType = e.target.value
             ? e.target.value
             : 'INTERNAL';
         onLicenseChange(currentSoftwareProduct);
     };
 
-    getExternalLicenceFeatureState() {
+    getExternalLicenseFeatureState() {
         var licenseFeature = this.props.features.find(
-            feature => feature.name === 'EXTERNAL_LICENCE'
+            feature => feature.name === 'EXTERNAL_LICENSE'
         );
         return licenseFeature ? licenseFeature.active : true;
     }
@@ -104,7 +104,7 @@ class SoftwareProductLandingPageView extends React.Component {
             isManual,
             onLicenseChange
         } = this.props;
-        let licenceChange = this.licenceChange;
+        let licenseChange = this.licenseChange;
         return (
             <div className="software-product-landing-wrapper">
                 <Dropzone
@@ -130,9 +130,9 @@ class SoftwareProductLandingPageView extends React.Component {
                                     currentSoftwareProduct={
                                         currentSoftwareProduct
                                     }
-                                    licenceChange={licenceChange}
+                                    licenseChange={licenseChange}
                                     onLicenseChange={onLicenseChange}
-                                    externalLicenceEnabled={this.getExternalLicenceFeatureState()}
+                                    externalLicenseEnabled={this.getExternalLicenseFeatureState()}
                                 />
                                 {this.renderProductDetails(
                                     isManual,
@@ -251,9 +251,9 @@ class SoftwareProductLandingPageView extends React.Component {
 
 const ProductSummary = ({
     currentSoftwareProduct,
-    licenceChange,
+    licenseChange,
     onLicenseChange,
-    externalLicenceEnabled
+    externalLicenseEnabled
 }) => {
     let {
         name = '',
@@ -291,13 +291,13 @@ const ProductSummary = ({
                                 </div>
                                 <div className="description">
                                     <LicenseAgreement
-                                        licenceChange={licenceChange}
+                                        licenseChange={licenseChange}
                                         currentSoftwareProduct={
                                             currentSoftwareProduct
                                         }
                                         onLicenseChange={onLicenseChange}
-                                        externalLicenceEnabled={
-                                            externalLicenceEnabled
+                                        externalLicenseEnabled={
+                                            externalLicenseEnabled
                                         }
                                     />
                                 </div>
@@ -315,7 +315,7 @@ const ProductSummary = ({
 };
 
 const LicenseAgreementWithExternal = ({
-    licenceChange,
+    licenseChange,
     currentSoftwareProduct,
     onLicenseChange
 }) => {
@@ -327,7 +327,7 @@ const LicenseAgreementWithExternal = ({
                     value="INTERNAL"
                     id="INTERNAL"
                     onChange={event =>
-                        licenceChange(
+                        licenseChange(
                             event,
                             currentSoftwareProduct,
                             onLicenseChange
@@ -336,7 +336,7 @@ const LicenseAgreementWithExternal = ({
                     checked={currentSoftwareProduct.licenseType === 'INTERNAL'}
                     name="license"
                 />
-                <div className="description licenceLabel">
+                <div className="description licenseLabel">
                     {i18n('Internal license')}
                 </div>
                 <br />
@@ -345,7 +345,7 @@ const LicenseAgreementWithExternal = ({
                     value="EXTERNAL"
                     id="EXTERNAL"
                     onChange={event =>
-                        licenceChange(
+                        licenseChange(
                             event,
                             currentSoftwareProduct,
                             onLicenseChange
@@ -354,7 +354,7 @@ const LicenseAgreementWithExternal = ({
                     checked={currentSoftwareProduct.licenseType === 'EXTERNAL'}
                     name="license"
                 />
-                <div className="description licenceLabel">
+                <div className="description licenseLabel">
                     {i18n('External license')}
                 </div>
             </form>
@@ -363,7 +363,7 @@ const LicenseAgreementWithExternal = ({
 };
 
 const LicenseAgreementWithoutExternal = ({
-    licenceChange,
+    licenseChange,
     currentSoftwareProduct,
     onLicenseChange
 }) => {
@@ -372,7 +372,7 @@ const LicenseAgreementWithoutExternal = ({
             <div
                 className="missing-license clickable"
                 onClick={event =>
-                    licenceChange(
+                    licenseChange(
                         event,
                         currentSoftwareProduct,
                         onLicenseChange
@@ -387,15 +387,15 @@ const LicenseAgreementWithoutExternal = ({
 };
 
 const LicenseAgreement = ({
-    licenceChange,
+    licenseChange,
     currentSoftwareProduct,
     onLicenseChange,
-    externalLicenceEnabled
+    externalLicenseEnabled
 }) => {
-    if (externalLicenceEnabled) {
+    if (externalLicenseEnabled) {
         return (
             <LicenseAgreementWithExternal
-                licenceChange={licenceChange}
+                licenseChange={licenseChange}
                 currentSoftwareProduct={currentSoftwareProduct}
                 onLicenseChange={onLicenseChange}
             />
@@ -403,7 +403,7 @@ const LicenseAgreement = ({
     } else {
         return (
             <LicenseAgreementWithoutExternal
-                licenceChange={licenceChange}
+                licenseChange={licenseChange}
                 currentSoftwareProduct={currentSoftwareProduct}
                 onLicenseChange={onLicenseChange}
             />
