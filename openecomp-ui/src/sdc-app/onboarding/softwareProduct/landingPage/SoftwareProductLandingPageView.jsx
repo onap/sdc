@@ -92,7 +92,7 @@ class SoftwareProductLandingPageView extends React.Component {
 
     getExternalLicenceFeatureState() {
         var licenseFeature = this.props.features.find(
-            feature => feature.name === 'EXTERNAL_LICENCE'
+            feature => feature.name === 'EXTERNAL_LICENSE'
         );
         return licenseFeature ? licenseFeature.active : true;
     }
