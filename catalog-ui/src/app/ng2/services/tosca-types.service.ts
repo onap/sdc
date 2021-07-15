@@ -47,8 +47,8 @@ export class ToscaTypesServiceNg2 {
     return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes').toPromise();
   }
 
-  async fetchCapabilityTypes(): Promise<CapabilityTypesMap> {
-    return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes').toPromise();
-  }
+    async fetchCapabilityTypes(modelName: string): Promise<CapabilityTypesMap>{
+        return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes', {params: {model: modelName}}).toPromise();
+    }
 }
 

@@ -566,9 +566,9 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
                     .equals(capabilityDefinition.getUniqueId()));
     }
 
-    public Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> getAllCapabilityTypes() {
+    public Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> getAllCapabilityTypes(String modelName) {
         Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> capabilityTypeCacheAll = capabilityTypeOperation
-            .getAllCapabilityTypes();
+            .getAllCapabilityTypes(modelName);
         if (capabilityTypeCacheAll.isRight()) {
             JanusGraphOperationStatus operationStatus = capabilityTypeCacheAll.right().value();
             if (JanusGraphOperationStatus.NOT_FOUND == operationStatus) {

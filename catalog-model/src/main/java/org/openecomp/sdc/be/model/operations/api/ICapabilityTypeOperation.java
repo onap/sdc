@@ -46,5 +46,5 @@ public interface ICapabilityTypeOperation {
 
     public Either<CapabilityTypeDefinition, StorageOperationStatus> getCapabilityType(String uniqueId, boolean inTransaction);
 
-    Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> getAllCapabilityTypes();
+    Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> getAllCapabilityTypes(String modelName);
 }
