@@ -20,14 +20,27 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.janusgraph.core.JanusGraphVertex;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.janusgraph.core.JanusGraphVertex;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
@@ -38,7 +51,12 @@ import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.IComplexDefaultValue;
+import org.openecomp.sdc.be.model.ModelTestBase;
+import org.openecomp.sdc.be.model.PropertyConstraint;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
@@ -48,16 +66,14 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 
 public class PropertyOperationTest extends ModelTestBase {
 
     HealingJanusGraphGenericDao janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
 
-    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null);
+    final DataTypeOperation dataTypeOperation = mock(DataTypeOperation.class);
+
+    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null, dataTypeOperation);
 
     @Before
     public void setup() {
@@ -441,7 +457,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	}
 
 	private PropertyOperation createTestSubject() {
-		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null);
+		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null, dataTypeOperation);
 	}
 
 	@Test
@@ -937,7 +953,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	@Test
 	public void testGetAllDataTypes() throws Exception {
 		PropertyOperation testSubject;
-		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> result;
+		Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -956,18 +972,6 @@ public class PropertyOperationTest extends ModelTestBase {
 		result = testSubject.checkInnerType(propDataDef);
 	}
 
-	
-	@Test
-	public void testGetAllDataTypeNodes() throws Exception {
-		PropertyOperation testSubject;
-		Either<List<DataTypeData>, JanusGraphOperationStatus> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getAllDataTypeNodes();
-	}
-
-	
 	@Test
 	public void testValidateAndUpdatePropertyValue() throws Exception {
 		PropertyOperation testSubject;

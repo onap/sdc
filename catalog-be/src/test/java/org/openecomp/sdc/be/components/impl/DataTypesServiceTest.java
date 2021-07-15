@@ -20,7 +20,11 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.HashMap;
+import java.util.Map;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +33,6 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.when;
 
 public class DataTypesServiceTest {
     ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
@@ -48,7 +47,7 @@ public class DataTypesServiceTest {
     public void setup() {
         mapreturn.put("Demo",new DataTypeDefinition());
         allDataTypes = Either.left(mapreturn);
-        when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
+        when(applicationDataTypeCache.getAll(null)).thenReturn(allDataTypes);
 
     }
 
@@ -60,7 +59,7 @@ public class DataTypesServiceTest {
     @Test
     public void getAllDataTypes_failure() {
         allDataTypes = Either.right(janusGraphOperationStatus);
-        when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
+        when(applicationDataTypeCache.getAll(null)).thenReturn(allDataTypes);
         Assert.assertEquals(true,dataTypesService.getAllDataTypes(applicationDataTypeCache).isRight());
     }
 

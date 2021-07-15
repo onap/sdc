@@ -49,6 +49,7 @@ public class DataTypeData extends GraphNode {
         dataTypeDataDefinition.setDerivedFromName((String) properties.get(GraphPropertiesDictionary.DERIVED_FROM.getProperty()));
         dataTypeDataDefinition.setCreationTime((Long) properties.get(GraphPropertiesDictionary.CREATION_DATE.getProperty()));
         dataTypeDataDefinition.setModificationTime((Long) properties.get(GraphPropertiesDictionary.LAST_UPDATE_DATE.getProperty()));
+        dataTypeDataDefinition.setModel((String) properties.get(GraphPropertiesDictionary.MODEL.getProperty()));
     }
 
     @Override
@@ -60,6 +61,7 @@ public class DataTypeData extends GraphNode {
         addIfExists(map, GraphPropertiesDictionary.DERIVED_FROM, dataTypeDataDefinition.getDerivedFromName());
         addIfExists(map, GraphPropertiesDictionary.CREATION_DATE, dataTypeDataDefinition.getCreationTime());
         addIfExists(map, GraphPropertiesDictionary.LAST_UPDATE_DATE, dataTypeDataDefinition.getModificationTime());
+        addIfExists(map, GraphPropertiesDictionary.MODEL, dataTypeDataDefinition.getModel());
         return map;
     }
 

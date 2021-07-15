@@ -59,6 +59,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     isPropertyValueOwner:boolean;
     isVnfConfiguration:boolean;
     constraints:string[];
+    modelNameFilter:string;
 
     validateJson(json:string):boolean;
     save(doNotCloseModal?:boolean):void;
@@ -125,7 +126,6 @@ export class PropertyFormViewModel {
                 private workspaceService: WorkspaceService) {
 
         this.formState = angular.isDefined(property.name) ? FormState.UPDATE : FormState.CREATE;
-
         this.initScope();
     }
 
@@ -203,9 +203,10 @@ export class PropertyFormViewModel {
         this.$scope.modalInstanceProperty = this.$uibModalInstance;
         this.$scope.currentPropertyIndex = _.findIndex(this.filteredProperties, i=> i.name == this.property.name);
         this.$scope.isLastProperty = this.$scope.currentPropertyIndex == (this.filteredProperties.length - 1);
-        this.$scope.dataTypes = this.DataTypesService.getAllDataTypes();
+        this.$scope.dataTypes = this.DataTypesService.getAllDataTypesFromModel(this.workspaceService.metadata.model);
         this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
         this.$scope.propertyOwnerType = this.propertyOwnerType;
+        this.$scope.modelNameFilter = this.workspaceService.metadata.model;
 
         this.$scope.editPropertyModel = {
             property : new PropertyModel(this.property),

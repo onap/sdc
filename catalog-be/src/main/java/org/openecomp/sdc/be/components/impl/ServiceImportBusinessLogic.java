@@ -66,7 +66,6 @@ import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
@@ -108,6 +107,7 @@ import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -120,7 +120,6 @@ import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -965,20 +964,14 @@ public class ServiceImportBusinessLogic {
         Map<String, Resource> originCompMap = new HashMap<>();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
+
         log.debug("enter ServiceImportBusinessLogic createResourceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
-        if (serviceBusinessLogic.dataTypeCache != null) {
-            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = serviceBusinessLogic.dataTypeCache.getAll();
-            if (allDataTypes.isRight()) {
-                JanusGraphOperationStatus status = allDataTypes.right().value();
-                BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
-                    "Failed to update property value on instance. Status is " + status, BeEcompErrorManager.ErrorSeverity.ERROR);
-                throw new ComponentException(componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)),
-                        yamlName));
-            }
+        final ApplicationDataTypeCache applicationDataTypeCache = serviceBusinessLogic.applicationDataTypeCache;
+        if (applicationDataTypeCache != null) {
             Resource finalResource = resource;
             uploadResInstancesMap.values().forEach(
-                i -> processComponentInstance(yamlName, finalResource, componentInstancesList, allDataTypes, instProperties, instCapabilities,
+                i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
+                    componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties, instCapabilities,
                     instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
@@ -1333,20 +1326,13 @@ public class ServiceImportBusinessLogic {
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
         log.debug("enter ServiceImportBusinessLogic  createServiceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
-        if (serviceBusinessLogic.dataTypeCache != null) {
-            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = serviceBusinessLogic.dataTypeCache.getAll();
-            if (allDataTypes.isRight()) {
-                JanusGraphOperationStatus status = allDataTypes.right().value();
-                BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",
-                    "Failed to update property value on instance. Status is " + status, BeEcompErrorManager.ErrorSeverity.ERROR);
-                throw new ComponentException(componentsUtils
-                    .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)),
-                        yamlName));
-            }
+        final ApplicationDataTypeCache applicationDataTypeCache = serviceBusinessLogic.applicationDataTypeCache;
+        if (applicationDataTypeCache != null) {
             Service finalResource = service;
             uploadResInstancesMap.values().forEach(
-                i -> processComponentInstance(yamlName, finalResource, componentInstancesList, allDataTypes, instProperties, instCapabilities,
-                    instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, i));
+                i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
+                    componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties,
+                    instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
@@ -1376,7 +1362,7 @@ public class ServiceImportBusinessLogic {
     }
 
     protected void processComponentInstance(String yamlName, Component component, List<ComponentInstance> componentInstancesList,
-                                            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes,
+                                            Map<String, DataTypeDefinition> allDataTypes,
                                             Map<String, List<ComponentInstanceProperty>> instProperties,
                                             Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties,
                                             Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instRequirements,
@@ -1416,12 +1402,12 @@ public class ServiceImportBusinessLogic {
         }
         if (originResource.getResourceType() != ResourceTypeEnum.VF) {
             ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, component, originResource,
-                currentCompInstance, instProperties, allDataTypes.left().value());
+                currentCompInstance, instProperties, allDataTypes);
             if (addPropertiesValueToRiRes.getStatus() != 200) {
                 throw new ComponentException(addPropertiesValueToRiRes);
             }
         } else {
-            addInputsValuesToRi(uploadComponentInstanceInfo, component, originResource, currentCompInstance, instInputs, allDataTypes.left().value());
+            addInputsValuesToRi(uploadComponentInstanceInfo, component, originResource, currentCompInstance, instInputs, allDataTypes);
         }
     }
 
@@ -1557,7 +1543,7 @@ public class ServiceImportBusinessLogic {
         return componentsUtils.getResponseFormat(ActionStatus.OK);
     }
 
-    protected void processComponentInstanceCapabilities(Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes,
+    protected void processComponentInstanceCapabilities(Map<String, DataTypeDefinition> allDataTypes,
                                                         Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties,
                                                         UploadComponentInstanceInfo uploadComponentInstanceInfo,
                                                         ComponentInstance currentCompInstance, Resource originResource) {
@@ -1569,18 +1555,18 @@ public class ServiceImportBusinessLogic {
             originResource.getCapabilities().forEach((k, v) -> serviceImportParseLogic.addCapabilities(originCapabilities, k, v));
             uploadComponentInstanceInfo.getCapabilities().values()
                 .forEach(l -> serviceImportParseLogic.addCapabilitiesProperties(newPropertiesMap, l));
-            updateCapabilityPropertiesValues(allDataTypes, originCapabilities, newPropertiesMap);
+            updateCapabilityPropertiesValues(allDataTypes, originCapabilities, newPropertiesMap, originResource.getModel());
         } else {
             originCapabilities = originResource.getCapabilities();
         }
         instCapabilties.put(currentCompInstance, originCapabilities);
     }
 
-    protected void updateCapabilityPropertiesValues(Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes,
+    protected void updateCapabilityPropertiesValues(Map<String, DataTypeDefinition> allDataTypes,
                                                     Map<String, List<CapabilityDefinition>> originCapabilities,
-                                                    Map<String, Map<String, UploadPropInfo>> newPropertiesMap) {
+                                                    Map<String, Map<String, UploadPropInfo>> newPropertiesMap, String model) {
         originCapabilities.values().stream().flatMap(Collection::stream).filter(c -> newPropertiesMap.containsKey(c.getName()))
-            .forEach(c -> updatePropertyValues(c.getProperties(), newPropertiesMap.get(c.getName()), allDataTypes.left().value()));
+            .forEach(c -> updatePropertyValues(c.getProperties(), newPropertiesMap.get(c.getName()), allDataTypes));
     }
 
     protected void updatePropertyValues(List<ComponentInstanceProperty> properties, Map<String, UploadPropInfo> newProperties,

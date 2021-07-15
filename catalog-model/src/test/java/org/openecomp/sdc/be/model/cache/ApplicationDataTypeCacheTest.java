@@ -49,6 +49,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.operations.impl.DataTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.springframework.context.ApplicationEventPublisher;
@@ -57,6 +58,9 @@ class ApplicationDataTypeCacheTest {
 
     @Mock
     private PropertyOperation propertyOperation;
+
+    @Mock
+	private DataTypeOperation dataTypeOperation;
 
     @Mock
 	private ApplicationEventPublisher applicationEventPublisher;
@@ -150,18 +154,19 @@ class ApplicationDataTypeCacheTest {
 
 		final DataTypeDefinition testDataType1 = createDataTypeDefinition("test.data.type1", "test.data.type1", 101L, 1000L);
 		final DataTypeDefinition testDataType2 = createDataTypeDefinition("test.data.type2", "test.data.type2", 101L, 1002L);
-		final Map<String, DataTypeDefinition> modifiedDataTypeDefinitionMap =
-			Map.of(testDataType1.getName(), testDataType1, testDataType2.getName(), testDataType2);
+		final Map<String, DataTypeDefinition> dataTypeDefinitionMap = Map.of(testDataType1.getName(), testDataType1, testDataType2.getName(), testDataType2);
+		final Map<String, Map<String, DataTypeDefinition>> modifiedDataTypeDefinitionMap = new HashMap<>();
+		modifiedDataTypeDefinitionMap.put(null, dataTypeDefinitionMap);
 		when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(modifiedDataTypeDefinitionMap));
 
 		final DataTypeData dataTypeData1 = createDataTypeData("test.data.type1", "test.data.type1", 101L, 101L);
 		final DataTypeData dataTypeData2 = createDataTypeData("test.data.type2", "test.data.type2", 101L, 1002L);
 
-		when(propertyOperation.getAllDataTypeNodes()).thenReturn(Either.left(List.of(dataTypeData1, dataTypeData2)));
+		when(dataTypeOperation.getAllDataTypeNodes()).thenReturn(List.of(dataTypeData1, dataTypeData2));
 
 		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) == 0);
 		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
-		assertDataTypeCache(modifiedDataTypeDefinitionMap);
+		assertDataTypeCache(modifiedDataTypeDefinitionMap.get(null));
 	}
 
 	@Test
@@ -172,17 +177,19 @@ class ApplicationDataTypeCacheTest {
 		await().until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
 		assertDataTypeCache(dataTypeDefinitionMap);
 
+		final Map<String, Map<String, DataTypeDefinition>> dataTypesMappedByModel = new HashMap<>();
 		final Map<String, DataTypeDefinition> modifiedDataTypeDefinitionMap = new HashMap<>();
 		final DataTypeDefinition testDataType1 = createDataTypeDefinition("test.data.type1", "test.data.type1", 1L, 1L);
 		modifiedDataTypeDefinitionMap.put(testDataType1.getName(), testDataType1);
 		final DataTypeDefinition testDataType3 = createDataTypeDefinition("test.data.type3", "test.data.type3", 1L, 1L);
 		modifiedDataTypeDefinitionMap.put(testDataType3.getName(), testDataType3);
-		when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(modifiedDataTypeDefinitionMap));
+		dataTypesMappedByModel.put(null, modifiedDataTypeDefinitionMap);
+		when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(dataTypesMappedByModel));
 
 		final DataTypeData dataTypeData1 = createDataTypeData("test.data.type1", "test.data.type1", 1L, 1L);
 		final DataTypeData dataTypeData3 = createDataTypeData("test.data.type3", "test.data.type3", 1L, 1L);
 
-		when(propertyOperation.getAllDataTypeNodes()).thenReturn(Either.left(List.of(dataTypeData1, dataTypeData3)));
+		when(dataTypeOperation.getAllDataTypeNodes()).thenReturn(List.of(dataTypeData1, dataTypeData3));
 
 		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) == 0);
 		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
@@ -191,9 +198,9 @@ class ApplicationDataTypeCacheTest {
 
 	@Test
 	void testGetAllWithNoInitialization() {
-		final Map<String, DataTypeDefinition> dataTypeDefinitionMap = new HashMap<>();
+		final Map<String, Map<String, DataTypeDefinition>> dataTypeDefinitionMap = new HashMap<>();
 		when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(dataTypeDefinitionMap));
-		final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> response = applicationDataTypeCache.getAll();
+		final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> response = applicationDataTypeCache.getAll(null);
 		assertNotNull(response);
 		assertTrue(response.isLeft());
 	}
@@ -202,7 +209,7 @@ class ApplicationDataTypeCacheTest {
 	void testGetWhenCacheIsEmpty() {
 		var dataTypeDefinition = new DataTypeDefinition();
 		when(propertyOperation.getDataTypeByUid("uniqueId")).thenReturn(Either.left(dataTypeDefinition));
-		final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeEither = applicationDataTypeCache.get("uniqueId");
+		final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeEither = applicationDataTypeCache.get(null,  "uniqueId");
 		assertNotNull(dataTypeEither);
 		assertTrue(dataTypeEither.isLeft());
 		assertEquals(dataTypeDefinition, dataTypeEither.left().value());
@@ -213,7 +220,8 @@ class ApplicationDataTypeCacheTest {
 		defaultInit();
 		final ScheduledFuture<?> scheduledFuture = applicationDataTypeCache.getScheduledFuture();
 		await().atMost(Duration.ofSeconds(schedulerPollIntervalInSec + 1)).until(() -> scheduledFuture.getDelay(TimeUnit.SECONDS) != 0);
-		final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeEither = applicationDataTypeCache.get("test.data.type1");
+		final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeEither =
+			applicationDataTypeCache.get(null,  "test.data.type1");
 		assertNotNull(dataTypeEither);
 		assertTrue(dataTypeEither.isLeft());
 		final DataTypeDefinition actualDataTypeDefinition = dataTypeEither.left().value();
@@ -236,12 +244,14 @@ class ApplicationDataTypeCacheTest {
         dataTypeDefinitionMap.put(testDataType1.getName(), testDataType1);
         final DataTypeDefinition testDataType2 = createDataTypeDefinition("test.data.type2", "test.data.type2", 101L, 1001L);
         dataTypeDefinitionMap.put(testDataType2.getName(), testDataType2);
-        when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(dataTypeDefinitionMap));
+		final Map<String, Map<String, DataTypeDefinition>> dataTypesMappedByModel = new HashMap<>();
+		dataTypesMappedByModel.put(null, dataTypeDefinitionMap);
+        when(propertyOperation.getAllDataTypes()).thenReturn(Either.left(dataTypesMappedByModel));
 
         final DataTypeData dataTypeData1 = createDataTypeData("test.data.type1", testDataType1.getName(), 100L, 1000L);
         final DataTypeData dataTypeData2 = createDataTypeData("test.data.type2", testDataType2.getName(), 101L, 1001L);
 
-        when(propertyOperation.getAllDataTypeNodes()).thenReturn(Either.left(List.of(dataTypeData1, dataTypeData2)));
+        when(dataTypeOperation.getAllDataTypeNodes()).thenReturn(List.of(dataTypeData1, dataTypeData2));
         applicationDataTypeCache.init();
     }
 
@@ -286,7 +296,7 @@ class ApplicationDataTypeCacheTest {
 	}
 
 	public void assertDataTypeCache(final Map<String, DataTypeDefinition> expectedDataTypeCache) {
-		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypeCacheMapEither = applicationDataTypeCache.getAll();
+		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypeCacheMapEither = applicationDataTypeCache.getAll(null);
 		assertNotNull(dataTypeCacheMapEither);
 		assertTrue(dataTypeCacheMapEither.isLeft());
 		final Map<String, DataTypeDefinition> actualDataTypeMap = dataTypeCacheMapEither.left().value();

@@ -21,52 +21,49 @@ package org.openecomp.sdc.be.components.validation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.utils.ExceptionUtils;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AnnotationValidator {
 
-    private static final Logger log = Logger.getLogger(ResourceImportManager.class);
     private final PropertyValidator propertyValidator;
     private final ExceptionUtils exceptionUtils;
-    private final ApplicationDataTypeCache dataTypeCache;
+    private final ApplicationDataTypeCache applicationDataTypeCache;
     private final ComponentsUtils componentsUtils;
 
-    public AnnotationValidator(PropertyValidator propertyValidator, ExceptionUtils exceptionUtils, ApplicationDataTypeCache dataTypeCache,
+    public AnnotationValidator(PropertyValidator propertyValidator, ExceptionUtils exceptionUtils, ApplicationDataTypeCache applicationDataTypeCache,
                                ComponentsUtils componentsUtils) {
         this.propertyValidator = propertyValidator;
         this.exceptionUtils = exceptionUtils;
-        this.dataTypeCache = dataTypeCache;
+        this.applicationDataTypeCache = applicationDataTypeCache;
         this.componentsUtils = componentsUtils;
     }
 
-    public List<Annotation> validateAnnotationsProperties(Annotation annotation, AnnotationTypeDefinition dbAnnotationTypeDefinition) {
+    public List<Annotation> validateAnnotationsProperties(final Annotation annotation, final AnnotationTypeDefinition dbAnnotationTypeDefinition,
+                                                          final String model) {
         List<Annotation> validAnnotations = new ArrayList<>();
-        if (annotation != null && propertiesValidator(annotation.getProperties(), dbAnnotationTypeDefinition.getProperties())) {
+        if (annotation != null && propertiesValidator(annotation.getProperties(), dbAnnotationTypeDefinition.getProperties(), model)) {
             validAnnotations.add(annotation);
         }
         return validAnnotations;
     }
 
-    private boolean propertiesValidator(List<PropertyDataDefinition> properties, List<PropertyDefinition> dbAnnotationTypeDefinitionProperties) {
+    private boolean propertiesValidator(final List<PropertyDataDefinition> properties,
+                                        final List<PropertyDefinition> dbAnnotationTypeDefinitionProperties, final String model) {
         List<PropertyDefinition> propertyDefinitionsList = new ArrayList<>();
         if (properties == null || dbAnnotationTypeDefinitionProperties == null) {
             return false;
         }
         properties.stream().forEach(property -> propertyDefinitionsList.add(new PropertyDefinition(property)));
-        Map<String, DataTypeDefinition> allDataTypes = dataTypeCache.getAll().left().on(error -> exceptionUtils.rollBackAndThrow(error));
-        propertyValidator.thinPropertiesValidator(propertyDefinitionsList, dbAnnotationTypeDefinitionProperties, allDataTypes);
+        propertyValidator.thinPropertiesValidator(propertyDefinitionsList, dbAnnotationTypeDefinitionProperties,
+            applicationDataTypeCache.getAll(model).left().on(error -> exceptionUtils.rollBackAndThrow(error)));
         return true;
     }
 }

@@ -7,6 +7,7 @@ import { PROPERTY_DATA } from 'app/utils';
 import * as _ from 'lodash';
 import { PROPERTY_TYPES } from '../../../../utils';
 import {Validation} from "../../../../view-models/workspace/tabs/general/general-view-model";
+import {WorkspaceService} from "../../workspace/workspace.service";
 
 @Component({
     selector: 'property-creator',
@@ -23,34 +24,8 @@ export class PropertyCreatorComponent {
     dataTypes: DataTypesMap;
     isLoading: boolean;
 
-    constructor(protected dataTypeService: DataTypeService) {}
-
-    ngOnInit() {
-        this.propertyModel = new PropertyBEModel();
-        this.propertyModel.type = '';
-        this.propertyModel.schema.property.type = '';
-        const types: string[] =  PROPERTY_DATA.TYPES; // All types - simple type + map + list
-        this.dataTypes = this.dataTypeService.getAllDataTypes(); // Get all data types in service
-        const nonPrimitiveTypes: string[] = _.filter(Object.keys(this.dataTypes), (type: string) => {
-            return types.indexOf(type) === -1;
-        });
-
-        this.typesProperties = _.map(PROPERTY_DATA.TYPES,
-            (type: string) => new DropdownValue(type, type)
-        );
-        const typesSimpleProperties = _.map(PROPERTY_DATA.SIMPLE_TYPES,
-            (type: string) => new DropdownValue(type, type)
-        );
-        const nonPrimitiveTypesValues = _.map(nonPrimitiveTypes,
-            (type: string) => new DropdownValue(type,
-                    type.replace('org.openecomp.datatypes.heat.', ''))
-        )
-        .sort((a, b) => a.label.localeCompare(b.label));
-        this.typesProperties = _.concat(this.typesProperties, nonPrimitiveTypesValues);
-        this.typesSchemaProperties = _.concat(typesSimpleProperties, nonPrimitiveTypesValues);
-        this.typesProperties.unshift(new DropdownValue('', 'Select Type...'));
-        this.typesSchemaProperties.unshift(new DropdownValue('', 'Select Schema Type...'));
-
+    constructor(protected dataTypeService: DataTypeService, private workspaceService: WorkspaceService) {
+        this.filterDataTypesByModel(this.workspaceService.metadata.model);
     }
 
     checkFormValidForSubmit() {
@@ -72,6 +47,34 @@ export class PropertyCreatorComponent {
         } else if (this.propertyModel.type === PROPERTY_TYPES.LIST) {
             this.propertyModel.value = JSON.stringify([]);
         }
+    }
+
+    public filterDataTypesByModel = (modelName: string) => {
+        this.dataTypes = new DataTypesMap(null);
+        this.dataTypes = this.dataTypeService.getDataTypeByModel(modelName);
+        this.propertyModel = new PropertyBEModel();
+        this.propertyModel.type = '';
+        this.propertyModel.schema.property.type = '';
+        const types: string[] =  PROPERTY_DATA.TYPES; // All types - simple type + map + list
+        const nonPrimitiveTypes: string[] = _.filter(Object.keys(this.dataTypes), (type: string) => {
+            return types.indexOf(type) === -1;
+        });
+
+        this.typesProperties = _.map(PROPERTY_DATA.TYPES,
+            (type: string) => new DropdownValue(type, type)
+        );
+        const typesSimpleProperties = _.map(PROPERTY_DATA.SIMPLE_TYPES,
+            (type: string) => new DropdownValue(type, type)
+        );
+        const nonPrimitiveTypesValues = _.map(nonPrimitiveTypes,
+            (type: string) => new DropdownValue(type,
+                type.replace('org.openecomp.datatypes.heat.', ''))
+        )
+        .sort((a, b) => a.label.localeCompare(b.label));
+        this.typesProperties = _.concat(this.typesProperties, nonPrimitiveTypesValues);
+        this.typesSchemaProperties = _.concat(typesSimpleProperties, nonPrimitiveTypesValues);
+        this.typesProperties.unshift(new DropdownValue('', 'Select Type...'));
+        this.typesSchemaProperties.unshift(new DropdownValue('', 'Select Schema Type...'));
     }
 
 }

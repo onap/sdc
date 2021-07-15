@@ -129,7 +129,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
     private ToscaExportHandler testSubject;
 
     @Mock
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
 
     @Mock
     private ToscaOperationFacade toscaOperationFacade;
@@ -236,7 +236,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         Component component = getNewResource();
         Either<ToscaRepresentation, ToscaError> result;
 
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Resource.class),
             any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
@@ -249,7 +249,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         component = getNewService();
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Service.class),
             any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
-        when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
 
         // default test when component is Service
         result = testSubject.exportComponent(component);
@@ -263,14 +263,14 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         ((Resource) component).setInterfaces(new HashMap<>());
 
-        when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
             .thenReturn(Either.left(Collections.emptyMap()));
         // default test when convertInterfaceNodeType is right
         result = testSubject.exportComponentInterface(component, false);
         Assert.assertNotNull(result);
 
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Resource.class),
             any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
@@ -298,7 +298,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
             .thenReturn(Either.left(Collections.emptyMap()));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         // when convertRequirements is called, make it return the same value as 3rd (index=2) argument.
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Resource.class),
             any(ToscaNodeType.class))).thenAnswer(i -> Either.left(i.getArgument(2)));
@@ -392,7 +392,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         component.setComponentInstances(resourceInstances);
 
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.getOriginComponent(any(Map.class), any(ComponentInstance.class))).thenReturn(Either.right(false));
 
         final Map<String, ToscaProperty> map = new HashMap<>();
@@ -431,7 +431,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
             any(Component.class), any(SubstitutionMapping.class)))
             .thenReturn(Either.left(new SubstitutionMapping()));
 
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
         when(inputConverter.convertInputs(any(List.class), any(Map.class))).thenReturn(new HashMap<>());
 
@@ -473,7 +473,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
             .convertSubstitutionMappingRequirements(anyMap(), any(Component.class), any(SubstitutionMapping.class)))
             .thenReturn(Either.left(new SubstitutionMapping()));
 
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
         when(inputConverter.convertInputs(anyList(), anyMap())).thenReturn(new HashMap<>());
         final Map<String, ToscaProperty> map = new HashMap<>();
@@ -580,7 +580,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         Either<ToscaTemplate, ToscaError> result;
 
-        when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
             .thenReturn(Either.left(Collections.emptyMap()));
         // default test
@@ -599,7 +599,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         inputs.add(new InputDefinition());
         component.setInputs(inputs);
 
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
             .thenReturn(Either.left(Collections.emptyMap()));
 
@@ -730,7 +730,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
             .convertComponentInstanceCapabilities(any(ComponentInstance.class), any(Map.class), any(ToscaNodeTemplate.class)))
             .thenReturn(Either.left(new ToscaNodeTemplate()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Resource.class), any(ToscaNodeType.class)))
             .thenReturn(Either.left(new ToscaNodeType()));
         when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
@@ -854,7 +854,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
             .convertComponentInstanceCapabilities(any(ComponentInstance.class), any(Map.class), any(ToscaNodeTemplate.class)))
             .thenReturn(Either.left(new ToscaNodeTemplate()));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Resource.class), any(ToscaNodeType.class)))
             .thenReturn(Either.left(new ToscaNodeType()));
         when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
@@ -917,7 +917,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
             .convertComponentInstanceCapabilities(any(ComponentInstance.class), any(Map.class), any(ToscaNodeTemplate.class)))
             .thenReturn(Either.right(ToscaError.GENERAL_ERROR));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Resource.class),
             any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
@@ -968,7 +968,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         when(capabilityRequirementConverter.getOriginComponent(any(Map.class), any(ComponentInstance.class))).thenReturn(Either.right(false));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Resource.class),
             any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
@@ -1023,7 +1023,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         doReturn(Either.left(component)).when(toscaOperationFacade).getToscaFullElement("id");
         when(capabilityRequirementConverter.getOriginComponent(any(Map.class), any(ComponentInstance.class))).thenReturn(Either.left(component));
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(Collections.emptyMap()));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Resource.class),
             any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class)))
@@ -1165,7 +1165,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
             .thenReturn(Either.left(Collections.emptyMap()));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
         when(capabilityRequirementConverter.convertRequirements(any(Map.class), any(Service.class),
             any(ToscaNodeType.class))).thenReturn(Either.left(new ToscaNodeType()));
 
@@ -1198,7 +1198,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
             any(ComponentParametersView.class)))
             .thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
 
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
         // test when getLatestByName is left
         result = Deencapsulation.invoke(testSubject, "createProxyNodeTypes", componentCache, container);
@@ -1213,7 +1213,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         ComponentInstance instance = new ComponentInstance();
         ToscaNodeType result;
 
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>()));
 
         // default test
         result = Deencapsulation.invoke(testSubject, "createProxyNodeType", componentCache, origComponent,

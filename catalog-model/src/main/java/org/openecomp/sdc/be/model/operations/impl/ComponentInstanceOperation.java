@@ -70,7 +70,7 @@ public class ComponentInstanceOperation extends AbstractOperation {
     @Autowired
     private IInputsOperation inputOperation;
     @Autowired
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
 
     public ComponentInstanceOperation() {
         super();
@@ -408,7 +408,8 @@ public class ComponentInstanceOperation extends AbstractOperation {
                 innerType = propDef.getType();
             }
             log.debug("Before validateAndUpdatePropertyValue");
-            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes =
+                applicationDataTypeCache.getAll(resourceInstanceInput.getModel());
             if (allDataTypes.isRight()) {
                 JanusGraphOperationStatus status = allDataTypes.right().value();
                 BeEcompErrorManager.getInstance().logInternalFlowError("UpdatePropertyValueOnComponentInstance",

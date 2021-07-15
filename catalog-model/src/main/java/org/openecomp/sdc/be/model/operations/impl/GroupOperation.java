@@ -72,15 +72,15 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
     private final TopologyTemplateOperation topologyTemplateOperation;
     private final PropertyOperation propertyOperation;
     private final GroupTypeOperation groupTypeOperation;
-    private final ApplicationDataTypeCache dataTypeCache;
+    private final ApplicationDataTypeCache applicationDataTypeCache;
 
     public GroupOperation(JanusGraphDao janusGraphDao, TopologyTemplateOperation topologyTemplateOperation, PropertyOperation propertyOperation,
-                          GroupTypeOperation groupTypeOperation, ApplicationDataTypeCache dataTypeCache) {
+                          GroupTypeOperation groupTypeOperation, ApplicationDataTypeCache applicationDataTypeCache) {
         this.janusGraphDao = janusGraphDao;
         this.topologyTemplateOperation = topologyTemplateOperation;
         this.propertyOperation = propertyOperation;
         this.groupTypeOperation = groupTypeOperation;
-        this.dataTypeCache = dataTypeCache;
+        this.applicationDataTypeCache = applicationDataTypeCache;
     }
 
     private GroupDefinition convertGroupDataToGroupDefinition(GroupData groupData) {
@@ -485,7 +485,7 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
         StorageOperationStatus result = null;
         String innerType =
             property.getSchema() == null ? null : property.getSchema().getProperty() == null ? null : property.getSchema().getProperty().getType();
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll(property.getModel());
         Either<Object, Boolean> isValid = null;
         if (allDataTypes.isRight()) {
             JanusGraphOperationStatus status = allDataTypes.right().value();
@@ -493,8 +493,8 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
             result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
         }
         if (result == null) {
-            isValid = propertyOperation
-                .validateAndUpdatePropertyValue(property.getType(), property.getValue(), innerType, allDataTypes.left().value());
+            isValid = propertyOperation.validateAndUpdatePropertyValue(property.getType(), property.getValue(), innerType,
+                allDataTypes.left().value());
             if (isValid.isRight()) {
                 log.debug("Failed to validate property value {}. Status is {}. ", property.getValue(), StorageOperationStatus.INVALID_PROPERTY);
                 result = StorageOperationStatus.INVALID_PROPERTY;

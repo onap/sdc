@@ -120,7 +120,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Data types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getAllDataTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    public Response getAllDataTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                           @Parameter(description = "model") @QueryParam("model") String modelName) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         init();
@@ -128,7 +129,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         if (responseWrapper.isEmpty()) {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {} - modifier id is {}", url, userId);
-            Map<String, DataTypeDefinition> dataTypes = propertyBusinessLogic.getAllDataTypes();
+            final Map<String, DataTypeDefinition> dataTypes = resourceBusinessLogic.getComponentsUtils()
+                .getAllDataTypes(resourceBusinessLogic.getApplicationDataTypeCache(), modelName);
             String dataTypeJson = gson.toJson(dataTypes);
             Response okResponse = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), dataTypeJson);
             responseWrapper.setInnerElement(okResponse);

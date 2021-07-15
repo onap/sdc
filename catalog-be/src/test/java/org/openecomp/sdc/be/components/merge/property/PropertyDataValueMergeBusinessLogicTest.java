@@ -178,7 +178,7 @@ public class PropertyDataValueMergeBusinessLogicTest {
         myType.setProperties(Arrays.asList(mac_range_plan, mac_count_required));
         Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
 
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypes));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
         
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         
@@ -230,7 +230,7 @@ public class PropertyDataValueMergeBusinessLogicTest {
         myType.setProperties(Arrays.asList(mac_range_plan, mymap, mac_count_required));
         Map<String, DataTypeDefinition> dataTypes = Collections.singletonMap(myType.getName(), myType);
 
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypes));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
         
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         
@@ -264,7 +264,7 @@ public class PropertyDataValueMergeBusinessLogicTest {
         PropertyDataDefinition newProp = createProp("prop1", "list", "myType", "[{\"prop2\":{\"prop3\":false}}]");
 
         Map<String, DataTypeDefinition> dataTypes = buildDataTypes();
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypes));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         assertEquals("myType", "[{\"prop2\":{\"prop3\":false}}]", newProp.getValue());
     }
@@ -300,7 +300,7 @@ public class PropertyDataValueMergeBusinessLogicTest {
         myType.setName("myType");
         
         Map<String, DataTypeDefinition> dataTypes = buildDataTypes();
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypes));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         assertEquals("lprop",  "[{\"prop2\":{\"prop4\":45,\"prop3\":true},\"prop1\":\"val1\"},{\"prop2\":{\"prop3\":false},\"prop1\":\"val2\"}]", newProp.getValue());
     }
@@ -311,7 +311,7 @@ public class PropertyDataValueMergeBusinessLogicTest {
         PropertyDataDefinition newProp = createProp("value_spec", "list", "json", "[{\"prop22\":{\"prop221\":45,\"prop222\":\"val222\",\"prop223\":\"false\"}}]");
 
         Map<String, DataTypeDefinition> dataTypes = buildDataTypes();
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypes));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         assertEquals("value_spec", "[{\"prop22\":{\"prop223\":\"false\",\"prop221\":45,\"prop222\":\"val222\"}}]", newProp.getValue());
     }
@@ -397,7 +397,7 @@ public class PropertyDataValueMergeBusinessLogicTest {
         Map<String, DataTypeDefinition> dataTypes = Stream.of(complexType, myType, myInnerType)
                                                            .collect(Collectors.toMap(DataTypeDefinition::getName, Function.identity()));
         
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypes));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypes));
         
         testInstance.mergePropertyValue(oldProp, newProp, Collections.emptyList());
         
@@ -525,14 +525,14 @@ public class PropertyDataValueMergeBusinessLogicTest {
     }
 
     private void testMergeProps(PropertyDataDefinition oldProp, PropertyDataDefinition newProp, String expectedValue,  List<String> getInputsToMerge) {
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(Collections.emptyMap()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(Collections.emptyMap()));
         testInstance.mergePropertyValue(oldProp, newProp, getInputsToMerge);
         assertEquals(expectedValue, newProp.getValue());
     }
 
 
     private String getMergedMapProp(PropertyDataDefinition oldProp, PropertyDataDefinition newProp, List<String> getInputsToMerge) {
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(Collections.emptyMap()));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(Collections.emptyMap()));
         testInstance.mergePropertyValue(oldProp, newProp, getInputsToMerge);
         return newProp.getValue();
     }

@@ -76,7 +76,7 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
     @Autowired
     PropertyOperation propertyOperation;
     @javax.annotation.Resource
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
 
     public Either<List<GroupInstance>, StorageOperationStatus> getAllGroupInstances(String parentId, NodeTypeEnum parentType) {
         Either<List<GroupInstance>, StorageOperationStatus> result = null;
@@ -285,7 +285,8 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
                 innerType = propDef.getType();
             }
             log.debug("Before validateAndUpdatePropertyValue");
-            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes =
+                applicationDataTypeCache.getAll(groupInstanceProperty.getModel());
             if (allDataTypes.isRight()) {
                 JanusGraphOperationStatus status = allDataTypes.right().value();
                 BeEcompErrorManager.getInstance()
@@ -388,7 +389,8 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
                 innerType = propDef.getType();
             }
             // Specific Update Logic
-            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
+            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes =
+                applicationDataTypeCache.getAll(groupInstanceProerty.getModel());
             if (allDataTypes.isRight()) {
                 JanusGraphOperationStatus status = allDataTypes.right().value();
                 BeEcompErrorManager.getInstance()

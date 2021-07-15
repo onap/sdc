@@ -43,15 +43,15 @@ public class PropertyDataValueMergeBusinessLogic {
 
     private static final Logger LOGGER = Logger.getLogger(PropertyDataValueMergeBusinessLogic.class);
     private final PropertyValueMerger propertyValueMerger;
-    private final ApplicationDataTypeCache dataTypeCache;
+    private final ApplicationDataTypeCache applicationDataTypeCache;
     private final PropertyConvertor propertyConvertor;
     private final Gson gson = new Gson();
 
     @Autowired
-    public PropertyDataValueMergeBusinessLogic(PropertyValueMerger propertyValueMerger, ApplicationDataTypeCache dataTypeCache,
+    public PropertyDataValueMergeBusinessLogic(PropertyValueMerger propertyValueMerger, ApplicationDataTypeCache applicationDataTypeCache,
                                                PropertyConvertor propertyConvertor) {
         this.propertyValueMerger = propertyValueMerger;
-        this.dataTypeCache = dataTypeCache;
+        this.applicationDataTypeCache = applicationDataTypeCache;
         this.propertyConvertor = propertyConvertor;
     }
 
@@ -60,7 +60,7 @@ public class PropertyDataValueMergeBusinessLogic {
      * @param newProp the new property to merge value into
      */
     public void mergePropertyValue(PropertyDataDefinition oldProp, PropertyDataDefinition newProp, List<String> getInputNamesToMerge) {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = applicationDataTypeCache.getAll(oldProp.getModel());
         if (dataTypesEither.isRight()) {
             LOGGER.debug("failed to fetch data types, skip merging of previous property values. status: {}", dataTypesEither.right().value());
         } else {
@@ -116,4 +116,5 @@ public class PropertyDataValueMergeBusinessLogic {
         String getInputEntry = "\"%s\":\"%s\"";
         return value != null && value.contains(String.format(getInputEntry, ToscaFunctions.GET_INPUT.getFunctionName(), inputName));
     }
+
 }

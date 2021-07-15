@@ -24,6 +24,7 @@
 'use strict';
 import {PropertyBEModel} from "./properties-inputs/property-be-model";
 import {AttributeBEModel} from "./attributes-outputs/attribute-be-model";
+import {Model} from "./model";
 
 export class DataTypeModel {
 
@@ -36,6 +37,7 @@ export class DataTypeModel {
     modificationTime:string;
     properties: Array<PropertyBEModel>;
     attributes: Array<AttributeBEModel>;
+    model: Model;
 
     constructor(dataType:DataTypeModel) {
         if (dataType) {
@@ -46,6 +48,7 @@ export class DataTypeModel {
             this.modificationTime = dataType.modificationTime;
             this.properties = dataType.properties;
             this.attributes = dataType.attributes;
+            this.model = this.model;
         }
     }
 

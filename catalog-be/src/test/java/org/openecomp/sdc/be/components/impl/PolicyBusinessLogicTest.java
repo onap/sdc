@@ -17,8 +17,23 @@
 package org.openecomp.sdc.be.components.impl;
 
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -70,22 +85,6 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyBusinessLogicTest {
 
@@ -104,7 +103,7 @@ public class PolicyBusinessLogicTest {
     @Mock
     private JanusGraphDao janusGraphDao;
     @Mock
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
     @Mock
     private PropertyOperation propertyOperation;
     @Mock
@@ -151,7 +150,7 @@ public class PolicyBusinessLogicTest {
         businessLogic.setUserValidations(userValidations);
         businessLogic.setGraphLockOperation(graphLockOperation);
         businessLogic.setPolicyTypeOperation(policyTypeOperation);
-        businessLogic.setDataTypeCache(dataTypeCache);
+        businessLogic.setApplicationDataTypeCache(applicationDataTypeCache);
         businessLogic.setPropertyOperation(propertyOperation);
         businessLogic.setPropertyDeclarationOrchestrator(propertyDeclarationOrchestrator);
     }
@@ -205,7 +204,6 @@ public class PolicyBusinessLogicTest {
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(Either.left(policy));
         when(toscaOperationFacade.getToscaFullElement(eq(COMPONENT_ID))).thenReturn(Either.left(newResource));
         when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(Either.left(policy));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop1), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop1));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop2), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop2));
 
@@ -318,7 +316,6 @@ public class PolicyBusinessLogicTest {
     @Test
     public void updatePolicyPropertiesSuccessTest(){
         stubValidateAndLockSuccess(CREATE_POLICY);
-        when(dataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>()));
         String prop1 = "Name";
         String prop2 = "Type";
         when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop1), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop1));

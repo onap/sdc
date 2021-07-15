@@ -246,7 +246,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
         when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
         when(toscaOperationFacade.validateCsarUuidUniqueness(Mockito.anyString())).thenReturn(StorageOperationStatus.OK);
         Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<String, DataTypeDefinition>();
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(emptyDataTypes));
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
         Either<Component, StorageOperationStatus> resourceStorageOperationStatusEither = Either

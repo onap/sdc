@@ -320,7 +320,7 @@ public class ResourceImportManager {
             if (toscaElements.isLeft()) {
                 final Map<String, Object> toscaAttributes = (Map<String, Object>) foundElements.get(0);
                 if (MapUtils.isNotEmpty(toscaAttributes)) {
-                    resource.setDataTypes(extractDataTypeFromJson(resourceBusinessLogic, toscaAttributes));
+                    resource.setDataTypes(extractDataTypeFromJson(resourceBusinessLogic, toscaAttributes, resource.getModel()));
                 }
             }
             // Derived From
@@ -914,10 +914,12 @@ public class ResourceImportManager {
     }
 
     private List<DataTypeDefinition> extractDataTypeFromJson(final ResourceBusinessLogic resourceBusinessLogic,
-                                                             final Map<String, Object> foundElements) {
+                                                             final Map<String, Object> foundElements,
+                                                             final String model) {
         final List<DataTypeDefinition> dataTypeDefinitionList = new ArrayList<>();
         if (MapUtils.isNotEmpty(foundElements)) {
-            final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypeCacheAll = resourceBusinessLogic.dataTypeCache.getAll();
+            final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypeCacheAll =
+                resourceBusinessLogic.applicationDataTypeCache.getAll(model);
             if (dataTypeCacheAll.isLeft()) {
                 for (final Entry<String, Object> attributeNameValue : foundElements.entrySet()) {
                     final Object value = attributeNameValue.getValue();

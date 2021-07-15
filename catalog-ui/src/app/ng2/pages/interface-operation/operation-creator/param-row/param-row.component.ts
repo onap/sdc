@@ -3,6 +3,7 @@ import {PROPERTY_DATA} from "app/utils";
 import {DataTypeService} from "app/ng2/services/data-type.service";
 import {OperationModel, OperationParameter, InputBEModel, DataTypeModel, Capability} from 'app/models';
 import {DropdownValue} from "app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {WorkspaceService} from "../../../workspace/workspace.service";
 
 class DropdownValueType extends DropdownValue {
     type: String;
@@ -37,7 +38,7 @@ export class ParamRowComponent {
     filteredInputProps: Array<DropdownValue> = [];
     filteredCapabilitiesProps: Array<{capabilityName: string, properties: Array<DropdownValueType>}> = [];
 
-    constructor(private dataTypeService:DataTypeService) {}
+    constructor(private dataTypeService:DataTypeService, protected workspaceService: WorkspaceService) {}
 
     ngOnInit() {
         if (this.isInputParam) {
@@ -58,7 +59,7 @@ export class ParamRowComponent {
                 )
             );
         } else {
-            const dataTypes: Array<DataTypeModel> = _.toArray(this.dataTypeService.getAllDataTypes());
+            const dataTypes: Array<DataTypeModel> = _.toArray(this.dataTypeService.getDataTypeByModel(this.workspaceService.metadata.model));
             this.propTypeEnum = _.concat(
                 _.map(
                     _.filter(
@@ -170,7 +171,7 @@ export class ParamRowComponent {
 
     getPrimitiveSubtypes(): Array<InputBEModel> {
         const flattenedProps: Array<any> = [];
-        const dataTypes = this.dataTypeService.getAllDataTypes();
+        const dataTypes = this.dataTypeService.getDataTypeByModel(this.workspaceService.metadata.model);
 
         _.forEach(this.inputProps, prop => {
             const type:DataTypeModel = _.find(

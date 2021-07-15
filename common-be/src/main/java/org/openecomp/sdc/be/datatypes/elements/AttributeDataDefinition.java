@@ -40,6 +40,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
     private String outputPath;
     private String instanceUniqueId;
     private String attributeId;
+    private String model;
     private String parentUniqueId;
 
     public AttributeDataDefinition(final AttributeDataDefinition attributeDataDefinition) {
@@ -57,6 +58,7 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
         this.setOutputPath(attributeDataDefinition.getOutputPath());
         this.setInstanceUniqueId(attributeDataDefinition.getInstanceUniqueId());
         this.setAttributeId(attributeDataDefinition.getAttributeId());
+        this.setModel(attributeDataDefinition.getModel());
         this.setParentUniqueId(attributeDataDefinition.getParentUniqueId());
         this.setOutputId(attributeDataDefinition.getOutputId());
         if (CollectionUtils.isNotEmpty(attributeDataDefinition.getGetOutputValues())) {

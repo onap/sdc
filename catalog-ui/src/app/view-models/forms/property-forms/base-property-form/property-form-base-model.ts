@@ -135,7 +135,7 @@ export abstract class PropertyFormBaseView {
         this.$scope.property = new PropertyModel(this.originalProperty); //we create a new Object so if user press cance we won't update the property
         this.$scope.types = PROPERTY_DATA.TYPES; //All types - simple type + map + list
         this.$scope.simpleTypes = PROPERTY_DATA.SIMPLE_TYPES; //All simple types
-        this.$scope.dataTypes = this.DataTypesService.getAllDataTypes(); //Get all data types in service
+        this.$scope.dataTypes = this.DataTypesService.getAllDataTypesFromModel(this.component.model.name); //Get all data types in service
         this.$scope.modalPropertyFormBase = this.$uibModalInstance;
         this.$scope.isNew = !angular.isDefined(this.$scope.property.name);
 

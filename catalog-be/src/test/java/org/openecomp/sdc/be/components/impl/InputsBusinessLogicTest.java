@@ -17,7 +17,26 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
@@ -64,26 +83,6 @@ import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 
 public class InputsBusinessLogicTest {
@@ -467,7 +466,7 @@ public class InputsBusinessLogicTest {
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
         when(propertyDeclarationOrchestrator.declarePropertiesToListInput(service, componentInstInputsMap, listInput)).thenReturn(Either.left(listInput));
         // for BaseOperation.getAllDataTypes:
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
         // for BaseOperation.validatePropertyDefaultValue:
         when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(true);
         when(propertyOperation.isPropertyInnerTypeValid(any(),any())).thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
@@ -540,14 +539,16 @@ public class InputsBusinessLogicTest {
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(applicationDataTypeCache.getAll(service.getModel())).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(componentsUtilsMock.getAllDataTypes(applicationDataTypeCache, service.getModel()))
+            .thenThrow(new ByActionStatusComponentException(ActionStatus.DATA_TYPES_NOT_LOADED));
 
         try {
             Either<List<InputDefinition>, ResponseFormat> result =
                     testInstance.createListInput(USER_ID, COMPONENT_ID, ComponentTypeEnum.SERVICE, createListInputParams, true, false);
         } catch (ByActionStatusComponentException e) {
-            assertEquals(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY, e.getActionStatus());
-            verify(applicationDataTypeCache, times(1)).getAll();
+            assertEquals(ActionStatus.DATA_TYPES_NOT_LOADED, e.getActionStatus());
+            verify(componentsUtilsMock, times(1)).getAllDataTypes(applicationDataTypeCache, service.getModel());
             return;
         }
         fail();
@@ -563,7 +564,7 @@ public class InputsBusinessLogicTest {
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
         // for BaseOperation.validatePropertyDefaultValue:
         when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(false);
 
@@ -583,7 +584,7 @@ public class InputsBusinessLogicTest {
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacadeMock.addDataTypesToComponent(dataTypesMapCaptor.capture(), eq(COMPONENT_ID))).thenReturn(Either.left(new ArrayList<>()));
         when(propertyDeclarationOrchestrator.getPropOwnerId(componentInstInputsMap)).thenReturn(COMPONENT_INSTANCE_ID);
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(new HashMap<>())); // don't use Collections.emptyMap
         // for BaseOperation.validatePropertyDefaultValue:
         when(propertyOperation.isPropertyTypeValid(any(), any())).thenReturn(true);
         when(propertyOperation.isPropertyInnerTypeValid(any(),any())).thenReturn(new ImmutablePair<>(listInput.getSchemaType(), true));
@@ -788,7 +789,7 @@ public class InputsBusinessLogicTest {
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service)).thenReturn(StorageOperationStatus.OK);
         // used in validateInputValueConstraint
         Map<String, DataTypeDefinition> dataTypeMap = new HashMap<>();
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(dataTypeMap)); // don't use Collections.emptyMap
+        when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeMap)); // don't use Collections.emptyMap
         // used in updateInputObjectValue
         when(propertyOperation.validateAndUpdatePropertyValue(INPUT_TYPE, NEW_VALUE, true, null, dataTypeMap))
             .thenReturn(Either.left(NEW_VALUE));

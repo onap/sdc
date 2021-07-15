@@ -2227,16 +2227,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private <T extends PropertyDefinition> Either<String, ResponseFormat> validatePropertyObjectValue(T property, String newValue, boolean isInput) {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
-        if (allDataTypesEither.isRight()) {
-            JanusGraphOperationStatus status = allDataTypesEither.right().value();
-            BeEcompErrorManager.getInstance()
-                .logInternalFlowError(UPDATE_PROPERTY_CONTEXT, "Failed to update property value on instance. Status is " + status,
-                    ErrorSeverity.ERROR);
-            return Either.right(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
-        }
-        Map<String, DataTypeDefinition> allDataTypes = allDataTypesEither.left().value();
+        final Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel());
         String propertyType = property.getType();
         String innerType = getInnerType(property);
 
@@ -2275,16 +2266,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private <T extends PropertyDefinition> Either<String, ResponseFormat> updatePropertyObjectValue(T property, boolean isInput) {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
-        if (allDataTypesEither.isRight()) {
-            JanusGraphOperationStatus status = allDataTypesEither.right().value();
-            BeEcompErrorManager.getInstance()
-                .logInternalFlowError(UPDATE_PROPERTY_CONTEXT, "Failed to update property value on instance. Status is " + status,
-                    ErrorSeverity.ERROR);
-            return Either.right(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
-        }
-        Map<String, DataTypeDefinition> allDataTypes = allDataTypesEither.left().value();
+        final Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel());
         String innerType = null;
         String propertyType = property.getType();
         ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
@@ -2341,15 +2323,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private <T extends AttributeDefinition> Either<String, ResponseFormat> updateAttributeObjectValue(final T attribute) {
-        final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
-        if (allDataTypesEither.isRight()) {
-            JanusGraphOperationStatus status = allDataTypesEither.right().value();
-            BeEcompErrorManager.getInstance()
-                .logInternalFlowError(UPDATE_PROPERTY_CONTEXT, "Failed to update attribute value on instance. Status is " + status,
-                    ErrorSeverity.ERROR);
-            return Either.right(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
-        }
         String innerType = null;
         final String attributeType = attribute.getType();
         final ToscaPropertyType type = ToscaPropertyType.isValidType(attributeType);
@@ -2374,7 +2347,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // Specific Update Logic
         String newValue = attribute.getValue();
 
-        final var isValid = attributeOperation.validateAndUpdateAttributeValue(attribute, innerType, allDataTypesEither.left().value());
+        final var isValid = attributeOperation.validateAndUpdateAttributeValue(attribute, innerType,
+            componentsUtils.getAllDataTypes(applicationDataTypeCache, attribute.getModel()));
         if (isValid.isRight()) {
             final Boolean res = isValid.right().value();
             if (!Boolean.TRUE.equals(res)) {

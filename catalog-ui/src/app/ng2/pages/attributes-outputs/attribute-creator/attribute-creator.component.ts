@@ -27,6 +27,7 @@ import * as _ from 'lodash';
 import {PROPERTY_TYPES} from '../../../../utils';
 import {AttributeBEModel} from "../../../../models/attributes-outputs/attribute-be-model";
 import {Validation} from "../../../../view-models/workspace/tabs/general/general-view-model";
+import {WorkspaceService} from "../../workspace/workspace.service";
 
 @Component({
   selector: 'attribute-creator',
@@ -43,7 +44,7 @@ export class AttributeCreatorComponent {
   dataTypes: DataTypesMap;
   isLoading: boolean;
 
-  constructor(protected dataTypeService: DataTypeService) {
+  constructor(protected dataTypeService: DataTypeService, protected workspaceService: WorkspaceService) {
   }
 
   ngOnInit() {
@@ -51,7 +52,7 @@ export class AttributeCreatorComponent {
     this.attributeModel.type = '';
     this.attributeModel.schema.property.type = '';
     const types: string[] = PROPERTY_DATA.TYPES; // All types - simple type + map + list
-    this.dataTypes = this.dataTypeService.getAllDataTypes(); // Get all data types in service
+    this.dataTypes = this.dataTypeService.getDataTypeByModel(this.workspaceService.metadata.model); // Get all data types in service
     const nonPrimitiveTypes: string[] = _.filter(Object.keys(this.dataTypes), (type: string) => {
       return types.indexOf(type) === -1;
     });

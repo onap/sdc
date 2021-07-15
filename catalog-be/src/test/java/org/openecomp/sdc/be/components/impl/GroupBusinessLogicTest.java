@@ -95,7 +95,7 @@ class GroupBusinessLogicTest {
     @InjectMocks
     private GroupBusinessLogic test;
     @Mock
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
     @Mock
     private ComponentsUtils componentsUtils;
     @Mock
@@ -115,7 +115,7 @@ class GroupBusinessLogicTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        test.setDataTypeCache(dataTypeCache);
+        test.setApplicationDataTypeCache(applicationDataTypeCache);
         test.setToscaOperationFacade(toscaOperationFacade);
         test.setPropertyOperation(propertyOperation);
         test.setComponentsUtils(componentsUtils);
@@ -129,7 +129,6 @@ class GroupBusinessLogicTest {
         List<GroupDefinition> groupDefinitions = new ArrayList<>();
         GroupDefinition groupDefinition = new GroupDefinition();
         groupDefinitions.add(groupDefinition);
-        when(dataTypeCache.getAll()).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         result = test.createGroups(component, groupDefinitions, true);
         assertThat(result.isRight()).isTrue();
     }
@@ -146,8 +145,8 @@ class GroupBusinessLogicTest {
         groupDefinition.setType(Constants.DEFAULT_GROUP_VF_MODULE);
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         Map<String, DataTypeDefinition> map = new HashMap<>();
-        when(dataTypeCache.getAll()).thenReturn(Either.left(map));
-        when(groupTypeOperation.getLatestGroupTypeByType(Constants.DEFAULT_GROUP_VF_MODULE, null, true)).thenReturn(Either.left(groupTypeDefinition));
+        when(groupTypeOperation.getLatestGroupTypeByType(Constants.DEFAULT_GROUP_VF_MODULE, component.getModel(), true))
+            .thenReturn(Either.left(groupTypeDefinition));
         when(groupsOperation.createGroups(any(Component.class), anyMap())).thenReturn(Either.left(groupDefinitions));
         when(groupsOperation.addCalculatedCapabilitiesWithProperties(anyString(), anyMap(), anyMap())).thenReturn(StorageOperationStatus.OK);
         result = test.createGroups(component, groupDefinitions, true);
@@ -203,7 +202,6 @@ class GroupBusinessLogicTest {
         Map<String, Set<String>> excludedGroupTypesMap = new HashMap<>();
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         Map<String, DataTypeDefinition> map = new HashMap<>();
-        when(dataTypeCache.getAll()).thenReturn(Either.left(map));
         when(accessValidations.validateUserCanWorkOnComponent(componentId, compTypeEnum, userId, "CreateGroup")).thenReturn(component);
 
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);

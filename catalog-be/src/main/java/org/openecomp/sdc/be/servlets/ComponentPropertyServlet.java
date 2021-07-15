@@ -315,9 +315,10 @@ public class ComponentPropertyServlet extends BeGenericServlet {
                 ResponseFormat responseFormat = getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT);
                 return buildErrorResponse(responseFormat);
             }
-            //Validate value and Constraint of property
+            //Validate value and Constraint of property and Fetch all data types from cache
             Either<Boolean, ResponseFormat> constraintValidatorResponse = PropertyValueConstraintValidationUtil.getInstance()
-                .validatePropertyConstraints(properties.values(), applicationDataTypeCache);
+                .validatePropertyConstraints(properties.values(), applicationDataTypeCache,
+                    propertyBusinessLogic.getComponentModelByComponentId(componentId));
             if (constraintValidatorResponse.isRight()) {
                 log.error("Failed validation value and constraint of property: {}", constraintValidatorResponse.right().value());
                 return buildErrorResponse(constraintValidatorResponse.right().value());

@@ -40,7 +40,7 @@ public class DataTypesService {
     }
 
     public Either<Map<String, DataTypeDefinition>, ResponseFormat> getAllDataTypes(ApplicationDataTypeCache applicationDataTypeCache) {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll(null);
         if (allDataTypes.isRight()) {
             JanusGraphOperationStatus operationStatus = allDataTypes.right().value();
             if (operationStatus == JanusGraphOperationStatus.NOT_FOUND) {

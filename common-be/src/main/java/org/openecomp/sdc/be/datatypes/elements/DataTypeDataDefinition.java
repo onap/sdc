@@ -38,6 +38,7 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
     // "boolean", "string", "float", "integer", "version" })
     private String derivedFromName;
     private String description;
+    private String model;
     /**
      * Timestamp of data type creation
      */
@@ -55,5 +56,6 @@ public class DataTypeDataDefinition extends ToscaDataDefinition {
         this.description = p.description;
         this.creationTime = p.creationTime;
         this.modificationTime = p.modificationTime;
+        this.model = p.model;
     }
 }
