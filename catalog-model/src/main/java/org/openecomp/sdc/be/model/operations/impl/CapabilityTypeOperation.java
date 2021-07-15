@@ -409,11 +409,11 @@ public class CapabilityTypeOperation extends AbstractOperation implements ICapab
         return getCapabilityType(uniqueId, true);
     }
 
-    public Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> getAllCapabilityTypes() {
+    public Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> getAllCapabilityTypes(String modelName) {
         Map<String, CapabilityTypeDefinition> capabilityTypes = new HashMap<>();
         Either<Map<String, CapabilityTypeDefinition>, JanusGraphOperationStatus> result = Either.left(capabilityTypes);
         Either<List<CapabilityTypeData>, JanusGraphOperationStatus> getAllCapabilityTypes = janusGraphGenericDao
-            .getByCriteria(NodeTypeEnum.CapabilityType, null, CapabilityTypeData.class);
+            .getByCriteriaForModel(NodeTypeEnum.CapabilityType, null, modelName, CapabilityTypeData.class);
         if (getAllCapabilityTypes.isRight()) {
             JanusGraphOperationStatus status = getAllCapabilityTypes.right().value();
             if (status != JanusGraphOperationStatus.NOT_FOUND) {

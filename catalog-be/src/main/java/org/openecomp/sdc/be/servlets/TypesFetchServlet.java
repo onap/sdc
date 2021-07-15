@@ -184,7 +184,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "404", description = "Capability types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getAllCapabilityTypesServlet(@Context final HttpServletRequest request,
-                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                                 @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                                 @Parameter(description = "model", required = false) @QueryParam("model") String modelName) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         try {
@@ -193,7 +194,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
-                Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> allDataTypes = capabilitiesBusinessLogic.getAllCapabilityTypes();
+                Either<Map<String, CapabilityTypeDefinition>, ResponseFormat> allDataTypes = capabilitiesBusinessLogic.getAllCapabilityTypes(modelName);
                 if (allDataTypes.isRight()) {
                     log.info("Failed to get all capability types. Reason - {}", allDataTypes.right().value());
                     Response errorResponse = buildErrorResponse(allDataTypes.right().value());
