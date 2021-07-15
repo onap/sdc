@@ -40,15 +40,21 @@ export class ToscaTypesServiceNg2 {
   }
 
   async fetchRelationshipTypes(modelName: string): Promise<RelationshipTypesMap> {
-    return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes', {params: {model: modelName}}).toPromise();
+    if(modelName) {
+      return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes', {params: {model: modelName}}).toPromise();
+    }
+    return this.http.get<RelationshipTypesMap>(this.baseUrl + 'relationshipTypes').toPromise();
   }
 
   async fetchNodeTypes(): Promise<NodeTypesMap> {
     return this.http.get<NodeTypesMap>(this.baseUrl + 'nodeTypes').toPromise();
   }
 
-  async fetchCapabilityTypes(): Promise<CapabilityTypesMap> {
+    async fetchCapabilityTypes(modelName: string): Promise<CapabilityTypesMap> {
+    if(modelName) {
+      return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes', {params: {model: modelName}}).toPromise();
+    }
     return this.http.get<CapabilityTypesMap>(this.baseUrl + 'capabilityTypes').toPromise();
-  }
+    }
 }
 

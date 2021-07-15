@@ -44,7 +44,7 @@ export class ReqAndCapabilitiesService {
         if (!this.capabilitiesListUpdated){
             // -- COMMON for both --
             this.capabilityTypesList = [];
-            let capabilityTypesResult = await this.toscaTypesServiceNg2.fetchCapabilityTypes();
+            let capabilityTypesResult = await this.toscaTypesServiceNg2.fetchCapabilityTypes(this.workspaceService.metadata.model);
             Object.keys(capabilityTypesResult).forEach(key => {this.capabilityTypesList.push(capabilityTypesResult[key])})
             this.capabilitiesListUpdated = true;
         }
