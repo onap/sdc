@@ -96,7 +96,7 @@ describe('Software Product Landing Page: ', function () {
 			...currentScreen.props,
 			currentSoftwareProduct,
 			componentsList: VSPComponentsFactory.buildList(2),
-			features: [{name:'EXTERNAL_LICENCE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}]
 		};
 
 		const store = storeCreator();
@@ -113,7 +113,7 @@ describe('Software Product Landing Page: ', function () {
 			...currentScreen.props,
 			currentSoftwareProduct,
 			componentsList: VSPComponentsFactory.buildList(2),
-			features: [{name:'EXTERNAL_LICENCE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}]
 		};
 		const e = { target: {
 			value: 'INTERNAL'
@@ -143,7 +143,7 @@ describe('Software Product Landing Page: ', function () {
 			currentSoftwareProduct,
 			...currentScreen.props,
 			componentsList: VSPComponentsFactory.buildList(2),
-			features: [{name:'EXTERNAL_LICENCE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}]
 		};
 
 		const store = storeCreator();
@@ -171,7 +171,7 @@ describe('Software Product Landing Page: ', function () {
 			onUploadConfirmation:  dummyFunc,
 			onUpload: dummyFunc,
 			onInvalidFileSizeUpload: dummyFunc,
-			features: [{name:'EXTERNAL_LICENCE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}]
 		};
 
 		const files = [
@@ -215,7 +215,7 @@ describe('Software Product Landing Page: ', function () {
 			onUploadConfirmation:  dummyFunc,
 			onUpload: dummyFunc,
 			onInvalidFileSizeUpload: dummyFunc,
-			features: [{name:'EXTERNAL_LICENCE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}]
 		};
 
 		const store = storeCreator();
