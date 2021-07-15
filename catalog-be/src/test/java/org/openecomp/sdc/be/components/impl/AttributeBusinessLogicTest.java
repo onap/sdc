@@ -135,7 +135,7 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock {
         Map<String, DataTypeDefinition> data = new HashMap<>();
         data.put("ONE", new DataTypeDefinition());
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
-        when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
+        when(applicationDataTypeCache.getAll(null)).thenReturn(allDataTypes);
 
         when(attributeOperation.isAttributeDefaultValueValid(any(), any())).thenReturn(true);
         Either<AttributeDefinition, ResponseFormat> response;
@@ -237,7 +237,7 @@ public class AttributeBusinessLogicTest extends BaseBusinessLogicMock {
         Map<String, DataTypeDefinition> data = new HashMap<>();
         data.put("ONE", new DataTypeDefinition());
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = Either.left(data);
-        when(applicationDataTypeCache.getAll()).thenReturn(allDataTypes);
+        when(applicationDataTypeCache.getAll(null)).thenReturn(allDataTypes);
 
         when(attributeOperation.isAttributeDefaultValueValid(any(), any())).thenReturn(true);
         Either<AttributeDefinition, ResponseFormat> response;

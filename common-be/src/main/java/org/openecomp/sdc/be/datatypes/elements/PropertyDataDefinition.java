@@ -20,9 +20,7 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +30,10 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 
 @EqualsAndHashCode(callSuper = false)
@@ -62,6 +61,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private String status;
     private String inputId;
     private String instanceUniqueId;
+    private String model;
     private String propertyId;
     private String parentPropertyType;
     private String subPropertyInputPath;
@@ -109,6 +109,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setStatus(propertyDataDefinition.getStatus());
         this.setInputId(propertyDataDefinition.getInputId());
         this.setInstanceUniqueId(propertyDataDefinition.getInstanceUniqueId());
+        this.setModel(propertyDataDefinition.getModel());
         this.setPropertyId(propertyDataDefinition.getPropertyId());
         this.setToscaGetFunctionType(propertyDataDefinition.getToscaGetFunctionType());
         this.parentPropertyType = propertyDataDefinition.getParentPropertyType();

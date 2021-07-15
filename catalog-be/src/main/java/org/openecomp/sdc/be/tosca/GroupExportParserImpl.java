@@ -66,17 +66,17 @@ public class GroupExportParserImpl implements GroupExportParser {
     private static final Logger log = Logger.getLogger(GroupExportParserImpl.class);
     private final PropertyConvertor propertyConvertor;
     private Map<String, DataTypeDefinition> dataTypes;
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
 
     @Autowired
-    public GroupExportParserImpl(ApplicationDataTypeCache dataTypeCache, PropertyConvertor propertyConvertor) {
-        this.dataTypeCache = dataTypeCache;
+    public GroupExportParserImpl(ApplicationDataTypeCache applicationDataTypeCache, PropertyConvertor propertyConvertor) {
+        this.applicationDataTypeCache = applicationDataTypeCache;
         this.propertyConvertor = propertyConvertor;
         this.dataTypes = getDataTypes();
     }
 
     private Map<String, DataTypeDefinition> getDataTypes() {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = applicationDataTypeCache.getAll(null);
         if (dataTypesEither.isRight()) {
             log.error("Failed to retrieve all data types {}", dataTypesEither.right().value());
             throw new SdcResourceNotFoundException();
@@ -86,7 +86,7 @@ public class GroupExportParserImpl implements GroupExportParser {
 
     @EventListener
     public void onDataTypesCacheChangedEvent(ApplicationDataTypeCache.DataTypesCacheChangedEvent dataTypesCacheChangedEvent) {
-        dataTypes = dataTypesCacheChangedEvent.getNewData();
+        dataTypes = dataTypesCacheChangedEvent.getNewData().get(null);
         log.debug("Data types cache updated.");
     }
 

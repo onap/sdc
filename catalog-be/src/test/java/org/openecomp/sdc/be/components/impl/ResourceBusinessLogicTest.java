@@ -30,11 +30,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 import fj.data.Either;
 import java.io.File;
@@ -71,7 +69,6 @@ import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOpera
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.utils.YamlTemplateParsingHandlerTest;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
@@ -114,7 +111,6 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
-import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
@@ -181,8 +177,7 @@ public class ResourceBusinessLogicTest {
 	private final CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
 	private final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
 	private final PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
-    private final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
-    private final ApplicationDataTypeCache dataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+	private final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
 	private final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
 	private final UserValidations userValidations = Mockito.mock(UserValidations.class);
 	private final WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
@@ -307,8 +302,7 @@ public class ResourceBusinessLogicTest {
 		when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
 		when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
 		Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
-        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
-        when(dataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
+		when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(emptyDataTypes));
 		when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
 		// BL object
@@ -329,8 +323,7 @@ public class ResourceBusinessLogicTest {
 		bl.setGraphLockOperation(graphLockOperation);
 		bl.setPropertyOperation(propertyOperation);
 		bl.setJanusGraphDao(mockJanusGraphDao);
-        bl.setApplicationDataTypeCache(applicationDataTypeCache);
-        bl.setDataTypeCache(dataTypeCache);
+		bl.setApplicationDataTypeCache(applicationDataTypeCache);
 		bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
 		bl.setCatalogOperations(catalogOperation);
 		toscaOperationFacade.setNodeTypeOperation(nodeTypeOperation);
@@ -440,7 +433,7 @@ public class ResourceBusinessLogicTest {
 		}
 		return resource;
 	}
-	
+
 	   private Resource createResourceObjectWithModel(boolean afterCreate) {
 	        Resource resource = new Resource();
 	        resource.setName(RESOURCE_NAME);
@@ -1454,19 +1447,19 @@ public class ResourceBusinessLogicTest {
 	public void createResourceFromCsarTest() {
 		bl.createResourceFromCsar(resourceResponse, user, new HashMap<>(), "");
 	}
-	
+
 	@Test()
     public void testCreateResourceFromCsarWithModel() throws URISyntaxException, ZipException {
-        
+
         final File csarFile = new File(
                 ResourceBusinessLogicTest.class.getClassLoader().getResource("csars/nonOnapCsar.csar").toURI());
         final Map<String, byte[]> csar = ZipUtils.readZip(csarFile, false);
-        
+
        String resourceYml =  new String(csar.get("Definitions/my_vnf.yaml"));
-        
+
        YamlTemplateParsingHandler yamlTemplateParser = new YamlTemplateParsingHandler(mockJanusGraphDao, null, Mockito.mock(AnnotationBusinessLogic.class), null);
        final ParsedToscaYamlInfo parsedToscaYamlInfo =  yamlTemplateParser.parseResourceInfoFromYAML("Definitions/my_vnf.yml", resourceYml, Collections.EMPTY_MAP, Collections.EMPTY_MAP, "myVnf", resourceResponse);
-        
+
         when(toscaOperationFacade.getLatestByToscaResourceName(anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Resource vduCp = new Resource();
         vduCp.setToscaResourceName("tosca.nodes.nfv.VduCp");
@@ -1498,7 +1491,7 @@ public class ResourceBusinessLogicTest {
         vduCp.getProperties().add(roleProp);
         when(toscaOperationFacade.getByToscaResourceNameMatchingVendorRelease("tosca.nodes.nfv.VduCp", "1.0.0")).thenReturn(Either.left(vduCp));
 
-        
+
         when(yamlTemplateParsingHandler.parseResourceInfoFromYAML(any(), any(), any(), any(), any(), any())).thenReturn(parsedToscaYamlInfo);
 
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
@@ -1509,7 +1502,7 @@ public class ResourceBusinessLogicTest {
         resourceResponse.setModel("testModel");
         resourceResponse.setResourceType(ResourceTypeEnum.VF);
         resourceResponse.setProperties(new ArrayList<>());
-        
+
         Resource derivedFrom = new Resource();
         List<PropertyDefinition> properties = new ArrayList<>();
         PropertyDefinition baseTypeProp = new PropertyDefinition();
@@ -1518,7 +1511,7 @@ public class ResourceBusinessLogicTest {
         properties.add(baseTypeProp);
         derivedFrom.setProperties(properties );
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(any(), eq("tosca.nodes.nfv.VNF"))).thenReturn(Either.left(derivedFrom));
-        
+
         when(toscaOperationFacade
         .validateComponentNameAndModelExists("myVnf", "testModel", ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(false));
 
@@ -1528,6 +1521,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.associateDeploymentArtifactsToInstances(any(), any(), any())).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.associateInstAttributeToComponentToInstances(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.associateResourceInstances(any(Component.class), anyString(), anyList())).thenReturn(Either.left(Collections.EMPTY_LIST));
+		when(applicationDataTypeCache.getAll(resourceResponse.getModel())).thenReturn(Either.left(emptyDataTypes));
 
         doAnswer(invocation -> {
             Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instReqs = invocation.getArgument(1);
@@ -1538,10 +1532,10 @@ public class ResourceBusinessLogicTest {
         }).
         when(toscaOperationFacade).associateOrAddCalculatedCapReq(any(), any(), any());
 
-        
+
         when(toscaOperationFacade.updateCalculatedCapabilitiesRequirements(any(), any(), any())).thenReturn(StorageOperationStatus.OK);
         when(groupBusinessLogic.validateUpdateVfGroupNames(any(), any())).thenReturn(Either.left(Collections.EMPTY_MAP));
-        
+
         ComponentInstance ci = new ComponentInstance();
         List<ComponentInstance> cis = new ArrayList<>();
         cis.add(ci);
@@ -1558,10 +1552,10 @@ public class ResourceBusinessLogicTest {
         doAnswer(invocation -> {
             return Either.left(resourceResponse);
         }).when(toscaOperationFacade).getToscaFullElement("myVnf");
-        
-        
+
+
         Resource result = bl.createResourceFromCsar(resourceResponse, user, csar, "1234");
-        
+
         assertEquals("myDomain.myVnf", result.getToscaResourceName());
         List<String> propIds = result.getProperties().stream().map(prop -> prop.getUniqueId()).collect(Collectors.toList());
         assertTrue(propIds.contains("myVnf.propInBase"));
@@ -1573,7 +1567,7 @@ public class ResourceBusinessLogicTest {
         assertTrue(propIds.contains("myVnf.provider"));
         assertTrue(propIds.contains("myVnf.software_version"));
         assertTrue(propIds.contains("myVnf.vnfm_info"));
-        
+
         final List<String> reqsName = new ArrayList<>();
 
         final List<ComponentInstance> cisWithExtReq = result.getComponentInstances().stream().filter(instance -> instance.getRequirements().get("tosca.nodes.nfv.VduCp").get(0).isExternal()).collect(Collectors.toList());

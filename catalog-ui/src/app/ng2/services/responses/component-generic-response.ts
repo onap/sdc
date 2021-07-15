@@ -31,6 +31,7 @@ import { GroupInstance } from "../../../models/graph/zones/group-instance";
 import { InputsGroup } from "../../../models/inputs";
 import { InterfaceModel } from "../../../models/operation";
 import { OutputBEModel } from "app/models/attributes-outputs/output-be-model";
+import {Model} from "../../../models/model";
 
 export class ComponentGenericResponse  implements Serializable<ComponentGenericResponse> {
 

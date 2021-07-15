@@ -29,6 +29,7 @@ import { ModalService } from 'app/ng2/services/modal.service';
 import { PROPERTY_DATA } from 'app/utils';
 import * as _ from 'lodash';
 import { PROPERTY_TYPES } from '../../../../utils';
+import {WorkspaceService} from "../../workspace/workspace.service";
 
 @Component({
     selector: 'declare-list',
@@ -50,7 +51,7 @@ export class DeclareListComponent {
     propertiesListString: string;
     privateDataType: DataTypeModel;
 
-    constructor(protected dataTypeService: DataTypeService, private modalService: ModalService) {}
+    constructor(protected dataTypeService: DataTypeService, private modalService: ModalService, private workspaceService: WorkspaceService) {}
 
     ngOnInit() {
         console.log('DeclareListComponent.ngOnInit() - enter');
@@ -59,7 +60,7 @@ export class DeclareListComponent {
         this.propertyModel.schema.property.type = '';
         this.propertyModel.required = false;
         const types: string[] =  PROPERTY_DATA.TYPES; // All types - simple type + map + list
-        this.dataTypes = this.dataTypeService.getAllDataTypes(); // Get all data types in service
+        this.dataTypes = this.dataTypeService.getDataTypeByModel(this.workspaceService.metadata.model); // Get all data types in service
         const nonPrimitiveTypes: string[] = _.filter(Object.keys(this.dataTypes), (type: string) => {
             return types.indexOf(type) === -1;
         });

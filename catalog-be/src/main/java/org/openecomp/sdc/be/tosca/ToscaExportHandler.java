@@ -157,7 +157,7 @@ public class ToscaExportHandler {
         .of("Service Function", "Service Role", "Naming Policy", "Service Type");
     private static final YamlUtil yamlUtil = new YamlUtil();
     private static final String COULD_NOT_PARSE_COMPONENT_ATTRIBUTES_COMPONENT_UNIQUE_ID = "Could not parse component '{}' attributes. Component unique id '{}'.";
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
     private ToscaOperationFacade toscaOperationFacade;
     private CapabilityRequirementConverter capabilityRequirementConverter;
     private PolicyExportParser policyExportParser;
@@ -170,7 +170,7 @@ public class ToscaExportHandler {
     private InterfacesOperationsConverter interfacesOperationsConverter;
 
     @Autowired
-    public ToscaExportHandler(final ApplicationDataTypeCache dataTypeCache,
+    public ToscaExportHandler(final ApplicationDataTypeCache applicationDataTypeCache,
                               final ToscaOperationFacade toscaOperationFacade,
                               final CapabilityRequirementConverter capabilityRequirementConverter,
                               final PolicyExportParser policyExportParser,
@@ -181,7 +181,7 @@ public class ToscaExportHandler {
                               final OutputConverter outputConverter,
                               final InterfaceLifecycleOperation interfaceLifecycleOperation,
                               final InterfacesOperationsConverter interfacesOperationsConverter) {
-        this.dataTypeCache = dataTypeCache;
+        this.applicationDataTypeCache = applicationDataTypeCache;
         this.toscaOperationFacade = toscaOperationFacade;
         this.capabilityRequirementConverter = capabilityRequirementConverter;
         this.policyExportParser = policyExportParser;
@@ -323,7 +323,7 @@ public class ToscaExportHandler {
         if (MapUtils.isNotEmpty(proxyInterfaceTypes)) {
             toscaNode.setInterface_types(proxyInterfaceTypes);
         }
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = applicationDataTypeCache.getAll(component.getModel());
         if (dataTypesEither.isRight()) {
             log.debug("Failed to retrieve all data types {}", dataTypesEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -701,7 +701,7 @@ public class ToscaExportHandler {
         List<String> allGlobalInterfaceTypes = lifecycleTypeEither.left().value().values().stream().map(InterfaceDataDefinition::getType)
             .collect(Collectors.toList());
         toscaNode.setInterface_types(addInterfaceTypeElement(component, allGlobalInterfaceTypes));
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = applicationDataTypeCache.getAll(component.getModel());
         if (dataTypesEither.isRight()) {
             log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -1182,7 +1182,7 @@ public class ToscaExportHandler {
         String derivedFrom = ((Resource) origComponent).getToscaResourceName();
 
         toscaNodeType.setDerived_from(derivedFrom);
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = applicationDataTypeCache.getAll(origComponent.getModel());
         if (dataTypesEither.isRight()) {
             log.debug("Failed to retrieve all data types {}", dataTypesEither.right().value());
         }

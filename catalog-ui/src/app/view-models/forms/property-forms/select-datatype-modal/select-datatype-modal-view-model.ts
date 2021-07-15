@@ -20,7 +20,7 @@
 
 'use strict';
 import {DataTypesService} from "app/services/data-types-service";
-import {PropertyModel, InputPropertyBase, Component} from "app/models";
+import {PropertyModel, InputPropertyBase, Component, DataTypesMap} from "app/models";
 import {IPropertyFormBaseViewScope, PropertyFormBaseView} from "../base-property-form/property-form-base-model";
 import {PROPERTY_TYPES} from "app/utils/constants";
 
@@ -31,6 +31,7 @@ interface ISelectDataTypeViewModelScope extends IPropertyFormBaseViewScope {
     isTypeDataType:boolean;
     myValue:any;
     isReadOnly:boolean;
+    modelNameFilter:string;
 }
 
 export class SelectDataTypeViewModel extends PropertyFormBaseView {
@@ -62,6 +63,7 @@ export class SelectDataTypeViewModel extends PropertyFormBaseView {
 
         this.$templateCache.put("select-datatype-modal-view.html", require('app/view-models/forms/property-forms/select-datatype-modal/select-datatype-modal-view.html'));
         this.$scope.innerViewSrcUrl = "select-datatype-modal-view.html";
+        this.$scope.modelNameFilter = this.component.model.name;
         this.initChildScope();
     }
 
@@ -113,5 +115,9 @@ export class SelectDataTypeViewModel extends PropertyFormBaseView {
         this.$scope.isReadOnly = true;
         this.initForNotSimpleType();
         this.removeSelected();
+    }
+
+    public getAllDataTypesFromModel = (modelName: string): DataTypesMap => {
+        return this.DataTypesService.getAllDataTypesFromModel(modelName);
     }
 }

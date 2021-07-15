@@ -17,6 +17,13 @@
 *  ============LICENSE_END=========================================================
 */
 
-interface Model {
-  name:string;
+export class Model {
+  name: string;
+
+  constructor(param?: any) {
+    if (param) {
+      this.name = param;
+    }
+  }
+
 }

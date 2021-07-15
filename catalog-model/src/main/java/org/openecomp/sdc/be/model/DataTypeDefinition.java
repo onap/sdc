@@ -36,7 +36,6 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
     private DataTypeDefinition derivedFrom;
     private List<PropertyConstraint> constraints;
     private List<PropertyDefinition> properties;
-    private String model;
 
     public DataTypeDefinition(final DataTypeDataDefinition dataTypeDataDefinition) {
         super(dataTypeDataDefinition);

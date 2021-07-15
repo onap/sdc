@@ -118,7 +118,6 @@ public abstract class BaseBusinessLogic {
     protected AttributeOperation attributeOperation;
     protected ApplicationDataTypeCache applicationDataTypeCache;
     protected ToscaOperationFacade toscaOperationFacade;
-    protected ApplicationDataTypeCache dataTypeCache;
     protected IGroupOperation groupOperation;
     protected IGroupInstanceOperation groupInstanceOperation;
     protected InterfaceLifecycleOperation interfaceLifecycleTypeOperation;
@@ -188,11 +187,6 @@ public abstract class BaseBusinessLogic {
     @Autowired
     void setPolicyTypeOperation(PolicyTypeOperation policyTypeOperation) {
         this.policyTypeOperation = policyTypeOperation;
-    }
-
-    @Autowired
-    public void setDataTypeCache(ApplicationDataTypeCache dataTypeCache) {
-        this.dataTypeCache = dataTypeCache;
     }
 
     @Autowired
@@ -341,21 +335,12 @@ public abstract class BaseBusinessLogic {
     }
 
     <T extends PropertyDataDefinition> String updateInputPropertyObjectValue(T property) {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypesEither = dataTypeCache.getAll();
-        if (allDataTypesEither.isRight()) {
-            JanusGraphOperationStatus status = allDataTypesEither.right().value();
-            BeEcompErrorManager.getInstance()
-                .logInternalFlowError("UpdatePropertyValueOnComponentInstance", "Failed to update property value on instance. Status is " + status,
-                    ErrorSeverity.ERROR);
-            throw new ByActionStatusComponentException(
-                componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status)));
-        }
-        Map<String, DataTypeDefinition> allDataTypes = allDataTypesEither.left().value();
         String propertyType = property.getType();
         String innerType = getInnerType(property);
         // Specific Update Logic
         Either<Object, Boolean> isValid = propertyOperation
-            .validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType, allDataTypes);
+            .validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType,
+                componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel()));
         String newValue = property.getValue();
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
@@ -431,21 +416,6 @@ public abstract class BaseBusinessLogic {
                 break;
         }
         return null;
-    }
-
-    protected Map<String, DataTypeDefinition> getAllDataTypes(ApplicationDataTypeCache applicationDataTypeCache) {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll();
-        if (allDataTypes.isRight()) {
-            JanusGraphOperationStatus operationStatus = allDataTypes.right().value();
-            if (operationStatus == JanusGraphOperationStatus.NOT_FOUND) {
-                BeEcompErrorManager.getInstance().logInternalDataError("FetchDataTypes", "Data types are not loaded", ErrorSeverity.ERROR);
-                throw new ByActionStatusComponentException(ActionStatus.DATA_TYPE_CANNOT_BE_EMPTY);
-            } else {
-                BeEcompErrorManager.getInstance().logInternalFlowError("FetchDataTypes", "Failed to fetch data types", ErrorSeverity.ERROR);
-                throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
-            }
-        }
-        return allDataTypes.left().value();
     }
 
     Either<Boolean, ResponseFormat> validatePropertyDefaultValue(IComplexDefaultValue property, Map<String, DataTypeDefinition> dataTypes) {
@@ -706,7 +676,8 @@ public abstract class BaseBusinessLogic {
         if (inputPathArr.length > 1) {
             inputPathArr = ArrayUtils.remove(inputPathArr, 0);
         }
-        Map<String, DataTypeDefinition> dataTypeDefinitionMap = applicationDataTypeCache.getAll().left().value();
+        final Map<String, DataTypeDefinition> dataTypeDefinitionMap =
+            componentsUtils.getAllDataTypes(applicationDataTypeCache, inputDefinition.getModel());
         String propertyType = inputDefinition.getParentPropertyType();
         for (String anInputPathArr : inputPathArr) {
             if (ToscaType.isPrimitiveType(propertyType)) {
@@ -773,5 +744,9 @@ public abstract class BaseBusinessLogic {
             throw new BusinessLogicException(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(errorStatus)));
         }
         return result.left().value();
+    }
+
+    public String getComponentModelByComponentId(final String componentId) throws BusinessLogicException {
+        return getComponent(componentId).getModel();
     }
 }

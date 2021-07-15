@@ -20,7 +20,15 @@
 
 'use strict';
 import { DataTypePropertyModel } from "../models/data-type-properties";
-import {ComponentInstance, InputModel, DataTypesMap, PropertyModel, InputPropertyBase, IAppConfigurtaion, SchemaProperty} from "../models";
+import {
+    ComponentInstance,
+    InputModel,
+    DataTypesMap,
+    PropertyModel,
+    InputPropertyBase,
+    IAppConfigurtaion,
+    SchemaProperty
+} from "../models";
 import {PROPERTY_DATA} from "../utils/constants";
 
 export interface IDataTypesService {
@@ -32,7 +40,7 @@ export interface IDataTypesService {
     selectedInstance:ComponentInstance;
     selectedComponentInputs:Array<InputModel>;
     //declare methods
-    initDataTypes():void;
+    fetchDataTypesByModel(modelName:string):void;
     getAllDataTypes():DataTypesMap;
     getFirsLevelOfDataTypeProperties(dataTypeName:string):Array<DataTypePropertyModel>;
     isDataTypeForSchemaType(property:SchemaProperty):boolean;
@@ -51,8 +59,9 @@ export class DataTypesService implements IDataTypesService {
     constructor(private sdcConfig:IAppConfigurtaion,
                 private $q:ng.IQService,
                 private $http:ng.IHttpService) {
-
     }
+
+    private baseUrl = this.sdcConfig.api.root + this.sdcConfig.api.component_api_root;
 
     dataTypes:DataTypesMap; //Data type map
     selectedPropertiesName:string;
@@ -61,15 +70,22 @@ export class DataTypesService implements IDataTypesService {
     selectedInstance:ComponentInstance;
     selectedComponentInputs:Array<InputModel>;
 
-    public initDataTypes = ():void => {
-        this.$http({
-            url: this.sdcConfig.api.root + this.sdcConfig.api.component_api_root + "dataTypes",
-            method: "get"
-        }).then((response:any) => {
+    public fetchDataTypesByModel = (modelName: string):void => {
+        let model;
+        if (modelName) {
+            model = {'model': modelName}
+        }
+        this.$http.get(this.baseUrl+"dataTypes", {params: model})
+        .then((response:any) => {
             this.dataTypes = response.data;
             delete this.dataTypes['tosca.datatypes.Root'];
         });
     };
+
+    public getAllDataTypesFromModel = (modelName: string): DataTypesMap => {
+        this.fetchDataTypesByModel(modelName);
+        return this.dataTypes;
+    }
 
     public getAllDataTypes = ():DataTypesMap => {
         return this.dataTypes;

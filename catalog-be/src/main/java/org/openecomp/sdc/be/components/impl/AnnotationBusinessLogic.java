@@ -54,7 +54,7 @@ public class AnnotationBusinessLogic {
                 if (isNotEmpty(inputAnnotationList)) {
                     for (Annotation annotation : inputAnnotationList) {
                         AnnotationTypeDefinition dbAnnotationTypeDefinition = annotationTypeOperations.getLatestType(annotation.getType());
-                        validateMergeAndSetAnnoProps(annotation, dbAnnotationTypeDefinition);
+                        validateMergeAndSetAnnoProps(annotation, dbAnnotationTypeDefinition, input.getModel());
                     }
                 }
                 input.setAnnotations(inputAnnotationList);
@@ -66,15 +66,16 @@ public class AnnotationBusinessLogic {
         return annotationTypeOperations;
     }
 
-    private void validateMergeAndSetAnnoProps(Annotation annotation, AnnotationTypeDefinition dbAnnotationTypeDefinition) {
-        annotationValidator.validateAnnotationsProperties(annotation, dbAnnotationTypeDefinition);
+    private void validateMergeAndSetAnnoProps(final Annotation annotation, final AnnotationTypeDefinition dbAnnotationTypeDefinition,
+                                              final String model) {
+        annotationValidator.validateAnnotationsProperties(annotation, dbAnnotationTypeDefinition, model);
         List<PropertyDataDefinition> mergedPropertiesList = mergePropsOfAnnoDataTypeWithParsedAnnoProps(annotation.getProperties(),
             dbAnnotationTypeDefinition.getProperties());
         annotation.setProperties(mergedPropertiesList);
     }
 
-    private List<PropertyDataDefinition> mergePropsOfAnnoDataTypeWithParsedAnnoProps(List<PropertyDataDefinition> annoProperties,
-                                                                                     List<PropertyDefinition> typePropertiesList) {
+    private List<PropertyDataDefinition> mergePropsOfAnnoDataTypeWithParsedAnnoProps(final List<PropertyDataDefinition> annoProperties,
+                                                                                     final List<PropertyDefinition> typePropertiesList) {
         Set<PropertyDataDefinition> mergedPropertiesSet = new HashSet<>(typePropertiesList);
         Map<String, PropertyDefinition> typePropsMap = MapUtil.toMap(typePropertiesList, PropertyDefinition::getName);
         for (PropertyDataDefinition propertyDataDefinitionObject : annoProperties) {

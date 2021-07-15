@@ -78,10 +78,6 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
             artifactToscaOperation);
     }
 
-    public Map<String, DataTypeDefinition> getAllDataTypes() {
-        return getAllDataTypes(applicationDataTypeCache);
-    }
-
     /**
      * Create new property on component in graph
      *
@@ -123,7 +119,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
                 result = Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_ALREADY_EXIST, propertyName));
                 return result;
             } else {
-                Map<String, DataTypeDefinition> allDataTypes = getAllDataTypes(applicationDataTypeCache);
+                Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel());
                 // validate property default values
                 Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue(newPropertyDefinition, allDataTypes);
                 if (defaultValuesValidation.isRight()) {

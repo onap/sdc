@@ -2536,3 +2536,12 @@ errors:
         message: "Error: Component '%1' with Vendor Release '%2' already exists.",
         messageId: "SVC4152"
     }
+
+    #-----------SVC4153---------------------------
+    # %1 - "Model name"
+    DATA_TYPES_NOT_LOADED: {
+        code: 500,
+        message: "Error: Could not fetch data types from data base with model %1",
+        messageId: "SVC4153"
+    }
+

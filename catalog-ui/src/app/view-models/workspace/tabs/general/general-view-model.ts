@@ -38,6 +38,7 @@ import {Component, IAppConfigurtaion, ICsarComponent, IMainCategory, IMetadataKe
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
 import {CATEGORY_SERVICE_METADATA_KEYS, PREVIOUS_CSAR_COMPONENT} from "../../../../utils/constants";
 import {Observable} from "rxjs";
+import {Model} from "../../../../models/model";
 
 export class Validation {
     componentNameValidationPattern:RegExp;

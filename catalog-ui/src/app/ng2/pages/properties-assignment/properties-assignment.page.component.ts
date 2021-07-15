@@ -67,6 +67,7 @@ import {ToscaPresentationData} from "../../../models/tosca-presentation";
 import {Observable} from "rxjs";
 import {ToscaGetFunctionType} from "../../../models/tosca-get-function-type.enum";
 import {TranslateService} from "../../shared/translator/translate.service";
+import {Model} from '../../../models/model';
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -130,6 +131,7 @@ export class PropertiesAssignmentComponent {
                 private inputsUtils: InputsUtils,
                 private componentServiceNg2: ComponentServiceNg2,
                 private componentInstanceServiceNg2: ComponentInstanceServiceNg2,
+                private propertyCreatorComponent: PropertyCreatorComponent,
                 @Inject("$stateParams") _stateParams,
                 @Inject("$scope") private $scope: ng.IScope,
                 @Inject("$state") private $state: ng.ui.IStateService,
@@ -220,6 +222,8 @@ export class PropertiesAssignmentComponent {
                 });
             }
         });
+
+      this.loadDataTypesByComponentModel(this.component.model);
     };
 
     ngOnDestroy() {
@@ -1142,7 +1146,8 @@ export class PropertiesAssignmentComponent {
     }
 
     /*** addProperty ***/
-    addProperty = () => {
+    addProperty = (model: Model) => {
+        this.loadDataTypesByComponentModel(model)
         let modalTitle = 'Add Property';
         let modal = this.ModalService.createCustomModal(new ModalModel(
             'sm',
@@ -1172,8 +1177,8 @@ export class PropertiesAssignmentComponent {
             ],
             null
         ));
-        this.ModalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
         modal.instance.open();
+        this.ModalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
     }
 
     /*** addInput ***/
@@ -1245,6 +1250,10 @@ export class PropertiesAssignmentComponent {
     private isInput = (instanceType:string):boolean =>{
         return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC || instanceType === ResourceType.CR;
     }
-    
+
+    loadDataTypesByComponentModel(model:Model) {
+        let modelName = new Model(model).name;
+        this.propertyCreatorComponent.filterDataTypesByModel(modelName);
+    }
 
 }

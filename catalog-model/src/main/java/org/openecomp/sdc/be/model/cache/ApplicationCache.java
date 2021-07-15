@@ -22,10 +22,11 @@ package org.openecomp.sdc.be.model.cache;
 import fj.data.Either;
 import java.util.Map;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 
 public interface ApplicationCache<T> {
 
-    Either<Map<String, T>, JanusGraphOperationStatus> getAll();
+    Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAll(final String model);
 
-    Either<T, JanusGraphOperationStatus> get(String uniqueId);
+    Either<T, JanusGraphOperationStatus> get(final String model, final String uniqueId);
 }

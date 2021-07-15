@@ -62,10 +62,11 @@ public class PropertyValueConstraintValidationUtil {
         return new PropertyValueConstraintValidationUtil();
     }
 
-    public Either<Boolean, ResponseFormat> validatePropertyConstraints(Collection<? extends PropertyDefinition> propertyDefinitionList,
-                                                                       ApplicationDataTypeCache applicationDataTypeCache) {
+    public Either<Boolean, ResponseFormat> validatePropertyConstraints(final Collection<? extends PropertyDefinition> propertyDefinitionList,
+                                                                       final ApplicationDataTypeCache applicationDataTypeCache,
+                                                                       final String model) {
         ResponseFormatManager responseFormatManager = getResponseFormatManager();
-        dataTypeDefinitionCache = applicationDataTypeCache.getAll().left().value();
+        dataTypeDefinitionCache = applicationDataTypeCache.getAll(model).left().value();
         CollectionUtils.emptyIfNull(propertyDefinitionList).stream().filter(this::isValuePresent)
             .forEach(this::evaluatePropertyTypeForConstraintValidation);
         if (CollectionUtils.isNotEmpty(errorMessages)) {

@@ -47,8 +47,8 @@ export class DataTypeService {
         return this.dataTypes[typeName];
     }
 
-    public getAllDataTypes(): DataTypesMap {
-        return this.dataTypes;
+    public getDataTypeByModel(modelName: string): DataTypesMap {
+        return this.dataTypeService.getAllDataTypesFromModel(modelName);
     }
 
     public getConstraintsByParentTypeAndUniqueID(rootPropertyType, propertyName){

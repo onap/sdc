@@ -20,35 +20,37 @@
 
 package org.openecomp.sdc.be.tosca;
 
-import fj.data.Either;
-import org.apache.commons.lang3.tuple.Pair;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
-import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
-import org.openecomp.sdc.be.components.utils.ResourceBuilder;
-import org.openecomp.sdc.be.model.*;
-import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.tosca.model.ToscaGroupTemplate;
-import org.openecomp.sdc.be.tosca.model.ToscaTemplateCapability;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
+
+import fj.data.Either;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
+import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
+import org.openecomp.sdc.be.components.utils.ResourceBuilder;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
+import org.openecomp.sdc.be.tosca.model.ToscaGroupTemplate;
+import org.openecomp.sdc.be.tosca.model.ToscaTemplateCapability;
 
 @ExtendWith(MockitoExtension.class)
 public class GroupExportParserImplTest {
@@ -67,7 +69,7 @@ public class GroupExportParserImplTest {
 	private GroupExportParser groupExportParser;
 
 	@Mock
-	private ApplicationDataTypeCache dataTypeCache;
+	private ApplicationDataTypeCache applicationDataTypeCache;
 	@Mock
 	private Component component;
 	@Mock
@@ -79,14 +81,15 @@ public class GroupExportParserImplTest {
 	}
 
 	private void initGroupExportParser() {
-		when(dataTypeCache.getAll()).thenReturn(Either.left(null));
-		groupExportParser = new GroupExportParserImpl(dataTypeCache, propertyConvertor);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(null));
+		groupExportParser = new GroupExportParserImpl(applicationDataTypeCache, propertyConvertor);
 	}
 
 	@Test
 	public void failToGetAllDataTypes() {
-		when(dataTypeCache.getAll()).thenReturn(Either.right(null));
-		assertThatExceptionOfType(SdcResourceNotFoundException.class).isThrownBy(() -> groupExportParser = new GroupExportParserImpl(dataTypeCache,
+		when(applicationDataTypeCache.getAll(null)).thenReturn(Either.right(null));
+		assertThatExceptionOfType(SdcResourceNotFoundException.class).isThrownBy(() -> groupExportParser = new GroupExportParserImpl(
+			applicationDataTypeCache,
                 propertyConvertor));
 	}
 

@@ -104,13 +104,14 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
             if (isAttributeExist(resource.getAttributes(), resourceId, newAttributeDef.getName())) {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.ATTRIBUTE_ALREADY_EXIST, newAttributeDef.getName()));
             }
-            Map<String, DataTypeDefinition> eitherAllDataTypes = getAllDataTypes(applicationDataTypeCache);
+            // fetch DataTypes by Model Name
+            Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, resource.getModel());
             // validate property default values
-            Either<Boolean, ResponseFormat> defaultValuesValidation = validateAttributeDefaultValue(newAttributeDef, eitherAllDataTypes);
+            Either<Boolean, ResponseFormat> defaultValuesValidation = validateAttributeDefaultValue(newAttributeDef, allDataTypes);
             if (defaultValuesValidation.isRight()) {
                 return Either.right(defaultValuesValidation.right().value());
             }
-            handleAttributeDefaultValue(newAttributeDef, eitherAllDataTypes);
+            handleAttributeDefaultValue(newAttributeDef, allDataTypes);
             // add the new attribute to resource on graph
 
             // need to get StorageOperationStatus and convert to ActionStatus from
@@ -252,14 +253,14 @@ public class AttributeBusinessLogic extends BaseBusinessLogic {
             if (eitherAttribute.isRight()) {
                 return Either.right(eitherAttribute.right().value());
             }
-            Map<String, DataTypeDefinition> eitherAllDataTypes = getAllDataTypes(applicationDataTypeCache);
+            Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, resource.getModel());
             // validate attribute default values
-            Either<Boolean, ResponseFormat> defaultValuesValidation = validateAttributeDefaultValue(newAttDef, eitherAllDataTypes);
+            Either<Boolean, ResponseFormat> defaultValuesValidation = validateAttributeDefaultValue(newAttDef, allDataTypes);
             if (defaultValuesValidation.isRight()) {
                 return Either.right(defaultValuesValidation.right().value());
             }
             // add the new property to resource on graph
-            StorageOperationStatus validateAndUpdateAttribute = attributeOperation.validateAndUpdateAttribute(newAttDef, eitherAllDataTypes);
+            StorageOperationStatus validateAndUpdateAttribute = attributeOperation.validateAndUpdateAttribute(newAttDef, allDataTypes);
             if (validateAndUpdateAttribute != StorageOperationStatus.OK) {
                 log.debug("Problem while updating attribute with id {}. Reason - {}", attributeId, validateAndUpdateAttribute);
                 result = Either.right(componentsUtils

@@ -21,6 +21,20 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.Maps;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import fj.data.Either;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -82,6 +96,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
+import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
@@ -89,20 +104,6 @@ import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Maps;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import fj.data.Either;
 
 @Component("property-operation")
 public class PropertyOperation extends AbstractOperation implements IPropertyOperation {
@@ -120,11 +121,14 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     private static final String UPDATE_DATA_TYPE = "UpdateDataType";
     private static Logger log = Logger.getLogger(PropertyOperation.class.getName());
     private DerivedFromOperation derivedFromOperation;
+    private DataTypeOperation dataTypeOperation;
 
     @Autowired
-    public PropertyOperation(HealingJanusGraphGenericDao janusGraphGenericDao, DerivedFromOperation derivedFromOperation) {
+    public PropertyOperation(HealingJanusGraphGenericDao janusGraphGenericDao, DerivedFromOperation derivedFromOperation,
+                             DataTypeOperation dataTypeOperation) {
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.derivedFromOperation = derivedFromOperation;
+        this.dataTypeOperation = dataTypeOperation;
     }
 
     public PropertyDefinition convertPropertyDataToPropertyDefinition(PropertyData propertyDataResult, String propertyName, String resourceId) {
@@ -1506,28 +1510,21 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         return Either.left(true);
     }
 
-    public Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAllDataTypes() {
-        Map<String, DataTypeDefinition> dataTypes = new HashMap<>();
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> result = Either.left(dataTypes);
-        Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypes = janusGraphGenericDao
-            .getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
-        if (getAllDataTypes.isRight()) {
-            JanusGraphOperationStatus status = getAllDataTypes.right().value();
-            if (status != JanusGraphOperationStatus.NOT_FOUND) {
-                return Either.right(status);
-            } else {
-                return result;
-            }
-        }
-        List<DataTypeData> list = getAllDataTypes.left().value();
+    public Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> getAllDataTypes() {
+        final Map<String, Map<String, DataTypeDefinition>> dataTypes = new HashMap<>();
+        Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> result = Either.left(dataTypes);
+        final Map<String, DataTypeDefinition> allDataTypesFound = new HashMap<>();
+        final List<DataTypeData> list = dataTypeOperation.getAllDataTypeNodes();
         if (list != null) {
             log.trace("Number of data types to load is {}", list.size());
             List<String> collect = list.stream().map(p -> p.getDataTypeDataDefinition().getName()).collect(Collectors.toList());
             log.trace("The data types to load are {}", collect);
             for (DataTypeData dataTypeData : list) {
-                log.trace("Going to fetch data type {}. uid is {}", dataTypeData.getDataTypeDataDefinition().getName(), dataTypeData.getUniqueId());
+                final String dataTypeName = dataTypeData.getDataTypeDataDefinition().getName();
+                final String dataTypeUniqueId = dataTypeData.getUniqueId();
+                log.trace("Going to fetch data type {}. uid is {}", dataTypeName, dataTypeUniqueId);
                 Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid = this
-                    .getAndAddDataTypeByUid(dataTypeData.getUniqueId(), dataTypes);
+                    .getAndAddDataTypeByUid(dataTypeUniqueId, allDataTypesFound);
                 if (dataTypeByUid.isRight()) {
                     JanusGraphOperationStatus status = dataTypeByUid.right().value();
                     if (status == JanusGraphOperationStatus.NOT_FOUND) {
@@ -1535,13 +1532,14 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     }
                     return Either.right(status);
                 }
+                result = Either.left(dataTypeOperation.mapDataTypesDefinitionByModel(allDataTypesFound));
             }
         }
         if (log.isTraceEnabled()) {
             if (result.isRight()) {
                 log.trace("After fetching all data types {}", result);
             } else {
-                Map<String, DataTypeDefinition> map = result.left().value();
+                Map<String, Map<String, DataTypeDefinition>> map = result.left().value();
                 if (map != null) {
                     String types = map.keySet().stream().collect(Collectors.joining(",", "[", "]"));
                     log.trace("After fetching all data types {} ", types);
@@ -1577,7 +1575,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             log.error(FAILED_TO_FETCH_PROPERTIES_OF_DATA_TYPE, uniqueId);
             return Either.right(propertiesStatus);
         }
-        allDataTypes.put(dataTypeDefinition.getName(), dataTypeDefinition);
+        allDataTypes.put(dataTypeDefinition.getUniqueId(), dataTypeDefinition);
         String derivedFrom = dataTypeDefinition.getDerivedFromName();
         if (allDataTypes.containsKey(derivedFrom)) {
             DataTypeDefinition parentDataTypeDefinition = allDataTypes.get(derivedFrom);
@@ -1606,24 +1604,26 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             }
             DataTypeDefinition parentDataTypeDefinition = dataTypeByUid.left().value();
             dataTypeDefinition.setDerivedFrom(parentDataTypeDefinition);
+            final var model = getModel(uniqueId);
+            if (StringUtils.isNotEmpty(model)) {
+                dataTypeDefinition.setModel(model);
+            }
         }
         result = Either.left(dataTypeDefinition);
         return result;
+    }
+
+    private String getModel(final String uniqueId) {
+        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> model = janusGraphGenericDao.getParentNode(
+            UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.DataType), uniqueId, GraphEdgeLabels.MODEL_ELEMENT,
+            NodeTypeEnum.Model, ModelData.class);
+        return model.isLeft() ? model.left().value().getLeft().getName() : StringUtils.EMPTY;
     }
 
     public Either<String, JanusGraphOperationStatus> checkInnerType(PropertyDataDefinition propDataDef) {
         String propertyType = propDataDef.getType();
         ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
         return getInnerType(type, propDataDef::getSchema);
-    }
-
-    public Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypeNodes() {
-        final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypes =
-            janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
-        if (getAllDataTypes.isRight() && getAllDataTypes.right().value() == JanusGraphOperationStatus.NOT_FOUND) {
-            return Either.left(Collections.emptyList());
-        }
-        return getAllDataTypes;
     }
 
     public Either<Object, Boolean> validateAndUpdatePropertyValue(String propertyType, String value, boolean isValidate, String innerType,

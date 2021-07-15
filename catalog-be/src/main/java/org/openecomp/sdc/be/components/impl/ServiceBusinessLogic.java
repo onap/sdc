@@ -382,11 +382,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (STATIC.equals(sourceValue)) {
             // Validate constraint on input value
             Either<Boolean, ResponseFormat> constraintValidationResult = validateOperationInputConstraint(operationInputDefinition, consumptionValue,
-                type);
+                type, containerService.getModel());
             if (constraintValidationResult.isRight()) {
                 return Either.right(constraintValidationResult.right().value());
             }
-            return handleConsumptionStaticValue(consumptionValue, type, operation, operationInputDefinition);
+            return handleConsumptionStaticValue(consumptionValue, type, operation, operationInputDefinition, containerService.getModel());
         }
         if (Objects.isNull(sourceValue)) {
             List<PropertyDefinition> propertyDefinitions;
@@ -523,13 +523,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     public Either<Operation, ResponseFormat> handleConsumptionStaticValue(String value, String type, Operation operation,
-                                                                          OperationInputDefinition operationInputDefinition) {
+                                                                          OperationInputDefinition operationInputDefinition, String model) {
         boolean isInputTypeSimilarToOperation = isAssignedValueFromValidType(type, value);
         if (!isInputTypeSimilarToOperation) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONSUMPTION_TYPE, type));
         }
         //Validate Constraint and Value
-        Either<Boolean, ResponseFormat> constraintValidationResponse = validateOperationInputConstraint(operationInputDefinition, value, type);
+        Either<Boolean, ResponseFormat> constraintValidationResponse = validateOperationInputConstraint(operationInputDefinition, value, type, model);
         if (constraintValidationResponse.isRight()) {
             return Either.right(constraintValidationResponse.right().value());
         }
@@ -538,7 +538,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Either<Boolean, ResponseFormat> validateOperationInputConstraint(OperationInputDefinition operationInputDefinition, String value,
-                                                                             String type) {
+                                                                             String type, String model) {
         ComponentInstanceProperty propertyDefinition = new ComponentInstanceProperty();
         propertyDefinition.setType(operationInputDefinition.getParentPropertyType());
         InputDefinition inputDefinition = new InputDefinition();
@@ -548,8 +548,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (Objects.nonNull(operationInputDefinition.getParentPropertyType())) {
             inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
         }
-        return PropertyValueConstraintValidationUtil.getInstance()
-            .validatePropertyConstraints(Collections.singletonList(inputDefinition), applicationDataTypeCache);
+        return PropertyValueConstraintValidationUtil.getInstance().validatePropertyConstraints(Collections.singletonList(inputDefinition),
+            applicationDataTypeCache, model);
     }
 
     private void addStaticValueToInputOperation(String value, Operation operation, OperationInputDefinition operationInputDefinition) {

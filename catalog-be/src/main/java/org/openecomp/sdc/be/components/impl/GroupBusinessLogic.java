@@ -1068,19 +1068,13 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
                                                                       boolean fromCsar) {
         Map<String, GroupDataDefinition> groups = new HashMap<>();
         Either<List<GroupDefinition>, ResponseFormat> result = null;
-        Either<List<GroupDefinition>, StorageOperationStatus> createGroupsResult = null;
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
-        if (allDataTypes.isRight()) {
-            JanusGraphOperationStatus status = allDataTypes.right().value();
-            BeEcompErrorManager.getInstance()
-                .logInternalFlowError("AddPropertyToGroup", "Failed to add property to group. Status is " + status, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
-        }
+        Either<List<GroupDefinition>, StorageOperationStatus> createGroupsResult;
+
         // handle groups and convert to tosca data
         if (groupDefinitions != null && !groupDefinitions.isEmpty()) {
             for (GroupDefinition groupDefinition : groupDefinitions) {
-                Either<GroupDefinition, ResponseFormat> handleGroupRes = handleGroup(component, groupDefinition, allDataTypes.left().value());
+                Either<GroupDefinition, ResponseFormat> handleGroupRes = handleGroup(component, groupDefinition,
+                    componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel()));
                 if (handleGroupRes.isRight()) {
                     result = Either.right(handleGroupRes.right().value());
                     break;
@@ -1150,18 +1144,11 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         Either<List<GroupDefinition>, ResponseFormat> result = null;
         Either<List<GroupDefinition>, StorageOperationStatus> createGroupsResult = null;
         List<GroupDataDefinition> groups = new ArrayList<>();
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = dataTypeCache.getAll();
-        if (allDataTypes.isRight()) {
-            JanusGraphOperationStatus status = allDataTypes.right().value();
-            BeEcompErrorManager.getInstance()
-                .logInternalFlowError("AddPropertyToGroup", "Failed to add property to group. Status is " + status, ErrorSeverity.ERROR);
-            return Either.right(componentsUtils
-                .getResponseFormat(componentsUtils.convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status))));
-        }
         // handle groups and convert to tosca data
         if (groupDefinitions != null && !groupDefinitions.isEmpty()) {
             for (GroupDefinition groupDefinition : groupDefinitions) {
-                Either<GroupDefinition, ResponseFormat> handleGroupRes = handleGroup(component, groupDefinition, allDataTypes.left().value());
+                Either<GroupDefinition, ResponseFormat> handleGroupRes = handleGroup(component, groupDefinition,
+                    componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel()));
                 if (handleGroupRes.isRight()) {
                     result = Either.right(handleGroupRes.right().value());
                     break;

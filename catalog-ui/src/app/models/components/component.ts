@@ -36,6 +36,7 @@ import {Relationship} from "../graph/relationship";
 import { PolicyInstance } from "app/models/graph/zones/policy-instance";
 import { GroupInstance } from "../graph/zones/group-instance";
 import { Metadata } from "app/models/metadata";
+import {Model} from "../model";
 
 
 // import {}

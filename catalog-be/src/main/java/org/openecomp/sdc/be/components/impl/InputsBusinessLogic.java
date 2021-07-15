@@ -289,14 +289,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 }
             }
             //Validate value and Constraint of input
-            Either<Boolean, ResponseFormat> constraintValidatorResponse = validateInputValueConstraint(inputs);
+            Either<Boolean, ResponseFormat> constraintValidatorResponse = validateInputValueConstraint(inputs, component.getModel());
             if (constraintValidatorResponse.isRight()) {
                 log.error("Failed validation value and constraint of property: {}", constraintValidatorResponse.right().value());
                 return Either.right(constraintValidatorResponse.right().value());
             }
             validateCanWorkOnComponent(component, userId);
             Map<String, DataTypeDefinition> dataTypes;
-            dataTypes = getAllDataTypes(applicationDataTypeCache);
+            dataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel());
             List<InputDefinition> componentsOldInputs = Optional.ofNullable(component.getInputs()).orElse(Collections.emptyList());
             for (InputDefinition newInput : inputs) {
                 InputDefinition currInput = getInputFromInputsListById(componentsOldInputs, newInput);
@@ -335,7 +335,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private Either<Boolean, ResponseFormat> validateInputValueConstraint(List<InputDefinition> inputs) {
+    private Either<Boolean, ResponseFormat> validateInputValueConstraint(List<InputDefinition> inputs, final String model) {
         PropertyValueConstraintValidationUtil propertyValueConstraintValidationUtil = PropertyValueConstraintValidationUtil.getInstance();
         List<InputDefinition> inputDefinitions = new ArrayList<>();
         for (InputDefinition inputDefinition : inputs) {
@@ -350,7 +350,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             }
             inputDefinitions.add(inputDef);
         }
-        return propertyValueConstraintValidationUtil.validatePropertyConstraints(inputDefinitions, applicationDataTypeCache);
+        return propertyValueConstraintValidationUtil.validatePropertyConstraints(inputDefinitions, applicationDataTypeCache, model);
     }
 
     public Either<List<ComponentInstanceInput>, ResponseFormat> getInputsForComponentInput(String userId, String componentId, String inputId) {
@@ -571,7 +571,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         List<InputDefinition> resourceProperties = component.getInputs();
 
-        Map<String, DataTypeDefinition> dataTypes = getAllDataTypes(applicationDataTypeCache);
+        final Map<String, DataTypeDefinition> dataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel());
 
         for (Map.Entry<String, InputDefinition> inputDefinition : inputs.entrySet()) {
             String inputName = inputDefinition.getKey();
@@ -609,8 +609,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
         log.trace("#createListInputsInGraph: enter");
 
-        Map<String, DataTypeDefinition> dataTypes = getAllDataTypes(
-            applicationDataTypeCache);
+        Map<String, DataTypeDefinition> dataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel());
         dataTypes.putAll(privateDataTypes);
 
         for (Map.Entry<String, InputDefinition> inputDefinition : inputs.entrySet()) {
@@ -829,7 +828,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 result = Either.right(componentsUtils.getResponseFormat(ActionStatus.INPUT_ALREADY_EXIST, inputName));
                 return result;
             }
-            Map<String, DataTypeDefinition> allDataTypes = getAllDataTypes(applicationDataTypeCache);
+            Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel());
             // validate input default values
             Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue(newInputDefinition, allDataTypes);
             if (defaultValuesValidation.isRight()) {

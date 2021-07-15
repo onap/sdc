@@ -36,12 +36,13 @@ import {ComponentModeService} from "../../services/component-services/component-
 import {SdcUiComponentsModule} from "onap-ui-angular";
 import {ModalFormsModule} from "app/ng2/components/ui/forms/modal-forms.module";
 import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.module";
+import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
 
 @NgModule({
   declarations: [
     PropertiesAssignmentComponent,
     InputsTableComponent,
-    FilterPropertiesAssignmentComponent
+    FilterPropertiesAssignmentComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,7 +60,7 @@ import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigt
   exports: [
     PropertiesAssignmentComponent
   ],
-  providers: [PropertiesService, HierarchyNavService, PropertiesUtils, InputsUtils, DataTypeService, ComponentModeService]
+  providers: [PropertiesService, HierarchyNavService, PropertiesUtils, InputsUtils, DataTypeService, ComponentModeService, PropertyCreatorComponent]
 })
 export class PropertiesAssignmentModule {
 

@@ -19,7 +19,14 @@
  */
 package org.openecomp.sdc.be.components.validation;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,14 +42,6 @@ import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnnotationValidatorTest {
@@ -62,7 +61,7 @@ public class AnnotationValidatorTest {
     @Mock
     private ComponentsUtils componentsUtils;
     @Mock
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
     @Mock
     private PropertyValidator propertyValidator;
     @Mock
@@ -70,10 +69,10 @@ public class AnnotationValidatorTest {
 
     @Before
     public void setUp() throws Exception {
-        annotationValidator = new AnnotationValidator(propertyValidator, exceptionUtils, dataTypeCache, componentsUtils);
+        annotationValidator = new AnnotationValidator(propertyValidator, exceptionUtils, applicationDataTypeCache, componentsUtils);
         allData = Collections.emptyMap();
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> cacheResponse = Either.left(allData);
-        Mockito.when(dataTypeCache.getAll()).thenReturn(cacheResponse);
+        Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(cacheResponse);
         annotationTypeProperties = Collections.emptyList();
         propertyDataDefinitions = new ArrayList<>();
     }
@@ -85,8 +84,7 @@ public class AnnotationValidatorTest {
         List<PropertyDefinition> properties = new ArrayList<>();
         properties.add(new PropertyDefinition(propertyDataDefinition));
 
-        List<Annotation> annotations = annotationValidator
-            .validateAnnotationsProperties(annotation, annotationTypeDefinition);
+        List<Annotation> annotations = annotationValidator.validateAnnotationsProperties(annotation, annotationTypeDefinition, null);
 
         Mockito.verify(propertyValidator).thinPropertiesValidator(properties, annotationTypeProperties, allData);
         assertThat(annotations.get(0), is(annotation));

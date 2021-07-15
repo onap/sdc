@@ -186,7 +186,7 @@ class ComponentInstanceBusinessLogicTest {
     @Mock
     private JanusGraphDao janusGraphDao;
     @Mock
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
     @Mock
     private PropertyOperation propertyOperation;
     @Mock
@@ -321,7 +321,7 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
             .thenReturn(StorageOperationStatus.OK);
-        when(dataTypeCache.getAll()).thenReturn(Either.left(types));
+        when(componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel())).thenReturn(types);
         when(propertyOperation.validateAndUpdatePropertyValue(property.getType(), "newVal", true, null, types))
             .thenReturn(Either.left("newVal"));
         when(propertyOperation.validateAndUpdateRules("string", property.getRules(),
@@ -420,7 +420,7 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(containerComponentID, NodeTypeEnum.ResourceInstance))
             .thenReturn(StorageOperationStatus.OK);
-        when(dataTypeCache.getAll()).thenReturn(Either.left(types));
+        when(componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel())).thenReturn(types);
         when(propertyOperation.validateAndUpdatePropertyValue(property.getType(), "newVal", true, null, types))
             .thenReturn(Either.right(false));
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.BAD_REQUEST))

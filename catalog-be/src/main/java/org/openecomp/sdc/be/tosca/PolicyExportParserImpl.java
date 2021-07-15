@@ -52,19 +52,19 @@ import org.springframework.context.event.EventListener;
 public class PolicyExportParserImpl implements PolicyExportParser {
 
     private static final Logger log = Logger.getLogger(PolicyExportParserImpl.class);
-    private ApplicationDataTypeCache dataTypeCache;
+    private ApplicationDataTypeCache applicationDataTypeCache;
     private Map<String, DataTypeDefinition> dataTypes;
     private PropertyConvertor propertyConvertor;
 
     @Autowired
-    public PolicyExportParserImpl(ApplicationDataTypeCache dataTypeCache, PropertyConvertor propertyConvertor) {
-        this.dataTypeCache = dataTypeCache;
+    public PolicyExportParserImpl(ApplicationDataTypeCache applicationDataTypeCache, PropertyConvertor propertyConvertor) {
+        this.applicationDataTypeCache = applicationDataTypeCache;
         this.propertyConvertor = propertyConvertor;
         this.dataTypes = getDataTypes();
     }
 
     private Map<String, DataTypeDefinition> getDataTypes() {
-        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = dataTypeCache.getAll();
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = applicationDataTypeCache.getAll(null);
         if (dataTypesEither.isRight()) {
             log.error("Failed to retrieve all data types {}", dataTypesEither.right().value());
             throw new SdcResourceNotFoundException();
@@ -74,7 +74,7 @@ public class PolicyExportParserImpl implements PolicyExportParser {
 
     @EventListener
     public void onDataTypesCacheChangedEvent(ApplicationDataTypeCache.DataTypesCacheChangedEvent dataTypesCacheChangedEvent) {
-        dataTypes = dataTypesCacheChangedEvent.getNewData();
+        dataTypes = dataTypesCacheChangedEvent.getNewData().get(null);
         log.debug("Data types cache updated.");
     }
 

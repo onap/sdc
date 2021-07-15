@@ -75,9 +75,11 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
@@ -97,6 +99,7 @@ import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
@@ -1542,4 +1545,20 @@ public class ComponentsUtils {
         return uiConstraintsMaps.stream().map(dataMap -> new com.fasterxml.jackson.databind.ObjectMapper().convertValue(dataMap, UIConstraint.class))
             .collect(Collectors.toList());
     }
+
+    public Map<String, DataTypeDefinition> getAllDataTypes(final ApplicationDataTypeCache applicationDataTypeCache, final String model) {
+        final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll(model);
+        if (allDataTypes.isRight()) {
+            final var operationStatus = allDataTypes.right().value();
+            if (operationStatus == JanusGraphOperationStatus.NOT_FOUND) {
+                BeEcompErrorManager.getInstance().logInternalDataError("FetchDataTypes", "Data types are not loaded", ErrorSeverity.ERROR);
+                throw new ByActionStatusComponentException(ActionStatus.DATA_TYPES_NOT_LOADED, model);
+            } else {
+                BeEcompErrorManager.getInstance().logInternalFlowError("FetchDataTypes", "Failed to fetch data types", ErrorSeverity.ERROR);
+                throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+            }
+        }
+        return allDataTypes.left().value();
+    }
+
 }

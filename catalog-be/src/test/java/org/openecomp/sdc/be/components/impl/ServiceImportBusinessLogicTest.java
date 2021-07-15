@@ -17,7 +17,33 @@
 package org.openecomp.sdc.be.components.impl;
 
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anyMap;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -42,7 +68,35 @@ import org.openecomp.sdc.be.externalapi.servlet.ArtifactExternalServlet;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.ComponentMetadataDefinition;
+import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.IPropertyInputCommon;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadPropInfo;
+import org.openecomp.sdc.be.model.UploadReqInfo;
+import org.openecomp.sdc.be.model.UploadResourceInfo;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -54,33 +108,6 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.anyMap;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
     private final static String DEFAULT_ICON = "defaulticon";
@@ -829,7 +856,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         uploadComponentInstanceInfo.setName("zxjTestImportServiceAb");
         Assertions.assertNotNull(resource);
         Assertions.assertNotNull(yamlName);
-        sIB1.processComponentInstance(yamlName, resource, componentInstancesList, allDataTypes, instProperties,
+        sIB1.processComponentInstance(yamlName, resource, componentInstancesList, allDataTypes.left().value(), instProperties,
                 instCapabilties, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes,
                 originCompMap, instInputs, uploadComponentInstanceInfo);
     }
@@ -854,7 +881,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         uploadComponentInstanceInfo.setName("zxjTestImportServiceAb0");
 
         Assertions.assertThrows(ComponentException.class, () -> sIB1.processComponentInstance(yamlName,
-                resource, componentInstancesList, allDataTypes, instProperties, instCapabilties,
+                resource, componentInstancesList, null, instProperties, instCapabilties,
                 instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap,
                 instInputs, uploadComponentInstanceInfo));
     }
@@ -1175,7 +1202,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         uploadComponentInstanceInfo.setName("zxjTestImportServiceAb");
         Assertions.assertNotNull(service);
 
-        sIB1.processComponentInstance(yamlName, service, componentInstancesList, allDataTypes,
+        sIB1.processComponentInstance(yamlName, service, componentInstancesList, allDataTypes.left().value(),
                 instProperties, instCapabilties, instRequirements, instDeploymentArtifacts,
                 instArtifacts, instAttributes, originCompMap, instInputs,
                 uploadComponentInstanceInfo);
@@ -1201,7 +1228,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         uploadComponentInstanceInfo.setName("zxjTestImportServiceAb0");
 
         Assertions.assertThrows(ComponentException.class, () -> sIB1.processComponentInstance(yamlName,
-                service, componentInstancesList, allDataTypes, instProperties, instCapabilties,
+                service, componentInstancesList, null, instProperties, instCapabilties,
                 instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap,
                 instInputs, uploadComponentInstanceInfo));
     }
@@ -1382,7 +1409,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         ComponentInstance currentCompInstance = new ComponentInstance();
         Resource originResource = createParseResourceObject(false);
         Assertions.assertNotNull(originResource);
-        sIB1.processComponentInstanceCapabilities(allDataTypes, instCapabilties,
+        sIB1.processComponentInstanceCapabilities(null, instCapabilties,
                 uploadComponentInstanceInfo, currentCompInstance, originResource);
     }
 
@@ -1395,7 +1422,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Resource originResource = createParseResourceObject(false);
         Assertions.assertNotNull(originResource);
 
-        sIB1.processComponentInstanceCapabilities(allDataTypes, instCapabilties, uploadComponentInstanceInfo,
+        sIB1.processComponentInstanceCapabilities(null, instCapabilties, uploadComponentInstanceInfo,
                 currentCompInstance, originResource);
     }
 
@@ -1405,7 +1432,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, List<CapabilityDefinition>> originCapabilities = new HashMap<>();
         Map<String, Map<String, UploadPropInfo>> newPropertiesMap = new HashMap<>();
         Assertions.assertNull(allDataTypes);
-        sIB1.updateCapabilityPropertiesValues(allDataTypes, originCapabilities, newPropertiesMap);
+        sIB1.updateCapabilityPropertiesValues(null, originCapabilities, newPropertiesMap, null);
     }
 
     @Test
