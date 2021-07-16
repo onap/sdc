@@ -40,6 +40,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.POLICIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.PROPERTIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIREMENTS;
@@ -64,6 +65,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -138,6 +140,9 @@ public class YamlTemplateParsingHandler {
         parsedToscaYamlInfo.setGroups(getGroups(fileName, mappedToscaTemplate));
         if (component instanceof Resource) {
             parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate));
+        }
+        if (getSubstitutionMappings(mappedToscaTemplate) != null) {
+            parsedToscaYamlInfo.setSubstitutionMappingNodeType((String) getSubstitutionMappings(mappedToscaTemplate).get(NODE_TYPE.getElementName()));
         }
         log.debug("#parseResourceInfoFromYAML - The yaml {} has been parsed ", fileName);
         return parsedToscaYamlInfo;

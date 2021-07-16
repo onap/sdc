@@ -78,6 +78,18 @@ public class GenericTypeBusinessLogic {
         Resource genericTypeResource = genericType.left().value();
         return Either.left(genericTypeResource);
     }
+    
+    public Either<Resource, ResponseFormat> fetchDerivedFromGenericType(final Component component, final String toscaType) {
+        if (StringUtils.isNotEmpty(toscaType)) {
+            final Either<Resource, StorageOperationStatus> genericType = toscaOperationFacade.getLatestByToscaResourceNameAndModel(toscaType, component.getModel());
+            if (genericType.isRight()) {
+                log.debug("Failed to fetch certified node type by tosca resource name {}", toscaType);
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), toscaType));
+            }
+            return Either.left(genericType.left().value());
+        }
+        return fetchDerivedFromGenericType(component);
+    }
 
     /**
      * @param genericType the generic node type

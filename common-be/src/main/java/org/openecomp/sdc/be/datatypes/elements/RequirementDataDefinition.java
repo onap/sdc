@@ -44,7 +44,10 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
     
     @Getter
     @Setter
-    public boolean external = false;
+    private boolean external = false;
+    @Getter
+    @Setter
+    private String externalName;
 
     /**
      * The default constructor initializing limits of the occurrences
@@ -80,6 +83,7 @@ public class RequirementDataDefinition extends ToscaDataDefinition {
         }
         this.setSource(other.getSource());
         this.setExternal(other.isExternal());
+        this.setExternalName(other.getExternalName());
     }
 
     /**

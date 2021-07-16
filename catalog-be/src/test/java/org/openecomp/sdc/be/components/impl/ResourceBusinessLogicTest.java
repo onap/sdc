@@ -27,20 +27,28 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import fj.data.Either;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,10 +66,12 @@ import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.YamlTemplateParsingHandler;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.utils.YamlTemplateParsingHandlerTest;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
@@ -91,6 +101,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
@@ -98,8 +109,12 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
@@ -134,6 +149,8 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -164,7 +181,8 @@ public class ResourceBusinessLogicTest {
 	private final CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
 	private final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
 	private final PropertyOperation propertyOperation = Mockito.mock(PropertyOperation.class);
-	private final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+    private final ApplicationDataTypeCache applicationDataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
+    private final ApplicationDataTypeCache dataTypeCache = Mockito.mock(ApplicationDataTypeCache.class);
 	private final WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
 	private final UserValidations userValidations = Mockito.mock(UserValidations.class);
 	private final WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
@@ -195,6 +213,7 @@ public class ResourceBusinessLogicTest {
 	private final ToscaExportHandler toscaExportHandler = Mockito.mock(ToscaExportHandler.class);
 	private final PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
 
+	private YamlTemplateParsingHandler yamlTemplateParsingHandler = Mockito.mock(YamlTemplateParsingHandler.class);
 	@InjectMocks
 	ResponseFormatManager responseManager = null;
 	private final GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
@@ -288,7 +307,8 @@ public class ResourceBusinessLogicTest {
 		when(toscaOperationFacade.createToscaComponent(any(Resource.class))).thenReturn(eitherCreate);
 		when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
 		Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
-		when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
+        when(applicationDataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
+        when(dataTypeCache.getAll()).thenReturn(Either.left(emptyDataTypes));
 		when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
 
 		// BL object
@@ -309,7 +329,8 @@ public class ResourceBusinessLogicTest {
 		bl.setGraphLockOperation(graphLockOperation);
 		bl.setPropertyOperation(propertyOperation);
 		bl.setJanusGraphDao(mockJanusGraphDao);
-		bl.setApplicationDataTypeCache(applicationDataTypeCache);
+        bl.setApplicationDataTypeCache(applicationDataTypeCache);
+        bl.setDataTypeCache(dataTypeCache);
 		bl.setGenericTypeBusinessLogic(genericTypeBusinessLogic);
 		bl.setCatalogOperations(catalogOperation);
 		toscaOperationFacade.setNodeTypeOperation(nodeTypeOperation);
@@ -359,7 +380,7 @@ public class ResourceBusinessLogicTest {
 				nodeTypesArtifactsToHandle,
 				nodeTypesNewCreatedArtifacts,
 				nodeTypesInfo,
-				new CsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name", ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml"),true));
+				new CsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name", ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml"),true), "");
 	}
 
 	@Test
@@ -419,6 +440,37 @@ public class ResourceBusinessLogicTest {
 		}
 		return resource;
 	}
+	
+	   private Resource createResourceObjectWithModel(boolean afterCreate) {
+	        Resource resource = new Resource();
+	        resource.setName(RESOURCE_NAME);
+	        resource.setToscaResourceName(RESOURCE_TOSCA_NAME);
+	        resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
+	        resource.setDescription("My short description");
+	        List<String> tgs = new ArrayList<>();
+	        tgs.add("test");
+	        tgs.add(resource.getName());
+	        resource.setTags(tgs);
+	        List<String> template = new ArrayList<>();
+	        template.add("tosca.nodes.Root");
+	        resource.setDerivedFrom(template);
+	        resource.setVendorName("Motorola");
+	        resource.setVendorRelease("1.0.0");
+	        resource.setContactId("ya5467");
+	        resource.setIcon("defaulticon");
+	        resource.setModel("Test Model");
+
+	        if (afterCreate) {
+	            resource.setName(resource.getName());
+	            resource.setVersion("0.1");
+	            resource.setUniqueId(resource.getName()
+	                    .toLowerCase() + ":" + resource.getVersion());
+	            resource.setCreatorUserId(user.getUserId());
+	            resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
+	            resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+	        }
+	        return resource;
+	    }
 
 	private Resource createResourceObjectCsar(boolean afterCreate) {
 		Resource resource = new Resource();
@@ -1402,6 +1454,132 @@ public class ResourceBusinessLogicTest {
 	public void createResourceFromCsarTest() {
 		bl.createResourceFromCsar(resourceResponse, user, new HashMap<>(), "");
 	}
+	
+	@Test()
+    public void testCreateResourceFromCsarWithModel() throws URISyntaxException, ZipException {
+        
+        final File csarFile = new File(
+                ResourceBusinessLogicTest.class.getClassLoader().getResource("csars/nonOnapCsar.csar").toURI());
+        final Map<String, byte[]> csar = ZipUtils.readZip(csarFile, false);
+        
+       String resourceYml =  new String(csar.get("Definitions/my_vnf.yaml"));
+        
+       YamlTemplateParsingHandler yamlTemplateParser = new YamlTemplateParsingHandler(mockJanusGraphDao, null, Mockito.mock(AnnotationBusinessLogic.class), null);
+       final ParsedToscaYamlInfo parsedToscaYamlInfo =  yamlTemplateParser.parseResourceInfoFromYAML("Definitions/my_vnf.yml", resourceYml, Collections.EMPTY_MAP, Collections.EMPTY_MAP, "myVnf", resourceResponse);
+        
+        when(toscaOperationFacade.getLatestByToscaResourceName(anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        Resource vduCp = new Resource();
+        vduCp.setToscaResourceName("tosca.nodes.nfv.VduCp");
+        vduCp.setState(LifecycleStateEnum.CERTIFIED);
+        vduCp.setUniqueId("tosca.nodes.nfv.VduCp");
+        vduCp.setProperties(new ArrayList<>());
+        Map<String, List<RequirementDefinition>> requirements = new HashMap<>();
+        RequirementDefinition req = new RequirementDefinition();
+        req.setName("virtual_link");
+        List<RequirementDefinition> listReqs = new ArrayList<>();
+        listReqs.add(req);
+        requirements.put("tosca.nodes.nfv.VduCp", listReqs);
+        vduCp.setRequirements(requirements);
+        PropertyDefinition bitrateProp = new PropertyDefinition();
+        bitrateProp.setName("bitrate_requirement");
+        bitrateProp.setType("integer");
+        vduCp.getProperties().add(bitrateProp);
+        PropertyDefinition virtNiProp = new PropertyDefinition();
+        virtNiProp.setName("virtual_network_interface_requirements");
+        virtNiProp.setType("list");
+        vduCp.getProperties().add(virtNiProp);
+        PropertyDefinition descriptionProp = new PropertyDefinition();
+        descriptionProp.setName("description");
+        descriptionProp.setType("string");
+        vduCp.getProperties().add(descriptionProp);
+        PropertyDefinition roleProp = new PropertyDefinition();
+        roleProp.setName("role");
+        roleProp.setType("string");
+        vduCp.getProperties().add(roleProp);
+        when(toscaOperationFacade.getByToscaResourceNameMatchingVendorRelease("tosca.nodes.nfv.VduCp", "1.0.0")).thenReturn(Either.left(vduCp));
+
+        
+        when(yamlTemplateParsingHandler.parseResourceInfoFromYAML(any(), any(), any(), any(), any(), any())).thenReturn(parsedToscaYamlInfo);
+
+        UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
+        uploadComponentInstanceInfo.setType("myType");
+        resourceResponse.setUniqueId("myVnf");
+        resourceResponse.setName("myVnf");
+        resourceResponse.setSystemName("myVnf");
+        resourceResponse.setModel("testModel");
+        resourceResponse.setResourceType(ResourceTypeEnum.VF);
+        resourceResponse.setProperties(new ArrayList<>());
+        
+        Resource derivedFrom = new Resource();
+        List<PropertyDefinition> properties = new ArrayList<>();
+        PropertyDefinition baseTypeProp = new PropertyDefinition();
+        baseTypeProp.setName("propInBase");
+        baseTypeProp.setType("string");
+        properties.add(baseTypeProp);
+        derivedFrom.setProperties(properties );
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(any(), eq("tosca.nodes.nfv.VNF"))).thenReturn(Either.left(derivedFrom));
+        
+        when(toscaOperationFacade
+        .validateComponentNameAndModelExists("myVnf", "testModel", ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(false));
+
+        when(toscaOperationFacade.addPropertyToComponent(any(), any(), any())).thenReturn(Either.left(new PropertyDefinition()));
+        when(toscaOperationFacade.associateComponentInstancePropertiesToComponent(any(), any())).thenReturn(Either.left(Collections.emptyMap()));
+        when(toscaOperationFacade.associateArtifactsToInstances(any(), any())).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.associateDeploymentArtifactsToInstances(any(), any(), any())).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.associateInstAttributeToComponentToInstances(any(), any())).thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.associateResourceInstances(any(Component.class), anyString(), anyList())).thenReturn(Either.left(Collections.EMPTY_LIST));
+
+        doAnswer(invocation -> {
+            Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instReqs = invocation.getArgument(1);
+            for (final Entry<ComponentInstance, Map<String, List<RequirementDefinition>>> m: instReqs.entrySet()) {
+                m.getKey().setRequirements(m.getValue());
+            }
+            return StorageOperationStatus.OK;
+        }).
+        when(toscaOperationFacade).associateOrAddCalculatedCapReq(any(), any(), any());
+
+        
+        when(toscaOperationFacade.updateCalculatedCapabilitiesRequirements(any(), any(), any())).thenReturn(StorageOperationStatus.OK);
+        when(groupBusinessLogic.validateUpdateVfGroupNames(any(), any())).thenReturn(Either.left(Collections.EMPTY_MAP));
+        
+        ComponentInstance ci = new ComponentInstance();
+        List<ComponentInstance> cis = new ArrayList<>();
+        cis.add(ci);
+        doAnswer(invocation -> {
+            List<ComponentInstance> componentInstances = new ArrayList<ComponentInstance>(((Map<ComponentInstance, Resource>)invocation.getArgument(1)).keySet());
+            ((Resource)invocation.getArgument(0)).setComponentInstances(componentInstances);
+            return null;
+        }).when(toscaOperationFacade).associateComponentInstancesToComponent(any(), any(), eq(false), eq(false));
+
+        doAnswer(invocation -> {
+            return Either.left(invocation.getArgument(0));
+        }).when(csarArtifactsAndGroupsBusinessLogic).deleteVFModules(any(Resource.class), any(CsarInfo.class), eq(true), eq(false));
+
+        doAnswer(invocation -> {
+            return Either.left(resourceResponse);
+        }).when(toscaOperationFacade).getToscaFullElement("myVnf");
+        
+        
+        Resource result = bl.createResourceFromCsar(resourceResponse, user, csar, "1234");
+        
+        assertEquals("myDomain.myVnf", result.getToscaResourceName());
+        List<String> propIds = result.getProperties().stream().map(prop -> prop.getUniqueId()).collect(Collectors.toList());
+        assertTrue(propIds.contains("myVnf.propInBase"));
+        assertTrue(propIds.contains("myVnf.descriptor_id"));
+        assertTrue(propIds.contains("myVnf.descriptor_version"));
+        assertTrue(propIds.contains("myVnf.flavour_description"));
+        assertTrue(propIds.contains("myVnf.flavour_id"));
+        assertTrue(propIds.contains("myVnf.product_name"));
+        assertTrue(propIds.contains("myVnf.provider"));
+        assertTrue(propIds.contains("myVnf.software_version"));
+        assertTrue(propIds.contains("myVnf.vnfm_info"));
+        
+        final List<String> reqsName = new ArrayList<>();
+
+        final List<ComponentInstance> cisWithExtReq = result.getComponentInstances().stream().filter(instance -> instance.getRequirements().get("tosca.nodes.nfv.VduCp").get(0).isExternal()).collect(Collectors.toList());
+        cisWithExtReq.forEach(instance -> reqsName.add(instance.getRequirements().get("tosca.nodes.nfv.VduCp").get(0).getExternalName()));
+        assertEquals(3, cisWithExtReq.size());
+    }
 
 	@Test
 	public void testResourceCategoryAfterCertify_UPDATE() {
@@ -2097,7 +2275,7 @@ public class ResourceBusinessLogicTest {
 		resource.setDerivedFrom(null);
 		resource.setResourceType(ResourceTypeEnum.VF);
 		when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
-		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericVF));
+		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource, null)).thenReturn(Either.left(genericVF));
 		when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericVF)).thenCallRealMethod();
 		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericVF.getProperties(),
 				resource.getUniqueId())).thenCallRealMethod();
@@ -2125,7 +2303,7 @@ public class ResourceBusinessLogicTest {
 		resource.setDerivedFrom(null);
 		resource.setResourceType(ResourceTypeEnum.CR);
 		when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
-		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericCR));
+		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource, null)).thenReturn(Either.left(genericCR));
 		when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericCR)).thenCallRealMethod();
 		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericCR.getProperties(),
 				resource.getUniqueId())).thenCallRealMethod();
@@ -2146,7 +2324,7 @@ public class ResourceBusinessLogicTest {
 		resource.setDerivedFrom(null);
 		resource.setResourceType(ResourceTypeEnum.PNF);
 		when(toscaOperationFacade.createToscaComponent(resource)).thenReturn(Either.left(resource));
-		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource)).thenReturn(Either.left(genericPNF));
+		when(genericTypeBusinessLogic.fetchDerivedFromGenericType(resource, null)).thenReturn(Either.left(genericPNF));
 		when(genericTypeBusinessLogic.generateInputsFromGenericTypeProperties(genericPNF)).thenCallRealMethod();
 		when(genericTypeBusinessLogic.convertGenericTypePropertiesToInputsDefintion(genericPNF.getProperties(),
 				resource.getUniqueId())).thenCallRealMethod();
