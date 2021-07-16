@@ -29,9 +29,6 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStr
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 import static org.openecomp.sdc.common.api.Constants.DEFAULT_GROUP_VF_MODULE;
-
-import com.google.common.annotations.VisibleForTesting;
-import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -185,6 +182,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import com.google.common.annotations.VisibleForTesting;
+import fj.data.Either;
 
 @org.springframework.stereotype.Component("resourceBusinessLogic")
 public class ResourceBusinessLogic extends ComponentBusinessLogic {
@@ -561,14 +560,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             preparedResource = updateExistingResourceByImport(newResource, oldResource, csarInfo.getModifier(), inTransaction, shouldLock,
                 isNested).left;
             log.trace("YAML topology file found in CSAR, file name: {}, contents: {}", yamlFileName, yamlFileContent);
-            handleResourceGenericType(preparedResource);
+            handleResourceGenericType(preparedResource, yamlFileContent, uploadComponentInstanceInfoMap, uploadComponentInstanceInfoMap.getSubstitutionMappingNodeType());
             handleNodeTypes(yamlFileName, preparedResource, yamlFileContent, shouldLock, nodeTypesArtifactsToHandle, createdArtifacts, nodeTypesInfo,
-                csarInfo, nodeName);
+                csarInfo, nodeName, newResource.getModel());
             preparedResource = createInputsOnResource(preparedResource, uploadComponentInstanceInfoMap.getInputs());
             Map<String, Resource> existingNodeTypesByResourceNames = new HashMap<>();
-            preparedResource = createResourceInstances(yamlFileName, preparedResource, oldResource, instances, csarInfo.getCreatedNodes(),
+            final Map<String, UploadComponentInstanceInfo> instancesToCreate = getInstancesToCreate(uploadComponentInstanceInfoMap, newResource.getModel());
+            preparedResource = createResourceInstances(yamlFileName, preparedResource, oldResource, instancesToCreate, csarInfo.getCreatedNodes(),
                 existingNodeTypesByResourceNames);
-            preparedResource = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName, preparedResource, oldResource, instances,
+            preparedResource = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName, preparedResource, oldResource, instancesToCreate,
                 existingNodeTypesByResourceNames);
         } catch (ComponentException e) {
             ResponseFormat responseFormat =
@@ -714,13 +714,29 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         return Either.left(resource);
     }
-
+    
     private Resource handleResourceGenericType(Resource resource) {
         Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
+        
         if (resource.shouldGenerateInputs()) {
             generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
         }
         return genericResource;
+    }
+
+    private Resource handleResourceGenericType(final Resource resource, final String topologyTemplateYaml, final ParsedToscaYamlInfo parsedToscaYamlInfo, final String substitutionMappingNodeType) {
+        if (processSubstitutableAsNodeType(resource, parsedToscaYamlInfo)) {
+            final Map<String, Object> substitutableAsNodeType = getSubstitutableAsNodeTypeFromTemplate((Map<String, Object>) new Yaml().load(topologyTemplateYaml), substitutionMappingNodeType);
+            final Resource genericResource = fetchAndSetDerivedFromGenericType(resource, (String)substitutableAsNodeType.get(TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
+        
+            generatePropertiesFromGenericType(resource, genericResource);
+            generatePropertiesFromNodeType(resource, substitutableAsNodeType);
+            final String resourceId = resource.getUniqueId();
+            resource.getProperties().forEach(propertyDefinition -> propertyDefinition.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(resourceId, propertyDefinition.getName())));
+            createResourcePropertiesOnGraph(resource);
+            return genericResource;
+        } 
+        return handleResourceGenericType(resource);
     }
 
     private Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(
@@ -1072,20 +1088,33 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                                       boolean needLock,
                                                                       Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
                                                                       List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
-                                                                      Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo) {
+                                                                      Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, final String substitutableAsNodeType) {
         Either<String, ResultStatusEnum> toscaVersion = findFirstToscaStringElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION);
         if (toscaVersion.isRight()) {
             throw new ByActionStatusComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
         }
         Map<String, Object> mapToConvert = new HashMap<>();
         mapToConvert.put(TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), toscaVersion.left().value());
-        Map<String, Object> nodeTypes = getNodeTypesFromTemplate(mappedToscaTemplate);
+        final Map<String, Object> nodeTypes = getNodeTypesFromTemplate(mappedToscaTemplate, substitutableAsNodeType);
         createNodeTypes(yamlName, resource, needLock, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, mapToConvert,
             nodeTypes);
         return csarInfo.getCreatedNodes();
     }
 
-    private Map<String, Object> getNodeTypesFromTemplate(Map<String, Object> mappedToscaTemplate) {
+    private Map<String, Object> getNodeTypesFromTemplate(final Map<String, Object> mappedToscaTemplate, final String substitutableAsNodeType) {
+        final Map<String, Object> nodeTypes = getAllNodeTypesInTemplate(mappedToscaTemplate);
+        if (StringUtils.isNotEmpty(substitutableAsNodeType)){
+               nodeTypes.remove(substitutableAsNodeType);
+        }
+        return nodeTypes;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getSubstitutableAsNodeTypeFromTemplate(final Map<String, Object> mappedToscaTemplate, final String substitutableAsNodeType) {
+        return (Map<String, Object>)getAllNodeTypesInTemplate(mappedToscaTemplate).get(substitutableAsNodeType);
+    }
+    
+    private Map<String, Object> getAllNodeTypesInTemplate(final Map<String, Object> mappedToscaTemplate) {
         return ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES).left().orValue(HashMap::new);
     }
 
@@ -1127,7 +1156,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Map<String, Object> nestedVfcJsonMap = nodesInfo.get(nodeName).getMappedToscaTemplate();
         log.debug("************* Going to create node types from yaml {}", yamlName);
         createResourcesFromYamlNodeTypesList(yamlName, resource, nestedVfcJsonMap, false, nodesArtifactsToHandle, createdArtifacts,
-            Collections.emptyMap(), csarInfo);
+            Collections.emptyMap(), csarInfo, resource.getModel());
         log.debug("************* Finished to create node types from yaml {}", yamlName);
         if (nestedVfcJsonMap.containsKey(TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE.getElementName())) {
             log.debug("************* Going to handle complex VFC from yaml {}", yamlName);
@@ -1395,36 +1424,55 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
             loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,
                 "Starting to add inputs from yaml: {}", yamlName);
-            final Resource genericResource = fetchAndSetDerivedFromGenericType(resource);
-            resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
-            log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
-            log.trace("************* Going to add inputs from yaml {}", yamlName);
-            if (resource.shouldGenerateInputs()) {
-                generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
-            }
-            final Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
-            resource = createInputsOnResource(resource, inputs);
-            log.trace("************* Finish to add inputs from yaml {}", yamlName);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
-                "Finish to add inputs from yaml: {}", yamlName);
-            if (resource.getResourceType() == ResourceTypeEnum.PNF) {
-                log.trace("************* Adding generic properties to PNF");
-                resource = (Resource) propertyBusinessLogic.copyPropertyToComponent(resource, genericResource.getProperties());
-                log.trace("************* Adding software information to PNF");
-                softwareInformationBusinessLogic.setSoftwareInformation(resource, csarInfo);
-                log.trace("************* Removing non-mano software information file from PNF");
-                if (csarInfo.getSoftwareInformationPath().isPresent() && !softwareInformationBusinessLogic.removeSoftwareInformationFile(csarInfo)) {
-                    log.warn(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceBusinessLogic.class.getName(), "catalog-be",
-                        "Could not remove the software information file.");
+            final Map<String, UploadComponentInstanceInfo> instancesToCreate;
+            if (processSubstitutableAsNodeType(resource, parsedToscaYamlInfo)) {
+                final Map<String, Object> substitutableAsNodeType = getSubstitutableAsNodeTypeFromTemplate((Map<String, Object>) new Yaml().load(topologyTemplateYaml), parsedToscaYamlInfo.getSubstitutionMappingNodeType());
+                resource.setToscaResourceName(parsedToscaYamlInfo.getSubstitutionMappingNodeType());
+                final Resource genericResource = fetchAndSetDerivedFromGenericType(resource, (String)substitutableAsNodeType.get(TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
+                resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
+                generatePropertiesFromGenericType(resource, genericResource);
+                generatePropertiesFromNodeType(resource, substitutableAsNodeType);
+                final String resourceId = resource.getUniqueId();
+                resource.getProperties().forEach(propertyDefinition -> propertyDefinition.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(resourceId, propertyDefinition.getName())));
+
+                createResourcePropertiesOnGraph(resource);
+                instancesToCreate = getInstancesToCreate(parsedToscaYamlInfo, resource.getModel());
+            } else {
+                final Resource genericResource = fetchAndSetDerivedFromGenericType(resource, null);
+                resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
+                log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
+                log.trace("************* Going to add inputs from yaml {}", yamlName);
+                if (resource.shouldGenerateInputs()) {
+                    generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
                 }
+                final Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
+                resource = createInputsOnResource(resource, inputs);
+                
+                log.trace("************* Finish to add inputs from yaml {}", yamlName);
+                loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                    "Finish to add inputs from yaml: {}", yamlName);
+                if (resource.getResourceType() == ResourceTypeEnum.PNF) {
+                    log.trace("************* Adding generic properties to PNF");
+                    resource = (Resource) propertyBusinessLogic.copyPropertyToComponent(resource, genericResource.getProperties());
+                    log.trace("************* Adding software information to PNF");
+                    softwareInformationBusinessLogic.setSoftwareInformation(resource, csarInfo);
+                    log.trace("************* Removing non-mano software information file from PNF");
+                    if (csarInfo.getSoftwareInformationPath().isPresent() && !softwareInformationBusinessLogic.removeSoftwareInformationFile(csarInfo)) {
+                        log.warn(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceBusinessLogic.class.getName(), "catalog-be",
+                            "Could not remove the software information file.");
+                    }
+                }
+                instancesToCreate = getInstancesToCreate(parsedToscaYamlInfo);
             }
-            final Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo.getInstances();
+
             log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
             loggerSupportability
                 .log(LoggerSupportabilityActions.CREATE_RESOURCE_FROM_YAML, resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,
                     "Start create nodes, RI and Relations  from yaml: {}", yamlName);
-            resource = createRIAndRelationsFromYaml(yamlName, resource, uploadComponentInstanceInfoMap, topologyTemplateYaml,
-                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName);
+            resource = createRIAndRelationsFromYaml(yamlName, resource, instancesToCreate, topologyTemplateYaml,
+                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName, parsedToscaYamlInfo.getSubstitutionMappingNodeType());
+            
+            
             log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
             loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
                 "Finished to create nodes, RI and Relation  from yaml: {}", yamlName);
@@ -1504,6 +1552,22 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(), NodeTypeEnum.Resource);
             }
         }
+    }
+    
+    private boolean processSubstitutableAsNodeType(final Resource resource, final ParsedToscaYamlInfo parsedToscaYamlInfo) {
+        return !resource.getResourceType().isAtomicType() && StringUtils.isNotEmpty(resource.getModel()) && parsedToscaYamlInfo.getSubstitutionMappingNodeType() != null;
+    }
+    
+    private Map<String, UploadComponentInstanceInfo> getInstancesToCreate(final ParsedToscaYamlInfo parsedToscaYamlInfo) {
+        return getInstancesToCreate(parsedToscaYamlInfo, null);
+    }
+    
+    private Map<String, UploadComponentInstanceInfo> getInstancesToCreate(final ParsedToscaYamlInfo parsedToscaYamlInfo, final String model) {
+        if (StringUtils.isEmpty(model) || StringUtils.isEmpty(parsedToscaYamlInfo.getSubstitutionMappingNodeType())) {
+            return parsedToscaYamlInfo.getInstances();
+        }
+        return  parsedToscaYamlInfo.getInstances().entrySet().stream().filter(entry -> !parsedToscaYamlInfo.getSubstitutionMappingNodeType().equals(entry.getValue().getType()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private void rollback(boolean inTransaction, Resource resource, List<ArtifactDefinition> createdArtifacts,
@@ -1689,6 +1753,41 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         return resource;
     }
+    
+    private Resource generatePropertiesFromNodeType(final Resource resource, final Map<String, Object> nodeType) {
+        final Either<Map<String, PropertyDefinition>, ResultStatusEnum> properties = ImportUtils.getProperties(nodeType);
+        if (properties.isLeft()) {
+            final List<PropertyDefinition> propertiesList = new ArrayList<>();
+            final Map<String, PropertyDefinition> value = properties.left().value();
+            if (value != null) {
+                for (Entry<String, PropertyDefinition> entry : value.entrySet()) {
+                    final String name = entry.getKey();
+                    final PropertyDefinition propertyDefinition = entry.getValue();
+                    propertyDefinition.setName(name);
+                    propertiesList.add(propertyDefinition);
+                    resource.getProperties().removeIf(p -> p.getName().equals(name));
+                }
+            }
+            resource.getProperties().addAll(propertiesList);
+        } 
+        return resource;
+    }
+    
+    private Resource createResourcePropertiesOnGraph(final Resource resource) {
+        final List<PropertyDefinition> resourceProperties = resource.getProperties();
+        for (PropertyDefinition propertyDefinition: resourceProperties) {
+            final Either<PropertyDefinition, StorageOperationStatus> addPropertyEither = toscaOperationFacade
+                    .addPropertyToComponent(propertyDefinition.getName(), propertyDefinition, resource);
+            
+            if (addPropertyEither.isRight()) {
+                final String error = String.format("failed to add properties from yaml: {}", addPropertyEither.right().value());
+                loggerSupportability.log(LoggerSupportabilityActions.CREATE_PROPERTIES, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
+                        error);
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(addPropertyEither.right().value()), error);
+            }
+        }
+        return resource;
+    }
 
     private List<GroupDefinition> updateGroupsMembersUsingResource(Map<String, GroupDefinition> groups, Resource component) {
         List<GroupDefinition> result = new ArrayList<>();
@@ -1829,10 +1928,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                   String topologyTemplateYaml, List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
                                                   Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
                                                   Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                                  String nodeName) {
+                                                  String nodeName, final String substitutableAsNodeType) {
         log.debug("************* Going to create all nodes {}", yamlName);
         handleNodeTypes(yamlName, resource, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts, nodeTypesInfo,
-            csarInfo, nodeName);
+            csarInfo, nodeName, substitutableAsNodeType);
         log.debug("************* Finished to create all nodes {}", yamlName);
         log.debug("************* Going to create all resource instances {}", yamlName);
         Map<String, Resource> existingNodeTypesByResourceNames = new HashMap<>();
@@ -1864,7 +1963,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private void handleNodeTypes(String yamlName, Resource resource, String topologyTemplateYaml, boolean needLock,
                                  Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToHandle,
                                  List<ArtifactDefinition> nodeTypesNewCreatedArtifacts, Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo,
-                                 String nodeName) {
+                                 String nodeName, String substitutableAsNodeType) {
         try {
             for (Entry<String, NodeTypeInfo> nodeTypeEntry : nodeTypesInfo.entrySet()) {
                 if (nodeTypeEntry.getValue().isNested() && !nodeTypeAlreadyExists(nodeTypeEntry.getKey())) {
@@ -1881,7 +1980,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 mappedToscaTemplate = (Map<String, Object>) new Yaml().load(topologyTemplateYaml);
             }
             createResourcesFromYamlNodeTypesList(yamlName, resource, mappedToscaTemplate, needLock, nodeTypesArtifactsToHandle,
-                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo);
+                nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, substitutableAsNodeType);
         } catch (ComponentException e) {
             ResponseFormat responseFormat =
                 e.getResponseFormat() != null ? e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
@@ -2384,14 +2483,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private void handleSubstitutionMappings(Resource resource, Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
+        Either<Resource, StorageOperationStatus> getResourceRes = null;
         if (resource.getResourceType() == ResourceTypeEnum.CVFC) {
-            Either<Resource, StorageOperationStatus> getResourceRes = updateCalculatedCapReqWithSubstitutionMappings(resource, uploadResInstancesMap);
-            if (getResourceRes.isRight()) {
-                ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
-                throw new ByResponseFormatComponentException(responseFormat);
-            }
+            getResourceRes = updateCalculatedCapReqWithSubstitutionMappings(resource, uploadResInstancesMap);
+        } else if (StringUtils.isNotEmpty(resource.getModel()) && resource.getResourceType() == ResourceTypeEnum.VF) {
+            getResourceRes = updateCalculatedCapReqWithSubstitutionMappingsForVf(resource, uploadResInstancesMap);
         }
+        if (getResourceRes != null && getResourceRes.isRight()) {
+            ResponseFormat responseFormat = componentsUtils
+                .getResponseFormatByResource(componentsUtils.convertFromStorageResponse(getResourceRes.right().value()), resource);
+            throw new ByResponseFormatComponentException(responseFormat);
+        }
+  
     }
 
     private void addRelationsToRI(String yamlName, Resource resource, Map<String, UploadComponentInstanceInfo> uploadResInstancesMap,
@@ -2559,6 +2662,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         Either<Resource, StorageOperationStatus> updateRes = null;
         Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> updatedInstCapabilities = new HashMap<>();
         Map<ComponentInstance, Map<String, List<RequirementDefinition>>> updatedInstRequirements = new HashMap<>();
+        
         StorageOperationStatus status = toscaOperationFacade.deleteAllCalculatedCapabilitiesRequirements(resource.getUniqueId());
         if (status != StorageOperationStatus.OK && status != StorageOperationStatus.NOT_FOUND) {
             log.debug("Failed to delete all calculated capabilities and requirements of resource {} upon update. Status is {}",
@@ -2576,6 +2680,31 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 updateRes = Either.right(status);
             }
         }
+        if (updateRes == null) {
+            updateRes = Either.left(resource);
+        }
+        return updateRes;
+    }
+    
+    private Either<Resource, StorageOperationStatus> updateCalculatedCapReqWithSubstitutionMappingsForVf(final Resource resource,
+            final Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
+        Either<Resource, StorageOperationStatus> updateRes = null;
+        final Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> updatedInstCapabilities = new HashMap<>();
+        final Map<ComponentInstance, Map<String, List<RequirementDefinition>>> updatedInstRequirements = new HashMap<>();
+        
+        resource.getComponentInstances().forEach(i -> {
+            setExternalCapabilities(updatedInstCapabilities, i, uploadResInstancesMap.get(i.getName()).getCapabilitiesNamesToUpdate());
+            setExternalRequirements(updatedInstRequirements, i, uploadResInstancesMap.get(i.getName()).getRequirementsNamesToUpdate());
+        });
+
+        final StorageOperationStatus status = toscaOperationFacade.updateCalculatedCapabilitiesRequirements(updatedInstCapabilities, updatedInstRequirements, resource);
+        if (status != StorageOperationStatus.OK) {
+            log.debug(
+                    "Failed to update capabilities and requirements of resource {}. Status is {}",
+                    resource.getUniqueId(), status);
+            updateRes = Either.right(status);
+        }
+
         if (updateRes == null) {
             updateRes = Either.left(resource);
         }
@@ -2610,6 +2739,54 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
         if (isNotEmpty(updatedRequirements)) {
             updatedInstRequirements.put(instance, updatedRequirements);
+        }
+    }
+    
+    private void setExternalRequirements(
+            final Map<ComponentInstance, Map<String, List<RequirementDefinition>>> updatedInstRequirements,
+            final ComponentInstance instance, final Map<String, String> requirementsNamesToUpdate) {
+        final Map<String, List<RequirementDefinition>> updatedRequirements = new HashMap<>();
+        final Set<String> updatedReqNames = new HashSet<>();
+        if (isNotEmpty(requirementsNamesToUpdate)) {
+            for (Map.Entry<String, List<RequirementDefinition>> requirements : instance.getRequirements().entrySet()) {
+                updatedRequirements.put(requirements.getKey(),
+                        requirements.getValue().stream()
+                                .filter(r -> requirementsNamesToUpdate.containsKey(r.getName())
+                                        && !updatedReqNames.contains(requirementsNamesToUpdate.get(r.getName())))
+                                .map(r -> {
+                                    r.setExternal(true);
+                                    r.setExternalName(requirementsNamesToUpdate.get(r.getName()));
+                                    updatedReqNames.add(r.getName());
+                                    return r;
+                                }).collect(toList()));
+            }
+        }
+        if (isNotEmpty(updatedRequirements)) {
+            updatedInstRequirements.put(instance, updatedRequirements);
+        }
+    }
+    
+    private void setExternalCapabilities(
+            final Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> updatedInstCapabilties,
+            final ComponentInstance instance, Map<String, String> capabilitiesNamesToUpdate) {
+        final Map<String, List<CapabilityDefinition>> updatedCapabilities = new HashMap<>();
+        final Set<String> updatedCapNames = new HashSet<>();
+        if (isNotEmpty(capabilitiesNamesToUpdate)) {
+            for (Map.Entry<String, List<CapabilityDefinition>> requirements : instance.getCapabilities().entrySet()) {
+                updatedCapabilities.put(requirements.getKey(),
+                        requirements.getValue().stream()
+                                .filter(c -> capabilitiesNamesToUpdate.containsKey(c.getName())
+                                        && !updatedCapNames.contains(capabilitiesNamesToUpdate.get(c.getName())))
+                                .map(c -> {
+                                    c.setExternal(true);
+                                    c.setExternalName(capabilitiesNamesToUpdate.get(c.getName()));
+                                    updatedCapNames.add(c.getName());
+                                    return c;
+                                }).collect(toList()));
+            }
+        }
+        if (isNotEmpty(updatedCapabilities)) {
+            updatedInstCapabilties.put(instance, updatedCapabilities);
         }
     }
 
@@ -3383,6 +3560,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             newResource.setUUID(oldResource.getUUID());
             newResource.setNormalizedName(oldResource.getNormalizedName());
             newResource.setSystemName(oldResource.getSystemName());
+            newResource.setModel(oldResource.getModel());
             if (oldResource.getCsarUUID() != null) {
                 newResource.setCsarUUID(oldResource.getCsarUUID());
             }
