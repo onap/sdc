@@ -40,7 +40,9 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
     @Getter
     @Setter
     private boolean external = false;
-
+    @Getter
+    @Setter
+    private String externalName;
     /**
      * The default constructor initializing limits of the occurrences
      */
@@ -91,6 +93,7 @@ public class CapabilityDataDefinition extends ToscaDataDefinition {
         this.setSource(other.getSource());
         this.setOwnerType(other.getOwnerType());
         this.setExternal(other.isExternal());
+        this.setExternalName(other.getExternalName());
     }
 
     public CapabilityDataDefinition(CapabilityTypeDataDefinition other) {

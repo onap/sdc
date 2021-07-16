@@ -737,23 +737,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         });
     }
 
-    private void generatePropertiesFromGenericType(final Service service, final Resource genericType) {
-        if (CollectionUtils.isEmpty(genericType.getProperties())) {
-            return;
-        }
-        final List<PropertyDefinition> genericTypePropertyList = genericType.getProperties().stream().map(PropertyDefinition::new)
-            .peek(propertyDefinition -> propertyDefinition.setUniqueId(null)).collect(Collectors.toList());
-        if (service.getProperties() == null) {
-            service.setProperties(new ArrayList<>(genericTypePropertyList));
-        } else {
-            List<PropertyDefinition> servicePropertyList = service.getProperties();
-            genericTypePropertyList.stream()
-                .filter(property -> servicePropertyList.stream().noneMatch(property1 -> property1.getName().equals(property.getName())))
-                .forEach(servicePropertyList::add);
-        }
-        service.getProperties().forEach(propertyDefinition -> propertyDefinition.setUniqueId(null));
-    }
-
     @SuppressWarnings("unchecked")
     private void createServiceApiArtifactsData(Service service, User user) {
         // create mandatory artifacts
