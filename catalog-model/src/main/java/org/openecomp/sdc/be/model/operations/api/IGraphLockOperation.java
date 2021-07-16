@@ -30,4 +30,6 @@ public interface IGraphLockOperation {
     StorageOperationStatus lockComponentByName(String name, NodeTypeEnum nodeType);
 
     StorageOperationStatus unlockComponentByName(String name, String componentId, NodeTypeEnum nodeType);
+
+    boolean disableLocking(final boolean disable);
 }
