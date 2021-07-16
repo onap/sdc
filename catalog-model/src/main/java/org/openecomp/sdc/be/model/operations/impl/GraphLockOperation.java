@@ -27,16 +27,16 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
 
+import lombok.NoArgsConstructor;
+
 @Component("graph-lock-operation")
+@NoArgsConstructor
 public class GraphLockOperation implements IGraphLockOperation {
 
     private static final Logger log = Logger.getLogger(GraphLockOperation.class.getName());
+    private boolean disable = false;
     @javax.annotation.Resource
     private JanusGraphGenericDao janusGraphGenericDao;
-
-    public GraphLockOperation() {
-        super();
-    }
 
     /*
      * (non-Javadoc)
@@ -48,7 +48,7 @@ public class GraphLockOperation implements IGraphLockOperation {
         log.info("lock resource with id {}", componentId);
         JanusGraphOperationStatus lockElementStatus = null;
         try {
-            lockElementStatus = janusGraphGenericDao.lockElement(componentId, nodeType);
+            lockElementStatus = disable ? JanusGraphOperationStatus.OK : janusGraphGenericDao.lockElement(componentId, nodeType);
         } catch (Exception e) {
             lockElementStatus = JanusGraphOperationStatus.ALREADY_LOCKED;
         }
@@ -62,13 +62,13 @@ public class GraphLockOperation implements IGraphLockOperation {
      */
     @Override
     public StorageOperationStatus unlockComponent(String componentId, NodeTypeEnum nodeType) {
-        JanusGraphOperationStatus lockElementStatus = janusGraphGenericDao.releaseElement(componentId, nodeType);
+        JanusGraphOperationStatus lockElementStatus = disable ? JanusGraphOperationStatus.OK : janusGraphGenericDao.releaseElement(componentId, nodeType);
         return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
     }
 
     @Override
     public StorageOperationStatus unlockComponentByName(String name, String componentId, NodeTypeEnum nodeType) {
-        JanusGraphOperationStatus lockElementStatus = janusGraphGenericDao.releaseElement(name, nodeType);
+        JanusGraphOperationStatus lockElementStatus = disable ? JanusGraphOperationStatus.OK : janusGraphGenericDao.releaseElement(name, nodeType);
         return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
     }
 
@@ -77,10 +77,17 @@ public class GraphLockOperation implements IGraphLockOperation {
         log.info("lock resource with name {}", name);
         JanusGraphOperationStatus lockElementStatus = null;
         try {
-            lockElementStatus = janusGraphGenericDao.lockElement(name, nodeType);
+            lockElementStatus = disable ? JanusGraphOperationStatus.OK : janusGraphGenericDao.lockElement(name, nodeType);
         } catch (Exception e) {
             lockElementStatus = JanusGraphOperationStatus.ALREADY_LOCKED;
         }
         return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(lockElementStatus);
+    }
+
+    @Override
+    public boolean disableLocking(boolean disable) {
+        log.info("Toggling disable locking from {} to {}", this.disable, disable);
+        this.disable = disable;
+        return this.disable;
     }
 }
