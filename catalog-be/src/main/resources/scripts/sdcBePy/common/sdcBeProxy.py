@@ -49,6 +49,9 @@ class SdcBeProxy:
             'consumerPassword': password
         }))
 
+    def disable_locking(self, disable):
+        return self.con.post("/sdc2/rest/v1/catalog/lock", disable)
+
     def get_normatives(self):
         return self.con.get("/sdc2/rest/v1/screen", with_buffer=True)
 
