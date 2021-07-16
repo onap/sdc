@@ -17,7 +17,8 @@ def main(sdc_be_proxy, update_version):
     # base_file_location = os.getcwd() + "/../../../import/tosca/"
     base_file_location = os.getcwd() + os.path.sep
     logger.debug("working directory =" + base_file_location)
-
+    if sdc_be_proxy.disable_locking("true") != 200:
+        raise RuntimeError("Failed to disable locking")
     model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy))
     try:
         model_import_manager.create_models()
@@ -28,7 +29,8 @@ def main(sdc_be_proxy, update_version):
     process_element_list(normativeElementsList.get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
     process_type_list(normativeTypesList.get_normative_type_candidate_list(base_file_location), sdc_be_proxy, update_version)
     process_element_list(normativeElementsList.get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
-
+    if sdc_be_proxy.disable_locking("false") != 200:
+        raise RuntimeError("Failed to enable locking")
     logger.log("Script end ->", "All normatives imported successfully!")
     logger.print_and_exit(0, None)
 
