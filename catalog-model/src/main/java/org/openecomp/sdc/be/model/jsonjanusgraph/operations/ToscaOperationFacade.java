@@ -1872,6 +1872,36 @@ public class ToscaOperationFacade {
         updateInstancesCapAndReqOnComponentFromDB(component);
         return storageOperationStatus;
     }
+    
+    public StorageOperationStatus updateCalculatedCapabilitiesRequirements(final Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> instCapabilties,
+            final Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instReg,
+            final Component component) {
+        StorageOperationStatus storageOperationStatus = StorageOperationStatus.OK;
+        if (instCapabilties != null) {
+            for (Entry<ComponentInstance, Map<String, List<CapabilityDefinition>>> entry : instCapabilties.entrySet()) {
+                final Map<String, List<CapabilityDefinition>> cap = entry.getValue();
+                for (List<CapabilityDefinition> capabilityList: cap.values()) {
+                    for (CapabilityDefinition capability: capabilityList) {
+                        nodeTemplateOperation.updateComponentInstanceCapabilities(component.getUniqueId(), entry.getKey().getUniqueId(), capability);
+                    }
+                }
+            }
+        }
+        if (instReg != null) {
+            for (Entry<ComponentInstance, Map<String, List<RequirementDefinition>>> entry : instReg.entrySet()) {
+                final Map<String, List<RequirementDefinition>> req = entry.getValue();
+                for (List<RequirementDefinition> requirementList: req.values()) {
+                    for (RequirementDefinition requirement: requirementList) {
+                        storageOperationStatus = nodeTemplateOperation.updateComponentInstanceRequirement(component.getUniqueId(), entry.getKey().getUniqueId(), requirement);
+                        if (storageOperationStatus != StorageOperationStatus.OK) {
+                            return storageOperationStatus;
+                        }
+                    }
+                }
+            }
+        }
+        return storageOperationStatus;
+    }
 
     private void updateInstancesCapAndReqOnComponentFromDB(Component component) {
         ComponentParametersView componentParametersView = new ComponentParametersView(true);
@@ -1897,6 +1927,9 @@ public class ToscaOperationFacade {
         // include props
         hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
         hasProps.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        if (modelName != null) {
+            hasProps.put(GraphPropertyEnum.MODEL, modelName);
+        }
         // exclude props
         states.add(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         hasNotProps.put(GraphPropertyEnum.STATE, states);
@@ -1913,7 +1946,7 @@ public class ToscaOperationFacade {
         List<Service> services = null;
         Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
         Map<GraphPropertyEnum, Object> hasNotProps = new EnumMap<>(GraphPropertyEnum.class);
-        fillPropsMap(hasProps, hasNotProps, internalComponentType, componentTypeEnum, isAbstract, vertexType);
+        fillPropsMap(hasProps, hasNotProps, internalComponentType, componentTypeEnum, isAbstract, vertexType, modelName);
         Either<List<GraphVertex>, JanusGraphOperationStatus> getRes = janusGraphDao
             .getByCriteria(vertexType, hasProps, hasNotProps, JsonParseFlagEnum.ParseMetadata);
         if (getRes.isRight() && !JanusGraphOperationStatus.NOT_FOUND.equals(getRes.right().value())) {
@@ -2156,11 +2189,14 @@ public class ToscaOperationFacade {
     }
 
     private void fillPropsMap(Map<GraphPropertyEnum, Object> hasProps, Map<GraphPropertyEnum, Object> hasNotProps, String internalComponentType,
-                              ComponentTypeEnum componentTypeEnum, boolean isAbstract, VertexTypeEnum internalVertexType) {
+                              ComponentTypeEnum componentTypeEnum, boolean isAbstract, VertexTypeEnum internalVertexType, String modelName) {
         hasNotProps.put(GraphPropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT.name());
         hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
         hasNotProps.put(GraphPropertyEnum.IS_ARCHIVED, true);
         hasProps.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
+        if (modelName != null) {
+            hasProps.put(GraphPropertyEnum.MODEL, modelName);
+        }
         if (VertexTypeEnum.NODE_TYPE == internalVertexType) {
             hasProps.put(GraphPropertyEnum.IS_ABSTRACT, isAbstract);
             if (internalComponentType != null) {

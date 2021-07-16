@@ -1110,6 +1110,7 @@ public class NodeTemplateOperation extends BaseOperation {
     private void bindCapabilityDefinition(final CapabilityDataDefinition fromCapabilityDefinition,
                                           final CapabilityDataDefinition capabilityDefinitionToUpdate) {
         capabilityDefinitionToUpdate.setExternal(fromCapabilityDefinition.isExternal());
+        capabilityDefinitionToUpdate.setExternalName(fromCapabilityDefinition.getExternalName());
     }
 
     private Optional<GraphVertex> findComponentVertex(final String componentId) {
@@ -1190,7 +1191,7 @@ public class NodeTemplateOperation extends BaseOperation {
 
         listRequirementDataDefinition.getListToscaDataDefinition().stream()
             .filter(e -> requirementDataDefinition.getOwnerId().equals(e.getOwnerId()) && requirementDataDefinition.getName().equals(e.getName()))
-            .forEach(r -> r.setExternal(requirementDataDefinition.isExternal()));
+            .forEach(r -> {r.setExternal(requirementDataDefinition.isExternal()); r.setExternalName(requirementDataDefinition.getExternalName());});
 
         return updateCalculatedReqOnGraph(componentId, containerV, existingReqs);
     }

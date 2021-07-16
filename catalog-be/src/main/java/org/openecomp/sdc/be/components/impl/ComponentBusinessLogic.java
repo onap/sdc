@@ -686,14 +686,34 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         });
         return componentNonGenericInputs;
     }
+    
+    protected void generatePropertiesFromGenericType(final Component component, final Resource genericType) {
+        if (CollectionUtils.isEmpty(genericType.getProperties())) {
+            return;
+        }
+        final List<PropertyDefinition> genericTypePropertyList = genericType.getProperties().stream().map(PropertyDefinition::new)
+            .peek(propertyDefinition -> propertyDefinition.setUniqueId(null)).collect(Collectors.toList());
+        if (component.getProperties() == null) {
+            component.setProperties(new ArrayList<>(genericTypePropertyList));
+        } else {
+            List<PropertyDefinition> servicePropertyList = component.getProperties();
+            genericTypePropertyList.stream()
+                .filter(property -> servicePropertyList.stream().noneMatch(property1 -> property1.getName().equals(property.getName())))
+                .forEach(servicePropertyList::add);
+        }
+        component.getProperties().forEach(propertyDefinition -> propertyDefinition.setUniqueId(null));
+    }
+    protected <T extends Component> Resource fetchAndSetDerivedFromGenericType(final T component) {
+        return fetchAndSetDerivedFromGenericType(component, null);
+    }
 
-    protected <T extends Component> Resource fetchAndSetDerivedFromGenericType(T component) {
-        Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic.fetchDerivedFromGenericType(component);
+    protected <T extends Component> Resource fetchAndSetDerivedFromGenericType(final T component, final String toscaType) {
+        final Either<Resource, ResponseFormat> genericTypeEither = this.genericTypeBusinessLogic.fetchDerivedFromGenericType(component, toscaType);
         if (genericTypeEither.isRight()) {
             log.debug("Failed to fetch latest generic type for component {} of type", component.getName(), component.assetType());
             throw new ByActionStatusComponentException(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType());
         }
-        Resource genericTypeResource = genericTypeEither.left().value();
+        final Resource genericTypeResource = genericTypeEither.left().value();
         component.setDerivedFromGenericInfo(genericTypeResource);
         return genericTypeResource;
     }
@@ -855,7 +875,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<Boolean, ResponseFormat> shouldUpgradeToLatestGeneric(Component clonedComponent) {
-        if (!clonedComponent.deriveFromGeneric()) {
+        if (!clonedComponent.deriveFromGeneric() || StringUtils.isNotEmpty(clonedComponent.getModel())) {
             return Either.left(false);
         }
         Boolean shouldUpgrade = false;

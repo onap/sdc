@@ -95,7 +95,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     @Test
     public void testHappyScenario() {
         Service service = createServiceObject(false);
-        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
         if (createResponse.isRight()) {
@@ -107,7 +107,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     @Test
     public void testServiceCreationPluginCall() {
         final Service service = createServiceObject(false);
-        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
         final List<ServiceCreationPlugin> serviceCreationPlugins = new ArrayList<>();
         serviceCreationPlugins.add(new ServiceCreationPlugin() {
             @Override
@@ -143,7 +143,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
         final Resource genericTypeResource = mockGenericTypeResource();
 
-        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericTypeResource));
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericTypeResource));
         final Service expectedService = createServiceObject(true);
         expectedService.setProperties(mockPropertyList());
         when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(expectedService));
@@ -168,7 +168,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
         final Resource genericTypeResource = mockGenericTypeResource();
 
-        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericTypeResource));
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericTypeResource));
         final Service expectedService = createServiceObject(true);
         expectedService.setProperties(mockPropertyList());
         expectedService.getProperties().add(serviceProperty);
@@ -188,7 +188,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     public void testHappyScenarioCRNullProjectCode() {
         Service service = createServiceObject(false);
         service.setProjectCode(null);
-        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
         if (createResponse.isRight()) {
@@ -202,7 +202,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         createServiceValidator();
         Service service = createServiceObject(false);
         service.setProjectCode("");
-        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
 
         if (createResponse.isRight()) {
@@ -744,7 +744,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     public void testDerivedFromGeneric() {
         Service service = createServiceObject(true);
         when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(service));
-        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service)).thenReturn(Either.left(genericService));
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
         assertTrue(createResponse.isLeft());
         service = createResponse.left().value();
