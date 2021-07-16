@@ -301,9 +301,7 @@ public class CapabilityRequirementConverter {
         Map<String, String[]> toscaRequirements = new HashMap<>();
         Either<Map<String, String[]>, ToscaError> result = null;
         for (Map.Entry<String, List<RequirementDefinition>> entry : requirements.entrySet()) {
-            Optional<RequirementDefinition> failedToAddRequirement = entry.getValue().stream().filter(RequirementDefinition::isExternal).filter(
-                r -> !addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getName(), r.getParentName(), ""),
-                    r.getPreviousName(), r.getOwnerId(), r.getPath())).findAny();
+            Optional<RequirementDefinition> failedToAddRequirement = addExternalToToscaRequirements(componentsCache, toscaRequirements, component, entry.getValue());
             if (failedToAddRequirement.isPresent()) {
                 logger.debug("Failed to convert requirement {} for substitution mappings section of a tosca template of the component {}. ",
                     failedToAddRequirement.get().getName(), component.getName());
@@ -316,6 +314,18 @@ public class CapabilityRequirementConverter {
         }
         return result;
     }
+    
+    private Optional<RequirementDefinition> addExternalToToscaRequirements(final Map<String, Component> componentsCache, 
+            final Map<String, String[]> toscaRequirements, final Component component, final List<RequirementDefinition> requirements) {
+        return requirements.stream().filter(RequirementDefinition::isExternal).filter(
+                r -> !
+                (StringUtils.isEmpty(r.getExternalName()) ?
+                    addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getName(), r.getParentName(), ""),
+                        r.getPreviousName(), r.getOwnerId(), r.getPath()): 
+                    addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getExternalName(), r.getName(), ""),
+                        r.getPreviousName(), r.getOwnerId(), r.getPath(), false))
+                    ).findAny();
+    }
 
     private Either<Map<String, String[]>, ToscaError> buildAddSubstitutionMappingsCapabilities(Map<String, Component> componentsCache,
                                                                                                Component component,
@@ -323,11 +333,7 @@ public class CapabilityRequirementConverter {
         Map<String, String[]> toscaCapabilities = new HashMap<>();
         Either<Map<String, String[]>, ToscaError> result = null;
         for (Map.Entry<String, List<CapabilityDefinition>> entry : capabilities.entrySet()) {
-            Optional<CapabilityDefinition> failedToAddRequirement = entry.getValue().stream()
-                .filter(CapabilityDataDefinition::isExternal)
-                .filter( c -> !addEntry(componentsCache, toscaCapabilities, component, new SubstitutionEntry(c.getName(), c.getParentName(), "")
-                    , c.getPreviousName(), c.getOwnerId(), c.getPath()))
-                .findAny();
+            Optional<CapabilityDefinition> failedToAddRequirement = addExternalToToscaCapabilities(componentsCache, toscaCapabilities, component, entry.getValue());
             if (failedToAddRequirement.isPresent()) {
                 logger.debug("Failed to convert capability {} for substitution mappings section of a tosca template of the component {}. ",
                     failedToAddRequirement.get().getName(), component.getName());
@@ -340,18 +346,38 @@ public class CapabilityRequirementConverter {
         }
         return result;
     }
+    
+    private Optional<CapabilityDefinition> addExternalToToscaCapabilities(final Map<String, Component> componentsCache, 
+            final Map<String, String[]> toscaCapabilities, final Component component, final List<CapabilityDefinition> requirements) {
+        return requirements.stream()
+                .filter(CapabilityDataDefinition::isExternal)
+                .filter( c -> !
+                        (StringUtils.isEmpty(c.getExternalName()) ?
+                                addEntry(componentsCache, toscaCapabilities, component, new SubstitutionEntry(c.getName(), c.getParentName(), ""),
+                                    c.getPreviousName(), c.getOwnerId(), c.getPath()):
+                                addEntry(componentsCache, toscaCapabilities, component, new SubstitutionEntry(c.getName(), c.getParentName(), ""),
+                                    c.getPreviousName(), c.getOwnerId(), c.getPath(), false))
+                ).findAny();
+    }
 
     private boolean addEntry(Map<String, Component> componentsCache, Map<String, String[]> capReqMap, Component component, SubstitutionEntry entry,
                              String previousName, String ownerId, List<String> path) {
-        if (shouldBuildSubstitutionName(component, path) && !buildSubstitutedNamePerInstance(componentsCache, component, entry.getFullName(),
-            previousName, path, ownerId, entry)) {
+        return addEntry(componentsCache, capReqMap, component, entry, previousName, ownerId, path, shouldBuildSubstitutionName(component, path));
+    }
+    
+    private boolean addEntry(final Map<String, Component> componentsCache, Map<String, String[]> capReqMap, final Component component, 
+            final SubstitutionEntry entry, final String previousName, final String ownerId, final List<String> path, final boolean shouldBuildSubstitutionName) {
+        if (shouldBuildSubstitutionName && !buildSubstitutedNamePerInstance(componentsCache,
+                component, entry.getFullName(), previousName, path, ownerId, entry)) {
             return false;
         }
-        logger.debug("The requirement/capability {} belongs to the component {} ", entry.getFullName(), component.getUniqueId());
+        logger.debug("The requirement/capability {} belongs to the component {} ", entry.getFullName(),
+                component.getUniqueId());
         if (StringUtils.isNotEmpty(entry.getSourceName())) {
             addEntry(capReqMap, component, path, entry);
         }
-        logger.debug("Finish convert the requirement/capability {} for the component {}. ", entry.getFullName(), component.getName());
+        logger.debug("Finish convert the requirement/capability {} for the component {}. ", entry.getFullName(),
+                component.getName());
         return true;
     }
 
@@ -445,10 +471,16 @@ public class CapabilityRequirementConverter {
 
     private ImmutablePair<String, ToscaRequirement> convertRequirement(Map<String, Component> componentsCache, Component component,
                                                                        boolean isNodeType, RequirementDefinition r) {
-        String name = r.getName();
-        if (!isNodeType && ToscaUtils.isNotComplexVfc(component)) {
-            name = buildReqNamePerOwnerByPath(componentsCache, component, r);
+        String name;
+        if (StringUtils.isEmpty(r.getExternalName())){
+            name = r.getName();
+            if (!isNodeType && ToscaUtils.isNotComplexVfc(component)) {
+                name = buildReqNamePerOwnerByPath(componentsCache, component, r);
+            }
+        } else {
+            name = r.getExternalName();
         }
+        
         logger.debug("the requirement {} belongs to resource {} ", name, component.getUniqueId());
         ToscaRequirement toscaRequirement = createToscaRequirement(r);
         return new ImmutablePair<>(name, toscaRequirement);
@@ -546,9 +578,14 @@ public class CapabilityRequirementConverter {
 
     private void convertCapability(Map<String, Component> componentsCache, Component component, Map<String, ToscaCapability> toscaCapabilities,
                                    boolean isNodeType, CapabilityDefinition c, Map<String, DataTypeDefinition> dataTypes, String capabilityName) {
-        String name = isNoneBlank(capabilityName) ? capabilityName : c.getName();
-        if (!isNodeType && ToscaUtils.isNotComplexVfc(component)) {
-            name = buildCapNamePerOwnerByPath(componentsCache, c, component);
+        String name;
+        if (StringUtils.isEmpty(c.getExternalName())) {
+            name = isNoneBlank(capabilityName) ? capabilityName : c.getName();
+            if (!isNodeType && ToscaUtils.isNotComplexVfc(component)) {
+                name = buildCapNamePerOwnerByPath(componentsCache, c, component);
+            }
+        } else {
+            name = c.getExternalName();
         }
         logger.debug("The capability {} belongs to resource {} ", name, component.getUniqueId());
         createToscaCapability(toscaCapabilities, c, dataTypes, name);
