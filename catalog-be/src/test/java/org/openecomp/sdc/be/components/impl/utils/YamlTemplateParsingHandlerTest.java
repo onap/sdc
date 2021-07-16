@@ -264,6 +264,7 @@ public class YamlTemplateParsingHandlerTest {
                            .get(CAPABILITY_TYPE)
                            .get(0).getProperties().get(0).getValue()).isEqualTo("success");
         assertThat(parsedYaml.getGroups().get(MAIN_GROUP_NAME).getCapabilities()).isNotNull();
+        assertThat(parsedYaml.getSubstitutionMappingNodeType()).isEqualTo("org.openecomp.resource.abstract.nodes.VF");
     }
 
     private void stubGetGroupType() {
