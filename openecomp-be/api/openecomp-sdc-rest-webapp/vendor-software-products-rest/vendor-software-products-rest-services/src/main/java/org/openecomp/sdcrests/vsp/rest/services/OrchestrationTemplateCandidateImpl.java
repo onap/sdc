@@ -160,17 +160,21 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             try {
                 packageInputStream = fileToUpload.getDataHandler().getInputStream();
             } catch (final IOException e) {
-                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(new ErrorMessage(ErrorLevel.ERROR, UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename)))).build();
+                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
+                    new ErrorMessage(ErrorLevel.ERROR, UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename)))).build();
             }
             try {
                 artifactInfo = artifactStorageManager.upload(vspId, versionId, packageInputStream);
             } catch (final BusinessException e) {
-                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename)))).build();
+                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
+                    new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename)))).build();
             }
             try {
-                fileToUploadBytes = packageSizeReducer.reduce(artifactInfo.getPath());
+                fileToUploadBytes = packageSizeReducer.reduce(artifactInfo.getPath(), true);
             } catch (final BusinessException e) {
-                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(artifactInfo.getPath())))).build();
+                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
+                    new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(artifactInfo.getPath()))))
+                    .build();
             }
         } else {
             fileToUploadBytes = fileToUpload.getObject(byte[].class);
@@ -183,7 +187,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         }
         final var onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
         if (onboardPackageInfo == null) {
-            return Response.ok(buildUploadResponseWithError(new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)))).build();
+            return Response.ok(buildUploadResponseWithError(new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename))))
+                .build();
         }
         final var vspDetails = new VspDetails(ValidationUtils.sanitizeInputString(vspId),
             new Version(ValidationUtils.sanitizeInputString(versionId)));
@@ -224,7 +229,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         } else {
             zipFile = vendorSoftwareProductManager.get(vspId, new Version((versionId)));
             if (!zipFile.isPresent()) {
-                ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(), ""));
+                ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
+                    getErrorWithParameters(NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(), ""));
                 LOGGER.error(errorMessage.getMessage());
                 return Response.status(NOT_FOUND).build();
             }
@@ -255,7 +261,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         FilesDataStructure fileDataStructure = copyFilesDataStructureDtoToFilesDataStructure(fileDataStructureDto);
         ValidationResponse response = candidateManager.updateFilesDataStructure(vspId, new Version(versionId), fileDataStructure);
         if (!response.isValid()) {
-            return Response.status(EXPECTATION_FAILED).entity(new MapValidationResponseToDto().applyMapping(response, ValidationResponseDto.class)).build();
+            return Response.status(EXPECTATION_FAILED).entity(new MapValidationResponseToDto().applyMapping(response, ValidationResponseDto.class))
+                .build();
         }
         return Response.ok(fileDataStructureDto).build();
     }

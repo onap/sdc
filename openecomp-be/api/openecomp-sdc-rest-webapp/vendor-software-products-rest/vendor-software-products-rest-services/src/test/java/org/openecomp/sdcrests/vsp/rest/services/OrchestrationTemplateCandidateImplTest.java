@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -168,7 +169,7 @@ class OrchestrationTemplateCandidateImplTest {
         final Path path = Path.of("src/test/resources/files/sample-not-signed.csar");
         when(artifactStorageManager.upload(anyString(), anyString(), any())).thenReturn(new PersistentStorageArtifactInfo(path));
         final byte[] bytes = Files.readAllBytes(path);
-        when(packageSizeReducer.reduce(any())).thenReturn(bytes);
+        when(packageSizeReducer.reduce(any(), anyBoolean())).thenReturn(bytes);
 
         Response response = orchestrationTemplateCandidate.upload("1", "1",
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), "1");

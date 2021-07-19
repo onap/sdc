@@ -48,8 +48,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
     public UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo) {
         final UploadFileResponse uploadFileResponse = new UploadFileResponse();
         if (onboardPackageInfo.getPackageType() == OnboardingTypesEnum.SIGNED_CSAR) {
-            final OnboardSignedPackage originalOnboardPackage = (OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage();
-            validatePackageSecurity(originalOnboardPackage).ifPresent(packageSignatureResponse -> {
+            validatePackageSecurity(onboardPackageInfo).ifPresent(packageSignatureResponse -> {
                 if (packageSignatureResponse.hasErrors()) {
                     uploadFileResponse.addStructureErrors(packageSignatureResponse.getErrors());
                 }
@@ -74,11 +73,12 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         return uploadFileResponse;
     }
 
-    private Optional<UploadFileResponse> validatePackageSecurity(final OnboardSignedPackage originalOnboardPackage) {
+    private Optional<UploadFileResponse> validatePackageSecurity(final OnboardPackageInfo onboardPackageInfo) {
+        final OnboardSignedPackage originalOnboardPackage = (OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage();
         final UploadFileResponse uploadFileResponseDto = new UploadFileResponse();
         try {
             final CsarSecurityValidator csarSecurityValidator = new CsarSecurityValidator();
-            if (!csarSecurityValidator.verifyPackageSignature(originalOnboardPackage)) {
+            if (!csarSecurityValidator.verifyPackageSignature(onboardPackageInfo)) {
                 final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR, Messages.FAILED_TO_VERIFY_SIGNATURE.getErrorMessage());
                 logger.error(errorMessage.getMessage());
                 uploadFileResponseDto.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage);
