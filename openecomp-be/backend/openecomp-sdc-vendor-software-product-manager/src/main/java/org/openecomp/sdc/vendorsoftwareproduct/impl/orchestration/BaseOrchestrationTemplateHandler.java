@@ -20,9 +20,13 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
@@ -53,6 +57,17 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
         final UploadFileResponse validateResponse = validate(onboardPackageInfo);
         if (!MapUtils.isEmpty(validateResponse.getErrors())) {
             uploadFileResponse.addStructureErrors(validateResponse.getErrors());
+            final ArtifactInfo artifactInfo = onboardPackageInfo.getArtifactInfo();
+            if (artifactInfo != null) {
+                final Path artifactInfoPath = artifactInfo.getPath();
+                if (artifactInfoPath != null) {
+                    try {
+                        Files.delete(artifactInfoPath);
+                    } catch (final IOException e) {
+                        logger.warn("Failed to delete '{}'", artifactInfoPath);
+                    }
+                }
+            }
             return uploadFileResponse;
         }
         final UploadFileResponse responseFromUpdate = updateCandidateData(vspDetails, onboardPackageInfo, candidateService);

@@ -27,6 +27,6 @@ import java.nio.file.Path;
  */
 public interface PackageSizeReducer {
 
-    byte[] reduce(Path path);
+    byte[] reduce(Path path, boolean includeSizeLimit);
 
 }
