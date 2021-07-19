@@ -19,14 +19,17 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.security;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.google.common.collect.ImmutableSet;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
@@ -48,13 +51,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipFile;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.SignerInformation;
@@ -62,8 +69,11 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.openecomp.sdc.be.csar.storage.exception.CsarSizeReducerException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 
 /**
  * This is temporary solution. When AAF provides functionality for verifying trustedCertificates, this class should be reviewed Class is responsible
@@ -72,9 +82,11 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
 public class SecurityManager {
 
     private static final String CERTIFICATE_DEFAULT_LOCATION = "cert";
-    public static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = ImmutableSet.of("cms");
-    public static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = ImmutableSet.of("cert", "crt");
-    private Logger logger = LoggerFactory.getLogger(SecurityManager.class);
+    public static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = Set.of("cms");
+    public static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = Set.of("cert", "crt");
+    private static final Logger logger = LoggerFactory.getLogger(SecurityManager.class);
+    private static final String UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION = "Unexpected error occurred during signature validation!";
+    private static final String COULD_NOT_VERIFY_SIGNATURE = "Could not verify signature!";
     private Set<X509Certificate> trustedCertificates = new HashSet<>();
     private Set<X509Certificate> trustedCertificatesFromPackage = new HashSet<>();
     private File certificateDirectory;
@@ -112,7 +124,7 @@ public class SecurityManager {
      * @return set of trustedCertificates
      * @throws SecurityManagerException
      */
-    public Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException, FileNotFoundException {
+    public Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException {
         //if file number in certificate directory changed reload certs
         String[] certFiles = certificateDirectory.list();
         if (certFiles == null) {
@@ -176,10 +188,80 @@ public class SecurityManager {
             return firstSigner.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
         } catch (OperatorCreationException | IOException | CMSException e) {
             logger.error(e.getMessage(), e);
-            throw new SecurityManagerException("Unexpected error occurred during signature validation!", e);
+            throw new SecurityManagerException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
         } catch (GeneralSecurityException e) {
-            throw new SecurityManagerException("Could not verify signature!", e);
+            throw new SecurityManagerException(COULD_NOT_VERIFY_SIGNATURE, e);
         }
+    }
+
+    public boolean verifySignedData(final OnboardPackageInfo onboardPackageInfo) throws SecurityManagerException, IOException {
+        final OnboardSignedPackage signedPackage = (OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage();
+        final var fileContentHandler = signedPackage.getFileContentHandler();
+        byte[] packageCert = null;
+        final Optional<String> certificateFilePath = signedPackage.getCertificateFilePath();
+        if (certificateFilePath.isPresent()) {
+            packageCert = fileContentHandler.getFileContent(certificateFilePath.get());
+        }
+        final var path = onboardPackageInfo.getArtifactInfo().getPath();
+        final var target = Path.of(path.toString() + "." + UUID.randomUUID());
+
+        try (final var signatureStream = new ByteArrayInputStream(fileContentHandler.getFileContent(signedPackage.getSignatureFilePath()));
+            final var pemParser = new PEMParser(new InputStreamReader(signatureStream))) {
+            final var parsedObject = pemParser.readObject();
+            if (!(parsedObject instanceof ContentInfo)) {
+                throw new SecurityManagerException("Signature is not recognized");
+            }
+
+            if (!findCSARandExtract(path, target)) {
+                return false;
+            }
+            final var signedData = new CMSSignedData(new CMSProcessableFile(target.toFile()), ContentInfo.getInstance(parsedObject));
+            final SignerInformation firstSigner = signedData.getSignerInfos().getSigners().iterator().next();
+            final X509Certificate cert;
+            Collection<X509CertificateHolder> certs;
+            if (packageCert == null) {
+                certs = signedData.getCertificates().getMatches(null);
+                cert = readSignCert(certs, firstSigner)
+                    .orElseThrow(() -> new SecurityManagerException("No certificate found in cms signature that should contain one!"));
+            } else {
+                certs = parseCertsFromPem(packageCert);
+                cert = readSignCert(certs, firstSigner)
+                    .orElseThrow(() -> new SecurityManagerException("No matching certificate found in certificate file that should contain one!"));
+            }
+            trustedCertificatesFromPackage = readTrustedCerts(certs, firstSigner);
+            if (verifyCertificate(cert, getTrustedCertificates()) == null) {
+                return false;
+            }
+            return firstSigner.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
+        } catch (OperatorCreationException | IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new SecurityManagerException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
+        } catch (GeneralSecurityException | CMSException e) {
+            throw new SecurityManagerException(COULD_NOT_VERIFY_SIGNATURE, e);
+        } catch (Exception e) {
+            throw new SecurityManagerException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
+        } finally {
+            Files.delete(target);
+        }
+    }
+
+    private boolean findCSARandExtract(final Path path, final Path target) throws IOException {
+        final AtomicBoolean found = new AtomicBoolean(false);
+        try (final var zf = new ZipFile(path.toString())) {
+            zf.entries().asIterator().forEachRemaining(entry -> {
+                final var entryName = entry.getName();
+                if (!entry.isDirectory() && entryName.toLowerCase().endsWith(".csar")) {
+                    try {
+                        Files.copy(zf.getInputStream(entry), target, REPLACE_EXISTING);
+                    } catch (final IOException e) {
+                        final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, path);
+                        throw new CsarSizeReducerException(errorMsg, e);
+                    }
+                    found.set(true);
+                }
+            });
+        }
+        return found.get();
     }
 
     private Optional<X509Certificate> readSignCert(final Collection<X509CertificateHolder> certs, final SignerInformation firstSigner) {
@@ -205,7 +287,7 @@ public class SecurityManager {
         return allCerts;
     }
 
-    private void processCertificateDir() throws SecurityManagerException, FileNotFoundException {
+    private void processCertificateDir() throws SecurityManagerException {
         if (!certificateDirectory.exists() || !certificateDirectory.isDirectory()) {
             logger.error("Issue with certificate directory, check if exists!");
             return;

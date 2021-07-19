@@ -23,7 +23,9 @@ package org.openecomp.sdc.be.csar.storage;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
@@ -32,7 +34,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -51,19 +54,20 @@ class CsarSizeReducerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    void reduceByPathAndSizeTest() throws ZipException {
+    @ParameterizedTest
+    @ValueSource(strings = {"dummyToReduce.zip", "dummyToReduce.csar", "dummyToNotReduce.csar"})
+    void reduceByPathAndSizeTest(String fileName) throws ZipException {
         final var pathToReduce1 = Path.of("Files/images");
         final var pathToReduce2 = Path.of("Files/Scripts/my_script.sh");
         final var sizeLimit = 150000L;
         when(csarPackageReducerConfiguration.getSizeLimit()).thenReturn(sizeLimit);
         when(csarPackageReducerConfiguration.getFoldersToStrip()).thenReturn(Set.of(pathToReduce1, pathToReduce2));
 
-        final var csarPath = Path.of("src/test/resources/csarSizeReducer/dummy.csar");
+        final var csarPath = Path.of("src/test/resources/csarSizeReducer/" + fileName);
 
         final Map<String, byte[]> originalCsar = ZipUtils.readZip(csarPath.toFile(), false);
 
-        final byte[] reduce = csarSizeReducer.reduce(csarPath);
+        final byte[] reduce = csarSizeReducer.reduce(csarPath, true);
 
         final Map<String, byte[]> reducedCsar = ZipUtils.readZip(reduce, false);
 
@@ -74,10 +78,43 @@ class CsarSizeReducerTest {
             assertTrue(reducedCsar.containsKey(originalFilePath),
                 String.format("No file should be removed, but it is missing original file '%s'", originalFilePath));
 
-            if (originalFilePath.startsWith(pathToReduce1.toString()) || originalFilePath.startsWith(pathToReduce2.toString())
-                || originalBytes.length > sizeLimit) {
-                assertArrayEquals("".getBytes(StandardCharsets.UTF_8), reducedCsar.get(originalFilePath),
-                    String.format("File '%s' expected to be reduced to empty string", originalFilePath));
+            final String extention = fileName.substring(fileName.lastIndexOf('.') + 1);
+            switch (extention.toLowerCase()) {
+                case "zip":
+                    verifyZIP(pathToReduce1, pathToReduce2, sizeLimit, reducedCsar, originalFilePath, originalBytes);
+                    break;
+                case "csar":
+                    verifyCSAR(pathToReduce1, pathToReduce2, sizeLimit, reducedCsar, originalFilePath, originalBytes);
+                    break;
+                default:
+                    fail("Unexpected file extention");
+                    break;
+            }
+        }
+    }
+
+    private void verifyCSAR(final Path pathToReduce1, final Path pathToReduce2, final long sizeLimit, final Map<String, byte[]> reducedCsar,
+                            final String originalFilePath, final byte[] originalBytes) {
+        if (originalFilePath.startsWith(pathToReduce1.toString()) || originalFilePath.startsWith(pathToReduce2.toString())
+            || originalBytes.length > sizeLimit) {
+            assertArrayEquals("".getBytes(StandardCharsets.UTF_8), reducedCsar.get(originalFilePath),
+                String.format("File '%s' expected to be reduced to empty string", originalFilePath));
+        } else {
+            assertArrayEquals(originalBytes, reducedCsar.get(originalFilePath),
+                String.format("File '%s' expected to be equal", originalFilePath));
+        }
+    }
+
+    private void verifyZIP(final Path pathToReduce1, final Path pathToReduce2, final long sizeLimit, final Map<String, byte[]> reducedCsar,
+                           final String originalFilePath, final byte[] originalBytes) {
+        if (originalFilePath.startsWith(pathToReduce1.toString()) || originalFilePath.startsWith(pathToReduce2.toString())
+            || originalBytes.length > sizeLimit) {
+            assertArrayEquals("".getBytes(StandardCharsets.UTF_8), reducedCsar.get(originalFilePath),
+                String.format("File '%s' expected to be reduced to empty string", originalFilePath));
+        } else {
+            if (originalFilePath.endsWith(".csar") && csarSizeReducer.getReduced().get()) {
+                assertNotEquals(originalBytes.length, reducedCsar.get(originalFilePath).length,
+                    String.format("File '%s' expected to be NOT equal", originalFilePath));
             } else {
                 assertArrayEquals(originalBytes, reducedCsar.get(originalFilePath),
                     String.format("File '%s' expected to be equal", originalFilePath));
