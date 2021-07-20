@@ -31,6 +31,7 @@
       <groupId>javax.el</groupId>
       <artifactId>javax.el-api</artifactId>
       <version>${javax.el-api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.glassfish.web</groupId>

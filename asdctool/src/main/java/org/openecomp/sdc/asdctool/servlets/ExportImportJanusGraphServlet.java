@@ -19,13 +19,10 @@
  */
 package org.openecomp.sdc.asdctool.servlets;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
@@ -37,38 +34,37 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
-import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLWriter;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.janusgraph.core.JanusGraph;
 import org.openecomp.sdc.asdctool.Utils;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 @Path("/janusgraph")
 public class ExportImportJanusGraphServlet {
 
-    private static Logger log = Logger.getLogger(ExportImportJanusGraphServlet.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ExportImportJanusGraphServlet.class);
 
     @GET
     @Path("export")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response export(@FormDataParam("janusGraphProperties") File janusGraphPropertiesFile,
-                           @FormDataParam("metadata") String exportGraphMetadata) {
+    public Response export(@FormDataParam("janusGraphProperties") final File janusGraphPropertiesFile,
+                           @FormDataParam("metadata") final String exportGraphMetadata) {
         printJanusGraphConfigFile(janusGraphPropertiesFile);
         printMetadata(exportGraphMetadata);
-        Properties janusGraphProperties = convertFileToProperties(janusGraphPropertiesFile);
+        final Properties janusGraphProperties = convertFileToProperties(janusGraphPropertiesFile);
         if (janusGraphProperties == null) {
-            Response response = Utils.buildOkResponse(400, "cannot parse janusgraph properties file", null);
-            return response;
+            return Utils.buildOkResponse(400, "cannot parse janusgraph properties file", null);
         }
-        Configuration conf = new BaseConfiguration();
-        for (Entry<Object, Object> entry : janusGraphProperties.entrySet()) {
-            String key = entry.getKey().toString();
-            Object value = entry.getValue();
+        final Configuration conf = new BaseConfiguration();
+        for (final Entry<Object, Object> entry : janusGraphProperties.entrySet()) {
+            final String key = entry.getKey().toString();
+            final Object value = entry.getValue();
             conf.setProperty(key, value);
         }
         conf.setProperty("storage.machine-id-appendix", System.currentTimeMillis() % 1000);
-        Optional<JanusGraph> openGraph = Utils.openGraph(conf);
+        final Optional<JanusGraph> openGraph = Utils.openGraph(conf);
         if (openGraph.isPresent()) {
             try {
                 return Utils.buildOkResponse(200, "ok man", null);
@@ -80,21 +76,21 @@ public class ExportImportJanusGraphServlet {
         }
     }
 
-    private Properties convertFileToProperties(File janusGraphPropertiesFile) {
-        Properties properties = new Properties();
-        try (FileReader fileReader = new FileReader(janusGraphPropertiesFile)) {
+    private Properties convertFileToProperties(final File janusGraphPropertiesFile) {
+        final var properties = new Properties();
+        try (final var fileReader = new FileReader(janusGraphPropertiesFile)) {
             properties.load(fileReader);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Failed to convert file to properties", e);
             return null;
         }
         return properties;
     }
 
-    private void printJanusGraphConfigFile(File janusGraphPropertiesFile) {
+    private void printJanusGraphConfigFile(final File janusGraphPropertiesFile) {
         if (log.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            try (BufferedReader br = new BufferedReader(new FileReader(janusGraphPropertiesFile))) {
+            final var builder = new StringBuilder();
+            try (final var br = new BufferedReader(new FileReader(janusGraphPropertiesFile))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     builder.append(line + Utils.NEW_LINE);
@@ -106,36 +102,8 @@ public class ExportImportJanusGraphServlet {
         }
     }
 
-    private void printMetadata(String exportGraphMetadata) {
+    private void printMetadata(final String exportGraphMetadata) {
         log.debug(exportGraphMetadata);
     }
 
-    public String exportGraph(JanusGraph graph, String outputDirectory) {
-        String result = null;
-        // GraphMLWriter graphMLWriter = new GraphMLWriter(graph);
-        GraphMLWriter graphMLWriter = GraphMLWriter.build().create();
-        String outputFile = outputDirectory + File.separator + "exportGraph." + System.currentTimeMillis() + ".ml";
-        OutputStream out = null;
-        try {
-            out = new BufferedOutputStream(new ByteArrayOutputStream());
-            // graphMLWriter.outputGraph(out);
-            graphMLWriter.writeGraph(out, graph);
-            // graph.commit();
-            graph.tx().commit();
-            result = outputFile;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // graph.rollback();
-            graph.tx().rollback();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
 }
