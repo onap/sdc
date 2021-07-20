@@ -48,8 +48,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <guava.version>30.1-jre</guava.version>
         <janusgraph.version>0.3.3</janusgraph.version>
         <spring.version>5.2.10.RELEASE</spring.version>
-        <jersey-bom.version>2.27</jersey-bom.version>
-        <netty.version>4.1.65.Final</netty.version>
+        <jersey-bom.version>2.34</jersey-bom.version>
+        <netty.version>4.1.66.Final</netty.version>
         <servlet-api.version>3.1.0</servlet-api.version>
         <wire-mock.version>2.26.3</wire-mock.version>
         <ecomp.version>2.6.0</ecomp.version>
@@ -57,7 +57,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <cadi.version>2.1.8</cadi.version>
         <lombok.version>1.18.18</lombok.version>
         <commons-beanutils>1.9.4</commons-beanutils>
-        <commons.io.version>2.7</commons.io.version>
+        <commons.io.version>2.8.0</commons.io.version>
         <commons-configuration>2.7</commons-configuration>
         <apache-poi.version>4.1.0</apache-poi.version>
         <onap.logging.version>1.6.1</onap.logging.version>
@@ -67,12 +67,15 @@ Modifications copyright (c) 2018-2019 Nokia
         <groovy.version>3.0.7</groovy.version>
         <swagger-core-mvn-plugin.version>2.1.7</swagger-core-mvn-plugin.version>
         <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
-        <hibernate.validator.version>5.3.6.Final</hibernate.validator.version>
+        <hibernate.validator.version>6.1.6.Final</hibernate.validator.version>
 
         <commons.collections.version>4.1</commons.collections.version>
-        <ws.rs.version>2.1</ws.rs.version>
+        <ws.rs.version>2.1.1</ws.rs.version>
+        <javax.validation.version>2.0.1.Final</javax.validation.version>
 
         <jetty.version>9.4.41.v20210516</jetty.version>
+
+        <org.owasp.esapi.version>2.2.3.0</org.owasp.esapi.version>
 
         <!-- JSON and YAML Parsing -->
         <jackson.version>2.12.1</jackson.version>
@@ -84,7 +87,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <!-- Yaml for properties -->
         <snakeyaml.version>1.28</snakeyaml.version>
         <functionaljava.version>4.7</functionaljava.version>
-        <httpclient.version>4.5.3</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <httpcore.version>4.4.1</httpcore.version>
         <json-simple.version>1.1</json-simple.version>
 
@@ -96,7 +99,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <!-- logback -->
         <logback.version>1.2.3</logback.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
-        <commons-codec>1.10</commons-codec>
+        <commons-codec>1.15</commons-codec>
         <commons-logging>1.2</commons-logging>
         <janino.version>3.0.6</janino.version>
         <log4j.version>2.13.1</log4j.version>
@@ -178,7 +181,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <surefire.skip.tests>false</surefire.skip.tests>
 
         <docker.api.version>1.35</docker.api.version>
-        <bouncycastle.version>1.68</bouncycastle.version>
+        <bouncycastle.version>1.69</bouncycastle.version>
 
         <verbose>false</verbose>
     </properties>

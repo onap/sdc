@@ -185,6 +185,12 @@ Modifications copyright (c) 2018 Nokia
       <artifactId>httpclient</artifactId>
       <version>${httpclient.version}</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -279,6 +285,10 @@ Modifications copyright (c) 2018 Nokia
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -299,6 +309,14 @@ Modifications copyright (c) 2018 Nokia
         <exclusion>
           <groupId>org.codehaus.jackson</groupId>
           <artifactId>jackson-mapper-asl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-validator</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -376,10 +394,20 @@ Modifications copyright (c) 2018 Nokia
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-validator</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
       </exclusions>
       <scope>test</scope>
     </dependency>
     <!-- CASSANDRA END -->
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
