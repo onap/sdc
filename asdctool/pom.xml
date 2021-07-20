@@ -307,6 +307,10 @@
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -334,6 +338,10 @@
         <exclusion>
           <groupId>org.codehaus.jackson</groupId>
           <artifactId>jackson-mapper-asl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-validator</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -492,13 +500,6 @@
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
       <version>${apache-poi.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>2.0.2</version>
-      <scope>compile</scope>
     </dependency>
 
     <!-- Temporary, till building the populate task which adding all components
@@ -774,7 +775,9 @@
                       <tag>
                         ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
                       </tag>
-                      <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
+                      <tag>
+                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}
+                      </tag>
                     </tags>
                   </build>
                 </image>
