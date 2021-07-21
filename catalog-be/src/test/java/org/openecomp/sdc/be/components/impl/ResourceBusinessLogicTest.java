@@ -86,7 +86,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;

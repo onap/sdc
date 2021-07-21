@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.asdctool.impl.validator.executor.IArtifactValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.executor.NodeToscaArtifactsValidatorExecutor;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 import java.util.ArrayList;

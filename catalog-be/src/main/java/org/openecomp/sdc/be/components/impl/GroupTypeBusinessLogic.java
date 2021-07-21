@@ -32,11 +32,11 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("groupTypeBusinessLogic")
@@ -45,14 +45,12 @@ public class GroupTypeBusinessLogic {
     private final GroupTypeOperation groupTypeOperation;
     private final JanusGraphDao janusGraphDao;
     private final UserValidations userValidations;
-    private final ComponentsUtils componentsUtils;
 
-    public GroupTypeBusinessLogic(GroupTypeOperation groupTypeOperation, JanusGraphDao janusGraphDao, UserValidations userValidations,
-                                  ComponentsUtils componentsUtils) {
+    @Autowired
+    public GroupTypeBusinessLogic(GroupTypeOperation groupTypeOperation, JanusGraphDao janusGraphDao, UserValidations userValidations) {
         this.groupTypeOperation = groupTypeOperation;
         this.janusGraphDao = janusGraphDao;
         this.userValidations = userValidations;
-        this.componentsUtils = componentsUtils;
     }
 
     public List<GroupTypeDefinition> getAllGroupTypes(String userId, String internalComponentType, String internalComponentModel) {
