@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ab07e096_1eac87ba",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/ResourceImportManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-07-21T11:20:09Z",
+      "side": 1,
+      "message": "wouldn\u0027t be better to migrate it to Junit5?",
+      "range": {
+        "startLine": 44,
+        "startChar": 52,
+        "endLine": 47,
+        "endChar": 22
+      },
+      "revId": "db9043cfd1ca6a10363f60107f7d2b7f31a77bc3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
