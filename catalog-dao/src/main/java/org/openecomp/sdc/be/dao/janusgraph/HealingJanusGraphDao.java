@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openecomp.sdc.be.dao.jsongraph;
+package org.openecomp.sdc.be.dao.janusgraph;
 
 import fj.data.Either;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.springframework.beans.factory.annotation.Autowired;
