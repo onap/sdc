@@ -27,7 +27,7 @@ import org.openecomp.sdc.asdctool.impl.validator.executor.TopologyTemplateValida
 import org.openecomp.sdc.asdctool.impl.validator.executor.ValidatorExecutor;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFile;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 
 import java.util.ArrayList;
 import java.util.List;
