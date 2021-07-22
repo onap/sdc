@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,6 +212,13 @@ describe('Software Product Details Module Tests', function () {
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
 			expect(baseUrl).toEqual('/sdc1/feProxy/rest/v1/categories/resources/');
+			expect(data).toEqual(undefined);
+			expect(options).toEqual(undefined);
+			return [];
+		});
+
+		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
+			expect(baseUrl).toEqual('/sdc1/feProxy/rest/v1/catalog/model/');
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return [];

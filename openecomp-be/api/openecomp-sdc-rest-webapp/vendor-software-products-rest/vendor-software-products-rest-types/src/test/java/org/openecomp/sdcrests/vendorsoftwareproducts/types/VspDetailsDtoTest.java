@@ -19,14 +19,15 @@
  */
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
+import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSettersExcluding;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class VspDetailsDtoTest {
+class VspDetailsDtoTest {
+
     @Test
-    public void shouldHaveValidGettersAndSetters() {
-        assertThat(VspDetailsDto.class, hasValidGettersAndSetters());
+    void shouldHaveValidGettersAndSetters() {
+        assertThat(VspDetailsDto.class, hasValidGettersAndSettersExcluding("selectedModelList"));
     }
 }

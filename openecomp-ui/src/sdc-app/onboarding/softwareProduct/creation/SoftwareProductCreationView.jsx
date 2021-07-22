@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +15,7 @@
  * permissions and limitations under the License.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { string } from 'prop-types';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import Validator from 'nfvo-utils/Validator.js';
 import Input from 'nfvo-components/input/validation/Input.jsx';
@@ -26,7 +27,11 @@ import { SP_CREATION_FORM_NAME } from './SoftwareProductCreationConstants.js';
 import sortByStringProperty from 'nfvo-utils/sortByStringProperty.js';
 
 import SoftwareProductCategoriesHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductCategoriesHelper.js';
-import { onboardingMethod as onboardingMethodConst } from '../SoftwareProductConstants.js';
+import {
+    ModelOption,
+    onboardingMethod as onboardingMethodConst
+} from '../SoftwareProductConstants.js';
+import SelectInput from 'nfvo-components/input/SelectInput.jsx';
 
 const SoftwareProductPropType = PropTypes.shape({
     id: PropTypes.string,
@@ -34,7 +39,8 @@ const SoftwareProductPropType = PropTypes.shape({
     description: PropTypes.string,
     category: PropTypes.string,
     subCategory: PropTypes.string,
-    vendorId: PropTypes.string
+    vendorId: PropTypes.string,
+    selectedModelList: PropTypes.arrayOf(string)
 });
 
 class SoftwareProductCreationView extends React.Component {
@@ -44,6 +50,7 @@ class SoftwareProductCreationView extends React.Component {
         softwareProductCategories: PropTypes.array,
         VSPNames: PropTypes.object,
         usersList: PropTypes.array,
+        modelList: PropTypes.array,
         onDataChanged: PropTypes.func.isRequired,
         onSubmit: PropTypes.func.isRequired,
         onCancel: PropTypes.func.isRequired
@@ -56,14 +63,17 @@ class SoftwareProductCreationView extends React.Component {
             onDataChanged,
             onCancel,
             genericFieldInfo,
-            disableVendor
+            disableVendor,
+            modelList
         } = this.props;
         let {
             name,
             description,
             vendorId,
             subCategory,
-            onboardingMethod
+            onboardingMethod,
+            modelOption,
+            selectedModelList
         } = data;
 
         const vendorList = this.getVendorList();
@@ -193,11 +203,24 @@ class SoftwareProductCreationView extends React.Component {
                                 />
                             </GridItem>
                         </GridSection>
-                        <OnboardingProcedure
-                            genericFieldInfo={genericFieldInfo}
-                            onboardingMethod={onboardingMethod}
-                            onDataChanged={onDataChanged}
-                        />
+                        <GridSection>
+                            <GridItem colSpan={2}>
+                                <OnboardingProcedure
+                                    genericFieldInfo={genericFieldInfo}
+                                    onboardingMethod={onboardingMethod}
+                                    onDataChanged={onDataChanged}
+                                />
+                            </GridItem>
+                            <GridItem colSpan={2}>
+                                <ModelSelection
+                                    genericFieldInfo={genericFieldInfo}
+                                    modelOption={modelOption}
+                                    modelList={modelList}
+                                    selectedModelList={selectedModelList}
+                                    onDataChanged={onDataChanged}
+                                />
+                            </GridItem>
+                        </GridSection>
                     </Form>
                 )}
             </div>
@@ -235,14 +258,12 @@ class SoftwareProductCreationView extends React.Component {
     }
 
     submit() {
-        let {
-            data: softwareProduct,
-            finalizedLicenseModelList,
-            usersList
-        } = this.props;
+        let { finalizedLicenseModelList, usersList } = this.props;
+        const softwareProduct = { ...this.props.data };
         softwareProduct.vendorName = finalizedLicenseModelList.find(
             vendor => vendor.id === softwareProduct.vendorId
         ).name;
+        delete softwareProduct.modelOption;
         this.props.onSubmit(softwareProduct, usersList);
     }
 
@@ -284,7 +305,7 @@ const OnboardingProcedure = ({
     genericFieldInfo
 }) => {
     return (
-        <GridSection title={i18n('Onboarding procedure')}>
+        <GridSection title={i18n('Onboarding procedure')} required={true}>
             <GridItem colSpan={4}>
                 <Input
                     label={i18n('Network Package')}
@@ -324,6 +345,79 @@ const OnboardingProcedure = ({
                     data-test-id="new-vsp-creation-procedure-manual"
                     groupClassName="no-bottom-margin"
                 />
+            </GridItem>
+        </GridSection>
+    );
+};
+
+const ModelSelection = ({
+    modelOption,
+    onDataChanged,
+    genericFieldInfo,
+    modelList = [],
+    selectedModelList = []
+}) => {
+    function onSelectChanged(selectedValueList) {
+        let modelList1 = [];
+        if (selectedValueList) {
+            modelList1 = selectedValueList.map(item => item.value);
+        }
+        onDataChanged({ selectedModelList: modelList1 }, SP_CREATION_FORM_NAME);
+    }
+
+    function selectDefaultModel() {
+        return () => {
+            onDataChanged(
+                { modelOption: ModelOption.DEFAULT },
+                SP_CREATION_FORM_NAME
+            );
+            onDataChanged({ selectedModelList: [] }, SP_CREATION_FORM_NAME);
+        };
+    }
+
+    return (
+        <GridSection title={i18n('Model')} required={true}>
+            <GridItem colSpan={4}>
+                <Input
+                    label={i18n('model.sdc.label')}
+                    checked={modelOption === ModelOption.DEFAULT}
+                    errorText={genericFieldInfo.modelOption.errorText}
+                    onChange={selectDefaultModel()}
+                    type="radio"
+                    data-test-id="model-option-default"
+                />
+                <Input
+                    label={i18n('vsp.model.select.label')}
+                    checked={modelOption === ModelOption.SELECTED}
+                    isValid={genericFieldInfo.modelOption.isValid}
+                    errorText={genericFieldInfo.modelOption.errorText}
+                    onChange={() =>
+                        onDataChanged(
+                            { modelOption: ModelOption.SELECTED },
+                            SP_CREATION_FORM_NAME
+                        )
+                    }
+                    type="radio"
+                    data-test-id="model-option-selected"
+                    groupClassName="no-bottom-margin"
+                />
+            </GridItem>
+            <GridItem colSpan={4}>
+                {modelOption === ModelOption.SELECTED && <br />}
+                {modelOption === ModelOption.SELECTED && (
+                    <SelectInput
+                        options={modelList.map(model => ({
+                            label: model.name,
+                            value: model.name
+                        }))}
+                        onMultiSelectChanged={onSelectChanged}
+                        value={selectedModelList}
+                        clearable={true}
+                        placeholder={i18n('vsp.model.select.label')}
+                        multi
+                    />
+                )}
+                {modelOption === ModelOption.SELECTED && <br />}
             </GridItem>
         </GridSection>
     );

@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +24,7 @@ export const actionTypes = keyMirror(
         FINALIZED_SOFTWARE_PRODUCT_LIST_LOADED: null,
         SOFTWARE_PRODUCT_LIST_EDIT: null,
         SOFTWARE_PRODUCT_CATEGORIES_LOADED: null,
+        SOFTWARE_PRODUCT_MODELS_LOADED: null,
         SOFTWARE_PRODUCT_QUESTIONNAIRE_UPDATE: null,
         LOAD_LICENSING_VERSIONS_LIST: null,
         TOGGLE_NAVIGATION_ITEM: null,
@@ -41,6 +43,11 @@ export const actionTypes = keyMirror(
 export const onboardingMethod = {
     MANUAL: 'Manual',
     NETWORK_PACKAGE: 'NetworkPackage'
+};
+
+export const ModelOption = {
+    DEFAULT: 'default',
+    SELECTED: 'selected'
 };
 
 export const onboardingOriginTypes = {
