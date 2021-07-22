@@ -1,6 +1,7 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
  * Modifications copyright (c) 2021 Nokia
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,9 +101,15 @@ function baseUrl() {
     const restPrefix = Configuration.get('restPrefix');
     return `${restPrefix}/v1.0/vendor-software-products/`;
 }
+
 function softwareProductCategoriesUrl() {
     const restCatalogPrefix = Configuration.get('restCatalogPrefix');
     return `${restCatalogPrefix}/v1/categories/resources/`;
+}
+
+function getModelUrl() {
+    const restCatalogPrefix = Configuration.get('restCatalogPrefix');
+    return `${restCatalogPrefix}/v1/catalog/model/`;
 }
 
 function uploadFile(vspId, formData, version) {
@@ -135,6 +142,7 @@ function putSoftwareProduct({ softwareProduct, version }) {
                 : undefined,
             icon: softwareProduct.icon,
             licenseType: softwareProduct.licenseType,
+            selectedModelList: softwareProduct.selectedModelList,
             licensingData: getLicensingData(softwareProduct.licensingData)
         }
     );
@@ -264,6 +272,17 @@ function fetchSoftwareProductCategories(dispatch) {
         .catch(() => handleResponse(null));
 }
 
+function fetchModelList(dispatch) {
+    let handleResponse = response =>
+        dispatch({
+            type: actionTypes.SOFTWARE_PRODUCT_MODELS_LOADED,
+            modelList: response
+        });
+    RestAPIUtil.fetch(getModelUrl())
+        .then(handleResponse)
+        .catch(() => handleResponse(null));
+}
+
 function loadLicensingData(dispatch, { licenseModelId, licensingVersion }) {
     return ItemsHelper.fetchVersion({
         itemId: licenseModelId,
@@ -329,6 +348,7 @@ const SoftwareProductActionHelper = {
 
     loadSoftwareProductAssociatedData(dispatch) {
         fetchSoftwareProductCategories(dispatch);
+        fetchModelList(dispatch);
         LicenseModelActionHelper.fetchFinalizedLicenseModels(dispatch);
     },
 

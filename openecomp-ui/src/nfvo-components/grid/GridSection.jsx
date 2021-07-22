@@ -22,7 +22,8 @@ const GridSection = ({
     children,
     className = '',
     titleClassName,
-    hasLastColSet = false
+    hasLastColSet = false,
+    required = false
 }) => {
     return (
         <div
@@ -32,6 +33,7 @@ const GridSection = ({
             {title && (
                 <div className={`section-title ${titleClassName || ''}`}>
                     {title}
+                    {required && <span className={'required'}>*</span>}
                 </div>
             )}
             <div className="grid-items">{children}</div>

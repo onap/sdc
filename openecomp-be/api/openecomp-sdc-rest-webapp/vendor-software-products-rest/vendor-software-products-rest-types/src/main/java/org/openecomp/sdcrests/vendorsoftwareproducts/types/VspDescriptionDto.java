@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +16,22 @@
  */
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.LicenseType;
 import org.openecomp.sdc.vendorsoftwareproduct.types.LicensingData;
 
 @Data
+@ToString
+@EqualsAndHashCode
 public class VspDescriptionDto {
 
     @NotNull
@@ -40,6 +50,7 @@ public class VspDescriptionDto {
     private String licensingVersion;    // this will be populated with vlm version
     private LicenseType licenseType;
     private LicensingData licensingData;
+    private List<String> selectedModelList;
 
     public void setName(final String name) {
         this.name = ValidationUtils.sanitizeInputString(name);
@@ -51,5 +62,20 @@ public class VspDescriptionDto {
 
     public void setDescription(final String description) {
         this.description = ValidationUtils.sanitizeInputString(description);
+    }
+
+    public void setSelectedModelList(final List<String> selectedModelList) {
+        if (CollectionUtils.isEmpty(selectedModelList)) {
+            this.selectedModelList = new ArrayList<>();
+            return;
+        }
+        this.selectedModelList = selectedModelList.stream().map(ValidationUtils::sanitizeInputString).collect(Collectors.toList());
+    }
+
+    public List<String> getSelectedModelList() {
+        if (selectedModelList == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(selectedModelList);
     }
 }
