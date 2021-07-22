@@ -59,6 +59,7 @@ public class VspCreationModal extends AbstractPageObject {
         selectCategory("resourceNewCategory.network l4+.common network resources");
         fillDescription(vspName);
         selectNetworkPackageOnboardingProcedure();
+        selectDefaultModel();
     }
 
     /**
@@ -97,6 +98,13 @@ public class VspCreationModal extends AbstractPageObject {
     }
 
     /**
+     * Selects the default model.
+     */
+    public void selectDefaultModel() {
+        clickElement(XpathSelector.DEFAULT_MODEL_RADIO);
+    }
+
+    /**
      * Selects a category in the category list based on the option value.
      *
      * @param categoryOptionValue the option value
@@ -109,7 +117,7 @@ public class VspCreationModal extends AbstractPageObject {
      * Selects the network package onboarding procedure option.
      */
     public void selectNetworkPackageOnboardingProcedure() {
-        wrappingElement.findElement(By.xpath(XpathSelector.METHOD_RADIO.getXpath())).click();
+        wrappingElement.findElement(By.xpath(XpathSelector.ONBOARDING_METHOD_RADIO.getXpath())).click();
     }
 
     private void setInputValue(final XpathSelector inputTestId, final String value) {
@@ -138,7 +146,8 @@ public class VspCreationModal extends AbstractPageObject {
         VENDOR_SELECT("new-vsp-vendor", "//select[@data-test-id='%s']"),
         CATEGORY_SELECT("new-vsp-category", "//select[@data-test-id='%s']"),
         DESCRIPTION_TXT("new-vsp-description", "//textarea[@data-test-id='%s']"),
-        METHOD_RADIO("new-vsp-creation-procedure-heat", "//input[@data-test-id='%s']/parent::label"),
+        ONBOARDING_METHOD_RADIO("new-vsp-creation-procedure-heat", "//input[@data-test-id='%s']/parent::label"),
+        DEFAULT_MODEL_RADIO("model-option-default", "//input[@data-test-id='%s']/parent::label"),
         CREATE_BTN("form-submit-button", "//*[@data-test-id='%s']");
 
         @Getter

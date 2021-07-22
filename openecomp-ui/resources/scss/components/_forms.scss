@@ -4,6 +4,10 @@
     &:first-child {
         padding-top: 0;
     }
+    span.required {
+        color: $red;
+        margin: 0 4px 0 0;
+    }
 }
 
 .validation-form-content {

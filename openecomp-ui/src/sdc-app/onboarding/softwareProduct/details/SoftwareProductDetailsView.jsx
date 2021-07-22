@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +52,7 @@ class GeneralSection extends React.Component {
         name: PropTypes.string,
         description: PropTypes.string,
         subCategory: PropTypes.string,
+        selectedModelList: PropTypes.arrayOf(PropTypes.string),
         softwareProductCategories: PropTypes.array,
         finalizedLicenseModelList: PropTypes.array,
         onDataChanged: PropTypes.func.isRequired,
@@ -164,6 +166,22 @@ class GeneralSection extends React.Component {
                                         )
                                 )}
                             </Input>
+                            <div className="form-group">
+                                <label className="control-label">
+                                    {i18n('Model')}
+                                </label>
+                                <div>
+                                    {this.props.selectedModelList.length > 0 ? (
+                                        <ul>
+                                            {this.props.selectedModelList.map(
+                                                value => <li>{value}</li>
+                                            )}
+                                        </ul>
+                                    ) : (
+                                        i18n('model.sdc.label')
+                                    )}
+                                </div>
+                            </div>
                         </GridItem>
                         <GridItem colSpan={2} stretch>
                             <Input
@@ -509,7 +527,8 @@ class SoftwareProductDetails extends Component {
             description,
             vendorId,
             subCategory,
-            vendorName
+            vendorName,
+            selectedModelList = []
         } = currentSoftwareProduct;
         return {
             name,
@@ -523,6 +542,7 @@ class SoftwareProductDetails extends Component {
             onSelectSubCategory: args => this.onSelectSubCategory(args),
             genericFieldInfo,
             vendorName,
+            selectedModelList,
             isVendorArchived,
             onArchivedVendorRemove
         };

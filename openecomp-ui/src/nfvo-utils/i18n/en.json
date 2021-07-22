@@ -284,6 +284,7 @@
   "Log Backup Frequency (days)": "Log Backup Frequency (days)",
   "Log File Location": "Log File Location",
   "Model": "Model",
+  "model.sdc.label": "SDC AID",
   "License Details": "License Details",
   "Feature Group": "Feature Group",
   "Please assign Feature Groups in VSP General": "Please assign Feature Groups in VSP General",
@@ -386,6 +387,7 @@
   "VendorSoftwareProduct/vendorName": "Vendor",
   "VendorSoftwareProduct/onboardingOrigin": "Onboarding Origin",
   "VendorSoftwareProduct/networkPackageName": "Network Package Name",
+  "vsp.model.select.label": "Other Models",
 
   "EntitlementPool" : "Entitlement Pool",
   "EntitlementPool/name" : "Name",
