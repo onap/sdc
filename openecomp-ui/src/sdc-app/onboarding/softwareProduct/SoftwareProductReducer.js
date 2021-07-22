@@ -1,5 +1,6 @@
 /*!
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,6 +158,12 @@ export default combineReducers({
     softwareProductCategories: (state = [], action) => {
         if (action.type === actionTypes.SOFTWARE_PRODUCT_CATEGORIES_LOADED) {
             return action.softwareProductCategories;
+        }
+        return state;
+    },
+    modelList: (state = [], action) => {
+        if (action.type === actionTypes.SOFTWARE_PRODUCT_MODELS_LOADED) {
+            return action.modelList;
         }
         return state;
     },
