@@ -7,7 +7,8 @@
     <classes>
       <class name="org.onap.sdc.backend.ci.tests.sanity.Onboard">
         <methods>
-          <exclude name="onboardCNFWithHelmValidatorTest"/>
+          <exclude name="onboardCNFWithHelmValidatorFlow"/>
+          <exclude name="onboardCNFWithHelmValidatorFlowWithWarning"/>
           <exclude name="onboardCNFWithHelmValidatorShouldFailTest"/>
         </methods>
       </class>
