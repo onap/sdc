@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +26,11 @@ import com.amdocs.zusammen.datatypes.item.Info;
 import com.amdocs.zusammen.datatypes.item.Item;
 import org.openecomp.convertor.ElementConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.VendorSoftwareProductInfoDaoZusammenImpl;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-public class ElementToVSPGeneralConvertor extends ElementConvertor {
+public class ElementToVSPGeneralConvertor extends ElementConvertor<VspDetails> {
 
     @Override
     public VspDetails convert(Element element) {
@@ -43,7 +45,7 @@ public class ElementToVSPGeneralConvertor extends ElementConvertor {
         if (item == null) {
             return null;
         }
-        VspDetails vspDetails = mapInfoToVspDetails(item.getInfo());
+        var vspDetails = mapInfoToVspDetails(item.getInfo());
         vspDetails.setId(item.getId().getValue());
         return vspDetails;
     }
@@ -56,8 +58,8 @@ public class ElementToVSPGeneralConvertor extends ElementConvertor {
         return mapInfoToVspDetails(elementInfo.getInfo());
     }
 
-    private VspDetails mapInfoToVspDetails(Info info) {
-        VspDetails vspDetails = new VspDetails();
+    private VspDetails mapInfoToVspDetails(final Info info) {
+        final var vspDetails = new VspDetails();
         vspDetails.setName(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.NAME.getValue()));
         vspDetails.setDescription(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.DESCRIPTION.getValue()));
         vspDetails.setIcon(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.ICON.getValue()));
@@ -73,6 +75,7 @@ public class ElementToVSPGeneralConvertor extends ElementConvertor {
         vspDetails.setLicenseAgreement(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.LICENSE_AGREEMENT.getValue()));
         vspDetails.setFeatureGroups(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.FEATURE_GROUPS.getValue()));
         vspDetails.setOnboardingMethod(info.getProperty(VendorSoftwareProductInfoDaoZusammenImpl.InfoPropertyName.ON_BOARDING_METHOD.getValue()));
+        vspDetails.setModelId(info.getProperty(InfoPropertyName.MODEL_ID.getValue()));
         return vspDetails;
     }
 }

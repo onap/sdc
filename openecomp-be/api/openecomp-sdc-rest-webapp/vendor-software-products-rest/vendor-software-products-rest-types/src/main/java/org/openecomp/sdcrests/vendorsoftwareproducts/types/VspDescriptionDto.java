@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +38,7 @@ public class VspDescriptionDto {
     private String vendorName;
     @NotNull
     private String vendorId;            // this will be populated with vlm id
+    private String modelId;
     private String licensingVersion;    // this will be populated with vlm version
     private LicenseType licenseType;
     private LicensingData licensingData;

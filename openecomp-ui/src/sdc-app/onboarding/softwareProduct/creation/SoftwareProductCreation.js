@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +34,11 @@ export const mapStateToProps = ({
     archivedSoftwareProductList,
     softwareProductList,
     finalizedSoftwareProductList,
-    softwareProduct: { softwareProductCreation, softwareProductCategories }
+    softwareProduct: {
+        softwareProductCreation,
+        softwareProductCategories,
+        modelList
+    }
 }) => {
     let { genericFieldInfo, vendorList = [] } = softwareProductCreation;
     let isFormValid = ValidationHelper.checkFormValid(genericFieldInfo);
@@ -55,6 +60,7 @@ export const mapStateToProps = ({
         softwareProductCategories,
         finalizedLicenseModelList,
         vendorList,
+        modelList: modelList,
         isFormValid,
         formReady: softwareProductCreation.formReady,
         genericFieldInfo,

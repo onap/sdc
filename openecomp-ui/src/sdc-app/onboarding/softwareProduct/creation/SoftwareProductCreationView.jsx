@@ -1,5 +1,6 @@
 /*!
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +35,8 @@ const SoftwareProductPropType = PropTypes.shape({
     description: PropTypes.string,
     category: PropTypes.string,
     subCategory: PropTypes.string,
-    vendorId: PropTypes.string
+    vendorId: PropTypes.string,
+    modelId: PropTypes.string
 });
 
 class SoftwareProductCreationView extends React.Component {
@@ -44,6 +46,7 @@ class SoftwareProductCreationView extends React.Component {
         softwareProductCategories: PropTypes.array,
         VSPNames: PropTypes.object,
         usersList: PropTypes.array,
+        modelList: PropTypes.array,
         onDataChanged: PropTypes.func.isRequired,
         onSubmit: PropTypes.func.isRequired,
         onCancel: PropTypes.func.isRequired
@@ -56,14 +59,16 @@ class SoftwareProductCreationView extends React.Component {
             onDataChanged,
             onCancel,
             genericFieldInfo,
-            disableVendor
+            disableVendor,
+            modelList
         } = this.props;
         let {
             name,
             description,
             vendorId,
             subCategory,
-            onboardingMethod
+            onboardingMethod,
+            modelId
         } = data;
 
         const vendorList = this.getVendorList();
@@ -168,6 +173,31 @@ class SoftwareProductCreationView extends React.Component {
                                             )
                                     )}
                                 </Input>
+                                <Input
+                                    label={i18n('Model')}
+                                    type="select"
+                                    value={modelId}
+                                    overlayPos="bottom"
+                                    isRequired={false}
+                                    onChange={e => this.onSelectModel(e)}
+                                    isValid={genericFieldInfo.modelId.isValid}
+                                    errorText={
+                                        genericFieldInfo.modelId.errorText
+                                    }
+                                    className="input-options-select"
+                                    groupClassName="bootstrap-input-options"
+                                    data-test-id="new-vsp-model">
+                                    <option key="" value="">
+                                        {i18n('model.sdc.label')}
+                                    </option>
+                                    {modelList.map(model => (
+                                        <option
+                                            key={model.name}
+                                            value={model.name}>
+                                            {model.name}
+                                        </option>
+                                    ))}
+                                </Input>
                             </GridItem>
                             <GridItem colSpan="2" stretch lastColInRow>
                                 <Input
@@ -221,6 +251,12 @@ class SoftwareProductCreationView extends React.Component {
         const selectedIndex = e.target.selectedIndex;
         const vendorId = e.target.options[selectedIndex].value;
         this.props.onDataChanged({ vendorId }, SP_CREATION_FORM_NAME);
+    }
+
+    onSelectModel(e) {
+        const selectedIndex = e.target.selectedIndex;
+        const modelId = e.target.options[selectedIndex].value;
+        this.props.onDataChanged({ modelId }, SP_CREATION_FORM_NAME);
     }
 
     onSelectSubCategory(e) {

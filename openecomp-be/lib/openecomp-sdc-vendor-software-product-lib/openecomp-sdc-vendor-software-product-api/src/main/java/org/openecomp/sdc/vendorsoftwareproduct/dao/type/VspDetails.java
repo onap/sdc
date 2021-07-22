@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +47,7 @@ public class VspDetails implements VersionableEntity {
     private String licenseAgreement;
     private List<String> featureGroups;
     private String onboardingMethod;
+    private String modelId;
 
     public VspDetails(String id, Version version) {
         this.id = id;
@@ -64,8 +66,7 @@ public class VspDetails implements VersionableEntity {
 
     @Override
     public String toString() {
-        return String
-            .format("Vsp id = '%s', Version = %s', Name = %s', Category = %s', Description = %s', Vendor = %s'", this.id, this.version, this.name,
-                this.category, this.description, this.vendorName);
+        return String.format("Vsp id = '%s', Version = '%s', Name = '%s', Category = '%s', Description = '%s', Vendor = '%s', Model = '%s'",
+            this.id, this.version, this.name, this.category, this.description, this.vendorName, this.modelId);
     }
 }

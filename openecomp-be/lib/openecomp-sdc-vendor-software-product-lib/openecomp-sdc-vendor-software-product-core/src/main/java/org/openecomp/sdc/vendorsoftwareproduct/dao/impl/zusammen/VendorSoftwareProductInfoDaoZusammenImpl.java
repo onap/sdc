@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +27,8 @@ import com.amdocs.zusammen.datatypes.item.Info;
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
@@ -189,7 +192,7 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         return questionnaireElement;
     }
 
-    private void addVspDetailsToInfo(Info info, VspDetails vspDetails) {
+    private void addVspDetailsToInfo(final Info info, final VspDetails vspDetails) {
         info.addProperty(InfoPropertyName.NAME.getValue(), vspDetails.getName());
         info.addProperty(InfoPropertyName.DESCRIPTION.getValue(), vspDetails.getDescription());
         info.addProperty(InfoPropertyName.ICON.getValue(), vspDetails.getIcon());
@@ -204,8 +207,13 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         info.addProperty(InfoPropertyName.LICENSE_AGREEMENT.getValue(), vspDetails.getLicenseAgreement());
         info.addProperty(InfoPropertyName.FEATURE_GROUPS.getValue(), vspDetails.getFeatureGroups());
         info.addProperty(InfoPropertyName.ON_BOARDING_METHOD.getValue(), vspDetails.getOnboardingMethod());
+        if (vspDetails.getModelId() != null) {
+            info.addProperty(InfoPropertyName.MODEL_ID.getValue(), vspDetails.getModelId());
+        }
     }
 
+    @AllArgsConstructor
+    @Getter
     public enum InfoPropertyName {
         // @formatter:off
         NAME("name"),
@@ -219,17 +227,11 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
         LICENSE_TYPE("licenseType"),
         LICENSE_AGREEMENT("licenseAgreement"),
         FEATURE_GROUPS("featureGroups"),
-        ON_BOARDING_METHOD("onboardingMethod");
+        ON_BOARDING_METHOD("onboardingMethod"),
+        MODEL_ID("modelId");
         // @formatter:on
 
-        private String value;
+        private final String value;
 
-        InfoPropertyName(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
     }
 }
