@@ -17,12 +17,16 @@ package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 
 /**
  * Created by TALIO on 4/25/2016.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Schema(description = "VspDetails")
 public class VspDetailsDto extends VspRequestDto {
 

@@ -1,5 +1,6 @@
 /*
  * Copyright © 2016-2018 European Support Limited
+ * Modifications Copyright (C) 2021 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +37,8 @@ const SoftwareProductPropType = PropTypes.shape({
     licenseType: PropTypes.string,
     status: PropTypes.string,
     licensingData: PropTypes.object,
-    validationData: PropTypes.object
+    validationData: PropTypes.object,
+    selectedModelList: PropTypes.arrayOf(PropTypes.string)
 });
 
 const ComponentPropType = PropTypes.shape({
@@ -259,7 +261,8 @@ const ProductSummary = ({
         name = '',
         description = '',
         vendorName = '',
-        fullCategoryDisplayName = ''
+        fullCategoryDisplayName = '',
+        selectedModelList = []
     } = currentSoftwareProduct;
     return (
         <div className="details-panel">
@@ -283,6 +286,20 @@ const ProductSummary = ({
                                 <div className="title">{i18n('Category')}</div>
                                 <div className="description">
                                     {fullCategoryDisplayName}
+                                </div>
+                            </div>
+                            <div className="detail-col">
+                                <div className="title">{i18n('Model')}</div>
+                                <div className="description">
+                                    {selectedModelList.length > 0 ? (
+                                        <ul>
+                                            {selectedModelList.map(value => (
+                                                <li>{value}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        i18n('model.sdc.label')
+                                    )}
                                 </div>
                             </div>
                             <div className="detail-col">

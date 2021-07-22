@@ -1,17 +1,23 @@
 /*
- * Copyright © 2016-2018 European Support Limited
+ * -
+ *  ============LICENSE_START=======================================================
+ *  Copyright © 2016-2018 European Support Limited
+ *  Modifications Copyright (C) 2021 Nordix Foundation.
+ *  ================================================================================
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  SPDX-License-Identifier: Apache-2.0
+ *  ============LICENSE_END=========================================================
  */
 
 import React from 'react';
@@ -69,6 +75,22 @@ describe('Software Product Creation Module Tests', function() {
 		let props = mapStateToProps(state);
 		expect(props.data).toEqual({});
 		expect(props.VSPNames).toEqual({vsp1: 'vsp1_id', vsp2: 'vsp2_id'});
+	});
+
+	it ('should return model list', () => {
+		const modelList = ["model1", "model2", "model3"];
+		let state = {
+			finalizedSoftwareProductList: [],
+			archivedSoftwareProductList: [],
+			softwareProductList: [],
+			softwareProduct: {
+				modelList: modelList,
+				softwareProductCreation: {}
+			},
+			users: {}
+		};
+		let props = mapStateToProps(state);
+		expect(props.modelList).toEqual(modelList);
 	});
 
 	it('simple jsx test', () => {
