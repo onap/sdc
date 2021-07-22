@@ -63,6 +63,20 @@
             border-color: $gray;
         }
     }
+    .select-multiple {
+        border: 1px solid $light-gray;
+        border-radius: 2px;
+        min-height: 60px;
+        float: left;
+        transition-property: width;
+        transition-duration: 300ms;
+        padding-top: 0;
+        padding-bottom: 0;
+        width: 100%;
+        &:hover {
+            border-color: $gray;
+        }
+    }
     .input-options-other {
         float: left;
         height: 30px;
