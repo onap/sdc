@@ -37,6 +37,7 @@ import org.onap.sdc.security.AuthenticationCookie;
 import org.onap.sdc.security.RepresentationUtils;
 import org.openecomp.sdc.common.impl.MutableHttpServletRequest;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.fe.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
@@ -242,12 +243,12 @@ public class PortalServlet extends HttpServlet {
      * @param request
      * @param headers
      */
-    private void addCookies(HttpServletResponse response, HttpServletRequest request, String[] headers) {
-        for (int i = 0; i < headers.length; i++) {
-            String currHeader = headers[i];
-            String headerValue = request.getHeader(currHeader);
+    private void addCookies(final HttpServletResponse response, final HttpServletRequest request, final String[] headers) {
+        for (var i = 0; i < headers.length; i++) {
+            final var currHeader = ValidationUtils.sanitizeInputString(headers[i]);
+            final var headerValue = ValidationUtils.sanitizeInputString(request.getHeader(currHeader));
             if (headerValue != null) {
-                final Cookie cookie = new Cookie(currHeader, headerValue);
+                final var cookie = new Cookie(currHeader, headerValue);
                 cookie.setSecure(true);
                 response.addCookie(cookie);
             }
