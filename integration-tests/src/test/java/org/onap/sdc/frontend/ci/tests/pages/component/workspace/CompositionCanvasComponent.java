@@ -135,7 +135,7 @@ public class CompositionCanvasComponent extends AbstractPageObject {
         int offsetFromElementCenter = 10;
         actions.moveToElement(canvasWebElement, positionFromCenter.getX() - offsetFromElementCenter,
             positionFromCenter.getY() + offsetFromElementCenter)
-            .pause(Duration.ofSeconds(1))
+            .pause(Duration.ofMillis(500))
             .click()
             .perform();
         ExtentTestActions.takeScreenshot(Status.INFO, "canvas-node-selected", String.format("'%s' was selected", elementName));
@@ -259,11 +259,11 @@ public class CompositionCanvasComponent extends AbstractPageObject {
         new Actions(webDriver)
             .moveToElement(canvasWebElement, greenPlusPositionFromCenter.getX(), greenPlusPositionFromCenter.getY())
             .moveByOffset(3, 3).moveByOffset(-3, -3)
-            .pause(Duration.ofSeconds(2))
+            .pause(Duration.ofMillis(500))
             .clickAndHold()
-            .pause(Duration.ofSeconds(1))
+            .pause(Duration.ofMillis(500))
             .moveToElement(canvasWebElement, toElementPositionFromCenter.getX(), toElementPositionFromCenter.getY())
-            .pause(Duration.ofSeconds(1))
+            .pause(Duration.ofMillis(500))
             .release()
             .perform();
         return new RelationshipWizardComponent(webDriver);
