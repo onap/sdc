@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "927cbd99_077bec04",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-07-23T11:40:15Z",
+      "side": 1,
+      "message": "You should create a specific ticket explaining the problem with swagger-ui and how it was solved.",
+      "range": {
+        "startLine": 11,
+        "startChar": 10,
+        "endLine": 11,
+        "endChar": 18
+      },
+      "revId": "8c1913d7dbcd017352af8af7f670eacf07c9b17b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
