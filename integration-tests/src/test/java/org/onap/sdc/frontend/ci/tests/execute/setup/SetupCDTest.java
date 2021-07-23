@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
+import javax.swing.ToolTipManager;
 import net.lightbody.bmp.core.har.Har;
 import org.json.simple.JSONObject;
 import org.onap.sdc.backend.ci.tests.config.UserCredentialsFromFile;
@@ -63,6 +64,8 @@ import org.testng.annotations.Test;
 public abstract class SetupCDTest extends DriverFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SetupCDTest.class);
+    private static final int initialDelay = ToolTipManager.sharedInstance().getInitialDelay();
+    private static final int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 
     private static final String RE_RUN = "<html><font color=\"red\">ReRun - </font></html>";
     private static final String WEB_SEAL_PASSWORD = "123123a";
@@ -133,6 +136,9 @@ public abstract class SetupCDTest extends DriverFactory {
         setUrl();
         ExtentManager.initReporter(getReportFolder(), REPORT_FILE_NAME, context);
         csvReport = new OnboardCSVReport(getReportFolder(), SHORT_CSV_REPORT_FILE_NAME);
+
+        ToolTipManager.sharedInstance().setInitialDelay(initialDelay * 10);
+        ToolTipManager.sharedInstance().setDismissDelay(dismissDelay / 10);
     }
 
     @BeforeMethod(alwaysRun = true)
