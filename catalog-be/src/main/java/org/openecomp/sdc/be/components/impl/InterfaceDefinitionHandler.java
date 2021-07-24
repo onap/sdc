@@ -75,8 +75,9 @@ public class InterfaceDefinitionHandler {
      * @param interfaceDefinitionToscaMap the TOSCA interface definition structure
      * @return an interface definition representation
      */
-    public InterfaceDefinition create(final Map<String, Object> interfaceDefinitionToscaMap) {
+    public InterfaceDefinition create(final Map<String, Object> interfaceDefinitionToscaMap, final String model) {
         final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setModel(model);
         if (interfaceDefinitionToscaMap.containsKey(TYPE.getElementName())) {
             final Object typeObj = interfaceDefinitionToscaMap.get(TYPE.getElementName());
             if (!(typeObj instanceof String)) {
@@ -101,18 +102,18 @@ public class InterfaceDefinitionHandler {
             operationMap = handleLegacyOperations(interfaceDefinitionToscaMap);
         }
         if (!operationMap.isEmpty()) {
-            validateOperations(interfaceDefinition.getType(), operationMap);
+            validateOperations(interfaceDefinition.getType(), operationMap, model);
             interfaceDefinition.setOperations(operationMap);
         }
         return interfaceDefinition;
     }
 
-    private void validateOperations(final String interfaceType, final Map<String, OperationDataDefinition> operationMap) {
+    private void validateOperations(final String interfaceType, final Map<String, OperationDataDefinition> operationMap, final String model) {
         if (MapUtils.isEmpty(operationMap)) {
             return;
         }
         Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceDefinitionMapEither = interfaceOperationBusinessLogic
-            .getAllInterfaceLifecycleTypes();
+            .getAllInterfaceLifecycleTypes(model);
         if (interfaceDefinitionMapEither.isRight() || MapUtils.isEmpty(interfaceDefinitionMapEither.left().value())) {
             throw new ByActionStatusComponentException(ActionStatus.INTERFACE_UNKNOWN, interfaceType);
         }

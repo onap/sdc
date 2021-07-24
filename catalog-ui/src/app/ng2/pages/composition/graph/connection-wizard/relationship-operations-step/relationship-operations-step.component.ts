@@ -64,7 +64,7 @@ export class RelationshipOperationsStepComponent implements OnInit, IStepCompone
   }
 
   private loadInterfaceTypeMap(): void {
-    this.componentService.getInterfaceTypes(null).subscribe(response => {
+    this.componentService.getInterfaceTypes(this.component).subscribe(response => {
       for (const interfaceType in response) {
         let operationList = response[interfaceType];
         //ignore interfaceTypes that doesn't contain operations
