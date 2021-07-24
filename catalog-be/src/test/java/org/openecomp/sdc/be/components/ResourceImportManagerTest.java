@@ -34,12 +34,13 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import fj.data.Either;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,6 +87,8 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import fj.data.Either;
 
 public class ResourceImportManagerTest {
 
@@ -236,7 +239,7 @@ public class ResourceImportManagerTest {
         operations.put("configure", new OperationDataDefinition());
 		interfaceDefinition.setOperations(operations );
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
-		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
+		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
         final ImmutablePair<Resource, ActionStatus> createResource = importManager
             .importNormativeResource(jsonContent, resourceMD, user, true, true);
@@ -261,7 +264,7 @@ public class ResourceImportManagerTest {
         operations.put("configure", new OperationDataDefinition());
 		interfaceDefinition.setOperations(operations );
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
-		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
+		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
         ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
         assertNull(createResource.left.getInterfaces());
@@ -285,7 +288,7 @@ public class ResourceImportManagerTest {
         operations.put("configure", new OperationDataDefinition());
 		interfaceDefinition.setOperations(operations );
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
-		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
+		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 		
         ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
         assertNull(createResource.left.getInterfaces());

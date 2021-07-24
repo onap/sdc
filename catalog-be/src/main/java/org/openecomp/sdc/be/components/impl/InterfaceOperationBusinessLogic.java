@@ -258,7 +258,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
         org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
         lockComponentResult(lock, storedComponent, errorContext);
-        Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceLifecycleTypes = getAllInterfaceLifecycleTypes();
+        Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceLifecycleTypes = getAllInterfaceLifecycleTypes(storedComponent.getModel());
         if (interfaceLifecycleTypes.isRight()) {
             return Either.right(interfaceLifecycleTypes.right().value());
         }
@@ -349,9 +349,9 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<Map<String, InterfaceDefinition>, ResponseFormat> getAllInterfaceLifecycleTypes() {
+    public Either<Map<String, InterfaceDefinition>, ResponseFormat> getAllInterfaceLifecycleTypes(final String model) {
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> interfaceLifecycleTypes = interfaceLifecycleTypeOperation
-            .getAllInterfaceLifecycleTypes();
+            .getAllInterfaceLifecycleTypes(model);
         if (interfaceLifecycleTypes.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_LIFECYCLE_TYPES_NOT_FOUND));
         }
