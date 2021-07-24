@@ -24,7 +24,6 @@ package org.openecomp.sdc.be.components.impl;
 import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataType;
 import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataTypeDefinitionWithName;
 
-import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +36,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import javax.servlet.ServletContext;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -96,6 +97,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.yaml.snakeyaml.Yaml;
+
+import fj.data.Either;
 
 @Component("resourceImportManager")
 public class ResourceImportManager {
@@ -351,7 +354,7 @@ public class ResourceImportManager {
             Map<String, Object> jsonInterfaces = toscaInterfaces.left().value();
             Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
             for (final Entry<String, Object> interfaceNameValue : jsonInterfaces.entrySet()) {
-                final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue());
+                final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(), resource.getModel());
                 if (eitherInterface.isRight()) {
                     log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(), resource.getName());
                 } else {
@@ -365,7 +368,7 @@ public class ResourceImportManager {
         }
     }
 
-    private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(final Object interfaceJson) {
+    private Either<InterfaceDefinition, ResultStatusEnum> createModuleInterface(final Object interfaceJson, final String model) {
         try {
             if (interfaceJson instanceof String) {
                 final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
@@ -374,7 +377,7 @@ public class ResourceImportManager {
             }
             if (interfaceJson instanceof Map) {
                 final Map<String, Object> interfaceJsonMap = (Map<String, Object>) interfaceJson;
-                final InterfaceDefinition interfaceDefinition = interfaceDefinitionHandler.create(interfaceJsonMap);
+                final InterfaceDefinition interfaceDefinition = interfaceDefinitionHandler.create(interfaceJsonMap, model);
                 return Either.left(interfaceDefinition);
             }
             return Either.right(ResultStatusEnum.GENERAL_ERROR);
