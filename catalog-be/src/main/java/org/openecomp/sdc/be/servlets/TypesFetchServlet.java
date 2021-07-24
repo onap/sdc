@@ -19,22 +19,11 @@
  */
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -47,8 +36,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.commons.collections4.ListUtils;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -78,6 +67,20 @@ import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
+
+import com.jcabi.aspects.Loggable;
+
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -145,7 +148,8 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "404", description = "Interface lifecycle types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getInterfaceLifecycleTypes(@Context final HttpServletRequest request,
-                                               @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+                                               @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                               @Parameter(description = "model") @QueryParam("model") String modelName) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         try {
@@ -154,7 +158,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.info("Start handle request of {} | modifier id is {}", url, userId);
                 Either<Map<String, InterfaceDefinition>, ResponseFormat> allInterfaceLifecycleTypes = interfaceOperationBusinessLogic
-                    .getAllInterfaceLifecycleTypes();
+                    .getAllInterfaceLifecycleTypes(modelName);
                 if (allInterfaceLifecycleTypes.isRight()) {
                     log.info("Failed to get all interface lifecycle types. Reason - {}", allInterfaceLifecycleTypes.right().value());
                     Response errorResponse = buildErrorResponse(allInterfaceLifecycleTypes.right().value());
