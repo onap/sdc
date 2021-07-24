@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -156,9 +157,9 @@ public class InterfaceLifecycleOperationTest {
 
     @Test
     public void testGetAllInterfaceLifecycleTypes_TypesNotFound() {
-        when(janusGraphGenericDao.getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(),
+        when(janusGraphGenericDao.getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), StringUtils.EMPTY,
             InterfaceData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
-        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(StringUtils.EMPTY);
         Assert.assertEquals(types.isRight(), Boolean.TRUE);
     }
 
@@ -173,14 +174,14 @@ public class InterfaceLifecycleOperationTest {
         interfaceDataList.add(interfaceData);
         Either<List<InterfaceData>, JanusGraphOperationStatus> allInterfaceTypes = Either.left(interfaceDataList);
         when(janusGraphGenericDao
-            .getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class)).thenReturn(allInterfaceTypes);
+            .getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), StringUtils.EMPTY, InterfaceData.class)).thenReturn(allInterfaceTypes);
 
         List<ImmutablePair<OperationData, GraphEdge>> list = new ArrayList<>();
         Either<List<ImmutablePair<OperationData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = Either.left(list);
         when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(childrenNodes);
         when(janusGraphGenericDao.getParentNode(any(), any(), any(), any(), any()))
         .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
-        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(StringUtils.EMPTY);
         Assert.assertEquals(types.left().value().size(),1);
     }
 
@@ -200,10 +201,10 @@ public class InterfaceLifecycleOperationTest {
         when(janusGraphGenericDao.getParentNode(any(), any(), any(), any(), any()))
         .thenReturn(Either.left(modelNode));
         when(janusGraphGenericDao
-            .getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class)).thenReturn(Either.left(interfaceTypes));
+            .getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), MODEL_NAME, InterfaceData.class)).thenReturn(Either.left(interfaceTypes));
         when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(Either.left(Collections.emptyList()));
 
-        Assert.assertEquals(1, interfaceLifecycleOperation.getAllInterfaceLifecycleTypes().left().value().size());
+        Assert.assertEquals(1, interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(MODEL_NAME).left().value().size());
     }
 
 }

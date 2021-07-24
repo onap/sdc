@@ -850,9 +850,9 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
     }
 
     @Override
-    public Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfaceLifecycleTypes() {
+    public Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfaceLifecycleTypes(final String model) {
         Either<List<InterfaceData>, JanusGraphOperationStatus> allInterfaceLifecycleTypes = janusGraphGenericDao
-            .getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class);
+            .getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), model, InterfaceData.class);
         if (allInterfaceLifecycleTypes.isRight()) {
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(allInterfaceLifecycleTypes.right().value()));
         }

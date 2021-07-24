@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
-import fj.data.Either;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -39,7 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,6 +53,8 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.yaml.snakeyaml.Yaml;
+
+import fj.data.Either;
 
 @ExtendWith(MockitoExtension.class)
 class InterfaceDefinitionHandlerTest {
@@ -84,20 +87,20 @@ class InterfaceDefinitionHandlerTest {
         operations.put(DELETE_OPERATION, new OperationDataDefinition());
         interfaceLifecyleStandard.setOperations(operations);
         interfaceTypes.put(INTERFACE_TYPE, interfaceLifecyleStandard);
-        when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes()).thenReturn(Either.left(interfaceTypes));
+        when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(StringUtils.EMPTY)).thenReturn(Either.left(interfaceTypes));
     }
 
     @Test
     void testCreateWithLegacyOperationDeclarationSuccess() throws FileNotFoundException {
         final Map<String, Object> load = loadYaml(Paths.get("interfaceDefinition-legacy.yaml"));
-        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(load);
+        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(load, StringUtils.EMPTY);
         assertInterfaceDefinition(actualInterfaceDefinition);
     }
 
     @Test
     void testCreateWithOperationSuccess() throws FileNotFoundException {
         final Map<String, Object> load = loadYaml(Paths.get("interfaceDefinition-tosca1.3.yaml"));
-        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(load);
+        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(load, StringUtils.EMPTY);
         assertInterfaceDefinition(actualInterfaceDefinition);
     }
 

@@ -693,7 +693,7 @@ public class ToscaExportHandler {
         log.debug("start convert node type for {}", component.getUniqueId());
         ToscaNodeType toscaNodeType = createNodeType(component);
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> lifecycleTypeEither = interfaceLifecycleOperation
-            .getAllInterfaceLifecycleTypes();
+            .getAllInterfaceLifecycleTypes(component.getModel());
         if (lifecycleTypeEither.isRight()) {
             log.debug("Failed to fetch all interface types :", lifecycleTypeEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -1077,7 +1077,7 @@ public class ToscaExportHandler {
             }
 
             Either<Map<String, InterfaceDefinition>, StorageOperationStatus> lifecycleTypeEither =
-                interfaceLifecycleOperation.getAllInterfaceLifecycleTypes();
+                interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(serviceComponent.getModel());
             if (lifecycleTypeEither.isRight()) {
                 log.debug("Failed to retrieve global interface types :", lifecycleTypeEither.right().value());
                 return Either.right(ToscaError.GENERAL_ERROR);
