@@ -850,7 +850,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
     }
 
     @Override
-    public Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfaceLifecycleTypes() {
+    public Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfaceLifecycleTypes(final String model) {
         Either<List<InterfaceData>, JanusGraphOperationStatus> allInterfaceLifecycleTypes = janusGraphGenericDao
             .getByCriteria(NodeTypeEnum.Interface, Collections.emptyMap(), InterfaceData.class);
         if (allInterfaceLifecycleTypes.isRight()) {
@@ -860,7 +860,7 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
         List<InterfaceData> interfaceDataList = allInterfaceLifecycleTypes.left().value();
         List<InterfaceDefinition> interfaceDefinitions = interfaceDataList.stream().map(this::convertInterfaceDataToInterfaceDefinition)
             .filter(interfaceDefinition -> interfaceDefinition.getUniqueId()
-                    .equalsIgnoreCase(UniqueIdBuilder.buildInterfaceTypeUid(interfaceDefinition.getModel(), interfaceDefinition.getType()))
+                    .equalsIgnoreCase(UniqueIdBuilder.buildInterfaceTypeUid(model, interfaceDefinition.getType()))
             ).collect(Collectors.toList());
         for (InterfaceDefinition interfaceDefinition : interfaceDefinitions) {
             Either<List<ImmutablePair<OperationData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao

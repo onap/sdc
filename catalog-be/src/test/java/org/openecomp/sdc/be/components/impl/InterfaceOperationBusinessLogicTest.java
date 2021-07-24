@@ -16,7 +16,21 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,19 +71,7 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InterfaceOperationBusinessLogicTest {
@@ -147,7 +149,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void createInterfaceOperationTestOnExistingInterface() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
                 Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
@@ -161,7 +163,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void createInterfaceOperationTestOnExistingInterfaceInputsFromCapProp() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
                 Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
@@ -200,7 +202,7 @@ public class InterfaceOperationBusinessLogicTest {
     @Test
     public void createInterfaceOperationWithoutInterfaceTest() {
         resource.getInterfaces().clear();
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperation.addInterfaces(any(), any())).thenReturn(Either.left(
                 Collections.singletonList(InterfaceOperationTestUtils.createMockInterface(interfaceId, operationId, operationName))));
@@ -217,7 +219,7 @@ public class InterfaceOperationBusinessLogicTest {
     @Test
     public void createInterfaceOperationWithoutInterfaceTestFail() {
         resource.getInterfaces().clear();
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperation.addInterfaces(any(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
@@ -231,7 +233,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void shouldFailWhenCreateInterfaceOperationFailedTest() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperation.updateInterfaces(any(), any()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
@@ -242,7 +244,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void updateInterfaceOperationTestWithArtifactSuccess() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
                 .thenReturn(Either.left(new ArtifactDefinition()));
@@ -260,7 +262,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void updateInterfaceOperationTestWithArtifactFailure() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.left(new ArtifactDefinition()));
         when(artifactToscaOperation.removeArifactFromResource(any(), any(), any(), anyBoolean()))
@@ -275,7 +277,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void updateInterfaceOperationTestWithoutArtifact() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(artifactToscaOperation.getArtifactById(any(), any())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(interfaceOperation.updateInterfaces(any(), any())).thenReturn(Either.left(
@@ -290,7 +292,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void updateInterfaceOperationTestDoesntExist() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperation =
                 interfaceOperationBusinessLogic.updateInterfaceOperation(resourceId,
@@ -302,7 +304,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void createInterfaceOperationTestFailOnException() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperation.updateInterfaces(any(), any())).thenThrow(new RuntimeException());
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
@@ -315,7 +317,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void createInterfaceOperationTestFailOnFetchinGlobalTypes() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Either<List<InterfaceDefinition>, ResponseFormat> interfaceOperationEither =
                 interfaceOperationBusinessLogic.createInterfaceOperation(resourceId,
@@ -327,7 +329,7 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void createInterfaceOperationTestFailOnValidation() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(Collections.emptyMap()));
         when(interfaceOperationValidation
                      .validateInterfaceOperations(any(), any(), any(), anyMap(), anyBoolean()))
@@ -510,10 +512,10 @@ public class InterfaceOperationBusinessLogicTest {
 
     @Test
     public void testGetAllInterfaceLifecycleTypes_TypesNotFound() {
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Either<Map<String, InterfaceDefinition>, ResponseFormat> response =
-                interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
+                interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any());
         Assert.assertTrue(response.isRight());
     }
 
@@ -524,10 +526,10 @@ public class InterfaceOperationBusinessLogicTest {
         interfaceDefinition.setType(interfaceId);
         Map<String, InterfaceDefinition> interfaceDefinitionMap = new HashMap<>();
         interfaceDefinitionMap.put(interfaceDefinition.getUniqueId(), interfaceDefinition);
-        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes())
+        when(interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(any()))
                 .thenReturn(Either.left(interfaceDefinitionMap));
         Either<Map<String, InterfaceDefinition>, ResponseFormat> response =
-                interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes();
+                interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(StringUtils.EMPTY);
         Assert.assertEquals(1, response.left().value().size());
     }
 
