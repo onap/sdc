@@ -210,7 +210,7 @@ export class ComponentServiceNg2 {
     }
 
     getInterfaceTypes(component:Component):Observable<{[id:string]: Array<string>}> {
-        return this.http.get<any>(this.baseUrl + 'interfaceLifecycleTypes')
+        return this.http.get<any>(this.baseUrl + 'interfaceLifecycleTypes' + (component.componentMetadata.model ? '?model=' + component.componentMetadata.model : ''))
             .map((res: any) => {
                 const interfaceMap = {};
                 if (!res) {

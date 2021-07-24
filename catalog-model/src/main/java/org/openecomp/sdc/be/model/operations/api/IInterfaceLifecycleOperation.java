@@ -19,11 +19,13 @@
  */
 package org.openecomp.sdc.be.model.operations.api;
 
-import fj.data.Either;
 import java.util.Map;
+
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
+
+import fj.data.Either;
 
 public interface IInterfaceLifecycleOperation {
 
@@ -56,5 +58,6 @@ public interface IInterfaceLifecycleOperation {
 
     public String getShortInterfaceName(InterfaceDataDefinition interfaceDefinition);
 
-    Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfaceLifecycleTypes();
+    Either<Map<String, InterfaceDefinition>, StorageOperationStatus> getAllInterfaceLifecycleTypes(final String model);
+
 }
