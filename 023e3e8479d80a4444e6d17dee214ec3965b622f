@@ -22,6 +22,30 @@
       "revId": "023e3e8479d80a4444e6d17dee214ec3965b622f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0097fcc1_6bfb45e3",
+        "filename": "catalog-ui/src/app/ng2/services/tosca-types.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-07-26T15:27:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da0a8b79_76855d8b",
+      "range": {
+        "startLine": 51,
+        "startChar": 82,
+        "endLine": 51,
+        "endChar": 124
+      },
+      "revId": "023e3e8479d80a4444e6d17dee214ec3965b622f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
