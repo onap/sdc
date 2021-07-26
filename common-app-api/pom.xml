@@ -35,7 +35,7 @@
           <artifactId>esapi</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.hibernate</groupId>
+          <groupId>org.hibernate.validator</groupId>
           <artifactId>hibernate-validator</artifactId>
         </exclusion>
       </exclusions>
