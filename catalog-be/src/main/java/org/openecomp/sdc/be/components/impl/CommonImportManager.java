@@ -340,6 +340,95 @@ public class CommonImportManager {
         }
     }
 
+    protected <T> Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> createElementTypesWithVersionByDao(List<T> elementTypesToCreate,
+                                                                                                             Function<T, Either<ActionStatus, ResponseFormat>> validator,
+                                                                                                             Function<T, ImmutablePair<ElementTypeEnum, String>> elementInfoGetter,
+                                                                                                             BiFunction<String, String, Either<T, StorageOperationStatus>> elementFetcher,
+                                                                                                             Function<T, Either<T, StorageOperationStatus>> elementAdder,
+                                                                                                             BiFunction<T, T, Either<T, StorageOperationStatus>> elementUpgrader,
+                                                                                                             String modelName) {
+
+        List<ImmutablePair<T, Boolean>> createdElementTypes = new ArrayList<>();
+
+        Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> eitherResult = Either.left(createdElementTypes);
+        Iterator<T> elementTypeItr = elementTypesToCreate.iterator();
+
+        try {
+            while (elementTypeItr.hasNext()) {
+                T elementType = elementTypeItr.next();
+                eitherResult = handleTypeByDao(elementType, validator, elementInfoGetter, elementFetcher, elementAdder, elementUpgrader, modelName)
+                    .left()
+                    .map(elem -> append(createdElementTypes, elem));
+
+                if (eitherResult.isRight()) {
+                    break;
+                }
+
+                if (!elementTypeItr.hasNext()) {
+                    log.info("all {} were created successfully!!!", elementType);
+                }
+            }
+        } catch (Exception e) {
+            eitherResult = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+            throw e;
+        } finally {
+            if (eitherResult.isLeft()) {
+                propertyOperation.getJanusGraphGenericDao().commit();
+            } else {
+                propertyOperation.getJanusGraphGenericDao().rollback();
+            }
+        }
+
+        return eitherResult;
+    }
+
+    private <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> handleTypeByDao(T elementType,
+                                                                                  Function<T, Either<ActionStatus, ResponseFormat>> validator,
+                                                                                  Function<T, ImmutablePair<ElementTypeEnum, String>> elementInfoGetter,
+                                                                                  BiFunction<String, String, Either<T, StorageOperationStatus>> elementFetcher,
+                                                                                  Function<T, Either<T, StorageOperationStatus>> elementAdder,
+                                                                                  BiFunction<T, T, Either<T, StorageOperationStatus>> elementUpgrader,
+                                                                                  String modelName) {
+
+        final ImmutablePair<ElementTypeEnum, String> elementInfo = elementInfoGetter.apply(elementType);
+        ElementTypeEnum elementTypeEnum = elementInfo.left;
+        String elementName = elementInfo.right;
+
+        Either<ActionStatus, ResponseFormat> validateElementType = validator.apply(elementType);
+        if (validateElementType.isRight()) {
+            ResponseFormat responseFormat = validateElementType.right().value();
+            log.debug("Failed in validation of element type: {}. Response is {}", elementType, responseFormat.getFormattedMessage());
+            return Either.right(responseFormat);
+        }
+
+        log.info("send {} : {} to dao for create", elementTypeEnum, elementName);
+
+        Either<T, StorageOperationStatus> findElementType = elementFetcher.apply(elementName, modelName);
+        if (findElementType.isRight()) {
+            StorageOperationStatus status = findElementType.right().value();
+            log.debug("searched {} finished with result:{}", elementTypeEnum, status);
+            if (status != StorageOperationStatus.NOT_FOUND) {
+                ResponseFormat responseFormat = getResponseFormatForElementType(convertFromStorageResponseForElementType(status, elementTypeEnum),
+                    elementTypeEnum, elementType);
+                return Either.right(responseFormat);
+            } else {
+                return addElementType(elementType, elementAdder, elementTypeEnum, elementName);
+            }
+        } else {
+
+            if (elementUpgrader != null) {
+                return updateElementType(elementType, elementUpgrader, elementTypeEnum, elementName, findElementType.left().value());
+
+            } else {
+                // mshitrit Once GroupType Versions are supported add
+                // code here
+                log.debug("{} : {} already exists.", elementTypeEnum, elementName);
+                return Either.left(new ImmutablePair<>(elementType, false));
+            }
+
+        }
+    }
+
     private <T> Either<ImmutablePair<T, Boolean>, ResponseFormat> addElementType(T elementType,
                                                                                  Function<T, Either<T, StorageOperationStatus>> elementAdder,
                                                                                  ElementTypeEnum elementTypeEnum, String elementName) {
@@ -384,7 +473,7 @@ public class CommonImportManager {
 
     public <T extends ToscaTypeDataDefinition> Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> createElementTypes(
         ToscaTypeImportData toscaTypeImportData, BiFunction<String, String, Either<List<T>, ActionStatus>> elementTypeFromYmlCreater,
-        Function<List<T>, Either<List<ImmutablePair<T, Boolean>>, ResponseFormat>> elementTypeDaoCreater, String modelName) {
+        BiFunction<List<T>, String, Either<List<ImmutablePair<T, Boolean>>, ResponseFormat>> elementTypeDaoCreater, String modelName) {
         Either<List<T>, ActionStatus> elementTypes = elementTypeFromYmlCreater.apply(toscaTypeImportData.getToscaTypesYml(), modelName);
         return elementTypes
             .right()
@@ -392,7 +481,7 @@ public class CommonImportManager {
             .left()
             .map(toscaTypes -> enrichTypesWithNonToscaMetadata(toscaTypes, toscaTypeImportData.getToscaTypeMetadata()))
             .left()
-            .bind(elementTypeDaoCreater::apply);
+            .bind(elementTypeList -> elementTypeDaoCreater.apply(elementTypeList, modelName));
     }
 
     public <T extends ToscaDataDefinition> List<ImmutablePair<T, Boolean>> createElementTypes(String toscaTypesYml,

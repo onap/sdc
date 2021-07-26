@@ -77,11 +77,11 @@ public class GroupTypeImportManager {
     }
 
     private Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> upsertGroupTypesByDao(
-        List<GroupTypeDefinition> groupTypesToCreate) {
-        return commonImportManager.createElementTypesByDao(groupTypesToCreate, this::validateGroupType,
+        List<GroupTypeDefinition> groupTypesToCreate, String modelName) {
+        return commonImportManager.createElementTypesWithVersionByDao(groupTypesToCreate, this::validateGroupType,
             groupType -> new ImmutablePair<>(ElementTypeEnum.GROUP_TYPE, UniqueIdBuilder.buildGroupTypeUid(groupType.getModel(),
                 groupType.getType(), groupType.getVersion(), NodeTypeEnum.GroupType.getName()).toLowerCase()), groupTypeOperation::getLatestGroupTypeByType,
-            groupTypeOperation::addGroupType, this::updateGroupType);
+            groupTypeOperation::addGroupType, this::updateGroupType, modelName);
     }
 
     private Either<GroupTypeDefinition, StorageOperationStatus> updateGroupType(GroupTypeDefinition newGroupType, GroupTypeDefinition oldGroupType) {

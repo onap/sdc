@@ -145,7 +145,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
         
-        addGroupTypeResult = groupTypeOperation.getGroupTypeByTypeAndVersion("org.openecomp.groups.NetworkCollection", "1.0");
+        addGroupTypeResult = groupTypeOperation.getGroupTypeByTypeAndVersion("org.openecomp.groups.NetworkCollection", "1.0", null);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
         
@@ -344,6 +344,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeResult =  groupTypeOperation.updateGroupType(newGroupTypeDefinition, addGroupTypeResult.left().value());
         assertTrue(updateGroupTypeResult.isRight());
         assertEquals(StorageOperationStatus.MATCH_NOT_FOUND, updateGroupTypeResult.right().value());
+
     }
     
     @Test
@@ -454,7 +455,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
         
-        addGroupTypeResult = groupTypeOperation.getGroupTypeByTypeAndVersion("org.openecomp.groups.PrivateCollection", "1.0");
+        addGroupTypeResult = groupTypeOperation.getGroupTypeByTypeAndVersion("org.openecomp.groups.PrivateCollection", "1.0", null);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
  
@@ -541,12 +542,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
     @Test
     public void testAddGroupTypeWithModel() {
-        createRootGroupTypeNode();
-
-        GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
-        groupTypeDefinition.setDescription("groups l2-networks in network collection");
-        groupTypeDefinition.setType("org.openecomp.groups.PrivateCollection");
-        groupTypeDefinition.setVersion("1.0");
+        GroupTypeDefinition groupTypeDefinition = createGroupTypeDef();
         groupTypeDefinition.setModel("testModel");
         Model model = new Model("testModel");
         modelOperation.createModel(model , true);
@@ -554,7 +550,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Either<GroupTypeDefinition, StorageOperationStatus> addGroupType = groupTypeOperation.addGroupType(groupTypeDefinition);
         assertTrue(addGroupType.isLeft());
         Either<GroupTypeDefinition, StorageOperationStatus> eitherGroupTypeFetched =
-            groupTypeOperation.getLatestGroupTypeByType(groupTypeDefinition.getType(), groupTypeDefinition.getModel());
+                groupTypeOperation.getLatestGroupTypeByType(groupTypeDefinition.getType(), groupTypeDefinition.getModel());
         assertTrue(eitherGroupTypeFetched.isLeft());
         assertEquals(groupTypeDefinition.getModel(), eitherGroupTypeFetched.left().value().getModel());
     }
@@ -712,7 +708,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         updatedType.setIcon("icon");
         groupTypeOperation.updateGroupType(updatedType, currGroupType.left().value());
 
-        Either<GroupTypeDefinition, StorageOperationStatus> fetchedUpdatedType = groupTypeOperation.getLatestGroupTypeByType(createdType.getType());
+        Either<GroupTypeDefinition, StorageOperationStatus> fetchedUpdatedType = groupTypeOperation.getLatestGroupTypeByType(createdType.getType(), createdType.getModel());
         GroupTypeDefinition fetchedGroupType = fetchedUpdatedType.left().value();
         assertThat(fetchedGroupType.getProperties()).isEmpty();
         assertThat(fetchedGroupType)
@@ -762,7 +758,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Either<GroupTypeDefinition, StorageOperationStatus> currGroupType = groupTypeOperation.addGroupType(groupType1);
         groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
 
-        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType());
+        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(), groupType1.getModel());
         assertThat(latestGroupType.left().value().getDerivedFrom()).isEqualTo(rootGroupType.getType());
         verifyDerivedFromNodeEqualsToRootGroupType(rootGroupType, latestGroupType.left().value().getUniqueId());
     }
@@ -778,7 +774,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeRes = groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
         assertThat(updateGroupTypeRes.right().value()).isEqualTo(StorageOperationStatus.NOT_FOUND);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType());
+        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(), groupType1.getModel());
         assertThat(latestGroupType.left().value().getDerivedFrom()).isEqualTo(rootGroupType.getType());
     }
 
@@ -795,7 +791,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
         groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
 
-        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType());
+        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(), groupType1.getModel());
         assertThat(latestGroupType.left().value().getDerivedFrom()).isEqualTo(derivedType1.getType());
     }
     
@@ -813,7 +809,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Either<GroupTypeDefinition, StorageOperationStatus> updateResult = groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
         assertThat(updateResult.right().value()).isEqualTo(StorageOperationStatus.GENERAL_ERROR);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(updatedGroupType.getType());
+        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(updatedGroupType.getType(), updatedGroupType.getModel());
         assertThat(latestGroupType.left().value().getDerivedFrom()).isEqualTo(rootGroupType.getType());
     }
 

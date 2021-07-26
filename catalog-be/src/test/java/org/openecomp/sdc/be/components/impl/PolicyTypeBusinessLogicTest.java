@@ -122,9 +122,9 @@ public class PolicyTypeBusinessLogicTest {
     @Test
     public void getLatestPolicyTypeByTypeTest() {
         PolicyTypeDefinition policyTypeDefinition = new PolicyTypeBuilder().setType("org.openecomp.policies.placement.Antilocate").build();
-        when(policyTypeOperation.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate")).thenReturn(
+        when(policyTypeOperation.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate", null)).thenReturn(
                 Either.left(policyTypeDefinition));
-        assertThat(policyTypeOperation.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate"))
-                .isEqualTo(Either.left(testInstance.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate")));
+        assertThat(policyTypeOperation.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate", null))
+                .isEqualTo(Either.left(testInstance.getLatestPolicyTypeByType("org.openecomp.policies.placement.Antilocate", null)));
     }
 }

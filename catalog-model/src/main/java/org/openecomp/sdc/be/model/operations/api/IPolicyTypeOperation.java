@@ -26,7 +26,7 @@ import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 
 public interface IPolicyTypeOperation {
 
-    Either<PolicyTypeDefinition, StorageOperationStatus> getLatestPolicyTypeByType(String policyTypeName);
+    Either<PolicyTypeDefinition, StorageOperationStatus> getLatestPolicyTypeByType(String policyTypeName, String modelName);
 
     Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType(PolicyTypeDefinition policyType);
 

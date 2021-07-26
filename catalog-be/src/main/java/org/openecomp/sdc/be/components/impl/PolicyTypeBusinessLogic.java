@@ -60,8 +60,8 @@ public class PolicyTypeBusinessLogic {
         return getPolicyTypes(excludedPolicyTypes, modelName);
     }
 
-    public PolicyTypeDefinition getLatestPolicyTypeByType(String policyTypeName) {
-        return policyTypeOperation.getLatestPolicyTypeByType(policyTypeName).left().on(e -> failOnPolicyType(e, policyTypeName));
+    public PolicyTypeDefinition getLatestPolicyTypeByType(String policyTypeName, String modelName) {
+        return policyTypeOperation.getLatestPolicyTypeByType(policyTypeName, modelName).left().on(e -> failOnPolicyType(e, policyTypeName));
     }
 
     public Set<String> getExcludedPolicyTypes(String internalComponentType) {

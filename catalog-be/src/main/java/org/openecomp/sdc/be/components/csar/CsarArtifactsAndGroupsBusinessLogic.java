@@ -592,7 +592,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
             resource.setDeploymentArtifacts(createdArtifactsMap);
             if (groupName != null && !groupName.isEmpty()) {
                 Either<GroupDefinition, ResponseFormat> groupDefinitionEither = buildGroupDefinition(createdArtifacts, heatGroups, groupTemplateInfo,
-                    groupName, artifactsGroup, artifactsUUIDGroup);
+                    groupName, artifactsGroup, artifactsUUIDGroup, resource.getModel());
                 if (groupDefinitionEither.isRight()) {
                     return Either.right(groupDefinitionEither.right().value());
                 }
@@ -611,7 +611,8 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
 
     private Either<GroupDefinition, ResponseFormat> buildGroupDefinition(List<ArtifactDefinition> createdArtifacts, List<GroupDefinition> heatGroups,
                                                                          ArtifactTemplateInfo groupTemplateInfo, String groupName,
-                                                                         Set<String> artifactsGroup, Set<String> artifactsUUIDGroup) {
+                                                                         Set<String> artifactsGroup, Set<String> artifactsUUIDGroup,
+                                                                         String model) {
         Map<String, String> members = new HashMap<>();
         associateMembersToArtifacts(createdArtifacts, null, heatGroups, artifactsGroup, members);
         List<String> artifactsList = new ArrayList<>(artifactsGroup);
@@ -630,7 +631,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
         prop.setValue(Boolean.toString(groupTemplateInfo.isBase()));
         properties.add(prop);
         Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeRes = groupTypeOperation
-            .getLatestGroupTypeByType(Constants.DEFAULT_GROUP_VF_MODULE, true);
+            .getLatestGroupTypeByType(Constants.DEFAULT_GROUP_VF_MODULE, model);
         if (getLatestGroupTypeRes.isRight()) {
             return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getLatestGroupTypeRes.right().value())));
         }
@@ -1197,7 +1198,7 @@ public class CsarArtifactsAndGroupsBusinessLogic extends BaseBusinessLogic {
                 createdArtifacts.addAll(createdNewArtifacts);
                 createdArtifacts.addAll(artifactsFromResource);
                 Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeRes = groupTypeOperation
-                    .getLatestGroupTypeByType(Constants.DEFAULT_GROUP_VF_MODULE, true);
+                    .getLatestGroupTypeByType(Constants.DEFAULT_GROUP_VF_MODULE, resource.getModel());
                 if (getLatestGroupTypeRes.isRight()) {
                     return Either
                         .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(getLatestGroupTypeRes.right().value())));

@@ -69,8 +69,8 @@ public class GroupTypeBusinessLogic {
         }
     }
 
-    public GroupTypeDefinition getLatestGroupTypeByType(String groupTypeName) {
-        return groupTypeOperation.getLatestGroupTypeByType(groupTypeName, true).left().on(e -> failOnGetGroupType(e, groupTypeName));
+    public GroupTypeDefinition getLatestGroupTypeByType(String groupTypeName, String modelName) {
+        return groupTypeOperation.getLatestGroupTypeByType(groupTypeName, modelName).left().on(e -> failOnGetGroupType(e, groupTypeName));
     }
 
     public Set<String> getExcludedGroupTypes(String internalComponentType) {

@@ -948,7 +948,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     public GroupDefinition createGroup(String componentId, ComponentTypeEnum componentTypeEnum, String groupType, String userId) {
         Component component = accessValidations.validateUserCanWorkOnComponent(componentId, componentTypeEnum, userId, CREATE_GROUP);
         validateGroupTypePerComponent(groupType, component);
-        GroupTypeDefinition groupTypeDefinition = groupTypeOperation.getLatestGroupTypeByType(groupType, false).left()
+        GroupTypeDefinition groupTypeDefinition = groupTypeOperation.getLatestGroupTypeByType(groupType, component.getModel(), false).left()
             .on(se -> onGroupTypeNotFound(component));
         boolean hasExistingGroups = CollectionUtils.isNotEmpty(component.getGroups());
         GroupDefinition groupDefinition = new GroupDefinition();
@@ -1240,7 +1240,7 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (StringUtils.isEmpty(groupType)) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_MISSING_GROUP_TYPE, groupDefinitionName));
         }
-        Either<GroupTypeDefinition, StorageOperationStatus> getGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType, true);
+        Either<GroupTypeDefinition, StorageOperationStatus> getGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType, component.getModel(), true);
         if (getGroupType.isRight()) {
             StorageOperationStatus status = getGroupType.right().value();
             if (status == StorageOperationStatus.NOT_FOUND) {

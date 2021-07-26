@@ -66,6 +66,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
@@ -266,9 +267,9 @@ public class YamlTemplateParsingHandlerTest {
     }
 
     private void stubGetGroupType() {
-        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(VFC_GROUP_TYPE))).thenReturn(VfcInstanceGroupType);
-        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(HEAT_GROUP_TYPE))).thenReturn(heatGroupType);
-        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(ROOT_GROUP_TYPE))).thenReturn(rootGroupType);
+        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(VFC_GROUP_TYPE), any())).thenReturn(VfcInstanceGroupType);
+        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(HEAT_GROUP_TYPE), any())).thenReturn(heatGroupType);
+        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(ROOT_GROUP_TYPE), any())).thenReturn(rootGroupType);
     }
 
     private static GroupTypeDefinition buildRootGroupType() {
@@ -366,7 +367,7 @@ public class YamlTemplateParsingHandlerTest {
     }
 
     private void stubGetPolicyType () {
-        when(policyTypeBusinessLogic.getLatestPolicyTypeByType(eq(OPENECOMP_ANTILOCATE_POLICY_TYPE))).thenReturn(
+        when(policyTypeBusinessLogic.getLatestPolicyTypeByType(eq(OPENECOMP_ANTILOCATE_POLICY_TYPE), any())).thenReturn(
                 OPENECOMP_POLICY_TYPE);
     }
 
