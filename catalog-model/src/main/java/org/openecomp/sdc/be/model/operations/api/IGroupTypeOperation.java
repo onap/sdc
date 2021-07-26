@@ -32,11 +32,11 @@ public interface IGroupTypeOperation {
 
     Either<GroupTypeDefinition, StorageOperationStatus> getGroupType(String uniqueId, boolean inTransaction);
 
-    Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name);
+    Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name, String model);
 
-    Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name, boolean inTransaction);
+    Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String name, String model, boolean inTransaction);
 
-    Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version);
+    Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version, String model);
 
-    Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version, boolean inTransaction);
+    Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String name, String version, String model, boolean inTransaction);
 }

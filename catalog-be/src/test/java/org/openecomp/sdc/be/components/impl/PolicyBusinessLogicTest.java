@@ -172,7 +172,7 @@ public class PolicyBusinessLogicTest {
     @Test
     public void createPolicySuccessTest(){
         stubValidateAndLockSuccess(CREATE_POLICY);
-        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME))).thenReturn(getPolicyTypeSuccessEither);
+        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME), any())).thenReturn(getPolicyTypeSuccessEither);
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(policySuccessEither);
         stubUnlockAndCommit();
         PolicyDefinition response = businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
@@ -201,7 +201,7 @@ public class PolicyBusinessLogicTest {
         newResource.setPolicies(policies);
         newResource.setComponentInstances(instanceList);
         
-        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME))).thenReturn(getPolicyTypeSuccessEither);
+        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME), any())).thenReturn(getPolicyTypeSuccessEither);
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(Either.left(policy));
         when(toscaOperationFacade.getToscaFullElement(eq(COMPONENT_ID))).thenReturn(Either.left(newResource));
         when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(Either.left(policy));
@@ -249,7 +249,7 @@ public class PolicyBusinessLogicTest {
     public void createPolicyPolicyTypeFailureTest(){
         stubValidateAndLockSuccess(CREATE_POLICY);
         Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeFailed = Either.right(StorageOperationStatus.NOT_FOUND);
-        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME))).thenReturn(getPolicyTypeFailed);
+        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME), any())).thenReturn(getPolicyTypeFailed);
         when(componentsUtils.convertFromStorageResponse(eq(getPolicyTypeFailed.right().value()))).thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
         stubUnlockAndRollback();
         businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
@@ -258,7 +258,7 @@ public class PolicyBusinessLogicTest {
     @Test(expected = ComponentException.class)
     public void createPolicyComponentTypeFailureTest(){
         stubValidateAndLockSuccess(CREATE_POLICY);
-        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME))).thenReturn(getPolicyTypeSuccessEither);
+        when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME), any())).thenReturn(getPolicyTypeSuccessEither);
         Either<PolicyDefinition, StorageOperationStatus> addPolicyRes = Either.right(StorageOperationStatus.BAD_REQUEST);
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(addPolicyRes);
         when(componentsUtils.convertFromStorageResponse(eq(addPolicyRes.right().value()))).thenReturn(ActionStatus.INVALID_CONTENT);

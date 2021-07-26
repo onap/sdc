@@ -20,7 +20,6 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
-import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
 import com.google.common.base.Strings;
 import fj.data.Either;
@@ -30,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -312,41 +312,19 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         }
     }
 
-    public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String type) {
-        return getLatestGroupTypeByType(type, true);
+    public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String type, String model) {
+         return getLatestGroupTypeByType(type, model, true);
     }
 
-    public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String type, boolean inTransaction) {
+    public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(String type, String model, boolean inTransaction) {
         Map<String, Object> mapCriteria = new HashMap<>();
         mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);
         mapCriteria.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
-        return getGroupTypeByCriteria(type, mapCriteria, inTransaction);
-    }
-
-    public Either<GroupTypeDefinition, StorageOperationStatus> getLatestGroupTypeByType(final String groupType, final String model) {
-        final Either<GroupTypeData, JanusGraphOperationStatus> groupTypeRes = janusGraphGenericDao
-            .getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupType, GroupTypeData.class, model);
-        if (groupTypeRes.isRight()) {
-            final JanusGraphOperationStatus status = groupTypeRes.right().value();
-            log.error("GroupTypeData cannot be found in graph. status is {}", status);
-            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
-        }
-        Either<GroupTypeDefinition, StorageOperationStatus> groupTypeDefinition = getGroupTypeByUid(groupTypeRes.left().value().getUniqueId());
-        if (groupTypeDefinition.isRight()) {
-            final StorageOperationStatus status = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(groupTypeRes.right().value());
-            log.error("GroupTypeDefinition cannot be found in graph. status is {}", status);
-            return Either.right(status);
-        }
-        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> modelName = janusGraphGenericDao.getParentNode(
-            UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.PolicyType), groupTypeRes.left().value().getUniqueId(), GraphEdgeLabels.MODEL_ELEMENT,
-            NodeTypeEnum.Model, ModelData.class);
-        if (modelName.isLeft()) {
-            groupTypeDefinition.left().value().setModel(modelName.left().value().getLeft().getName());
-        }
-        return groupTypeDefinition;
+         return getGroupTypeByCriteria(type, mapCriteria, model, inTransaction);
     }
 
     public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByCriteria(String type, Map<String, Object> properties,
+                                                                                      String model,
                                                                                       boolean inTransaction) {
         Either<GroupTypeDefinition, StorageOperationStatus> result = null;
         try {
@@ -355,8 +333,8 @@ public class GroupTypeOperation implements IGroupTypeOperation {
                 result = Either.right(StorageOperationStatus.INVALID_ID);
                 return result;
             }
-            Either<List<GroupTypeData>, StorageOperationStatus> groupTypeEither = janusGraphGenericDao
-                .getByCriteria(NodeTypeEnum.GroupType, properties, GroupTypeData.class).right()
+             Either<List<GroupTypeData>, StorageOperationStatus> groupTypeEither = janusGraphGenericDao
+                .getByCriteriaForModel(NodeTypeEnum.GroupType, properties, model, GroupTypeData.class).right()
                 .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
             if (groupTypeEither.isRight()) {
                 result = Either.right(groupTypeEither.right().value());
@@ -373,8 +351,22 @@ public class GroupTypeOperation implements IGroupTypeOperation {
 
     private Either<GroupTypeDefinition, StorageOperationStatus> buildGroupTypeDefinition(String uniqueId, GroupTypeData groupTypeNode) {
         GroupTypeDefinition groupType = new GroupTypeDefinition(groupTypeNode.getGroupTypeDataDefinition());
+        Optional<String> modelName = getAssociatedModelName(uniqueId);
+        if(modelName.isPresent()) {
+            groupType.setModel(modelName.get());
+        }
         return fillDerivedFrom(uniqueId, groupType).left().map(derivedFrom -> fillProperties(uniqueId, groupType, derivedFrom)).left()
             .bind(props -> fillCapabilities(uniqueId, groupType));
+    }
+
+    public Optional<String> getAssociatedModelName(String uniqueId) {
+        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> modelName = janusGraphGenericDao.getParentNode(
+            UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), uniqueId, GraphEdgeLabels.MODEL_ELEMENT,
+            NodeTypeEnum.Model, ModelData.class);
+        if(modelName.isRight()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(modelName.left().value().getLeft().getName());
     }
 
     private Either<GroupTypeDefinition, StorageOperationStatus> fillCapabilities(String uniqueId, GroupTypeDefinition groupType) {
@@ -436,15 +428,15 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         return derivedFrom;
     }
 
-    public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String type, String version) {
-        return getGroupTypeByTypeAndVersion(type, version, false);
+    public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String type, String version, String model) {
+        return getGroupTypeByTypeAndVersion(type, version, model, false);
     }
 
-    public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String type, String version, boolean inTransaction) {
+    public Either<GroupTypeDefinition, StorageOperationStatus> getGroupTypeByTypeAndVersion(String type, String version, String model, boolean inTransaction) {
         Map<String, Object> mapCriteria = new HashMap<>();
         mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);
         mapCriteria.put(GraphPropertiesDictionary.VERSION.getProperty(), version);
-        return getGroupTypeByCriteria(type, mapCriteria, inTransaction);
+        return getGroupTypeByCriteria(type, mapCriteria, model, inTransaction);
     }
 
     /**
@@ -618,7 +610,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         String groupTypeId = updatedGroupType.getUniqueId();
         if (StringUtils.equals(updatedGroupType.getDerivedFrom(), currDerivedFromGroupType)) {
             return Strings.isNullOrEmpty(currDerivedFromGroupType) ? Either.right(StorageOperationStatus.OK)
-                : getLatestGroupTypeByType(currDerivedFromGroupType, true).left().map(def -> null);
+                : getLatestGroupTypeByType(currDerivedFromGroupType, updatedGroupType.getModel()).left().map(def -> null);
         }
         StorageOperationStatus status = isLegalToReplaceParent(currDerivedFromGroupType, updatedGroupType.getDerivedFrom(),
             updatedGroupType.getType());
@@ -628,7 +620,7 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         log.debug(
             "#updateGroupDerivedFrom - updating group derived from relation for group type with id {}. old derived type {}. new derived type {}",
             groupTypeId, currDerivedFromGroupType, updatedGroupType.getDerivedFrom());
-        StorageOperationStatus deleteDerivedRelationStatus = deleteDerivedFromGroupType(groupTypeId, currDerivedFromGroupType);
+        StorageOperationStatus deleteDerivedRelationStatus = deleteDerivedFromGroupType(groupTypeId, currDerivedFromGroupType, updatedGroupType.getModel());
         if (deleteDerivedRelationStatus != StorageOperationStatus.OK) {
             return Either.right(deleteDerivedRelationStatus);
         }
@@ -651,13 +643,13 @@ public class GroupTypeOperation implements IGroupTypeOperation {
             derivedFromGroup -> derivedFromOperation.addDerivedFromRelation(gtUniqueId, derivedFromGroup.getUniqueId(), NodeTypeEnum.GroupType));
     }
 
-    private StorageOperationStatus deleteDerivedFromGroupType(String groupTypeId, String derivedFromType) {
+    private StorageOperationStatus deleteDerivedFromGroupType(String groupTypeId, String derivedFromType, String model) {
         if (derivedFromType == null) {
             return StorageOperationStatus.OK;
         }
         log.debug("#deleteDerivedFromGroupType - deleting derivedFrom relation for group type with id {} and its derived type {}", groupTypeId,
             derivedFromType);
-        return getLatestGroupTypeByType(derivedFromType, true).either(
+        return  getLatestGroupTypeByType(derivedFromType, model).either(
             derivedFromNode -> derivedFromOperation.removeDerivedFromRelation(groupTypeId, derivedFromNode.getUniqueId(), NodeTypeEnum.GroupType),
             err -> err);
     }

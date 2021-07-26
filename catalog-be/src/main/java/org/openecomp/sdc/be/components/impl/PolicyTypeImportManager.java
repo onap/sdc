@@ -77,11 +77,11 @@ public class PolicyTypeImportManager {
     }
 
     private Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> upsertPolicyTypesByDao(
-        List<PolicyTypeDefinition> policyTypesToCreate) {
-        return commonImportManager.createElementTypesByDao(policyTypesToCreate, this::validatePolicyType,
+        List<PolicyTypeDefinition> policyTypesToCreate, String modelName) {
+        return commonImportManager.createElementTypesWithVersionByDao(policyTypesToCreate, this::validatePolicyType,
             policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, UniqueIdBuilder.buildPolicyTypeUid(policyType.getModel(),
                 policyType.getType(), policyType.getVersion(), NodeTypeEnum.PolicyType.getName()).toLowerCase()), policyTypeOperation::getLatestPolicyTypeByType,
-            policyTypeOperation::addPolicyType, this::updatePolicyType);
+            policyTypeOperation::addPolicyType, this::updatePolicyType, modelName);
     }
 
     private Either<PolicyTypeDefinition, StorageOperationStatus> updatePolicyType(PolicyTypeDefinition newPolicyType,
@@ -108,7 +108,7 @@ public class PolicyTypeImportManager {
                     boolean isValid = toscaOperationFacade.getLatestByToscaResourceName(targetId).isLeft();
                     if (!isValid) { // check if it is a groupType
                         final Either<GroupTypeDefinition, StorageOperationStatus> groupTypeFound = groupTypeOperation
-                            .getLatestGroupTypeByType(targetId, false);
+                            .getLatestGroupTypeByType(targetId, policyType.getModel(), false);
                         isValid = groupTypeFound.isLeft() && !groupTypeFound.left().value().isEmpty();
                     }
                     if (!isValid) {

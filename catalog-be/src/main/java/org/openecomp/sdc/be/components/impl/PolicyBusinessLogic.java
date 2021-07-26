@@ -679,7 +679,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
                 .either(Either::left, r -> Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(r))));
     }*/
     private PolicyTypeDefinition validatePolicyTypeOnCreatePolicy(String policyTypeName, Component component) {
-        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyTypeByType = policyTypeOperation.getLatestPolicyTypeByType(policyTypeName);
+        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyTypeByType = policyTypeOperation.getLatestPolicyTypeByType(policyTypeName, component.getModel());
         if (latestPolicyTypeByType.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(latestPolicyTypeByType.right().value()));
         }

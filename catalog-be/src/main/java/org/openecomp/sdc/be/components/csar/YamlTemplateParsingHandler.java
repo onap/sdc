@@ -135,9 +135,9 @@ public class YamlTemplateParsingHandler {
         findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
         parsedToscaYamlInfo.setInputs(getInputs(mappedToscaTemplate));
         parsedToscaYamlInfo.setInstances(getInstances(fileName, mappedToscaTemplate, createdNodesToscaResourceNames));
-        parsedToscaYamlInfo.setGroups(getGroups(fileName, mappedToscaTemplate));
+        parsedToscaYamlInfo.setGroups(getGroups(fileName, mappedToscaTemplate, component.getModel()));
         if (component instanceof Resource) {
-            parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate));
+            parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate, component.getModel()));
         }
         log.debug("#parseResourceInfoFromYAML - The yaml {} has been parsed ", fileName);
         return parsedToscaYamlInfo;
@@ -176,15 +176,15 @@ public class YamlTemplateParsingHandler {
         return inputs;
     }
 
-    private Map<String, PolicyDefinition> getPolicies(String fileName, Map<String, Object> toscaJson) {
+    private Map<String, PolicyDefinition> getPolicies(String fileName, Map<String, Object> toscaJson, String model) {
         Map<String, Object> foundPolicies = findFirstToscaMapElement(toscaJson, POLICIES).left().on(err -> logPoliciesNotFound(fileName));
         if (MapUtils.isNotEmpty(foundPolicies)) {
-            return foundPolicies.entrySet().stream().map(this::createPolicy).collect(Collectors.toMap(PolicyDefinition::getName, p -> p));
+            return foundPolicies.entrySet().stream().map(policyToCreate -> createPolicy(policyToCreate, model)).collect(Collectors.toMap(PolicyDefinition::getName, p -> p));
         }
         return Collections.emptyMap();
     }
 
-    private PolicyDefinition createPolicy(Map.Entry<String, Object> policyNameValue) {
+    private PolicyDefinition createPolicy(Map.Entry<String, Object> policyNameValue, String model) {
         PolicyDefinition emptyPolicyDef = new PolicyDefinition();
         String policyName = policyNameValue.getKey();
         emptyPolicyDef.setName(policyName);
@@ -192,7 +192,7 @@ public class YamlTemplateParsingHandler {
             // There's no need to null test in conjunction with an instanceof test. null is not an instanceof anything, so a null check is redundant.
             if (policyNameValue.getValue() instanceof Map) {
                 Map<String, Object> policyTemplateJsonMap = (Map<String, Object>) policyNameValue.getValue();
-                validateAndFillPolicy(emptyPolicyDef, policyTemplateJsonMap);
+                validateAndFillPolicy(emptyPolicyDef, policyTemplateJsonMap, model);
             } else {
                 rollbackWithException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
             }
@@ -208,7 +208,7 @@ public class YamlTemplateParsingHandler {
         return Collections.emptyMap();
     }
 
-    private void validateAndFillPolicy(PolicyDefinition emptyPolicyDefinition, Map<String, Object> policyTemplateJsonMap) {
+    private void validateAndFillPolicy(PolicyDefinition emptyPolicyDefinition, Map<String, Object> policyTemplateJsonMap, String model) {
         String policyTypeName = (String) policyTemplateJsonMap.get(TYPE.getElementName());
         if (StringUtils.isEmpty(policyTypeName)) {
             log.debug("#validateAndFillPolicy - The 'type' member is not found under policy {}", emptyPolicyDefinition.getName());
@@ -217,13 +217,13 @@ public class YamlTemplateParsingHandler {
         emptyPolicyDefinition.setType(policyTypeName);
         // set policy targets
         emptyPolicyDefinition.setTargets(validateFillPolicyTargets(policyTemplateJsonMap));
-        PolicyTypeDefinition policyTypeDefinition = validateGetPolicyTypeDefinition(policyTypeName);
+        PolicyTypeDefinition policyTypeDefinition = validateGetPolicyTypeDefinition(policyTypeName, model);
         // set policy properties
         emptyPolicyDefinition.setProperties(validateFillPolicyProperties(policyTypeDefinition, policyTemplateJsonMap));
     }
 
-    private PolicyTypeDefinition validateGetPolicyTypeDefinition(String policyType) {
-        PolicyTypeDefinition policyTypeDefinition = policyTypeBusinessLogic.getLatestPolicyTypeByType(policyType);
+    private PolicyTypeDefinition validateGetPolicyTypeDefinition(String policyType, String modelName) {
+        PolicyTypeDefinition policyTypeDefinition = policyTypeBusinessLogic.getLatestPolicyTypeByType(policyType, modelName);
         if (policyTypeDefinition == null) {
             log.debug("#validateAndFillPolicy - The policy type {} not found", policyType);
             rollbackWithException(ActionStatus.POLICY_TYPE_IS_INVALID, policyType);
@@ -293,10 +293,10 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, GroupDefinition> getGroups(String fileName, Map<String, Object> toscaJson) {
+    private Map<String, GroupDefinition> getGroups(String fileName, Map<String, Object> toscaJson, String model) {
         Map<String, Object> foundGroups = findFirstToscaMapElement(toscaJson, GROUPS).left().on(err -> logGroupsNotFound(fileName));
         if (MapUtils.isNotEmpty(foundGroups) && matcheKey(foundGroups)) {
-            Map<String, GroupDefinition> groups = foundGroups.entrySet().stream().map(this::createGroup)
+            Map<String, GroupDefinition> groups = foundGroups.entrySet().stream().map(groupToCreate -> createGroup(groupToCreate, model))
                 .collect(Collectors.toMap(GroupDefinition::getName, g -> g));
             Map<String, Object> substitutionMappings = getSubstitutionMappings(toscaJson);
             if (capabilitiesSubstitutionMappingsExist(substitutionMappings)) {
@@ -343,13 +343,13 @@ public class YamlTemplateParsingHandler {
         return substitutionMappings != null && substitutionMappings.containsKey(CAPABILITIES.getElementName());
     }
 
-    private GroupDefinition createGroup(Map.Entry<String, Object> groupNameValue) {
+    private GroupDefinition createGroup(Map.Entry<String, Object> groupNameValue, String model) {
         GroupDefinition group = new GroupDefinition();
         group.setName(groupNameValue.getKey());
         try {
             if (groupNameValue.getValue() instanceof Map) {
                 Map<String, Object> groupTemplateJsonMap = (Map<String, Object>) groupNameValue.getValue();
-                validateAndFillGroup(group, groupTemplateJsonMap);
+                validateAndFillGroup(group, groupTemplateJsonMap, model);
                 validateUpdateGroupProperties(group, groupTemplateJsonMap);
                 validateUpdateGroupCapabilities(group, groupTemplateJsonMap);
             } else {
@@ -443,14 +443,14 @@ public class YamlTemplateParsingHandler {
         }
     }
 
-    private void validateAndFillGroup(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap) {
+    private void validateAndFillGroup(GroupDefinition groupInfo, Map<String, Object> groupTemplateJsonMap, String model) {
         String type = (String) groupTemplateJsonMap.get(TYPE.getElementName());
         if (StringUtils.isEmpty(type)) {
             log.debug("#validateAndFillGroup - The 'type' member is not found under group {}", groupInfo.getName());
             rollbackWithException(ActionStatus.GROUP_MISSING_GROUP_TYPE, groupInfo.getName());
         }
         groupInfo.setType(type);
-        GroupTypeDefinition groupType = groupTypeBusinessLogic.getLatestGroupTypeByType(type);
+        GroupTypeDefinition groupType = groupTypeBusinessLogic.getLatestGroupTypeByType(type, model);
         if (groupType == null) {
             log.debug("#validateAndFillGroup - The group type {} not found", groupInfo.getName());
             rollbackWithException(ActionStatus.GROUP_TYPE_IS_INVALID, type);

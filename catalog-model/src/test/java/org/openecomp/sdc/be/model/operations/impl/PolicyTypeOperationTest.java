@@ -107,7 +107,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
     @Test
     public void testGetLatestPolicyTypeByType() {
         PolicyTypeDefinition policyTypeCreated = policyTypeOperation.addPolicyType(createPolicyTypeDef()).left().value();
-        Either<PolicyTypeDefinition, StorageOperationStatus> eitherPolicyTypeFetched = policyTypeOperation.getLatestPolicyTypeByType(policyTypeCreated.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> eitherPolicyTypeFetched = policyTypeOperation.getLatestPolicyTypeByType(policyTypeCreated.getType(), policyTypeCreated.getModel());
         assertTrue(eitherPolicyTypeFetched.isLeft());
         PolicyTypeDefinition policyTypeFetched = eitherPolicyTypeFetched.left().value();
         assertEquals(policyTypeFetched.toString(), policyTypeCreated.toString());
@@ -134,7 +134,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         String derivedFromRootType = rootPolicyType.getType();
         PolicyTypeDefinition policyType1 = createPolicyTypeDef("tosca.policies.type1", "desc1", derivedFromRootType);
         policyTypeOperation.addPolicyType(policyType1);
-        Either<PolicyTypeDefinition, StorageOperationStatus> eitherPolicyTypeFetched = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> eitherPolicyTypeFetched = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType(), policyType1.getModel());
         assertThat(eitherPolicyTypeFetched.left().value().getDerivedFrom()).isEqualTo(rootPolicyType.getType());
     }
 
@@ -145,7 +145,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         PolicyTypeDefinition policyType1 = createPolicyTypeDef("tosca.policies.type1", null, prop1, prop2);
         PolicyTypeDefinition policyType2 = createPolicyTypeDef("tosca.policies.type2", "desc3", policyType1.getType(), null);
         addPolicyTypesToDB(policyType1, policyType2);
-        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType2 = policyTypeOperation.getLatestPolicyTypeByType(policyType2.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType2 = policyTypeOperation.getLatestPolicyTypeByType(policyType2.getType(), policyType2.getModel());
         assertThat(latestPolicyType2.isLeft()).isTrue();
         assertThat(latestPolicyType2.left().value().getProperties())
             .usingElementComparatorOnFields("defaultValue", "name", "type")
@@ -166,7 +166,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
         addPolicyTypesToDB(rootPolicyType, policyType1, policyType2, policyType3, policyType4);
 
-        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType3 = policyTypeOperation.getLatestPolicyTypeByType(policyType4.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType3 = policyTypeOperation.getLatestPolicyTypeByType(policyType4.getType(), policyType4.getModel());
         assertThat(latestPolicyType3.isLeft()).isTrue();
         assertThat(latestPolicyType3.left().value().getProperties())
             .usingElementComparatorOnFields("defaultValue", "name", "type")
@@ -220,7 +220,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         Either<PolicyTypeDefinition, StorageOperationStatus> addedPolicyTypeResult = policyTypeOperation.addPolicyType(policyType1);
         assertThat(addedPolicyTypeResult.isLeft()).isTrue();
 
-        Either<PolicyTypeDefinition, StorageOperationStatus> fetchedPolicyType = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> fetchedPolicyType = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType(), policyType1.getModel());
         PolicyTypeDefinition fetchedPolicyTypeVal = fetchedPolicyType.left().value();
         assertThat(fetchedPolicyTypeVal.getDerivedFrom()).isEqualTo(derivedFromRootType);
         verifyDerivedFromNodeEqualsToRootPolicyType(rootPolicyType, fetchedPolicyTypeVal.getUniqueId());
@@ -245,7 +245,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         updatedType.setIcon("icon");
         policyTypeOperation.updatePolicyType(updatedType, currPolicyType.left().value());
 
-        Either<PolicyTypeDefinition, StorageOperationStatus> fetchedUpdatedType = policyTypeOperation.getLatestPolicyTypeByType(createdType.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> fetchedUpdatedType = policyTypeOperation.getLatestPolicyTypeByType(createdType.getType(), createdType.getModel());
         PolicyTypeDefinition fetchedPolicyType = fetchedUpdatedType.left().value();
         assertThat(fetchedPolicyType.getProperties()).isEmpty();
         assertThat(fetchedPolicyType)
@@ -266,7 +266,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
         policyTypeOperation.updatePolicyType(updatedPolicyType, currPolicyType.left().value());
 
-        Either<PolicyTypeDefinition, StorageOperationStatus> fetchedUpdatedType = policyTypeOperation.getLatestPolicyTypeByType(policyType.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> fetchedUpdatedType = policyTypeOperation.getLatestPolicyTypeByType(policyType.getType(), policyType.getModel());
         assertThat(fetchedUpdatedType.left().value().getProperties())
             .usingElementComparatorOnFields("name", "defaultValue", "type")
             .containsExactlyInAnyOrder(updatedProp1, prop3);
@@ -282,7 +282,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
         Either<PolicyTypeDefinition, StorageOperationStatus> currPolicyType = policyTypeOperation.addPolicyType(policyType1);
         policyTypeOperation.updatePolicyType(updatedPolicyType, currPolicyType.left().value());
 
-        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType(), policyType1.getModel());
         assertThat(latestPolicyType.left().value().getDerivedFrom()).isEqualTo(rootPolicyType.getType());
         verifyDerivedFromNodeEqualsToRootPolicyType(rootPolicyType, latestPolicyType.left().value().getUniqueId());
     }
@@ -297,7 +297,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
         policyTypeOperation.updatePolicyType(updatedPolicyType, currPolicyType.left().value());
 
-        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType(), policyType1.getModel());
         assertThat(latestPolicyType.left().value().getDerivedFrom()).isNull();
         verifyDerivedFromRelationDoesntExist(latestPolicyType.left().value().getUniqueId());
     }
@@ -315,7 +315,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
 
         policyTypeOperation.updatePolicyType(updatedPolicyType, currPolicyType.left().value());
 
-        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType());
+        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyType = policyTypeOperation.getLatestPolicyTypeByType(policyType1.getType(), policyType1.getModel());
         assertThat(latestPolicyType.left().value().getDerivedFrom()).isEqualTo(rootPolicyType.getType());
         verifyDerivedFromNodeEqualsToRootPolicyType(rootPolicyType, latestPolicyType.left().value().getUniqueId());
     }

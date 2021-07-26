@@ -147,7 +147,7 @@ class GroupBusinessLogicTest {
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         Map<String, DataTypeDefinition> map = new HashMap<>();
         when(dataTypeCache.getAll()).thenReturn(Either.left(map));
-        when(groupTypeOperation.getLatestGroupTypeByType(Constants.DEFAULT_GROUP_VF_MODULE, true)).thenReturn(Either.left(groupTypeDefinition));
+        when(groupTypeOperation.getLatestGroupTypeByType(Constants.DEFAULT_GROUP_VF_MODULE, null, true)).thenReturn(Either.left(groupTypeDefinition));
         when(groupsOperation.createGroups(any(Component.class), anyMap())).thenReturn(Either.left(groupDefinitions));
         when(groupsOperation.addCalculatedCapabilitiesWithProperties(anyString(), anyMap(), anyMap())).thenReturn(StorageOperationStatus.OK);
         result = test.createGroups(component, groupDefinitions, true);
@@ -213,9 +213,9 @@ class GroupBusinessLogicTest {
         List<PropertyDefinition> properties = asList(
             buildProperty("network_collection_type", "l3-network", "network collection type, defined with default value"));
         groupTypeDefinition.setProperties(properties);
-        when(groupTypeOperation.getLatestGroupTypeByType(grpType, false)).thenReturn(Either.left(groupTypeDefinition));
+        when(groupTypeOperation.getLatestGroupTypeByType(grpType, component.getModel(), false)).thenReturn(Either.left(groupTypeDefinition));
         when(toscaOperationFacade.canAddGroups(componentId)).thenReturn(true);
-        when(groupTypeOperation.getLatestGroupTypeByType(grpType, true)).thenReturn(Either.left(groupTypeDefinition));
+        when(groupTypeOperation.getLatestGroupTypeByType(grpType, component.getModel(), true)).thenReturn(Either.left(groupTypeDefinition));
         when(propertyOperation.checkInnerType(any(PropertyDefinition.class))).thenReturn(Either.left("ok"));
         when(propertyOperation.validateAndUpdatePropertyValue("string", null, "ok", map)).thenReturn(Either.left(component));
         when(groupsOperation.addGroups(any(Resource.class), any())).thenReturn(Either.left(groupDefList));
