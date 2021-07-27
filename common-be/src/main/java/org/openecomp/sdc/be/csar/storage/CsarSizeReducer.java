@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -45,12 +46,19 @@ public class CsarSizeReducer implements PackageSizeReducer {
     @Override
     public byte[] reduce(final Path csarPackagePath) {
         final var reducedCsarPath = Path.of(csarPackagePath + "." + UUID.randomUUID());
+        final var thresholdEntries = configuration.getThresholdEntries();
+        final var totalEntryArchive = new AtomicInteger(0);
 
         try (final var zf = new ZipFile(csarPackagePath.toString());
             final var zos = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(reducedCsarPath)))) {
 
             zf.entries().asIterator().forEachRemaining(entry -> {
                 final var entryName = entry.getName();
+                if (totalEntryArchive.getAndIncrement() > thresholdEntries) {
+                    // too much entries in this archive, can lead to inodes exhaustion of the system
+                    final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
+                    throw new CsarSizeReducerException(errorMsg);
+                }
                 try {
                     if (!entry.isDirectory()) {
                         zos.putNextEntry(new ZipEntry(entryName));

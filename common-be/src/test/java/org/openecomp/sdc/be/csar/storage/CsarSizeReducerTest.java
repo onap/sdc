@@ -58,6 +58,7 @@ class CsarSizeReducerTest {
         final var sizeLimit = 150000L;
         when(csarPackageReducerConfiguration.getSizeLimit()).thenReturn(sizeLimit);
         when(csarPackageReducerConfiguration.getFoldersToStrip()).thenReturn(Set.of(pathToReduce1, pathToReduce2));
+        when(csarPackageReducerConfiguration.getThresholdEntries()).thenReturn(10000);
 
         final var csarPath = Path.of("src/test/resources/csarSizeReducer/dummy.csar");
 

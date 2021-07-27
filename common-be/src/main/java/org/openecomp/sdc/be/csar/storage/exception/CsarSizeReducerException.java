@@ -27,4 +27,8 @@ public class CsarSizeReducerException extends BusinessException {
     public CsarSizeReducerException(final String message, final Throwable cause) {
         super(message, cause);
     }
+
+    public CsarSizeReducerException(final String message) {
+        super(message);
+    }
 }
