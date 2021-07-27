@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6eb762ea_f41600e2",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/CsarSizeReducer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-07-27T07:44:50Z",
+      "side": 1,
+      "message": "why exclude the size limit?",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 61
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66a636f7_899bcfe5",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/BaseOrchestrationTemplateHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-07-27T07:44:50Z",
+      "side": 1,
+      "message": "what is being deleted here and why?",
+      "range": {
+        "startLine": 60,
+        "startChar": 6,
+        "endLine": 70,
+        "endChar": 13
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0461018_cce82237",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/CsarSecurityValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-07-27T07:44:50Z",
+      "side": 1,
+      "message": "extract the condition to a boolean method with a name that makes is easier understand why the fork in code here",
+      "range": {
+        "startLine": 52,
+        "startChar": 9,
+        "endLine": 52,
+        "endChar": 113
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27907e10_43f2791d",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-07-27T07:44:50Z",
+      "side": 1,
+      "message": "lot of duplication of code with existing method. Extract common code to another method",
+      "range": {
+        "startLine": 219,
+        "startChar": 0,
+        "endLine": 235,
+        "endChar": 92
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
