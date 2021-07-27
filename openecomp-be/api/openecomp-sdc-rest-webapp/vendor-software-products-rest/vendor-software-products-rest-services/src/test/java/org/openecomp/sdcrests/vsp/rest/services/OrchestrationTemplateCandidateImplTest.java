@@ -74,7 +74,10 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto
 class OrchestrationTemplateCandidateImplTest {
 
     private final Logger logger = LoggerFactory.getLogger(OrchestrationTemplateCandidateImplTest.class);
-
+    private final String candidateId = UUID.randomUUID().toString();
+    private final String softwareProductId = UUID.randomUUID().toString();
+    private final String versionId = UUID.randomUUID().toString();
+    private final String user = "cs0008";
     @Mock
     private OrchestrationTemplateCandidateManager candidateManager;
     @Mock
@@ -85,14 +88,7 @@ class OrchestrationTemplateCandidateImplTest {
     private ArtifactStorageManager artifactStorageManager;
     @Mock
     private PackageSizeReducer packageSizeReducer;
-
     private OrchestrationTemplateCandidateImpl orchestrationTemplateCandidate;
-
-    private final String candidateId = UUID.randomUUID().toString();
-    private final String softwareProductId = UUID.randomUUID().toString();
-    private final String versionId = UUID.randomUUID().toString();
-
-    private final String user = "cs0008";
 
     @BeforeEach
     public void setUp() {
