@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -100,9 +101,16 @@ public class CsarSizeReducer implements PackageSizeReducer {
     }
 
     private Consumer<ZipEntry> signedZipProcessingConsumer(final Path csarPackagePath, final ZipFile zf, final ZipOutputStream zos) {
+        final var thresholdEntries = configuration.getThresholdEntries();
+        final var totalEntryArchive = new AtomicInteger(0);
         return zipEntry -> {
             final var entryName = zipEntry.getName();
             try {
+                if (totalEntryArchive.getAndIncrement() > thresholdEntries) {
+                    // too much entries in this archive, can lead to inodes exhaustion of the system
+                    final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
+                    throw new CsarSizeReducerException(errorMsg);
+                }
                 zos.putNextEntry(new ZipEntry(entryName));
                 if (!zipEntry.isDirectory()) {
                     if (entryName.toLowerCase().endsWith(CSAR_EXTENSION)) {
@@ -123,8 +131,15 @@ public class CsarSizeReducer implements PackageSizeReducer {
     }
 
     private Consumer<ZipEntry> unsignedZipProcessingConsumer(final Path csarPackagePath, final ZipFile zf, final ZipOutputStream zos) {
+        final var thresholdEntries = configuration.getThresholdEntries();
+        final var totalEntryArchive = new AtomicInteger(0);
         return zipEntry -> {
             final var entryName = zipEntry.getName();
+            if (totalEntryArchive.getAndIncrement() > thresholdEntries) {
+                // too much entries in this archive, can lead to inodes exhaustion of the system
+                final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
+                throw new CsarSizeReducerException(errorMsg);
+            }
             try {
                 zos.putNextEntry(new ZipEntry(entryName));
                 if (!zipEntry.isDirectory()) {
