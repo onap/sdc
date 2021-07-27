@@ -132,9 +132,10 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         final var commonConfigurationManager = CommonConfigurationManager.getInstance();
         final List<String> foldersToStrip = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "foldersToStrip", new ArrayList<>());
         final int sizeLimit = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "sizeLimit", 1000000);
+        final int thresholdEntries = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "thresholdEntries", 10000);
         LOGGER.info("Folders to strip: '{}'", String.join(", ", foldersToStrip));
         final Set<Path> foldersToStripPathSet = foldersToStrip.stream().map(Path::of).collect(Collectors.toSet());
-        return new CsarPackageReducerConfiguration(foldersToStripPathSet, sizeLimit);
+        return new CsarPackageReducerConfiguration(foldersToStripPathSet, sizeLimit, thresholdEntries);
     }
 
     private ArtifactStorageConfig readArtifactStorageConfiguration() {
@@ -173,7 +174,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
                 fileToUploadBytes = packageSizeReducer.reduce(artifactInfo.getPath());
             } catch (final BusinessException e) {
                 return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
-                    new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(artifactInfo.getPath()))))
+                        new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(artifactInfo.getPath()))))
                     .build();
             }
         } else {
@@ -189,7 +190,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         if (onboardPackageInfo == null) {
             final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
                 new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)));
-            return Response.ok(uploadFileResponseDto).build();
+            return Response.ok(uploadFileResponseDto)
+                .build();
         }
         final var version = new Version(ValidationUtils.sanitizeInputString(versionId));
         final var vspDetails = new VspDetails(ValidationUtils.sanitizeInputString(vspId), version);
