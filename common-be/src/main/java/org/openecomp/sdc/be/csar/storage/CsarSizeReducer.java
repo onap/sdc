@@ -20,14 +20,18 @@
 
 package org.openecomp.sdc.be.csar.storage;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import lombok.Getter;
 import org.openecomp.sdc.be.csar.storage.exception.CsarSizeReducerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +39,8 @@ import org.slf4j.LoggerFactory;
 public class CsarSizeReducer implements PackageSizeReducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsarSizeReducer.class);
+    @Getter
+    private final AtomicBoolean reduced = new AtomicBoolean(false);
 
     private final CsarPackageReducerConfiguration configuration;
 
@@ -52,11 +58,18 @@ public class CsarSizeReducer implements PackageSizeReducer {
             zf.entries().asIterator().forEachRemaining(entry -> {
                 final var entryName = entry.getName();
                 try {
+                    zos.putNextEntry(new ZipEntry(entryName));
                     if (!entry.isDirectory()) {
-                        zos.putNextEntry(new ZipEntry(entryName));
-                        if (isCandidateToRemove(entry)) {
+                        // if is CSAR call 'reduce' recursively
+                        if (entryName.toLowerCase().endsWith(".csar")) {
+                            final var target = Path.of(reducedCsarPath.toString() + "." + UUID.randomUUID());
+                            Files.copy(zf.getInputStream(entry), target, REPLACE_EXISTING);
+                            zos.write(reduce(target));
+                            Files.delete(target);
+                        } else if (isCandidateToRemove(entry)) {
                             // replace with EMPTY string to avoid package description inconsistency/validation errors
                             zos.write("".getBytes());
+                            reduced.set(true);
                         } else {
                             zos.write(zf.getInputStream(entry).readAllBytes());
                         }
@@ -67,7 +80,6 @@ public class CsarSizeReducer implements PackageSizeReducer {
                     throw new CsarSizeReducerException(errorMsg, ei);
                 }
             });
-
         } catch (final IOException ex1) {
             rollback(reducedCsarPath);
             final var errorMsg = String.format("An unexpected problem happened while reading the CSAR '%s'", csarPackagePath);
@@ -75,7 +87,11 @@ public class CsarSizeReducer implements PackageSizeReducer {
         }
         final byte[] reducedCsarBytes;
         try {
-            reducedCsarBytes = Files.readAllBytes(reducedCsarPath);
+            if (reduced.get()) {
+                reducedCsarBytes = Files.readAllBytes(reducedCsarPath);
+            } else {
+                reducedCsarBytes = Files.readAllBytes(csarPackagePath);
+            }
         } catch (final IOException e) {
             final var errorMsg = String.format("Could not read bytes of file '%s'", csarPackagePath);
             throw new CsarSizeReducerException(errorMsg, e);
