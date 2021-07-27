@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -69,6 +70,8 @@ public class CsarSizeReducer implements PackageSizeReducer {
 
     private byte[] reduce(final Path csarPackagePath, final ZipProcessFunction zipProcessingFunction) {
         final var reducedCsarPath = Path.of(csarPackagePath + "." + UUID.randomUUID());
+        final var thresholdEntries = configuration.getThresholdEntries();
+        final var totalEntryArchive = new AtomicInteger(0);
 
         try (final var zf = new ZipFile(csarPackagePath.toString());
             final var zos = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(reducedCsarPath)))) {
