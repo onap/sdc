@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "a40d5df2_9af8ff6a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-07-27T07:47:09Z",
+      "side": 1,
+      "message": "Create a story rather than referencing the epic, and explain the change in the story",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 18
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6eb762ea_f41600e2",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/CsarSizeReducer.java",
         "patchSetId": 1
