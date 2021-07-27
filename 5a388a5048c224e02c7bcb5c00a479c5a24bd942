@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "43d3a2eb_a45e0cb5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-07-27T11:17:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a40d5df2_9af8ff6a",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 18
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6eb762ea_f41600e2",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/CsarSizeReducer.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2021-07-27T07:44:50Z",
       "side": 1,
       "message": "why exclude the size limit?",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 61
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a26b5d12_cf307da9",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/CsarSizeReducer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-07-27T11:17:02Z",
+      "side": 1,
+      "message": "yes, you right, not need anymore, before it was different order of IFs",
+      "parentUuid": "6eb762ea_f41600e2",
       "range": {
         "startLine": 67,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9d48befc_0bba251e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/BaseOrchestrationTemplateHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-07-27T11:17:02Z",
+      "side": 1,
+      "message": "in case of \u0027validate\u0027 return errors we need to clean up temp files created by SecurityManager.findCSARandExtract()",
+      "parentUuid": "66a636f7_899bcfe5",
+      "range": {
+        "startLine": 60,
+        "startChar": 6,
+        "endLine": 70,
+        "endChar": 13
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f0461018_cce82237",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/CsarSecurityValidator.java",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "5c3d65bd_5bf008ca",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/CsarSecurityValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-07-27T11:17:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f0461018_cce82237",
+      "range": {
+        "startLine": 52,
+        "startChar": 9,
+        "endLine": 52,
+        "endChar": 113
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27907e10_43f2791d",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
         "patchSetId": 1
@@ -114,6 +210,30 @@
       "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09de84b0_852cf2fe",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/security/SecurityManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-07-27T11:17:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27907e10_43f2791d",
+      "range": {
+        "startLine": 219,
+        "startChar": 0,
+        "endLine": 235,
+        "endChar": 92
+      },
+      "revId": "5a388a5048c224e02c7bcb5c00a479c5a24bd942",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
