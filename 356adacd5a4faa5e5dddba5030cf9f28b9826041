@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd25cbfb_d3278006",
+        "filename": "catalog-be/src/main/resources/scripts/sdcBePy/tosca/imports/run.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-07-28T13:00:58Z",
+      "side": 1,
+      "message": "If an exception is thrown here the backend will be left with locking disabled, should ensure locking is always enabled again irrespective of success or failure here",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 122
+      },
+      "revId": "356adacd5a4faa5e5dddba5030cf9f28b9826041",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
