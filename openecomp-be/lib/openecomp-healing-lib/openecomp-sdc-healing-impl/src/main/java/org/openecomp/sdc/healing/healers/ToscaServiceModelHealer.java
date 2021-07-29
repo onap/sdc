@@ -46,7 +46,7 @@ public class ToscaServiceModelHealer implements Healer {
 
     private static final String VALIDATION_FAILURE_MESSAGE =
         "Product was updated. Please " + "update the uploaded Heat file according to these validation errors: \n";
-    private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao;
+    private ServiceModelDao<ToscaServiceModel> serviceModelDao;
     private OrchestrationTemplateDao orchestrationTemplateDao;
 
     public ToscaServiceModelHealer() {
@@ -54,7 +54,7 @@ public class ToscaServiceModelHealer implements Healer {
         this.orchestrationTemplateDao = OrchestrationTemplateDaoFactory.getInstance().createInterface();
     }
 
-    public ToscaServiceModelHealer(ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao,
+    public ToscaServiceModelHealer(ServiceModelDao<ToscaServiceModel> serviceModelDao,
                                    OrchestrationTemplateDao orchestrationTemplateDao) {
         this.serviceModelDao = serviceModelDao;
         this.orchestrationTemplateDao = orchestrationTemplateDao;

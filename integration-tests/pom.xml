@@ -544,7 +544,7 @@ limitations under the License.
                                 </volumes>
                                 <wait>
                                     <time>30000</time>
-                                    <log>Initializing onboard schemas</log>
+                                    <log>Onboarding init was successful</log>
                                 </wait>
                                 <network>
                                     <mode>custom</mode>

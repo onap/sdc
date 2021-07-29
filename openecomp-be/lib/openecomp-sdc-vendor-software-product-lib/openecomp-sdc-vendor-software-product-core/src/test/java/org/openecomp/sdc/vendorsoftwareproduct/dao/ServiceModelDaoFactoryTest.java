@@ -87,8 +87,8 @@ public class ServiceModelDaoFactoryTest {
         zusammenAdaptor);
 
     zusammenAdaptor.setItemVersion(itemVersionmock);
-    ToscaServiceModel model = getToscaServiceModel();
-    serviceModelDaoZusammen.storeServiceModel(vspId, version, model);
+    ToscaServiceModel toscaServiceModel = getToscaServiceModel();
+    serviceModelDaoZusammen.storeServiceModel(vspId, version, toscaServiceModel);
   }
 
   @Test
