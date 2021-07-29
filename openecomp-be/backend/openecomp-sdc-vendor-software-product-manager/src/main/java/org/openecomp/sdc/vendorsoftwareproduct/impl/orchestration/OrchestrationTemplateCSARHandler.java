@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Optional;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
@@ -49,7 +50,8 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         final UploadFileResponse uploadFileResponse = new UploadFileResponse();
         if (onboardPackageInfo.getPackageType() == OnboardingTypesEnum.SIGNED_CSAR) {
             final OnboardSignedPackage originalOnboardPackage = (OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage();
-            validatePackageSecurity(originalOnboardPackage).ifPresent(packageSignatureResponse -> {
+            final ArtifactInfo artifactInfo = onboardPackageInfo.getArtifactInfo();
+            validatePackageSecurity(originalOnboardPackage, artifactInfo).ifPresent(packageSignatureResponse -> {
                 if (packageSignatureResponse.hasErrors()) {
                     uploadFileResponse.addStructureErrors(packageSignatureResponse.getErrors());
                 }
@@ -74,11 +76,11 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         return uploadFileResponse;
     }
 
-    private Optional<UploadFileResponse> validatePackageSecurity(final OnboardSignedPackage originalOnboardPackage) {
+    private Optional<UploadFileResponse> validatePackageSecurity(final OnboardSignedPackage signedPackage, final ArtifactInfo artifactInfo) {
         final UploadFileResponse uploadFileResponseDto = new UploadFileResponse();
         try {
             final CsarSecurityValidator csarSecurityValidator = new CsarSecurityValidator();
-            if (!csarSecurityValidator.verifyPackageSignature(originalOnboardPackage)) {
+            if (!csarSecurityValidator.verifyPackageSignature(signedPackage, artifactInfo)) {
                 final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR, Messages.FAILED_TO_VERIFY_SIGNATURE.getErrorMessage());
                 logger.error(errorMessage.getMessage());
                 uploadFileResponseDto.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage);
@@ -86,7 +88,7 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
             }
         } catch (final SecurityManagerException e) {
             final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR, e.getMessage());
-            logger.error("Could not validate package signature {}", originalOnboardPackage.getFilename(), e);
+            logger.error("Could not validate package signature {}", signedPackage.getFilename(), e);
             uploadFileResponseDto.addStructureError(SdcCommon.UPLOAD_FILE, errorMessage);
             return Optional.of(uploadFileResponseDto);
         }

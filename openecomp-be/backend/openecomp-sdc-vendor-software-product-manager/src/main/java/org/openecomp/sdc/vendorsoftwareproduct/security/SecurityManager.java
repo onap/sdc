@@ -19,14 +19,17 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.security;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.google.common.collect.ImmutableSet;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
@@ -48,22 +51,28 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipFile;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
+import org.openecomp.sdc.common.errors.SdcRuntimeException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 
 /**
  * This is temporary solution. When AAF provides functionality for verifying trustedCertificates, this class should be reviewed Class is responsible
@@ -71,19 +80,22 @@ import org.openecomp.sdc.logging.api.LoggerFactory;
  */
 public class SecurityManager {
 
+    public static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = Set.of("cms");
+    public static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = Set.of("cert", "crt");
     private static final String CERTIFICATE_DEFAULT_LOCATION = "cert";
-    public static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = ImmutableSet.of("cms");
-    public static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = ImmutableSet.of("cert", "crt");
-    private Logger logger = LoggerFactory.getLogger(SecurityManager.class);
-    private Set<X509Certificate> trustedCertificates = new HashSet<>();
-    private Set<X509Certificate> trustedCertificatesFromPackage = new HashSet<>();
-    private File certificateDirectory;
+    private static final Logger logger = LoggerFactory.getLogger(SecurityManager.class);
+    private static final String UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION = "Unexpected error occurred during signature validation!";
+    private static final String COULD_NOT_VERIFY_SIGNATURE = "Could not verify signature!";
 
     static {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
     }
+
+    private Set<X509Certificate> trustedCertificates = new HashSet<>();
+    private Set<X509Certificate> trustedCertificatesFromPackage = new HashSet<>();
+    private File certificateDirectory;
 
     private SecurityManager() {
         certificateDirectory = this.getcertDirectory(System.getenv("SDC_CERT_DIR"));
@@ -99,20 +111,12 @@ public class SecurityManager {
     }
 
     /**
-     * Initialization on demand class / synchronized singleton pattern.
-     */
-    private static class SecurityManagerInstanceHolder {
-
-        private static final SecurityManager instance = new SecurityManager();
-    }
-
-    /**
      * Checks the configured location for available trustedCertificates
      *
      * @return set of trustedCertificates
      * @throws SecurityManagerException
      */
-    public Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException, FileNotFoundException {
+    public Set<X509Certificate> getTrustedCertificates() throws SecurityManagerException {
         //if file number in certificate directory changed reload certs
         String[] certFiles = certificateDirectory.list();
         if (certFiles == null) {
@@ -145,41 +149,119 @@ public class SecurityManager {
      * @return true if signature verified
      * @throws SecurityManagerException
      */
-    public boolean verifySignedData(final byte[] messageSyntaxSignature, final byte[] packageCert, final byte[] innerPackageFile)
-        throws SecurityManagerException {
-        try (ByteArrayInputStream signatureStream = new ByteArrayInputStream(messageSyntaxSignature); final PEMParser pemParser = new PEMParser(
-            new InputStreamReader(signatureStream))) {
+    public boolean verifySignedData(final byte[] messageSyntaxSignature,
+                                    final byte[] packageCert,
+                                    final byte[] innerPackageFile) throws SecurityManagerException {
+        try (final ByteArrayInputStream signatureStream = new ByteArrayInputStream(messageSyntaxSignature);
+            final PEMParser pemParser = new PEMParser(new InputStreamReader(signatureStream))) {
             final Object parsedObject = pemParser.readObject();
             if (!(parsedObject instanceof ContentInfo)) {
                 throw new SecurityManagerException("Signature is not recognized");
             }
-            final ContentInfo signature = ContentInfo.getInstance(parsedObject);
-            final CMSTypedData signedContent = new CMSProcessableByteArray(innerPackageFile);
-            final CMSSignedData signedData = new CMSSignedData(signedContent, signature);
-            final Collection<SignerInformation> signers = signedData.getSignerInfos().getSigners();
-            final SignerInformation firstSigner = signers.iterator().next();
-            final X509Certificate cert;
-            Collection<X509CertificateHolder> certs;
-            if (packageCert == null) {
-                certs = signedData.getCertificates().getMatches(null);
-                cert = readSignCert(certs, firstSigner)
-                    .orElseThrow(() -> new SecurityManagerException("No certificate found in cms signature that should contain one!"));
-            } else {
-                certs = parseCertsFromPem(packageCert);
-                cert = readSignCert(certs, firstSigner)
-                    .orElseThrow(() -> new SecurityManagerException("No matching certificate found in certificate file that should contain one!"));
+            return verify(packageCert, new CMSSignedData(new CMSProcessableByteArray(innerPackageFile), ContentInfo.getInstance(parsedObject)));
+        } catch (final IOException | CMSException e) {
+            logger.error(e.getMessage(), e);
+            throw new SecurityManagerException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
+        }
+    }
+
+    public boolean verifyPackageSignedData(final OnboardSignedPackage signedPackage, final ArtifactInfo artifactInfo)
+        throws SecurityManagerException {
+        boolean fail = false;
+        final var fileContentHandler = signedPackage.getFileContentHandler();
+        byte[] packageCert = null;
+        final Optional<String> certificateFilePath = signedPackage.getCertificateFilePath();
+        if (certificateFilePath.isPresent()) {
+            packageCert = fileContentHandler.getFileContent(certificateFilePath.get());
+        }
+        final var path = artifactInfo.getPath();
+        final var target = Path.of(path.toString() + "." + UUID.randomUUID());
+
+        try (final var signatureStream = new ByteArrayInputStream(fileContentHandler.getFileContent(signedPackage.getSignatureFilePath()));
+            final var pemParser = new PEMParser(new InputStreamReader(signatureStream))) {
+            final var parsedObject = pemParser.readObject();
+            if (!(parsedObject instanceof ContentInfo)) {
+                fail = true;
+                throw new SecurityManagerException("Signature is not recognized");
             }
-            trustedCertificatesFromPackage = readTrustedCerts(certs, firstSigner);
-            if (verifyCertificate(cert, getTrustedCertificates()) == null) {
+
+            if (!findCSARandExtract(path, target)) {
+                fail = true;
                 return false;
             }
-            return firstSigner.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
-        } catch (OperatorCreationException | IOException | CMSException e) {
+            final var verify = verify(packageCert, new CMSSignedData(new CMSProcessableFile(target.toFile()), ContentInfo.getInstance(parsedObject)));
+            fail = !verify;
+            return verify;
+        } catch (final IOException e) {
+            fail = true;
             logger.error(e.getMessage(), e);
-            throw new SecurityManagerException("Unexpected error occurred during signature validation!", e);
-        } catch (GeneralSecurityException e) {
-            throw new SecurityManagerException("Could not verify signature!", e);
+            throw new SecurityManagerException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
+        } catch (final CMSException e) {
+            fail = true;
+            throw new SecurityManagerException(COULD_NOT_VERIFY_SIGNATURE, e);
+        } catch (final SecurityManagerException e) {
+            fail = true;
+            throw e;
+        } finally {
+            deleteFile(target);
+            if (fail) {
+                deleteFile(path);
+            }
         }
+    }
+
+    private void deleteFile(final Path filePath) {
+        try {
+            Files.delete(filePath);
+        } catch (final IOException e) {
+            logger.warn("Failed to delete '{}' after verifying package signed data", filePath, e);
+        }
+    }
+
+    private boolean verify(final byte[] packageCert, final CMSSignedData signedData) throws SecurityManagerException {
+        final SignerInformation firstSigner = signedData.getSignerInfos().getSigners().iterator().next();
+        final X509Certificate cert;
+        Collection<X509CertificateHolder> certs;
+        if (packageCert == null) {
+            certs = signedData.getCertificates().getMatches(null);
+            cert = readSignCert(certs, firstSigner)
+                .orElseThrow(() -> new SecurityManagerException("No certificate found in cms signature that should contain one!"));
+        } else {
+            try {
+                certs = parseCertsFromPem(packageCert);
+            } catch (final IOException e) {
+                throw new SecurityManagerException("Failed to parse certificate from PEM", e);
+            }
+            cert = readSignCert(certs, firstSigner)
+                .orElseThrow(() -> new SecurityManagerException("No matching certificate found in certificate file that should contain one!"));
+        }
+        trustedCertificatesFromPackage = readTrustedCerts(certs, firstSigner);
+        if (verifyCertificate(cert, getTrustedCertificates()) == null) {
+            return false;
+        }
+        try {
+            return firstSigner.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
+        } catch (CMSException | OperatorCreationException e) {
+            throw new SecurityManagerException("Failed to verify package signed data", e);
+        }
+    }
+
+    private boolean findCSARandExtract(final Path path, final Path target) throws IOException {
+        final AtomicBoolean found = new AtomicBoolean(false);
+        try (final var zf = new ZipFile(path.toString())) {
+            zf.entries().asIterator().forEachRemaining(entry -> {
+                final var entryName = entry.getName();
+                if (!entry.isDirectory() && entryName.toLowerCase().endsWith(".csar")) {
+                    try {
+                        Files.copy(zf.getInputStream(entry), target, REPLACE_EXISTING);
+                    } catch (final IOException e) {
+                        throw new SdcRuntimeException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
+                    }
+                    found.set(true);
+                }
+            });
+        }
+        return found.get();
     }
 
     private Optional<X509Certificate> readSignCert(final Collection<X509CertificateHolder> certs, final SignerInformation firstSigner) {
@@ -205,7 +287,7 @@ public class SecurityManager {
         return allCerts;
     }
 
-    private void processCertificateDir() throws SecurityManagerException, FileNotFoundException {
+    private void processCertificateDir() throws SecurityManagerException {
         if (!certificateDirectory.exists() || !certificateDirectory.isDirectory()) {
             logger.error("Issue with certificate directory, check if exists!");
             return;
@@ -253,8 +335,8 @@ public class SecurityManager {
         }
     }
 
-    private PKIXCertPathBuilderResult verifyCertificate(X509Certificate cert, Set<X509Certificate> additionalCerts)
-        throws GeneralSecurityException, SecurityManagerException {
+    private PKIXCertPathBuilderResult verifyCertificate(final X509Certificate cert,
+                                                        final Set<X509Certificate> additionalCerts) throws SecurityManagerException {
         if (null == cert) {
             throw new SecurityManagerException("The certificate is empty!");
         }
@@ -273,7 +355,11 @@ public class SecurityManager {
                 intermediateCerts.add(additionalCert);
             }
         }
-        return verifyCertificate(cert, trustedRootCerts, intermediateCerts);
+        try {
+            return verifyCertificate(cert, trustedRootCerts, intermediateCerts);
+        } catch (final GeneralSecurityException e) {
+            throw new SecurityManagerException("Failed to verify certificate", e);
+        }
     }
 
     private PKIXCertPathBuilderResult verifyCertificate(X509Certificate cert, Set<X509Certificate> allTrustedRootCerts,
@@ -324,5 +410,13 @@ public class SecurityManager {
 
     private boolean isSelfSigned(X509Certificate cert) {
         return cert.getIssuerDN().equals(cert.getSubjectDN());
+    }
+
+    /**
+     * Initialization on demand class / synchronized singleton pattern.
+     */
+    private static class SecurityManagerInstanceHolder {
+
+        private static final SecurityManager instance = new SecurityManager();
     }
 }

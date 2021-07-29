@@ -19,7 +19,8 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import java.util.Optional;
-import org.openecomp.core.utilities.file.FileContentHandler;
+import lombok.NoArgsConstructor;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
@@ -27,12 +28,10 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 /**
  * Validates the package security
  */
+@NoArgsConstructor
 public class CsarSecurityValidator {
 
     private SecurityManager securityManager = SecurityManager.getInstance();
-
-    public CsarSecurityValidator() {
-    }
 
     //for tests purpose
     CsarSecurityValidator(final SecurityManager securityManager) {
@@ -45,15 +44,24 @@ public class CsarSecurityValidator {
      * @return true if signature verified
      * @throws SecurityManagerException when a certificate error occurs.
      */
-    public boolean verifyPackageSignature(final OnboardSignedPackage signedPackage) throws SecurityManagerException {
-        final FileContentHandler fileContentHandler = signedPackage.getFileContentHandler();
-        final byte[] signatureBytes = fileContentHandler.getFileContent(signedPackage.getSignatureFilePath());
-        final byte[] archiveBytes = fileContentHandler.getFileContent(signedPackage.getInternalPackageFilePath());
-        byte[] certificateBytes = null;
-        final Optional<String> certificateFilePath = signedPackage.getCertificateFilePath();
-        if (certificateFilePath.isPresent()) {
-            certificateBytes = fileContentHandler.getFileContent(certificateFilePath.get());
+    public boolean verifyPackageSignature(final OnboardSignedPackage signedPackage, final ArtifactInfo artifactInfo) throws SecurityManagerException {
+        if (isArtifactInfoPresent(artifactInfo)) {
+            return securityManager.verifyPackageSignedData(signedPackage, artifactInfo);
+        } else {
+            final var fileContentHandler = signedPackage.getFileContentHandler();
+            final byte[] signatureBytes = fileContentHandler.getFileContent(signedPackage.getSignatureFilePath());
+            final byte[] archiveBytes = fileContentHandler.getFileContent(signedPackage.getInternalPackageFilePath());
+            byte[] certificateBytes = null;
+            final Optional<String> certificateFilePath = signedPackage.getCertificateFilePath();
+            if (certificateFilePath.isPresent()) {
+                certificateBytes = fileContentHandler.getFileContent(certificateFilePath.get());
+            }
+            return securityManager.verifySignedData(signatureBytes, certificateBytes, archiveBytes);
         }
-        return securityManager.verifySignedData(signatureBytes, certificateBytes, archiveBytes);
     }
+
+    private boolean isArtifactInfoPresent(final ArtifactInfo artifactInfo) {
+        return artifactInfo != null && artifactInfo.getPath() != null;
+    }
+
 }
