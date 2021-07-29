@@ -106,9 +106,9 @@ public class VendorSoftwareProductManagerImplTest {
   @Mock
   private VendorLicenseFacade vendorLicenseFacadeMock;
   @Mock
-  private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDaoMock;
+  private ServiceModelDao<ToscaServiceModel> serviceModelDaoMock;
   @Mock
-  private EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDaoMock;
+  private EnrichedServiceModelDao<ToscaServiceModel> enrichedServiceModelDaoMock;
   @Mock
   private HealingManager healingManagerMock;
   @Mock

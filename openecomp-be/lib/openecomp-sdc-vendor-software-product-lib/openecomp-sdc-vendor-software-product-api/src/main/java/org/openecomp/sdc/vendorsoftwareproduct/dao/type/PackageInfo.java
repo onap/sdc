@@ -23,6 +23,7 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import java.nio.ByteBuffer;
+import java.util.Set;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -38,6 +39,8 @@ public class PackageInfo {
     private String vspId;
     @PartitionKey(value = 1)
     private String version;
+    @Column(name = "version_id")
+    private String versionId;
     @Column(name = "display_name")
     private String displayName;
     @Column(name = "vsp_name")
@@ -59,9 +62,12 @@ public class PackageInfo {
     private ByteBuffer translatedFile;
     @Column(name = "resource_type")
     private String resourceType = ResourceTypeEnum.VF.name();
+    @Column(name = "models")
+    private Set<String> models;
 
-    public PackageInfo(String packageId, Version version) {
+    public PackageInfo(final String packageId, final Version version) {
         this.vspId = packageId;
         this.version = version.getName();
+        this.versionId = version.getId();
     }
 }

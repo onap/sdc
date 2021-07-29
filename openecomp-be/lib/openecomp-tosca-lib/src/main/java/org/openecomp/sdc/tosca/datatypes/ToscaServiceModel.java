@@ -21,6 +21,7 @@ package org.openecomp.sdc.tosca.datatypes;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.AccessLevel;
@@ -43,10 +44,19 @@ import org.openecomp.sdc.tosca.services.DataModelUtil;
 @Setter
 public class ToscaServiceModel implements AsdcModel {
 
+    private List<String> modelList;
     private FileContentHandler artifactFiles;
     @Getter(AccessLevel.NONE)
     private Map<String, ServiceTemplate> serviceTemplates;
     private String entryDefinitionServiceTemplate;
+
+
+    public ToscaServiceModel(final FileContentHandler artifactFiles, final Map<String, ServiceTemplate> serviceTemplates,
+                             final String entryDefinitionServiceTemplate) {
+        this.artifactFiles = artifactFiles;
+        this.serviceTemplates = serviceTemplates;
+        this.entryDefinitionServiceTemplate = entryDefinitionServiceTemplate;
+    }
 
     /**
      * Gets cloned service model.
@@ -55,7 +65,7 @@ public class ToscaServiceModel implements AsdcModel {
      * @return the cloned service model
      */
     public static ToscaServiceModel getClonedServiceModel(ToscaServiceModel toscaServiceModel) {
-        return ToscaServiceModel.class.cast(DataModelUtil.getClonedObject(toscaServiceModel));
+        return (ToscaServiceModel) DataModelUtil.getClonedObject(toscaServiceModel);
     }
 
     /**
