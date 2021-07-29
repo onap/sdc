@@ -4,7 +4,25 @@ CREATE TYPE IF NOT EXISTS user_candidate_version (version frozen<version>, user 
 CREATE TABLE IF NOT EXISTS version_info (entity_type text, entity_id text, active_version frozen<version>, status text, candidate frozen<user_candidate_version>, viewable_versions set<frozen<version>>, latest_final_version frozen<version>, PRIMARY KEY (entity_type, entity_id));
 CREATE TABLE IF NOT EXISTS version_info_deleted (entity_type text, entity_id text, active_version frozen<version>, status text, candidate frozen<user_candidate_version>, viewable_versions set<frozen<version>>, latest_final_version frozen<version>, PRIMARY KEY (entity_type, entity_id));
 CREATE TABLE IF NOT EXISTS unique_value (type text, value text, PRIMARY KEY ((type, value)));
-CREATE TABLE IF NOT EXISTS package_details (VSP_ID text, version text,DISPLAY_NAME text,vsp_name text,vsp_description text,VENDOR_NAME text,CATEGORY text,SUB_CATEGORY text,VENDOR_RELEASE text,PACKAGE_CHECKSUM text,PACKAGE_TYPE text, RESOURCE_TYPE text, TRANSLATE_CONTENT blob,PRIMARY KEY ((VSP_ID, version)));
+CREATE TABLE IF NOT EXISTS package_details
+(
+    VSP_ID            text,
+    version           text,
+    version_id        text,
+    DISPLAY_NAME      text,
+    vsp_name          text,
+    vsp_description   text,
+    VENDOR_NAME       text,
+    CATEGORY          text,
+    SUB_CATEGORY      text,
+    VENDOR_RELEASE    text,
+    PACKAGE_CHECKSUM  text,
+    PACKAGE_TYPE      text,
+    RESOURCE_TYPE     text,
+    models            set<text>,
+    TRANSLATE_CONTENT blob,
+    PRIMARY KEY ((VSP_ID, version))
+);
 CREATE TABLE IF NOT EXISTS vsp_enriched_service_template (vsp_id text, version frozen<version>, base_name text static, name text, content_data blob, PRIMARY KEY ((vsp_id, version), name));
 CREATE TABLE IF NOT EXISTS vsp_enriched_service_artifact (vsp_id text, version frozen<version>, name text, content_data blob, PRIMARY KEY ((vsp_id, version), name));
 CREATE TABLE IF NOT EXISTS application_config (namespace text, key text, value text, PRIMARY KEY (namespace, key));

@@ -36,8 +36,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
-public class EnrichedServiceModelDaoZusammenImpl extends ServiceModelDaoZusammenImpl implements
-    EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> {
+public class EnrichedServiceModelDaoZusammenImpl extends ServiceModelDaoZusammenImpl implements EnrichedServiceModelDao<ToscaServiceModel> {
 
     private static final Logger logger = LoggerFactory.getLogger(EnrichedServiceModelDaoZusammenImpl.class);
 

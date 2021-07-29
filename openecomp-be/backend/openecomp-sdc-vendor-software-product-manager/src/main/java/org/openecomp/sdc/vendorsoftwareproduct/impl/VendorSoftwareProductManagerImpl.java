@@ -51,7 +51,6 @@ import org.openecomp.core.enrichment.api.EnrichmentManager;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.dao.ServiceModelDao;
-import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.json.JsonSchemaDataGenerator;
@@ -147,8 +146,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
     private VendorSoftwareProductInfoDao vspInfoDao;
     private VendorLicenseFacade vendorLicenseFacade;
-    private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao;
-    private EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao;
+    private ServiceModelDao<ToscaServiceModel> serviceModelDao;
+    private EnrichedServiceModelDao<ToscaServiceModel> enrichedServiceModelDao;
     private VendorLicenseArtifactsService licenseArtifactsService;
     private InformationArtifactGenerator informationArtifactGenerator;
     private PackageInfoDao packageInfoDao;
@@ -388,10 +387,14 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             return null;
         }
         enrichedServiceModelDao.deleteAll(vendorSoftwareProductId, version);
-        EnrichmentManager<ToscaServiceModel> enrichmentManager = EnrichmentManagerFactory.getInstance().createInterface();
+        if (CollectionUtils.isNotEmpty(serviceModel.getModelList())) {
+            enrichedServiceModelDao.storeServiceModel(vendorSoftwareProductId, version, serviceModel);
+            return Collections.emptyMap();
+        }
+        final EnrichmentManager<ToscaServiceModel> enrichmentManager = EnrichmentManagerFactory.getInstance().createInterface();
         enrichmentManager.init(vendorSoftwareProductId, version);
         enrichmentManager.setModel(serviceModel);
-        Map<String, List<ErrorMessage>> enrichErrors = enrichmentManager.enrich();
+        final Map<String, List<ErrorMessage>> enrichErrors = enrichmentManager.enrich();
         enrichedServiceModelDao.storeServiceModel(vendorSoftwareProductId, version, enrichmentManager.getModel());
         return enrichErrors;
     }
@@ -568,8 +571,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             });
     }
 
-    private PackageInfo createPackageInfo(VspDetails vspDetails) {
-        PackageInfo packageInfo = new PackageInfo(vspDetails.getId(), vspDetails.getVersion());
+    private PackageInfo createPackageInfo(final VspDetails vspDetails) {
+        final var packageInfo = new PackageInfo(vspDetails.getId(), vspDetails.getVersion());
         packageInfo.setVspName(vspDetails.getName());
         packageInfo.setVspDescription(vspDetails.getDescription());
         packageInfo.setCategory(vspDetails.getCategory());
@@ -577,6 +580,9 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         packageInfo.setVendorName(vspDetails.getVendorName());
         packageInfo.setPackageType(VendorSoftwareProductConstants.CSAR);
         packageInfo.setVendorRelease("1.0"); //todo TBD
+        if (CollectionUtils.isNotEmpty(vspDetails.getModelIdList())) {
+            packageInfo.setModels(new HashSet<>(vspDetails.getModelIdList()));
+        }
         return packageInfo;
     }
 
@@ -732,8 +738,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
         private VendorSoftwareProductInfoDao vspInfoDao;
         private VendorLicenseFacade vendorLicenseFacade;
-        private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao;
-        private EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao;
+        private ServiceModelDao<ToscaServiceModel> serviceModelDao;
+        private EnrichedServiceModelDao<ToscaServiceModel> enrichedServiceModelDao;
         private VendorLicenseArtifactsService licenseArtifactsService;
         private InformationArtifactGenerator informationArtifactGenerator;
         private PackageInfoDao packageInfoDao;
@@ -772,12 +778,12 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             return this;
         }
 
-        public Builder serviceModel(ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDao) {
+        public Builder serviceModel(ServiceModelDao<ToscaServiceModel> serviceModelDao) {
             this.serviceModelDao = serviceModelDao;
             return this;
         }
 
-        public Builder enrichedServiceModel(EnrichedServiceModelDao<ToscaServiceModel, ServiceElement> enrichedServiceModelDao) {
+        public Builder enrichedServiceModel(EnrichedServiceModelDao<ToscaServiceModel> enrichedServiceModelDao) {
             this.enrichedServiceModelDao = enrichedServiceModelDao;
             return this;
         }

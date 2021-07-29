@@ -18,14 +18,15 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.impl.AbstractToscaSolConverter;
 import org.openecomp.core.impl.ToscaConverterImpl;
+import org.openecomp.core.impl.ToscaModelConverter;
 import org.openecomp.core.impl.ToscaSolConverterVnf;
 import org.openecomp.core.impl.ToscaSolModelDrivenConverterPnf;
 import org.openecomp.core.utilities.file.FileContentHandler;
@@ -43,14 +44,11 @@ import org.openecomp.sdc.heat.services.tree.ToscaTreeManager;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentMonitoringUploadEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ProcessEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
-import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -101,37 +99,55 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
             return;
         }
         HeatStructureTree tree = toscaTreeManager.getTree();
-        Map<String, String> componentsQuestionnaire = new HashMap<>();
-        Map<String, Map<String, String>> componentNicsQuestionnaire = new HashMap<>();
-        Map<String, Collection<ComponentMonitoringUploadEntity>> componentMibList = new HashMap<>();
-        Map<String, Collection<ProcessEntity>> processes = new HashMap<>();
-        Map<String, ProcessEntity> processArtifact = new HashMap<>();
-        OrchestrationUtil orchestrationUtil = new OrchestrationUtil();
-        orchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspDetails.getId(), vspDetails.getVersion(), componentsQuestionnaire,
-            componentNicsQuestionnaire, componentMibList, processes, processArtifact);
+        final var orchestrationUtil = new OrchestrationUtil();
+        orchestrationUtil.backupComponentsQuestionnaireBeforeDelete(vspDetails.getId(), vspDetails.getVersion(),
+            new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>());
         Optional<ByteArrayInputStream> zipByteArrayInputStream = candidateService
             .fetchZipFileByteArrayInputStream(vspDetails.getId(), candidateData, null, OnboardingTypesEnum.CSAR, errors);
         orchestrationUtil.deleteUploadDataAndContent(vspDetails.getId(), vspDetails.getVersion());
         zipByteArrayInputStream.ifPresent(
             byteArrayInputStream -> orchestrationUtil.saveUploadData(vspDetails, candidateData, byteArrayInputStream, fileContentHandler, tree));
-        ETSIService etsiService = new ETSIServiceImpl();
-        ToscaServiceModel toscaServiceModel;
-        if (etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
-            if (OnboardingTypesEnum.CSAR.toString().equalsIgnoreCase(candidateData.getFileSuffix())) {
-                fileContentHandler
-                    .addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getOriginalFileName() + EXT_SEPARATOR + candidateData.getOriginalFileSuffix(),
-                        candidateData.getOriginalFileContentData().array());
-            } else {
-                fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getFileName() + EXT_SEPARATOR + candidateData.getFileSuffix(),
-                    candidateData.getContentData().array());
-            }
-            final ResourceTypeEnum resourceType = etsiService.getResourceType(fileContentHandler);
-            toscaServiceModel = instantiateToscaConverterFor(resourceType).convert(fileContentHandler);
-        } else {
-            toscaServiceModel = new ToscaConverterImpl().convert(fileContentHandler);
-        }
-        orchestrationUtil.saveServiceModel(vspDetails.getId(), vspDetails.getVersion(), toscaServiceModel, toscaServiceModel);
+        final var toscaServiceModel = convertToToscaServiceModel(vspDetails.getModelIdList(), fileContentHandler, candidateData);
+        orchestrationUtil
+            .saveServiceModel(vspDetails.getId(), vspDetails.getVersion(), toscaServiceModel, toscaServiceModel);
         candidateService.deleteOrchestrationTemplateCandidate(vspDetails.getId(), vspDetails.getVersion());
+    }
+
+    private ToscaServiceModel convertToToscaServiceModel(final List<String> modelList, final FileContentHandler fileContentHandler,
+                                                         final OrchestrationTemplateCandidateData candidateData) throws IOException {
+        if (CollectionUtils.isNotEmpty(modelList)) {
+            return handleToscaModelConversion(modelList, fileContentHandler, candidateData);
+        }
+        if (new ETSIServiceImpl().isSol004WithToscaMetaDirectory(fileContentHandler)) {
+            return getToscaServiceModelSol004(fileContentHandler, candidateData);
+        }
+        return new ToscaConverterImpl().convert(fileContentHandler);
+    }
+
+    private ToscaServiceModel handleToscaModelConversion(final List<String> modelList, final FileContentHandler fileContentHandler,
+                                                         final OrchestrationTemplateCandidateData candidateData) throws IOException {
+        addOriginalOnboardedPackage(fileContentHandler, candidateData);
+        final var toscaServiceModel = new ToscaModelConverter().convert(fileContentHandler);
+        toscaServiceModel.setModelList(modelList);
+        return toscaServiceModel;
+    }
+
+    private ToscaServiceModel getToscaServiceModelSol004(final FileContentHandler fileContentHandler,
+                                                         final OrchestrationTemplateCandidateData candidateData) throws IOException {
+        addOriginalOnboardedPackage(fileContentHandler, candidateData);
+        final ResourceTypeEnum resourceType = new ETSIServiceImpl().getResourceType(fileContentHandler);
+        return instantiateToscaConverterFor(resourceType).convert(fileContentHandler);
+    }
+
+    private void addOriginalOnboardedPackage(final FileContentHandler fileContentHandler, final OrchestrationTemplateCandidateData candidateData) {
+        if (OnboardingTypesEnum.CSAR.getType().equalsIgnoreCase(candidateData.getFileSuffix())) {
+            fileContentHandler
+                .addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getOriginalFileName() + EXT_SEPARATOR + candidateData.getOriginalFileSuffix(),
+                    candidateData.getOriginalFileContentData().array());
+        } else {
+            fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getFileName() + EXT_SEPARATOR + candidateData.getFileSuffix(),
+                candidateData.getContentData().array());
+        }
     }
 
     private AbstractToscaSolConverter instantiateToscaConverterFor(ResourceTypeEnum resourceType) {

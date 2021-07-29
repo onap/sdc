@@ -34,6 +34,7 @@ public class MapPackageInfoToPackageInfoDto extends MappingBase<PackageInfo, Pac
         target.setPackageId(source.getVspId());
         target.setDescription(source.getVspDescription());
         target.setVersion(source.getVersion());
+        target.setVersionId(source.getVersionId());
         target.setPackageType(source.getPackageType());
         target.setCategory(source.getCategory());
         target.setSubCategory(source.getSubCategory());
@@ -41,5 +42,6 @@ public class MapPackageInfoToPackageInfoDto extends MappingBase<PackageInfo, Pac
         target.setVendorRelease(source.getVendorRelease());
         target.setVendorName(source.getVendorName());
         target.setResourceType(source.getResourceType());
+        target.setModels(source.getModels());
     }
 }
