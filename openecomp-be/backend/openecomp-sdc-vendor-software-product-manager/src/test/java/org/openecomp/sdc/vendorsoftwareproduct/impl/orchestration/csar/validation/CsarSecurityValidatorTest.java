@@ -19,6 +19,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -27,12 +28,21 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
+import org.openecomp.sdc.be.csar.storage.PersistentStorageArtifactInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
@@ -40,37 +50,88 @@ import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 
-public class CsarSecurityValidatorTest {
+class CsarSecurityValidatorTest {
 
-    private static final String BASE_DIR = "/vspmanager.csar/";
+    private static final String BASE_DIR = "/vspmanager.csar/signing/";
+    private static final String DELIMITER = "---";
     private CsarSecurityValidator csarSecurityValidator;
     @Mock
-    SecurityManager securityManager;
+    private SecurityManager securityManager;
 
-    @Before
-    public void setUp() {
+    @AfterEach
+    void tearDown() throws Exception {
+        restore();
+    }
+
+    private void restore() throws Exception {
+        final URI uri = CsarSecurityValidatorTest.class.getResource(BASE_DIR).toURI();
+        final List<Path> list = Files.list(Path.of(uri.getPath())).filter(path -> path.toString().contains(DELIMITER)).collect(Collectors.toList());
+        for (final Path path : list) {
+            final String[] split = path.toString().split(DELIMITER);
+            Files.move(path, Path.of(split[0]), REPLACE_EXISTING);
+        }
+    }
+
+    @BeforeEach
+    public void setUp() throws Exception {
         initMocks(this);
         csarSecurityValidator = new CsarSecurityValidator(securityManager);
+        backup();
+    }
+
+    private void backup() throws Exception {
+        final URI uri = CsarSecurityValidatorTest.class.getResource(BASE_DIR).toURI();
+        final List<Path> list = Files.list(Path.of(uri.getPath())).collect(Collectors.toList());
+        for (final Path path : list) {
+            Files.copy(path, Path.of(path.toString() + DELIMITER + UUID.randomUUID()), REPLACE_EXISTING);
+        }
     }
 
     @Test
-    public void isSignatureValidTestCorrectStructureAndValidSignatureExists() throws SecurityManagerException {
-        final byte[] packageBytes = getFileBytesOrFail("signing/signed-package.zip");
-        final OnboardSignedPackage onboardSignedPackage = loadSignedPackage("signed-package.zip",
-            packageBytes, null);
-        when(securityManager.verifySignedData(any(), any(), any())).thenReturn(true);
-        final boolean isSignatureValid = csarSecurityValidator.verifyPackageSignature(onboardSignedPackage);
+    void isSignatureValidTestCorrectStructureAndValidSignatureExists() throws SecurityManagerException, IOException {
+        final byte[] packageBytes = getFileBytesOrFail("signed-package.zip");
+        final OnboardPackageInfo onboardPackageInfo = loadSignedPackageWithArtifactInfo("signed-package.zip", packageBytes, null);
+        when(securityManager.verifyPackageSignedData(any(OnboardSignedPackage.class), any(ArtifactInfo.class))).thenReturn(true);
+        final boolean isSignatureValid = csarSecurityValidator
+            .verifyPackageSignature((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(), onboardPackageInfo.getArtifactInfo());
         assertThat("Signature should be valid", isSignatureValid, is(true));
     }
 
-    @Test(expected = SecurityManagerException.class)
-    public void isSignatureValidTestCorrectStructureAndNotValidSignatureExists() throws SecurityManagerException {
-        final byte[] packageBytes = getFileBytesOrFail("signing/signed-package-tampered-data.zip");
-        final OnboardSignedPackage onboardSignedPackage = loadSignedPackage("signed-package-tampered-data.zip",
+    @Test
+    void isSignatureValidTestCorrectStructureAndNotValidSignatureExists() throws SecurityManagerException {
+        final byte[] packageBytes = getFileBytesOrFail("signed-package-tampered-data.zip");
+        final OnboardPackageInfo onboardPackageInfo = loadSignedPackageWithArtifactInfo("signed-package-tampered-data.zip", packageBytes, null);
+        //no mocked securityManager
+        csarSecurityValidator = new CsarSecurityValidator();
+        Assertions.assertThrows(SecurityManagerException.class, () -> {
+            csarSecurityValidator
+                .verifyPackageSignature((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(), onboardPackageInfo.getArtifactInfo());
+        });
+    }
+
+    @Test
+    void isSignatureValidTestCorrectStructureAndValidSignatureExistsArtifactStorageManagerIsEnabled() throws SecurityManagerException {
+        final byte[] packageBytes = getFileBytesOrFail("signed-package.zip");
+        final OnboardPackageInfo onboardPackageInfo = loadSignedPackageWithoutArtifactInfo("signed-package.zip",
+            packageBytes, null);
+        when(securityManager.verifySignedData(any(), any(), any())).thenReturn(true);
+        final boolean isSignatureValid = csarSecurityValidator
+            .verifyPackageSignature((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(), onboardPackageInfo.getArtifactInfo());
+
+        assertThat("Signature should be valid", isSignatureValid, is(true));
+    }
+
+    @Test
+    void isSignatureValidTestCorrectStructureAndNotValidSignatureExistsArtifactStorageManagerIsEnabled() throws SecurityManagerException {
+        final byte[] packageBytes = getFileBytesOrFail("signed-package-tampered-data.zip");
+        final OnboardPackageInfo onboardPackageInfo = loadSignedPackageWithoutArtifactInfo("signed-package-tampered-data.zip",
             packageBytes, null);
         //no mocked securityManager
         csarSecurityValidator = new CsarSecurityValidator();
-        csarSecurityValidator.verifyPackageSignature(onboardSignedPackage);
+        Assertions.assertThrows(SecurityManagerException.class, () -> {
+            csarSecurityValidator
+                .verifyPackageSignature((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(), onboardPackageInfo.getArtifactInfo());
+        });
     }
 
     private byte[] getFileBytesOrFail(final String path) {
@@ -87,8 +148,21 @@ public class CsarSecurityValidatorTest {
             CsarSecurityValidatorTest.class.getResource(BASE_DIR + path).toURI()));
     }
 
-    private OnboardSignedPackage loadSignedPackage(final String packageName, final byte[] packageBytes,
-        CnfPackageValidator cnfPackageValidator) {
+    private OnboardPackageInfo loadSignedPackageWithArtifactInfo(final String packageName, final byte[] packageBytes,
+                                                                 final CnfPackageValidator cnfPackageValidator) {
+        final OnboardingPackageProcessor onboardingPackageProcessor =
+            new OnboardingPackageProcessor(packageName, packageBytes, cnfPackageValidator,
+                new PersistentStorageArtifactInfo(Path.of("src/test/resources/vspmanager.csar/signing/signed-package.zip")));
+        final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+        if (onboardPackageInfo == null) {
+            fail("Unexpected error. Could not load original package");
+        }
+
+        return onboardPackageInfo;
+    }
+
+    private OnboardPackageInfo loadSignedPackageWithoutArtifactInfo(final String packageName, final byte[] packageBytes,
+                                                                    final CnfPackageValidator cnfPackageValidator) {
         final OnboardingPackageProcessor onboardingPackageProcessor =
             new OnboardingPackageProcessor(packageName, packageBytes, cnfPackageValidator, null);
         final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
@@ -96,6 +170,6 @@ public class CsarSecurityValidatorTest {
             fail("Unexpected error. Could not load original package");
         }
 
-        return (OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage();
+        return onboardPackageInfo;
     }
 }
