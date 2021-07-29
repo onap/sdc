@@ -125,7 +125,8 @@ public class OrchestrationTemplateProcessZipHandler implements OrchestrationTemp
         orchestrationUtil.saveUploadData(vspDetails, candidateData, zipByteArrayInputStream.get(), fileContentMap, tree);
         TranslatorOutput translatorOutput = HeatToToscaUtil.loadAndTranslateTemplateData(fileContentMap);
         ToscaServiceModel toscaServiceModel = translatorOutput.getToscaServiceModel();
-        orchestrationUtil.saveServiceModel(vspId, version, translatorOutput.getNonUnifiedToscaServiceModel(), toscaServiceModel);
+        orchestrationUtil
+            .saveServiceModel(vspId, version, translatorOutput.getNonUnifiedToscaServiceModel(), toscaServiceModel);
         orchestrationUtil
             .retainComponentQuestionnaireData(vspId, version, componentsQuestionnaire, componentNicsQuestionnaire, componentMibList, processes,
                 processArtifact);
