@@ -90,7 +90,7 @@ public class OrchestrationUtil {
     private final ProcessDao processDao;
     private final OrchestrationTemplateDao orchestrationTemplateDataDao;
     private final ComponentDao componentDao;
-    private final ServiceModelDao serviceModelDao;
+    private final ServiceModelDao<ToscaServiceModel> serviceModelDao;
     private final ComponentDependencyModelDao componentDependencyModelDao;
     private final CompositionEntityDataManager compositionEntityDataManager;
     private final CompositionDataExtractor compositionDataExtractor;
@@ -275,7 +275,8 @@ public class OrchestrationUtil {
         VspMergeDaoFactory.getInstance().createInterface().updateHint(vspDetails.getId(), vspDetails.getVersion());
     }
 
-    public void saveServiceModel(String vspId, Version version, ToscaServiceModel serviceModelToExtract, ToscaServiceModel serviceModelToStore) {
+    public void saveServiceModel(String vspId, Version version, ToscaServiceModel serviceModelToExtract,
+                                 ToscaServiceModel serviceModelToStore) {
         if (serviceModelToExtract != null) {
             serviceModelDao.storeServiceModel(vspId, version, serviceModelToStore);
             //Extracting the compostion data from the output service model of the first phase of

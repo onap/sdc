@@ -16,21 +16,22 @@
 package org.openecomp.core.utilities.orchestration;
 
 import java.util.Arrays;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
+@AllArgsConstructor
 public enum OnboardingTypesEnum {
     CSAR("csar"), ZIP("zip"), MANUAL("manual"), NONE("none"), SIGNED_CSAR("signed-csar");
-    private final String type;
 
-    OnboardingTypesEnum(final String type) {
-        this.type = type;
-    }
+    @Getter
+    private final String type;
 
     public static OnboardingTypesEnum getOnboardingTypesEnum(final String type) {
         if (StringUtils.isEmpty(type)) {
             return null;
         }
-        return Arrays.stream(OnboardingTypesEnum.values()).filter(onboardingTypesEnum -> onboardingTypesEnum.toString().equalsIgnoreCase(type))
+        return Arrays.stream(OnboardingTypesEnum.values()).filter(onboardingTypesEnum -> onboardingTypesEnum.type.equalsIgnoreCase(type))
             .findAny().orElse(null);
     }
 

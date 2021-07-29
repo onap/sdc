@@ -113,7 +113,8 @@ public abstract class AbstractToscaConverter implements ToscaConverter {
         toscaServiceModel.setEntryDefinitionServiceTemplate(entryDefinitionServiceTemplateName);
         externalFilesHandler.addFile(TOSCA_META_ORIG_PATH_FILE_NAME, csarFiles.get(TOSCA_META_ORIG_PATH_FILE_NAME));
         toscaServiceModel.setArtifactFiles(externalFilesHandler);
-        if (MapUtils.isNotEmpty(globalSubstitutionServiceTemplate.getNode_types())) {
+        if (MapUtils.isNotEmpty(globalSubstitutionServiceTemplate.getNode_types())
+            || MapUtils.isNotEmpty(globalSubstitutionServiceTemplate.getData_types())) {
             serviceTemplates.put(GLOBAL_SUBSTITUTION_SERVICE_FILE_NAME, globalSubstitutionServiceTemplate);
         }
     }
