@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea7979fd_9ca4bc5b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-07-29T10:31:35Z",
+      "side": 1,
+      "message": "is this to filter out interfaces not belonging to the model?\nInstead why not call janusGraphGenericDao.getByCriteriaForModel instead of janusGraphGenericDao.getByCriteria on line 854 above",
+      "range": {
+        "startLine": 862,
+        "startChar": 9,
+        "endLine": 863,
+        "endChar": 113
+      },
+      "revId": "d1c9c99a0a0603be3e8c93d4b467a8e7c2101144",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02c5c264_7daf2e8e",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-07-29T10:31:35Z",
+      "side": 1,
+      "message": "only append the model if it is non null",
+      "range": {
+        "startLine": 213,
+        "startChar": 74,
+        "endLine": 213,
+        "endChar": 117
+      },
+      "revId": "d1c9c99a0a0603be3e8c93d4b467a8e7c2101144",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
