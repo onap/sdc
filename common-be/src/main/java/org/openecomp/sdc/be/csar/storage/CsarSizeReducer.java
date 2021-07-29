@@ -20,14 +20,24 @@
 
 package org.openecomp.sdc.be.csar.storage;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+import lombok.Getter;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.openecomp.sdc.be.csar.storage.exception.CsarSizeReducerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +45,12 @@ import org.slf4j.LoggerFactory;
 public class CsarSizeReducer implements PackageSizeReducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsarSizeReducer.class);
+    private static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = Set.of("cms");
+    private static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = Set.of("cert", "crt");
+    private static final String CSAR_EXTENSION = "csar";
+    private static final String UNEXPECTED_PROBLEM_HAPPENED_WHILE_READING_THE_CSAR = "An unexpected problem happened while reading the CSAR '%s'";
+    @Getter
+    private final AtomicBoolean reduced = new AtomicBoolean(false);
 
     private final CsarPackageReducerConfiguration configuration;
 
@@ -44,38 +60,31 @@ public class CsarSizeReducer implements PackageSizeReducer {
 
     @Override
     public byte[] reduce(final Path csarPackagePath) {
+        if (hasSignedPackageStructure(csarPackagePath)) {
+            return reduce(csarPackagePath, this::signedZipProcessingConsumer);
+        } else {
+            return reduce(csarPackagePath, this::unsignedZipProcessingConsumer);
+        }
+    }
+
+    private byte[] reduce(final Path csarPackagePath, final ZipProcessFunction zipProcessingFunction) {
         final var reducedCsarPath = Path.of(csarPackagePath + "." + UUID.randomUUID());
 
         try (final var zf = new ZipFile(csarPackagePath.toString());
             final var zos = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(reducedCsarPath)))) {
-
-            zf.entries().asIterator().forEachRemaining(entry -> {
-                final var entryName = entry.getName();
-                try {
-                    if (!entry.isDirectory()) {
-                        zos.putNextEntry(new ZipEntry(entryName));
-                        if (isCandidateToRemove(entry)) {
-                            // replace with EMPTY string to avoid package description inconsistency/validation errors
-                            zos.write("".getBytes());
-                        } else {
-                            zos.write(zf.getInputStream(entry).readAllBytes());
-                        }
-                    }
-                    zos.closeEntry();
-                } catch (final IOException ei) {
-                    final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
-                    throw new CsarSizeReducerException(errorMsg, ei);
-                }
-            });
-
+            zf.entries().asIterator().forEachRemaining(zipProcessingFunction.getProcessZipConsumer(csarPackagePath, zf, zos));
         } catch (final IOException ex1) {
             rollback(reducedCsarPath);
-            final var errorMsg = String.format("An unexpected problem happened while reading the CSAR '%s'", csarPackagePath);
+            final var errorMsg = String.format(UNEXPECTED_PROBLEM_HAPPENED_WHILE_READING_THE_CSAR, csarPackagePath);
             throw new CsarSizeReducerException(errorMsg, ex1);
         }
         final byte[] reducedCsarBytes;
         try {
-            reducedCsarBytes = Files.readAllBytes(reducedCsarPath);
+            if (reduced.get()) {
+                reducedCsarBytes = Files.readAllBytes(reducedCsarPath);
+            } else {
+                reducedCsarBytes = Files.readAllBytes(csarPackagePath);
+            }
         } catch (final IOException e) {
             final var errorMsg = String.format("Could not read bytes of file '%s'", csarPackagePath);
             throw new CsarSizeReducerException(errorMsg, e);
@@ -88,6 +97,51 @@ public class CsarSizeReducer implements PackageSizeReducer {
         }
 
         return reducedCsarBytes;
+    }
+
+    private Consumer<? super ZipEntry> signedZipProcessingConsumer(final Path csarPackagePath, final ZipFile zf, final ZipOutputStream zos) {
+        return zipEntry -> {
+            final var entryName = zipEntry.getName();
+            try {
+                zos.putNextEntry(new ZipEntry(entryName));
+                if (!zipEntry.isDirectory()) {
+                    if (entryName.toLowerCase().endsWith(CSAR_EXTENSION)) {
+                        final var internalCsarExtractPath = Path.of(csarPackagePath + "." + UUID.randomUUID());
+                        Files.copy(zf.getInputStream(zipEntry), internalCsarExtractPath, REPLACE_EXISTING);
+                        zos.write(reduce(internalCsarExtractPath, this::unsignedZipProcessingConsumer));
+                        Files.delete(internalCsarExtractPath);
+                    } else {
+                        zos.write(zf.getInputStream(zipEntry).readAllBytes());
+                    }
+                }
+                zos.closeEntry();
+            } catch (final IOException ei) {
+                final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
+                throw new CsarSizeReducerException(errorMsg, ei);
+            }
+        };
+    }
+
+    private Consumer<? super ZipEntry> unsignedZipProcessingConsumer(final Path csarPackagePath, final ZipFile zf, final ZipOutputStream zos) {
+        return zipEntry -> {
+            final var entryName = zipEntry.getName();
+            try {
+                zos.putNextEntry(new ZipEntry(entryName));
+                if (!zipEntry.isDirectory()) {
+                    if (isCandidateToRemove(zipEntry)) {
+                        // replace with EMPTY string to avoid package description inconsistency/validation errors
+                        zos.write("".getBytes());
+                        reduced.set(true);
+                    } else {
+                        zos.write(zf.getInputStream(zipEntry).readAllBytes());
+                    }
+                }
+                zos.closeEntry();
+            } catch (final IOException ei) {
+                final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
+                throw new CsarSizeReducerException(errorMsg, ei);
+            }
+        };
     }
 
     private void rollback(final Path reducedCsarPath) {
@@ -104,6 +158,61 @@ public class CsarSizeReducer implements PackageSizeReducer {
         final String zipEntryName = zipEntry.getName();
         return configuration.getFoldersToStrip().stream().anyMatch(Path.of(zipEntryName)::startsWith)
             || zipEntry.getSize() > configuration.getSizeLimit();
+    }
+
+    private boolean hasSignedPackageStructure(final Path csarPackagePath) {
+        final List<Path> packagePathList;
+        try (final var zf = new ZipFile(csarPackagePath.toString())) {
+            packagePathList = zf.stream()
+                .filter(zipEntry -> !zipEntry.isDirectory())
+                .map(ZipEntry::getName).map(Path::of)
+                .collect(Collectors.toList());
+        } catch (final IOException e) {
+            final var errorMsg = String.format(UNEXPECTED_PROBLEM_HAPPENED_WHILE_READING_THE_CSAR, csarPackagePath);
+            throw new CsarSizeReducerException(errorMsg, e);
+        }
+
+        if (CollectionUtils.isEmpty(packagePathList)) {
+            return false;
+        }
+        final int numberOfFiles = packagePathList.size();
+        if (numberOfFiles == 2) {
+            return hasOneInternalPackageFile(packagePathList) && hasOneSignatureFile(packagePathList);
+        }
+        if (numberOfFiles == 3) {
+            return hasOneInternalPackageFile(packagePathList) && hasOneSignatureFile(packagePathList) && hasOneCertificateFile(packagePathList);
+        }
+        return false;
+    }
+
+    private boolean hasOneInternalPackageFile(final List<Path> packagePathList) {
+        return packagePathList.parallelStream()
+            .map(Path::toString)
+            .map(FilenameUtils::getExtension)
+            .map(String::toLowerCase)
+            .filter(extension -> extension.endsWith(CSAR_EXTENSION)).count() == 1;
+    }
+
+    private boolean hasOneSignatureFile(final List<Path> packagePathList) {
+        return packagePathList.parallelStream()
+            .map(Path::toString)
+            .map(FilenameUtils::getExtension)
+            .map(String::toLowerCase)
+            .filter(ALLOWED_SIGNATURE_EXTENSIONS::contains).count() == 1;
+    }
+
+    private boolean hasOneCertificateFile(final List<Path> packagePathList) {
+        return packagePathList.parallelStream()
+            .map(Path::toString)
+            .map(FilenameUtils::getExtension)
+            .map(String::toLowerCase)
+            .filter(ALLOWED_CERTIFICATE_EXTENSIONS::contains).count() == 1;
+    }
+
+    @FunctionalInterface
+    private interface ZipProcessFunction {
+
+        Consumer<? super ZipEntry> getProcessZipConsumer(Path csarPackagePath, ZipFile zf, ZipOutputStream zos);
     }
 
 }

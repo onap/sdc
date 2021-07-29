@@ -27,14 +27,20 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.csar.storage.PersistentStorageArtifactInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
+import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 
-public class SecurityManagerTest {
+class SecurityManagerTest {
 
     private File certDir;
     private String cerDirPath = "/tmp/cert/";
@@ -71,7 +77,7 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void testGetCertificates() throws IOException, SecurityManagerException, URISyntaxException {
+    void testGetCertificates() throws IOException, SecurityManagerException, URISyntaxException {
         File newFile = prepareCertFiles("/cert/root-certificate.pem", cerDirPath + "/root-certificate.pem");
         assertEquals(1, securityManager.getTrustedCertificates().size());
         newFile.delete();
@@ -79,13 +85,13 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void testGetCertificatesNoDirectory() throws IOException, SecurityManagerException {
+    void testGetCertificatesNoDirectory() throws IOException, SecurityManagerException {
         certDir.delete();
         assertEquals(0, securityManager.getTrustedCertificates().size());
     }
 
     @Test
-    public void testGetCertificatesException() throws IOException, SecurityManagerException {
+    void testGetCertificatesException() throws IOException, SecurityManagerException {
         File newFile = new File(cerDirPath + "root-certificate.pem");
         newFile.createNewFile();
         Assertions.assertThrows(SecurityManagerException.class, () -> {
@@ -97,9 +103,9 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void testGetCertificatesUpdated() throws IOException, SecurityManagerException, URISyntaxException {
+    void testGetCertificatesUpdated() throws IOException, SecurityManagerException, URISyntaxException {
         File newFile = prepareCertFiles("/cert/root-certificate.pem", cerDirPath + "root-certificate.pem");
-        assertTrue(securityManager.getTrustedCertificates().size() == 1);
+        assertEquals(1, securityManager.getTrustedCertificates().size());
         File otherNewFile = prepareCertFiles("/cert/package-certificate.pem", cerDirPath + "package-certificate.pem");
         assertEquals(2, securityManager.getTrustedCertificates().size());
         otherNewFile.delete();
@@ -109,7 +115,7 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestCertIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
+    void verifySignedDataTestCertIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
         prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         byte[] signature = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.cms");
         byte[] archive = readAllBytes("/cert/2-file-signed-package/dummyPnfv4.csar");
@@ -117,7 +123,22 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestCertNotIncludedIntoSignatureButExpected() throws IOException, URISyntaxException, SecurityManagerException {
+    void verifySignedDataTestCertIncludedIntoSignatureArtifactStorageManagerIsEnabled()
+        throws IOException, URISyntaxException, SecurityManagerException {
+        prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
+        byte[] fileToUploadBytes = readAllBytes("/cert/2-file-signed-package/2-file-signed-package.zip");
+
+        final var onboardingPackageProcessor = new OnboardingPackageProcessor("2-file-signed-package.zip", fileToUploadBytes,
+            new CnfPackageValidator(),
+            new PersistentStorageArtifactInfo(Path.of("src/test/resources/cert/2-file-signed-package/2-file-signed-package.zip")));
+        final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+
+        assertTrue(securityManager
+            .verifyPackageSignedData((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(), onboardPackageInfo.getArtifactInfo()));
+    }
+
+    @Test
+    void verifySignedDataTestCertNotIncludedIntoSignatureButExpected() throws IOException, URISyntaxException, SecurityManagerException {
         Assertions.assertThrows(SecurityManagerException.class, () -> {
             prepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
             byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
@@ -128,7 +149,7 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestCertNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
+    void verifySignedDataTestCertNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
         prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
         byte[] archive = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.csar");
@@ -137,7 +158,22 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestCertIntermediateNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
+    void verifySignedDataTestCertNotIncludedIntoSignatureArtifactStorageManagerIsEnabled()
+        throws IOException, URISyntaxException, SecurityManagerException {
+        prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
+        byte[] fileToUploadBytes = readAllBytes("/cert/3-file-signed-package/3-file-signed-package.zip");
+
+        final var onboardingPackageProcessor = new OnboardingPackageProcessor("3-file-signed-package.zip", fileToUploadBytes,
+            new CnfPackageValidator(),
+            new PersistentStorageArtifactInfo(Path.of("src/test/resources/cert/3-file-signed-package/3-file-signed-package.zip")));
+        final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+
+        assertTrue(securityManager
+            .verifyPackageSignedData((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(), onboardPackageInfo.getArtifactInfo()));
+    }
+
+    @Test
+    void verifySignedDataTestCertIntermediateNotIncludedIntoSignature() throws IOException, URISyntaxException, SecurityManagerException {
         prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         prepareCertFiles("/cert/package2.cert", cerDirPath + "signing-ca2.crt");
         byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
@@ -147,7 +183,7 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestCertWrongIntermediate() throws IOException, URISyntaxException, SecurityManagerException {
+    void verifySignedDataTestCertWrongIntermediate() throws IOException, URISyntaxException, SecurityManagerException {
         Assertions.assertThrows(SecurityManagerException.class, () -> {
             prepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
             prepareCertFiles("/cert/signing-ca1.crt", cerDirPath + "signing-ca1.crt");
@@ -160,7 +196,7 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestCertIncludedIntoSignatureWithWrongIntermediateInDirectory()
+    void verifySignedDataTestCertIncludedIntoSignatureWithWrongIntermediateInDirectory()
         throws IOException, URISyntaxException, SecurityManagerException {
         prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         prepareCertFiles("/cert/signing-ca1.crt", cerDirPath + "signing-ca1.crt");
@@ -170,7 +206,7 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestCertWrongIntermediateInDirectory() throws IOException, URISyntaxException, SecurityManagerException {
+    void verifySignedDataTestCertWrongIntermediateInDirectory() throws IOException, URISyntaxException, SecurityManagerException {
         prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
         prepareCertFiles("/cert/signing-ca1.crt", cerDirPath + "signing-ca1.crt");
         byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
@@ -180,7 +216,7 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestWrongCertificate() throws IOException, URISyntaxException, SecurityManagerException {
+    void verifySignedDataTestWrongCertificate() throws IOException, URISyntaxException, SecurityManagerException {
         Assertions.assertThrows(SecurityManagerException.class, () -> {
             prepareCertFiles("/cert/root-certificate.pem", cerDirPath + "root-certificate.cert");
             byte[] signature = readAllBytes("/cert/3-file-signed-package/dummyPnfv4.cms");
@@ -192,7 +228,7 @@ public class SecurityManagerTest {
     }
 
     @Test
-    public void verifySignedDataTestChangedArchive() throws IOException, URISyntaxException, SecurityManagerException {
+    void verifySignedDataTestChangedArchive() throws IOException, URISyntaxException, SecurityManagerException {
         Assertions.assertThrows(SecurityManagerException.class, () -> {
             prepareCertFiles("/cert/root.cert", cerDirPath + "root.cert");
             byte[] signature = readAllBytes("/cert/tampered-signed-package/dummyPnfv4.cms");
