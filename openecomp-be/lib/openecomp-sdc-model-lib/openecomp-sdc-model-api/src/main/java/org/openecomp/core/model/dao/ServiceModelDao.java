@@ -22,13 +22,18 @@ package org.openecomp.core.model.dao;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-public interface ServiceModelDao<M, E> extends VersionableDao {
+public interface ServiceModelDao<M> extends VersionableDao {
 
     M getServiceModel(String vspId, Version version);
 
+    /**
+     * Store a service model.
+     *
+     * @param vspId        the Vendor Software Product id
+     * @param version      the Vendor Software Product version
+     * @param serviceModel the service model to store
+     */
     void storeServiceModel(String vspId, Version version, M serviceModel);
-
-    E getServiceModelInfo(String vspId, Version version, String name);
 
     void deleteAll(String vspId, Version version);
 

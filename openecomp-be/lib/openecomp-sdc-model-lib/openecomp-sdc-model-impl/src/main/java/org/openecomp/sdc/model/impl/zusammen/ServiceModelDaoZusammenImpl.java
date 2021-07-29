@@ -19,6 +19,8 @@
  */
 package org.openecomp.sdc.model.impl.zusammen;
 
+import static org.openecomp.core.model.types.ToscaServiceModelProperty.BASE;
+import static org.openecomp.core.model.types.ToscaServiceModelProperty.MODELS;
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildElement;
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
 
@@ -32,6 +34,8 @@ import com.amdocs.zusammen.datatypes.item.ElementContext;
 import com.amdocs.zusammen.datatypes.item.Info;
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,7 +45,6 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.core.model.dao.ServiceModelDao;
 import org.openecomp.core.model.errors.RetrieveServiceTemplateFromDbErrorBuilder;
-import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
@@ -53,9 +56,8 @@ import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.types.ElementPropertyName;
 
-public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaServiceModel, ServiceElement> {
+public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaServiceModel> {
 
-    private static final String BASE_PROPERTY = "base";
     private static final Logger logger = LoggerFactory.getLogger(ServiceModelDaoZusammenImpl.class);
     protected ZusammenAdaptor zusammenAdaptor;
     protected ElementType elementType;
@@ -70,48 +72,48 @@ public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaService
     }
 
     @Override
-    public ToscaServiceModel getServiceModel(String vspId, Version version) {
-        SessionContext context = ZusammenUtil.createSessionContext();
-        ElementContext elementContext = new ElementContext(vspId, version.getId());
-        Optional<ElementInfo> serviceModel = getServiceModelElementInfo(context, elementContext);
-        if (!serviceModel.isPresent()) {
+    public ToscaServiceModel getServiceModel(final String vspId, final Version version) {
+        final var context = ZusammenUtil.createSessionContext();
+        final var elementContext = new ElementContext(vspId, version.getId());
+        final Optional<ElementInfo> serviceModelOpt = getServiceModelElementInfo(context, elementContext);
+        if (serviceModelOpt.isEmpty()) {
             return null;
         }
-        Id serviceModelElementId = serviceModel.get().getId();
-        Map<String, ServiceTemplate> serviceTemplates = getTemplates(context, elementContext, serviceModelElementId);
+        final var serviceModelElementInfo = serviceModelOpt.get();
+        final var serviceModelElementId = serviceModelElementInfo.getId();
+        final Map<String, ServiceTemplate> serviceTemplates = getTemplates(context, elementContext, serviceModelElementId);
         if (serviceTemplates == null) {
             return null;
         }
-        FileContentHandler artifacts = getArtifacts(context, elementContext, serviceModelElementId);
-        String entryDefinitionServiceTemplate = serviceModel.get().getInfo().getProperty(BASE_PROPERTY);
-        return new ToscaServiceModel(artifacts, serviceTemplates, entryDefinitionServiceTemplate);
+        final FileContentHandler artifacts = getArtifacts(context, elementContext, serviceModelElementId);
+        final String entryDefinitionServiceTemplate = serviceModelElementInfo.getInfo().getProperty(BASE.getName());
+        final List<String> modelList = serviceModelElementInfo.getInfo().getProperty(MODELS.getName());
+        return new ToscaServiceModel(modelList, artifacts, serviceTemplates, entryDefinitionServiceTemplate);
     }
 
     @Override
-    public void storeServiceModel(String vspId, Version version, ToscaServiceModel serviceModel) {
-        logger.info("Storing service model for VendorSoftwareProduct id -> {}", vspId);
-        ZusammenElement templatesElement = buildStructuralElement(ElementType.Templates, Action.UPDATE);
+    public void storeServiceModel(final String vspId, final Version version, final ToscaServiceModel serviceModel) {
+        logger.info("Storing service model for VendorSoftwareProduct id '{}', version '{}', models '{}'", vspId, version,
+            String.join(",", serviceModel.getModelList() == null ? Collections.emptyList() : serviceModel.getModelList()));
+        final ZusammenElement templatesElement = buildStructuralElement(ElementType.Templates, Action.UPDATE);
         serviceModel.getServiceTemplates().forEach((key, value) -> templatesElement
             .addSubElement(buildServiceTemplateElement(key, value, serviceModel.getEntryDefinitionServiceTemplate(), Action.CREATE)));
-        ZusammenElement artifactsElement = buildStructuralElement(ElementType.Artifacts, Action.UPDATE);
+        final ZusammenElement artifactsElement = buildStructuralElement(ElementType.Artifacts, Action.UPDATE);
         if (Objects.nonNull(serviceModel.getArtifactFiles())) {
             serviceModel.getArtifactFiles().getFiles()
                 .forEach((key, value) -> artifactsElement.addSubElement(buildArtifactElement(key, value, Action.CREATE)));
         }
-        ZusammenElement serviceModelElement = buildServiceModelElement(serviceModel.getEntryDefinitionServiceTemplate());
+        final ZusammenElement serviceModelElement = buildServiceModelElement(serviceModel.getEntryDefinitionServiceTemplate());
+        serviceModelElement.getInfo().addProperty(MODELS.getName(), serviceModel.getModelList());
         serviceModelElement.addSubElement(templatesElement);
         serviceModelElement.addSubElement(artifactsElement);
-        ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
+        final ZusammenElement vspModel = buildStructuralElement(ElementType.VspModel, Action.IGNORE);
+        vspModel.getInfo().addProperty(MODELS.getName(), serviceModel.getModelList());
         vspModel.addSubElement(serviceModelElement);
-        SessionContext context = ZusammenUtil.createSessionContext();
-        ElementContext elementContext = new ElementContext(vspId, version.getId());
+        final var context = ZusammenUtil.createSessionContext();
+        final var elementContext = new ElementContext(vspId, version.getId());
         zusammenAdaptor.saveElement(context, elementContext, vspModel, "Store service model");
         logger.info("Finished storing {} for VendorSoftwareProduct id -> {}", elementType.name(), vspId);
-    }
-
-    @Override
-    public ServiceElement getServiceModelInfo(String vspId, Version version, String name) {
-        return null;
     }
 
     @Override
@@ -120,7 +122,7 @@ public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaService
         SessionContext context = ZusammenUtil.createSessionContext();
         ElementContext elementContext = new ElementContext(vspId, version.getId());
         Optional<ElementInfo> serviceModel = getServiceModelElementInfo(context, elementContext);
-        if (!serviceModel.isPresent()) {
+        if (serviceModel.isEmpty()) {
             logger.info("{} of vsp {} version {} does not exist - nothing to delete", elementType.name(), vspId, version.getId());
             return;
         }
@@ -163,7 +165,7 @@ public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaService
                                           ElementContext elementContext, ZusammenElement serviceModelElement) {
         Optional<ElementInfo> elementInfo = zusammenAdaptor
             .getElementInfoByName(context, elementContext, serviceModelElementId, ElementType.Templates.name());
-        if (!elementInfo.isPresent()) {
+        if (elementInfo.isEmpty()) {
             return;
         }
         ZusammenElement templateElement = buildStructuralElement(ElementType.Templates, Action.UPDATE);
@@ -203,7 +205,7 @@ public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaService
 
     private ZusammenElement buildServiceModelElement(String entryDefinitionServiceTemplate) {
         ZusammenElement serviceModelElement = buildStructuralElement(elementType, Action.UPDATE);
-        serviceModelElement.getInfo().addProperty(BASE_PROPERTY, entryDefinitionServiceTemplate);
+        serviceModelElement.getInfo().addProperty(BASE.getName(), entryDefinitionServiceTemplate);
         return serviceModelElement;
     }
 
@@ -213,7 +215,7 @@ public class ServiceModelDaoZusammenImpl implements ServiceModelDao<ToscaService
         info.setName(name);
         info.setDescription(serviceTemplate.getDescription());
         info.addProperty(ElementPropertyName.elementType.name(), ElementType.ServiceTemplate.name());
-        info.addProperty(BASE_PROPERTY, entryDefinitionServiceTemplate);
+        info.addProperty(BASE.getName(), entryDefinitionServiceTemplate);
         String yaml = new ToscaExtensionYamlUtil().objectToYaml(serviceTemplate);
         zusammenElement.setData(new ByteArrayInputStream(yaml.getBytes()));
         zusammenElement.setInfo(info);

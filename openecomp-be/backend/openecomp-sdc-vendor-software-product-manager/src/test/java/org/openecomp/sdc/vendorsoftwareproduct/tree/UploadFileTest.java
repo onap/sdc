@@ -74,7 +74,7 @@ public class UploadFileTest {
   @Mock
   private CompositionDataExtractor compositionDataExtractorMock;
   @Mock
-  private ServiceModelDao<ToscaServiceModel, ServiceElement> serviceModelDaoMock;
+  private ServiceModelDao<ToscaServiceModel> serviceModelDaoMock;
   @Mock
   private CompositionEntityDataManager compositionEntityDataManagerMock;
   @Mock

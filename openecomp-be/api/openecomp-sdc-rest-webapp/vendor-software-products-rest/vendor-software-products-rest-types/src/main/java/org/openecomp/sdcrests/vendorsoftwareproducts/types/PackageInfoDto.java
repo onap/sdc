@@ -15,6 +15,7 @@
  */
 package org.openecomp.sdcrests.vendorsoftwareproducts.types;
 
+import java.util.Set;
 import lombok.Data;
 
 /**
@@ -27,6 +28,7 @@ public class PackageInfoDto {
     private String description;
     private String vspName;
     private String version;
+    private String versionId;
     private String packageId;
     private String category;
     private String subCategory;
@@ -35,4 +37,6 @@ public class PackageInfoDto {
     private String packageChecksum;
     private String packageType;
     private String resourceType;
+    private Set<String> models;
+
 }

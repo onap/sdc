@@ -22,10 +22,8 @@ package org.openecomp.core.model.dao;
 import org.openecomp.core.model.types.ServiceArtifact;
 import org.openecomp.sdc.versioning.dao.VersionableDao;
 
-public interface EnrichedServiceModelDao<M, E> extends VersionableDao, ServiceModelDao<M, E> {
+public interface EnrichedServiceModelDao<M> extends VersionableDao, ServiceModelDao<M> {
 
     void storeExternalArtifact(ServiceArtifact serviceArtifact);
-    //List<ServiceArtifact> getExternalArtifacts(String vspId, Version version);
 
-    //List<String> getServiceModelContentNames();
-} 
+}
