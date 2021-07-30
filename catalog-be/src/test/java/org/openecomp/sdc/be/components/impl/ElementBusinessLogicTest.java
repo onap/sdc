@@ -312,16 +312,17 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
         List<BaseType> baseTypes = new ArrayList<>();
         baseTypes.add(new BaseType("org.openecomp.type"));
         String categoryName = "CAT01";
+        String modelName = "MODEL01";
 
         when(userValidations.validateUserExistsActionStatus(eq(user.getUserId()))).thenReturn(ActionStatus.OK);
-        when(elementDao.getBaseTypes(categoryName)).thenReturn(baseTypes);
-        Assert.assertTrue(elementBusinessLogic.getBaseTypes(categoryName, user.getUserId())
+        when(elementDao.getBaseTypes(categoryName, modelName)).thenReturn(baseTypes);
+        Assert.assertTrue(elementBusinessLogic.getBaseTypes(categoryName, user.getUserId(), modelName)
         .isLeft());
     }
     
     @Test
     public void testGetBaseTypes_givenUserValidationFails_thenReturnsException() {
         when(userValidations.validateUserExistsActionStatus(eq(user.getUserId()))).thenReturn(ActionStatus.RESTRICTED_OPERATION);
-        Assert.assertTrue(elementBusinessLogic.getBaseTypes("CAT01", user.getUserId()).isRight());
+        Assert.assertTrue(elementBusinessLogic.getBaseTypes("CAT01", user.getUserId(), null).isRight());
     }
 }

@@ -364,10 +364,9 @@ public class ToscaOperationFacade {
         final Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, nodeName);
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-        propertiesToMatch.put(GraphPropertyEnum.MODEL, model);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
         final Either<List<GraphVertex>, JanusGraphOperationStatus> highestResources = janusGraphDao
-            .getByCriteria(null, propertiesToMatch, propertiesNotToMatch, parseFlag);
+            .getByCriteria(null, propertiesToMatch, propertiesNotToMatch, parseFlag, model);
         if (highestResources.isRight()) {
             final JanusGraphOperationStatus status = highestResources.right().value();
             log.debug("failed to find resource with name {}. status={} ", nodeName, status);
@@ -388,8 +387,8 @@ public class ToscaOperationFacade {
         return getToscaElementByOperation(highestResource, filter);
     }
 
-    public <T extends Component> Either<T, StorageOperationStatus> getLatestByToscaResourceName(String toscaResourceName) {
-        return getLatestByName(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName, null);
+    public <T extends Component> Either<T, StorageOperationStatus> getLatestByToscaResourceName(String toscaResourceName, String modelName) {
+        return getLatestByName(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName, modelName);
     }
 
     public <T extends Component> Either<T, StorageOperationStatus> getFullLatestComponentByToscaResourceName(String toscaResourceName) {
@@ -459,7 +458,7 @@ public class ToscaOperationFacade {
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         Map<String, Entry<JanusGraphPredicate, Object>> predicateCriteria = getVendorVersionPredicate(vendorRelease);
         Either<List<GraphVertex>, JanusGraphOperationStatus> getLatestRes = janusGraphDao
-            .getByCriteria(vertexType, props, null, predicateCriteria, parseFlag);
+            .getByCriteria(vertexType, props, null, predicateCriteria, parseFlag, null);
         if (getLatestRes.isRight() || CollectionUtils.isEmpty(getLatestRes.left().value())) {
             getLatestRes = janusGraphDao.getByCriteria(vertexType, props, parseFlag);
         }
@@ -486,7 +485,7 @@ public class ToscaOperationFacade {
         });
     }
 
-    public <T extends Component> Either<T, StorageOperationStatus> getByToscaResourceNameAndVersion(final String toscaResourceName, final String version) {
+    public <T extends Component> Either<T, StorageOperationStatus> getByToscaResourceNameAndVersion(final String toscaResourceName, final String version, final String model) {
         Either<T, StorageOperationStatus> result;
 
         Map<GraphPropertyEnum, Object> hasProperties = new EnumMap<>(GraphPropertyEnum.class);
@@ -497,7 +496,7 @@ public class ToscaOperationFacade {
         hasNotProperties.put(GraphPropertyEnum.IS_DELETED, true);
 
         Either<List<GraphVertex>, JanusGraphOperationStatus> getResourceRes = janusGraphDao
-            .getByCriteria(VertexTypeEnum.NODE_TYPE, hasProperties, hasNotProperties, JsonParseFlagEnum.ParseAll);
+            .getByCriteria(VertexTypeEnum.NODE_TYPE, hasProperties, hasNotProperties, JsonParseFlagEnum.ParseAll, model);
         if (getResourceRes.isRight()) {
             JanusGraphOperationStatus status = getResourceRes.right().value();
             log.debug("failed to find resource with toscaResourceName {}, version {}. Status is {} ", toscaResourceName, version, status);
@@ -807,10 +806,9 @@ public class ToscaOperationFacade {
         Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(property, nodeName);
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-        propertiesToMatch.put(GraphPropertyEnum.MODEL, model);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
         Either<List<GraphVertex>, JanusGraphOperationStatus> highestResources = janusGraphDao
-            .getByCriteria(null, propertiesToMatch, propertiesNotToMatch, parseFlag);
+            .getByCriteria(null, propertiesToMatch, propertiesNotToMatch, parseFlag, model);
         if (highestResources.isRight()) {
             JanusGraphOperationStatus status = highestResources.right().value();
             log.debug("failed to find resource with name {}. status={} ", nodeName, status);
@@ -905,7 +903,7 @@ public class ToscaOperationFacade {
 
     public <T extends Component> Either<T, StorageOperationStatus> getComponentByNameAndVendorRelease(final ComponentTypeEnum componentType,
         final String name, final String vendorRelease,
-        final JsonParseFlagEnum parseFlag) {
+        final JsonParseFlagEnum parseFlag, final String modelName) {
         Map<GraphPropertyEnum, Object> hasProperties = new EnumMap<>(GraphPropertyEnum.class);
         Map<GraphPropertyEnum, Object> hasNotProperties = new EnumMap<>(GraphPropertyEnum.class);
         hasProperties.put(GraphPropertyEnum.NAME, name);
@@ -915,7 +913,7 @@ public class ToscaOperationFacade {
         }
         Map<String, Entry<JanusGraphPredicate, Object>> predicateCriteria = getVendorVersionPredicate(vendorRelease);
         Either<List<GraphVertex>, JanusGraphOperationStatus> getResourceRes = janusGraphDao.getByCriteria(null, hasProperties, hasNotProperties,
-            predicateCriteria, parseFlag);
+            predicateCriteria, parseFlag, modelName);
         if (getResourceRes.isRight()) {
             JanusGraphOperationStatus status = getResourceRes.right().value();
             log.debug("failed to find resource with name {}, version {}. Status is {} ", name, predicateCriteria, status);
@@ -1947,7 +1945,7 @@ public class ToscaOperationFacade {
         Map<GraphPropertyEnum, Object> hasNotProps = new EnumMap<>(GraphPropertyEnum.class);
         fillPropsMap(hasProps, hasNotProps, internalComponentType, componentTypeEnum, isAbstract, vertexType, modelName);
         Either<List<GraphVertex>, JanusGraphOperationStatus> getRes = janusGraphDao
-            .getByCriteria(vertexType, hasProps, hasNotProps, JsonParseFlagEnum.ParseMetadata);
+            .getByCriteria(vertexType, hasProps, hasNotProps, JsonParseFlagEnum.ParseMetadata, modelName);
         if (getRes.isRight() && !JanusGraphOperationStatus.NOT_FOUND.equals(getRes.right().value())) {
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getRes.right().value()));
         }
@@ -1969,7 +1967,7 @@ public class ToscaOperationFacade {
         ComponentParametersView params = new ComponentParametersView(true);
         params.setIgnoreAllVersions(false);
         if (getRes.isLeft()) {
-            for (GraphVertex vertexComponent : getVerticesForModel(modelName, getRes.left().value())) {
+            for (GraphVertex vertexComponent : getRes.left().value()) {
                 Either<ToscaElement, StorageOperationStatus> componentRes = topologyTemplateOperation
                     .getLightComponent(vertexComponent, componentTypeEnum, params);
                 if (componentRes.isRight()) {
@@ -2129,13 +2127,13 @@ public class ToscaOperationFacade {
                                                                                             final ComponentTypeEnum componentType) {
         final String normalizedName = ValidationUtils.normaliseComponentName(resourceName);
         final Either<List<GraphVertex>, JanusGraphOperationStatus> vertexEither = janusGraphDao
-            .getByCriteria(getVertexTypeEnum(resourceType), propertiesToMatch(normalizedName, componentType), null, null, JsonParseFlagEnum.NoParse);
+            .getByCriteria(getVertexTypeEnum(resourceType), propertiesToMatch(normalizedName, componentType), null, null, JsonParseFlagEnum.NoParse, modelName);
         if (vertexEither.isRight() && vertexEither.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
             log.debug("failed to get vertex from graph with property normalizedName: {} and model: {}", normalizedName, modelName);
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(vertexEither.right().value()));
         }
         return Either.left(CollectionUtils.isEmpty(vertexEither.isLeft() ? vertexEither.left().value().stream()
-            .filter(graphVertex -> graphVertex.getMetadataProperty(GraphPropertyEnum.NAME).equals(modelName)).collect(Collectors.toList()) : null));
+            .collect(Collectors.toList()) : null));
     }
 
     private VertexTypeEnum getVertexTypeEnum(final ResourceTypeEnum resourceType) {
@@ -2359,7 +2357,7 @@ public class ToscaOperationFacade {
     }
 
     public <T extends Component> Either<T, StorageOperationStatus> getLatestByNameAndVersion(String name, String version,
-                                                                                             JsonParseFlagEnum parseFlag) {
+                                                                                             JsonParseFlagEnum parseFlag, String model) {
         Either<T, StorageOperationStatus> result;
         Map<GraphPropertyEnum, Object> hasProperties = new EnumMap<>(GraphPropertyEnum.class);
         Map<GraphPropertyEnum, Object> hasNotProperties = new EnumMap<>(GraphPropertyEnum.class);
@@ -2368,7 +2366,7 @@ public class ToscaOperationFacade {
         hasProperties.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
         hasNotProperties.put(GraphPropertyEnum.IS_DELETED, true);
         Either<List<GraphVertex>, JanusGraphOperationStatus> getResourceRes = janusGraphDao
-            .getByCriteria(null, hasProperties, hasNotProperties, parseFlag);
+            .getByCriteria(null, hasProperties, hasNotProperties, parseFlag, model);
         if (getResourceRes.isRight()) {
             JanusGraphOperationStatus status = getResourceRes.right().value();
             log.debug("failed to find resource with name {}, version {}. Status is {} ", name, version, status);
@@ -2471,10 +2469,10 @@ public class ToscaOperationFacade {
         return null;
     }
 
-    public Either<Boolean, StorageOperationStatus> validateToscaResourceNameExtends(String templateNameCurrent, String templateNameExtends) {
+    public Either<Boolean, StorageOperationStatus> validateToscaResourceNameExtends(String templateNameCurrent, String templateNameExtends, String model) {
         String currentTemplateNameChecked = templateNameExtends;
         while (currentTemplateNameChecked != null && !currentTemplateNameChecked.equalsIgnoreCase(templateNameCurrent)) {
-            Either<Resource, StorageOperationStatus> latestByToscaResourceName = getLatestByToscaResourceName(currentTemplateNameChecked);
+            Either<Resource, StorageOperationStatus> latestByToscaResourceName = getLatestByToscaResourceName(currentTemplateNameChecked, model);
             if (latestByToscaResourceName.isRight()) {
                 return latestByToscaResourceName.right().value() == StorageOperationStatus.NOT_FOUND ? Either.left(false)
                     : Either.right(latestByToscaResourceName.right().value());
@@ -2593,7 +2591,7 @@ public class ToscaOperationFacade {
                                                                                   Map<GraphPropertyEnum, Object> propertiesNotToMatch,
                                                                                   String modelName) {
         Either<List<GraphVertex>, JanusGraphOperationStatus> getRes = janusGraphDao
-            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll);
+            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll, modelName);
         if (getRes.isRight()) {
             if (getRes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
@@ -2602,7 +2600,7 @@ public class ToscaOperationFacade {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getRes.right().value()));
             }
         } else {
-            for (final GraphVertex vertex : getVerticesForModel(modelName, getRes.left().value())) {
+            for (final GraphVertex vertex : getRes.left().value()) {
                 Either<ToscaElement, StorageOperationStatus> getServiceRes = topologyTemplateOperation
                     .getLightComponent(vertex, ComponentTypeEnum.SERVICE, new ComponentParametersView(true));
                 if (getServiceRes.isRight()) {

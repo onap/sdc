@@ -490,7 +490,7 @@ public class ElementOperationTest extends ModelTestBase {
 
             GraphVertex baseTypeVertex = mock(GraphVertex.class);
             when(baseTypeVertex.getMetadataProperty(GraphPropertyEnum.VERSION)).thenReturn("1.0");
-            when(healingJanusGraphDao.getByCriteria(any(), any(), any()))
+            when(healingJanusGraphDao.getByCriteria(eq(VertexTypeEnum.NODE_TYPE), any(), isNull(), eq(JsonParseFlagEnum.ParseAll), any()))
                     .thenReturn(Either.left(Collections.singletonList(baseTypeVertex)));
 
             GraphVertex derivedTypeVertex = mock(GraphVertex.class);
@@ -508,7 +508,7 @@ public class ElementOperationTest extends ModelTestBase {
             when(derivedTypeVertex.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME))
                     .thenReturn("org.parent.type");
 
-            List<BaseType> baseTypes = elementOperation.getBaseTypes("serviceCategoryA");
+            List<BaseType> baseTypes = elementOperation.getBaseTypes("serviceCategoryA", null);
 
             assertEquals(2, baseTypes.size());
             assertEquals("org.base.type", baseTypes.get(0).getToscaResourceName());
@@ -539,13 +539,13 @@ public class ElementOperationTest extends ModelTestBase {
 
             GraphVertex baseTypeVertex = mock(GraphVertex.class);
             when(baseTypeVertex.getMetadataProperty(GraphPropertyEnum.VERSION)).thenReturn("1.0");
-            when(healingJanusGraphDao.getByCriteria(any(), any(), any()))
+            when(healingJanusGraphDao.getByCriteria(eq(VertexTypeEnum.NODE_TYPE), any(), isNull(), eq(JsonParseFlagEnum.ParseAll), any()))
                     .thenReturn(Either.left(Collections.singletonList(baseTypeVertex)));
 
             when(healingJanusGraphDao.getParentVertices(baseTypeVertex, EdgeLabelEnum.DERIVED_FROM,
                     JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
 
-            List<BaseType> baseTypes = elementOperation.getBaseTypes("serviceCategoryA");
+            List<BaseType> baseTypes = elementOperation.getBaseTypes("serviceCategoryA", null);
 
             assertEquals(1, baseTypes.size());
             assertEquals("org.service.default", baseTypes.get(0).getToscaResourceName());

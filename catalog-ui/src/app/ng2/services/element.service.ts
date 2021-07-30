@@ -33,8 +33,9 @@ export class ElementService {
         this.baseUrl = sdcConfig.api.root;
     }
 
-    getCategoryBasetypes(categoryName:string):Observable<BaseTypeResponse[]> {
-        return this.http.get<ListBaseTypesResponse>(this.baseUrl + "/v1/category/services/" + categoryName + "/baseTypes")
+    getCategoryBasetypes(categoryName:string, modelName:string):Observable<BaseTypeResponse[]> {
+	    let modelQueryParam: string = modelName ? '?model=' + modelName : '';
+        return this.http.get<ListBaseTypesResponse>(this.baseUrl + "/v1/category/services/" + categoryName + "/baseTypes" + modelQueryParam)
             .pipe(map(response => response.baseTypes));
     }
 

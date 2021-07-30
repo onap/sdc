@@ -313,7 +313,7 @@ public class ServiceImportParseLogic {
             log.debug("Error occured during fetching node type with tosca name {}, error: {}", currVfcToscaName, status);
             throw new ComponentException(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
         } else if (org.apache.commons.lang.StringUtils.isNotEmpty(currVfcToscaName)) {
-            return (Resource) toscaOperationFacade.getLatestByToscaResourceName(currVfcToscaName).left()
+            return (Resource) toscaOperationFacade.getLatestByToscaResourceName(currVfcToscaName, resource.getModel()).left()
                 .on(st -> findVfcResource(csarInfo, resource, previousVfcToscaName, null, st));
         }
         return null;
@@ -1504,7 +1504,7 @@ public class ServiceImportParseLogic {
         String currentTemplateName = currentResource.getDerivedFrom().get(0);
         String updatedTemplateName = updateInfoResource.getDerivedFrom().get(0);
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
-            .validateToscaResourceNameExtends(currentTemplateName, updatedTemplateName);
+            .validateToscaResourceNameExtends(currentTemplateName, updatedTemplateName, currentResource.getModel());
         if (dataModelResponse.isRight()) {
             StorageOperationStatus storageStatus = dataModelResponse.right().value();
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Create/Update Resource - validateDerivingFromExtendingType");

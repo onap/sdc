@@ -282,7 +282,7 @@ public class ElementOperationMock implements IElementOperation {
     }
 
     @Override
-    public List<BaseType> getBaseTypes(String categoryName) {
+    public List<BaseType> getBaseTypes(String categoryName, String modelName) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -55,12 +55,12 @@ public class ForwardingPathToscaOperationFacade extends ToscaOperationFacade {
     }
 
     @Override
-    public <T extends Component> Either<T, StorageOperationStatus> getLatestByToscaResourceName(String toscaResourceName) {
+    public <T extends Component> Either<T, StorageOperationStatus> getLatestByToscaResourceName(String toscaResourceName, String model) {
         if(toscaResourceName.equals(ForwardingPathUtils.FORWARDING_PATH_NODE_NAME) || toscaResourceName.equals(ForwardingPathUtils.FORWARDER_CAPABILITY)){
             Resource component = new Resource();
             component.setToscaResourceName(GENERIC_SERVICE_NAME);
             return Either.left((T)component);
         }
-        return super.getLatestByToscaResourceName(toscaResourceName);
+        return super.getLatestByToscaResourceName(toscaResourceName, model);
     }
 }

@@ -203,7 +203,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         final Service service = createServiceObject(false);
         Resource resource = new Resource();
         Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(resource);
-        when(toscaOperationFacade.getLatestByToscaResourceName(anyString()))
+        when(toscaOperationFacade.getLatestByToscaResourceName(anyString(), any()))
             .thenReturn(getCompLatestResult);
 
         final CsarInfo csarInfo = getCsarInfo();
@@ -229,7 +229,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         final Service service = createServiceObject(false);
         Resource resource = new Resource();
         Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(resource);
-        when(toscaOperationFacade.getLatestByToscaResourceName(anyString()))
+        when(toscaOperationFacade.getLatestByToscaResourceName(anyString(), any()))
             .thenReturn(getCompLatestResult);
         Assertions.assertNotNull(extractedVfcsArtifacts);
         testSubject.findAddNodeTypeArtifactsToHandle(getCsarInfo(), nodeTypesArtifactsToHandle, service,
@@ -1205,7 +1205,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         updatedDerivedFromList.add("23344567778");
         updateInfoResource.setDerivedFrom(updatedDerivedFromList);
 
-        when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString()))
+        when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString(), any()))
             .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         Assertions.assertNotNull(
@@ -1218,7 +1218,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Resource currentResource = createParseResourceObject(true);
         Resource updateInfoResource = createParseResourceObject(true);
 
-        when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString()))
+        when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString(), any()))
             .thenReturn(Either.left(false));
 
         Assertions.assertNotNull(

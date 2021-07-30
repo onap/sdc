@@ -1460,7 +1460,7 @@ public class ResourceBusinessLogicTest {
        YamlTemplateParsingHandler yamlTemplateParser = new YamlTemplateParsingHandler(mockJanusGraphDao, null, Mockito.mock(AnnotationBusinessLogic.class), null);
        final ParsedToscaYamlInfo parsedToscaYamlInfo =  yamlTemplateParser.parseResourceInfoFromYAML("Definitions/my_vnf.yml", resourceYml, Collections.EMPTY_MAP, Collections.EMPTY_MAP, "myVnf", resourceResponse);
 
-        when(toscaOperationFacade.getLatestByToscaResourceName(anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(anyString(), any())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Resource vduCp = new Resource();
         vduCp.setToscaResourceName("tosca.nodes.nfv.VduCp");
         vduCp.setState(LifecycleStateEnum.CERTIFIED);
@@ -1673,7 +1673,7 @@ public class ResourceBusinessLogicTest {
 		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		Either<Boolean, StorageOperationStatus> isToscaNameExtending = Either.left(true);
-		when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString()))
+		when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString(), anyString()))
 				.thenReturn(isToscaNameExtending);
 
 		Either<Map<String, PropertyDefinition>, StorageOperationStatus> findPropertiesOfNode = Either
@@ -1703,7 +1703,7 @@ public class ResourceBusinessLogicTest {
 		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(eitherUpdate);
 
 		Either<Boolean, StorageOperationStatus> isToscaNameExtending = Either.left(false);
-		when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString()))
+		when(toscaOperationFacade.validateToscaResourceNameExtends(anyString(), anyString(), anyString()))
 				.thenReturn(isToscaNameExtending);
 
 		resource.setVersion("1.0");
@@ -1740,7 +1740,7 @@ public class ResourceBusinessLogicTest {
 		assertThat(createdResource).isNotNull();
 		Either<Resource, StorageOperationStatus> getLatestResult = Either.left(createdResource);
 		Either<Component, StorageOperationStatus> getCompLatestResult = Either.left(createdResource);
-		when(toscaOperationFacade.getLatestByToscaResourceName(resourceExist.getToscaResourceName()))
+		when(toscaOperationFacade.getLatestByToscaResourceName(resourceExist.getToscaResourceName(), null))
 				.thenReturn(getCompLatestResult);
 		when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(resourceExist.getToscaResourceName(), null))
 			.thenReturn(getCompLatestResult);
@@ -1851,9 +1851,9 @@ public class ResourceBusinessLogicTest {
 				.getRight();
 		when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName(), null))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName()))
+		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName(), null))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-		when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName))
+		when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName, null))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
 		when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(resourceToUpdate.getToscaResourceName(), null))
@@ -1889,11 +1889,11 @@ public class ResourceBusinessLogicTest {
 				.getRight();
 		when(toscaOperationFacade.getLatestByName(resourceToUpdate.getName(), null))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName()))
+		when(toscaOperationFacade.getLatestByToscaResourceName(resourceToUpdate.getToscaResourceName(), null))
 				.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 		when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(resourceToUpdate.getToscaResourceName(), null))
 			.thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-		when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName))
+		when(toscaOperationFacade.getLatestByToscaResourceName(nestedResourceName, null))
 				.thenReturn(Either.left(resourceResponse));
 		when(toscaOperationFacade.overrideComponent(any(Resource.class), any(Resource.class)))
 				.thenReturn(Either.left(resourceResponse));
@@ -2283,7 +2283,7 @@ public class ResourceBusinessLogicTest {
 
 	private Resource createRoot() {
 		rootType = setupGenericTypeMock(GENERIC_ROOT_NAME);
-		when(toscaOperationFacade.getLatestByToscaResourceName(GENERIC_ROOT_NAME))
+		when(toscaOperationFacade.getLatestByToscaResourceName(GENERIC_ROOT_NAME, null))
 				.thenReturn(Either.left(rootType));
 		return rootType;
 	}

@@ -215,7 +215,7 @@ public class ResourceImportManager {
         }
         final Either<Resource, StorageOperationStatus> resourceEither =
             toscaOperationFacade.getComponentByNameAndVendorRelease(resource.getComponentType(), resource.getName(),
-                resource.getVendorRelease(), JsonParseFlagEnum.ParseAll);
+                resource.getVendorRelease(), JsonParseFlagEnum.ParseAll, resource.getModel());
         if (resourceEither.isLeft() && toscaOperationFacade.isNodeAssociatedToModel(resource.getModel(), resource)) {
             if (resource.getModel() == null) {
                 throw new ByActionStatusComponentException(ActionStatus.COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS,
@@ -528,7 +528,7 @@ public class ResourceImportManager {
             String derivedFrom = toscaDerivedFromElement.left().value();
             log.debug("Derived from TOSCA name is {}", derivedFrom);
             resource.setDerivedFrom(Arrays.asList(new String[]{derivedFrom}));
-            Either<Resource, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade.getLatestByToscaResourceName(derivedFrom);
+            Either<Resource, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade.getLatestByToscaResourceName(derivedFrom, resource.getModel());
             if (latestByToscaResourceName.isRight()) {
                 StorageOperationStatus operationStatus = latestByToscaResourceName.right().value();
                 if (operationStatus == StorageOperationStatus.NOT_FOUND) {

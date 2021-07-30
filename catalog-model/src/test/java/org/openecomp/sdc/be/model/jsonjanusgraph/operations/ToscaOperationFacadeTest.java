@@ -263,10 +263,9 @@ public class ToscaOperationFacadeTest {
         Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, "toscaResourceName");
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-        propertiesToMatch.put(GraphPropertyEnum.MODEL, null);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
-        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll))
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseAll, null))
             .thenReturn(Either.left(list));
         when(topologyTemplateOperationMock.getToscaElement(ArgumentMatchers.eq(graphVertex), any(ComponentParametersView.class)))
             .thenReturn(Either.left(toscaElement));
@@ -437,12 +436,12 @@ public class ToscaOperationFacadeTest {
     public void testGetLatestByToscaResourceName() {
         Either<Component, StorageOperationStatus> result;
         String toscaResourceName = "name";
+        String model = "testModel";
         ToscaElement toscaElement = getToscaElementForTest();
 
         Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, toscaResourceName);
         propertiesToMatch.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-        propertiesToMatch.put(GraphPropertyEnum.MODEL, null);
         Map<GraphPropertyEnum, Object> propertiesNotToMatch = new EnumMap<>(GraphPropertyEnum.class);
         propertiesNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
 
@@ -454,11 +453,11 @@ public class ToscaOperationFacadeTest {
         graphVertex.setMetadataProperties(props);
         graphVertexList.add(graphVertex);
 
-        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata))
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, propertiesNotToMatch, JsonParseFlagEnum.ParseMetadata, model))
             .thenReturn(Either.left(graphVertexList));
         when(topologyTemplateOperationMock.getToscaElement(any(GraphVertex.class), any(ComponentParametersView.class)))
             .thenReturn(Either.left(toscaElement));
-        result = testInstance.getLatestByToscaResourceName(toscaResourceName);
+        result = testInstance.getLatestByToscaResourceName(toscaResourceName, model);
         assertTrue(result.isLeft());
     }
 

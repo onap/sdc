@@ -63,7 +63,7 @@ export class SelectDataTypeViewModel extends PropertyFormBaseView {
 
         this.$templateCache.put("select-datatype-modal-view.html", require('app/view-models/forms/property-forms/select-datatype-modal/select-datatype-modal-view.html'));
         this.$scope.innerViewSrcUrl = "select-datatype-modal-view.html";
-        this.$scope.modelNameFilter = this.component.model.name;
+        this.$scope.modelNameFilter = this.component.model;
         this.initChildScope();
     }
 

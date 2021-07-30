@@ -107,7 +107,7 @@ public class GroupTypeImportManager {
                 for (String member : groupType.getMembers()) {
                     // Verify that such Resource exist
                     Either<org.openecomp.sdc.be.model.Resource, StorageOperationStatus> eitherMemberExist = toscaOperationFacade
-                        .getLatestByToscaResourceName(member);
+                        .getLatestByToscaResourceName(member, groupType.getModel());
                     if (eitherMemberExist.isRight()) {
                         StorageOperationStatus operationStatus = eitherMemberExist.right().value();
                         log.debug("Error when fetching parent resource {}, error: {}", member, operationStatus);
