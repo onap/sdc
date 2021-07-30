@@ -1311,6 +1311,33 @@ public class ComponentsUtils {
         return responseEnum;
     }
 
+    public ActionStatus convertFromStorageResponseForPolicyType(StorageOperationStatus storageResponse) {
+        ActionStatus responseEnum;
+        switch (storageResponse) {
+            case OK:
+                responseEnum = ActionStatus.OK;
+                break;
+            case CONNECTION_FAILURE:
+            case GRAPH_IS_LOCK:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+            case BAD_REQUEST:
+                responseEnum = ActionStatus.INVALID_CONTENT;
+                break;
+            case ENTITY_ALREADY_EXISTS:
+                responseEnum = ActionStatus.POLICY_TYPE_ALREADY_EXIST;
+                break;
+            case SCHEMA_VIOLATION:
+                responseEnum = ActionStatus.POLICY_TYPE_ALREADY_EXIST;
+                break;
+            default:
+                responseEnum = ActionStatus.GENERAL_ERROR;
+                break;
+        }
+        log.debug(CONVERT_STORAGE_RESPONSE_TO_ACTION_RESPONSE, storageResponse, responseEnum);
+        return responseEnum;
+    }
+
     public ActionStatus convertFromStorageResponseForDataType(StorageOperationStatus storageResponse) {
         ActionStatus responseEnum;
         switch (storageResponse) {

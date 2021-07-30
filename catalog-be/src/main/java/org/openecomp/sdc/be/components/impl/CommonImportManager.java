@@ -180,6 +180,9 @@ public class CommonImportManager {
             case GROUP_TYPE:
                 ret = componentsUtils.convertFromStorageResponseForGroupType(status);
                 break;
+            case POLICY_TYPE:
+                ret = componentsUtils.convertFromStorageResponseForPolicyType(status);
+                break;
             case DATA_TYPE:
                 ret = componentsUtils.convertFromStorageResponseForDataType(status);
                 break;
