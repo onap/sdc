@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -1851,7 +1852,7 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.left(service));
         when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
             .thenReturn(Either.left(originService));
-        when(toscaOperationFacade.getLatestByToscaResourceName(eq(originService.getDerivedFromGenericType())))
+        when(toscaOperationFacade.getLatestByToscaResourceName(eq(originService.getDerivedFromGenericType()), isNull()))
             .thenReturn(Either.left(serviceBaseComponent));
         when(toscaOperationFacade.getToscaElement(eq(ORIGIN_COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(originService));

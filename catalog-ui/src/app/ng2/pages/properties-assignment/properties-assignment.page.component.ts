@@ -1146,7 +1146,7 @@ export class PropertiesAssignmentComponent {
     }
 
     /*** addProperty ***/
-    addProperty = (model: Model) => {
+    addProperty = (model: string) => {
         this.loadDataTypesByComponentModel(model)
         let modalTitle = 'Add Property';
         let modal = this.ModalService.createCustomModal(new ModalModel(
@@ -1251,9 +1251,8 @@ export class PropertiesAssignmentComponent {
         return instanceType === ResourceType.VF || instanceType === ResourceType.PNF || instanceType === ResourceType.CVFC || instanceType === ResourceType.CR;
     }
 
-    loadDataTypesByComponentModel(model:Model) {
-        let modelName = new Model(model).name;
-        this.propertyCreatorComponent.filterDataTypesByModel(modelName);
+    loadDataTypesByComponentModel(model:string) {
+        this.propertyCreatorComponent.filterDataTypesByModel(model);
     }
 
 }

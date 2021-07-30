@@ -220,7 +220,7 @@ public class ToscaExportHandler {
         if (component.getDerivedFromGenericType() != null && !component.getDerivedFromGenericType()
             .startsWith("org.openecomp.resource.abstract.nodes.")) {
             final Either<Component, StorageOperationStatus> baseType = toscaOperationFacade
-                .getByToscaResourceNameAndVersion(component.getDerivedFromGenericType(), component.getDerivedFromGenericVersion());
+                .getByToscaResourceNameAndVersion(component.getDerivedFromGenericType(), component.getDerivedFromGenericVersion(), component.getModel());
             if (baseType.isLeft() && baseType.left().value() != null) {
                 addDependencies(imports, dependencies, baseType.left().value());
             } else {

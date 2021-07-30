@@ -202,11 +202,11 @@ public class ElementServlet extends BeGenericServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCategoryBaseTypes(@PathParam(value = "categoryName") final String categoryName,
             @PathParam(value = "componentType") final String componentType, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-
+            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+            @Parameter(description = "model", required = false) @QueryParam("model") String modelName) {
         try {
             final ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
-            final Either<List<BaseType>, ActionStatus> either = elementBL.getBaseTypes(categoryName, userId);
+            final Either<List<BaseType>, ActionStatus> either = elementBL.getBaseTypes(categoryName, userId, modelName);
             
             if (either.isRight() || either.left().value() == null) {
                 log.debug("No base types were found");

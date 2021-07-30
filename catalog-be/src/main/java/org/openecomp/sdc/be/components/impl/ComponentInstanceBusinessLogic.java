@@ -446,7 +446,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
         final Component service = getServiceResult.left().value();
         final Either<Component, StorageOperationStatus> getServiceDerivedFromTypeResult = toscaOperationFacade
-            .getLatestByToscaResourceName(service.getDerivedFromGenericType());
+            .getLatestByToscaResourceName(service.getDerivedFromGenericType(), service.getModel());
         if (getServiceDerivedFromTypeResult.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
         }
@@ -2835,7 +2835,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     final Component service = getServiceResult.left().value();
 
                     final Either<Component, StorageOperationStatus> getServiceDerivedFromTypeResult = toscaOperationFacade
-                        .getLatestByToscaResourceName(service.getDerivedFromGenericType());
+                        .getLatestByToscaResourceName(service.getDerivedFromGenericType(), service.getModel());
                     if (getServiceDerivedFromTypeResult.isRight()) {
                         throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getServiceResult.right().value()));
                     }

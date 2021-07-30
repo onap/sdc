@@ -2730,7 +2730,7 @@ public class NodeTemplateOperation extends BaseOperation {
         EnumMap<GraphPropertyEnum, Object> hasNot = new EnumMap<>(GraphPropertyEnum.class);
         hasNot.put(GraphPropertyEnum.IS_DELETED, true);
         Either<List<GraphVertex>, JanusGraphOperationStatus> byCriteria = janusGraphDao
-            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props, hasNot, JsonParseFlagEnum.ParseMetadata);
+            .getByCriteria(VertexTypeEnum.TOPOLOGY_TEMPLATE, props, hasNot, JsonParseFlagEnum.ParseMetadata);  // AGNOSTIC
         if (byCriteria.isRight()) {
             log.debug("Failed to fetch vertex by criteria {} error {}", props, byCriteria.right().value());
             return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(byCriteria.right().value());

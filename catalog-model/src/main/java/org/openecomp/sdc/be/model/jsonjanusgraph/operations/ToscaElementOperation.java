@@ -1400,7 +1400,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         }
         propertiesHasNotToMatch.put(GraphPropertyEnum.IS_DELETED, true);
         propertiesHasNotToMatch.put(GraphPropertyEnum.IS_ARCHIVED, true); //US382674, US382683
-        return janusGraphDao.getByCriteria(null, propertiesToMatch, propertiesHasNotToMatch, parseFlag);
+        return janusGraphDao.getByCriteria(null, propertiesToMatch, propertiesHasNotToMatch, parseFlag);  // AGNOSTIC
     }
 
     // highest + (certified && !highest)
@@ -1421,7 +1421,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         propertiesHasNotToMatchCertified.put(GraphPropertyEnum.IS_ARCHIVED, true);  //US382674, US382683
         propertiesHasNotToMatchCertified.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
         Either<List<GraphVertex>, JanusGraphOperationStatus> certifiedNotHighestNodes = janusGraphDao
-            .getByCriteria(null, propertiesToMatchCertified, propertiesHasNotToMatchCertified, JsonParseFlagEnum.ParseMetadata);
+            .getByCriteria(null, propertiesToMatchCertified, propertiesHasNotToMatchCertified, JsonParseFlagEnum.ParseMetadata);  // AGNOSTIC
         if (certifiedNotHighestNodes.isRight() && certifiedNotHighestNodes.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
             return Either.right(certifiedNotHighestNodes.right().value());
         }

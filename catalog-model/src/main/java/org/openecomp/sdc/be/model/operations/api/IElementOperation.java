@@ -86,7 +86,7 @@ public interface IElementOperation {
 
     Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction);
     
-    List<BaseType> getBaseTypes(String categoryName);
+    List<BaseType> getBaseTypes(String categoryName, String modelName);
 
     Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId);
 

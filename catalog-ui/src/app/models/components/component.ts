@@ -147,7 +147,7 @@ export abstract class Component implements IComponent {
     public categorySpecificMetadata: Metadata = new Metadata();
     public derivedFromGenericType: string;
     public derivedFromGenericVersion: string;
-    public model: Model;
+    public model: string;
 
     constructor(componentService:IComponentService, protected $q:ng.IQService, component?:Component) {
         if (component) {

@@ -72,7 +72,7 @@ public class GenericTypeBusinessLogic {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
             }
         } else {
-            genericType = toscaOperationFacade.getByToscaResourceNameAndVersion(genericTypeToscaName, component.getDerivedFromGenericVersion());
+            genericType = toscaOperationFacade.getByToscaResourceNameAndVersion(genericTypeToscaName, component.getDerivedFromGenericVersion(), component.getModel());
         }
 
         Resource genericTypeResource = genericType.left().value();
