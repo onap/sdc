@@ -1288,11 +1288,11 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
     }
     
-    public Either<List<BaseType>, ActionStatus> getBaseTypes(final String categoryName, final String userId) {
+    public Either<List<BaseType>, ActionStatus> getBaseTypes(final String categoryName, final String userId, final String modelName) {
         final ActionStatus status = validateUserExistsActionStatus(userId);
         if (ActionStatus.OK != status) {
             return Either.right(status);
         }
-        return Either.left(elementOperation.getBaseTypes(categoryName));
+        return Either.left(elementOperation.getBaseTypes(categoryName, modelName));
     }
 }

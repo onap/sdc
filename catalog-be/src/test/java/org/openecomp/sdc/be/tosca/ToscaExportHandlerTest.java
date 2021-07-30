@@ -529,7 +529,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         component.setDerivedFromGenericType("org.typeA");
         component.setDerivedFromGenericVersion("1.0");
-        when(toscaOperationFacade.getByToscaResourceNameAndVersion("org.typeA", "1.0")).thenReturn(Either.left(baseType));
+        when(toscaOperationFacade.getByToscaResourceNameAndVersion("org.typeA", "1.0", null)).thenReturn(Either.left(baseType));
 
         // default test
         result = Deencapsulation.invoke(testSubject, "fillImports", component, toscaTemplate);

@@ -451,7 +451,8 @@ export class GeneralViewModel {
 
         this.$scope.initBaseTypes = ():void => {
             if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.component.categories) {
-                 this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name).subscribe((data: BaseTypeResponse[]) => {
+	             let modelName = this.$scope.component.model ? this.$scope.component.model : null;
+                 this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
 	                 this.$scope.baseTypes = []
                      this.$scope.baseTypeVersions = []
                      data.forEach(baseType => {
@@ -682,7 +683,8 @@ export class GeneralViewModel {
                 }
             }
             if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component.categories[0]) {
-	            this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name).subscribe((data: BaseTypeResponse[]) => {
+	            let modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
+	            this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
 		
                     if(this.$scope.isCreateMode()){
                         this.$scope.baseTypes = []
@@ -709,7 +711,8 @@ export class GeneralViewModel {
         };
 
         this.$scope.onBaseTypeChange = (): void => {
-            this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name).subscribe((data: BaseTypeResponse[]) => {
+	        let modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
+            this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
                      this.$scope.baseTypeVersions = []
                      data.forEach(baseType => {
 	                     if(baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
@@ -718,6 +721,20 @@ export class GeneralViewModel {
 	                     };
                      });
              })
+        };
+
+        this.$scope.onModelChange = (): void => {
+            if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.component.categories) {
+	             let modelName = this.$scope.component.model ? this.$scope.component.model : null;
+                 this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
+		                this.$scope.baseTypes = []
+                        this.$scope.baseTypeVersions = []
+                        data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
+                        data[0].versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+                        this.$scope.component.derivedFromGenericType = data[0].toscaResourceName;
+                        this.$scope.component.derivedFromGenericVersion = data[0].versions[0];
+                 })
+            }
         };
 
         this.$scope.onVendorNameChange = (oldVendorName: string): void => {

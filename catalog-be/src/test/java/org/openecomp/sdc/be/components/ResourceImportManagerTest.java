@@ -110,7 +110,7 @@ public class ResourceImportManagerTest {
     public static void beforeClass() {
         importManager = new ResourceImportManager(componentsUtils, capabilityTypeOperation, interfaceDefinitionHandler);
         importManager.setAuditingManager(auditingManager);
-        when(toscaOperationFacade.getLatestByToscaResourceName(Mockito.anyString())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceName(Mockito.anyString(), Mockito.any())).thenReturn(Either.left(null));
         when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(Mockito.anyString(), Mockito.any())).thenReturn(Either.left(null));
         importManager.setResponseFormatManager(responseFormatManager);
         importManager.setResourceBusinessLogic(resourceBusinessLogic);
@@ -130,7 +130,7 @@ public class ResourceImportManagerTest {
         Mockito.reset(auditingManager, responseFormatManager, resourceBusinessLogic, userAdmin);
         Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
         when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
-            any(JsonParseFlagEnum.class))).thenReturn(notFound);
+            any(JsonParseFlagEnum.class), any())).thenReturn(notFound);
     }
 
     @Test
@@ -308,7 +308,7 @@ public class ResourceImportManagerTest {
         setResourceBusinessLogicMock();
         final Either<Component, StorageOperationStatus> foundResourceEither = Either.left(Mockito.mock(Resource.class));
         when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
-            any(JsonParseFlagEnum.class))).thenReturn(foundResourceEither);
+            any(JsonParseFlagEnum.class), any())).thenReturn(foundResourceEither);
         when(toscaOperationFacade.isNodeAssociatedToModel(eq(null), any(Resource.class))).thenReturn(true);
 
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");

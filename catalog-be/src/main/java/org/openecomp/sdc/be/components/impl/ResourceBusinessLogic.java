@@ -802,7 +802,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             componentsUtils.auditResource(responseFormat, csarInfo.getModifier(), resource, AuditingActionEnum.CREATE_RESOURCE);
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status), csarInfo.getCsarUUID());
         } else if (StringUtils.isNotEmpty(currVfcToscaName)) {
-            return (Resource) toscaOperationFacade.getLatestByToscaResourceName(currVfcToscaName).left()
+            return (Resource) toscaOperationFacade.getLatestByToscaResourceName(currVfcToscaName, resource.getModel()).left()
                 .on(st -> findVfcResource(csarInfo, resource, previousVfcToscaName, null, st));
         }
         return null;
@@ -1969,7 +1969,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                  String nodeName, String substitutableAsNodeType) {
         try {
             for (Entry<String, NodeTypeInfo> nodeTypeEntry : nodeTypesInfo.entrySet()) {
-                if (nodeTypeEntry.getValue().isNested() && !nodeTypeAlreadyExists(nodeTypeEntry.getKey())) {
+                if (nodeTypeEntry.getValue().isNested() && !nodeTypeAlreadyExists(nodeTypeEntry.getKey(), resource.getModel())) {
                     handleNestedVfc(resource, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
                         nodeTypeEntry.getKey());
                     log.trace("************* finished to create node {}", nodeTypeEntry.getKey());
@@ -1997,8 +1997,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private boolean nodeTypeAlreadyExists(final String toscaResourceName) {
-        return toscaOperationFacade.getLatestByToscaResourceName(toscaResourceName).isLeft();
+    private boolean nodeTypeAlreadyExists(final String toscaResourceName, String modelName) {
+        return toscaOperationFacade.getLatestByToscaResourceName(toscaResourceName, modelName).isLeft();
     }
 
     private Either<Resource, ResponseFormat> handleVfCsarArtifacts(Resource resource, CsarInfo csarInfo, List<ArtifactDefinition> createdArtifacts,
@@ -3490,7 +3490,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                                                final CsarInfo csarInfo, final boolean isNested,
                                                                                final String nodeName) {
         final Either<Component, StorageOperationStatus> latestByToscaName = toscaOperationFacade.getLatestByToscaResourceName(
-            buildNestedToscaResourceName(resource.getResourceType().name(), csarInfo.getVfResourceName(), nodeName).getRight());
+            buildNestedToscaResourceName(resource.getResourceType().name(), csarInfo.getVfResourceName(), nodeName).getRight(), resource.getModel());
         if (latestByToscaName.isLeft()) {
             final Resource nestedResource = (Resource) latestByToscaName.left().value();
             log.debug(VALIDATE_DERIVED_BEFORE_UPDATE);
@@ -3676,7 +3676,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private Component getParentComponent(Resource newResource) {
         String toscaResourceNameDerivedFrom = newResource.getDerivedFrom().get(0);
         Either<Component, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade
-            .getLatestByToscaResourceName(toscaResourceNameDerivedFrom);
+            .getLatestByToscaResourceName(toscaResourceNameDerivedFrom, newResource.getModel());
         if (latestByToscaResourceName.isRight()) {
             BeEcompErrorManager.getInstance()
                 .logInternalDataError("mergeOldResourceMetadataWithNew", "derived from resource not found", ErrorSeverity.ERROR);
@@ -4601,7 +4601,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         String currentTemplateName = currentResource.getDerivedFrom().get(0);
         String updatedTemplateName = updateInfoResource.getDerivedFrom().get(0);
         Either<Boolean, StorageOperationStatus> dataModelResponse = toscaOperationFacade
-            .validateToscaResourceNameExtends(currentTemplateName, updatedTemplateName);
+            .validateToscaResourceNameExtends(currentTemplateName, updatedTemplateName, currentResource.getModel());
         if (dataModelResponse.isRight()) {
             StorageOperationStatus storageStatus = dataModelResponse.right().value();
             BeEcompErrorManager.getInstance().logBeDaoSystemError("Create/Update Resource - validateDerivingFromExtendingType");
@@ -4905,20 +4905,20 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         log.debug("validate resource properties default values");
         List<PropertyDefinition> properties = resource.getProperties();
         if (properties != null) {
-            iterateOverProperties(properties);
+            iterateOverProperties(properties, resource.getModel());
         }
         return true;
     }
 
-    public void iterateOverProperties(List<PropertyDefinition> properties) {
+    public void iterateOverProperties(List<PropertyDefinition> properties, String model) {
         String type = null;
         String innerType = null;
         for (PropertyDefinition property : properties) {
-            if (!propertyOperation.isPropertyTypeValid(property, null)) {
+            if (!propertyOperation.isPropertyTypeValid(property, model)) {
                 log.info("Invalid type for property {}", property);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
             }
-            Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel());
+            Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, model);
             type = property.getType();
             if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
                 ResponseFormat responseFormat = validateMapOrListPropertyType(property, innerType, allDataTypes);

@@ -617,6 +617,7 @@
                             data-ng-class="{'view-mode': isViewMode()}"
                             data-ng-disabled="component.isCsarComponent() || !isCreateMode()"
                             data-ng-model="component.model"
+                            data-ng-change="onModelChange()"
                             data-tests-id="modelName">
                       <option value="">SDC AID</option>
                       <option ng-repeat="model in models | orderBy:[name]">{{model}}</option>

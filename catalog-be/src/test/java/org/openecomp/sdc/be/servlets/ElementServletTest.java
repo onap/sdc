@@ -1110,7 +1110,7 @@ class ElementServletTest extends JerseyTest {
     void getBaseTypesTest() {
         String path = "/v1/category/services/CAT1/baseTypes";
         Either<List<BaseType>, ActionStatus> baseTypesEither = Either.left(new ArrayList<>());
-        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId()))
+        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId(), null))
             .thenReturn(baseTypesEither);
 
         Response response = target()
@@ -1128,7 +1128,7 @@ class ElementServletTest extends JerseyTest {
         String path = "/v1/category/services/CAT1/baseTypes";
         Either<List<BaseType>, ActionStatus> baseTypesEither = Either.right(ActionStatus.NO_CONTENT);
 
-        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId()))
+        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId(), null))
             .thenReturn(baseTypesEither);
 
         Response response = target()

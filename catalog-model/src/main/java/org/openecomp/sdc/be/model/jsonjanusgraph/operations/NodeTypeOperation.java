@@ -934,7 +934,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         Map<GraphPropertyEnum, Object> propsHasNot = new HashMap<>();
         propsHasNot.put(GraphPropertyEnum.IS_DELETED, true);
         Either<List<GraphVertex>, JanusGraphOperationStatus> byCriteria = janusGraphDao
-            .getByCriteria(VertexTypeEnum.NODE_TYPE, props, propsHasNot, JsonParseFlagEnum.NoParse);
+            .getByCriteria(VertexTypeEnum.NODE_TYPE, props, propsHasNot, JsonParseFlagEnum.NoParse, nodeType.getModel());
         if (byCriteria.isRight()) {
             log.debug("Failed to fetch derived by props {} error {}", props, byCriteria.right().value());
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(byCriteria.right().value()));

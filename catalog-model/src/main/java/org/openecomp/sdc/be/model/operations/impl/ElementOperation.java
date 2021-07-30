@@ -380,7 +380,7 @@ public class ElementOperation implements IElementOperation {
     }
 
     @Override
-    public List<BaseType> getBaseTypes(final String categoryName){
+    public List<BaseType> getBaseTypes(final String categoryName, final String modelName){
         final ArrayList<BaseType> baseTypes = new ArrayList<>();
         final Map<String, String> categoriesSpecificBaseTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes();
         final String categorySpecificBaseType = categoriesSpecificBaseTypes == null ? null : categoriesSpecificBaseTypes.get(categoryName);
@@ -391,8 +391,8 @@ public class ElementOperation implements IElementOperation {
         props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, baseToscaResourceName);
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         final Either<List<GraphVertex>, JanusGraphOperationStatus> baseTypeVertex = janusGraphDao
-                .getByCriteria(VertexTypeEnum.NODE_TYPE, props, JsonParseFlagEnum.ParseAll);
-
+                .getByCriteria(VertexTypeEnum.NODE_TYPE, props, null, JsonParseFlagEnum.ParseAll, modelName);
+        
         if (baseTypeVertex.isLeft()) {
             BaseType baseType = new BaseType(baseToscaResourceName);
             baseTypes.add(baseType);
