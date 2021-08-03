@@ -66,7 +66,7 @@ public class DriverFactory {
                 return name.startsWith(config.getDownloadAutomationFolder());
             }
         });
-        Arrays.asList(listFiles).forEach(e -> FileHandling.deleteDirectory(e.getAbsolutePath()));
+        //Arrays.asList(listFiles).forEach(e -> FileHandling.deleteDirectory(e.getAbsolutePath()));
 
 
         driverThread = new ThreadLocal<WebDriverThread>() {
