@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "36f765b2_2c9481b2",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/InterfaceLifecycleOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-03T09:19:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea7979fd_9ca4bc5b",
+      "range": {
+        "startLine": 862,
+        "startChar": 9,
+        "endLine": 863,
+        "endChar": 113
+      },
+      "revId": "d1c9c99a0a0603be3e8c93d4b467a8e7c2101144",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "02c5c264_7daf2e8e",
         "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "d1c9c99a0a0603be3e8c93d4b467a8e7c2101144",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd82268d_b1fa6798",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-03T09:19:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02c5c264_7daf2e8e",
+      "range": {
+        "startLine": 213,
+        "startChar": 74,
+        "endLine": 213,
+        "endChar": 117
+      },
+      "revId": "d1c9c99a0a0603be3e8c93d4b467a8e7c2101144",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
