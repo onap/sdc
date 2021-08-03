@@ -3,6 +3,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2021 Nokia Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +27,8 @@ import com.aventstack.extentreports.reporter.ExtentXReporter;
 import com.aventstack.extentreports.reporter.configuration.Protocol;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -108,8 +111,9 @@ public class ExtentManager {
             String suiteNameFromVersionInfoFile = FileHandling.getKeyByValueFromPropertyFormatFile(filepath + VERSIONS_INFO_FILE_NAME, "suiteName");
             reporterDataDefinition(onboardVersion, osVersion, envData, suiteNameFromVersionInfoFile);
         } else {
-            FileHandling.deleteDirectory(SetupCDTest.getReportFolder());
-            FileHandling.createDirectory(filepath);
+            if (!Files.exists(Paths.get(filepath))) {
+                FileHandling.createDirectory(filepath);
+            }
             setReporter(filepath, htmlFile, false);
             Calendar calendar = new GregorianCalendar();
             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a");
