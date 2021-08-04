@@ -18,12 +18,16 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.RelationshipTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -37,13 +41,15 @@ public class RelationshipTypeImportManager {
     private final RelationshipTypeOperation relationshipTypeOperation;
     private final CommonImportManager commonImportManager;
     private final ComponentsUtils componentsUtils;
+    private final ModelOperation modelOperation;
 
     @Autowired
     public RelationshipTypeImportManager(RelationshipTypeOperation relationshipTypeOperation, CommonImportManager commonImportManager,
-                                         ComponentsUtils componentsUtils) {
+                                         ComponentsUtils componentsUtils, ModelOperation modelOperation) {
         this.relationshipTypeOperation = relationshipTypeOperation;
         this.commonImportManager = commonImportManager;
         this.componentsUtils = componentsUtils;
+        this.modelOperation = modelOperation;
     }
 
     public Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(final String relationshipYml, final String modelName) {
@@ -60,8 +66,13 @@ public class RelationshipTypeImportManager {
 
     private Either<List<RelationshipTypeDefinition>, ActionStatus> createRelationshipTypesFromYml(final String relationshipTypeYml, final String modelName) {
         final Either<List<RelationshipTypeDefinition>, ActionStatus> relationshipTypes =  commonImportManager.createElementTypesFromYml(relationshipTypeYml, this::createRelationshipType);
-        if (relationshipTypes.isLeft()){
-            relationshipTypes.left().value().forEach(relationshipType -> relationshipType.setModel(modelName));
+        if (relationshipTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+            final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
+            if (modelOptional.isPresent()) {
+                relationshipTypes.left().value().forEach(relationshipType -> relationshipType.setModel(modelName));
+                return relationshipTypes;
+            }
+            return Either.right(ActionStatus.INVALID_MODEL);
         }
         return relationshipTypes;
     }

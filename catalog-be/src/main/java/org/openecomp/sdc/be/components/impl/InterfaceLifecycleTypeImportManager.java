@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -36,9 +37,11 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -57,6 +60,8 @@ public class InterfaceLifecycleTypeImportManager {
     private ComponentsUtils componentsUtils;
     @Resource
     private CommonImportManager commonImportManager;
+    @Resource
+    private ModelOperation modelOperation;
 
     public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml, final String modelName) {
         Either<List<InterfaceDefinition>, ActionStatus> interfaces = createInterfaceTypeFromYml(interfaceLifecycleTypesYml, modelName);
@@ -71,7 +76,12 @@ public class InterfaceLifecycleTypeImportManager {
     private Either<List<InterfaceDefinition>, ActionStatus> createInterfaceTypeFromYml(final String interfaceTypesYml, final String modelName) {
         final Either<List<InterfaceDefinition>, ActionStatus> interfaceTypes = commonImportManager.createElementTypesFromYml(interfaceTypesYml, this::createInterfaceDefinition);
         if (interfaceTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
-            interfaceTypes.left().value().forEach(interfaceType -> interfaceType.setModel(modelName));
+            final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
+            if (modelOptional.isPresent()) {
+                interfaceTypes.left().value().forEach(interfaceType -> interfaceType.setModel(modelName));
+                return interfaceTypes;
+            }
+            return Either.right(ActionStatus.INVALID_MODEL);
         }
         return interfaceTypes;
     }

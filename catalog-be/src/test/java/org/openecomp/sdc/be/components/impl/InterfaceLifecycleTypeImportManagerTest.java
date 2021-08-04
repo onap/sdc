@@ -35,8 +35,10 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 import java.io.IOException;
@@ -61,6 +63,7 @@ public class InterfaceLifecycleTypeImportManagerTest {
     public static final CommonImportManager commonImportManager = Mockito.mock(CommonImportManager.class);
     public static final IInterfaceLifecycleOperation interfaceLifecycleOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
     public static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
+    public static final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
 
     @BeforeClass
     public static void beforeClass() throws IOException {
@@ -83,6 +86,7 @@ public class InterfaceLifecycleTypeImportManagerTest {
     @Test
     public void createLifecycleTypesTest() throws IOException {
         final String ymlContent = getYmlContent();
+        when(modelOperation.findModelByName("test")).thenReturn(Optional.of(new Model("test")));
         final Either<List<InterfaceDefinition>, ResponseFormat> createCapabilityTypes =
             importManager.createLifecycleTypes(ymlContent, "test");
         assertTrue(createCapabilityTypes.isLeft());

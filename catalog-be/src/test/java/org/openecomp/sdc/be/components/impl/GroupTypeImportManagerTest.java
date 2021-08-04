@@ -28,6 +28,7 @@ import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GroupTypeImportManagerTest {
@@ -41,12 +42,14 @@ public class GroupTypeImportManagerTest {
     @Mock
     CommonImportManager commonImportManager;
     @Mock
+    ModelOperation modelOperation;
+    @Mock
     private ToscaTypeImportData data;
 
     @Test
     public void shouldInvokeCreateElementTypes() {
         GroupTypeImportManager groupTypeImportManager = new GroupTypeImportManager(groupTypeOperation, componentsUtils,
-            toscaOperationFacade, commonImportManager);
+            toscaOperationFacade, commonImportManager, modelOperation);
         groupTypeImportManager.createGroupTypes(data, null);
         Mockito.verify(commonImportManager).createElementTypes(Mockito.any(ToscaTypeImportData.class), Mockito.any(), Mockito.any(), Mockito.any());
     }
