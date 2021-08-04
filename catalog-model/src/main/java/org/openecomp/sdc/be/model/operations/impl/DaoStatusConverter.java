@@ -58,6 +58,8 @@ public class DaoStatusConverter {
                 return StorageOperationStatus.PROPERTY_NAME_ALREADY_EXISTS;
             case INVALID_PROPERTY:
                 return StorageOperationStatus.INVALID_PROPERTY;
+            case INVALID_MODEL_NAME:
+                return StorageOperationStatus.INVALID_MODEL_NAME;
             default:
                 return StorageOperationStatus.GENERAL_ERROR;
         }

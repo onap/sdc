@@ -163,6 +163,18 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
     }
 
     @Test
+    public void testAddCapabilityTypeWithInvalidModel() {
+
+        CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition();
+        capabilityTypeDefinition.setDescription("desc1");
+        capabilityTypeDefinition.setType("tosca.capabilities.Container1");
+        capabilityTypeDefinition.setModel("testModel");
+
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        assertEquals(StorageOperationStatus.INVALID_MODEL_NAME, addCapabilityType1.right().value());
+    }
+
+    @Test
     public void testAddDerviedCapabilityType() {
 
         CapabilityTypeDefinition capabilityTypeDefinition = createCapabilityTypeDef("tosca.capabilities.Container2", "desc1", "derivedFrom");

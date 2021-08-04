@@ -555,6 +555,20 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertEquals(groupTypeDefinition.getModel(), eitherGroupTypeFetched.left().value().getModel());
     }
 
+    @Test
+    public void testAddGroupTypeWithInvalidModel() {
+        createRootGroupTypeNode();
+
+        GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
+        groupTypeDefinition.setDescription("groups l2-networks in network collection");
+        groupTypeDefinition.setType("org.openecomp.groups.PrivateCollection");
+        groupTypeDefinition.setVersion("1.0");
+        groupTypeDefinition.setModel("testModel");
+
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupType = groupTypeOperation.addGroupType(groupTypeDefinition);
+        assertEquals(StorageOperationStatus.INVALID_MODEL_NAME, addGroupType.right().value());
+    }
+
     
     private GroupTypeData getOrCreateRootGroupTypeNode() {
         Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao

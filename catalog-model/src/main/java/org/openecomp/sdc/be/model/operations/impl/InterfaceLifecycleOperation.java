@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -51,6 +53,7 @@ import org.openecomp.sdc.be.resources.data.OperationData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fj.data.Either;
@@ -61,12 +64,16 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
     private static final Logger log = Logger.getLogger(InterfaceLifecycleOperation.class.getName());
     private static final String FAILED_TO_FIND_OPERATION = "Failed to find operation  {} on interface {}";
     private static final String FAILED_TO_FIND_ARTIFACT = "Failed to add artifact {} to interface {}";
-    @javax.annotation.Resource
     private ArtifactOperation artifactOperation;
-    @javax.annotation.Resource
     private JanusGraphGenericDao janusGraphGenericDao;
-    public InterfaceLifecycleOperation() {
+    private ModelOperation modelOperation;
+
+    @Autowired
+    public InterfaceLifecycleOperation(ArtifactOperation artifactOperation, JanusGraphGenericDao janusGraphGenericDao, ModelOperation modelOperation) {
         super();
+        this.artifactOperation = artifactOperation;
+        this.janusGraphGenericDao = janusGraphGenericDao;
+        this.modelOperation = modelOperation;
     }
 
     @Override
@@ -813,10 +820,16 @@ public class InterfaceLifecycleOperation implements IInterfaceLifecycleOperation
         if (model == null) {
             return Either.left(null);
         }
-        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
-        final GraphNode to = new UniqueIdData(NodeTypeEnum.Interface, interfaceDefinition.getUniqueId());
-        log.info("Connecting model {} to type {}", from, to);
-        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        final Optional<Model> modelOptional = modelOperation.findModelByName(interfaceDefinition.getModel());
+        if (modelOptional.isPresent()) {
+            final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(modelOptional.get().getName()));
+            final GraphNode to = new UniqueIdData(NodeTypeEnum.Interface, interfaceDefinition.getUniqueId());
+            log.info("Connecting model {} to type {}", from, to);
+            return janusGraphGenericDao.createRelation(from, to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right()
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        }
+        log.error("Could not find model name {}", model);
+        return  Either.right(StorageOperationStatus.INVALID_MODEL_NAME);
     }
 
     @Override

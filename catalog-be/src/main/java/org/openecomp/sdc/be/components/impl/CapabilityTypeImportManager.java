@@ -22,12 +22,15 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.utils.TypeCompareUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -42,11 +45,13 @@ public class CapabilityTypeImportManager {
     private static final Logger log = Logger.getLogger(CapabilityTypeImportManager.class.getName());
     private final CapabilityTypeOperation capabilityTypeOperation;
     private final CommonImportManager commonImportManager;
+    private final ModelOperation modelOperation;
 
     @Autowired
-    public CapabilityTypeImportManager(CapabilityTypeOperation capabilityTypeOperation, CommonImportManager commonImportManager) {
+    public CapabilityTypeImportManager(CapabilityTypeOperation capabilityTypeOperation, CommonImportManager commonImportManager, ModelOperation modelOperation) {
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.commonImportManager = commonImportManager;
+        this.modelOperation = modelOperation;
     }
 
     public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(final String capabilityTypesYml, final String modelName) {
@@ -57,7 +62,12 @@ public class CapabilityTypeImportManager {
     private Either<List<CapabilityTypeDefinition>, ActionStatus> createCapabilityTypesFromYml(final String capabilityTypesYml, final String modelName) {
         final Either<List<CapabilityTypeDefinition>, ActionStatus> capabilityTypes = commonImportManager.createElementTypesFromYml(capabilityTypesYml, this::createCapabilityType);
         if (capabilityTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
-           capabilityTypes.left().value().forEach(capabilityType -> capabilityType.setModel(modelName));
+            final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
+            if (modelOptional.isPresent()) {
+                capabilityTypes.left().value().forEach(capabilityType -> capabilityType.setModel(modelName));
+                return capabilityTypes;
+            }
+            return Either.right(ActionStatus.INVALID_MODEL);
         }
         return capabilityTypes;
     }

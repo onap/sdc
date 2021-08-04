@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import fj.data.Either;
-import org.apache.commons.collections.CollectionUtils;
+import java.util.Optional;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -82,6 +83,9 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
 
     @Mock
     DerivedFromOperation derivedFromOperation;
+
+    @Mock
+    ModelOperation modelOperation;
 
     @InjectMocks
     @Spy
@@ -428,8 +432,11 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         derivedFromRelationshipTypeData.setRelationshipTypeDataDefinition(dervideFromRelationshipInstDataDefinition);
         
         Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND))
-                .when(janusGraphGenericDao).getNode("uid", relationshipTypeDefinition.getUniqueId(), RelationshipTypeData.class); 
-        
+                .when(janusGraphGenericDao).getNode("uid", relationshipTypeDefinition.getUniqueId(), RelationshipTypeData.class);
+
+        Mockito.doReturn(Optional.of(new Model("modelA")))
+            .when(modelOperation).findModelByName("modelA");
+
         Mockito.doReturn(Either.left(derivedFromRelationshipTypeData))
                 .when(janusGraphGenericDao).getNode("type", "tosca.relationships.Root", RelationshipTypeData.class, "modelA"); 
         
@@ -482,6 +489,63 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
                 relationshipTypeOperation.addRelationshipType(relationshipTypeDefinition, true);
 
         assertTrue(either.isLeft());
+    }
+
+    @Test
+    public void testAddRelationshipTypeWithInvalidModel() {
+
+        final String relationshipName = "tosca.relationships.MyRelationship";
+        final String derivedFromRelationshipName = "tosca.relationships.Root";
+        final String modelName = "modelA";
+
+        RelationshipTypeDefinition relationshipTypeDefinition = new RelationshipTypeDefinition();
+        relationshipTypeDefinition.setProperties(createPropertyData("prop1"));
+        relationshipTypeDefinition.setUniqueId(modelName + DOT + relationshipName);
+        relationshipTypeDefinition.setType(relationshipName);
+        relationshipTypeDefinition.setModel(modelName);
+        relationshipTypeDefinition.setDerivedFrom(derivedFromRelationshipName);
+
+        RelationshipTypeData derivedFromRelationshipTypeData = new RelationshipTypeData();
+        RelationshipInstDataDefinition dervideFromRelationshipInstDataDefinition = new RelationshipInstDataDefinition();
+        dervideFromRelationshipInstDataDefinition.setUniqueId("modelA.tosca.relationships.Root");
+        dervideFromRelationshipInstDataDefinition.setType("tosca.relationships.Root");
+        derivedFromRelationshipTypeData.setRelationshipTypeDataDefinition(dervideFromRelationshipInstDataDefinition);
+
+        Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND))
+            .when(janusGraphGenericDao).getNode("uid", relationshipTypeDefinition.getUniqueId(), RelationshipTypeData.class);
+
+        Mockito.doReturn(Either.left(derivedFromRelationshipTypeData))
+            .when(janusGraphGenericDao).getNode("type", "tosca.relationships.Root", RelationshipTypeData.class, "modelA");
+
+        Mockito.doReturn(Either.left(Collections.singletonMap("prop1", new PropertyDefinition()))).when(propertyOperation)
+            .getAllTypePropertiesFromAllDerivedFrom(modelName + DOT + derivedFromRelationshipName, NodeTypeEnum.RelationshipType, RelationshipTypeData.class);
+
+        Mockito.doReturn(Either.left(new ArrayList<>(relationshipTypeDefinition.getProperties().values()))).when(propertyOperation)
+            .validatePropertiesUniqueness(Mockito.any(), Mockito.any());
+
+        Mockito.doReturn(Either.left(new RelationshipTypeData(relationshipTypeDefinition))).when(janusGraphGenericDao)
+            .createNode(Mockito.any(), Mockito.eq(RelationshipTypeData.class));
+
+        Mockito.doReturn(Either.left(new HashMap())).when(propertyOperation)
+            .addPropertiesToElementType(Mockito.anyString(), Mockito.any(), Mockito.anyMap());
+
+        Mockito.doReturn(Either.left(new GraphRelation())).when(janusGraphGenericDao)
+            .createRelation(Mockito.any(), Mockito.any(), Mockito.eq(GraphEdgeLabels.MODEL_ELEMENT), Mockito.any());
+
+        Mockito.doReturn(Either.left(Collections.singletonMap("derivedFromProp1", new PropertyDefinition()))).when(propertyOperation)
+            .findPropertiesOfNode(NodeTypeEnum.RelationshipType, derivedFromRelationshipTypeData.getUniqueId());
+
+        Mockito.doReturn(Either.left(Collections.singletonMap("prop1", new PropertyDefinition()))).when(propertyOperation)
+            .findPropertiesOfNode(NodeTypeEnum.RelationshipType, relationshipTypeDefinition.getUniqueId());
+
+        Mockito.doReturn(Optional.empty())
+            .when(modelOperation).findModelByName("modelA");
+
+        Either<RelationshipTypeDefinition, StorageOperationStatus> either =
+            relationshipTypeOperation.addRelationshipType(relationshipTypeDefinition, true);
+
+        assertTrue(either.isRight());
+        assertEquals(StorageOperationStatus.INVALID_MODEL_NAME, either.right().value());
     }
 
     @Test

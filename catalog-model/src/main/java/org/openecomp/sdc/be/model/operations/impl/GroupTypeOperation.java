@@ -52,6 +52,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
@@ -78,16 +79,18 @@ public class GroupTypeOperation implements IGroupTypeOperation {
     private final CapabilityOperation capabilityOperation;
     private final DerivedFromOperation derivedFromOperation;
     private final OperationUtils operationUtils;
+    private final ModelOperation modelOperation;
 
     public GroupTypeOperation(JanusGraphGenericDao janusGraphGenericDao, PropertyOperation propertyOperation,
                               CapabilityTypeOperation capabilityTypeOperation, CapabilityOperation capabilityOperation,
-                              DerivedFromOperation derivedFromOperation, OperationUtils operationUtils) {
+                              DerivedFromOperation derivedFromOperation, OperationUtils operationUtils, ModelOperation modelOperation) {
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.propertyOperation = propertyOperation;
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.capabilityOperation = capabilityOperation;
         this.derivedFromOperation = derivedFromOperation;
         this.operationUtils = operationUtils;
+        this.modelOperation = modelOperation;
     }
 
     public Either<GroupTypeDefinition, StorageOperationStatus> addGroupType(GroupTypeDefinition groupTypeDefinition) {
@@ -498,10 +501,15 @@ public class GroupTypeOperation implements IGroupTypeOperation {
         if (model == null) {
             return Either.left(null);
         }
-        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
-        final GraphNode to = new UniqueIdData(NodeTypeEnum.GroupType, groupTypeDefinition.getUniqueId());
-        log.info("Connecting model {} to type {}", from, to);
-        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap());
+        final Optional<Model> modelOptional = modelOperation.findModelByName(groupTypeDefinition.getModel());
+        if (modelOptional.isPresent()) {
+            final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(modelOptional.get().getName()));
+            final GraphNode to = new UniqueIdData(NodeTypeEnum.GroupType, groupTypeDefinition.getUniqueId());
+            log.info("Connecting model {} to type {}", from, to);
+            return janusGraphGenericDao.createRelation(from, to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap());
+        }
+        log.error("Could not find model name {}", model);
+        return  Either.right(JanusGraphOperationStatus.INVALID_MODEL_NAME);
     }
 
     private Either<GraphRelation, JanusGraphOperationStatus> connectToDerivedFrom(String ctUniqueId, String derivedFrom) {

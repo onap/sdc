@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.janusgraph.core.JanusGraphVertex;
@@ -54,6 +55,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -70,10 +72,9 @@ import org.openecomp.sdc.be.resources.data.PropertyValueData;
 public class PropertyOperationTest extends ModelTestBase {
 
     HealingJanusGraphGenericDao janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
-
     final DataTypeOperation dataTypeOperation = mock(DataTypeOperation.class);
-
-    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null, dataTypeOperation);
+    ModelOperation modelOperation = mock(ModelOperation.class);
+    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null, modelOperation, dataTypeOperation);
 
     @Before
     public void setup() {
@@ -457,7 +458,7 @@ public class PropertyOperationTest extends ModelTestBase {
 	}
 
 	private PropertyOperation createTestSubject() {
-		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null, dataTypeOperation);
+		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null, modelOperation, dataTypeOperation);
 	}
 
 	@Test
@@ -921,6 +922,9 @@ public class PropertyOperationTest extends ModelTestBase {
 	        Mockito.doReturn(Either.left(new GraphRelation())).when(janusGraphGenericDao)
                 .createRelation(Mockito.any(), Mockito.any(), Mockito.eq(GraphEdgeLabels.MODEL_ELEMENT), Mockito.any());
 
+           Mockito.doReturn(Optional.of(new Model("testModel")))
+               .when(modelOperation).findModelByName("testModel");
+
 	        result = propertyOperation.addDataType(dataTypeDefinition);
 	        assertTrue(result.isLeft());
 	        
@@ -937,7 +941,28 @@ public class PropertyOperationTest extends ModelTestBase {
 	        assertTrue(resultGetByUid.isLeft());
 	    }
 
-	
+    @Test
+    public void testAddDataTypeWithInvalidModel() throws Exception {
+        DataTypeDefinition dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setName("testName");
+        dataTypeDefinition.setModel("testModel");
+        Either<DataTypeDefinition, StorageOperationStatus> result;
+
+        Mockito.doReturn(Either.left(new DataTypeData(dataTypeDefinition))).when(janusGraphGenericDao)
+            .createNode(Mockito.any(), Mockito.eq(DataTypeData.class));
+
+        Mockito.doReturn(Either.left(new GraphRelation())).when(janusGraphGenericDao)
+            .createRelation(Mockito.any(), Mockito.any(), Mockito.eq(GraphEdgeLabels.MODEL_ELEMENT), Mockito.any());
+
+        Mockito.doReturn(Optional.empty())
+            .when(modelOperation).findModelByName("testModel");
+
+        result = propertyOperation.addDataType(dataTypeDefinition);
+        assertTrue(result.isRight());
+        assertEquals(StorageOperationStatus.INVALID_MODEL_NAME, result.right().value());
+    }
+
+
 	@Test
 	public void testGetDataTypeByUidWithoutDerivedDataTypes() throws Exception {
 		PropertyOperation testSubject;
