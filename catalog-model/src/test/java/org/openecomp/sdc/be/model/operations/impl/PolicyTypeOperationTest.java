@@ -129,6 +129,15 @@ public class PolicyTypeOperationTest extends ModelTestBase {
     }
 
     @Test
+    public void testAddPolicyTypeWithInvalidModel() {
+        PolicyTypeDefinition policyTypeDefinition = createPolicyTypeDef();
+        policyTypeDefinition.setModel("testModel");
+
+        Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType = policyTypeOperation.addPolicyType(policyTypeDefinition);
+        assertEquals(StorageOperationStatus.INVALID_MODEL_NAME, addPolicyType.right().value());
+    }
+
+    @Test
     public void testGetLatestPolicyTypeByType_derivedFromFetchedCorrectly() {
         PolicyTypeDefinition rootPolicyType = createRootPolicyTypeOnGraph();
         String derivedFromRootType = rootPolicyType.getType();

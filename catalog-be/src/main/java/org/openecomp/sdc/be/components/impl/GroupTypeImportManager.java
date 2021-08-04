@@ -23,6 +23,7 @@ import fj.data.Either;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -35,10 +36,12 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.utils.TypeCompareUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -55,13 +58,15 @@ public class GroupTypeImportManager {
     private final ComponentsUtils componentsUtils;
     private final ToscaOperationFacade toscaOperationFacade;
     private final CommonImportManager commonImportManager;
+    private final ModelOperation modelOperation;
 
     public GroupTypeImportManager(GroupTypeOperation groupTypeOperation, ComponentsUtils componentsUtils, ToscaOperationFacade toscaOperationFacade,
-                                  CommonImportManager commonImportManager) {
+                                  CommonImportManager commonImportManager, ModelOperation modelOperation) {
         this.groupTypeOperation = groupTypeOperation;
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
         this.commonImportManager = commonImportManager;
+        this.modelOperation = modelOperation;
     }
 
     public Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypes(ToscaTypeImportData toscaTypeImportData, String modelName) {
@@ -71,7 +76,12 @@ public class GroupTypeImportManager {
     private Either<List<GroupTypeDefinition>, ActionStatus> createGroupTypesFromYml(String groupTypesYml, String modelName) {
         Either<List<GroupTypeDefinition>, ActionStatus> groupTypes = commonImportManager.createElementTypesFromYml(groupTypesYml, this::createGroupType);
         if (groupTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
-            groupTypes.left().value().forEach(groupType -> groupType.setModel(modelName));
+            Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
+            if (modelOptional.isPresent()) {
+                groupTypes.left().value().forEach(groupType -> groupType.setModel(modelName));
+                return groupTypes;
+            }
+            return Either.right(ActionStatus.INVALID_MODEL);
         }
         return groupTypes;
     }

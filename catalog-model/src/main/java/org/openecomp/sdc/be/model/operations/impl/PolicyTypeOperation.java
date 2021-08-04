@@ -41,6 +41,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
@@ -60,12 +61,21 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
     private static final Logger log = Logger.getLogger(PolicyTypeOperation.class.getName());
     private static final String CREATE_FLOW_CONTEXT = "CreatePolicyType";
     private static final String GET_FLOW_CONTEXT = "GetPolicyType";
-    @Autowired
     private PropertyOperation propertyOperation;
-    @Autowired
     private DerivedFromOperation derivedFromOperation;
-    @Autowired
     private OperationUtils operationUtils;
+    private ModelOperation modelOperation;
+
+    @Autowired
+    public PolicyTypeOperation(PropertyOperation propertyOperation,
+                               DerivedFromOperation derivedFromOperation,
+                               OperationUtils operationUtils,
+                               ModelOperation modelOperation) {
+        this.propertyOperation = propertyOperation;
+        this.derivedFromOperation = derivedFromOperation;
+        this.operationUtils = operationUtils;
+        this.modelOperation = modelOperation;
+    }
 
 
     @Override
@@ -159,10 +169,16 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         if (model == null) {
             return Either.left(null);
         }
-        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
-        final GraphNode to = new UniqueIdData(NodeTypeEnum.PolicyType, policyTypeDefinition.getUniqueId());
-        log.info("Connecting model {} to type {}", from, to);
-        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        Optional<Model> modelOptional = modelOperation.findModelByName(policyTypeDefinition.getModel());
+        if (modelOptional.isPresent()) {
+            final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(modelOptional.get().getName()));
+            final GraphNode to = new UniqueIdData(NodeTypeEnum.PolicyType, policyTypeDefinition.getUniqueId());
+            log.info("Connecting model {} to type {}", from, to);
+            return janusGraphGenericDao.createRelation(from, to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right()
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        }
+        log.error("Could not find model name {}", model);
+        return  Either.right(StorageOperationStatus.INVALID_MODEL_NAME);
     }
 
     private Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeByCriteria(String type, Map<String, Object> properties, String model) {

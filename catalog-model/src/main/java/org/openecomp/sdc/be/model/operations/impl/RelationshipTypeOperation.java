@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
@@ -34,6 +35,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
@@ -54,10 +56,16 @@ public class RelationshipTypeOperation extends AbstractOperation {
     private static final String RELATIONSHIP_TYPE_CANNOT_BE_FOUND_IN_GRAPH_STATUS_IS =
         "Relationship type {} cannot be " + "found in " + "graph status is {}";
     private static final String FAILED_TO_FETCH_PROPERTIES_OF_RELATIONSHIP_TYPE = "Failed to fetch properties of " + "relationship type {}";
-    @Autowired
     private PropertyOperation propertyOperation;
-    @Autowired
     private DerivedFromOperation derivedFromOperation;
+    private ModelOperation modelOperation;
+
+    @Autowired
+    public RelationshipTypeOperation(PropertyOperation propertyOperation, DerivedFromOperation derivedFromOperation, ModelOperation modelOperation) {
+        this.propertyOperation = propertyOperation;
+        this.derivedFromOperation = derivedFromOperation;
+        this.modelOperation = modelOperation;
+    }
 
     public Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeByUid(String uniqueId) {
         Either<RelationshipTypeDefinition, JanusGraphOperationStatus> result;
@@ -268,10 +276,16 @@ public class RelationshipTypeOperation extends AbstractOperation {
         if (model == null) {
             return Either.left(null);
         }
-        final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
-        final GraphNode to = new UniqueIdData(NodeTypeEnum.RelationshipType, relationshipTypeDefinition.getUniqueId());
-        logger.info("Connecting model {} to type {}", from, to);
-        return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right().map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        Optional<Model> modelOptional = modelOperation.findModelByName(relationshipTypeDefinition.getModel());
+        if (modelOptional.isPresent()) {
+            final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(modelOptional.get().getName()));
+            final GraphNode to = new UniqueIdData(NodeTypeEnum.RelationshipType, relationshipTypeDefinition.getUniqueId());
+            logger.info("Connecting model {} to type {}", from, to);
+            return janusGraphGenericDao.createRelation(from, to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap()).right()
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
+        }
+        logger.error("Could not find model name {}", model);
+        return  Either.right(StorageOperationStatus.INVALID_MODEL_NAME);
     }
 
     private Either<RelationshipTypeDefinition, JanusGraphOperationStatus> getRelationshipTypeByTypeAndModel(final String relationshipType, final String model) {

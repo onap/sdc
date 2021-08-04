@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
@@ -34,9 +35,11 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -55,6 +58,8 @@ public class DataTypeImportManager {
     private ComponentsUtils componentsUtils;
     @Resource
     private CommonImportManager commonImportManager;
+    @Resource
+    private ModelOperation modelOperation;
 
     public Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypes(final String dataTypeYml, final String modelName) {
         return commonImportManager
@@ -64,7 +69,12 @@ public class DataTypeImportManager {
     private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName) {
         final Either<List<DataTypeDefinition>, ActionStatus> dataTypes = commonImportManager.createElementTypesFromYml(dataTypesYml, this::createDataType);
         if (dataTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
-            dataTypes.left().value().forEach(dataType -> dataType.setModel(modelName));
+            Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
+            if (modelOptional.isPresent()) {
+                dataTypes.left().value().forEach(dataType -> dataType.setModel(modelName));
+                return dataTypes;
+            }
+            return Either.right(ActionStatus.INVALID_MODEL);
         }
         return dataTypes;
     }

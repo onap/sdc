@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
@@ -79,6 +80,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
@@ -121,13 +123,15 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     private static final String UPDATE_DATA_TYPE = "UpdateDataType";
     private static Logger log = Logger.getLogger(PropertyOperation.class.getName());
     private DerivedFromOperation derivedFromOperation;
+    private ModelOperation modelOperation;
     private DataTypeOperation dataTypeOperation;
 
     @Autowired
     public PropertyOperation(HealingJanusGraphGenericDao janusGraphGenericDao, DerivedFromOperation derivedFromOperation,
-                             DataTypeOperation dataTypeOperation) {
+                             ModelOperation modelOperation, DataTypeOperation dataTypeOperation) {
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.derivedFromOperation = derivedFromOperation;
+        this.modelOperation = modelOperation;
         this.dataTypeOperation = dataTypeOperation;
     }
 
@@ -1169,14 +1173,19 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     }
     
     private Either<GraphRelation, JanusGraphOperationStatus> addDataTypeToModel(final DataTypeDefinition dataTypeDefinition) {
-      final String model = dataTypeDefinition.getModel();
-      if (model == null) {
-          return Either.left(null);
+        final String model = dataTypeDefinition.getModel();
+        if (model == null) {
+            return Either.left(null);
+        }
+        Optional<Model> modelOptional = modelOperation.findModelByName(dataTypeDefinition.getModel());
+        if (modelOptional.isPresent()) {
+            final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(modelOptional.get().getName()));
+            final GraphNode to = new UniqueIdData(NodeTypeEnum.DataType, dataTypeDefinition.getUniqueId());
+            log.info("Connecting model {} to type {}", from, to);
+            return janusGraphGenericDao.createRelation(from, to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap());
       }
-      final GraphNode from = new UniqueIdData(NodeTypeEnum.Model, UniqueIdBuilder.buildModelUid(model));
-      final GraphNode to = new UniqueIdData(NodeTypeEnum.DataType, dataTypeDefinition.getUniqueId());
-      log.info("Connecting model {} to type {}", from, to);
-      return janusGraphGenericDao.createRelation(from , to, GraphEdgeLabels.MODEL_ELEMENT, Collections.emptyMap());
+        log.error("Could not find model name {}", model);
+        return  Either.right(JanusGraphOperationStatus.INVALID_MODEL_NAME);
   }
 
     private DataTypeData buildDataTypeData(DataTypeDefinition dataTypeDefinition, String ctUniqueId) {

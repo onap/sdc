@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
@@ -50,6 +51,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
@@ -73,8 +75,9 @@ public class InterfaceLifecycleOperationTest {
     private static String INTERFACE_TYPE = "tosca.interfaces.standard";
 
     JanusGraphGenericDao janusGraphGenericDao = Mockito.mock(JanusGraphGenericDao.class);
+    ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
     @InjectMocks
-    private InterfaceLifecycleOperation interfaceLifecycleOperation = new InterfaceLifecycleOperation();
+    private InterfaceLifecycleOperation interfaceLifecycleOperation = new InterfaceLifecycleOperation(null, janusGraphGenericDao, modelOperation);
 
     @Before
     public void createUserAndCategory() {
@@ -207,4 +210,43 @@ public class InterfaceLifecycleOperationTest {
         Assert.assertEquals(1, interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(MODEL_NAME).left().value().size());
     }
 
+    @Test
+    public void createInterfaceOnResourceWithInvalidModelTest() {
+        final var uid = UniqueIdBuilder.buildInterfaceTypeUid(MODEL_NAME, INTERFACE_TYPE);
+        final var modelData = new ModelData(MODEL_NAME, uid);
+        final ImmutablePair<GraphNode, GraphEdge> modelNode = new ImmutablePair<>(modelData, Mockito.mock(GraphEdge.class));
+
+        InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setModel("testModel");
+
+        when(janusGraphGenericDao.getNode(any(), any(), eq(InterfaceData.class))).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
+        when(janusGraphGenericDao.createNode(any(), eq(InterfaceData.class))).thenReturn(Either.left(new InterfaceData(interfaceDefinition)));
+        when(janusGraphGenericDao.getParentNode(any(), any(), any(), any(), any())).thenReturn(Either.left(modelNode));
+        when(modelOperation.findModelByName("testModel")).thenReturn(Optional.empty());
+        Either<InterfaceDefinition, StorageOperationStatus> createInterface = interfaceLifecycleOperation.createInterfaceType(interfaceDefinition, true);
+
+        Assert.assertTrue(createInterface.isRight());
+        Assert.assertEquals(StorageOperationStatus.INVALID_MODEL_NAME, createInterface.right().value());
+    }
+
+    @Test
+    public void createInterfaceOnResourceWithModelTest() {
+        final var uid = UniqueIdBuilder.buildInterfaceTypeUid(MODEL_NAME, INTERFACE_TYPE);
+        final var modelData = new ModelData(MODEL_NAME, uid);
+        final ImmutablePair<GraphNode, GraphEdge> modelNode = new ImmutablePair<>(modelData, Mockito.mock(GraphEdge.class));
+
+        InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setModel("testModel");
+        Model model = new Model("testModel");
+        modelOperation.createModel(model, true);
+
+        when(janusGraphGenericDao.getNode(any(), any(), eq(InterfaceData.class))).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
+        when(janusGraphGenericDao.createNode(any(), eq(InterfaceData.class))).thenReturn(Either.left(new InterfaceData(interfaceDefinition)));
+        when(janusGraphGenericDao.getParentNode(any(), any(), any(), any(), any())).thenReturn(Either.left(modelNode));
+        when(modelOperation.findModelByName("testModel")).thenReturn(Optional.of(new Model("testModel")));
+        when(janusGraphGenericDao.createRelation(any(), any(), eq(GraphEdgeLabels.MODEL_ELEMENT), any())).thenReturn(Either.left(Mockito.mock(GraphRelation.class)));
+        Either<InterfaceDefinition, StorageOperationStatus> createInterface = interfaceLifecycleOperation.createInterfaceType(interfaceDefinition, true);
+
+        Assert.assertTrue(createInterface.isLeft());
+    }
 }

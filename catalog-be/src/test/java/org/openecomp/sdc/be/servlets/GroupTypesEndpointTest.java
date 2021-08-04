@@ -62,6 +62,7 @@ import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityOperation;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.resources.data.GroupTypeData;
@@ -89,6 +90,7 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
     private static CapabilityOperation capabilityOperation;
     private static UserValidations userValidations;
     private static OperationUtils operationUtils;
+    private static ModelOperation modelOperation;
     private static User user;
 
     static ConfigurationSource configurationSource = new FSConfigurationSource(
@@ -114,7 +116,7 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
         @Bean
         GroupTypeOperation groupTypeOperation() {
             return new GroupTypeOperation(janusGraphGenericDao, propertyOperation, capabilityTypeOperation,
-                capabilityOperation, derivedFromOperation, operationUtils);
+                capabilityOperation, derivedFromOperation, operationUtils, modelOperation);
         }
     }
 
