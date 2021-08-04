@@ -22,6 +22,30 @@
       "revId": "356adacd5a4faa5e5dddba5030cf9f28b9826041",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf3b1324_e01a9d87",
+        "filename": "catalog-be/src/main/resources/scripts/sdcBePy/tosca/imports/run.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-04T09:12:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fd25cbfb_d3278006",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 122
+      },
+      "revId": "356adacd5a4faa5e5dddba5030cf9f28b9826041",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
