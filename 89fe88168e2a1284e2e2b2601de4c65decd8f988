@@ -22,6 +22,30 @@
       "revId": "89fe88168e2a1284e2e2b2601de4c65decd8f988",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "178f28ae_f1c4c6a2",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/setup/ExtentManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2021-08-04T06:54:43Z",
+      "side": 0,
+      "message": "It will be garbage only if we don\u0027t use \u0027mvn clean install\u0027. The \u0027clean\u0027 removes ${project}/target directory. This method removing ${project}/target/ExtentReport/UI. If target was deleted ExtentReport also doesn\u0027t exists.  \n \nIn README.md recommended command is \"mvn clean\". In CI also \u0027mvn clean\u0027 is used. \nFiles will be garbage in case when user run test without \u0027clean\u0027.",
+      "parentUuid": "2ddddd87_882812bc",
+      "range": {
+        "startLine": 111,
+        "startChar": 12,
+        "endLine": 111,
+        "endChar": 72
+      },
+      "revId": "89fe88168e2a1284e2e2b2601de4c65decd8f988",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
