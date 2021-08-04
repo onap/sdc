@@ -3,7 +3,7 @@
 SDC
 ================================================================================
 Copyright (C) 2020 AT&T Intellectual Property. All rights reserved.
-Modifications copyright (c) 2020 Nokia
+Modifications copyright (c) 2020-2021 Nokia
 ================================================================================
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ limitations under the License.
         <it.docker.version>latest</it.docker.version>
         <it.ui.firefox.version>86.0</it.ui.firefox.version>
         <it.helm-validator.disabled>true</it.helm-validator.disabled>
-        <it.helm-validator.version>1.2.0</it.helm-validator.version>
+        <it.helm-validator.version>1.2.2</it.helm-validator.version>
 
         <!-- parser-->
         <sdc-tosca-parser.version>1.6.5</sdc-tosca-parser.version>
