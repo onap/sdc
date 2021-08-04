@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -32,8 +33,10 @@ import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.util.CapabilityTypeNameEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -57,7 +60,8 @@ public class CapabilityTypeImportManagerTest {
     private static final JanusGraphGenericDao JANUS_GRAPH_GENERIC_DAO = mock(JanusGraphGenericDao.class);
     private static final PropertyOperation propertyOperation = mock(PropertyOperation.class);
     private CommonImportManager commonImportManager = new CommonImportManager(componentsUtils, propertyOperation);
-    private CapabilityTypeImportManager manager = new CapabilityTypeImportManager(capabilityTypeOperation, commonImportManager);
+    private ModelOperation modelOperation = mock(ModelOperation.class);
+    private CapabilityTypeImportManager manager = new CapabilityTypeImportManager(capabilityTypeOperation, commonImportManager, modelOperation);
 
     @BeforeClass
     public static void beforeClass() {
@@ -81,6 +85,7 @@ public class CapabilityTypeImportManagerTest {
     @Test
     public void testCreateCapabilityTypes() throws IOException {
         String ymlContent = getCapabilityTypesYml();
+        when(modelOperation.findModelByName("testModel")).thenReturn(Optional.of(new Model("testModel")));
         Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes = manager.createCapabilityTypes(ymlContent, "testModel");
         assertTrue(createCapabilityTypes.isLeft());
 

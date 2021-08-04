@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.RelationshipTypeOperation;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,11 +37,13 @@ public class RelationshipTypeImportManagerTest {
     private CommonImportManager commonImportManager;
     @Mock
     private ComponentsUtils componentsUtils;
+    @Mock
+    private ModelOperation modelOperation;
 
     @Test
     public void shouldInvokeCreateElementTypes() {
         RelationshipTypeImportManager relationshipTypeImportManager =
-            new RelationshipTypeImportManager(relationshipTypeOperation, commonImportManager, componentsUtils);
+            new RelationshipTypeImportManager(relationshipTypeOperation, commonImportManager, componentsUtils, modelOperation);
         relationshipTypeImportManager.createRelationshipTypes("anyYaml", "anyModel");
         Mockito.verify(commonImportManager).createElementTypes((String) Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 

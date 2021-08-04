@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.components.impl;
 import fj.data.Either;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -32,12 +33,14 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
 import org.openecomp.sdc.be.model.operations.impl.GroupTypeOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -52,16 +55,18 @@ public class PolicyTypeImportManager {
     private final ToscaOperationFacade toscaOperationFacade;
     private final CommonImportManager commonImportManager;
     private final GroupTypeOperation groupTypeOperation;
+    private final ModelOperation modelOperation;
 
     public PolicyTypeImportManager(IPolicyTypeOperation policyTypeOperation, ComponentsUtils componentsUtils, GroupOperation groupOperation,
                                    ToscaOperationFacade toscaOperationFacade, CommonImportManager commonImportManager,
-                                   GroupTypeOperation groupTypeOperation) {
+                                   GroupTypeOperation groupTypeOperation, ModelOperation modelOperation) {
         this.policyTypeOperation = policyTypeOperation;
         this.componentsUtils = componentsUtils;
         this.groupOperation = groupOperation;
         this.toscaOperationFacade = toscaOperationFacade;
         this.commonImportManager = commonImportManager;
         this.groupTypeOperation = groupTypeOperation;
+        this.modelOperation = modelOperation;
     }
 
     public Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> createPolicyTypes(ToscaTypeImportData toscaTypeImportData, String modelName) {
@@ -71,7 +76,12 @@ public class PolicyTypeImportManager {
     private Either<List<PolicyTypeDefinition>, ActionStatus> createPolicyTypesFromYml(String policyTypesYml, String modelName) {
         Either<List<PolicyTypeDefinition>, ActionStatus> policyTypes = commonImportManager.createElementTypesFromYml(policyTypesYml, this::createPolicyType);
         if (policyTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
-            policyTypes.left().value().forEach(policyType -> policyType.setModel(modelName));
+            final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
+            if (modelOptional.isPresent()) {
+                policyTypes.left().value().forEach(policyType -> policyType.setModel(modelName));
+                return policyTypes;
+            }
+            return Either.right(ActionStatus.INVALID_MODEL);
         }
         return policyTypes;
     }

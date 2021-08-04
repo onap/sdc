@@ -80,6 +80,7 @@ import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerThree
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerTwoParam;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
@@ -132,9 +133,10 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadCapabilityType(@Parameter(description = "FileInputStream") @FormDataParam("capabilityTypeZip") File file,
                                          @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                          @Parameter(description = "model") @FormDataParam("model") String modelName) {
+        final String sanitizedModelName = ValidationUtils.sanitizeInputString(modelName);
         ConsumerThreeParam<Wrapper<Response>, String, String> createElementsMethod = (responseWrapper, ymlPayload, model) -> createElementsType(responseWrapper,
-            () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload, modelName));
-        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name(), modelName);
+            () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload, sanitizedModelName));
+        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name(), sanitizedModelName);
     }
 
     @POST
@@ -149,6 +151,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadRelationshipType(@Parameter(description = "FileInputStream") @FormDataParam("relationshipTypeZip") File file,
                                            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                            @Parameter(description = "model") @FormDataParam("model") String modelName) {
+        modelName = ValidationUtils.sanitizeInputString(modelName);
         return uploadElementTypeServletLogic(this::createRelationshipTypes, file, request, creator, NodeTypeEnum.RelationshipType.getName(), modelName);
     }
 
@@ -164,8 +167,9 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadInterfaceLifecycleType(@Parameter(description = "FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file,
                                                  @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                                  @Parameter(description = "model") @FormDataParam("model") String modelName) {
+        final String sanitizedModelName = ValidationUtils.sanitizeInputString(modelName);
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper,
-            () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload, modelName));
+            () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload, sanitizedModelName));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "Interface Types");
     }
 
@@ -197,6 +201,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
                                     @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
                                     @Parameter(description = "model") @FormDataParam("model") String modelName) {
+        modelName = ValidationUtils.sanitizeInputString(modelName);
         return uploadElementTypeServletLogic(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName);
     }
 
@@ -213,6 +218,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                                      @Parameter(description = "model") @FormDataParam("model") String modelName,
                                      @Parameter(description = "FileInputStream") @FormDataParam("groupTypesZip") File file,
                                      @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+        modelName = ValidationUtils.sanitizeInputString(modelName);
         Map<String, ToscaTypeMetadata> typesMetadata = getTypesMetadata(toscaTypesMetaData);
         return uploadTypesWithMetaData(this::createGroupTypes, typesMetadata, file, request, creator, NodeTypeEnum.GroupType.getName(), modelName);
     }
@@ -230,6 +236,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                                       @Parameter(description = "model") @FormDataParam("model") String modelName,
                                       @Parameter(description = "FileInputStream") @FormDataParam("policyTypesZip") File file,
                                       @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+        modelName = ValidationUtils.sanitizeInputString(modelName);
         Map<String, ToscaTypeMetadata> typesMetadata = getTypesMetadata(toscaTypesMetaData);
         return uploadTypesWithMetaData(this::createPolicyTypes, typesMetadata, file, request, creator, NodeTypeEnum.PolicyType.getName(), modelName);
     }

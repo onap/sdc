@@ -65,6 +65,7 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
@@ -197,6 +198,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         try {
             init();
             validateUserExist(responseWrapper, userWrapper, userId);
+            modelName = ValidationUtils.sanitizeInputString(modelName);
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
@@ -240,6 +242,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         try {
             init();
             validateUserExist(responseWrapper, userWrapper, userId);
+            modelName = ValidationUtils.sanitizeInputString(modelName);
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
