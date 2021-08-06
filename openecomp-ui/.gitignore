@@ -17,3 +17,4 @@ coverage
 .storybook/resources
 yarn-error.log
 stats.json
+package-lock.json

@@ -25,7 +25,7 @@ import i18nJson from 'i18nJson';
 var Intl = window.Intl || IntlObj.default,
     IntlMessageFormat = IntlMessageFormatObj.default,
     IntlRelativeFormat = IntlRelativeFormatObj.default,
-    createFormatCache = createFormatCacheObj.default;
+    createFormatCache = createFormatCacheObj;
 
 /*extract locale*/
 var _locale = window.localStorage && localStorage.getItem('user_locale');

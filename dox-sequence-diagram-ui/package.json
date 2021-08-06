@@ -50,7 +50,7 @@
         "svg-sprite-loader": "3.7.3",
         "url-loader": "^1.0.1",
         "webpack": "^4.5.0",
-        "webpack-cli": "^2.0.14",
+        "webpack-cli": "^3.3.12",
         "webpack-dev-server": "^3.1.2"
     },
     "engines": {
