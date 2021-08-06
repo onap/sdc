@@ -86,10 +86,7 @@ module.exports = (env, argv) => {
                     ],
                     include: [
                         /resources/,
-                        path.join(
-                            __dirname,
-                            'node_modules/dox-sequence-diagram-ui/'
-                        ),
+                        path.join(__dirname, DEV ? '../dox-sequence-diagram-ui/' : 'node_modules/dox-sequence-diagram-ui/'),
                         path.join(__dirname, 'node_modules/react-datepicker/'),
                         path.join(__dirname, 'node_modules/react-select/'),
                         path.join(__dirname, 'node_modules/onap-ui-common/'),

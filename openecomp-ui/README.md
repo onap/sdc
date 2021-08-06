@@ -2,32 +2,39 @@
 
 ## Setup
 
-##### Install `nodejs`:
+###Install `npm`
 
-download nodejs from here: https://nodejs.org/en/ (take the "current" version with latest features) & install it.
-##### Install `gulp`
+Install npm v6.
+
+###Install `Node.js`
+
+Install node v10.17.0 (as in the pom.xml <nodeVersion>v10.17.0</nodeVersion>).
+
+* To manage different versions of node, is recommended to install "n" (https://github.com/tj/n).
+
+### Install `gulp`
 
 install gulp by running the following command `npm install --global gulp-cli`
 
-##### Install DOX-UI
+## Build
+
+### Install DOX-UI
 * pull for latest changes
-* go to folder `dox-sequence-diagram-ui`
-* run `npm install`
-* wait for it...
-* go to folder `openecomp-ui`
-* run `npm install`
-* create a copy of `devConfig.defaults.json` file and name it `devConfig.json` (we already configured git to ignore it so it will not be pushed)
-in that file.
+* go to folder `../dox-sequence-diagram-ui`
+* run `npm install && npm run build`
 
-  set "proxyCatalogTarget" to the URL of the sdc-frontend; set "proxyTarget" to the URL of the sdc-onboard-backend (**pay attention, it is a JSON file**):
+#### Install onboarding-fe
+* go to the current project folder `openecomp-ui`
+* run `npm install`
+* create a copy of `devConfig.defaults.json` file and name it `devConfig.json` (it is already configured to gitignore, so it will not be pushed)
+* in `devConfig.json`:
+  * set "proxyCatalogTarget" to the URL of the sdc-frontend; set "proxyTarget" to the URL of the sdc-onboard-backend (**pay attention, it is a JSON file**):
 
-  For example *http://\<host>:\<port>*
+    For example *http://\<host>:\<port>*
 * run `npm start`
 * your favorite UI will wait for you at: `http://localhost:9000/sdc1/#!/onboardVendor`
 
-
-
-#### Troubleshooting
+## Troubleshooting
 Problem | Why is this happening | Solution
 ------- | --------------------- | --------
 npm cannot reach destination | proxy | When within managed network, you should set your proxy to NPM as the following: <br> `npm config set proxy http://<host>:<port>` <br> `npm config set https-proxy http://<host>:<port>`
