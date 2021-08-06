@@ -22,6 +22,30 @@
       "revId": "e9709e652a19b3fa496623f742a9cc13a2ced2d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4e98d58_0bef50df",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/CsarSizeReducer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-06T09:41:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f925e91e_e093d79f",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 73
+      },
+      "revId": "e9709e652a19b3fa496623f742a9cc13a2ced2d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
