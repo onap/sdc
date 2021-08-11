@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "0b3d64c7_feea519f",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspDetails.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-11T16:28:35Z",
+      "side": 1,
+      "message": "Please check https://gerrit.onap.org/r/c/sdc/+/123253",
+      "parentUuid": "c0046323_83fcfd34",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 37
+      },
+      "revId": "236d9f9ba607e45f169ec454bf9890808f1ff5c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cf0945a1_b7fdeb6b",
         "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
         "patchSetId": 5
@@ -93,6 +117,30 @@
       "revId": "236d9f9ba607e45f169ec454bf9890808f1ff5c0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "103a1fb0_79177ec5",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-11T16:28:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2aec0416_67630f66",
+      "range": {
+        "startLine": 390,
+        "startChar": 29,
+        "endLine": 390,
+        "endChar": 54
+      },
+      "revId": "236d9f9ba607e45f169ec454bf9890808f1ff5c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
