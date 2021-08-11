@@ -22,6 +22,30 @@
       "revId": "fe74b60ca8c0574356f4892a54838acd7c5174e4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b4aaeb5_ef345a92",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 850,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-11T11:32:05Z",
+      "side": 1,
+      "message": "The comment was only intended for my own reference during implementation to keep track of where I had already checked. My intention was to remove before submitting for review.\nI have now removed all such comments",
+      "parentUuid": "83408da2_96c84459",
+      "range": {
+        "startLine": 850,
+        "startChar": 102,
+        "endLine": 850,
+        "endChar": 114
+      },
+      "revId": "fe74b60ca8c0574356f4892a54838acd7c5174e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
