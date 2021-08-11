@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "716ab998_499da3bd",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspDetails.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-11T10:24:41Z",
+      "side": 1,
+      "message": "Consider if the modelIdist should be added to the PackageInfo so will be displayed to the user on creation of the VF during VSP import",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 37
+      },
+      "revId": "236d9f9ba607e45f169ec454bf9890808f1ff5c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf0945a1_b7fdeb6b",
+        "filename": "openecomp-ui/src/nfvo-utils/i18n/en.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-11T10:24:41Z",
+      "side": 1,
+      "message": "Maybe change to \"Other Models\"",
+      "range": {
+        "startLine": 390,
+        "startChar": 29,
+        "endLine": 390,
+        "endChar": 54
+      },
+      "revId": "236d9f9ba607e45f169ec454bf9890808f1ff5c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
