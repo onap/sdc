@@ -11,14 +11,14 @@ from sdcBePy import properties
 colors = BColors()
 
 
-def process_element_list(normative_elements_list, sdc_be_proxy):
+def process_element_list(normative_elements_list, sdc_be_proxy, model=None):
     attempt = 0
     for normative_element in normative_elements_list:
         while True:
             attempt += 1
             try:
                 process_and_create_normative_element(normative_element,
-                                                     sdc_be_proxy=sdc_be_proxy)
+                                                     sdc_be_proxy=sdc_be_proxy, model=model)
                 break
             except ResourceCreationError as e:
                 _check_and_retry(attempt, e.error_code, e.message)
