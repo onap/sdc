@@ -30,5 +30,10 @@ import lombok.NoArgsConstructor;
 public class Model {
 
     private String name;
+    private String derivedFrom;
+    
+    public Model(final String name) {
+    	this.name = name;
+    }
 
 }

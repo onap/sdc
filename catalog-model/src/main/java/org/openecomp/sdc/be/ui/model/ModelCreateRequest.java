@@ -20,17 +20,20 @@ package org.openecomp.sdc.be.ui.model;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * This class is responsible for holding all required fields from the create Model post request.
  * It also validates the Model 'name' field.
  */
-@Data
+@Data @AllArgsConstructor @NoArgsConstructor
 public class ModelCreateRequest {
 
     @NotNull(message = "Model name cannot be null")
     @Size(min = 2, message = "Model name cannot be empty")
     private String name;
 
+    private String derivedFrom;
 }

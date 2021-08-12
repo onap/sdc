@@ -19,6 +19,7 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -29,17 +30,24 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -55,14 +63,17 @@ public class ModelOperation {
     private final JanusGraphGenericDao janusGraphGenericDao;
     private final JanusGraphDao janusGraphDao;
     private final ToscaModelImportCassandraDao toscaModelImportCassandraDao;
+    private final DerivedFromOperation derivedFromOperation;
 
     @Autowired
     public ModelOperation(final JanusGraphGenericDao janusGraphGenericDao,
                           final JanusGraphDao janusGraphDao,
-                          final ToscaModelImportCassandraDao toscaModelImportCassandraDao) {
+                          final ToscaModelImportCassandraDao toscaModelImportCassandraDao,
+                          final DerivedFromOperation derivedFromOperation) {
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.janusGraphDao = janusGraphDao;
         this.toscaModelImportCassandraDao = toscaModelImportCassandraDao;
+        this.derivedFromOperation = derivedFromOperation;
     }
 
     public Model createModel(final Model model, final boolean inTransaction) {
@@ -80,7 +91,8 @@ public class ModelOperation {
                 throw new OperationException(ActionStatus.GENERAL_ERROR,
                     String.format("Failed to create model %s on JanusGraph with %s error", model, janusGraphOperationStatus));
             }
-            result = new Model(createNode.left().value().getName());
+            addDerivedFromRelation(model);
+            result = new Model(createNode.left().value().getName(), model.getDerivedFrom());
             return result;
         } finally {
             if (!inTransaction) {
@@ -89,6 +101,24 @@ public class ModelOperation {
                 } else {
                     janusGraphGenericDao.rollback();
                 }
+            }
+        }
+    }
+    
+    private void addDerivedFromRelation(final Model model) {
+        final String derivedFrom = model.getDerivedFrom();
+        if (derivedFrom == null) {
+            return;
+        }
+        log.debug("Adding derived from relation between model {} to its parent {}",
+                model.getName(), derivedFrom);
+        final Optional<Model> derivedFromModelOptional = this.findModelByName(derivedFrom);
+        if (derivedFromModelOptional.isPresent()) {
+            final Either<GraphRelation, StorageOperationStatus> result = derivedFromOperation.addDerivedFromRelation(UniqueIdBuilder.buildModelUid(model.getName()), 
+                    UniqueIdBuilder.buildModelUid(derivedFromModelOptional.get().getName()), NodeTypeEnum.Model);
+            if(result.isRight()) {
+                throw new OperationException(ActionStatus.GENERAL_ERROR,
+                    String.format("Failed to create relationship from model % to derived from model %s on JanusGraph with %s error", model, derivedFrom, result.right().value()));
             }
         }
     }
@@ -171,7 +201,24 @@ public class ModelOperation {
     }
 
     private Model convertToModel(final GraphVertex modelGraphVertex) {
-        return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME));
+        final String modelName = (String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME);
+
+        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> parentNode =
+                        janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
+                                        GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model, ModelData.class);
+        log.debug("After retrieving DERIVED_FROM node of {}. status is {}", modelName, parentNode);
+        if (parentNode.isRight()) {
+            final JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
+            if (janusGraphOperationStatus != JanusGraphOperationStatus.NOT_FOUND) {
+                final var operationException = ModelOperationExceptionSupplier.failedToRetrieveModels(janusGraphOperationStatus).get();
+                log.error(EcompLoggerErrorCode.DATA_ERROR, this.getClass().getName(), operationException.getMessage());
+                throw operationException;
+            }
+            return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME));
+        } else {
+            final ModelData parentModel = parentNode.left().value().getKey();
+            return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME), parentModel.getName());
+        }
     }
 }
 
