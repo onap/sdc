@@ -18,6 +18,7 @@
 import json
 import os
 import zipfile
+from sdcBePy.tosca.models.normativeTypeCandidate import NormativeTypeCandidate
 from pathlib import Path
 
 
@@ -29,6 +30,7 @@ class ModelImportManager:
     IMPORTS_FOLDER_NAME = 'imports'
     ACTION_UPGRADE = 'upgrade'
     ACTION_INIT = 'init'
+    NODE_TYPES = 'node-types/'
 
     def __init__(self, model_imports_path, model_client):
         self.__model_base_path = model_imports_path
@@ -41,12 +43,19 @@ class ModelImportManager:
             model_imports_zip_path = self.__zip_model_imports(model_folder_name, self.ACTION_INIT)
             model_payload_dict = self.__read_model_payload(model_folder_name, self.ACTION_INIT)
             self.__model_client.create_model(model_payload_dict, model_imports_zip_path)
+            tosca_path = self.__get_model_tosca_path(self.ACTION_INIT, model_folder_name)
+            self.__model_client.import_model_elements(model_payload_dict, tosca_path)
+            if os.path.isdir(tosca_path + self.NODE_TYPES):
+                self.__model_client.import_model_types(model_payload_dict, self.__get_model_normative_type_candidate(tosca_path), False)
 
     def update_models(self):
         for model_folder_name in self.__get_model_upgrade_list():
             model_imports_zip_path = self.__zip_model_imports(model_folder_name, self.ACTION_UPGRADE)
             model_payload_dict = self.__read_model_payload(model_folder_name, self.ACTION_UPGRADE)
             self.__model_client.update_model_imports(model_payload_dict, model_imports_zip_path)
+            tosca_path = self.__get_model_tosca_path(self.ACTION_UPGRADE, model_folder_name)
+            if os.path.isdir(tosca_path + self.NODE_TYPES):
+                self.__model_client.import_model_types(model_payload_dict, self.__get_model_normative_type_candidate(tosca_path), True)
 
     def __get_model_init_list(self):
         return self.__get_model_list(self.__model_init_path)
@@ -62,7 +71,11 @@ class ModelImportManager:
             break
         return model_list
 
-    def __zip_model_imports(self, model, action_type) -> Path:
+    def __get_model_normative_type_candidate(self, tosca_path):
+        path = tosca_path + self.NODE_TYPES
+        return [NormativeTypeCandidate(path, self.__read_model_type_json(path))]
+
+    def __zip_model_imports(self, action_type, ) -> Path:
         base_path = self.__get_base_action_path(action_type)
         model_path = base_path / model
         model_imports_path = base_path / model / self.IMPORTS_FOLDER_NAME
@@ -81,6 +94,13 @@ class ModelImportManager:
         json_data = json.load(json_file, strict=False)
         return json.dumps(json_data)
 
+    def __read_model_type_json(self, tosca_path):
+        path = tosca_path + "types.json"
+        if not os.path.isfile(path):
+            return []
+        json_file = open(path)
+        return json.load(json_file)
+
     def __read_model_payload(self, model, action_type) -> dict:
         base_path = self.__get_base_action_path(action_type)
         model_payload_path = base_path / model / "payload.json"
@@ -89,3 +109,6 @@ class ModelImportManager:
 
     def __get_base_action_path(self, action_type) -> Path:
         return self.__model_init_path if action_type == self.INIT_FOLDER_NAME else self.__model_upgrade_path
+
+    def __get_model_tosca_path(self, action, model):
+        return str(self.__get_base_action_path(action) / model) + "/tosca/"
