@@ -10,7 +10,7 @@ from sdcBePy.common.errors import ResourceCreationError
 
 def process_and_create_normative_element(normative_element,
                                          scheme=None, be_host=None, be_port=None, header=None, admin_user=None, sdc_be_proxy=None,
-                                         debug=False,
+                                         model=None, debug=False,
                                          exit_on_success=False):
     if sdc_be_proxy is None:
         sdc_be_proxy = SdcBeProxy(be_host, be_port, header, scheme, admin_user, debug=debug)
@@ -21,31 +21,33 @@ def process_and_create_normative_element(normative_element,
                               url_suffix,
                               element_name,
                               element_from_name,
+                              model,
                               with_metadata,
                               exit_on_success)
 
 
 def _create_normative_element(sdc_be_proxy, file_dir,
-                              url_suffix, element_name, element_form_name, with_metadata=False,
+                              url_suffix, element_name, element_form_name, model, with_metadata=False,
                               exit_on_success=False):
     result = _send_request(sdc_be_proxy,
                            file_dir,
                            url_suffix,
                            element_name,
                            element_form_name,
+                           model,
                            with_metadata)
     print_and_check_result(result, exit_on_success)
 
 
 def _send_request(sdc_be_proxy, file_dir, url_suffix, element_name,
-                  element_form_name,
+                  element_form_name, model,
                   with_metadata=False):
     try:
         log("create normative element ", element_name)
 
         type_file_name = file_dir + element_name
         multi_part_form_data = _create_multipart_form_data(element_form_name, type_file_name, with_metadata,
-                                                           element_name)
+                                                           element_name, model)
 
         debug("http request url =", url_suffix)
         http_res = sdc_be_proxy.post_file(url_suffix, multi_part_form_data)
@@ -62,12 +64,15 @@ def _send_request(sdc_be_proxy, file_dir, url_suffix, element_name,
         return element_name, None, None
 
 
-def _create_multipart_form_data(element_form_name, type_file_name, with_metadata, element_name):
+def _create_multipart_form_data(element_form_name, type_file_name, with_metadata, element_name, model):
     tosca_type_zip_part = _create_zip_file_multi_part(element_form_name, type_file_name, element_name)
     multi_part_form_data = [tosca_type_zip_part]
     if with_metadata:
         metadata_type_part = _create_metadata_multipart(type_file_name)
         multi_part_form_data.append(metadata_type_part)
+    if model is not None:
+        model_data = ("model", model)
+        multi_part_form_data.append(model_data)
     debug(multi_part_form_data)
     return multi_part_form_data
 
@@ -75,7 +80,6 @@ def _create_multipart_form_data(element_form_name, type_file_name, with_metadata
 def _create_metadata_multipart(type_file_name):
     metadata = _create_json_metadata_str(type_file_name)
     return "toscaTypeMetadata", metadata
-
 
 def _create_zip_file_multi_part(element_form_name, type_file_name, element_name):
     zf = zipfile.ZipFile(type_file_name + ".zip", "w")
