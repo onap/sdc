@@ -1,6 +1,7 @@
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation
+ *  Modifications Copyright (C) 2021 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -70,6 +71,21 @@ public class ZipUtils {
      * @throws ZipSlipException when a zip slip attempt is detected
      */
     public static void checkForZipSlipInRead(final Path filePath) throws ZipSlipException {
+        validateFilePath(filePath);
+    }
+
+    /**
+     * Checks if the path is a zip slip attempt when you don't have a destination folder eg in memory reading or zip creation.
+     *
+     * @param filePath the file path
+     * @return File Path validated
+     * @throws ZipSlipException when a zip slip attempt is detected
+     */
+    public static Path checkForZipSlipInReadAndReturnPath(final Path filePath) throws ZipSlipException {
+        return Path.of(validateFilePath(filePath));
+    }
+
+    private static String validateFilePath(Path filePath) throws ZipSlipException {
         final File file = filePath.toFile();
         String canonicalPath = null;
         try {
@@ -83,6 +99,7 @@ public class ZipUtils {
         if (filePath.toString().contains("../") || filePath.toString().contains("..\\")) {
             throw new ZipSlipException(filePath.toString());
         }
+        return canonicalPath;
     }
 
     /**
@@ -244,7 +261,7 @@ public class ZipUtils {
                 if (zipEntry.isDirectory()) {
                     createDirectoryIfNotExists(fileToWritePath);
                 } else {
-                    writeFile(stream, fileToWritePath);
+                    writeFile(stream, checkForZipSlipInReadAndReturnPath(fileToWritePath));
                 }
             }
         } catch (final FileNotFoundException e) {
@@ -265,7 +282,7 @@ public class ZipUtils {
         final Path parentFolderPath = fileToWritePath.getParent();
         if (parentFolderPath != null) {
             try {
-                Files.createDirectories(parentFolderPath);
+                Files.createDirectories(checkForZipSlipInReadAndReturnPath(parentFolderPath));
             } catch (final IOException e) {
                 throw new ZipException(String.format("Could not create parent directories of '%s'", fileToWritePath.toString()), e);
             }
@@ -290,9 +307,9 @@ public class ZipUtils {
             return;
         }
         try {
-            Files.createDirectories(path);
+            Files.createDirectories(checkForZipSlipInReadAndReturnPath(path));
         } catch (final IOException e) {
-            throw new ZipException(String.format("Could not create directories for path '%s'", path.toString()), e);
+            throw new ZipException(String.format("Could not create directories for path '%s'", path), e);
         }
     }
 
@@ -308,7 +325,7 @@ public class ZipUtils {
         try {
             createdZipFilePath = Files.createFile(toZipFilePath);
         } catch (final IOException e) {
-            throw new ZipException(String.format("Could not create file '%s'", toZipFilePath.toString()), e);
+            throw new ZipException(String.format("Could not create file '%s'", toZipFilePath), e);
         }
         try (final FileOutputStream fileOutputStream = new FileOutputStream(
             createdZipFilePath.toFile()); final BufferedOutputStream bos = new BufferedOutputStream(
@@ -322,7 +339,7 @@ public class ZipUtils {
                 final Path relativePath = fromPath.relativize(path);
                 final File file = path.toFile();
                 if (file.isDirectory()) {
-                    zipOut.putNextEntry(new ZipEntry(relativePath.toString() + File.separator));
+                    zipOut.putNextEntry(new ZipEntry(relativePath + File.separator));
                 } else {
                     zipOut.putNextEntry(new ZipEntry(relativePath.toString()));
                     zipOut.write(Files.readAllBytes(path));
@@ -330,7 +347,7 @@ public class ZipUtils {
                 zipOut.closeEntry();
             }
         } catch (final FileNotFoundException e) {
-            throw new ZipException(String.format("Could not create file '%s'", toZipFilePath.toString()), e);
+            throw new ZipException(String.format("Could not create file '%s'", toZipFilePath), e);
         } catch (final IOException e) {
             throw new ZipException("An error has occurred while creating the zip package", e);
         }
