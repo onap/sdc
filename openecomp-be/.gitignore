@@ -11,3 +11,4 @@ package
 *.iml
 *.ipr
 *.iws
+/dist/sdc-onboard-db-init-docker/artifacts/upgrade-scripts/
