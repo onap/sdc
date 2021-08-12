@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "e539789b_cb195e78",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-08-12T12:45:21Z",
+      "side": 1,
+      "message": "Just because model.getName() is being called twice in the same function. Lines 114 and 117",
+      "parentUuid": "cb03ced8_1ccf1fca",
+      "range": {
+        "startLine": 114,
+        "startChar": 10,
+        "endLine": 114,
+        "endChar": 25
+      },
+      "revId": "3f7f29292819b928eaf80817e2a9d9f1e7f3caf1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "97ef3b19_d22c70c0",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
         "patchSetId": 1
