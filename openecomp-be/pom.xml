@@ -87,6 +87,7 @@
     <module>/tools/swagger-ui</module>
     <module>/tools/zusammen-tools</module>
     <module>/backend</module>
+    <module>/dist</module>
   </modules>
 
   <profiles>
