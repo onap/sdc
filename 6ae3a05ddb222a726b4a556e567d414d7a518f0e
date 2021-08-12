@@ -22,6 +22,30 @@
       "revId": "6ae3a05ddb222a726b4a556e567d414d7a518f0e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62ce403e_221520a8",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/zip/ZipUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-08-12T13:15:27Z",
+      "side": 1,
+      "message": "I tried but as you can see here (https://sonarcloud.io/project/issues?fileUuids\u003dAXsrUrJgnWkaakhX_EUS\u0026id\u003dafribeiro_sdc\u0026open\u003dAXsrUuzanWkaakhX_F2Z\u0026resolved\u003dfalse\u0026types\u003dVULNERABILITY) it would not solve this issue.",
+      "parentUuid": "67b9ae75_0ffa4723",
+      "range": {
+        "startLine": 264,
+        "startChar": 38,
+        "endLine": 264,
+        "endChar": 72
+      },
+      "revId": "6ae3a05ddb222a726b4a556e567d414d7a518f0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
