@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a8a9b452_6881a5f8",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-12T12:37:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "480f7b1c_2a278f97",
+      "range": {
+        "startLine": 108,
+        "startChar": 40,
+        "endLine": 108,
+        "endChar": 51
+      },
+      "revId": "3f7f29292819b928eaf80817e2a9d9f1e7f3caf1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4a159334_0f9592dd",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "b1927a77_d883209b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-12T12:37:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4a159334_0f9592dd",
+      "range": {
+        "startLine": 109,
+        "startChar": 7,
+        "endLine": 109,
+        "endChar": 52
+      },
+      "revId": "3f7f29292819b928eaf80817e2a9d9f1e7f3caf1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b5e32968_53fe2096",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2021-08-12T11:05:01Z",
       "side": 1,
       "message": "Could be extracted to a final variable.",
+      "range": {
+        "startLine": 114,
+        "startChar": 10,
+        "endLine": 114,
+        "endChar": 25
+      },
+      "revId": "3f7f29292819b928eaf80817e2a9d9f1e7f3caf1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb03ced8_1ccf1fca",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-12T12:37:50Z",
+      "side": 1,
+      "message": "Dont see much point",
+      "parentUuid": "b5e32968_53fe2096",
       "range": {
         "startLine": 114,
         "startChar": 10,
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "f8ed1fb6_808131d4",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-12T12:37:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "97ef3b19_d22c70c0",
+      "range": {
+        "startLine": 206,
+        "startChar": 8,
+        "endLine": 208,
+        "endChar": 107
+      },
+      "revId": "3f7f29292819b928eaf80817e2a9d9f1e7f3caf1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e1b9f3dc_0243a5ae",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
         "patchSetId": 1
@@ -114,6 +210,30 @@
       "revId": "3f7f29292819b928eaf80817e2a9d9f1e7f3caf1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9f9ecc5_3f0fb036",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-12T12:37:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1b9f3dc_0243a5ae",
+      "range": {
+        "startLine": 219,
+        "startChar": 12,
+        "endLine": 219,
+        "endChar": 71
+      },
+      "revId": "3f7f29292819b928eaf80817e2a9d9f1e7f3caf1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
