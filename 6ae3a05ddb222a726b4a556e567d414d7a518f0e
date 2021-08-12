@@ -46,6 +46,30 @@
       "revId": "6ae3a05ddb222a726b4a556e567d414d7a518f0e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e824bd7c_6c561a1e",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/zip/ZipUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-12T13:45:52Z",
+      "side": 1,
+      "message": "I believe it is because you continue to write the original file path.\nhttps://sonarcloud.io/code?id\u003dafribeiro_sdc\u0026selected\u003dafribeiro_sdc%3Acommon-app-api%2Fsrc%2Fmain%2Fjava%2Forg%2Fopenecomp%2Fsdc%2Fcommon%2Fzip%2FZipUtils.java\u0026line\u003d263\n\nIt seems you need the canonical path of the file to validate and write. Why not do that in separate methods?\nMaybe one to sanitize the path (returning the canonical form) and other to check for the zip slip.\nI understand that it works. I just don\u0027t like the mix of the need to write with the canonical path and the zip slip validation.",
+      "parentUuid": "62ce403e_221520a8",
+      "range": {
+        "startLine": 264,
+        "startChar": 38,
+        "endLine": 264,
+        "endChar": 72
+      },
+      "revId": "6ae3a05ddb222a726b4a556e567d414d7a518f0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
