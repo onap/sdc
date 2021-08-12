@@ -199,6 +199,21 @@ class ModelServletTest extends JerseyTest {
             .post(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
     }
+    
+    @Test
+    void createModelWithDerivedFromSuccessTest() throws JsonProcessingException {
+        when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+        when(componentsUtils.getResponseFormat(ActionStatus.CREATED)).thenReturn(responseFormat);
+        when(modelBusinessLogic.createModel(any(Model.class))).thenReturn(model);
+        ModelCreateRequest derviedModelCreateRequest = new ModelCreateRequest();
+        derviedModelCreateRequest.setName("derivedModel");
+        derviedModelCreateRequest.setDerivedFrom(model.getName());
+        final FormDataMultiPart formDataMultiPart = buildCreateFormDataMultiPart(new byte[0], parseToJsonString(derviedModelCreateRequest));
+        final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
+            .header(Constants.USER_ID_HEADER, USER_ID)
+            .post(Entity.entity(formDataMultiPart, MediaType.MULTIPART_FORM_DATA));
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+    }
 
     @Test
     void createModelFailTest() throws JsonProcessingException {

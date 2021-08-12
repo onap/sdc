@@ -264,7 +264,7 @@ class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ModelOperation modelOperation() {
-            return new ModelOperation(null, null, null);
+            return new ModelOperation(null, null, null, null);
         }
 
         private void initGraphForTest() {
