@@ -22,7 +22,8 @@ from pathlib import Path
 import pycurl
 
 from sdcBePy.common import logger
-
+from sdcBePy.common.normative.main import process_element_list, process_type_list
+from sdcBePy.tosca.models.normativeElementsList import get_normative_element_candidate_list, get_normative_element_with_metadata_list
 
 class ModelClient:
 
@@ -75,6 +76,21 @@ class ModelClient:
             logger.log(error_msg, response_buffer.getvalue())
             raise Exception(error_msg)
         logger.log("Updated model", model_name)
+
+    def import_model_elements(self, model_payload_dict, tosca_elements_import_path, with_metadata=False):
+        model_name = model_payload_dict['name']
+        logger.debug("Starting import of normative elements for model '{}'".format(model_name))
+        if with_metadata:
+            process_element_list(get_normative_element_with_metadata_list(tosca_elements_import_path), self.__sdc_be_proxy, model=model_name)
+        else:
+            process_element_list(get_normative_element_candidate_list(tosca_elements_import_path), self.__sdc_be_proxy, model=model_name)
+        logger.log("Finished importing normative elements for model", model_name)
+
+    def import_model_types(self, model_payload_dict, types_list, upgrade):
+        model_name = model_payload_dict['name']
+        logger.debug("Starting import of normative types for model '{}'".format(model_name))
+        process_type_list(types_list, self.__sdc_be_proxy, upgrade)
+        logger.log("Finished importing normative types for model", model_name)
 
     @staticmethod
     def __parse_to_json_str(model_payload_dict):
