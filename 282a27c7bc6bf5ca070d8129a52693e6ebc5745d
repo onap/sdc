@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2063612f_31f8b95f",
+        "filename": "openecomp-be/tools/install/database/init_schemas.cql",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-12T08:35:08Z",
+      "side": 1,
+      "message": "This will add the new columns in the case of a fresh install, but in an upgrade scenario we need to alter the table",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 2
+      },
+      "revId": "282a27c7bc6bf5ca070d8129a52693e6ebc5745d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
