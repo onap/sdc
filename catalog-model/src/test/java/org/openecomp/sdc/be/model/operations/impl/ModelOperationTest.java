@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -47,17 +49,21 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.resources.data.ModelData;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -72,6 +78,8 @@ class ModelOperationTest extends ModelTestBase {
     private JanusGraphDao janusGraphDao;
     @Mock
     private ToscaModelImportCassandraDao toscaModelImportCassandraDao;
+    @Mock
+    private DerivedFromOperation derivedFromOperation;
 
     private final String modelName = "ETSI-SDC-MODEL-TEST";
 
@@ -92,6 +100,23 @@ class ModelOperationTest extends ModelTestBase {
         final Model createdModel = modelOperation.createModel(new Model(modelName), false);
         assertThat(createdModel).isNotNull();
         assertThat(createdModel.getName()).isEqualTo(modelName);
+    }
+    
+    @Test
+    void createDerivedModelSuccessTest() {
+        final String derivedModelName = "derivedModel";
+        final ModelData modelData = new ModelData(derivedModelName,  UniqueIdBuilder.buildModelUid(derivedModelName));
+        when(janusGraphGenericDao.createNode(any(),any())).thenReturn(Either.left(modelData));
+        
+        final GraphVertex modelVertex = new GraphVertex();
+        modelVertex.addMetadataProperty(GraphPropertyEnum.NAME, "baseModel");
+        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.MODEL), anyMap())).thenReturn(Either.left(Collections.singletonList(modelVertex)));
+        when(janusGraphGenericDao.getChild(eq("uid"), anyString(), eq(GraphEdgeLabels.DERIVED_FROM), eq(NodeTypeEnum.Model), eq(ModelData.class))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(derivedFromOperation.addDerivedFromRelation("model.derivedModel", "model.baseModel", NodeTypeEnum.Model)).thenReturn(Either.left(new GraphRelation()));
+        
+        final Model createdModel = modelOperation.createModel(new Model(derivedModelName, modelName), false);
+        assertThat(createdModel).isNotNull();
+        assertThat(createdModel.getName()).isEqualTo(derivedModelName);
     }
 
     @Test
@@ -200,6 +225,8 @@ class ModelOperationTest extends ModelTestBase {
         final GraphVertex expectedVertex = mock(GraphVertex.class);
         when(expectedVertex.getMetadataProperty(GraphPropertyEnum.NAME)).thenReturn(modelName);
         when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.MODEL), mapArgumentCaptor.capture())).thenReturn(Either.left(List.of(expectedVertex)));
+        when(janusGraphGenericDao.getChild("uid", UniqueIdBuilder.buildModelUid(modelName), GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model,
+            ModelData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         final Optional<Model> modelByNameOpt = modelOperation.findModelByName(modelName);
 
         final Map<GraphPropertyEnum, Object> value = mapArgumentCaptor.getValue();
@@ -232,6 +259,9 @@ class ModelOperationTest extends ModelTestBase {
         final GraphVertex expectedVertex = mock(GraphVertex.class);
         when(expectedVertex.getMetadataProperty(GraphPropertyEnum.NAME)).thenReturn(modelName);
         when(janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, Collections.emptyMap())).thenReturn(Either.left(List.of(expectedVertex)));
+        when(janusGraphGenericDao.getChild("uid", UniqueIdBuilder.buildModelUid(modelName), GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model,
+            ModelData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+
         final List<Model> actualModelList = modelOperation.findAllModels();
         assertFalse(actualModelList.isEmpty());
         assertEquals(1, actualModelList.size());

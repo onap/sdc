@@ -693,7 +693,23 @@ public class JanusGraphGenericDao {
 
         if (modelVertices.isLeft()) {
             for (ImmutablePair<JanusGraphVertex, Edge> vertexPair : modelVertices.left().value()) {
-                if (model.equals((String)vertexPair.getLeft().property("name").value())) {
+                if (modelVertexMatchesModel(vertexPair.getLeft(), model)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean modelVertexMatchesModel(final JanusGraphVertex modelVertex, final String model) {
+        if (model.equals((String)modelVertex.property("name").value())) {
+            return true;
+        }
+        final Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> derivedModels =
+                        getParentVerticies(modelVertex, GraphEdgeLabels.DERIVED_FROM);
+        if (derivedModels.isLeft()) {
+            for (final ImmutablePair<JanusGraphVertex, Edge> derivedModel : derivedModels.left().value()) {
+                if (modelVertexMatchesModel(derivedModel.left, model)) {
                     return true;
                 }
             }
