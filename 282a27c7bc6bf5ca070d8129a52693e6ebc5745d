@@ -22,6 +22,30 @@
       "revId": "282a27c7bc6bf5ca070d8129a52693e6ebc5745d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa0c2491_cd814b4a",
+        "filename": "openecomp-be/tools/install/database/init_schemas.cql",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-12T14:25:50Z",
+      "side": 1,
+      "message": "There is no upgrade scenario implemented in the onboarding init solution.\nI could not find also a way to add a column only if it does not exist when using a cql script.\n\nAs a workaround, I\u0027ve kind of activated the use of an alter_table.cql script (it was being added to the init docker image, but not being called), and added the alter tables there. \nThe alter_table.cql result is being ignored, so it will not guarantee a successful upgrade. I believe if one cql command fails, the next ones will not be executed, and I also could not find an error handling in cql scripts.\n\nI could, though, split every single command (3 for now) in a separate file and force the execution of all commands if wanted (ignoring the result).",
+      "parentUuid": "2063612f_31f8b95f",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 2
+      },
+      "revId": "282a27c7bc6bf5ca070d8129a52693e6ebc5745d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
