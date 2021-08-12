@@ -23,4 +23,8 @@ public class ZipSlipException extends ZipException {
     public ZipSlipException(final String filePath) {
         super(String.format("Zip slip attempt detected in file: %s", filePath));
     }
+
+    public ZipSlipException(final String filePath, final Throwable throwable) {
+        super(filePath, throwable);
+    }
 }
