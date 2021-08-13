@@ -51,8 +51,8 @@ import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.utils.GroupTypeBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -108,7 +108,7 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
 
         @Bean
         GroupTypeBusinessLogic groupTypeBusinessLogic() {
-            return new GroupTypeBusinessLogic(groupTypeOperation(), janusGraphDao, userValidations, componentsUtils);
+            return new GroupTypeBusinessLogic(groupTypeOperation(), janusGraphDao, userValidations);
         }
 
         @Bean
@@ -170,7 +170,8 @@ class GroupTypesEndpointTest extends JerseySpringBaseTest {
     void getGroupTypes_validUser_Success() {
         List<GroupTypeDefinition> testConfigGroupTypes = buildGroupTypesList();
         List<GroupTypeDefinition> fetchedGroupTypes = buildGetGroupTypesCall(USER_ID, COMPONENT_TYPE)
-            .get(new GenericType<>() {});
+            .get(new GenericType<>() {
+            });
         verifyGroupTypesList(testConfigGroupTypes, fetchedGroupTypes);
     }
 

@@ -25,46 +25,45 @@ import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.T;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.utils.CassandraTestHelper;
 import org.openecomp.sdc.be.utils.DAOConfDependentTest;
 
-public class CassandraClientTest extends DAOConfDependentTest {
+class CassandraClientTest extends DAOConfDependentTest {
 
     private CassandraClient createTestSubject() {
         return new CassandraClient();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() {
         CassandraTestHelper.startServer();
     }
 
     @Test
-    public void testSetLocalDc() throws Exception {
+    void testSetLocalDc() throws Exception {
         CassandraClient testSubject;
 
         Builder mock = Mockito.mock(Cluster.Builder.class);
         Mockito.when(mock.withLoadBalancingPolicy(Mockito.any())).thenReturn(new Builder());
         // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "setLocalDc", new Object[]{Cluster.Builder.class});
+        Assertions.assertNotNull(testSubject);
 
-        ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
-            .setLocalDataCenter("mock");
+        ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setLocalDataCenter("mock");
 
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "setLocalDc", mock);
+        Assertions.assertNotNull(testSubject);
     }
 
     @Test
-    public void testEnableSsl() throws Exception {
+    void testEnableSsl() throws Exception {
         CassandraClient testSubject;
         Cluster.Builder clusterBuilder = null;
 
@@ -72,39 +71,46 @@ public class CassandraClientTest extends DAOConfDependentTest {
         Mockito.when(mock.withSSL()).thenReturn(new Builder());
 
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setSsl(false);
-        // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "enableSsl", mock);
+        Assertions.assertNotNull(testSubject);
+        Assertions.assertNull(System.getProperty("javax.net.ssl.trustStore"));
+        Assertions.assertNull(System.getProperty("javax.net.ssl.trustStorePassword"));
 
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setSsl(true);
-        // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "enableSsl", mock);
+        Assertions.assertNotNull(testSubject);
+        Assertions.assertNotNull(System.getProperty("javax.net.ssl.trustStore"));
+        Assertions.assertNotNull(System.getProperty("javax.net.ssl.trustStorePassword"));
+
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setTruststorePath(null);
-        ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig()
-            .setTruststorePassword(null);
-        Deencapsulation.invoke(testSubject, "enableSsl", mock);
+        ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setTruststorePassword(null);
+        testSubject = createTestSubject();
+        Assertions.assertNotNull(testSubject);
+        Assertions.assertNotNull(System.getProperty("javax.net.ssl.trustStore"));
+        Assertions.assertNotNull(System.getProperty("javax.net.ssl.trustStorePassword"));
     }
 
     @Test
-    public void testEnableAuthentication() throws Exception {
+    void testEnableAuthentication() throws Exception {
         CassandraClient testSubject;
         Builder mock = Mockito.mock(Cluster.Builder.class);
         Mockito.when(mock.withCredentials(Mockito.any(), Mockito.any())).thenReturn(new Builder());
 
-        // default test
         testSubject = createTestSubject();
-        Deencapsulation.invoke(testSubject, "enableAuthentication", Cluster.Builder.class);
+        Assertions.assertNotNull(testSubject);
 
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setAuthenticate(true);
-        Deencapsulation.invoke(testSubject, "enableAuthentication", mock);
+        testSubject = createTestSubject();
+        Assertions.assertNotNull(testSubject);
+
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setUsername(null);
         ConfigurationManager.getConfigurationManager().getConfiguration().getCassandraConfig().setPassword(null);
-        Deencapsulation.invoke(testSubject, "enableAuthentication", mock);
+        testSubject = createTestSubject();
+        Assertions.assertNotNull(testSubject);
     }
 
     @Test
-    public void testConnect() throws Exception {
+    void testConnect() throws Exception {
         CassandraClient testSubject;
         String keyspace = "";
         Either<ImmutablePair<Session, MappingManager>, CassandraOperationStatus> result;
@@ -112,10 +118,11 @@ public class CassandraClientTest extends DAOConfDependentTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.connect(keyspace);
+        Assertions.assertNotNull(result);
     }
 
     @Test
-    public void testSave() throws Exception {
+    void testSave() throws Exception {
         CassandraClient testSubject;
         T entity = null;
         Class<T> clazz = null;
@@ -125,10 +132,11 @@ public class CassandraClientTest extends DAOConfDependentTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.save(entity, clazz, manager);
+        Assertions.assertNotNull(result);
     }
 
     @Test
-    public void testGetById() throws Exception {
+    void testGetById() throws Exception {
         CassandraClient testSubject;
         String id = "";
         Class<T> clazz = null;
@@ -138,10 +146,11 @@ public class CassandraClientTest extends DAOConfDependentTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.getById(id, clazz, manager);
+        Assertions.assertNotNull(result);
     }
 
     @Test
-    public void testDelete() throws Exception {
+    void testDelete() throws Exception {
         CassandraClient testSubject;
         String id = "";
         Class<T> clazz = null;
@@ -151,24 +160,27 @@ public class CassandraClientTest extends DAOConfDependentTest {
         // default test
         testSubject = createTestSubject();
         result = testSubject.delete(id, clazz, manager);
+        Assertions.assertNotNull(result);
     }
 
     @Test
-    public void testIsConnected() throws Exception {
+    void testIsConnected() throws Exception {
         CassandraClient testSubject;
         boolean result;
 
         // default test
         testSubject = createTestSubject();
         result = testSubject.isConnected();
+        Assertions.assertTrue(result);
     }
 
     @Test
-    public void testCloseClient() throws Exception {
+    void testCloseClient() throws Exception {
         CassandraClient testSubject;
 
         // default test
         testSubject = createTestSubject();
         testSubject.closeClient();
+        Assertions.assertNotNull(testSubject);
     }
 }
