@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 
 public class ServiceToscaArtifactsValidatorExecutorTest
