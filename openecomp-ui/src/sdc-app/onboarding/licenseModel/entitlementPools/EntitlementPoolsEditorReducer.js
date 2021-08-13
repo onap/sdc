@@ -55,10 +55,7 @@ export default (state = {}, action) => {
                     description: {
                         isValid: true,
                         errorText: '',
-                        validations: [
-                            { type: 'maxLength', data: 1000 },
-                            { type: 'validateName', data: true }
-                        ]
+                        validations: [{ type: 'maxLength', data: 1000 }]
                     },
                     type: {
                         isValid: true,
@@ -68,10 +65,7 @@ export default (state = {}, action) => {
                     increments: {
                         isValid: true,
                         errorText: '',
-                        validations: [
-                            { type: 'maxLength', data: 120 },
-                            { type: 'validateName', data: true }
-                        ]
+                        validations: [{ type: 'maxLength', data: 120 }]
                     },
                     thresholdUnits: {
                         isValid: true,
