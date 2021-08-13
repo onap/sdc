@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "165b2f57_803695a2",
+        "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-13T12:51:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7125a82a_59f2e494",
+      "range": {
+        "startLine": 39,
+        "startChar": 24,
+        "endLine": 39,
+        "endChar": 31
+      },
+      "revId": "da47ff47fea497a8e7214b5d3aaccc799ebabe61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "42690e37_4e4d3372",
         "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
         "patchSetId": 2
@@ -69,6 +93,30 @@
       "revId": "da47ff47fea497a8e7214b5d3aaccc799ebabe61",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "469ee157_83c0465a",
+        "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-13T12:51:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42690e37_4e4d3372",
+      "range": {
+        "startLine": 45,
+        "startChar": 25,
+        "endLine": 45,
+        "endChar": 48
+      },
+      "revId": "da47ff47fea497a8e7214b5d3aaccc799ebabe61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
