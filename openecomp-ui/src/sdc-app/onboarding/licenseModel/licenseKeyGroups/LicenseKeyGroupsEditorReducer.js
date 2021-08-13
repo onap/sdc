@@ -49,10 +49,7 @@ export default (state = {}, action) => {
                     description: {
                         isValid: true,
                         errorText: '',
-                        validations: [
-                            { type: 'maxLength', data: 1000 },
-                            { type: 'validateName', data: true }
-                        ]
+                        validations: [{ type: 'maxLength', data: 1000 }]
                     },
                     name: {
                         isValid: true,
@@ -81,10 +78,7 @@ export default (state = {}, action) => {
                     increments: {
                         isValid: true,
                         errorText: '',
-                        validations: [
-                            { type: 'maxLength', data: 120 },
-                            { type: 'validateName', data: true }
-                        ]
+                        validations: [{ type: 'maxLength', data: 120 }]
                     },
                     startDate: {
                         isValid: true,
@@ -99,10 +93,7 @@ export default (state = {}, action) => {
                     manufacturerReferenceNumber: {
                         isValid: true,
                         errorText: '',
-                        validations: [
-                            { type: 'maxLength', data: 100 },
-                            { type: 'validateName', data: true }
-                        ]
+                        validations: [{ type: 'maxLength', data: 100 }]
                     }
                 }
             };

@@ -32,10 +32,7 @@ export default (state = {}, action) => {
                     description: {
                         isValid: true,
                         errorText: '',
-                        validations: [
-                            { type: 'maxLength', data: 1000 },
-                            { type: 'validateName', data: true }
-                        ],
+                        validations: [{ type: 'maxLength', data: 1000 }],
                         tabId:
                             FeatureGroupStateConstants
                                 .SELECTED_FEATURE_GROUP_TAB.GENERAL
