@@ -70,6 +70,30 @@
       "revId": "6ae3a05ddb222a726b4a556e567d414d7a518f0e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61a24b64_d2e59925",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/zip/ZipUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-08-13T14:53:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e824bd7c_6c561a1e",
+      "range": {
+        "startLine": 264,
+        "startChar": 38,
+        "endLine": 264,
+        "endChar": 72
+      },
+      "revId": "6ae3a05ddb222a726b4a556e567d414d7a518f0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
