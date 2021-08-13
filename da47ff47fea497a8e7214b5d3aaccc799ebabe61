@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "001a6d1e_8601f065",
+        "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-13T11:06:32Z",
+      "side": 1,
+      "message": "think this need to be \"upgrade-scripts\" to match the Dockerfile",
+      "range": {
+        "startLine": 39,
+        "startChar": 24,
+        "endLine": 39,
+        "endChar": 31
+      },
+      "revId": "da47ff47fea497a8e7214b5d3aaccc799ebabe61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42690e37_4e4d3372",
+        "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-13T11:06:32Z",
+      "side": 1,
+      "message": "should we add \"(possibly previously upgraded)\" so the user knows this is not necessarily an actual failure.",
+      "range": {
+        "startLine": 45,
+        "startChar": 25,
+        "endLine": 45,
+        "endChar": 48
+      },
+      "revId": "da47ff47fea497a8e7214b5d3aaccc799ebabe61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
