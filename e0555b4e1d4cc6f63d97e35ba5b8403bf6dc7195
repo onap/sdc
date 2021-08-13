@@ -46,6 +46,30 @@
       "revId": "e0555b4e1d4cc6f63d97e35ba5b8403bf6dc7195",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd97c2a4_b30405dd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/CapabilityTypeOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-13T14:38:12Z",
+      "side": 1,
+      "message": "In my opinion its only adding bloat to the code without any benefit to check twice so I would say remove it from here. \nDiscuss with Andre before removing though just in case he sees some benefit I am missing",
+      "parentUuid": "295e5aef_53cb56eb",
+      "range": {
+        "startLine": 198,
+        "startChar": 2,
+        "endLine": 199,
+        "endChar": 40
+      },
+      "revId": "e0555b4e1d4cc6f63d97e35ba5b8403bf6dc7195",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
