@@ -46,6 +46,30 @@
       "revId": "282a27c7bc6bf5ca070d8129a52693e6ebc5745d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8d75969_66a519a2",
+        "filename": "openecomp-be/tools/install/database/init_schemas.cql",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-13T09:27:22Z",
+      "side": 1,
+      "message": "I\u0027ve implemented a way to add and run upgrade scripts during the onboarding init: https://gerrit.onap.org/r/c/sdc/+/123263.\nFor this particular change, I\u0027ve added a new script to be executed: openecomp-be/tools/install/database/upgrade-scripts/20210729-dox.package_details.cql",
+      "parentUuid": "aa0c2491_cd814b4a",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 2
+      },
+      "revId": "282a27c7bc6bf5ca070d8129a52693e6ebc5745d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
