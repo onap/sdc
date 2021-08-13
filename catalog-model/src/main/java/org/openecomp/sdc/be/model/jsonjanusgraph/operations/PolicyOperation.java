@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;

@@ -31,7 +31,7 @@ import org.openecomp.sdc.be.components.utils.ComponentInstanceBuilder;
 import org.openecomp.sdc.be.components.utils.GroupDefinitionBuilder;
 import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.components.utils.ServiceBuilder;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Component;
