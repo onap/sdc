@@ -94,6 +94,30 @@
       "revId": "e0555b4e1d4cc6f63d97e35ba5b8403bf6dc7195",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be154cf5_c4c02988",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/CapabilityTypeOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-13T16:13:39Z",
+      "side": 1,
+      "message": "It doesnt really add any extra safety though as the relationship creation will fail if the model does not exist, so the only effect will be a different error message, the point of failure is still effectively the same, we are not preventing any adverse side effects of a failure here due to model not existing",
+      "parentUuid": "479a406a_6616d49e",
+      "range": {
+        "startLine": 198,
+        "startChar": 2,
+        "endLine": 199,
+        "endChar": 40
+      },
+      "revId": "e0555b4e1d4cc6f63d97e35ba5b8403bf6dc7195",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
