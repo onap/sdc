@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7125a82a_59f2e494",
+        "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-13T12:45:33Z",
+      "side": 1,
+      "message": "Thanks for catching. It was a last minute change I\u0027ve made.",
+      "parentUuid": "001a6d1e_8601f065",
+      "range": {
+        "startLine": 39,
+        "startChar": 24,
+        "endLine": 39,
+        "endChar": 31
+      },
+      "revId": "da47ff47fea497a8e7214b5d3aaccc799ebabe61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "42690e37_4e4d3372",
         "filename": "openecomp-be/dist/sdc-onboard-db-init-docker/artifacts/startup.sh",
         "patchSetId": 2
