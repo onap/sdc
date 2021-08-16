@@ -226,7 +226,7 @@ public class ServiceImportBusinessLogic {
         log.trace("************* created successfully from YAML, resource TOSCA ");
         try {
             CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID);
-            Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractNodeTypesInfo();
+            Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
             Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = serviceImportParseLogic
                 .findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
             if (findNodeTypesArtifactsToHandleRes.isRight()) {

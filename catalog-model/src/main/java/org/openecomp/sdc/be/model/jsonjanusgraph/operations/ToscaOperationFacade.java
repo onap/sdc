@@ -2191,9 +2191,7 @@ public class ToscaOperationFacade {
         hasNotProps.put(GraphPropertyEnum.IS_DELETED, true);
         hasNotProps.put(GraphPropertyEnum.IS_ARCHIVED, true);
         hasProps.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
-        if (modelName != null) {
-            hasProps.put(GraphPropertyEnum.MODEL, modelName);
-        }
+
         if (VertexTypeEnum.NODE_TYPE == internalVertexType) {
             hasProps.put(GraphPropertyEnum.IS_ABSTRACT, isAbstract);
             if (internalComponentType != null) {

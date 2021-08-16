@@ -118,6 +118,7 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
@@ -211,6 +212,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private final CsarBusinessLogic csarBusinessLogic;
     private final PropertyBusinessLogic propertyBusinessLogic;
     private final PolicyBusinessLogic policyBusinessLogic;
+    private final ModelBusinessLogic modelBusinessLogic;
     private IInterfaceLifecycleOperation interfaceTypeOperation;
     private LifecycleBusinessLogic lifecycleBusinessLogic;
     @Autowired
@@ -223,6 +225,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private PropertyDataValueMergeBusinessLogic propertyDataValueMergeBusinessLogic;
     @Autowired
     private SoftwareInformationBusinessLogic softwareInformationBusinessLogic;
+
 
     @Autowired
     public ResourceBusinessLogic(final IElementOperation elementDao, final IGroupOperation groupOperation,
@@ -241,7 +244,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                  final ComponentNameValidator componentNameValidator, final ComponentTagsValidator componentTagsValidator,
                                  final ComponentValidator componentValidator, final ComponentIconValidator componentIconValidator,
                                  final ComponentProjectCodeValidator componentProjectCodeValidator,
-                                 final ComponentDescriptionValidator componentDescriptionValidator, final PolicyBusinessLogic policyBusinessLogic) {
+                                 final ComponentDescriptionValidator componentDescriptionValidator, final PolicyBusinessLogic policyBusinessLogic,
+                                 final ModelBusinessLogic modelBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -257,6 +261,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.csarBusinessLogic = csarBusinessLogic;
         this.propertyBusinessLogic = propertyBusinessLogic;
         this.policyBusinessLogic = policyBusinessLogic;
+        this.modelBusinessLogic = modelBusinessLogic;
     }
 
     static <T> Either<T, RuntimeException> rollbackWithEither(final JanusGraphDao janusGraphDao, final ActionStatus actionStatus,
@@ -507,7 +512,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
         CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(newResource, oldResource, user, csarUIPayload, csarUUID);
         lockComponent(lockedResourceId, oldResource, "update Resource From Csar");
-        Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractNodeTypesInfo();
+        Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
             nodeTypesInfo, csarInfo, oldResource);
         if (findNodeTypesArtifactsToHandleRes.isRight()) {
@@ -1016,7 +1021,23 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             .log(LoggerSupportabilityActions.CREATE_RESOURCE_FROM_YAML, StatusCode.STARTED, "Starting to create Resource From Csar by user {}",
                 user.getUserId());
         CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, csarUIPayload, csarUUID);
-        Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractNodeTypesInfo();
+        Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
+        if (StringUtils.isNotEmpty(resource.getModel())) {
+            final Map<String, Object> dataTypesToCreate = new HashMap<>();
+            for (final String dataType: csarInfo.getDataTypes().keySet()) {
+                final Either<DataTypeDefinition, StorageOperationStatus> result = propertyOperation.getDataTypeByName(dataType, resource.getModel());
+                if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+                    dataTypesToCreate.put(dataType, csarInfo.getDataTypes().get(dataType));
+                }
+            }
+            if (MapUtils.isNotEmpty(dataTypesToCreate)) {
+                final String nameForGeneratedModel = resource.getModel() + "_" + csarInfo.getVfResourceName() + resource.getCsarVersion();
+                final Model model = new Model(nameForGeneratedModel, resource.getModel());
+                modelBusinessLogic.createModel(model, new Yaml().dump(dataTypesToCreate));
+                resource.setModel(nameForGeneratedModel);
+            }
+        }
+        
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
             nodeTypesInfo, csarInfo, resource);
         if (findNodeTypesArtifactsToHandleRes.isRight()) {

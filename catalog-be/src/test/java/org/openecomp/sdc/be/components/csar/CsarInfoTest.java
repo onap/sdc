@@ -127,10 +127,10 @@ public class CsarInfoTest {
     }
 
     @Test
-    public void csarCheckNodeTypesInfoTest() {
+    public void csarCheckTypesInfoTest() {
 
         // when
-        Map<String, NodeTypeInfo> nodeTypeInfoMap = csarInfo.extractNodeTypesInfo();
+        Map<String, NodeTypeInfo> nodeTypeInfoMap = csarInfo.extractTypesInfo();
         NodeTypeInfo nodeTypeInfo = nodeTypeInfoMap.get(NODE_TYPE);
 
         // then
@@ -140,6 +140,10 @@ public class CsarInfoTest {
 
         assertEquals(MAIN_TEMPLATE_NAME, csarInfo.getMainTemplateName());
         assertEquals(csarInfo.getMainTemplateName(), nodeTypeInfo.getTemplateFileName());
+        
+        Map<String, Object> dataTypes = csarInfo.getDataTypes();
+        assertTrue(dataTypes.containsKey("tosca.datatypes.testDataType.FromMainTemplate"));
+        assertTrue(dataTypes.containsKey("tosca.datatypes.testDataType.FromGlobalSub"));
     }
 
     @Test
@@ -176,15 +180,15 @@ public class CsarInfoTest {
         final String nodeTypeInSubstitutionMapping = (String) ((Map<String, Object>)((Map<String, Object>)csarInfo.getMappedToscaMainTemplate().get("topology_template")).get("substitution_mappings")).get("node_type");
         assertTrue(((Map<String, Object>) csarInfo.getMappedToscaMainTemplate().get("node_types")).containsKey(nodeTypeInSubstitutionMapping));
         
-        assertTrue(csarInfo.extractNodeTypesInfo().isEmpty());
+        assertTrue(csarInfo.extractTypesInfo().isEmpty());
     }
     
     @Test
     public void testCreateCsarInfoVnfWithNodeTypeInGlobalSub() throws URISyntaxException, ZipException {
         final CsarInfo csarInfo = createCsarInfo("nodeTypeInGlobalSub.csar", "Definitions/MainServiceTemplate.yaml");
 
-        assertEquals(1, csarInfo.extractNodeTypesInfo().size());
-        final NodeTypeInfo nodeTypeInfo = csarInfo.extractNodeTypesInfo().get("tosca.nodes.l3vpn");
+        assertEquals(1, csarInfo.extractTypesInfo().size());
+        final NodeTypeInfo nodeTypeInfo = csarInfo.extractTypesInfo().get("tosca.nodes.l3vpn");
         assertNotNull(nodeTypeInfo);
         assertEquals("Definitions/GlobalSubstitutionTypesServiceTemplate.yaml", nodeTypeInfo.getTemplateFileName());
         assertEquals("tosca.nodes.l3vpn", nodeTypeInfo.getType());        

@@ -279,7 +279,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
             .getParentVertex(previousToscaElement, EdgeLabelEnum.MODEL, JsonParseFlagEnum.NoParse);
         if (modelElementVertexResponse.isLeft()) {
             final JanusGraphOperationStatus status = janusGraphDao
-                .createEdge(nextToscaElement.getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.MODEL, new HashMap<>());
+                .createEdge(modelElementVertexResponse.left().value().getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.MODEL, new HashMap<>());
             if (JanusGraphOperationStatus.OK != status) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                     FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.MODEL,
