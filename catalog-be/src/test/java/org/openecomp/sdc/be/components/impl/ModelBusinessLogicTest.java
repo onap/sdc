@@ -58,6 +58,8 @@ class ModelBusinessLogicTest {
     private ModelBusinessLogic modelBusinessLogic;
     @Mock
     private ModelOperation modelOperation;
+    @Mock
+    private DataTypeImportManager dataTypeImportManager;
     private Model model;
     private final Path modelImportsResourcePath = Path.of("src/test/resources/modelImports");
 
@@ -77,6 +79,17 @@ class ModelBusinessLogicTest {
         final Model result = modelBusinessLogic.createModel(model);
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo(model.getName());
+    }
+    
+    @Test
+    void createModelWithDataTypesTest() {
+        final String dataTypes = "dummyString";
+        when(modelOperation.createModel(model, false)).thenReturn(model);
+        final Model result = modelBusinessLogic.createModel(model, dataTypes);
+        assertThat(result).isNotNull();
+        assertThat(result.getName()).isEqualTo(model.getName());
+        
+        verify(dataTypeImportManager).createDataTypes(dataTypes, model.getName());
     }
 
     @Test

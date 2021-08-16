@@ -43,10 +43,18 @@ public class ModelBusinessLogic {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelBusinessLogic.class);
     private final ModelOperation modelOperation;
+    private final DataTypeImportManager dataTypeImportManager;
 
     @Autowired
-    public ModelBusinessLogic(final ModelOperation modelOperation) {
+    public ModelBusinessLogic(final ModelOperation modelOperation, final DataTypeImportManager dataTypeImportManager) {
         this.modelOperation = modelOperation;
+        this.dataTypeImportManager = dataTypeImportManager;
+    }
+    
+    public Model createModel(final Model model, final String datatypesYaml) {
+        createModel(model);
+        dataTypeImportManager.createDataTypes(datatypesYaml, model.getName());
+        return model;
     }
 
     public Model createModel(final Model model) {

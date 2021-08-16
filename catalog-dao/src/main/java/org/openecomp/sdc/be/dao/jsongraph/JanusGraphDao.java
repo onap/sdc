@@ -587,14 +587,25 @@ public class JanusGraphDao {
     }
 
     private boolean vertexValidForModel(final JanusGraphVertex vertex, final String model) {
-        final Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> modelVertices = getParentVerticies(vertex, GraphEdgeLabels.MODEL_ELEMENT);
+        final String vertexLabel = (String)vertex.property(GraphPropertyEnum.LABEL.getProperty()).value();
+        final VertexTypeEnum vertexType = VertexTypeEnum.getByName(vertexLabel);
+        final GraphEdgeLabels edgeLabel = vertexType.equals(VertexTypeEnum.TOPOLOGY_TEMPLATE) ? GraphEdgeLabels.MODEL : GraphEdgeLabels.MODEL_ELEMENT;
+        final Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> modelVertices = getParentVerticies(vertex, edgeLabel);
 
         if (modelVertices.isLeft()) {
-            for (ImmutablePair<JanusGraphVertex, Edge> vertexPair : modelVertices.left().value()) {
-                if (model.equals((String)vertexPair.getLeft().property("name").value())) {
-                    return true;
-                }
-            }
+            return modelVertices.left().value().stream().anyMatch(vertexPair -> modelVertexMatchesModel(vertexPair.getLeft(), model));
+        }
+        return false;
+    }
+    
+    private boolean modelVertexMatchesModel(final JanusGraphVertex modelVertex, final String model) {
+        if (model.equals((String)modelVertex.property("name").value())) {
+            return true;
+        }
+        final Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> derivedModels =
+                        getParentVerticies(modelVertex, GraphEdgeLabels.DERIVED_FROM);
+        if (derivedModels.isLeft()) {
+            return derivedModels.left().value().stream().anyMatch(derivedModel ->modelVertexMatchesModel(derivedModel.left, model));
         }
         return false;
     }
