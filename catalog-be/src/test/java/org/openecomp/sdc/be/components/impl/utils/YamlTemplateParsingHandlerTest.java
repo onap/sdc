@@ -149,7 +149,7 @@ public class YamlTemplateParsingHandlerTest {
 
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                csarInfo.extractNodeTypesInfo(), NODE_NAME, resource);
+                csarInfo.extractTypesInfo(), NODE_NAME, resource);
 
         validateParsedYaml(parsedYaml, NESTED_GROUP_NAME,
                 Lists.newArrayList("heat_file", "description"));

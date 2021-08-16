@@ -190,7 +190,8 @@ public class ResourceBusinessLogicTest {
 	private final IGroupOperation groupOperation = Mockito.mock(IGroupOperation.class);
 	private final IGroupInstanceOperation groupInstanceOperation = Mockito.mock(IGroupInstanceOperation.class);
 	private final IGroupTypeOperation groupTypeOperation = Mockito.mock(IGroupTypeOperation.class);
-	private final GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
+    private final GroupBusinessLogic groupBusinessLogic = Mockito.mock(GroupBusinessLogic.class);
+    private final ModelBusinessLogic modelBusinessLogic = Mockito.mock(ModelBusinessLogic.class);
 	private final InterfaceOperation interfaceOperation = Mockito.mock(InterfaceOperation.class);
 	private final ArtifactsOperations artifactToscaOperation = Mockito.mock(ArtifactsOperations.class);
 	private final PropertyBusinessLogic propertyBusinessLogic = Mockito.mock(PropertyBusinessLogic.class);
@@ -313,7 +314,7 @@ public class ResourceBusinessLogicTest {
 				csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
 				artifactToscaOperation, propertyBusinessLogic, componentContactIdValidator, componentNameValidator,
 				componentTagsValidator, componentValidator,	componentIconValidator, componentProjectCodeValidator,
-				componentDescriptionValidator, policyBusinessLogic);
+				componentDescriptionValidator, policyBusinessLogic, modelBusinessLogic);
 		bl.setElementDao(mockElementDao);
 		bl.setUserAdmin(mockUserAdmin);
 		bl.setCapabilityTypeOperation(capabilityTypeOperation);
@@ -1460,6 +1461,8 @@ public class ResourceBusinessLogicTest {
        YamlTemplateParsingHandler yamlTemplateParser = new YamlTemplateParsingHandler(mockJanusGraphDao, null, Mockito.mock(AnnotationBusinessLogic.class), null);
        final ParsedToscaYamlInfo parsedToscaYamlInfo =  yamlTemplateParser.parseResourceInfoFromYAML("Definitions/my_vnf.yml", resourceYml, Collections.EMPTY_MAP, Collections.EMPTY_MAP, "myVnf", resourceResponse);
 
+       when(propertyOperation.getDataTypeByName("tosca.datatypes.testDataType.FromMainTemplate", "testModel")).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+       
         when(toscaOperationFacade.getLatestByToscaResourceName(anyString(), any())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         Resource vduCp = new Resource();
         vduCp.setToscaResourceName("tosca.nodes.nfv.VduCp");
@@ -1502,6 +1505,7 @@ public class ResourceBusinessLogicTest {
         resourceResponse.setModel("testModel");
         resourceResponse.setResourceType(ResourceTypeEnum.VF);
         resourceResponse.setProperties(new ArrayList<>());
+        resourceResponse.setCsarVersion("1.0");
 
         Resource derivedFrom = new Resource();
         List<PropertyDefinition> properties = new ArrayList<>();
@@ -1513,7 +1517,7 @@ public class ResourceBusinessLogicTest {
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(any(), eq("tosca.nodes.nfv.VNF"))).thenReturn(Either.left(derivedFrom));
 
         when(toscaOperationFacade
-        .validateComponentNameAndModelExists("myVnf", "testModel", ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(false));
+        .validateComponentNameAndModelExists("myVnf", "testModel_myVnf1.0", ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(false));
 
         when(toscaOperationFacade.addPropertyToComponent(any(), any(), any())).thenReturn(Either.left(new PropertyDefinition()));
         when(toscaOperationFacade.associateComponentInstancePropertiesToComponent(any(), any())).thenReturn(Either.left(Collections.emptyMap()));
@@ -1521,7 +1525,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade.associateDeploymentArtifactsToInstances(any(), any(), any())).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.associateInstAttributeToComponentToInstances(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.associateResourceInstances(any(Component.class), anyString(), anyList())).thenReturn(Either.left(Collections.EMPTY_LIST));
-		when(applicationDataTypeCache.getAll(resourceResponse.getModel())).thenReturn(Either.left(emptyDataTypes));
+		when(applicationDataTypeCache.getAll("testModel_myVnf1.0")).thenReturn(Either.left(emptyDataTypes));
 
         doAnswer(invocation -> {
             Map<ComponentInstance, Map<String, List<RequirementDefinition>>> instReqs = invocation.getArgument(1);
