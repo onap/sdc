@@ -112,6 +112,7 @@ export class OnboardingService {
         newMetadata.csarUUID = csar.packageId;
         newMetadata.csarPackageType = csar.packageType;
         newMetadata.csarVersion = csar.version;
+        newMetadata.csarVersionId = csar.versionId;
         newMetadata.packageId = csar.packageId;
         newMetadata.description = csar.description;
         newMetadata.selectedCategory = selectedCategory && selectedSubCategory ? selectedCategory.name + "_#_" + selectedSubCategory.name : '';
@@ -121,6 +122,7 @@ export class OnboardingService {
         newMetadata.tags = [];
         newMetadata.icon = DEFAULT_ICON;
         newMetadata.iconSprite = "sprite-resource-icons";
+        newMetadata.models = csar.models;
         return newMetadata;
     };
 
