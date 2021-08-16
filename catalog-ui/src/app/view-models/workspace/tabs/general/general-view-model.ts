@@ -81,6 +81,7 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     componentModel:componentModel;
     instantiationTypes:Array<instantiationType>;
     isHiddenCategorySelected: boolean;
+    isModelRequired: boolean;
 
     save():Promise<any>;
     revert():void;
@@ -102,6 +103,7 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     updateIcon():void;
     possibleToUpdateIcon():boolean;
     initModel():void;
+    isVspImport(): boolean;
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -465,11 +467,43 @@ export class GeneralViewModel {
         };
 
         this.$scope.initModel = ():void => {
-            this.$scope.models = new Array();
+            this.$scope.isModelRequired = false;
+            this.$scope.models = [{id: '', name: 'SDC AID'}];
+            if (this.$scope.isVspImport()) {
+                if (this.$scope.component.componentMetadata.models) {
+                    this.$scope.isModelRequired = true;
+                    this.$scope.models = [{id: '', name: 'Select'},
+                        ...this.$scope.component.componentMetadata.models.map(value => {
+                            return {id: value, name: value};
+                        })
+                    ];
+                }
+                return;
+            }
+
             this.modelService.getModels().subscribe((modelsFound: Model[]) => {
-                modelsFound.forEach(model => {this.$scope.models.push(model.name)});})
-            this.$scope.models.filter(model => model.name === this.$scope.component).model;
+                modelsFound.forEach(model => {this.$scope.models.push({id: model.name, name: model.name})});
+            });
+
+            this.$scope.models.sort(function (model1, model2) {
+                if (model1.id > model2.id) {
+                    return 1;
+                }
+                if (model1.id < model2.id) {
+                    return -1;
+                }
+                return 0;
+            });
         };
+
+        this.$scope.isVspImport = (): boolean => {
+            if (!this.$scope.component || !this.$scope.component.isResource()) {
+                return false;
+            }
+
+            const resource = <Resource>this.$scope.component;
+            return resource.isCsarComponent();
+        }
 
         this.$scope.initEnvironmentContext = ():void => {
             if (this.$scope.componentType === ComponentType.SERVICE) {
@@ -725,15 +759,15 @@ export class GeneralViewModel {
 
         this.$scope.onModelChange = (): void => {
             if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.component.categories) {
-	             let modelName = this.$scope.component.model ? this.$scope.component.model : null;
-                 this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
-		                this.$scope.baseTypes = []
-                        this.$scope.baseTypeVersions = []
-                        data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
-                        data[0].versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-                        this.$scope.component.derivedFromGenericType = data[0].toscaResourceName;
-                        this.$scope.component.derivedFromGenericVersion = data[0].versions[0];
-                 })
+                let modelName = this.$scope.component.model ? this.$scope.component.model : null;
+                this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
+                    this.$scope.baseTypes = []
+                    this.$scope.baseTypeVersions = []
+                    data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
+                    data[0].versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+                    this.$scope.component.derivedFromGenericType = data[0].toscaResourceName;
+                    this.$scope.component.derivedFromGenericVersion = data[0].versions[0];
+                });
             }
         };
 
