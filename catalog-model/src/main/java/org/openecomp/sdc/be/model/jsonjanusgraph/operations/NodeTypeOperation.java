@@ -576,7 +576,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         if (derivedFromResources != null && !derivedFromResources.isEmpty()) {
             for (String parentResource : derivedFromResources) {
                 Either<List<GraphVertex>, JanusGraphOperationStatus> getParentResources = derivedResourceResolver
-                    .findDerivedResources(parentResource);
+                    .findDerivedResources(parentResource, nodeType.getModel());
                 List<GraphVertex> resources = null;
                 if (getParentResources.isRight()) {
                     log.error("Cannot find parent resource by tosca resource name {} in the graph.", parentResource);

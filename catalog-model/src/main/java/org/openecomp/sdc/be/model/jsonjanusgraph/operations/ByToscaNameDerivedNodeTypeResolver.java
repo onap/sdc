@@ -41,10 +41,10 @@ public class ByToscaNameDerivedNodeTypeResolver implements DerivedNodeTypeResolv
     private JanusGraphDao janusGraphDao;
 
     @Override
-    public Either<List<GraphVertex>, JanusGraphOperationStatus> findDerivedResources(String parentResource) {
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> findDerivedResources(String parentResource, final String modelName) {
         Map<GraphPropertyEnum, Object> propertiesToMatch = new HashMap<>();
         propertiesToMatch.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
         propertiesToMatch.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, parentResource);
-        return janusGraphDao.getByCriteria(VertexTypeEnum.NODE_TYPE, propertiesToMatch, JsonParseFlagEnum.ParseMetadata);
+        return janusGraphDao.getByCriteria(VertexTypeEnum.NODE_TYPE, propertiesToMatch, null, JsonParseFlagEnum.ParseMetadata, modelName);
     }
 }

@@ -26,5 +26,5 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
 public interface DerivedNodeTypeResolver {
 
-    Either<List<GraphVertex>, JanusGraphOperationStatus> findDerivedResources(String parentResource);
+    Either<List<GraphVertex>, JanusGraphOperationStatus> findDerivedResources(String parentResource, String modelName);
 }

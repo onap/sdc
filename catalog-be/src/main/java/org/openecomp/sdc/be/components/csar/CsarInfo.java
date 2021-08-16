@@ -85,6 +85,9 @@ public class CsarInfo {
     private boolean isUpdate;
     @Getter
     private Map<String, Resource> createdNodes;
+    private Map<String, Object> datatypeDefinitions;
+    private List<Map.Entry<String, byte[]>> globalSubstitutes;
+
 
     @SuppressWarnings("unchecked")
     public CsarInfo(User modifier, String csarUUID, Map<String, byte[]> csar, String vfResourceName, String mainTemplateName,
@@ -101,7 +104,18 @@ public class CsarInfo {
         this.isUpdate = isUpdate;
         this.createdNodes = new HashMap<>();
         this.nonManoConfiguration = NonManoConfigurationManager.getInstance().getNonManoConfiguration();
+        this.globalSubstitutes = getGlobalSubstitutes(csar);
     }
+    
+    private List<Map.Entry<String, byte[]>> getGlobalSubstitutes(final Map<String, byte[]> csar){
+        final List<Map.Entry<String, byte[]>> globalSubstitutesInCsar = new ArrayList<>();
+        for (Map.Entry<String, byte[]> entry : csar.entrySet()) {
+            if (isAServiceTemplate(entry.getKey()) && isGlobalSubstitute(entry.getKey())) {
+                globalSubstitutesInCsar.add(entry);
+            }
+        }
+        return globalSubstitutesInCsar;
+    }    
 
     @VisibleForTesting
     CsarInfo(final NonManoConfiguration nonManoConfiguration) {
@@ -153,37 +167,56 @@ public class CsarInfo {
         this.isUpdate = isUpdate;
     }
 
-    public Map<String, NodeTypeInfo> extractNodeTypesInfo() {
+    public Map<String, NodeTypeInfo> extractTypesInfo() {
         Map<String, NodeTypeInfo> nodeTypesInfo = new HashMap<>();
-        List<Map.Entry<String, byte[]>> globalSubstitutes = new ArrayList<>();
         final Set<String> nodeTypesUsedInNodeTemplates = new HashSet<>();
         for (Map.Entry<String, byte[]> entry : getCsar().entrySet()) {
-            extractNodeTypeInfo(nodeTypesInfo, globalSubstitutes, nodeTypesUsedInNodeTemplates, entry);
+            extractNodeTypeInfo(nodeTypesInfo,  nodeTypesUsedInNodeTemplates, entry);
         }
         if (CollectionUtils.isNotEmpty(globalSubstitutes)) {
-            setDerivedFrom(nodeTypesInfo, globalSubstitutes);
-            addGlobalSubstitutionsToNodeTypes(globalSubstitutes, nodeTypesUsedInNodeTemplates, nodeTypesInfo);
+            setDerivedFrom(nodeTypesInfo);
+            addGlobalSubstitutionsToNodeTypes(nodeTypesUsedInNodeTemplates, nodeTypesInfo);
         }
+        
         markNestedVfc(getMappedToscaMainTemplate(), nodeTypesInfo);
         return nodeTypesInfo;
     }
+    
+    public Map<String, Object> getDataTypes() {
+        if (datatypeDefinitions == null) {
+            datatypeDefinitions = new HashMap<>();
+            for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
+                final String yamlFileContents = new String(entry.getValue());
+                final Map<String, Object> mappedToscaTemplate = new Yaml().load(yamlFileContents);
+                datatypeDefinitions.putAll(getDataTypesFromTemplate(mappedToscaTemplate));
+            }
+            datatypeDefinitions.putAll(getDataTypesFromTemplate(mappedToscaMainTemplate));
+        }
+        return datatypeDefinitions;
+    }
+    
+    @SuppressWarnings("unchecked")    
+    private Map<String, Object> getDataTypesFromTemplate(final Map<String, Object> mappedToscaTemplate) {
+        final Either<Object, ResultStatusEnum> dataTypesEither = findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.DATA_TYPES,
+                        ToscaElementTypeEnum.MAP);
+        if (dataTypesEither != null && dataTypesEither.isLeft()) {
+            return (Map<String, Object>) dataTypesEither.left().value();
+        }
+        return Collections.emptyMap();
+    }
 
     @SuppressWarnings("unchecked")
-    private void extractNodeTypeInfo(Map<String, NodeTypeInfo> nodeTypesInfo, List<Map.Entry<String, byte[]>> globalSubstitutes,
+    private void extractNodeTypeInfo(Map<String, NodeTypeInfo> nodeTypesInfo,
                                      final Set<String> nodeTypesUsedInNodeTemplates, Map.Entry<String, byte[]> entry) {
-        if (isAServiceTemplate(entry.getKey())) {
-            if (isGlobalSubstitute(entry.getKey())) {
-                globalSubstitutes.add(entry);
-            } else {
-                Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(new String(entry.getValue()));
-                findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS, ToscaElementTypeEnum.MAP).right()
-                    .on(sub -> handleSubstitutionMappings(nodeTypesInfo, entry, mappedToscaTemplate, (Map<String, Object>) sub));
-                final Either<Object, ResultStatusEnum> nodeTypesEither = findToscaElement(mappedToscaTemplate,
-                    TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
-                if (nodeTypesEither.isLeft()) {
-                    final Map<String, Map<String, Object>> nodeTemplates = (Map<String, Map<String, Object>>) nodeTypesEither.left().value();
-                    nodeTypesUsedInNodeTemplates.addAll(findNodeTypesUsedInNodeTemplates(nodeTemplates));
-                }
+        if (isAServiceTemplate(entry.getKey()) && !isGlobalSubstitute(entry.getKey())) {
+            Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(new String(entry.getValue()));
+            findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS, ToscaElementTypeEnum.MAP).right()
+                .on(sub -> handleSubstitutionMappings(nodeTypesInfo, entry, mappedToscaTemplate, (Map<String, Object>) sub));
+            final Either<Object, ResultStatusEnum> nodeTypesEither = findToscaElement(mappedToscaTemplate,
+                TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
+            if (nodeTypesEither.isLeft()) {
+                final Map<String, Map<String, Object>> nodeTemplates = (Map<String, Map<String, Object>>) nodeTypesEither.left().value();
+                nodeTypesUsedInNodeTemplates.addAll(findNodeTypesUsedInNodeTemplates(nodeTemplates));
             }
         }
     }
@@ -232,7 +265,7 @@ public class CsarInfo {
     }
 
     @SuppressWarnings("unchecked")
-    private void setDerivedFrom(Map<String, NodeTypeInfo> nodeTypesInfo, List<Map.Entry<String, byte[]>> globalSubstitutes) {
+    private void setDerivedFrom(Map<String, NodeTypeInfo> nodeTypesInfo) {
         for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
             String yamlFileContents = new String(entry.getValue());
             Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);
@@ -259,8 +292,7 @@ public class CsarInfo {
     }
 
     @SuppressWarnings("unchecked")
-    private void addGlobalSubstitutionsToNodeTypes(final List<Map.Entry<String, byte[]>> globalSubstitutes,
-                                                   final Set<String> nodeTypesUsedInNodeTemplates, final Map<String, NodeTypeInfo> nodeTypesInfo) {
+    private void addGlobalSubstitutionsToNodeTypes(final Set<String> nodeTypesUsedInNodeTemplates, final Map<String, NodeTypeInfo> nodeTypesInfo) {
         for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
             final String yamlFileContents = new String(entry.getValue());
             final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) new Yaml().load(yamlFileContents);

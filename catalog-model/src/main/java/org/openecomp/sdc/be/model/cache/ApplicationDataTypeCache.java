@@ -168,7 +168,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     public Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> getAll(final String model) {
         try {
             readWriteLock.readLock().lock();
-            if (MapUtils.isEmpty(dataTypesByModelCacheMap)) {
+            if (MapUtils.isEmpty(dataTypesByModelCacheMap) || !dataTypesByModelCacheMap.containsKey(model)) {
                 final var dataTypesFound = getAllDataTypesFromGraph();
                 if (dataTypesFound.isRight()) {
                     return Either.right(dataTypesFound.right().value());
