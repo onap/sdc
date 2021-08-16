@@ -126,6 +126,7 @@ export class ComponentMetadata implements IComponentMetadata {
     public resourceType: string;
     public csarUUID: string;
     public csarVersion: string;
+    public csarVersionId: string;
     public derivedList: string[];
     public vendorName: string;
     public vendorRelease: string;
@@ -134,6 +135,7 @@ export class ComponentMetadata implements IComponentMetadata {
     public csarPackageType: string;
     public packageId: string;
     public iconSprite: string;
+    public models: string[];
 
     // Service only
     public serviceFunction: string;
