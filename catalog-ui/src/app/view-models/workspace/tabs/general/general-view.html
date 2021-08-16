@@ -611,17 +611,17 @@
 
                   <!--------------------- Model -------------------->
                   <div class="i-sdc-form-item">
-                    <label class="i-sdc-form-label">Model</label>
-                    <select class="i-sdc-form-select"
-                            name="modelName"
-                            data-ng-class="{'view-mode': isViewMode()}"
-                            data-ng-disabled="component.isCsarComponent() || !isCreateMode()"
-                            data-ng-model="component.model"
-                            data-ng-change="onModelChange()"
-                            data-tests-id="modelName">
-                      <option value="">SDC AID</option>
-                      <option ng-repeat="model in models | orderBy:[name]">{{model}}</option>
-                    </select>
+                      <label class="i-sdc-form-label required">Model</label>
+                      <select class="i-sdc-form-select"
+                              name="modelName"
+                              data-ng-class="{'view-mode': isViewMode()}"
+                              data-ng-disabled="!isCreateMode()"
+                              data-ng-model="component.model"
+                              data-ng-change="onModelChange()"
+                              data-tests-id="modelName"
+                              ng-required="isModelRequired">
+                          <option ng-repeat="model in models" value="{{model.id}}">{{model.name}}</option>
+                      </select>
                   </div>
                   <!--------------------- Model -------------------->
 

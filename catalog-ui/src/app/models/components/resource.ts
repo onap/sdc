@@ -47,6 +47,7 @@ export class Resource extends Component {
     // Onboarding parameters
     public csarUUID:string;
     public csarVersion:string;
+    public csarVersionId: string;
     public csarPackageType:string;
     public packageId:string;
 
@@ -61,6 +62,7 @@ export class Resource extends Component {
             this.resourceType = component.resourceType;
             this.csarUUID = component.csarUUID;
             this.csarVersion = component.csarVersion;
+            this.csarVersionId = component.csarVersionId;
             this.resourceVendorModelNumber = component.resourceVendorModelNumber;
             this.filterTerm = this.name + ' ' + this.description + ' ' + (this.tags ? this.tags.toString() : '') + ' ' + this.version + ' ' + this.resourceType;
             if (component.categories && component.categories[0] && component.categories[0].subcategories && component.categories[0].subcategories[0]) {
@@ -82,6 +84,7 @@ export class Resource extends Component {
         this.resourceType = componentMetadata.resourceType;
         this.csarUUID = componentMetadata.csarUUID;
         this.csarVersion = componentMetadata.csarVersion;
+        this.csarVersionId = componentMetadata.csarVersionId;
         this.derivedFrom = componentMetadata.derivedFrom;
         this.resourceVendorModelNumber = componentMetadata.resourceVendorModelNumber;
         this.setComponentDisplayData();

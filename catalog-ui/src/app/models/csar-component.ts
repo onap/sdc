@@ -25,6 +25,7 @@ export interface ICsarComponent {
     description:string;
     vspName:string;
     version:string;
+    versionId:string;
     packageId:string;
     category:string;
     subCategory:string
@@ -32,5 +33,6 @@ export interface ICsarComponent {
     packageType:string;
     resourceType:string;
     vendorRelease:string;
+    models: Array<string>;
 }
 
