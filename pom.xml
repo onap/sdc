@@ -74,7 +74,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <javax.validation.version>2.0.1.Final</javax.validation.version>
 
         <jetty.version>9.4.41.v20210516</jetty.version>
-        <cxf.version>3.4.3</cxf.version>
+        <cxf.version>3.4.4</cxf.version>
 
         <org.owasp.esapi.version>2.2.0.0</org.owasp.esapi.version>
         <org.dom4j.version>2.1.3</org.dom4j.version>
