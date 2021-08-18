@@ -66,68 +66,80 @@ public class Resource extends Component implements Serializable {
     }
 
     public Boolean isAbstract() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).isAbstract();
+        return getResourceMetadataDataDefinition().isAbstract();
     }
 
     public void setAbstract(Boolean isAbstract) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setAbstract(isAbstract);
+        getResourceMetadataDataDefinition().setAbstract(isAbstract);
     }
 
     public String getCost() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).getCost();
+        return getResourceMetadataDataDefinition().getCost();
     }
 
     public void setCost(String cost) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setCost(cost);
+        getResourceMetadataDataDefinition().setCost(cost);
     }
 
     public String getLicenseType() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).getLicenseType();
+        return getResourceMetadataDataDefinition().getLicenseType();
     }
 
     public void setLicenseType(String licenseType) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setLicenseType(licenseType);
+        getResourceMetadataDataDefinition().setLicenseType(licenseType);
     }
 
     public String getToscaResourceName() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).getToscaResourceName();
+        return getResourceMetadataDataDefinition().getToscaResourceName();
     }
 
     public void setToscaResourceName(String toscaResourceName) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setToscaResourceName(toscaResourceName);
+        getResourceMetadataDataDefinition().setToscaResourceName(toscaResourceName);
     }
 
     public ResourceTypeEnum getResourceType() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceType();
+        return getResourceMetadataDataDefinition().getResourceType();
     }
 
     public void setResourceType(ResourceTypeEnum resourceType) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setResourceType(resourceType);
+        getResourceMetadataDataDefinition().setResourceType(resourceType);
     }
 
     public String getVendorName() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).getVendorName();
+        return getResourceMetadataDataDefinition().getVendorName();
     }
 
     public void setVendorName(String vendorName) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setVendorName(vendorName);
+        getResourceMetadataDataDefinition().setVendorName(vendorName);
     }
 
     public String getVendorRelease() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).getVendorRelease();
+        return getResourceMetadataDataDefinition().getVendorRelease();
     }
 
     public void setVendorRelease(String vendorRelease) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setVendorRelease(vendorRelease);
+        getResourceMetadataDataDefinition().setVendorRelease(vendorRelease);
     }
 
     public String getResourceVendorModelNumber() {
-        return ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).getResourceVendorModelNumber();
+        return getResourceMetadataDataDefinition().getResourceVendorModelNumber();
     }
 
     public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
-        ((ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition())
+        getResourceMetadataDataDefinition()
             .setResourceVendorModelNumber(resourceVendorModelNumber);
+    }
+
+    private ResourceMetadataDataDefinition getResourceMetadataDataDefinition() {
+        return (ResourceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
+    }
+
+    public String getCsarVersionId() {
+        return getResourceMetadataDataDefinition().getCsarVersionId();
+    }
+
+    public void setCsarVersionId(String csarVersionId) {
+        getResourceMetadataDataDefinition().setCsarVersionId(csarVersionId);
     }
 
     @Override

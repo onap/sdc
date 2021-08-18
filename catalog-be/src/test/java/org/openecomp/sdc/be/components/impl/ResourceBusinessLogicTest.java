@@ -112,6 +112,7 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.VendorSoftwareProduct;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -544,6 +545,12 @@ public class ResourceBusinessLogicTest {
 	@Test
 	public void testUpdateUnhappyScenario() {
 		Resource resource = createResourceObjectCsar(true);
+		final var csarVersionId = "csarVersionId";
+		resource.setCsarVersionId(csarVersionId);
+
+		final var vendorSoftwareProduct = new VendorSoftwareProduct();
+		vendorSoftwareProduct.setFileMap(new HashMap<>());
+		vendorSoftwareProduct.setModelList(Collections.emptyList());
 		setCanWorkOnResource(resource);
 		validateUserRoles(Role.ADMIN, Role.DESIGNER);
 
@@ -551,9 +558,7 @@ public class ResourceBusinessLogicTest {
 		when(toscaOperationFacade.validateToscaResourceNameExists("tosca.nodes.Root")).thenReturn(Either.left(true));
 		when(toscaOperationFacade.getToscaElement(resource.getUniqueId())).thenReturn(Either.left(setCanWorkOnResource(resource)));
 		when(toscaOperationFacade.updateToscaElement(resource)).thenReturn(Either.left(resource));
-
-		when(csarOperation.getCsar("valid_vf.csar", user)).thenReturn(Either.left(new HashMap<>()));
-
+		when(csarOperation.findVsp("valid_vf.csar", csarVersionId, user)).thenReturn(Optional.of(vendorSoftwareProduct));
 
 		try {
 			Resource createdResource = bl.validateAndUpdateResourceFromCsar(resource, user, null, "", resource.getUniqueId());
