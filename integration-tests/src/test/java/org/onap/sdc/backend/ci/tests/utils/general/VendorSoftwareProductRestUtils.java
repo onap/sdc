@@ -362,8 +362,8 @@ public class VendorSoftwareProductRestUtils {
         RestResponse response = http.httpSendPost(url, body, headersMap);
 
         vendorSoftwareProductObject.setVspId(ResponseParser.getValueFromJsonResponse(response.getResponse(), "itemId"));
+        vendorSoftwareProductObject.setVersionId(ResponseParser.getValueFromJsonResponse(response.getResponse(), "version:id"));
         vendorSoftwareProductObject.setComponentId(ResponseParser.getValueFromJsonResponse(response.getResponse(), "version:id"));
-//		vendorSoftwareProductObject.setVersion(ResponseParser.getValueFromJsonResponse(response.getResponse(), "version:name"));
         vendorSoftwareProductObject.setAttContact(user.getUserId());
 
         return new Pair<>(response, vendorSoftwareProductObject);

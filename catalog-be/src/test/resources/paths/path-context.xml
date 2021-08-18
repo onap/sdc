@@ -50,6 +50,7 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.components.validation,
 		org.openecomp.sdc.be.switchover.detector,
 		org.openecomp.sdc.be.tosca,
+		org.openecomp.sdc.be.client,
 		org.openecomp.sdc.be.model.operations.impl,
 		org.openecomp.sdc.be.model.jsonjanusgraph.operations,
 		org.openecomp.sdc.be.model.jsonjanusgraph.utils,
