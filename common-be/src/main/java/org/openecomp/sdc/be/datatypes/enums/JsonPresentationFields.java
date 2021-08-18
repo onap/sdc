@@ -61,6 +61,7 @@ public enum JsonPresentationFields {
     INVARIANT_UUID("invariantUuid", GraphPropertyEnum.INVARIANT_UUID),
     CSAR_UUID("csarUuid", GraphPropertyEnum.CSAR_UUID),
     CSAR_VERSION("csarVersion", null),
+    CSAR_VERSION_ID("csarVersionId", null),
     IMPORTED_TOSCA_CHECKSUM("importedToscaChecksum", null),
     CONTACT_ID("contactId", null),
     PROJECT_CODE("projectCode", null),

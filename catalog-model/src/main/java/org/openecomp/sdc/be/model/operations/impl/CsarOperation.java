@@ -19,80 +19,59 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import fj.data.Either;
 import java.util.Map;
-import javax.annotation.PostConstruct;
+import java.util.Optional;
+import org.apache.commons.collections4.MapUtils;
+import org.openecomp.sdc.be.client.onboarding.api.OnboardingClient;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.VendorSoftwareProduct;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("csar-operation")
 public class CsarOperation {
 
-    private static final Logger log = Logger.getLogger(CsarOperation.class.getName());
-    @javax.annotation.Resource
-    private OnboardingClient onboardingClient;
+    private static final Logger LOGGER = Logger.getLogger(CsarOperation.class.getName());
 
-    @PostConstruct
-    public void init() {
+    private final OnboardingClient onboardingClient;
+
+    @Autowired
+    public CsarOperation(final OnboardingClient onboardingClient) {
+        this.onboardingClient = onboardingClient;
     }
 
     /**
-     * get csar from remote repository
+     * Finds the CSAR package of the latest version of a Vendor Software Product (VSP) from the onboarding repository.
      *
-     * @param csarUuid
-     * @return
+     * @param csarUuid the VSP id
+     * @param user     the logged user
+     * @return a Map containing the CSAR files <path, bytes> (left), or a StorageOperationStatus if an error occurs (right)
      */
-    public Either<Map<String, byte[]>, StorageOperationStatus> getCsar(String csarUuid, User user) {
-        Either<Map<String, byte[]>, StorageOperationStatus> result = onboardingClient.getCsar(csarUuid, user.getUserId());
+    public Either<Map<String, byte[]>, StorageOperationStatus> findVspLatestPackage(String csarUuid, User user) {
+        final Either<Map<String, byte[]>, StorageOperationStatus> result = onboardingClient.findLatestPackage(csarUuid, user.getUserId());
         if (result.isRight()) {
-            log.debug("Cannot find csar {}. Staus returned is {}", csarUuid, result.right().value());
-        } else {
-            Map<String, byte[]> values = result.left().value();
-            if (values != null) {
-                log.debug("The returned files are {}", values.keySet());
-            }
+            LOGGER.debug("Could not find VSP Package '{}'. Status '{}'", csarUuid, result.right().value());
+            return result;
+        }
+        if (MapUtils.isNotEmpty(result.left().value())) {
+            final Map<String, byte[]> values = result.left().value();
+            LOGGER.debug("The returned files are {}", values.keySet());
         }
         return result;
     }
 
-    @SuppressWarnings("unchecked")
-    public Either<String, StorageOperationStatus> getCsarLatestVersion(String csarUuid, User user) {
-        Either<String, StorageOperationStatus> result = onboardingClient.getPackages(user.getUserId());
-        if (result.isRight()) {
-            log.debug("Cannot find version for package with Id {}. Status returned is {}", csarUuid, result.right().value());
-        } else {
-            String latestVersion = null;
-            JsonElement root = new JsonParser().parse(result.left().value());
-            JsonArray csarsInfo = root.getAsJsonObject().get("results").getAsJsonArray();
-            for (JsonElement csarInfo : csarsInfo) {
-                Map<String, String> csarInfoMap = new Gson().fromJson(csarInfo, Map.class);
-                if (csarInfoMap.get("packageId").equals(csarUuid)) {
-                    String curVersion = csarInfoMap.get("version");
-                    if (latestVersion == null || isGreater(latestVersion, curVersion)) {
-                        latestVersion = curVersion;
-                    }
-                }
-            }
-            if (latestVersion != null) {
-                result = Either.left(latestVersion);
-            } else {
-                log.debug("The returned packages are {}. Failed to find latest version for package with Id {}. ", result.left().value(), csarUuid);
-                result = Either.right(StorageOperationStatus.NOT_FOUND);
-            }
-        }
-        return result;
+    /**
+     * Finds the Vendor Software Product (VSP) from the onboarding repository.
+     *
+     * @param id        the VSP id
+     * @param versionId the VSP version
+     * @param user      the logged user
+     * @return a VSP representation if found, empty otherwise.
+     */
+    public Optional<VendorSoftwareProduct> findVsp(final String id, final String versionId, final User user) {
+        return onboardingClient.findVendorSoftwareProduct(id, versionId, user.getUserId());
     }
 
-    private boolean isGreater(String latestVersion, String currentVersion) {
-        return Double.parseDouble(latestVersion) < Double.parseDouble(currentVersion);
-    }
-
-    public OnboardingClient getOnboardingClient() {
-        return onboardingClient;
-    }
 }

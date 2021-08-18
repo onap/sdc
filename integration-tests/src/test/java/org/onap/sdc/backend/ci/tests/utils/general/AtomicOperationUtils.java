@@ -142,13 +142,16 @@ public final class AtomicOperationUtils {
 		}
 	}
 
-	public static Either<Resource, RestResponse> createResourceByResourceDetails(ResourceReqDetails resourceDetails, UserRoleEnum userRole, Boolean validateState) {
+	public static Either<Resource, RestResponse> createResourceByResourceDetails(final ResourceReqDetails resourceDetails,
+																				 final UserRoleEnum userRole,
+																				 final Boolean validateState) {
 		try {
 			User defaultUser = ElementFactory.getDefaultUser(userRole);
 			RestResponse resourceResp = ResourceRestUtils.createResource(resourceDetails, defaultUser);
 
 			if (validateState) {
-				assertTrue("Create resource failed with error: " + resourceResp.getResponse(),resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED);
+				assertEquals("Create resource failed with error: " + resourceResp.getResponse(),
+					ResourceRestUtils.STATUS_CODE_CREATED, (int) resourceResp.getErrorCode());
 			}
 
 			if (resourceResp.getErrorCode() == ResourceRestUtils.STATUS_CODE_CREATED) {

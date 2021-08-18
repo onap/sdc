@@ -2554,3 +2554,29 @@ errors:
         messageId: "SVC4154"
     }
 
+    #-----------SVC4155---------------------------
+    # %1 - "VSP id"
+    # %2 - "VSP version id"
+    VSP_FIND_ERROR: {
+        code: 500,
+        message: "An error has occurred while retrieving the Vendor Software Product of id '%1', version id '%2'",
+        messageId: "SVC4155"
+    }
+
+    #-----------SVC4156---------------------------
+    # %1 - "VSP id"
+    # %2 - "VSP version id"
+    VSP_NOT_FOUND: {
+        code: 404,
+        message: "Could not find Vendor Software Product of id '%1', version id '%2'",
+        messageId: "SVC4156"
+    }
+
+    #-----------SVC4157---------------------------
+    # %1 - "The model name"
+    # %2 - "List of allowed models"
+    VSP_MODEL_NOT_ALLOWED: {
+        code: 400,
+        message: "The Model '%1' is not allowed for the imported Vendor Software Product. Allowed Models: '%2'",
+        messageId: "SVC4157"
+    }

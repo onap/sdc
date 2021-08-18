@@ -945,7 +945,9 @@ onboarding:
     protocol: http
     port: <%= node['ONBOARDING_BE'][:http_port] %>
     <% end -%>
-    downloadCsarUri: "/onboarding-api/v1.0/vendor-software-products/packages"
+    getVspPackageUri: "/onboarding-api/v1.0/vendor-software-products/packages/%s?versionId=%s" # /onboarding-api/v1.0/vendor-software-products/packages/:vspId?versionId=:vspVersionId
+    getLatestVspPackageUri: "/onboarding-api/v1.0/vendor-software-products/packages/%s" # /onboarding-api/v1.0/vendor-software-products/packages/:vspId
+    getVspUri: "/onboarding-api/v1.0/vendor-software-products/%s/versions/%s" # /onboarding-api/v1.0/vendor-software-products/:vspId/versions/:vspVersionId
     healthCheckUri: "/onboarding-api/v1.0/healthcheck"
 
 # #GSS IDNS

@@ -71,6 +71,8 @@ public class CsarInfo {
     @Setter
     private String csarUUID;
     @Getter
+    private String csarVersionId;
+    @Getter
     @Setter
     private Map<String, byte[]> csar;
     @Getter
@@ -89,7 +91,6 @@ public class CsarInfo {
     private List<Map.Entry<String, byte[]>> globalSubstitutes;
 
 
-    @SuppressWarnings("unchecked")
     public CsarInfo(User modifier, String csarUUID, Map<String, byte[]> csar, String vfResourceName, String mainTemplateName,
                     String mainTemplateContent, boolean isUpdate) {
         this.vfResourceName = vfResourceName;
@@ -98,7 +99,7 @@ public class CsarInfo {
         this.csar = csar;
         this.mainTemplateName = mainTemplateName;
         this.mainTemplateContent = mainTemplateContent;
-        this.mappedToscaMainTemplate = (Map<String, Object>) new Yaml().load(mainTemplateContent);
+        this.mappedToscaMainTemplate = new Yaml().load(mainTemplateContent);
         this.createdNodesToscaResourceNames = new HashMap<>();
         this.cvfcToCreateQueue = new PriorityQueue<>();
         this.isUpdate = isUpdate;
@@ -116,6 +117,12 @@ public class CsarInfo {
         }
         return globalSubstitutesInCsar;
     }    
+
+    public CsarInfo(final User modifier, final String csarUUID, final String csarVersionId, final Map<String, byte[]> csarContent,
+                    final String vfResourceName, final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
+        this(modifier, csarUUID, csarContent, vfResourceName, mainTemplateName, mainTemplateContent, isUpdate);
+        this.csarVersionId = csarVersionId;
+    }
 
     @VisibleForTesting
     CsarInfo(final NonManoConfiguration nonManoConfiguration) {

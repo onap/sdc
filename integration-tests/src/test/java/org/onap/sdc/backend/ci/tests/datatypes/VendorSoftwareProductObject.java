@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,22 @@
 
 package org.onap.sdc.backend.ci.tests.datatypes;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString(callSuper = false)
+@NoArgsConstructor
 public class VendorSoftwareProductObject extends VendorSoftwareProductObjectReqDetails {
 
 	private String vspId;
 	private String componentId;
 	private String attContact;
 	private String version;
-
-	public VendorSoftwareProductObject(){super();}
+	private String versionId;
 
 	public VendorSoftwareProductObject(String vspId, String componentId, String attContact, String version) {
 		this.vspId = vspId;
@@ -44,45 +52,4 @@ public class VendorSoftwareProductObject extends VendorSoftwareProductObjectReqD
 		this.version = version;
 	}
 
-	public String getVspId() {
-		return vspId;
-	}
-
-	public void setVspId(String vspId) {
-		this.vspId = vspId;
-	}
-
-	public String getComponentId() {
-		return componentId;
-	}
-
-	public void setComponentId(String componentId) {
-		this.componentId = componentId;
-	}
-
-	public String getAttContact() {
-		return attContact;
-	}
-
-	public void setAttContact(String attContact) {
-		this.attContact = attContact;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	@Override
-	public String toString() {
-		return "VendorSoftwareProductObject{" +
-				"vspId='" + vspId + '\'' +
-				", componentId='" + componentId + '\'' +
-				", attContact='" + attContact + '\'' +
-				", version='" + version + '\'' +
-				'}';
-	}
 }

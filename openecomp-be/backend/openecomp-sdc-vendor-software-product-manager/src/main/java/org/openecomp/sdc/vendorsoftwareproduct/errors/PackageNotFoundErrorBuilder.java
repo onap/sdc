@@ -41,6 +41,12 @@ public class PackageNotFoundErrorBuilder {
         builder.withMessage(String.format(PACKAGE_VERSION_NOT_FOUND_MSG, vendorSoftwareProductId, version == null ? null : version.toString()));
     }
 
+    public PackageNotFoundErrorBuilder(String vendorSoftwareProductId, String version) {
+        builder.withId(VendorSoftwareProductErrorCodes.PACKAGE_NOT_FOUND);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(String.format(PACKAGE_VERSION_NOT_FOUND_MSG, vendorSoftwareProductId, version));
+    }
+
     /**
      * Instantiates a new Package not found error builder.
      *

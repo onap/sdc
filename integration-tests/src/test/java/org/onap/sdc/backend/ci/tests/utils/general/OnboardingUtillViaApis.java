@@ -143,6 +143,7 @@ public class OnboardingUtillViaApis {
 		tags.add(vendorSoftwareProductObject.getName());
 		resourceDetails.setCsarUUID(vendorSoftwareProductObject.getVspId());
 		resourceDetails.setCsarVersion(vendorSoftwareProductObject.getVersion());
+		resourceDetails.setCsarVersionId(vendorSoftwareProductObject.getVersionId());
 		resourceDetails.setName(vendorSoftwareProductObject.getName());
 		resourceDetails.setTags(tags);
 		resourceDetails.setDescription(vendorSoftwareProductObject.getDescription());

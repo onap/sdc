@@ -20,32 +20,33 @@
 
 package org.onap.sdc.backend.ci.tests.datatypes;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.Resource;
 
 import java.util.List;
 
+@Getter
+@Setter
+@ToString(callSuper = false)
 public class ResourceReqDetails extends ComponentReqDetails {
-	List<String> derivedFrom;
-	String vendorName;
-	String vendorRelease;
-	String componentType = "RESOURCE";
 
-	public String getComponentType() {
-		return componentType;
-	}
-	// Unsettable/unupdatable fields
-
-	Boolean isAbstract;
-	Boolean isHighestVersion;
-	String cost;
-
-	String licenseType;
-	String toscaResourceName;
-	String resourceVendorModelNumber;
-
-	private String resourceType = ResourceTypeEnum.VFC.toString(); // Default
-																	// value
+	private List<String> derivedFrom;
+	private String vendorName;
+	private String vendorRelease;
+	@Setter(AccessLevel.NONE)
+	private String componentType = "RESOURCE";
+	private String csarVersionId;
+	private Boolean isAbstract;
+	private Boolean isHighestVersion;
+	private String cost;
+	private String licenseType;
+	private String toscaResourceName;
+	private String resourceVendorModelNumber;
+	private String resourceType = ResourceTypeEnum.VFC.toString();
 
 	public ResourceReqDetails() {
 		super();
@@ -152,94 +153,6 @@ public class ResourceReqDetails extends ComponentReqDetails {
 		this.licenseType = licenseType;
 		this.resourceType = resourceType;
 		this.toscaResourceName = resourceName;
-	}
-
-	public String getResourceVendorModelNumber() {
-		return resourceVendorModelNumber;
-	}
-	
-	public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
-		this.resourceVendorModelNumber = resourceVendorModelNumber;
-	}
-	public String getToscaResourceName() {
-		return toscaResourceName;
-	}
-
-	public void setToscaResourceName(String toscaResourceName) {
-		this.toscaResourceName = toscaResourceName;
-	}
-
-	public List<String> getDerivedFrom() {
-		return derivedFrom;
-	}
-
-	public void setDerivedFrom(List<String> derivedFrom) {
-		this.derivedFrom = derivedFrom;
-	}
-
-	public String getVendorName() {
-		return vendorName;
-	}
-
-	public void setVendorName(String vendorName) {
-		this.vendorName = vendorName;
-	}
-
-	public String getVendorRelease() {
-		return vendorRelease;
-	}
-
-	public void setVendorRelease(String vendorRelease) {
-		this.vendorRelease = vendorRelease;
-	}
-
-	public String getCost() {
-		return cost;
-	}
-
-	public void setCost(String cost) {
-		this.cost = cost;
-	}
-
-	public String getLicenseType() {
-		return licenseType;
-	}
-
-	public void setLicenseType(String licenseType) {
-		this.licenseType = licenseType;
-	}
-
-	// Unupdatable fields - to check that they are not updated
-	public void setIsAbstract(Boolean isAbstract) {
-		this.isAbstract = isAbstract;
-	}
-
-	public void setIsHighestVersion(Boolean isHighestVersion) {
-		this.isHighestVersion = isHighestVersion;
-	}
-
-	public Boolean getIsAbstract() {
-		return isAbstract;
-	}
-
-	public Boolean getIsHighestVersion() {
-		return isHighestVersion;
-	}
-
-	public String getResourceType() {
-		return resourceType;
-	}
-
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
-	}
-
-	@Override
-	public String toString() {
-		return "ResourceReqDetails [name=" + name + ", derivedFrom=" + derivedFrom + ", vendorName=" + vendorName
-				+ ", vendorRelease=" + vendorRelease + ", version=" + version + ", isAbstract=" + isAbstract
-				+ ", isHighestVersion=" + isHighestVersion + ", cost=" + cost + ", licenseType=" + licenseType
-				+ ", resourceType=" + resourceType + "]";
 	}
 
 }
