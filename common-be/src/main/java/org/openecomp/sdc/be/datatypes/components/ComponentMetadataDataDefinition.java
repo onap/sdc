@@ -37,106 +37,45 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Getter
+@Setter
 public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinition {
 
     private static final Logger LOGGER = Logger.getLogger(ComponentMetadataDataDefinition.class.getName());
-    @Getter
     private String uniqueId;
-    @Getter
-    @Setter
     private String name; // archiveName
-    @Getter
-    @Setter
     private String version; // archiveVersion
-    @Getter
-    @Setter
     private Boolean highestVersion;
-    @Getter
-    @Setter
     private Long creationDate;
-    @Getter
-    @Setter
     private Long lastUpdateDate;
-    @Getter
-    @Setter
     private String description;
-    @Getter
-    @Setter
     private String state;
-    @Getter
-    @Setter
     private List<String> tags;
-    @Getter
-    @Setter
     private String conformanceLevel;
-    @Getter
-    @Setter
     private String icon;
-    @Getter
     private String UUID;
-    @Getter
-    @Setter
     private String normalizedName;
-    @Getter
-    @Setter
     private String systemName;
-    @Getter
-    @Setter
     private String contactId;
-    @Getter
-    @Setter
     private Map<String, String> allVersions;
-    @Getter
-    @Setter
     private Boolean isDeleted;
-    @Getter
-    @Setter
     private String projectCode;
-    @Getter
-    @Setter
     private String csarUUID;
-    @Getter
-    @Setter
     private String csarVersion;
-    @Getter
-    @Setter
     private String importedToscaChecksum;
-    @Getter
     private String invariantUUID;
-    @Getter
-    @Setter
     protected ComponentTypeEnum componentType;
-    // USER
-    @Getter
-    @Setter
     private String creatorUserId;
-    @Getter
-    @Setter
     private String creatorFullName;
-    @Getter
-    @Setter
     private String lastUpdaterUserId;
-    @Getter
-    @Setter
     private String lastUpdaterFullName;
-    //Archive/Restore
-    @Getter
-    @Setter
     private Boolean isArchived = false;
-    @Getter
-    @Setter
     private Long archiveTime;
-    @Getter
-    @Setter
     private Boolean isVspArchived = false;
-    @Getter
-    @Setter
     private Map<String, String> categorySpecificMetadata;
-    @Getter
-    @Setter
     private String model;
 
-    public ComponentMetadataDataDefinition(ComponentMetadataDataDefinition other) {
+    protected ComponentMetadataDataDefinition(ComponentMetadataDataDefinition other) {
         this.uniqueId = other.getUniqueId();
         this.name = other.getName();
         this.version = other.getVersion();
@@ -165,7 +104,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.model = other.getModel();
     }
 
-    public ComponentMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
+    protected ComponentMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
         this.uniqueId = extractor.getUniqueId();
         this.name = extractor.getName();
         this.version = extractor.getVersion();

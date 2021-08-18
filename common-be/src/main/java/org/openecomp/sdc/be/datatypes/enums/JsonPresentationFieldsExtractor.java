@@ -105,6 +105,10 @@ public class JsonPresentationFieldsExtractor {
         return (String) properties.get(JsonPresentationFields.CSAR_VERSION.getPresentation());
     }
 
+    public String getCsarVersionId() {
+        return (String) properties.get(JsonPresentationFields.CSAR_VERSION_ID.getPresentation());
+    }
+
     public String getImportedToscaChecksum() {
         return (String) properties.get(JsonPresentationFields.IMPORTED_TOSCA_CHECKSUM.getPresentation());
     }

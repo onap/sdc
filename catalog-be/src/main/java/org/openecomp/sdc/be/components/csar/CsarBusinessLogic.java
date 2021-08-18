@@ -23,10 +23,10 @@ package org.openecomp.sdc.be.components.csar;
 
 import fj.data.Either;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CsarValidationUtils;
-import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -37,6 +37,7 @@ import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.VendorSoftwareProduct;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
 import org.openecomp.sdc.be.model.operations.StorageException;
@@ -48,6 +49,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +65,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
 
     @Autowired
     public CsarBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
-                             IGroupTypeOperation groupTypeOperation, GroupBusinessLogic groupBusinessLogic, InterfaceOperation interfaceOperation,
+                             IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
                              InterfaceLifecycleOperation interfaceLifecycleTypeOperation, YamlTemplateParsingHandler yamlHandler,
                              ArtifactsOperations artifactToscaOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
@@ -99,13 +101,19 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         if (status == StorageOperationStatus.ENTITY_ALREADY_EXISTS) {
             log.debug("Failed to create resource {}, csarUUID {} already exist for a different VF ", resource.getSystemName(), csarUUID);
         } else if (status != StorageOperationStatus.OK) {
-            log.debug("Failed to validate uniqueness of CsarUUID {} for resource", csarUUID, resource.getSystemName());
+            log.debug("Failed to validate uniqueness of CsarUUID '{}' for resource '{}'", csarUUID, resource.getSystemName());
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status));
         }
     }
 
     public CsarInfo getCsarInfo(Resource resource, Resource oldResource, User user, Map<String, byte[]> payload, String csarUUID) {
-        Map<String, byte[]> csar = getCsar(resource, user, payload, csarUUID);
+        Map<String, byte[]> csar = payload;
+        if (csar == null) {
+            final var vendorSoftwareProduct = getCsar(resource, user);
+            validateModel(resource, vendorSoftwareProduct);
+
+            csar = vendorSoftwareProduct.getFileMap();
+        }
         ImmutablePair<String, String> toscaYamlCsarStatus = validateAndParseCsar(resource, user, csar, csarUUID).left()
             .on(this::throwComponentException);
         String checksum = CsarValidationUtils.getToscaYamlChecksum(csar, csarUUID, componentsUtils).left()
@@ -117,7 +125,23 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
                 csarUUID, oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().getImportedToscaChecksum(), checksum);
             oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().setImportedToscaChecksum(checksum);
         }
-        return new CsarInfo(user, csarUUID, csar, resource.getName(), toscaYamlCsarStatus.getKey(), toscaYamlCsarStatus.getValue(), true);
+        return new CsarInfo(user, csarUUID, resource.getCsarVersionId(), csar, resource.getName(), toscaYamlCsarStatus.getKey(),
+            toscaYamlCsarStatus.getValue(), true);
+    }
+
+    private void validateModel(final Resource resource, final VendorSoftwareProduct vendorSoftwareProduct) {
+        if (resource.getModel() == null) {
+            if (!vendorSoftwareProduct.getModelList().isEmpty()) {
+                var modelStringList = String.join(", ", vendorSoftwareProduct.getModelList());
+                throw new ByActionStatusComponentException(ActionStatus.VSP_MODEL_NOT_ALLOWED, "SDC AID", modelStringList);
+            }
+            return;
+        }
+        if (!vendorSoftwareProduct.getModelList().contains(resource.getModel())) {
+            var modelStringList =
+                vendorSoftwareProduct.getModelList().isEmpty() ? "SDC AID" : String.join(", ", vendorSoftwareProduct.getModelList());
+            throw new ByActionStatusComponentException(ActionStatus.VSP_MODEL_NOT_ALLOWED, resource.getModel(), modelStringList);
+        }
     }
 
     public CsarInfo getCsarInfo(Service service, Service oldResource, User user, Map<String, byte[]> payload, String csarUUID) {
@@ -152,9 +176,8 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         throw new ByResponseFormatComponentException(responseFormat);
     }
 
-    private Either<ImmutablePair<String, String>, ResponseFormat> validateAndParseCsar(Component component, User user, Map<String, byte[]> payload,
+    private Either<ImmutablePair<String, String>, ResponseFormat> validateAndParseCsar(Component component, User user, Map<String, byte[]> csar,
                                                                                        String csarUUID) {
-        Map<String, byte[]> csar = getCsar(component, user, payload, csarUUID);
         Either<Boolean, ResponseFormat> validateCsarStatus = CsarValidationUtils.validateCsar(csar, csarUUID, componentsUtils);
         if (validateCsarStatus.isRight()) {
             ResponseFormat responseFormat = validateCsarStatus.right().value();
@@ -182,7 +205,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         if (payload != null) {
             return payload;
         }
-        Either<Map<String, byte[]>, StorageOperationStatus> csar = csarOperation.getCsar(csarUUID, user);
+        Either<Map<String, byte[]>, StorageOperationStatus> csar = csarOperation.findVspLatestPackage(csarUUID, user);
         if (csar.isRight()) {
             StorageOperationStatus value = csar.right().value();
             log.debug("#getCsar - failed to fetch csar with ID {}, error: {}", csarUUID, value);
@@ -195,6 +218,31 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
             throw new StorageException(csar.right().value());
         }
         return csar.left().value();
+    }
+
+    private VendorSoftwareProduct getCsar(final Resource resource, final User user) {
+        final Optional<VendorSoftwareProduct> vendorSoftwareProductOpt;
+        try {
+            vendorSoftwareProductOpt = csarOperation.findVsp(resource.getCsarUUID(), resource.getCsarVersionId(), user);
+        } catch (final Exception exception) {
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, CsarBusinessLogic.class.getName(), exception.getMessage());
+            auditGetCsarError(resource, user, resource.getCsarUUID(), StorageOperationStatus.GENERAL_ERROR);
+            throw new ByActionStatusComponentException(ActionStatus.VSP_FIND_ERROR, resource.getCsarUUID(), resource.getCsarVersionId());
+        }
+        if (vendorSoftwareProductOpt.isEmpty()) {
+            auditGetCsarError(resource, user, resource.getCsarUUID(), StorageOperationStatus.CSAR_NOT_FOUND);
+            throw new ByActionStatusComponentException(ActionStatus.VSP_NOT_FOUND, resource.getCsarUUID(), resource.getCsarVersionId());
+        }
+        return vendorSoftwareProductOpt.get();
+    }
+
+    private void auditGetCsarError(Component component, User user, String csarUUID, StorageOperationStatus storageOperationStatus) {
+        log.debug("#getCsar - failed to fetch csar with ID {}, error: {}", csarUUID, storageOperationStatus);
+        BeEcompErrorManager.getInstance().logBeDaoSystemError(CREATING_RESOURCE_FROM_CSAR_FETCHING_CSAR_WITH_ID + csarUUID + FAILED);
+        var responseFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(storageOperationStatus), csarUUID);
+        if (component instanceof Resource) {
+            componentsUtils.auditResource(responseFormat, user, (Resource) component, AuditingActionEnum.CREATE_RESOURCE);
+        }
     }
 
     private void auditAndThrowException(Resource resource, User user, AuditingActionEnum auditingAction, ActionStatus status, String... params) {

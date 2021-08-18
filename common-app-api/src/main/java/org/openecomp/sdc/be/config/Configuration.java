@@ -348,7 +348,9 @@ public class Configuration extends BasicConfiguration {
         private String protocol = "http";
         private String host;
         private Integer port;
-        private String downloadCsarUri;
+        private String getLatestVspPackageUri;
+        private String getVspPackageUri;
+        private String getVspUri;
         @ToString.Exclude
         private String healthCheckUri;
     }

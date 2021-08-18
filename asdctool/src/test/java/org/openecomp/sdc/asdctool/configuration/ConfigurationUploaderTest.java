@@ -20,19 +20,22 @@
 
 package org.openecomp.sdc.asdctool.configuration;
 
-import org.junit.Test;
 
-public class ConfigurationUploaderTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-	private ConfigurationUploader createTestSubject() {
-		return new ConfigurationUploader();
-	}
+import org.junit.jupiter.api.Test;
+
+class ConfigurationUploaderTest {
 
 	@Test
-	public void testUploadConfigurationFiles() throws Exception {
-		String appConfigDir = "src/main/resources/config/";
+	void testUploadConfigurationFiles() {
+		final var appConfigDir = "src/main/resources/config/";
 
-		// default test
+		//when
 		ConfigurationUploader.uploadConfigurationFiles(appConfigDir);
+
+		//then
+		assertEquals(appConfigDir, System.getProperty("config.home"));
+		assertEquals(appConfigDir + "Artifact-Generator.properties", System.getProperty("artifactgenerator.config"));
 	}
 }
