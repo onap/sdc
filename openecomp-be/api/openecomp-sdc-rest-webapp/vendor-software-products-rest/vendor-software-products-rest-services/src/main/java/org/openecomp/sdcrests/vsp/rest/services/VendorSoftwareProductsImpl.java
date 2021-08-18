@@ -335,16 +335,18 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response getTranslatedFile(String vspId, String versionName, String user) {
-        List<Version> versions = versioningManager.list(vspId);
-        Version version;
-        if (versionName == null) {
+    public Response getTranslatedFile(String vspId, String versionId, String user) {
+        final List<Version> versions = versioningManager.list(vspId);
+        final Version version;
+        if (versionId == null) {
             version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
                 .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
                 .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
         } else {
-            version = versions.stream().filter(ver -> versionName.equals(ver.getName())).findFirst()
-                .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
+            version = versions.stream()
+                .filter(ver -> versionId.equals(ver.getName()) || versionId.equals(ver.getId()))
+                .findFirst()
+                .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId, versionId).build()));
             if (version.getStatus() != VersionStatus.Certified) {
                 throw new CoreException(new RequestedVersionInvalidErrorBuilder().build());
             }

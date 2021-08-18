@@ -20,24 +20,27 @@
 package org.openecomp.sdc.be.datatypes.components;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFieldsExtractor;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 
 @EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@ToString(callSuper = true)
 public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinition {
 
     private String vendorName;
     private String vendorRelease;
     private String resourceVendorModelNumber;
-    private ResourceTypeEnum resourceType = ResourceTypeEnum.VFC; // ResourceType.VFC
-
-    // is
-
-    // default
+    private ResourceTypeEnum resourceType = ResourceTypeEnum.VFC;
     private Boolean isAbstract;
     private String cost;
     private String licenseType;
     private String toscaResourceName;
+    private String csarVersionId;
 
     public ResourceMetadataDataDefinition() {
         super();
@@ -52,6 +55,7 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
         this.isAbstract = other.isHighestVersion();
         this.resourceType = other.getResourceType();
         this.toscaResourceName = other.getToscaResourceName();
+        this.csarVersionId = other.getCsarVersionId();
     }
 
     public ResourceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
@@ -62,76 +66,15 @@ public class ResourceMetadataDataDefinition extends ComponentMetadataDataDefinit
         this.isAbstract = extractor.isAbstract();
         this.resourceType = extractor.getResourceType();
         this.toscaResourceName = extractor.getToscaResourceName();
-    }
-
-    public String getVendorName() {
-        return vendorName;
-    }
-
-    public void setVendorName(String vendorName) {
-        this.vendorName = vendorName;
-    }
-
-    public String getVendorRelease() {
-        return vendorRelease;
-    }
-
-    public void setVendorRelease(String vendorRelease) {
-        this.vendorRelease = vendorRelease;
-    }
-
-    public String getResourceVendorModelNumber() {
-        return resourceVendorModelNumber;
-    }
-
-    public void setResourceVendorModelNumber(String resourceVendorModelNumber) {
-        this.resourceVendorModelNumber = resourceVendorModelNumber;
-    }
-
-    public ResourceTypeEnum getResourceType() {
-        return resourceType;
-    }
-
-    public void setResourceType(ResourceTypeEnum resourceType) {
-        this.resourceType = resourceType;
+        this.csarVersionId = extractor.getCsarVersionId();
     }
 
     public Boolean isAbstract() {
-        return isAbstract;
+        return getIsAbstract();
     }
 
-    public void setAbstract(Boolean isAbstract) {
-        this.isAbstract = isAbstract;
-    }
-
-    public String getCost() {
-        return cost;
-    }
-
-    public void setCost(String cost) {
-        this.cost = cost;
-    }
-
-    public String getLicenseType() {
-        return licenseType;
-    }
-
-    public void setLicenseType(String licenseType) {
-        this.licenseType = licenseType;
-    }
-
-    public String getToscaResourceName() {
-        return toscaResourceName;
-    }
-
-    public void setToscaResourceName(String toscaResourceName) {
-        this.toscaResourceName = toscaResourceName;
-    }
-
-    @Override
-    public String toString() {
-        return "ResourceMetadataDataDefinition [vendorName=" + vendorName + ", vendorRelease=" + vendorRelease + ", resourceVendorModelNumber="
-            + resourceVendorModelNumber + ", resourceType=" + resourceType + ", isAbstract=" + isAbstract + super.toString() + "]";
+    public void setAbstract(final Boolean isAbstract) {
+        setIsAbstract(isAbstract);;
     }
 
     @Override

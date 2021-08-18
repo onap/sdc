@@ -106,7 +106,7 @@ public class ImportReqDetails extends ResourceReqDetails {
 
 	public void setRequirements(String path, String fileName, User user, String derivedFromSource) throws IOException, JSONException {
 		Map<String, Object> requirementsFromFile = getRequirementsMapFromFile(path + File.separator + fileName,
-				toscaResourceName, "requirements");
+				getToscaResourceName(), "requirements");
 		Map<String, Object> reqs = organizeRequirementsMap(requirementsFromFile);
 		getDerivedReqCap(user, reqs, "requirements", derivedFromSource);
 		this.requirements = reqs;
@@ -170,7 +170,7 @@ public class ImportReqDetails extends ResourceReqDetails {
 
 	public void setCapabilities(String path, String fileName, User user, String derivedFromSource) throws IOException, JSONException {
 		Map<String, Object> capabilitiesFromFile = getCapabilitiesMapFromFile(path + File.separator + fileName,
-				toscaResourceName, CAPS);
+			getToscaResourceName(), CAPS);
 		Map<String, Object> caps = organizeCapabilitiesMap(capabilitiesFromFile);
 		getDerivedReqCap(user, caps, CAPS, derivedFromSource);
 		this.capabilities = caps;
