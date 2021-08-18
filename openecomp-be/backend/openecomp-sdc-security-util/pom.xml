@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.functionaljava</groupId>
       <artifactId>functionaljava</artifactId>
-      <version>4.7</version>
+      <version>${functionaljava.version}</version>
     </dependency>
 
     <dependency>
