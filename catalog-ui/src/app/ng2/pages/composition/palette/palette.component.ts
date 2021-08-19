@@ -74,7 +74,9 @@ export class PaletteComponent {
                     const subCategoryToCheck = this.paletteElements[category][subCategory];
                     const res = subCategoryToCheck.filter((item) => item.searchFilterTerms.toLowerCase().indexOf(searchText) >= 0)
                     if (res.length > 0) {
-                        paletteElementsAfterSearch[category] = {};
+                        if (paletteElementsAfterSearch[category] == null) {
+                            paletteElementsAfterSearch[category] = {};
+                        }
                         paletteElementsAfterSearch[category][subCategory] = res;
                     }
                 }
