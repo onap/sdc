@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -55,7 +56,9 @@ import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
@@ -168,6 +171,7 @@ public class ToscaExportHandler {
     private OutputConverter outputConverter;
     private InterfaceLifecycleOperation interfaceLifecycleOperation;
     private InterfacesOperationsConverter interfacesOperationsConverter;
+    private ToscaModelImportCassandraDao toscaModelImportCassandraDao;
 
     @Autowired
     public ToscaExportHandler(final ApplicationDataTypeCache applicationDataTypeCache,
@@ -180,7 +184,8 @@ public class ToscaExportHandler {
                               final InputConverter inputConverter,
                               final OutputConverter outputConverter,
                               final InterfaceLifecycleOperation interfaceLifecycleOperation,
-                              final InterfacesOperationsConverter interfacesOperationsConverter) {
+                              final InterfacesOperationsConverter interfacesOperationsConverter,
+                              final ToscaModelImportCassandraDao toscaModelImportCassandraDao) {
         this.applicationDataTypeCache = applicationDataTypeCache;
         this.toscaOperationFacade = toscaOperationFacade;
         this.capabilityRequirementConverter = capabilityRequirementConverter;
@@ -192,6 +197,7 @@ public class ToscaExportHandler {
         this.outputConverter = outputConverter;
         this.interfaceLifecycleOperation = interfaceLifecycleOperation;
         this.interfacesOperationsConverter = interfacesOperationsConverter;
+        this.toscaModelImportCassandraDao = toscaModelImportCassandraDao;
     }
 
     public static String getInterfaceFilename(String artifactName) {
@@ -211,7 +217,7 @@ public class ToscaExportHandler {
     }
 
     public Either<ToscaRepresentation, ToscaError> exportComponentInterface(final Component component, final boolean isAssociatedComponent) {
-        final List<Map<String, Map<String, String>>> imports = new ArrayList<>(getDefaultToscaImportConfig());
+        final List<Map<String, Map<String, String>>> imports = new ArrayList<>(getDefaultToscaImports(component.getModel()));
         if (CollectionUtils.isEmpty(imports)) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -274,7 +280,7 @@ public class ToscaExportHandler {
     }
 
     public Either<ToscaTemplate, ToscaError> convertToToscaTemplate(final Component component) {
-        final List<Map<String, Map<String, String>>> defaultToscaImportConfig = getDefaultToscaImportConfig();
+        final List<Map<String, Map<String, String>>> defaultToscaImportConfig = getDefaultToscaImports(component.getModel());
         if (CollectionUtils.isEmpty(defaultToscaImportConfig)) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
@@ -295,6 +301,23 @@ public class ToscaExportHandler {
             log.trace("convert component as topology template");
             return convertToscaTemplate(component, toscaTemplate);
         }
+    }
+
+    public List<Map<String, Map<String, String>>> getDefaultToscaImports(final String model) {
+        if (model == null) {
+            return getDefaultToscaImportConfig();
+        }
+        List<ToscaImportByModel> importsByModel = toscaModelImportCassandraDao.findAllByModel(model);
+        List<Map<String, Map<String, String>>> importList = new ArrayList<>();
+        for(ToscaImportByModel toscaImportByModel: importsByModel) {
+            Map<String, Map<String, String>> importByModelMapofMaps = new HashMap<>();
+            Map<String, String> importByModelMap = new HashMap<>();
+            importByModelMap.put("file", toscaImportByModel.getFullPath());
+            String fileName = FilenameUtils.getBaseName(toscaImportByModel.getFullPath());
+            importByModelMapofMaps.put(fileName, importByModelMap);
+            importList.add(importByModelMapofMaps);
+        }
+        return importList;
     }
 
     private Either<ToscaTemplate, ToscaError> convertToscaTemplate(Component component, ToscaTemplate toscaNode) {
@@ -508,7 +531,7 @@ public class ToscaExportHandler {
     }
 
     private Either<ImmutablePair<ToscaTemplate, Map<String, Component>>, ToscaError> fillImports(Component component, ToscaTemplate toscaTemplate) {
-        final List<Map<String, Map<String, String>>> defaultToscaImportConfig = getDefaultToscaImportConfig();
+        final List<Map<String, Map<String, String>>> defaultToscaImportConfig = getDefaultToscaImports(component.getModel());
         if (CollectionUtils.isEmpty(defaultToscaImportConfig)) {
             log.debug(FAILED_TO_GET_DEFAULT_IMPORTS_CONFIGURATION);
             return Either.right(ToscaError.GENERAL_ERROR);
