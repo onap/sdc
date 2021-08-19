@@ -2545,3 +2545,10 @@ errors:
         messageId: "SVC4153"
     }
 
+    #-----------SVC4154---------------------------
+    CSAR_TOSCA_IMPORTS_ERROR: {
+        code: 400,
+        message: "Error: An error has occurred while including the default TOSCA imports in the CSAR",
+        messageId: "SVC4154"
+    }
+

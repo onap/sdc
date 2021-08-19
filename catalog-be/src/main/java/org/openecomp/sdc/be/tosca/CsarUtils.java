@@ -31,6 +31,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,6 +77,8 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
+import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
+import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -169,6 +172,8 @@ public class CsarUtils {
     private ToscaExportHandler toscaExportUtils;
     @Autowired(required = false)
     private List<CsarEntryGenerator> generators;
+    @Autowired(required = false)
+    private ToscaModelImportCassandraDao toscaModelImportCassandraDao;
     private String versionFirstThreeOctets;
 
     public CsarUtils() {
@@ -426,16 +431,21 @@ public class CsarUtils {
         if (zipOutputStreamOrResponseFormat != null && zipOutputStreamOrResponseFormat.isRight()) {
             return zipOutputStreamOrResponseFormat;
         }
-        //retrieve SDC.zip from Cassandra
-        Either<byte[], ResponseFormat> latestSchemaFilesFromCassandra = getLatestSchemaFilesFromCassandra();
-        if (latestSchemaFilesFromCassandra.isRight()) {
-            log.error("Error retrieving SDC Schema files from cassandra");
-            return Either.right(latestSchemaFilesFromCassandra.right().value());
+        if (component.getModel() == null) {
+            //retrieve SDC.zip from Cassandra
+            Either<byte[], ResponseFormat> latestSchemaFiles = getLatestSchemaFilesFromCassandra();
+            if (latestSchemaFiles.isRight()) {
+                log.error("Error retrieving SDC Schema files from cassandra");
+                return Either.right(latestSchemaFiles.right().value());
+            }
+            final byte[] schemaFileZip = latestSchemaFiles.left().value();
+            final List<String> nodesFromPackage = findNonRootNodesFromPackage(dependencies);
+            //add files from retrieved SDC.zip to Definitions folder in CSAR
+            addSchemaFilesFromCassandra(zip, schemaFileZip, nodesFromPackage);
+        } else {
+            //retrieve schema files by model from Cassandra
+            addSchemaFilesByModel(zip, component.getModel());
         }
-        final byte[] schemaFileZip = latestSchemaFilesFromCassandra.left().value();
-        final List<String> nodesFromPackage = findNonRootNodesFromPackage(dependencies);
-        //add files from retrieved SDC.zip to Definitions folder in CSAR
-        addSchemaFilesFromCassandra(zip, schemaFileZip, nodesFromPackage);
         Either<CsarDefinition, ResponseFormat> collectedComponentCsarDefinition = collectComponentCsarDefinition(component);
         if (collectedComponentCsarDefinition.isRight()) {
             return Either.right(collectedComponentCsarDefinition.right().value());
@@ -797,6 +807,22 @@ public class CsarUtils {
         String fto = getVersionFirstThreeOctets();
         return sdcSchemaFilesCassandraDao.getSpecificSchemaFiles(fto, CONFORMANCE_LEVEL).right().map(schemaFilesFetchDBError(fto)).left()
             .bind(iff(List::isEmpty, () -> schemaFileFetchError(fto), s -> Either.left(s.iterator().next().getPayloadAsArray())));
+    }
+
+    private void addSchemaFilesByModel(final ZipOutputStream zipOutputStream, final String model) {
+        try {
+            final List<ToscaImportByModel> schemaImportsByModel = toscaModelImportCassandraDao.findAllByModel(model);
+            for (ToscaImportByModel toscaImportByModel : schemaImportsByModel) {
+                final ZipEntry zipEntry = new ZipEntry(DEFINITIONS_PATH + toscaImportByModel.getFullPath());
+                zipOutputStream.putNextEntry(zipEntry);
+                final byte[] content = toscaImportByModel.getContent().getBytes(StandardCharsets.UTF_8);
+                zipOutputStream.write(content, 0, content.length);
+                zipOutputStream.closeEntry();
+            }
+        } catch (IOException e) {
+            log.error("Error while writing the schema files by model to the CSAR " + "{}", e);
+            throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.CSAR_TOSCA_IMPORTS_ERROR));
+        }
     }
 
     private F<CassandraOperationStatus, ResponseFormat> schemaFilesFetchDBError(String firstThreeOctets) {
