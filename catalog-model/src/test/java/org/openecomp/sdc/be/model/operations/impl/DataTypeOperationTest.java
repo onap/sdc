@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
@@ -122,7 +123,7 @@ class DataTypeOperationTest {
 
 
     private void initTestData() {
-        model = new Model(modelName);
+        model = new Model(modelName, ModelTypeEnum.NORMATIVE);
         final String TEST_DATA_TYPE_001 = "test.data.type001";
         final String TEST_DATA_TYPE_002 = "test.data.type002";
         final String TEST_DATA_TYPE_003 = "test.data.type003";

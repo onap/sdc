@@ -1494,7 +1494,6 @@ public class ResourceBusinessLogicTest {
         vduCp.getProperties().add(roleProp);
         when(toscaOperationFacade.getLatestByToscaResourceNameAndModel("tosca.nodes.nfv.VduCp", "testModel_myVnf1.0")).thenReturn(Either.left(vduCp));
 
-
         when(yamlTemplateParsingHandler.parseResourceInfoFromYAML(any(), any(), any(), any(), any(), any())).thenReturn(parsedToscaYamlInfo);
 
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();

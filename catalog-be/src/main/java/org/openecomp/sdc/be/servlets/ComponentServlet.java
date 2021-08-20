@@ -250,6 +250,7 @@ public class ComponentServlet extends BeGenericServlet {
                                                                           @Context final HttpServletRequest request,
                                                                           @QueryParam("internalComponentType") String internalComponentType,
                                                                           @QueryParam("componentModel") String internalComponentModel,
+                                                                          @QueryParam("includeNormativeExtensionModels") boolean includeNormativeExtensionModels,
                                                                           @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
                                                                           @Parameter(description = "uid list", required = true) String data)
         throws IOException {
@@ -263,7 +264,7 @@ public class ComponentServlet extends BeGenericServlet {
             }
             Either<List<Component>, ResponseFormat> actionResponse = businessLogic
                 .getLatestVersionNotAbstractComponentsMetadata(false, HighestFilterEnum.HIGHEST_ONLY, componentTypeEnum,
-                    internalComponentType, userId, internalComponentModel);
+                    internalComponentType, userId, internalComponentModel, includeNormativeExtensionModels);
             if (actionResponse.isRight()) {
                 log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, componentType);
                 return buildErrorResponse(actionResponse.right().value());

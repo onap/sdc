@@ -25,8 +25,6 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import fj.data.Either;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,6 +42,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -54,6 +53,7 @@ import org.openecomp.sdc.be.resources.data.PolicyTypeData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import fj.data.Either;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -117,7 +117,7 @@ public class PolicyTypeOperationTest extends ModelTestBase {
     public void testAddPolicyTypeWithModel() {
         PolicyTypeDefinition policyTypeDefinition = createPolicyTypeDef();
         policyTypeDefinition.setModel("testModel");
-        Model model = new Model("testModel");
+        Model model = new Model("testModel", ModelTypeEnum.NORMATIVE);
         modelOperation.createModel(model , true);
 
         Either<PolicyTypeDefinition, StorageOperationStatus> addPolicyType = policyTypeOperation.addPolicyType(policyTypeDefinition);

@@ -52,5 +52,9 @@ public class ModelOperationExceptionSupplier {
         var errorMsg = String.format("Failed to retrieve models. Status '%s'", janusGraphOperationStatus);
         return () -> new OperationException(ActionStatus.GENERAL_ERROR, errorMsg);
     }
+    
+    public static Supplier<OperationException> unknownModelType(final String modelType) {
+        return () -> new OperationException(ActionStatus.UNKNOWN_MODEL_TYPE, modelType);
+    }
 
 }
