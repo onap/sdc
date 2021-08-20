@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b11e61ee_5689c5d1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-20T15:41:22Z",
+      "side": 1,
+      "message": "would be great if we had a proper error message. For that a new Action status and entry in the errors yaml. For example:\nCSAR_TOSCA_IMPORTS_ERROR\nAn error has occurred while including the default TOSCA imports in the CSAR.",
+      "range": {
+        "startLine": 824,
+        "startChar": 91,
+        "endLine": 824,
+        "endChar": 117
+      },
+      "revId": "ca7e87fc780920776c3eb903f7df9f1422760fbe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
