@@ -59,6 +59,7 @@ import org.openecomp.sdc.be.dao.jsongraph.utils.JsonParserUtils;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
@@ -443,12 +444,29 @@ public class JanusGraphDao {
             return Either.right(graph.right().value());
         }
     }
+    
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type, final Map<GraphPropertyEnum, Object> props,
+            final Map<GraphPropertyEnum, Object> hasNotProps,
+            final JsonParseFlagEnum parseFlag,
+            final String model) {
+        return getByCriteria(type, props, hasNotProps, null, parseFlag, model, false);
+    }
 
-    public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(VertexTypeEnum type, Map<GraphPropertyEnum, Object> props,
-                                                                              Map<GraphPropertyEnum, Object> hasNotProps,
-                                                                              JsonParseFlagEnum parseFlag,
-                                                                              String model) {
-        return getByCriteria(type, props, hasNotProps, null, parseFlag, model);
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type, final Map<GraphPropertyEnum, Object> props,
+                                                                              final Map<GraphPropertyEnum, Object> hasNotProps,
+                                                                              final JsonParseFlagEnum parseFlag,
+                                                                              final String model, 
+                                                                              final boolean includeNormativeExtensionModels) {
+        return getByCriteria(type, props, hasNotProps, null, parseFlag, model, includeNormativeExtensionModels);
+    }
+    
+    public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type,
+            final Map<GraphPropertyEnum, Object> hasProps,
+            final Map<GraphPropertyEnum, Object> hasNotProps,
+            final Map<String, Entry<JanusGraphPredicate, Object>> predicates,
+            final JsonParseFlagEnum parseFlag,
+            final String model) {
+        return  getByCriteria(type, hasProps, hasNotProps, predicates, parseFlag, model, false);
     }
 
     public Either<List<GraphVertex>, JanusGraphOperationStatus> getByCriteria(final VertexTypeEnum type,
@@ -456,7 +474,8 @@ public class JanusGraphDao {
                                                                               final Map<GraphPropertyEnum, Object> hasNotProps,
                                                                               final Map<String, Entry<JanusGraphPredicate, Object>> predicates,
                                                                               final JsonParseFlagEnum parseFlag,
-                                                                              final String model) {
+                                                                              final String model,
+                                                                              final boolean includeNormativeExtensionModels) {
         Either<JanusGraph, JanusGraphOperationStatus> graph = janusGraphClient.getGraph();
         if (graph.isLeft()) {
             try {
@@ -493,7 +512,7 @@ public class JanusGraphDao {
                 }
                 List<GraphVertex> result = new ArrayList<>();
 
-                final Predicate<? super JanusGraphVertex> filterPredicate = StringUtils.isEmpty(model) ? this::vertexNotConnectedToAnyModel : vertex -> vertexValidForModel(vertex, model);
+                final Predicate<? super JanusGraphVertex> filterPredicate = StringUtils.isEmpty(model) ? this::vertexNotConnectedToAnyModel : vertex -> vertexValidForModel(vertex, model, includeNormativeExtensionModels);
                 final List<JanusGraphVertex> verticesForModel = StreamSupport.stream(vertices.spliterator(), false).filter(filterPredicate).collect(Collectors.toList());
                 if (verticesForModel == null || verticesForModel.size() == 0) {
                     return Either.right(JanusGraphOperationStatus.NOT_FOUND);
@@ -586,7 +605,7 @@ public class JanusGraphDao {
         }
     }
 
-    private boolean vertexValidForModel(final JanusGraphVertex vertex, final String model) {
+    private boolean vertexValidForModel(final JanusGraphVertex vertex, final String model, final boolean includeNormativeExtensions) {
         final String vt = (String)vertex.property(GraphPropertyEnum.LABEL.getProperty()).value();
         final VertexTypeEnum vertexType = VertexTypeEnum.getByName(vt);
         final GraphEdgeLabels edgeLabel = vertexType.equals(VertexTypeEnum.TOPOLOGY_TEMPLATE) ? GraphEdgeLabels.MODEL : GraphEdgeLabels.MODEL_ELEMENT;
@@ -594,7 +613,7 @@ public class JanusGraphDao {
 
         if (modelVertices.isLeft()) {
             for (ImmutablePair<JanusGraphVertex, Edge> vertexPair : modelVertices.left().value()) {
-                if (modelVertexMatchesModel(vertexPair.getLeft(), model)) {
+                if (modelVertexMatchesModel(vertexPair.getLeft(), model, includeNormativeExtensions)) {
                     return true;
                 }
             }
@@ -602,20 +621,37 @@ public class JanusGraphDao {
         return false;
     }
     
-    private boolean modelVertexMatchesModel(final JanusGraphVertex modelVertex, final String model) {
+    private boolean modelVertexMatchesModel(final JanusGraphVertex modelVertex, final String model, final boolean includeNormativeExtensions) {
         if (model.equals((String)modelVertex.property("name").value())) {
             return true;
         }
         final Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> derivedModels =
                         getParentVerticies(modelVertex, GraphEdgeLabels.DERIVED_FROM);
         if (derivedModels.isLeft()) {
-            for (final ImmutablePair<JanusGraphVertex, Edge> derivedModel : derivedModels.left().value()) {
-                if (modelVertexMatchesModel(derivedModel.left, model)) {
+            for (final ImmutablePair<JanusGraphVertex, Edge> derivedFromModel : derivedModels.left().value()) {
+                if (modelVertexMatchesModel(derivedFromModel.left, model, includeNormativeExtensions)) {
                     return true;
                 }
             }
         }
+        
+        if (includeNormativeExtensions && isANormativeExtension(modelVertex)) {
+            final Either<List<Vertex>,JanusGraphOperationStatus> derivedFromModels =
+                    getChildrenVertices(modelVertex, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseAll);
+            if (derivedFromModels.isLeft()) {
+                for (final Vertex derivedFromModel : derivedFromModels.left().value()) {
+                    if (model.equals((String)derivedFromModel.property("name").value())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
         return false;
+    }
+    
+    private boolean isANormativeExtension(final JanusGraphVertex modelVertex) {
+        return ModelTypeEnum.NORMATIVE_EXTENSION.getValue().equals((String)modelVertex.property(GraphPropertyEnum.MODEL_TYPE.getProperty()).value());
     }
     
     private Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> getParentVerticies(

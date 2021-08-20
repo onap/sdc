@@ -35,4 +35,8 @@ export class ModelService {
     return this.http.get<Model[]>(this.baseUrl + "/v1/catalog/model");
   }
 
+  getModelsOfType(type: string):Observable<Model[]> {
+    return this.http.get<Model[]>(this.baseUrl + "/v1/catalog/model?modelType=" + type);
+  }
+
 }
