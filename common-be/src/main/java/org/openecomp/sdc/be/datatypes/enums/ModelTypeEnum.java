@@ -16,28 +16,22 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.ui.model;
+package org.openecomp.sdc.be.datatypes.enums;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
+import java.util.Arrays;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-/**
- * This class is responsible for holding all required fields from the create Model post request.
- * It also validates the Model 'name' field.
- */
-@Data @AllArgsConstructor @NoArgsConstructor
-public class ModelCreateRequest {
-
-    @NotNull(message = "Model name cannot be null")
-    @Size(min = 2, message = "Model name cannot be empty")
-    private String name;
-
-    private String derivedFrom;
+@Getter
+@AllArgsConstructor
+public enum ModelTypeEnum {
+    NORMATIVE("normative"), 
+    NORMATIVE_EXTENSION("normative-extension");
     
-    private ModelTypeEnum modelType;
-
+    private final String value;
+    
+    public static Optional<ModelTypeEnum> findByValue(String value) {
+        return Arrays.stream(ModelTypeEnum.values()).filter(modelTypeEnum -> modelTypeEnum.getValue().equals(value)).findAny();
+    }
 }

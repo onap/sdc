@@ -41,9 +41,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
@@ -53,10 +55,12 @@ import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.Model;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.ui.model.ModelCreateRequest;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -108,6 +112,9 @@ public class ModelServlet extends AbstractValidationsServlet {
         validateUser(ValidationUtils.sanitizeInputString(userId));
         final var modelName = ValidationUtils.sanitizeInputString(modelCreateRequest.getName().trim());
         try {
+            if (modelCreateRequest.getModelType() == null){
+                modelCreateRequest.setModelType(ModelTypeEnum.NORMATIVE);
+            }
             final Model createdModel = modelBusinessLogic
                 .createModel(new JMapper<>(Model.class, ModelCreateRequest.class).getDestination(modelCreateRequest));
             modelBusinessLogic.createModelImports(modelName, modelImportsZip);
@@ -134,10 +141,10 @@ public class ModelServlet extends AbstractValidationsServlet {
             @ApiResponse(responseCode = "403", description = "Restricted operation")
         }
     )
-    public Response listModels(@HeaderParam(value = Constants.USER_ID_HEADER) final String userId) {
+    public Response listModels(@HeaderParam(value = Constants.USER_ID_HEADER) final String userId, @QueryParam("modelType") final String modelType) {
         validateUser(ValidationUtils.sanitizeInputString(userId));
         try {
-            final List<Model> modelList = modelBusinessLogic.listModels();
+            final List<Model> modelList = StringUtils.isEmpty(modelType)? modelBusinessLogic.listModels() : modelBusinessLogic.listModels(getModelTypeEnum(modelType));
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), RepresentationUtils.toRepresentation(modelList));
         } catch (final BusinessException e) {
             throw e;
@@ -147,6 +154,14 @@ public class ModelServlet extends AbstractValidationsServlet {
             log.error(errorMsg, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
+    }
+    
+    private ModelTypeEnum getModelTypeEnum(final String modelType) {
+        final ModelTypeEnum modelTypeEnum = ModelTypeEnum.valueOf(modelType.toUpperCase());
+        if (modelTypeEnum == null) {
+            throw ModelOperationExceptionSupplier.unknownModelType(modelType).get();
+        }
+        return modelTypeEnum;
     }
 
     @PUT

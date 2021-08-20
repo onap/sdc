@@ -218,7 +218,7 @@ describe('Software Product Details Module Tests', function () {
 		});
 
 		mockRest.addHandler('fetch', ({options, data, baseUrl}) => {
-			expect(baseUrl).toEqual('/sdc1/feProxy/rest/v1/catalog/model/');
+			expect(baseUrl).toEqual('/sdc1/feProxy/rest/v1/catalog/model?modelType=normative');
 			expect(data).toEqual(undefined);
 			expect(options).toEqual(undefined);
 			return [];

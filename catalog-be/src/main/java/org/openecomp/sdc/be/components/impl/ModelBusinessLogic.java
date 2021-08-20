@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
@@ -76,6 +77,10 @@ public class ModelBusinessLogic {
      */
     public List<Model> listModels() {
         return modelOperation.findAllModels();
+    }
+    
+    public List<Model> listModels(final ModelTypeEnum modelType) {
+        return modelOperation.findModels(modelType);
     }
 
     public void createModelImports(final String modelName, final InputStream modelImportsZip) {
