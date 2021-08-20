@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
@@ -188,7 +189,7 @@ public class InterfaceLifecycleOperationTest {
     @Test
     public void testGetAllInterfaceLifecycleTypesWithModel() {
         final var uid = UniqueIdBuilder.buildInterfaceTypeUid(MODEL_NAME, INTERFACE_TYPE);
-        final var modelData = new ModelData(MODEL_NAME, uid);
+        final var modelData = new ModelData(MODEL_NAME, uid, ModelTypeEnum.NORMATIVE.getValue());
         final ImmutablePair<GraphNode, GraphEdge> modelNode = new ImmutablePair<>(modelData, Mockito.mock(GraphEdge.class));
 
         final InterfaceData interfaceData = new InterfaceData();

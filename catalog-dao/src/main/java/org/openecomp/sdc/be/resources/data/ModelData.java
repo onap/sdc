@@ -30,17 +30,20 @@ public class ModelData extends GraphNode {
 
     private final String name;
     private final String uniqueId;
+    private final String modelType;
 
-    public ModelData(final String name, final String uniqueId) {
+    public ModelData(final String name, final String uniqueId, final String modelType) {
         super(NodeTypeEnum.Model);
         this.name = name;
         this.uniqueId = uniqueId;
+        this.modelType = modelType;
     }
 
     public ModelData(final Map<String, Object> properties) {
         super(NodeTypeEnum.Model);
         name = (String) properties.get(GraphPropertiesDictionary.NAME.getProperty());
         uniqueId = (String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty());
+        modelType = (String) properties.get(GraphPropertiesDictionary.MODEL_TYPE.getProperty());
     }
 
     @Override
@@ -48,6 +51,7 @@ public class ModelData extends GraphNode {
         final Map<String, Object> map = new HashMap<>();
         addIfExists(map, GraphPropertiesDictionary.NAME, name);
         addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, uniqueId);
+        addIfExists(map, GraphPropertiesDictionary.MODEL_TYPE, modelType);
         return map;
     }
 

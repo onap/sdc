@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.elements.RelationshipInstDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -396,7 +397,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
                 .when(janusGraphGenericDao).getNode(Mockito.anyString(), Mockito.any(), Mockito.eq(RelationshipTypeData.class), Mockito.any()); 
         
         
-        ModelData modelData = new ModelData("modelA", "modelA");
+        ModelData modelData = new ModelData("modelA", "modelA", ModelTypeEnum.NORMATIVE.getValue());
         ImmutablePair<ModelData, GraphEdge> pair = new ImmutablePair<>(modelData, new GraphEdge());
         Mockito.doReturn(Either.left(pair))
                 .when(janusGraphGenericDao).getParentNode("uid", relationshipInstDataDefinition1.getUniqueId(), GraphEdgeLabels.MODEL_ELEMENT, NodeTypeEnum.Model, ModelData.class); 
@@ -464,7 +465,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         Mockito.doReturn(Either.left(new GraphRelation())).when(derivedFromOperation)
                 .addDerivedFromRelation(relationshipTypeDefinition.getUniqueId(), derivedFromRelationshipTypeData.getUniqueId(), NodeTypeEnum.RelationshipType);
         
-        ModelData modelData = new ModelData("modelA", "modelA");
+        ModelData modelData = new ModelData("modelA", "modelA", ModelTypeEnum.NORMATIVE.getValue());
         ImmutablePair<ModelData, GraphEdge> pair = new ImmutablePair<>(modelData, new GraphEdge());
         Mockito.doReturn(Either.left(pair))
                 .when(janusGraphGenericDao).getParentNode("uid", dervideFromRelationshipInstDataDefinition.getUniqueId(), GraphEdgeLabels.MODEL_ELEMENT, NodeTypeEnum.Model, ModelData.class); 
@@ -544,7 +545,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
         Mockito.doReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND)).when(janusGraphGenericDao)
                 .getChild(Mockito.any(), Mockito.anyString(), Mockito.any(), Mockito.any(), Mockito.eq(RelationshipTypeData.class));
         
-        ModelData modelData = new ModelData("modelA", "modelA");
+        ModelData modelData = new ModelData("modelA", "modelA", ModelTypeEnum.NORMATIVE.getValue());
         ImmutablePair<ModelData, GraphEdge> pair = new ImmutablePair<>(modelData, new GraphEdge());
         Mockito.doReturn(Either.left(pair))
                 .when(janusGraphGenericDao).getParentNode("uid", newRelationshipTypeDefinition.getUniqueId(), GraphEdgeLabels.MODEL_ELEMENT, NodeTypeEnum.Model, ModelData.class); 
@@ -574,7 +575,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
                 .getChild(Mockito.anyString(), Mockito.anyString(), Mockito.any(), Mockito.any(),
                         Mockito.eq(RelationshipTypeData.class));
         
-        ModelData modelData = new ModelData("modelA", "modelA");
+        ModelData modelData = new ModelData("modelA", "modelA", ModelTypeEnum.NORMATIVE.getValue());
         ImmutablePair<ModelData, GraphEdge> pair = new ImmutablePair<>(modelData, new GraphEdge());
         Mockito.doReturn(Either.left(pair))
                 .when(janusGraphGenericDao).getParentNode("uid", relationshipTypeDefinition.getUniqueId(), GraphEdgeLabels.MODEL_ELEMENT, NodeTypeEnum.Model, ModelData.class); 

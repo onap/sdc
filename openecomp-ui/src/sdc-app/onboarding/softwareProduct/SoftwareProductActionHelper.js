@@ -109,7 +109,7 @@ function softwareProductCategoriesUrl() {
 
 function getModelUrl() {
     const restCatalogPrefix = Configuration.get('restCatalogPrefix');
-    return `${restCatalogPrefix}/v1/catalog/model/`;
+    return `${restCatalogPrefix}/v1/catalog/model?modelType=normative`;
 }
 
 function uploadFile(vspId, formData, version) {
