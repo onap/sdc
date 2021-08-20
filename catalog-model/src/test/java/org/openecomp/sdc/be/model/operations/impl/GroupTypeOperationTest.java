@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -544,7 +545,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
     public void testAddGroupTypeWithModel() {
         GroupTypeDefinition groupTypeDefinition = createGroupTypeDef();
         groupTypeDefinition.setModel("testModel");
-        Model model = new Model("testModel");
+        Model model = new Model("testModel", ModelTypeEnum.NORMATIVE);
         modelOperation.createModel(model , true);
 
         Either<GroupTypeDefinition, StorageOperationStatus> addGroupType = groupTypeOperation.addGroupType(groupTypeDefinition);

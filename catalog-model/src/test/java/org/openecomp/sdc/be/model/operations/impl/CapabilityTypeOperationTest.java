@@ -47,6 +47,7 @@ import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
@@ -136,7 +137,7 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         capabilityTypeDefinition.setType("tosca.capabilities.Container1");
         capabilityTypeDefinition.setModel("testModel");
         
-        Model model = new Model("testModel");
+        Model model = new Model("testModel", ModelTypeEnum.NORMATIVE);
         modelOperation.createModel(model , true);
 
         Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);

@@ -98,6 +98,7 @@ import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -1033,7 +1034,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
                 final String nameForGeneratedModel = resource.getModel() + "_" + csarInfo.getVfResourceName() + resource.getCsarVersion();
-                final Model model = new Model(nameForGeneratedModel, resource.getModel());
+                final Model model = new Model(nameForGeneratedModel, resource.getModel(), ModelTypeEnum.NORMATIVE_EXTENSION);
                 modelBusinessLogic.createModel(model, new Yaml().dump(dataTypesToCreate));
                 resource.setModel(nameForGeneratedModel);
             }
