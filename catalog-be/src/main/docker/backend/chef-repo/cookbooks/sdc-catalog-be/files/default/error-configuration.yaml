@@ -2546,6 +2546,14 @@ errors:
         message: "Error: Could not fetch data types from data base with model %1",
         messageId: "SVC4153"
     }
+    
+        #-----------SVC4154---------------------------
+    # %1 - "Model name"
+    UNKNOWN_MODEL_TYPE: {
+        code: 400,
+        message: "Error: Model type  %1 not known in the system",
+        messageId: "SVC4154"
+    }
 
     #-----------SVC4154---------------------------
     CSAR_TOSCA_IMPORTS_ERROR: {

@@ -318,7 +318,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         List<Component> componentList;
         actionResponse = resourceBL
             .getLatestVersionNotAbstractComponentsMetadata(isAbstract, HighestFilterEnum.HIGHEST_ONLY, ComponentTypeEnum.RESOURCE, null, userId,
-                null);
+                null, false);
         if (actionResponse.isRight()) {
             log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, ComponentTypeEnum.RESOURCE.getValue());
             return Either.right(buildErrorResponse(actionResponse.right().value()));

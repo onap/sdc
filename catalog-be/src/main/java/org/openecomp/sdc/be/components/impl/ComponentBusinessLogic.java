@@ -423,16 +423,17 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponentsMetadata(boolean isAbstractAbstract,
-                                                                                                 HighestFilterEnum highestFilter,
-                                                                                                 ComponentTypeEnum componentTypeEnum,
-                                                                                                 String internalComponentType, String userId,
-                                                                                                 String modelName) {
+    public Either<List<Component>, ResponseFormat> getLatestVersionNotAbstractComponentsMetadata(final boolean isAbstractAbstract,
+                                                                                                 final HighestFilterEnum highestFilter,
+                                                                                                 final ComponentTypeEnum componentTypeEnum,
+                                                                                                 final String internalComponentType, String userId,
+                                                                                                 final String modelName,
+                                                                                                 final boolean includeNormativeExtensionModels) {
         Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = null;
         try {
             validateUserExists(userId);
            nonCheckoutCompResponse = toscaOperationFacade
-                .getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType, modelName);
+                .getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType, modelName, includeNormativeExtensionModels);
             if (nonCheckoutCompResponse.isLeft()) {
                 log.debug("Retrieved Resource successfully.");
                 return Either.left(nonCheckoutCompResponse.left().value());
