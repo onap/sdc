@@ -46,6 +46,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
@@ -83,7 +84,7 @@ public class ModelOperation {
 
     public Model createModel(final Model model, final boolean inTransaction) {
         Model result = null;
-        final var modelData = new ModelData(model.getName(), UniqueIdBuilder.buildModelUid(model.getName()));
+        final var modelData = new ModelData(model.getName(), UniqueIdBuilder.buildModelUid(model.getName()), model.getModelType());
         try {
             final Either<ModelData, JanusGraphOperationStatus> createNode = janusGraphGenericDao.createNode(modelData, ModelData.class);
             if (createNode.isRight()) {
@@ -97,7 +98,7 @@ public class ModelOperation {
                     String.format("Failed to create model %s on JanusGraph with %s error", model, janusGraphOperationStatus));
             }
             addDerivedFromRelation(model);
-            result = new Model(createNode.left().value().getName(), model.getDerivedFrom());
+            result = new Model(createNode.left().value().getName(), model.getDerivedFrom(), model.getModelType());
             return result;
         } finally {
             if (!inTransaction) {
@@ -183,6 +184,13 @@ public class ModelOperation {
     public List<Model> findAllModels() {
         return findModelsByCriteria(Collections.emptyMap());
     }
+    
+    public List<Model> findModels(final ModelTypeEnum modelType) {
+        final Map<GraphPropertyEnum, Object> propertyCriteria = new EnumMap<>(GraphPropertyEnum.class);
+        propertyCriteria.put(GraphPropertyEnum.MODEL_TYPE, modelType.getValue());
+        
+        return findModelsByCriteria(propertyCriteria);
+    }
 
     private List<Model> findModelsByCriteria(final Map<GraphPropertyEnum, Object> propertyCriteria) {
         final List<GraphVertex> modelVerticesByCriteria = findModelVerticesByCriteria(propertyCriteria);
@@ -209,7 +217,9 @@ public class ModelOperation {
 
     private Model convertToModel(final GraphVertex modelGraphVertex) {
         final String modelName = (String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME);
-
+        final String modelTypeProperty = (String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.MODEL_TYPE);
+        final ModelTypeEnum modelType = StringUtils.isEmpty(modelTypeProperty) ? ModelTypeEnum.NORMATIVE : ModelTypeEnum.findByValue(modelTypeProperty).get();
+        
         final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> parentNode =
             janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
                 GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model, ModelData.class);
@@ -221,10 +231,10 @@ public class ModelOperation {
                 log.error(EcompLoggerErrorCode.DATA_ERROR, this.getClass().getName(), operationException.getMessage());
                 throw operationException;
             }
-            return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME));
+            return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME), modelType);
         } else {
             final ModelData parentModel = parentNode.left().value().getKey();
-            return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME), parentModel.getName());
+            return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME), parentModel.getName(), modelType);
         }
     }
 

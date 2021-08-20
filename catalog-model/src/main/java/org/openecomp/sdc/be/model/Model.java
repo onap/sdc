@@ -18,6 +18,7 @@
  */
 package org.openecomp.sdc.be.model;
 
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import com.googlecode.jmapper.annotations.JGlobalMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,9 +32,15 @@ public class Model {
 
     private String name;
     private String derivedFrom;
+    private ModelTypeEnum modelType;
     
     public Model(final String name) {
     	this.name = name;
+    }
+    
+    public Model(final String name, final ModelTypeEnum modelType) {
+        this.name = name;
+        this.modelType = modelType;
     }
 
 }

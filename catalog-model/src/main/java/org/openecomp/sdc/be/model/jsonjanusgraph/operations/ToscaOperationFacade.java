@@ -1935,17 +1935,18 @@ public class ToscaOperationFacade {
         return fetchServicesByCriteria(services, hasProps, hasNotProps, modelName);
     }
 
-    private Either<List<Component>, StorageOperationStatus> getLatestVersionNotAbstractToscaElementsMetadataOnly(boolean isAbstract,
-                                                                                                                 ComponentTypeEnum componentTypeEnum,
-                                                                                                                 String internalComponentType,
-                                                                                                                 VertexTypeEnum vertexType,
-                                                                                                                 String modelName) {
+    private Either<List<Component>, StorageOperationStatus> getLatestVersionNotAbstractToscaElementsMetadataOnly(final boolean isAbstract,
+                                                                                                                 final ComponentTypeEnum componentTypeEnum,
+                                                                                                                 final String internalComponentType,
+                                                                                                                 final VertexTypeEnum vertexType,
+                                                                                                                 final String modelName,
+                                                                                                                 final boolean includeNormativeExtensionModels) {
         List<Service> services = null;
         Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
         Map<GraphPropertyEnum, Object> hasNotProps = new EnumMap<>(GraphPropertyEnum.class);
         fillPropsMap(hasProps, hasNotProps, internalComponentType, componentTypeEnum, isAbstract, vertexType, modelName);
         Either<List<GraphVertex>, JanusGraphOperationStatus> getRes = janusGraphDao
-            .getByCriteria(vertexType, hasProps, hasNotProps, JsonParseFlagEnum.ParseMetadata, modelName);
+            .getByCriteria(vertexType, hasProps, hasNotProps, JsonParseFlagEnum.ParseMetadata, modelName, includeNormativeExtensionModels);
         if (getRes.isRight() && !JanusGraphOperationStatus.NOT_FOUND.equals(getRes.right().value())) {
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getRes.right().value()));
         }
@@ -2070,7 +2071,7 @@ public class ToscaOperationFacade {
     private Either<List<String>, StorageOperationStatus> getComponentUids(boolean isAbstract, ComponentTypeEnum componentTypeEnum,
                                                                           String internalComponentType) {
         Either<List<Component>, StorageOperationStatus> getToscaElementsRes = getLatestVersionNotAbstractMetadataOnly(isAbstract, componentTypeEnum,
-            internalComponentType, null);
+            internalComponentType, null, false);
         if (getToscaElementsRes.isRight()) {
             return Either.right(getToscaElementsRes.right().value());
         }
@@ -2214,14 +2215,15 @@ public class ToscaOperationFacade {
     }
 
     public Either<List<Component>, StorageOperationStatus> getLatestVersionNotAbstractMetadataOnly(boolean isAbstract,
-                                                                                                   ComponentTypeEnum componentTypeEnum,
-                                                                                                   String internalComponentType,
-                                                                                                   String modelName) {
+                                                                                                   final ComponentTypeEnum componentTypeEnum,
+                                                                                                   final String internalComponentType,
+                                                                                                   final String modelName,
+                                                                                                   final boolean includeNormativeExtensionModels) {
         List<VertexTypeEnum> internalVertexTypes = getInternalVertexTypes(componentTypeEnum, internalComponentType);
         List<Component> result = new ArrayList<>();
         for (VertexTypeEnum vertexType : internalVertexTypes) {
             Either<List<Component>, StorageOperationStatus> listByVertexType = getLatestVersionNotAbstractToscaElementsMetadataOnly(isAbstract,
-                componentTypeEnum, internalComponentType, vertexType, modelName);
+                componentTypeEnum, internalComponentType, vertexType, modelName, includeNormativeExtensionModels);
             if (listByVertexType.isRight()) {
                 return listByVertexType;
             }

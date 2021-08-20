@@ -27,17 +27,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 
 @TestInstance(Lifecycle.PER_CLASS)
 class ModelDataTest {
 
     private final String modelName = "ETSI-SDC-MODEL-TEST";
     private final String modelId = UUID.randomUUID().toString();
+    private final ModelTypeEnum modelType = ModelTypeEnum.NORMATIVE;
     ModelData modelData;
 
     @BeforeAll
     void initTestData() {
-        modelData = new ModelData(modelName, modelId);
+        modelData = new ModelData(modelName, modelId, modelType);
     }
 
     @Test
@@ -45,17 +47,20 @@ class ModelDataTest {
         assertThat(modelData).isNotNull();
         assertThat(modelData.getUniqueId()).isEqualTo(modelId);
         assertThat(modelData.getName()).isEqualTo(modelName);
+        assertThat(modelData.getModelType()).isEqualTo(modelType.getValue());
     }
 
     @Test
     void modelDataFromPropertiesMapTest() {
-        final Map<String, Object> properties = new HashMap();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put("name", modelData.getName());
         properties.put("uid", modelData.getUniqueId());
+        properties.put("modelType", modelData.getModelType());
         final ModelData modelDataFromPropertiesMap = new ModelData(properties);
         assertThat(modelDataFromPropertiesMap).isNotNull();
         assertThat(modelDataFromPropertiesMap.getUniqueId()).isEqualTo(modelId);
         assertThat(modelDataFromPropertiesMap.getName()).isEqualTo(modelName);
+        assertThat(modelDataFromPropertiesMap.getModelType()).isEqualTo(modelType.getValue());
     }
 
     @Test
@@ -65,6 +70,7 @@ class ModelDataTest {
         assertThat(result).isNotEmpty();
         assertThat(result.values()).contains(modelId);
         assertThat(result.values()).contains(modelName);
+        assertThat(result.values()).contains(modelType.getValue());
     }
 
 }

@@ -32,6 +32,9 @@ export class CompositionPaletteService {
         let model = this.workspaceService.metadata.model
         if (model) {
           params = params.append('componentModel', model);
+          if (this.workspaceService.getMetadataType() === 'SERVICE'){
+            params = params.append('includeNormativeExtensionModels', 'true');
+          }
         }
         const loadInstances = this.http.get(this.facadeUrl, {params});
         const loadGroups = this.http.get(this.baseUrl + 'groupTypes', {params});

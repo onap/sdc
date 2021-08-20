@@ -485,9 +485,15 @@ export class GeneralViewModel {
                 return;
             }
 
-            this.modelService.getModels().subscribe((modelsFound: Model[]) => {
-                modelsFound.forEach(model => {this.$scope.models.push({id: model.name, name: model.name})});
-            });
+            if (!this.$scope.isCreateMode() && this.$scope.isVspImport()){
+                this.modelService.getModels().subscribe((modelsFound: Model[]) => {
+                    modelsFound.forEach(model => {this.$scope.models.push({id: model.name, name: model.name})});
+                });	
+            } else {
+                this.modelService.getModelsOfType("normative").subscribe((modelsFound: Model[]) => {
+                    modelsFound.forEach(model => {this.$scope.models.push({id: model.name, name: model.name})});
+                });
+            }
 
             this.$scope.models.sort(function (model1, model2) {
                 if (model1.id > model2.id) {
