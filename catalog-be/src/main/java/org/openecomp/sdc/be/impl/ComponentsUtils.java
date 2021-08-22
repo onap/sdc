@@ -404,12 +404,15 @@ public class ComponentsUtils {
         return responseFormat;
     }
 
-    public ResponseFormat getResponseFormatByArtifactId(ActionStatus actionStatus, String artifactId) {
+    public ResponseFormat getResponseFormatByArtifactId(ActionStatus actionStatus, String... params) {
         ResponseFormat responseFormat;
         switch (actionStatus) {
             case RESOURCE_NOT_FOUND:
             case ARTIFACT_NOT_FOUND:
-                responseFormat = getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, artifactId);
+                responseFormat = getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, params);
+                break;
+            case ARTIFACT_NAME_INVALID:
+                responseFormat = getResponseFormat(ActionStatus.ARTIFACT_NAME_INVALID, params);
                 break;
             default:
                 responseFormat = getResponseFormat(actionStatus);

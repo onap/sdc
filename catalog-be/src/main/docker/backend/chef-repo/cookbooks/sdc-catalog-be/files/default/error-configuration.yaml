@@ -1803,9 +1803,11 @@ errors:
         messageId: "SVC4669"
     }
     #---------SVC4670------------------------------
+    # %1 - artifactname
+    # %2 - validname
     ARTIFACT_NAME_INVALID: {
         code: 400,
-        message: "Error: Artifact name is invalid.",
+        message: "Error: Artifact name '%1' is invalid. Only the following characters are allowed in the Artifact Name: '%2'.",
         messageId: "SVC4670"
     }
     #---------SVC4671------------------------------
