@@ -198,6 +198,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private static final String CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES = "Create Resource - validateCapabilityTypesCreate";
     private static final String COMPONENT_INSTANCE_WITH_NAME = "component instance with name ";
     private static final String COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE = "component instance with name {}  in resource {} ";
+    private static final String VALID_CHARACTERS_ARTIFACT_NAME = "'A-Z', 'a-z', '0-9', '.', '_', '-', '@' and space";
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(ResourceBusinessLogic.class.getName());
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     private final ResourceImportManager resourceImportManager;
@@ -2148,7 +2149,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             Either<List<NonMetaArtifactInfo>, String> artifactPathAndNameList = getValidArtifactNames(csarInfo, collectedWarningMessages);
             if (artifactPathAndNameList.isRight()) {
                 return Either.right(
-                    getComponentsUtils().getResponseFormatByArtifactId(ActionStatus.ARTIFACT_NAME_INVALID, artifactPathAndNameList.right().value()));
+                    getComponentsUtils().getResponseFormatByArtifactId(ActionStatus.ARTIFACT_NAME_INVALID, artifactPathAndNameList.right().value(),
+                        VALID_CHARACTERS_ARTIFACT_NAME));
             }
             EnumMap<ArtifactOperationEnum, List<NonMetaArtifactInfo>> vfCsarArtifactsToHandle = null;
             if (artifactOperation.isCreateOrLink()) {
