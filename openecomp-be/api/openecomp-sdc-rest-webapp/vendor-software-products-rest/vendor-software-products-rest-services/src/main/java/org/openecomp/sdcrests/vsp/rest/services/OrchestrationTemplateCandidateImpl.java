@@ -152,7 +152,9 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     }
 
     @Override
-    public Response upload(final String vspId, final String versionId, final Attachment fileToUpload, final String user) {
+    public Response upload(String vspId, String versionId, final Attachment fileToUpload, final String user) {
+        vspId = ValidationUtils.sanitizeInputString(vspId);
+        versionId = ValidationUtils.sanitizeInputString(versionId);
         final byte[] fileToUploadBytes;
         final var filename = ValidationUtils.sanitizeInputString(fileToUpload.getDataHandler().getName());
         ArtifactInfo artifactInfo = null;
@@ -193,8 +195,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             return Response.ok(uploadFileResponseDto)
                 .build();
         }
-        final var version = new Version(ValidationUtils.sanitizeInputString(versionId));
-        final var vspDetails = new VspDetails(ValidationUtils.sanitizeInputString(vspId), version);
+        final var version = new Version(versionId);
+        final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
         return processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
     }
 

@@ -22,13 +22,21 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validati
 import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_7_1;
 
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+import java.util.stream.Collectors;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 
 public class ValidatorFactory {
 
-    private ValidatorFactory() {
+    private final ServiceLoader<Validator> validatorLoader;
+
+    public ValidatorFactory() {
+        this.validatorLoader = ServiceLoader.load(Validator.class);
     }
 
     /**
@@ -38,7 +46,7 @@ public class ValidatorFactory {
      * @return Validator based on the contents of the csar package provided
      * @throws IOException when metafile is invalid
      */
-    public static Validator getValidator(final FileContentHandler fileContentHandler) throws IOException {
+    public Validator getValidator(final FileContentHandler fileContentHandler) throws IOException {
         final ETSIService etsiService = new ETSIServiceImpl(null);
         if (!etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
             return new ONAPCsarValidator();
@@ -50,5 +58,19 @@ public class ValidatorFactory {
             return new SOL004Version3MetaDirectoryValidator();
         }
         return new SOL004MetaDirectoryValidator();
+    }
+
+    /**
+     * Get validators based on the given model.
+     *
+     * @param model the model
+     * @return a list containing all validators for the given model, empty otherwise.
+     */
+    public List<Validator> getValidators(final String model) {
+        return validatorLoader.stream()
+            .map(Provider::get)
+            .filter(validator -> validator.appliesTo(model))
+            .sorted(Comparator.comparingInt(Validator::getOrder))
+            .collect(Collectors.toList());
     }
 }

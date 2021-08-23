@@ -41,6 +41,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 
 class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirectoryValidatorTest {
 
+    private final ValidatorFactory validatorFactory = new ValidatorFactory();
+
     @Override
     public SOL004MetaDirectoryValidator getSOL004MetaDirectoryValidator() {
         return new SOL004Version4MetaDirectoryValidator();
@@ -107,7 +109,7 @@ class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirectoryValida
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Validator validator = ValidatorFactory.getValidator(handler);
+        final Validator validator = validatorFactory.getValidator(handler);
         final ValidationResult validationResult = validator.validate(handler);
         assertTrue(validationResult.getErrors().isEmpty());
     }
@@ -137,7 +139,7 @@ class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirectoryValida
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Validator validator = ValidatorFactory.getValidator(handler);
+        final Validator validator = validatorFactory.getValidator(handler);
         final ValidationResult validationResult = validator.validate(handler);
         assertExpectedErrors("Non-MANO file does not exist", validationResult.getErrors(), 1);
     }
@@ -167,7 +169,7 @@ class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirectoryValida
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Validator validator = ValidatorFactory.getValidator(handler);
+        final Validator validator = validatorFactory.getValidator(handler);
         final ValidationResult validationResult = validator.validate(handler);
         assertExpectedErrors("Manifest with non existent source files", validationResult.getErrors(), 1);
     }
