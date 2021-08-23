@@ -22,6 +22,30 @@
       "revId": "2b73e5ce44cb1d53e4a4a52716be9e8fac38a7a7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0159bf8_d1e88b77",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 2550,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-08-23T13:04:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "36ad2455_902717b1",
+      "range": {
+        "startLine": 2550,
+        "startChar": 14,
+        "endLine": 2550,
+        "endChar": 17
+      },
+      "revId": "2b73e5ce44cb1d53e4a4a52716be9e8fac38a7a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
