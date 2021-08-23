@@ -49,6 +49,7 @@ export class ConfigService {
             this.cacheService.set('serviceCategories', response.categories.serviceCategories);
             this.cacheService.set('resourceCategories', response.categories.resourceCategories);
             this.cacheService.set('UIConfiguration', response.configuration);
+            this.cacheService.set('models', response.models);
         });
         return promise;
     }

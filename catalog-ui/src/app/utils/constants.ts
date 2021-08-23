@@ -28,6 +28,7 @@ export let CP_END_POINT = 'CpEndPoint';
 export let CHANGE_COMPONENT_CSAR_VERSION_FLAG = 'changeComponentCsarVersion';
 export let PREVIOUS_CSAR_COMPONENT = 'previousCsarComponent'
 export let CATEGORY_SERVICE_METADATA_KEYS = ["Naming Policy","Service Type","Service Function","Service Role"];
+export let DEFAULT_MODEL_NAME = "SDC AID";
 
 export class GeneralStatus {
   static OK = 'OK';

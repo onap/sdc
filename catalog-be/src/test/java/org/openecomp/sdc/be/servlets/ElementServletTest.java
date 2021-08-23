@@ -28,11 +28,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-import fj.data.Either;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -40,8 +40,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.commons.text.StrSubstitutor;
 import org.apache.http.HttpStatus;
+import org.assertj.core.util.Lists;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -54,6 +56,7 @@ import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -89,6 +92,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
+import fj.data.Either;
+
 class ElementServletTest extends JerseyTest {
 
     public static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
@@ -111,6 +116,7 @@ class ElementServletTest extends JerseyTest {
     private static final ComponentsCleanBusinessLogic componentsCleanBusinessLogic = Mockito
         .mock(ComponentsCleanBusinessLogic.class);
     private static final ElementBusinessLogic elementBusinessLogic = Mockito.mock(ElementBusinessLogic.class);
+    private static final ModelBusinessLogic modelBusinessLogic = Mockito.mock(ModelBusinessLogic.class);
 
     private static final ResponseFormat okResponseFormat = new ResponseFormat(HttpStatus.SC_OK);
     private static final ResponseFormat conflictResponseFormat = new ResponseFormat(HttpStatus.SC_CONFLICT);
@@ -180,7 +186,7 @@ class ElementServletTest extends JerseyTest {
         when(webApplicationContext.getBean(ElementBusinessLogic.class)).thenReturn(elementBusinessLogic);
         when(webApplicationContext.getBean(ComponentsUtils.class)).thenReturn(componentUtils);
         when(beGenericServlet.getComponentsUtils()).thenReturn(componentUtils);
-
+        when(modelBusinessLogic.listModels()).thenReturn(Lists.emptyList());
         Either<User, ActionStatus> designerEither = Either.left(designerUser);
 
         when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerUser);
@@ -1101,6 +1107,7 @@ class ElementServletTest extends JerseyTest {
                     bind(componentsCleanBusinessLogic).to(ComponentsCleanBusinessLogic.class);
                     bind(elementBusinessLogic).to(ElementBusinessLogic.class);
                     bind(artifactsBusinessLogic).to(ArtifactsBusinessLogic.class);
+                    bind(modelBusinessLogic).to(ModelBusinessLogic.class);
                 }
             })
             .property("contextConfig", context);

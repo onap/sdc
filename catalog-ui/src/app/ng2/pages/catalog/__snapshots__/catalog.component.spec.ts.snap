@@ -13,6 +13,7 @@ exports[`catalog component should match current snapshot of catalog component 1`
   initScopeMembers={[Function Function]}
   isDefaultFilter={[Function Function]}
   loaderService={[Function Object]}
+  models={[Function Array]}
   resourceNamePipe={[Function Object]}
   sdcConfig={[Function Object]}
   sdcMenu={[Function Object]}
@@ -46,6 +47,28 @@ exports[`catalog component should match current snapshot of catalog component 1`
         <div
           class="sdc-catalog-leftbar-container"
         >
+          <div
+            class="sdc-catalog-model-filter-container"
+          >
+            <div
+              class="i-sdc-designer-leftbar-section-title pointer"
+            >
+              <span
+                class="i-sdc-designer-leftbar-section-title-icon"
+              />
+              <span
+                class="i-sdc-designer-leftbar-section-title-text"
+                data-tests-id="statusFilterTitle"
+              >
+                Model
+              </span>
+            </div>
+            <div
+              class="i-sdc-designer-leftbar-section-content"
+            >
+              <sdc-checklist />
+            </div>
+          </div>
           <div
             class="sdc-catalog-type-filter-container"
           >

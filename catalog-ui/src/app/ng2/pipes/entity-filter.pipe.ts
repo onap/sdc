@@ -20,7 +20,7 @@
 
 import {Pipe, PipeTransform} from "@angular/core";
 import {Component, Resource} from "app/models";
-import {ComponentType} from "app/utils/constants";
+import {ComponentType, DEFAULT_MODEL_NAME} from "app/utils/constants";
 
 export interface ISearchFilter {
     [key:string]: string;
@@ -34,6 +34,8 @@ export interface IEntityFilterObject {
     selectedCategoriesModel?:Array<string>;
     // Statuses
     selectedStatuses?:Array<string>;
+    // Models
+    selectedModels?:Array<string>;
     // distributed
     distributed?:Array<string>;
     // search
@@ -127,6 +129,21 @@ export class EntityFilterPipe implements PipeTransform{
                 });
             });
             filteredComponents = filteredDistributed;
+        }
+
+        // filter by model
+        // --------------------------------------------------------------------------
+        if (filter.selectedModels && filter.selectedModels.length > 0) {
+            let filteredModels = [];
+            let defaultModelPresent = filter.selectedModels.indexOf(DEFAULT_MODEL_NAME) > -1;
+            angular.forEach(filteredComponents, (component:Component):void => {
+                if (filter.selectedModels.indexOf(component.model) > -1) {
+                    filteredModels.push(component);
+                } else if (!component.model && defaultModelPresent) {
+	                filteredModels.push(component);
+                }
+            });
+            filteredComponents = filteredModels;
         }
 
         // filter by search
