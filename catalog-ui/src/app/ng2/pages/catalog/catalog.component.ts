@@ -27,12 +27,14 @@ import { SdcMenuToken, IAppMenu } from "../../config/sdc-menu.config";
 import { Component, ICategoryBase, IMainCategory, ISubCategory, IConfigStatuses, ICatalogSelector, CatalogSelectorTypes } from "app/models";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
+import { Model } from "app/models/model";
 
 interface Gui {
     onComponentSubTypesClick:Function;
     onComponentTypeClick:Function;
     onCategoryClick:Function;
     onStatusClick:Function;
+    onModelClick:Function;
     changeFilterTerm:Function;
 }
 
@@ -40,6 +42,7 @@ interface IFilterParams {
     components: string[];
     categories: string[];
     statuses: (string)[];
+    models: string[];
     order: [string, boolean];
     term: string;
     active: boolean;
@@ -54,6 +57,7 @@ interface ICheckboxesFilterKeys {
     componentTypes: ICheckboxesFilterMap;
     categories: ICheckboxesFilterMap;
     statuses: ICheckboxesFilterMap;
+    models: ICheckboxesFilterMap;
 }
 
 interface ICategoriesMap {
@@ -73,6 +77,7 @@ export class CatalogComponent {
     public checkboxesFilterKeys:ICheckboxesFilterKeys;
     public gui:Gui;
     public categories:Array<IMainCategory>;
+    public models: Array<string> = new Array();
     public filteredCategories:Array<IMainCategory>;
     public confStatus:IConfigStatuses;
     public componentTypes:{[key:string]: Array<string>};
@@ -96,11 +101,13 @@ export class CatalogComponent {
     public typesChecklistModel: SdcUiCommon.ChecklistModel;
     public categoriesChecklistModel: SdcUiCommon.ChecklistModel;
     public statusChecklistModel: SdcUiCommon.ChecklistModel;
+    public modelsChecklistModel: SdcUiCommon.ChecklistModel;
 
     private defaultFilterParams:IFilterParams = {
         components: [],
         categories: [],
         statuses: [],
+        models: [],
         order: ['lastUpdateDate', true],
         term: '',
         active: true
@@ -149,8 +156,9 @@ export class CatalogComponent {
         this.numberOfItemToDisplay = 0;
         this.categories = this.makeSortedCategories(this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories')))
             .map((cat) => <IMainCategory>cat);
+        this.models = this.cacheService.get('models').map((model:Model) => model.name);
         this.confStatus = this.sdcMenu.statuses;
-        this.expandedSection = ["type", "category", "status"];
+        this.expandedSection = ["type", "category", "status", "model"];
         this.catalogItems = [];
         this.search = {FilterTerm: ""};
         this.categoriesMap = this.initCategoriesMap();
@@ -167,6 +175,7 @@ export class CatalogComponent {
         this.buildChecklistModelForTypes();
         this.buildChecklistModelForCategories();
         this.buildChecklistModelForStatuses();
+        this.buildChecklistModelForModels();
     }
 
     private getTestIdForCheckboxByText = ( text: string ):string => {
@@ -216,6 +225,18 @@ export class CatalogComponent {
         );
     }
 
+    private buildChecklistModelForModels() {
+        this.modelsChecklistModel = new SdcUiCommon.ChecklistModel(this.checkboxesFilterKeys.models._main,
+            this.models.map((model) => new SdcUiCommon.ChecklistItemModel(
+                model, 
+                false, 
+                this.checkboxesFilterKeys.models._main.indexOf(model) !== -1, 
+                null, 
+                this.getTestIdForCheckboxByText(model), 
+                model))
+        );
+    }
+
     private buildChecklistModelForStatuses() {
         // For statuses checklist model, use the statuses keys as values. On applying filtering map the statuses keys to statuses values.
         this.statusChecklistModel = new SdcUiCommon.ChecklistModel(this.checkboxesFilterKeys.statuses._main,
@@ -236,6 +257,7 @@ export class CatalogComponent {
         this.checkboxesFilter.selectedResourceSubTypes = [];
         this.checkboxesFilter.selectedCategoriesModel = [];
         this.checkboxesFilter.selectedStatuses = [];
+        this.checkboxesFilter.selectedModels = [];
     }
 
     private initCheckboxesFilterKeys() {
@@ -244,6 +266,7 @@ export class CatalogComponent {
         this.checkboxesFilterKeys.componentTypes = { _main: [] };
         this.checkboxesFilterKeys.categories = { _main: [] };
         this.checkboxesFilterKeys.statuses = { _main: [] };
+        this.checkboxesFilterKeys.models = { _main: [] };
     }
 
     private initCategoriesMap(categoriesList?:(ICategoryBase)[], parentCategory:ICategoryBase=null): ICategoriesMap {
@@ -360,6 +383,12 @@ export class CatalogComponent {
                 term: filterTerm
             });
         };
+ 
+        this.gui.onModelClick = (): void => {
+            this.changeFilterParams({
+                models: this.makeFilterParamsFromCheckboxes(this.modelsChecklistModel)
+            });
+        };
     }
 
     public raiseNumberOfElementToDisplay(recalculate:boolean = false): void {
@@ -444,6 +473,7 @@ export class CatalogComponent {
         this.applyFilterParamsComponents(filterParams);
         this.applyFilterParamsCategories(filterParams);
         this.applyFilterParamsStatuses(filterParams);
+        this.applyFilterParamsModels(filterParams);
         this.applyFilterParamsOrder(filterParams);
         this.applyFilterParamsTerm(filterParams);
 
@@ -499,6 +529,11 @@ export class CatalogComponent {
         this.checkboxesFilter.selectedStatuses = _.reduce(_.flatMap(this.checkboxesFilterKeys.statuses), (stats, st:string) => [...stats, ...this.confStatus[st].values], []);
     }
 
+    private applyFilterParamsModels(filterParams: IFilterParams) {
+        this.applyFilterParamsToCheckboxes(this.modelsChecklistModel, filterParams.models);
+        this.checkboxesFilter.selectedModels = _.flatMap(this.checkboxesFilterKeys.models);
+    }
+
     private applyFilterParamsOrder(filterParams: IFilterParams) {
         this.sortBy = filterParams.order[0];
         this.reverse = filterParams.order[1];
@@ -525,6 +560,8 @@ export class CatalogComponent {
                         paramsChecklist = paramsChecklist || this.categoriesChecklistModel;
                     case 'filter.statuses':
                         paramsChecklist = paramsChecklist || this.statusChecklistModel;
+                    case 'filter.models':
+                        paramsChecklist = paramsChecklist || this.modelsChecklistModel;
 
                         // for those cases above - split param by comma and make reduced checklist values for filter params (url)
                         newVal = _.uniq(params[k].split(','));
@@ -559,6 +596,7 @@ export class CatalogComponent {
                 case 'components':
                 case 'categories':
                 case 'statuses':
+                case 'models':
                     newVal = changedFilterParams[k] && changedFilterParams[k].length ? changedFilterParams[k].join(',') : null;
                     break;
                 case 'order':
@@ -582,7 +620,8 @@ export class CatalogComponent {
                 this.changeFilterParams({
                     components: this.makeFilterParamsFromCheckboxes(this.typesChecklistModel),
                     categories: this.makeFilterParamsFromCheckboxes(this.categoriesChecklistModel),
-                    statuses: this.makeFilterParamsFromCheckboxes(this.statusChecklistModel)
+                    statuses: this.makeFilterParamsFromCheckboxes(this.statusChecklistModel),
+                    models: this.makeFilterParamsFromCheckboxes(this.modelsChecklistModel)
                 });
                 // rebuild the checkboxes to show selected
                 this.buildCheckboxLists();

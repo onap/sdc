@@ -19,22 +19,12 @@
  */
 package org.openecomp.sdc.be.servlets;
 
-import com.jcabi.aspects.Loggable;
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -50,8 +40,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.scheduledtasks.ComponentsCleanBusinessLogic;
@@ -83,6 +75,19 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
+import com.jcabi.aspects.Loggable;
+
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tags;
+
 @Path("/v1/")
 /**
  *
@@ -101,15 +106,17 @@ public class ElementServlet extends BeGenericServlet {
     private final ComponentsCleanBusinessLogic componentsCleanBusinessLogic;
     private final ElementBusinessLogic elementBusinessLogic;
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
+    private final ModelBusinessLogic modelBusinessLogic;
 
     @Inject
     public ElementServlet(final UserBusinessLogic userBusinessLogic, final ComponentsUtils componentsUtils,
                           final ComponentsCleanBusinessLogic componentsCleanBusinessLogic, final ElementBusinessLogic elementBusinessLogic,
-                          final ArtifactsBusinessLogic artifactsBusinessLogic) {
+                          final ArtifactsBusinessLogic artifactsBusinessLogic, final ModelBusinessLogic modelBusinessLogic) {
         super(userBusinessLogic, componentsUtils);
         this.componentsCleanBusinessLogic = componentsCleanBusinessLogic;
         this.elementBusinessLogic = elementBusinessLogic;
         this.artifactsBusinessLogic = artifactsBusinessLogic;
+        this.modelBusinessLogic = modelBusinessLogic;
     }
     /*
      ******************************************************************************
@@ -652,6 +659,7 @@ public class ElementServlet extends BeGenericServlet {
                 return buildErrorResponse(either.right().value());
             }
             consolidatedObject.put("categories", either.left().value());
+            consolidatedObject.put("models", modelBusinessLogic.listModels());
             consolidatedObject.put("version", getVersion(servletContext));
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("getSDCVersion");

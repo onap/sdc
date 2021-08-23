@@ -1336,6 +1336,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         if (isAddToCatalog(excludeTypes, metadatObj) && (existInCatalog.get(uniqueId) == null && (isDeleted == null || !isDeleted.booleanValue()))) {
             CatalogComponent catalogComponent = new CatalogComponent();
             catalogComponent.setUniqueId(uniqueId);
+            catalogComponent.setModel((String) metadatObj.get(JsonPresentationFields.MODEL.getPresentation()));
             catalogComponent
                 .setComponentType(ComponentTypeEnum.valueOf((String) metadatObj.get(JsonPresentationFields.COMPONENT_TYPE.getPresentation())));
             catalogComponent.setVersion((String) metadatObj.get(JsonPresentationFields.VERSION.getPresentation()));

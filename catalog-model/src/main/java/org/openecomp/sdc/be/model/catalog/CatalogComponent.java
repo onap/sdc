@@ -53,6 +53,7 @@ public class CatalogComponent {
     private Boolean isHighestVersion;
     private String lastUpdaterUserId;
     private List<CategoryDefinition> categories;
+    private String model;
 
     public List<String> getTags() {
         return tags == null ? Collections.emptyList() : ImmutableList.copyOf(tags);

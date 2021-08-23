@@ -34,6 +34,8 @@ export interface IEntityFilterObject {
     selectedCategoriesModel?:Array<string>;
     // Statuses
     selectedStatuses?:Array<string>;
+    // Models
+    selectedModels?:Array<string>;
     // distributed
     distributed?:Array<string>;
     // search
@@ -127,6 +129,18 @@ export class EntityFilterPipe implements PipeTransform{
                 });
             });
             filteredComponents = filteredDistributed;
+        }
+
+        // filter by model
+        // --------------------------------------------------------------------------
+        if (filter.selectedModels && filter.selectedModels.length > 0) {
+            let filteredModels = [];
+            angular.forEach(filteredComponents, (component:Component):void => {
+                if (filter.selectedModels.indexOf(component.model) > -1) {
+                    filteredModels.push(component);
+                }
+            });
+            filteredComponents = filteredModels;
         }
 
         // filter by search

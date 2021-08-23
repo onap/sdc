@@ -75,18 +75,21 @@ describe('catalog component', () => {
                 components: ["Resource.VF", "Resource.VFC"],
                 order:  ["lastUpdateDate", true],
                 statuses: ["inDesign"],
+                models: ["test"],
                 term: "Vf"
             }
             checkboxesFilterMock = {
                 selectedCategoriesModel: ["serviceNewCategory.network l4+", "resourceNewCategory.allotted resource.allotted resource"],
                 selectedComponentTypes: ["Resource.VF", "Resource.VFC"],
                 selectedResourceSubTypes: ["VF", "VFC"],
-                selectedStatuses: ["NOT_CERTIFIED_CHECKOUT", "NOT_CERTIFIED_CHECKIN"]
+                selectedStatuses: ["NOT_CERTIFIED_CHECKOUT", "NOT_CERTIFIED_CHECKIN"],
+                selectedModels: ["test"]
             };
             checkboxesFilterKeysMock = {
                 categories:{_main: ["serviceNewCategory.network l4+"]},
                 componentTypes: { Resource: ["Resource.VF", "Resource.VFC"], _main: ["Resource.VFC"]},
-                statuses: {_main: ["inDesign"]}
+                statuses: {_main: ["inDesign"]},
+                models: {_main: ["test"]}
             }
 
             stateServiceMock = {
@@ -186,7 +189,7 @@ describe('catalog component', () => {
         expect(component.componentInstance.numberOfItemToDisplay).toEqual(0);
         expect(component.componentInstance.categories).toEqual(categoriesElements);
         expect(component.componentInstance.confStatus).toEqual(component.componentInstance.sdcMenu.statuses);
-        expect(component.componentInstance.expandedSection).toEqual( ["type", "category", "status"]);
+        expect(component.componentInstance.expandedSection).toEqual( ["type", "category", "status", "model"]);
         expect(component.componentInstance.catalogItems).toEqual([]);
         expect(component.componentInstance.search).toEqual({FilterTerm: ""});
         expect(component.componentInstance.initCategoriesMap).toHaveBeenCalled();
@@ -203,10 +206,12 @@ describe('catalog component', () => {
         component.componentInstance.buildChecklistModelForTypes = jest.fn();
         component.componentInstance.buildChecklistModelForCategories = jest.fn();
         component.componentInstance.buildChecklistModelForStatuses = jest.fn();
+		component.componentInstance.buildChecklistModelForModels = jest.fn();
         component.componentInstance.buildCheckboxLists();
         expect(component.componentInstance.buildChecklistModelForTypes).toHaveBeenCalled();
         expect(component.componentInstance.buildChecklistModelForCategories).toHaveBeenCalled();
         expect(component.componentInstance.buildChecklistModelForStatuses).toHaveBeenCalled();
+        expect(component.componentInstance.buildChecklistModelForModels).toHaveBeenCalled();
     });
 
     it ('should call on catalog component getTestIdForCheckboxByText ' , () => {
@@ -266,7 +271,7 @@ describe('catalog component', () => {
         component.componentInstance.initCheckboxesFilter();
         expect(component.componentInstance.checkboxesFilter.selectedComponentTypes).toEqual([]);
         expect(component.componentInstance.checkboxesFilter.selectedResourceSubTypes).toEqual([]);
-        expect(component.componentInstance.checkboxesFilter.selectedCategoriesModel).toEqual([]);
+        expect(component.componentInstance.checkboxesFilter.selectedModels).toEqual([]);
         expect(component.componentInstance.checkboxesFilter.selectedStatuses).toEqual([]);
     });
 
@@ -276,6 +281,7 @@ describe('catalog component', () => {
         expect(component.componentInstance.checkboxesFilterKeys.componentTypes).toEqual({ _main: [] });
         expect(component.componentInstance.checkboxesFilterKeys.categories).toEqual({ _main: [] });
         expect(component.componentInstance.checkboxesFilterKeys.statuses).toEqual({ _main: [] });
+        expect(component.componentInstance.checkboxesFilterKeys.models).toEqual({ _main: [] });
     });
 
     it ('should call on catalog component initCategoriesMap' , () => {
@@ -469,6 +475,7 @@ describe('catalog component', () => {
         component.componentInstance.applyFilterParamsComponents = jest.fn();
         component.componentInstance.applyFilterParamsCategories = jest.fn();
         component.componentInstance.applyFilterParamsStatuses = jest.fn();
+        component.componentInstance.applyFilterParamsModels = jest.fn();
         component.componentInstance.applyFilterParamsOrder = jest.fn();
         component.componentInstance.applyFilterParamsTerm = jest.fn();
         component.componentInstance.filterCatalogItems = jest.fn();
@@ -596,7 +603,7 @@ describe('catalog component', () => {
         component.componentInstance.applyFilterParamsToView = jest.fn();
         component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ["lastUpdateDate", true], statuses: [], term: ""};
         component.componentInstance.$state.go = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
-        const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
+        const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.models": "test", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
         component.componentInstance.changeFilterParams(filterParamsMock);
         expect(component.componentInstance.filterParams).toEqual(filterParamsMock);
         expect(component.componentInstance.$state.go).toHaveBeenCalledWith('.',newParams, {location: 'replace', notify: false});
@@ -610,7 +617,7 @@ describe('catalog component', () => {
         component.componentInstance.buildCheckboxLists = jest.fn();
         component.componentInstance.filterParams =  { active: true, categories: [], components: [], order:  ["lastUpdateDate", true], statuses: [], term: ""};
         component.componentInstance.$state.go = jest.fn().mockImplementation(() => Promise.resolve({ json: () => [] }));
-        const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
+        const newParams = {"filter.active": true, "filter.categories": "resourceNewCategory.allotted resource.allotted resource,resourceNewCategory.allotted resource.contrail route,resourceNewCategory.application l4+.application server", "filter.components": "Resource.VF,Resource.VFC", "filter.models": "test", "filter.order": "-lastUpdateDate", "filter.statuses": "inDesign", "filter.term": "Vf"}
         component.componentInstance.typesChecklistModel = checkListModelMock;
         component.componentInstance.categoriesChecklistModel = checkListModelMock;
         component.componentInstance.statusChecklistModel = checkListModelMock;

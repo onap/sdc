@@ -60,6 +60,20 @@
                     </div>
                 </div>
 
+                <!-- Model -->
+                <div class="sdc-catalog-model-filter-container">
+                    <div class="i-sdc-designer-leftbar-section-title pointer" (click)="sectionClick('model')"
+                         [ngClass]="{'expanded': expandedSection.indexOf('model') !== -1}">
+                        <span class="i-sdc-designer-leftbar-section-title-icon"></span>
+                        <span class="i-sdc-designer-leftbar-section-title-text"
+                              data-tests-id="statusFilterTitle">Model</span>
+                    </div>
+                    <div class="i-sdc-designer-leftbar-section-content">
+                        <sdc-checklist [checklistModel]="modelsChecklistModel" [testId]="'checklist-model'"
+                                       (checkedChange)="gui.onModelClick()"></sdc-checklist>
+                    </div>
+                </div>
+
             </div>
         </div>
 
