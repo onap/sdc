@@ -20,26 +20,24 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openecomp.sdc.be.test.util.TestResourcesHandler.getResourceBytesOrFail;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 
-public class ONAPCsarValidatorTest {
+class ONAPCsarValidatorTest {
 
     private ONAPCsarValidator onapCsarValidator;
     private FileContentHandler contentHandler;
 
     @BeforeEach
-    public void setUp() throws IOException{
+    void setUp() {
         onapCsarValidator = new ONAPCsarValidator();
         contentHandler = new FileContentHandler();
         contentHandler.addFile("TOSCA-Metadata/TOSCA.meta",
@@ -51,13 +49,13 @@ public class ONAPCsarValidatorTest {
     }
 
     @Test
-    public void testGivenCSARPackage_withValidContent_thenNoErrorsReturned() {
+    void testGivenCSARPackage_withValidContent_thenNoErrorsReturned() {
         assertExpectedErrors("Valid CSAR Package should have 0 errors",
-                onapCsarValidator.validateContent(contentHandler), 0);
+                onapCsarValidator.validate(contentHandler).getErrors(), 0);
     }
 
     @Test
-    public void testGivenCSARPackage_withInvalidManifestFile_thenErrorsReturned() throws IOException{
+    void testGivenCSARPackage_withInvalidManifestFile_thenErrorsReturned() {
         contentHandler = new FileContentHandler();
         contentHandler.addFile("TOSCA-Metadata/TOSCA.meta",
             getResourceBytesOrFail("validation.files/metafile/nonSOL004WithMetaDirectoryCompliantMetaFile.meta"));
@@ -66,29 +64,30 @@ public class ONAPCsarValidatorTest {
         contentHandler.addFile(TestConstants.TOSCA_DEFINITION_FILEPATH,
             getResourceBytesOrFail(TestConstants.SAMPLE_DEFINITION_FILE_PATH));
 
-        assertExpectedErrors("CSAR package with invalid manifest file should have errors", onapCsarValidator.validateContent(contentHandler), 1);
+        assertExpectedErrors("CSAR package with invalid manifest file should have errors",
+            onapCsarValidator.validate(contentHandler).getErrors(), 1);
 
     }
 
     @Test
-    public void testGivenCSARPackage_withUnwantedFolders_thenErrorsReturned(){
+    void testGivenCSARPackage_withUnwantedFolders_thenErrorsReturned() {
         contentHandler.addFolder("Files/");
-        assertExpectedErrors("CSAR package with unwanted folders should fail with errors", onapCsarValidator.validateContent(contentHandler), 1);
+        assertExpectedErrors("CSAR package with unwanted folders should fail with errors",
+            onapCsarValidator.validate(contentHandler).getErrors(), 1);
     }
 
     @Test
-    public void testGivenCSARPackage_withUnwantedFiles_thenErrorsReturned(){
+    void testGivenCSARPackage_withUnwantedFiles_thenErrorsReturned() {
         contentHandler.addFile("ExtraFile.text", "".getBytes());
         assertExpectedErrors("CSAR package with unwanted files should fail with errors",
-                onapCsarValidator.validateContent(contentHandler), 1);
+                onapCsarValidator.validate(contentHandler).getErrors(), 1);
     }
 
-    private void assertExpectedErrors( String testCase, Map<String, List<ErrorMessage>> errors, int expectedErrors){
-        if(expectedErrors > 0){
-            List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
-            assertEquals(testCase, expectedErrors, errorMessages.size());
-        }else{
-            assertEquals(testCase, expectedErrors, errors.size());
+    private void assertExpectedErrors(String testCase, List<ErrorMessage> errorMessages, int expectedErrors) {
+        if (expectedErrors > 0) {
+            assertEquals(expectedErrors, errorMessages.size(), testCase);
+        } else {
+            assertTrue(errorMessages.isEmpty(), testCase);
         }
     }
 }

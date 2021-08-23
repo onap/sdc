@@ -30,14 +30,11 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
@@ -49,22 +46,8 @@ import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 
 class ONAPCsarValidator implements Validator {
 
-    private static Logger logger = LoggerFactory.getLogger(ONAPCsarValidator.class);
-    private List<ErrorMessage> uploadFileErrors = new ArrayList<>();
-
-    @Override
-    public Map<String, List<ErrorMessage>> validateContent(final FileContentHandler contentHandler) {
-        Map<String, List<ErrorMessage>> errors = new HashMap<>();
-        validateManifest(contentHandler);
-        validateMetadata(contentHandler);
-        validateNoExtraFiles(contentHandler);
-        validateFolders(contentHandler.getFolderList());
-        if (uploadFileErrors == null || uploadFileErrors.isEmpty()) {
-            return errors;
-        }
-        errors.put(SdcCommon.UPLOAD_FILE, uploadFileErrors);
-        return errors;
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(ONAPCsarValidator.class);
+    private final List<ErrorMessage> uploadFileErrors = new ArrayList<>();
 
     private void validateMetadata(FileContentHandler contentMap) {
         if (!validateTOSCAYamlFileInRootExist(contentMap, MAIN_SERVICE_TEMPLATE_YAML_FILE_NAME)) {
@@ -77,7 +60,7 @@ class ONAPCsarValidator implements Validator {
                     uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, Messages.METADATA_NO_ENTRY_DEFINITIONS.getErrorMessage()));
                 }
             } catch (IOException exception) {
-                logger.error(exception.getMessage(), exception);
+                LOGGER.error(exception.getMessage(), exception);
                 uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, Messages.FAILED_TO_VALIDATE_METADATA.getErrorMessage()));
             }
         } else {
@@ -98,7 +81,7 @@ class ONAPCsarValidator implements Validator {
         } catch (final IOException ex) {
             final String errorMessage = Messages.MANIFEST_UNEXPECTED_ERROR.formatMessage(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME, ex.getMessage());
             uploadFileErrors.add(new ErrorMessage(ErrorLevel.ERROR, errorMessage));
-            logger.error(errorMessage, ex);
+            LOGGER.error(errorMessage, ex);
         }
     }
 
@@ -138,5 +121,26 @@ class ONAPCsarValidator implements Validator {
                 .add(new ErrorMessage(ErrorLevel.ERROR, getErrorWithParameters(Messages.CSAR_FILE_NOT_FOUND.getErrorMessage(), fileName)));
         }
         return containsFile;
+    }
+
+    @Override
+    public ValidationResult validate(final FileContentHandler csarContent) {
+        validateManifest(csarContent);
+        validateMetadata(csarContent);
+        validateNoExtraFiles(csarContent);
+        validateFolders(csarContent.getFolderList());
+        final var csarValidationResult = new CsarValidationResult();
+        uploadFileErrors.forEach(csarValidationResult::addError);
+        return csarValidationResult;
+    }
+
+    @Override
+    public boolean appliesTo(String model) {
+        return model == null;
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

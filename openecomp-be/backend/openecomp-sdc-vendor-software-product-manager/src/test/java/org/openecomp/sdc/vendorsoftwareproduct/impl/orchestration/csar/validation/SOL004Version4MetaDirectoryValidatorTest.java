@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openecomp.sdc.be.config.NonManoArtifactType.ONAP_CNF_HELM;
 import static org.openecomp.sdc.be.test.util.TestResourcesHandler.getResourceBytesOrFail;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
@@ -35,16 +35,11 @@ import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.va
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.tosca.csar.ManifestTokenType;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 
-public class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirectoryValidatorTest {
-
-    private static int manifestDefinitionErrorCountVersion4 = 2;
+class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirectoryValidatorTest {
 
     @Override
     public SOL004MetaDirectoryValidator getSOL004MetaDirectoryValidator() {
@@ -83,11 +78,11 @@ public class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirector
 
     @Override
     protected int getManifestDefinitionErrorCount() {
-        return manifestDefinitionErrorCountVersion4;
+        return 2;
     }
 
     @Test
-    public void testGivenManifestFile_withValidSourceAndNonManoSources_thenNoErrorIsReturned() throws IOException {
+    void testGivenManifestFile_withValidSourceAndNonManoSources_thenNoErrorIsReturned() throws IOException {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -113,14 +108,12 @@ public class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirector
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Validator validator = ValidatorFactory.getValidator(handler);
-        final Map<String, List<ErrorMessage>> errors = validator.validateContent(handler);
-        assertEquals(0, errors.size());
-
-
+        final ValidationResult validationResult = validator.validate(handler);
+        assertTrue(validationResult.getErrors().isEmpty());
     }
 
     @Test
-    public void testGivenManifestFile_withNotReferencedNonManoSources_thenErrorIsReturned() throws IOException {
+    void testGivenManifestFile_withNotReferencedNonManoSources_thenErrorIsReturned() throws IOException {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -145,12 +138,12 @@ public class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirector
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Validator validator = ValidatorFactory.getValidator(handler);
-        final Map<String, List<ErrorMessage>> errors = validator.validateContent(handler);
-        assertExpectedErrors("Non-MANO file does not exist", errors, 1);
+        final ValidationResult validationResult = validator.validate(handler);
+        assertExpectedErrors("Non-MANO file does not exist", validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenManifestFile_withNonExistentSourceFile_thenErrorIsReturned() throws IOException {
+    void testGivenManifestFile_withNonExistentSourceFile_thenErrorIsReturned() throws IOException {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         //non existent reference
         manifestBuilder.withSource("Artifacts/Deployment/non-mano/RadioNode.yaml");
@@ -175,8 +168,8 @@ public class SOL004Version4MetaDirectoryValidatorTest extends SOL004MetaDirector
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
         final Validator validator = ValidatorFactory.getValidator(handler);
-        final Map<String, List<ErrorMessage>> errors = validator.validateContent(handler);
-        assertExpectedErrors("Manifest with non existent source files", errors, 1);
+        final ValidationResult validationResult = validator.validate(handler);
+        assertExpectedErrors("Manifest with non existent source files", validationResult.getErrors(), 1);
     }
 
 }

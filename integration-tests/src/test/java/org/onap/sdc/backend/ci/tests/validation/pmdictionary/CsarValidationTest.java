@@ -20,20 +20,23 @@
  */
 package org.onap.sdc.backend.ci.tests.validation.pmdictionary;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.exception.OnboardPackageException;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidationResult;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidatorFactory;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 class CsarValidationTest {
 
@@ -43,10 +46,10 @@ class CsarValidationTest {
         FileContentHandler pnfFileContent = CsarLoader.load("validPnfCompliantWithSOL004.csar", "/Files/PNFs/validation/pmdictionary/validPnfCompliantWithSOL004.csar");
 
         //when
-        Map<String, List<ErrorMessage>> errorsMap = ValidatorFactory.getValidator(pnfFileContent).validateContent(pnfFileContent);
+        final ValidationResult validationResult = ValidatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
 
         //then
-        assertThat(errorsMap, is(anEmptyMap()));
+        assertThat(validationResult.getErrors(), is(empty()));
     }
 
     @Test
@@ -56,8 +59,8 @@ class CsarValidationTest {
         FileContentHandler pnfFileContent = CsarLoader.load("invalidPnfCompliantWithSOL004.csar", "/Files/PNFs/validation/pmdictionary/invalidPnfCompliantWithSOL004.csar");
 
         //when
-        Map<String, List<ErrorMessage>> errorMap = ValidatorFactory.getValidator(pnfFileContent).validateContent(pnfFileContent);
-        List<ErrorMessage> errorList = errorMap.get("uploadFile");
+        final ValidationResult validationResult = ValidatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
+        List<ErrorMessage> errorList = validationResult.getErrors();
 
         //then
         assertThat(errorList, is(not(empty())));
@@ -74,10 +77,11 @@ class CsarValidationTest {
         );
 
         //when
-        Map<String, List<ErrorMessage>> errorsMap = ValidatorFactory.getValidator(pnfFileContent).validateContent(pnfFileContent);
+        final ValidationResult validationResult = ValidatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
 
         //then
-        assertThat(errorsMap, is(anEmptyMap()));
+        assertThat(validationResult.isValid(), is(true));
+        assertThat(validationResult.getErrors(), is(empty()));
     }
 
     @Test
@@ -90,8 +94,8 @@ class CsarValidationTest {
         );
 
         //when
-        Map<String, List<ErrorMessage>> errorsMap = ValidatorFactory.getValidator(pnfFileContent).validateContent(pnfFileContent);
-        List<ErrorMessage> errorList = errorsMap.get("uploadFile");
+        final ValidationResult validationResult = ValidatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
+        List<ErrorMessage> errorList = validationResult.getErrors();
 
         //then
         assertThat(getActualErrorMessages(errorList), containsInAnyOrder(expectedErrorMessage.toArray()));
