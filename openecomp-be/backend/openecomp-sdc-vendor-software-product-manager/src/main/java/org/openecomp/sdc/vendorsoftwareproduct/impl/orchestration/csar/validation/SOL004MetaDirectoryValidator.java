@@ -111,19 +111,6 @@ class SOL004MetaDirectoryValidator implements Validator {
         this.securityManager = securityManager;
     }
 
-    @Override
-    public Map<String, List<ErrorMessage>> validateContent(final FileContentHandler fileContentHandler) {
-        this.contentHandler = (OnboardingPackageContentHandler) fileContentHandler;
-        this.folderList = contentHandler.getFolderList();
-        parseToscaMetadata();
-        verifyMetadataFile();
-        if (packageHasCertificate()) {
-            verifySignedFiles();
-        }
-        validatePmDictionaryContentsAgainstSchema();
-        return Collections.unmodifiableMap(getAnyValidationErrors());
-    }
-
     private boolean packageHasCertificate() {
         final String certificatePath = getCertificatePath().orElse(null);
         return contentHandler.containsFile(certificatePath);
@@ -499,15 +486,6 @@ class SOL004MetaDirectoryValidator implements Validator {
         LOGGER.warn(Messages.METADATA_UNSUPPORTED_ENTRY.getErrorMessage(), entry.getKey());
     }
 
-    private Map<String, List<ErrorMessage>> getAnyValidationErrors() {
-        if (errorsByFile.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        final Map<String, List<ErrorMessage>> errors = new HashMap<>();
-        errors.put(SdcCommon.UPLOAD_FILE, errorsByFile);
-        return errors;
-    }
-
     private void validatePmDictionaryContentsAgainstSchema() {
         final Stream<byte[]> pmDictionaryFiles = new FileExtractor(getEtsiEntryManifestPath(), contentHandler).findFiles(ONAP_PM_DICTIONARY);
         new PMDictionaryValidator().validate(pmDictionaryFiles, (String message) -> reportError(ErrorLevel.ERROR, message));
@@ -531,5 +509,30 @@ class SOL004MetaDirectoryValidator implements Validator {
             final String formattedFileList = files.stream().map(filePath -> String.format("'%s'", filePath)).collect(Collectors.joining(", "));
             reportError(ErrorLevel.ERROR, Messages.UNIQUE_ONAP_CNF_HELM_NON_MANO_ERROR.formatMessage(formattedFileList));
         }
+    }
+
+    @Override
+    public ValidationResult validate(final FileContentHandler csarContent) {
+        this.contentHandler = (OnboardingPackageContentHandler) csarContent;
+        this.folderList = contentHandler.getFolderList();
+        parseToscaMetadata();
+        verifyMetadataFile();
+        if (packageHasCertificate()) {
+            verifySignedFiles();
+        }
+        validatePmDictionaryContentsAgainstSchema();
+        final var csarValidationResult = new CsarValidationResult();
+        errorsByFile.forEach(csarValidationResult::addError);
+        return csarValidationResult;
+    }
+
+    @Override
+    public boolean appliesTo(final String model) {
+        return model == null;
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

@@ -19,10 +19,7 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import java.util.List;
-import java.util.Map;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 /**
  * Validates the contents of the CSAR package uploaded in SDC.
@@ -30,8 +27,27 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 public interface Validator {
 
     /**
-     * @param contentHandler contains file and its data
-     * @return errors Map of errors that occur
+     * Validates the structure and content of a CSAR.
+     *
+     * @param csarContent the CSAR content
+     * @return the result of the validation
      */
-    Map<String, List<ErrorMessage>> validateContent(final FileContentHandler contentHandler);
+    ValidationResult validate(final FileContentHandler csarContent);
+
+    /**
+     * Checks if the validator applies to the given model.
+     *
+     * @param model the model to check
+     * @return {@code true} if the validator applies to the given model, {@code false} otherwise
+     */
+    boolean appliesTo(final String model);
+
+    /**
+     * Should return the execution order that the validator is intended to run in relation to other validators that applies to the same model ({@link
+     * #appliesTo(String)}). The lower the value, the higher the priority. If a validator happens to have the same order of others, the system will
+     * randomly decides the execution order.
+     *
+     * @return the execution order of the validator.
+     */
+    int getOrder();
 }

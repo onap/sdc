@@ -22,7 +22,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
@@ -34,6 +36,7 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.CsarSecurityValidator;
+import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidationResult;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.Validator;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidatorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
@@ -64,7 +67,10 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         final FileContentHandler fileContentHandler = onboardPackage.getFileContentHandler();
         try {
             final Validator validator = ValidatorFactory.getValidator(fileContentHandler);
-            uploadFileResponse.addStructureErrors(validator.validateContent(fileContentHandler));
+            final ValidationResult validationResult = validator.validate(fileContentHandler);
+            if (CollectionUtils.isNotEmpty(validationResult.getErrors())) {
+                uploadFileResponse.addStructureErrors(Map.of(SdcCommon.UPLOAD_FILE, validationResult.getErrors()));
+            }
         } catch (IOException exception) {
             logger.error(exception.getMessage(), exception);
             uploadFileResponse
