@@ -50,7 +50,7 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
         if (isInvalidRawZipData(onboardPackage.getFileExtension(), uploadFileResponse, fileContentByteArray, candidateService)) {
             return uploadFileResponse;
         }
-        final UploadFileResponse validateResponse = validate(onboardPackageInfo);
+        final UploadFileResponse validateResponse = validate(vspDetails, onboardPackageInfo);
         if (!MapUtils.isEmpty(validateResponse.getErrors())) {
             uploadFileResponse.addStructureErrors(validateResponse.getErrors());
             return uploadFileResponse;
@@ -87,7 +87,7 @@ public abstract class BaseOrchestrationTemplateHandler implements OrchestrationT
         return false;
     }
 
-    public abstract UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo);
+    public abstract UploadFileResponse validate(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo);
 
     protected abstract OnboardingTypesEnum getHandlerType();
 }

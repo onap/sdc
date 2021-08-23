@@ -22,6 +22,9 @@ package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration;
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,7 +39,6 @@ import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.CsarSecurityValidator;
-import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidationResult;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.Validator;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidatorFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
@@ -48,8 +50,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
 public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateHandler {
 
+    private final ValidatorFactory validatorFactory;
+
+    public OrchestrationTemplateCSARHandler() {
+        this.validatorFactory = new ValidatorFactory();
+    }
+
     @Override
-    public UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo) {
+    public UploadFileResponse validate(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo) {
         final UploadFileResponse uploadFileResponse = new UploadFileResponse();
         if (onboardPackageInfo.getPackageType() == OnboardingTypesEnum.SIGNED_CSAR) {
             final OnboardSignedPackage originalOnboardPackage = (OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage();
@@ -66,20 +74,55 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
         final FileContentHandler fileContentHandler = onboardPackage.getFileContentHandler();
         try {
-            final Validator validator = ValidatorFactory.getValidator(fileContentHandler);
-            final ValidationResult validationResult = validator.validate(fileContentHandler);
-            if (CollectionUtils.isNotEmpty(validationResult.getErrors())) {
-                uploadFileResponse.addStructureErrors(Map.of(SdcCommon.UPLOAD_FILE, validationResult.getErrors()));
+            final List<String> modelIdList = vspDetails.getModelIdList();
+            if (CollectionUtils.isEmpty(modelIdList)) {
+                final Map<String, List<ErrorMessage>> errorResponseMap = validateSdcModel(fileContentHandler);
+                if (!errorResponseMap.isEmpty()) {
+                    uploadFileResponse.addStructureErrors(errorResponseMap);
+                }
+            } else {
+                final Map<String, List<ErrorMessage>> errorResponseMap = validateModels(modelIdList, fileContentHandler);
+                if (!errorResponseMap.isEmpty()) {
+                    uploadFileResponse.addStructureErrors(errorResponseMap);
+                }
             }
-        } catch (IOException exception) {
+        } catch (final IOException exception) {
             logger.error(exception.getMessage(), exception);
             uploadFileResponse
                 .addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_CSAR_FILE.getErrorMessage()));
-        } catch (CoreException coreException) {
+        } catch (final CoreException coreException) {
             logger.error(coreException.getMessage(), coreException);
             uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, coreException.getMessage()));
         }
         return uploadFileResponse;
+    }
+
+    private Map<String, List<ErrorMessage>> validateModels(final List<String> modelIdList, final FileContentHandler fileContentHandler) {
+        final Map<String, List<ErrorMessage>> errorResponseMap = new HashMap<>();
+        modelIdList.forEach(model -> {
+            final List<Validator> validators = validatorFactory.getValidators(model);
+            validators.forEach(validator -> {
+                final var validationResult = validator.validate(fileContentHandler);
+                if (CollectionUtils.isNotEmpty(validationResult.getErrors())) {
+                    if (errorResponseMap.containsKey(SdcCommon.UPLOAD_FILE)) {
+                        errorResponseMap.get(SdcCommon.UPLOAD_FILE).addAll(validationResult.getErrors());
+                    } else {
+                        errorResponseMap.put(SdcCommon.UPLOAD_FILE, validationResult.getErrors());
+                    }
+                }
+            });
+        });
+        return errorResponseMap;
+    }
+
+    private Map<String, List<ErrorMessage>> validateSdcModel(final FileContentHandler fileContentHandler) throws IOException {
+        final var validator = validatorFactory.getValidator(fileContentHandler);
+        final var validationResult = validator.validate(fileContentHandler);
+        if (CollectionUtils.isNotEmpty(validationResult.getErrors())) {
+            return Map.of(SdcCommon.UPLOAD_FILE, validationResult.getErrors());
+        }
+
+        return Collections.emptyMap();
     }
 
     private Optional<UploadFileResponse> validatePackageSecurity(final OnboardSignedPackage signedPackage, final ArtifactInfo artifactInfo) {

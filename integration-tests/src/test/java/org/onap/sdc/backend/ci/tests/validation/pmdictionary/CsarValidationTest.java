@@ -39,6 +39,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validatio
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.ValidatorFactory;
 
 class CsarValidationTest {
+    
+    private final ValidatorFactory validatorFactory = new ValidatorFactory();
 
     @Test
     void shouldNotReturnErrors_whenPnfCsarIsValid() throws OnboardPackageException, IOException {
@@ -46,7 +48,7 @@ class CsarValidationTest {
         FileContentHandler pnfFileContent = CsarLoader.load("validPnfCompliantWithSOL004.csar", "/Files/PNFs/validation/pmdictionary/validPnfCompliantWithSOL004.csar");
 
         //when
-        final ValidationResult validationResult = ValidatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
+        final ValidationResult validationResult = validatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
 
         //then
         assertThat(validationResult.getErrors(), is(empty()));
@@ -59,7 +61,7 @@ class CsarValidationTest {
         FileContentHandler pnfFileContent = CsarLoader.load("invalidPnfCompliantWithSOL004.csar", "/Files/PNFs/validation/pmdictionary/invalidPnfCompliantWithSOL004.csar");
 
         //when
-        final ValidationResult validationResult = ValidatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
+        final ValidationResult validationResult = validatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
         List<ErrorMessage> errorList = validationResult.getErrors();
 
         //then
@@ -77,7 +79,7 @@ class CsarValidationTest {
         );
 
         //when
-        final ValidationResult validationResult = ValidatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
+        final ValidationResult validationResult = validatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
 
         //then
         assertThat(validationResult.isValid(), is(true));
@@ -94,7 +96,7 @@ class CsarValidationTest {
         );
 
         //when
-        final ValidationResult validationResult = ValidatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
+        final ValidationResult validationResult = validatorFactory.getValidator(pnfFileContent).validate(pnfFileContent);
         List<ErrorMessage> errorList = validationResult.getErrors();
 
         //then
