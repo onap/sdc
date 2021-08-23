@@ -23,11 +23,11 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -63,7 +63,10 @@ import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.va
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -79,9 +82,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackage
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManagerException;
 
-public class SOL004MetaDirectoryValidatorTest {
-
-    private static int MANIFEST_DEFINITION_ERROR_COUNT = 1;
+class SOL004MetaDirectoryValidatorTest {
 
     protected SOL004MetaDirectoryValidator sol004MetaDirectoryValidator;
     protected OnboardingPackageContentHandler handler;
@@ -139,23 +140,23 @@ public class SOL004MetaDirectoryValidatorTest {
      * ETSI Version 2.7.1 onwards contains two possible Definition File reference
      */
     protected int getManifestDefinitionErrorCount() {
-        return MANIFEST_DEFINITION_ERROR_COUNT;
+        return 1;
     }
 
     @Test
-    public void testGivenTOSCAMetaFile_whenEntryHasNoValue_thenErrorIsReturned() {
+    void testGivenTOSCAMetaFile_whenEntryHasNoValue_thenErrorIsReturned() {
         final String metaFileWithInvalidEntry = "TOSCA-Meta-File-Version: \n" +
                 "Entry-Definitions: " + TOSCA_DEFINITION_FILEPATH;
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileWithInvalidEntry.getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytesOrFail(SAMPLE_DEFINITION_FILE_PATH));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("TOSCA Meta file with no entries", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("TOSCA Meta file with no entries", validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenTOSCAMeta_withAllSupportedEntries_thenNoErrorsReturned() {
+    void testGivenTOSCAMeta_withAllSupportedEntries_thenNoErrorsReturned() {
 
         final String entryTestFilePath = "Files/Tests";
         final String entryLicenseFilePath = "Files/Licenses";
@@ -188,13 +189,13 @@ public class SOL004MetaDirectoryValidatorTest {
 
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
 
-        assertEquals(0, errors.size());
+        assertTrue(validationResult.getErrors().isEmpty());
     }
 
     @Test
-    public void testGivenTOSCAMeta_withUnsupportedEntry_thenNoErrorIsReturned() {
+    void testGivenTOSCAMeta_withUnsupportedEntry_thenNoErrorIsReturned() {
         metaFileBuilder
                 .append("a-unknown-entry")
                 .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" ")
@@ -210,15 +211,15 @@ public class SOL004MetaDirectoryValidatorTest {
                 .withSource(TOSCA_MANIFEST_FILEPATH);
 
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertThat("Validation should produce no errors", errors, is(anEmptyMap()));
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertThat("Validation should produce no errors", validationResult.getErrors(), is(empty()));
     }
 
     /**
      * Tests if the meta file contains invalid versions in TOSCA-Meta-File-Version and CSAR-Version attributes.
      */
     @Test
-    public void testGivenTOSCAMetaFile_withInvalidTOSCAMetaFileVersionAndCSARVersion_thenErrorIsReturned() {
+    void testGivenTOSCAMetaFile_withInvalidTOSCAMetaFileVersionAndCSARVersion_thenErrorIsReturned() {
         final StringBuilder metaFileBuilder = new StringBuilder()
                 .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
                 .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(Integer.MAX_VALUE).append("\n")
@@ -246,23 +247,22 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Invalid TOSCA-Meta-File-Version and CSAR-Version attributes", errors, 2);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Invalid TOSCA-Meta-File-Version and CSAR-Version attributes", validationResult.getErrors(), 2);
     }
 
     @Test
-    public void testGivenTOSCAMetaFile_withNonExistentFileReferenced_thenErrorsReturned() {
+    void testGivenTOSCAMetaFile_withNonExistentFileReferenced_thenErrorsReturned() {
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertThat("Total of errors should be as expected", errors.size(), is(1));
-        final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
-        assertThat("Total of errors messages should be as expected", errorMessages.size(), is((2 + getManifestDefinitionErrorCount())));
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        final List<ErrorMessage> errors = validationResult.getErrors();
+        assertThat("Total of errors messages should be as expected", errors.size(), is((2 + getManifestDefinitionErrorCount())));
     }
 
 
     @Test
-    public void testGivenDefinitionFile_whenValidImportStatementExist_thenNoErrorsReturned() {
+    void testGivenDefinitionFile_whenValidImportStatementExist_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -285,12 +285,12 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertEquals(0, errors.size());
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertEquals(0, validationResult.getErrors().size());
     }
 
     @Test
-    public void testGivenDefinitionFile_whenMultipleDefinitionsImportStatementExist_thenNoErrorsReturned() {
+    void testGivenDefinitionFile_whenMultipleDefinitionsImportStatementExist_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -320,12 +320,13 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertEquals(0, errors.size());
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getErrors().isEmpty());
     }
 
     @Test
-    public void testGivenDefinitionFile_whenInvalidImportStatementExist_thenErrorIsReturned() {
+    void testGivenDefinitionFile_whenInvalidImportStatementExist_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -346,15 +347,15 @@ public class SOL004MetaDirectoryValidatorTest {
         String manifest = manifestBuilder.build();
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifest.getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("", errors, getManifestDefinitionErrorCount());
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("", validationResult.getErrors(), getManifestDefinitionErrorCount());
     }
 
     /**
      * Manifest referenced import file missing
      */
     @Test
-    public void testGivenDefinitionFile_whenReferencedImportDoesNotExist_thenErrorIsReturned() {
+    void testGivenDefinitionFile_whenReferencedImportDoesNotExist_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -376,12 +377,12 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest referenced import file missing", errors, getManifestDefinitionErrorCount());
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Manifest referenced import file missing", validationResult.getErrors(), getManifestDefinitionErrorCount());
     }
 
     @Test
-    public void testGivenDefinitionFile_whenFileInPackageNotInManifest_thenErrorIsReturned() {
+    void testGivenDefinitionFile_whenFileInPackageNotInManifest_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -403,12 +404,12 @@ public class SOL004MetaDirectoryValidatorTest {
 
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Artifact is not being referenced in manifest file", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Artifact is not being referenced in manifest file", validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenDefinitionFile_whenManifestNotreferencedInManifest_thenNoErrorIsReturned() {
+    void testGivenDefinitionFile_whenManifestNotreferencedInManifest_thenNoErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -431,15 +432,16 @@ public class SOL004MetaDirectoryValidatorTest {
 
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertEquals(0, errors.size());
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getErrors().isEmpty());
     }
 
     /**
      * Reference with invalid YAML format.
      */
     @Test
-    public void testGivenDefinitionFile_withInvalidYAML_thenErrorIsReturned() {
+    void testGivenDefinitionFile_withInvalidYAML_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -458,12 +460,12 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Reference with invalid YAML format", errors, getManifestDefinitionErrorCount());
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Reference with invalid YAML format", validationResult.getErrors(), getManifestDefinitionErrorCount());
     }
 
     @Test
-    public void testGivenManifestFile_withValidSourceAndNonManoSources_thenNoErrorIsReturned() throws IOException {
+    void testGivenManifestFile_withValidSourceAndNonManoSources_thenNoErrorIsReturned() throws IOException {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -488,15 +490,16 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertEquals(0, errors.size());
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getErrors().isEmpty());
     }
 
     /**
      * Manifest with non existent source files should return error.
      */
     @Test
-    public void testGivenManifestFile_withNonExistentSourceFile_thenErrorIsReturned() throws IOException {
+    void testGivenManifestFile_withNonExistentSourceFile_thenErrorIsReturned() throws IOException {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         //non existent reference
         manifestBuilder.withSource("Artifacts/Deployment/Events/RadioNode_pnf_v1.yaml");
@@ -520,27 +523,27 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest with non existent source files", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Manifest with non existent source files", validationResult.getErrors(), 1);
     }
 
     /**
      * Tests the validation for a TOSCA Manifest with invalid data.
      */
     @Test
-    public void testGivenManifestFile_withInvalidData_thenErrorIsReturned() {
+    void testGivenManifestFile_withInvalidData_thenErrorIsReturned() {
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, getResourceBytesOrFail("validation.files/manifest/invalidManifest.mf"));
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_DEFINITION_FILEPATH, getResourceBytesOrFail(SAMPLE_DEFINITION_FILE_PATH));
         handler.addFile(SAMPLE_DEFINITION_IMPORT_FILE_PATH, "".getBytes());
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("TOSCA manifest with invalid data", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("TOSCA manifest with invalid data", validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenManifestAndDefinitionFile_withSameNames_thenNoErrorReturned()  {
+    void testGivenManifestAndDefinitionFile_withSameNames_thenNoErrorReturned()  {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -558,15 +561,16 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertEquals(0, errors.size());
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getErrors().isEmpty());
     }
 
     /**
      * Main TOSCA definitions file and Manifest file with different name should return error.
      */
     @Test
-    public void testGivenManifestAndMainDefinitionFile_withDifferentNames_thenErrorIsReturned() {
+    void testGivenManifestAndMainDefinitionFile_withDifferentNames_thenErrorIsReturned() {
         metaFileBuilder = new StringBuilder()
                 .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
                 .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
@@ -598,13 +602,13 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource("Definitions/MainServiceTemplate2.mf");
         handler.addFile("Definitions/MainServiceTemplate2.mf", manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
         assertExpectedErrors("Main TOSCA definitions file and Manifest file with different name should return error",
-                errors, 1);
+            validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenManifestFile_withDifferentExtension_thenErrorIsReturned() {
+    void testGivenManifestFile_withDifferentExtension_thenErrorIsReturned() {
         metaFileBuilder = new StringBuilder()
                 .append(TOSCA_META_FILE_VERSION_ENTRY.getName())
                 .append(ATTRIBUTE_VALUE_SEPARATOR.getToken()).append(" 1.0").append("\n")
@@ -636,13 +640,13 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource("Definitions/MainServiceTemplate.txt");
         handler.addFile("Definitions/MainServiceTemplate.txt", manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
         assertExpectedErrors("Manifest file with different extension than .mf should return error",
-                errors, 1);
+            validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenManifestFile_withValidVnfMetadata_thenNoErrorsReturned() {
+    void testGivenManifestFile_withValidVnfMetadata_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -655,12 +659,13 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest with valid vnf mandatory values should not return any errors", errors, 0);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertTrue(validationResult.isValid(), "Manifest with valid vnf mandatory values should be valid");
+        assertExpectedErrors("Manifest with valid vnf mandatory values should not return any errors", validationResult.getErrors(), 0);
     }
 
     @Test
-    public void testGivenManifestFile_withValidPnfMetadata_thenNoErrorsReturned() {
+    void testGivenManifestFile_withValidPnfMetadata_thenNoErrorsReturned() {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -676,15 +681,15 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest with valid pnf mandatory values should not return any errors", errors, 0);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Manifest with valid pnf mandatory values should not return any errors", validationResult.getErrors(), 0);
     }
 
     /**
      * Manifest with mixed metadata should return error.
      */
     @Test
-    public void testGivenManifestFile_withMetadataContainingMixedPnfVnfMetadata_thenErrorIsReturned() {
+    void testGivenManifestFile_withMetadataContainingMixedPnfVnfMetadata_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = new ManifestBuilder()
                 .withMetaData(PNFD_NAME.getToken(), "RadioNode")
                 .withMetaData(VNF_PROVIDER_ID.getToken(), "Bilal Iqbal")
@@ -701,13 +706,13 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest with mixed metadata should return error", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Manifest with mixed metadata should return error", validationResult.getErrors(), 1);
     }
 
 
     @Test
-    public void testGivenManifestFile_withMetadataMissingPnfOrVnfMandatoryEntries_thenErrorIsReturned() {
+    void testGivenManifestFile_withMetadataMissingPnfOrVnfMandatoryEntries_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = new ManifestBuilder()
                 .withMetaData("invalid_product_name", "RadioNode")
                 .withMetaData("invalid_provider_id", "Bilal Iqbal")
@@ -726,12 +731,12 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest with missing vnf or pnf mandatory entries should return error", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Manifest with missing vnf or pnf mandatory entries should return error", validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenManifestFile_withMetadataMissingMandatoryPnfEntries_thenErrorIsReturned() {
+    void testGivenManifestFile_withMetadataMissingMandatoryPnfEntries_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = new ManifestBuilder();
 
         manifestBuilder.withMetaData(PNFD_NAME.getToken(), "RadioNode");
@@ -749,13 +754,13 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest with metadata missing pnf mandatory entries should return error", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
 
+        assertExpectedErrors("Manifest with metadata missing pnf mandatory entries should return error", validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenManifestFile_withMetadataMissingMandatoryVnfEntries_thenErrorIsReturned() {
+    void testGivenManifestFile_withMetadataMissingMandatoryVnfEntries_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = new ManifestBuilder();
 
         manifestBuilder.withMetaData(VNF_PRODUCT_NAME.getToken(), "RadioNode");
@@ -772,8 +777,9 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest with metadata missing vnf mandatory entries should return error", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+
+        assertExpectedErrors("Manifest with metadata missing vnf mandatory entries should return error", validationResult.getErrors(), 1);
 
     }
 
@@ -781,7 +787,7 @@ public class SOL004MetaDirectoryValidatorTest {
      * Manifest with more than 4 metadata entries should return error.
      */
     @Test
-    public void testGivenManifestFile_withMetadataEntriesExceedingTheLimit_thenErrorIsReturned() {
+    void testGivenManifestFile_withMetadataEntriesExceedingTheLimit_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder()
                 .withMetaData(PNFD_NAME.getToken(), "RadioNode")
                 .withMetaData(ManifestTokenType.PNFD_PROVIDER.getToken(), "Bilal Iqbal")
@@ -800,12 +806,12 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Manifest with more than 4 metadata entries should return error", errors, 1);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Manifest with more than 4 metadata entries should return error", validationResult.getErrors(), 1);
     }
 
     @Test
-    public void testGivenManifestFile_withPnfMetadataAndVfEntries_thenErrorIsReturned() {
+    void testGivenManifestFile_withPnfMetadataAndVfEntries_thenErrorIsReturned() {
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         metaFileBuilder
                 .append(ETSI_ENTRY_TESTS.getName())
@@ -824,8 +830,9 @@ public class SOL004MetaDirectoryValidatorTest {
 
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
-        final Map<String, List<ErrorMessage>> errors = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors("Tosca.meta should not have entries applicable only to VF", errors, 2);
+
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors("Tosca.meta should not have entries applicable only to VF", validationResult.getErrors(), 2);
 
     }
 
@@ -833,7 +840,7 @@ public class SOL004MetaDirectoryValidatorTest {
      * Tests an imported descriptor with a missing imported file.
      */
     @Test
-    public void testGivenDefinitionFileWithImportedDescriptor_whenImportedDescriptorImportsMissingFile_thenMissingImportErrorOccur() {
+    void testGivenDefinitionFileWithImportedDescriptor_whenImportedDescriptorImportsMissingFile_thenMissingImportErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -857,7 +864,7 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         for (int i =0;i < getManifestDefinitionErrorCount();i++)
@@ -865,14 +872,14 @@ public class SOL004MetaDirectoryValidatorTest {
                     , Messages.MISSING_IMPORT_FILE.formatMessage("Definitions/etsi_nfv_sol001_pnfd_2_5_2_types.yaml"))
                     );
 
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     /**
      * Tests an imported descriptor with invalid import statement.
      */
     @Test
-    public void testGivenDefinitionFileWithImportedDescriptor_whenInvalidImportStatementExistInImportedDescriptor_thenInvalidImportErrorOccur() {
+    void testGivenDefinitionFileWithImportedDescriptor_whenInvalidImportStatementExistInImportedDescriptor_thenInvalidImportErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -896,7 +903,7 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
 
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         for (int i =0;i < getManifestDefinitionErrorCount();i++)
@@ -904,11 +911,11 @@ public class SOL004MetaDirectoryValidatorTest {
                 , Messages.INVALID_IMPORT_STATEMENT.formatMessage(definitionImportOne, "null"))
          );
 
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     @Test
-    public void givenManifestWithNonManoPmAndVesArtifacts_whenNonManoArtifactsAreValid_thenNoErrorsOccur() {
+    void givenManifestWithNonManoPmAndVesArtifacts_whenNonManoArtifactsAreValid_thenNoErrorsOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -933,14 +940,13 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
 
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
-                .validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
 
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), Collections.emptyList());
+        assertExpectedErrors(validationResult.getErrors(), Collections.emptyList());
     }
 
     @Test
-    public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsYamlAreInvalid_thenInvalidYamlErrorOccur() {
+    void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsYamlAreInvalid_thenInvalidYamlErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -966,12 +972,12 @@ public class SOL004MetaDirectoryValidatorTest {
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR, "while scanning a simple key in 'reader', line 2, column 1: key {} ^could not find expected ':' in 'reader', line 2, column 7: key {} ^")
             );
 
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     @Test
-    public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsYamlAreEmpty_thenEmptyYamlErrorOccur() {
+    void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsYamlAreEmpty_thenEmptyYamlErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -1005,14 +1011,12 @@ public class SOL004MetaDirectoryValidatorTest {
                 , "PM_Dictionary YAML file is empty")
         );
 
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
-            .validateContent(handler);
-
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     @Test
-    public void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsHaveNotYamlExtension_thenInvalidYamlExtensionErrorOccur() {
+    void givenManifestWithNonManoPmOrVesArtifacts_whenNonManoArtifactsHaveNotYamlExtension_thenInvalidYamlExtensionErrorOccur() {
         final ManifestBuilder manifestBuilder = getVnfManifestSampleBuilder();
 
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFileBuilder.toString().getBytes(StandardCharsets.UTF_8));
@@ -1047,14 +1051,13 @@ public class SOL004MetaDirectoryValidatorTest {
         );
 
 
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator
-                .validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
 
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     @Test
-    public void givenPackageWithValidSoftwareInformationNonMano_whenThePackageIsValidated_thenNoErrorsAreReturned() {
+    void givenPackageWithValidSoftwareInformationNonMano_whenThePackageIsValidated_thenNoErrorsAreReturned() {
         //given a package with software information non-mano artifact
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         final String nonManoSoftwareInformationPath = "Artifacts/software-information/pnf-sw-information-valid.yaml";
@@ -1072,13 +1075,13 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
         //when package is validated
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
         //then no errors
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), Collections.emptyList());
+        assertExpectedErrors(validationResult.getErrors(), Collections.emptyList());
     }
 
     @Test
-    public void givenPackageWithUnparsableSwInformationNonMano_whenThePackageIsValidated_thenInvalidErrorIsReturned() {
+    void givenPackageWithUnparsableSwInformationNonMano_whenThePackageIsValidated_thenInvalidErrorIsReturned() {
         //given a package with unparsable software information non-mano artifact
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         final String nonManoSoftwareInformationPath = "Artifacts/software-information/pnf-sw-information-valid.yaml";
@@ -1096,17 +1099,17 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
         //when package is validated
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
         //then invalid error returned
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
                 , Messages.INVALID_SW_INFORMATION_NON_MANO_ERROR.formatMessage(nonManoSoftwareInformationPath))
         );
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     @Test
-    public void givenPackageWithIncorrectSwInformationNonMano_whenThePackageIsValidated_thenInvalidErrorIsReturned() {
+    void givenPackageWithIncorrectSwInformationNonMano_whenThePackageIsValidated_thenInvalidErrorIsReturned() {
         //given a package with incorrect software information non-mano artifact
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         final String nonManoSoftwareInformationPath = "Artifacts/software-information/pnf-sw-information-invalid.yaml";
@@ -1124,17 +1127,17 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
         //when package is validated
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
         //then incorrect error returned
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
                 , Messages.INCORRECT_SW_INFORMATION_NON_MANO_ERROR.formatMessage(nonManoSoftwareInformationPath))
         );
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     @Test
-    public void givenPackageWithTwoSoftwareInformationNonMano_whenThePackageIsValidated_thenUniqueErrorIsReturned() {
+    void givenPackageWithTwoSoftwareInformationNonMano_whenThePackageIsValidated_thenUniqueErrorIsReturned() {
         //given a package with two software information non-mano artifacts
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         final String nonManoSoftwareInformation1Path = "Artifacts/software-information/pnf-sw-information-valid1.yaml";
@@ -1156,7 +1159,7 @@ public class SOL004MetaDirectoryValidatorTest {
         manifestBuilder.withSource(TOSCA_MANIFEST_FILEPATH);
         handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
         //when package is validated
-        final Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        final ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
         //then unique error returned
         final List<ErrorMessage> expectedErrorList = new ArrayList<>();
         final String errorFiles = Stream.of(nonManoSoftwareInformation1Path, nonManoSoftwareInformation2Path)
@@ -1165,11 +1168,11 @@ public class SOL004MetaDirectoryValidatorTest {
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
                 , Messages.UNIQUE_SW_INFORMATION_NON_MANO_ERROR.formatMessage(errorFiles))
         );
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     @Test
-    public void signedPackage() throws SecurityManagerException {
+    void signedPackage() throws SecurityManagerException {
         //given
         final ManifestBuilder manifestBuilder = getPnfManifestSampleBuilder();
         final String fakeArtifactPath = "Artifacts/aArtifact.yaml";
@@ -1200,30 +1203,30 @@ public class SOL004MetaDirectoryValidatorTest {
         sol004MetaDirectoryValidator = getSol004WithSecurity(securityManagerMock);
 
         //when
-        Map<String, List<ErrorMessage>> actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        ValidationResult validationResult = sol004MetaDirectoryValidator.validate(handler);
         //then
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), Collections.emptyList());
+        assertExpectedErrors(validationResult.getErrors(), Collections.emptyList());
 
         //given
         sol004MetaDirectoryValidator = getSol004WithSecurity(securityManagerMock);
         when(securityManagerMock.verifySignedData(any(), any(), any())).thenReturn(false);
 
         //when
-        actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        validationResult = sol004MetaDirectoryValidator.validate(handler);
 
         //then
         List<ErrorMessage> expectedErrorList = new ArrayList<>();
         expectedErrorList.add(new ErrorMessage(ErrorLevel.ERROR
                 , Messages.ARTIFACT_INVALID_SIGNATURE.formatMessage(fakeArtifactCmsPath, fakeArtifactPath))
         );
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
 
         //given
         sol004MetaDirectoryValidator = getSol004WithSecurity(securityManagerMock);
         when(securityManagerMock.verifySignedData(any(), any(), any()))
                 .thenThrow(new SecurityManagerException("SecurityManagerException"));
         //when
-        actualErrorMap = sol004MetaDirectoryValidator.validateContent(handler);
+        validationResult = sol004MetaDirectoryValidator.validate(handler);
 
         //then
         expectedErrorList = new ArrayList<>();
@@ -1233,23 +1236,26 @@ public class SOL004MetaDirectoryValidatorTest {
                     fakeArtifactPath, fakeCertificatePath, "SecurityManagerException")
             )
         );
-        assertExpectedErrors(actualErrorMap.get(SdcCommon.UPLOAD_FILE), expectedErrorList);
+        assertExpectedErrors(validationResult.getErrors(), expectedErrorList);
     }
 
     protected void assertExpectedErrors(final String testCase, final Map<String, List<ErrorMessage>> errors, final int expectedErrors){
-        final List<ErrorMessage> errorMessages = errors.get(SdcCommon.UPLOAD_FILE);
+        assertExpectedErrors(testCase, errors.get(SdcCommon.UPLOAD_FILE), expectedErrors);
+    }
+
+    protected void assertExpectedErrors(final String testCase, final List<ErrorMessage> errorMessages, final int expectedErrors){
         printErrorMessages(errorMessages);
         if (expectedErrors > 0) {
-            assertEquals(testCase, expectedErrors, errorMessages.size());
+            assertEquals(expectedErrors, errorMessages.size(), testCase);
         } else {
-            assertEquals(testCase, expectedErrors, errors.size());
+            assertTrue(errorMessages.isEmpty(), testCase);
         }
     }
 
     private void printErrorMessages(final List<ErrorMessage> errorMessages) {
         if (CollectionUtils.isNotEmpty(errorMessages)) {
             errorMessages.forEach(errorMessage ->
-                    System.out.println(String.format("%s: %s", errorMessage.getLevel(), errorMessage.getMessage()))
+                    System.out.printf("%s: %s%n", errorMessage.getLevel(), errorMessage.getMessage())
             );
         }
     }
@@ -1267,7 +1273,7 @@ public class SOL004MetaDirectoryValidatorTest {
 
         actualErrorList.forEach(error -> {
             Predicate<ErrorMessage> matching = e -> e.getLevel() == error.getLevel() && sanitize(e.getMessage()).equalsIgnoreCase(sanitize(error.getMessage()));
-            assertTrue("The actual error and expected error lists should be the same", expectedErrorList.stream().anyMatch(matching));
+            assertTrue(expectedErrorList.stream().anyMatch(matching), "The actual error and expected error lists should be the same");
         });
     }
 

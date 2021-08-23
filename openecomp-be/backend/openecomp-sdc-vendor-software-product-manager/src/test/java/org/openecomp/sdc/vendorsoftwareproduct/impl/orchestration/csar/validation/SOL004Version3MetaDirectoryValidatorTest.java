@@ -27,8 +27,6 @@ import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 
 public class SOL004Version3MetaDirectoryValidatorTest extends SOL004MetaDirectoryValidatorTest {
 
-    private static int MANIFEST_DEFINITION_ERROR_COUNT_VERSION_3 = 2;
-
     @Override
     public SOL004MetaDirectoryValidator getSOL004MetaDirectoryValidator() {
         return new SOL004Version3MetaDirectoryValidator();
@@ -62,6 +60,6 @@ public class SOL004Version3MetaDirectoryValidatorTest extends SOL004MetaDirector
 
     @Override
     protected int getManifestDefinitionErrorCount() {
-        return MANIFEST_DEFINITION_ERROR_COUNT_VERSION_3;
+        return 2;
     }
 }

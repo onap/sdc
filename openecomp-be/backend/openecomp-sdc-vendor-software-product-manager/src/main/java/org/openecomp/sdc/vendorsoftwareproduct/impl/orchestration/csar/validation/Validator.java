@@ -19,19 +19,16 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import java.util.List;
-import java.util.Map;
 import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.datatypes.error.ErrorMessage;
 
 /**
  * Validates the contents of the CSAR package uploaded in SDC.
  */
 public interface Validator {
 
-    /**
-     * @param contentHandler contains file and its data
-     * @return errors Map of errors that occur
-     */
-    Map<String, List<ErrorMessage>> validateContent(final FileContentHandler contentHandler);
+    ValidationResult validate(final FileContentHandler csarContent);
+
+    boolean appliesTo(final String model);
+
+    int getOrder();
 }
