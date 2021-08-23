@@ -37,7 +37,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 public class OrchestrationTemplateZipHandler extends BaseOrchestrationTemplateHandler {
 
     @Override
-    public UploadFileResponse validate(final OnboardPackageInfo onboardPackageInfo) {
+    public UploadFileResponse validate(final VspDetails vspDetails, final OnboardPackageInfo onboardPackageInfo) {
         final UploadFileResponse uploadFileResponse = new UploadFileResponse();
         final OnboardPackage onboardPackage = onboardPackageInfo.getOnboardPackage();
         OrchestrationUtil.getFileContentMap(OnboardingTypesEnum.ZIP, uploadFileResponse, onboardPackage.getFileContent().array());
