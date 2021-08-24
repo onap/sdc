@@ -20,7 +20,21 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,21 +55,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
 public class InterfaceLifecycleTypeImportManagerTest {
 
     @InjectMocks
@@ -67,13 +66,14 @@ public class InterfaceLifecycleTypeImportManagerTest {
 
     @BeforeClass
     public static void beforeClass() throws IOException {
-        when(interfaceLifecycleOperation.createInterfaceType(Mockito.any(InterfaceDefinition.class))).thenAnswer(new Answer<Either<InterfaceDefinition, StorageOperationStatus>>() {
-            public Either<InterfaceDefinition, StorageOperationStatus> answer(InvocationOnMock invocation) {
-                Object[] args = invocation.getArguments();
-                return Either.left((InterfaceDefinition) args[0]);
-            }
+        when(interfaceLifecycleOperation.createInterfaceType(Mockito.any(InterfaceDefinition.class))).thenAnswer(
+            new Answer<Either<InterfaceDefinition, StorageOperationStatus>>() {
+                public Either<InterfaceDefinition, StorageOperationStatus> answer(InvocationOnMock invocation) {
+                    Object[] args = invocation.getArguments();
+                    return Either.left((InterfaceDefinition) args[0]);
+                }
 
-        });
+            });
         when(commonImportManager.createElementTypesFromYml(Mockito.anyString(), Mockito.any())).thenCallRealMethod();
         when(commonImportManager.createElementTypesFromToscaJsonMap(Mockito.any(), Mockito.any())).thenCallRealMethod();
     }
@@ -88,7 +88,7 @@ public class InterfaceLifecycleTypeImportManagerTest {
         final String ymlContent = getYmlContent();
         when(modelOperation.findModelByName("test")).thenReturn(Optional.of(new Model("test")));
         final Either<List<InterfaceDefinition>, ResponseFormat> createCapabilityTypes =
-            importManager.createLifecycleTypes(ymlContent, "test");
+            importManager.createLifecycleTypes(ymlContent, "test", false);
         assertTrue(createCapabilityTypes.isLeft());
         final List<InterfaceDefinition> interfaceDefinitionList = createCapabilityTypes.left().value();
         assertThat("Interface definitions should not be empty", interfaceDefinitionList, is(not(empty())));
@@ -98,10 +98,10 @@ public class InterfaceLifecycleTypeImportManagerTest {
         final String standardInterfaceType = "tosca.interfaces.node.lifecycle.Standard";
         final String nslcmInterfaceType = "tosca.interfaces.nfv.Nslcm";
         final Optional<InterfaceDefinition> standardInterfaceOpt = interfaceDefinitionList.stream().filter(
-            interfaceDefinition -> standardInterfaceType.equals(interfaceDefinition.getType()))
+                interfaceDefinition -> standardInterfaceType.equals(interfaceDefinition.getType()))
             .findFirst();
         final Optional<InterfaceDefinition> nslcmInterfaceOpt = interfaceDefinitionList.stream().filter(
-            interfaceDefinition -> nslcmInterfaceType.equals(interfaceDefinition.getType()))
+                interfaceDefinition -> nslcmInterfaceType.equals(interfaceDefinition.getType()))
             .findFirst();
         assertThat("", standardInterfaceOpt.isPresent(), is(true));
         assertThat("", nslcmInterfaceOpt.isPresent(), is(true));
