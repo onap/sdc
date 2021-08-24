@@ -1,0 +1,37 @@
+tosca.relationships.Root:
+  description: This is the default (root) TOSCA Relationship Type definition that all other TOSCA Relationship Types derive from.
+  attributes:
+    tosca_id:
+      description: A unique identifier of the realized instance of a Relationship Template that derives from any TOSCA normative type.
+      type: string
+    tosca_name:
+      description: This attribute reflects the name of the Relationship Template as defined in the TOSCA service template. This name is not unique to the realized instance model of corresponding deployed application as each template in the model can result in one or more instances (e.g., scaled) when orchestrated to a provider environment.
+      type: string
+    state:
+      description: The state of the relationship instance.
+      type: string
+      default: initial
+  interfaces:
+    Configure:
+      type: tosca.interfaces.relationship.Configure
+
+tosca.relationships.DependsOn:
+  derived_from: tosca.relationships.Root
+  description: This type represents a general dependency relationship between two nodes.
+  valid_target_types:
+    - tosca.capabilities.Node
+
+tosca.relationships.nfv.VirtualBindsTo:
+  derived_from: tosca.relationships.DependsOn
+  description: Represents an association relationship between Vdu.Compute and VduCp node types
+  valid_target_types: [ tosca.capabilities.nfv.VirtualBindable ]
+
+tosca.relationships.nfv.VirtualLinksTo:
+  derived_from: tosca.relationships.DependsOn
+  description: Represents an association relationship between the VduCp and VnfVirtualLink node types
+  valid_target_types: [ tosca.capabilities.nfv.VirtualLinkable ]
+
+tosca.relationships.nfv.AttachesTo:
+  derived_from: tosca.relationships.Root
+  description: Represents an association relationship between the Vdu.Compute and one of the node types, Vdu.VirtualBlockStorage, Vdu.VirtualObjectStorage or Vdu.VirtualFileStorage
+  valid_target_types: [ tosca.capabilities.nfv.VirtualStorage ]

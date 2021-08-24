@@ -944,10 +944,10 @@ limitations under the License.
                                 </property>
                             </systemProperties>
                             <suiteXmlFiles>
-                                <file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>
+					    <!--<file>src/test/resources/ci/testSuites/backend/onapApiSanity.xml</file>-->
                                 <file>src/test/resources/ci/testSuites/frontend/onapUiSanity.xml</file>
-                                <file>src/test/resources/ci/testSuites/backend/helmValidatorTests.xml</file>
-                                <file>src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml</file>
+				<!--<file>src/test/resources/ci/testSuites/backend/helmValidatorTests.xml</file> -->
+				<!--<file>src/test/resources/ci/testSuites/frontend/helmValidatorTests.xml</file> -->
                             </suiteXmlFiles>
                         </configuration>
                     </plugin>

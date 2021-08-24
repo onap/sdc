@@ -20,15 +20,12 @@ def main(sdc_be_proxy, update_version):
     if sdc_be_proxy.disable_locking("true") != 200:
         raise RuntimeError("Failed to disable locking")
     try:
-        model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy))
-        try:
-            model_import_manager.create_models()
-        except Exception as ex:
-            logger.log("An error has occurred while uploading the models: ", str(ex))
-            raise ex
         process_element_list(normativeElementsList.get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
         process_type_list(normativeTypesList.get_normative_type_candidate_list(base_file_location), sdc_be_proxy, update_version)
         process_element_list(normativeElementsList.get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
+        #Add model based normatives
+        model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy))
+        model_import_manager.create_models()
     except Exception as ex:
         logger.log("An error has occurred while uploading elements and types: ", str(ex))
         raise ex
