@@ -1,0 +1,15 @@
+[
+    "root",
+    "VNF",
+    "Cp",
+    "vnfExtCp",
+    "vnfVirtualLink",
+    "vduVirtualObjectStorage",
+    "vduVirtualFileStorage",
+    "vduVirtualBlockStorage",
+    "NsVirtualLink",
+    "NS",
+    "vduCompute",
+    "Sap",
+    "vduCp"
+]
