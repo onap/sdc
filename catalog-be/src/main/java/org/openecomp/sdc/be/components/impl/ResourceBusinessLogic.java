@@ -3370,9 +3370,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (nodeNamespaceMap.containsKey(uploadComponentInstanceInfo.getType())) {
             refResource = nodeNamespaceMap.get(uploadComponentInstanceInfo.getType());
         } else {
-            Either<Resource, StorageOperationStatus> findResourceEither = toscaOperationFacade
-                .getByToscaResourceNameMatchingVendorRelease(uploadComponentInstanceInfo.getType(),
-                    ((ResourceMetadataDataDefinition) resource.getComponentMetadataDefinition().getMetadataDataDefinition()).getVendorRelease());
+            Either<Resource, StorageOperationStatus> findResourceEither = StringUtils.isEmpty(resource.getModel()) ?
+                toscaOperationFacade.getByToscaResourceNameMatchingVendorRelease(uploadComponentInstanceInfo.getType(),
+                    ((ResourceMetadataDataDefinition) resource.getComponentMetadataDefinition().getMetadataDataDefinition()).getVendorRelease()):
+                toscaOperationFacade.getLatestByToscaResourceNameAndModel(uploadComponentInstanceInfo.getType(), resource.getModel());
             if (findResourceEither.isRight()) {
                 log.debug("validateResourceInstanceBeforeCreate - not found latest version for resource instance with name {} and type {}",
                     uploadComponentInstanceInfo.getName(), uploadComponentInstanceInfo.getType());
