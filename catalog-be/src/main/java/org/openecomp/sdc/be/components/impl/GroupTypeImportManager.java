@@ -69,13 +69,20 @@ public class GroupTypeImportManager {
         this.modelOperation = modelOperation;
     }
 
-    public Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypes(ToscaTypeImportData toscaTypeImportData, String modelName) {
-        return commonImportManager.createElementTypes(toscaTypeImportData, this::createGroupTypesFromYml, this::upsertGroupTypesByDao, modelName);
+    public Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> createGroupTypes(ToscaTypeImportData toscaTypeImportData,
+                                                                                                      String modelName, final boolean include) {
+        final Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
+            toscaTypeImportData, this::createGroupTypesFromYml, this::upsertGroupTypesByDao, modelName);
+        if (include && StringUtils.isNotEmpty(modelName)) {
+            commonImportManager.addTypesToImport(toscaTypeImportData.getToscaTypesYml(), modelName);
+        }
+        return elementTypes;
     }
 
     private Either<List<GroupTypeDefinition>, ActionStatus> createGroupTypesFromYml(String groupTypesYml, String modelName) {
-        Either<List<GroupTypeDefinition>, ActionStatus> groupTypes = commonImportManager.createElementTypesFromYml(groupTypesYml, this::createGroupType);
-        if (groupTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+        Either<List<GroupTypeDefinition>, ActionStatus> groupTypes = commonImportManager.createElementTypesFromYml(groupTypesYml,
+            this::createGroupType);
+        if (groupTypes.isLeft() && StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
                 groupTypes.left().value().forEach(groupType -> groupType.setModel(modelName));
@@ -90,7 +97,8 @@ public class GroupTypeImportManager {
         List<GroupTypeDefinition> groupTypesToCreate, String modelName) {
         return commonImportManager.createElementTypesWithVersionByDao(groupTypesToCreate, this::validateGroupType,
             groupType -> new ImmutablePair<>(ElementTypeEnum.GROUP_TYPE, UniqueIdBuilder.buildGroupTypeUid(groupType.getModel(),
-                groupType.getType(), groupType.getVersion(), NodeTypeEnum.GroupType.getName()).toLowerCase()), groupTypeOperation::getLatestGroupTypeByType,
+                groupType.getType(), groupType.getVersion(), NodeTypeEnum.GroupType.getName()).toLowerCase()),
+            groupTypeOperation::getLatestGroupTypeByType,
             groupTypeOperation::addGroupType, this::updateGroupType, modelName);
     }
 

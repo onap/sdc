@@ -42,7 +42,6 @@ import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
-import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -63,14 +62,19 @@ public class InterfaceLifecycleTypeImportManager {
     @Resource
     private ModelOperation modelOperation;
 
-    public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml, final String modelName) {
+    public Either<List<InterfaceDefinition>, ResponseFormat> createLifecycleTypes(String interfaceLifecycleTypesYml, final String modelName,
+                                                                                  final boolean include) {
         Either<List<InterfaceDefinition>, ActionStatus> interfaces = createInterfaceTypeFromYml(interfaceLifecycleTypesYml, modelName);
         if (interfaces.isRight()) {
             ActionStatus status = interfaces.right().value();
             ResponseFormat responseFormat = componentsUtils.getResponseFormatByGroupType(status, null);
             return Either.right(responseFormat);
         }
-        return createInterfacesByDao(interfaces.left().value());
+        final Either<List<InterfaceDefinition>, ResponseFormat> elementTypes = createInterfacesByDao(interfaces.left().value());
+        if (include && StringUtils.isNotEmpty(modelName)) {
+            commonImportManager.addTypesToImport(interfaceLifecycleTypesYml, modelName);
+        }
+        return elementTypes;
     }
 
     private Either<List<InterfaceDefinition>, ActionStatus> createInterfaceTypeFromYml(final String interfaceTypesYml, final String modelName) {

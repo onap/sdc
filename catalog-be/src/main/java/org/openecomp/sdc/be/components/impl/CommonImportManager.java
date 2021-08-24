@@ -30,16 +30,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
+import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.elements.ToscaTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -62,13 +66,18 @@ import org.yaml.snakeyaml.Yaml;
 public class CommonImportManager {
 
     private static final Logger log = Logger.getLogger(CommonImportManager.class.getName());
+    private static final String ADDITIONAL_TYPE_DEFINITIONS = "additional_type_definitions";
     private final ComponentsUtils componentsUtils;
     private final PropertyOperation propertyOperation;
+    private final ToscaModelImportCassandraDao toscaModelImportCassandraDao;
+
 
     @Autowired
-    public CommonImportManager(ComponentsUtils componentsUtils, PropertyOperation propertyOperation) {
+    public CommonImportManager(ComponentsUtils componentsUtils, PropertyOperation propertyOperation,
+                               final ToscaModelImportCassandraDao toscaModelImportCassandraDao) {
         this.componentsUtils = componentsUtils;
         this.propertyOperation = propertyOperation;
+        this.toscaModelImportCassandraDao = toscaModelImportCassandraDao;
     }
 
     public static void setProperties(Map<String, Object> toscaJson, Consumer<List<PropertyDefinition>> consumer) {
@@ -527,6 +536,112 @@ public class CommonImportManager {
         }
         return elementTypeDaoCreater.apply(elementTypes.left().value());
 
+    }
+
+    public void addTypesToImport(final String dataTypeYml, final String modelName) {
+        final List<ToscaImportByModel> allSchemaImportsByModel = toscaModelImportCassandraDao.findAllByModel(modelName);
+        final Optional<ToscaImportByModel> any = allSchemaImportsByModel.stream()
+            .filter(t -> t.getFullPath().contains(ADDITIONAL_TYPE_DEFINITIONS)).findAny();
+        final ToscaImportByModel toscaImportByModelAdditionalTypeDefinitions;
+        final List<ToscaImportByModel> schemaImportsByModel;
+        if (any.isPresent()) {
+            toscaImportByModelAdditionalTypeDefinitions = any.get();
+            schemaImportsByModel = allSchemaImportsByModel.stream()
+                .filter(toscaImportByModel -> !toscaImportByModel.getFullPath().contains(ADDITIONAL_TYPE_DEFINITIONS))
+                .collect(Collectors.toList());
+        } else {
+            toscaImportByModelAdditionalTypeDefinitions = new ToscaImportByModel();
+            toscaImportByModelAdditionalTypeDefinitions.setModelId(modelName);
+            toscaImportByModelAdditionalTypeDefinitions.setFullPath("additional_type_definitions.yml");
+            toscaImportByModelAdditionalTypeDefinitions.setContent(dataTypeYml);
+            schemaImportsByModel = new ArrayList<>(allSchemaImportsByModel);
+        }
+
+        final List<ToscaImportByModel> toscaImportByModels = new ArrayList<>();
+        handleExistedImports(dataTypeYml, schemaImportsByModel, toscaImportByModels);
+
+        final Map<String, Object> originalContent = (Map<String, Object>) new Yaml().load(toscaImportByModelAdditionalTypeDefinitions.getContent());
+        removeDuplicated(dataTypeYml, originalContent);
+
+        final StringBuilder stringBuilder = buildContent(dataTypeYml, originalContent);
+        toscaImportByModelAdditionalTypeDefinitions.setContent(stringBuilder.toString());
+        toscaImportByModels.add(toscaImportByModelAdditionalTypeDefinitions);
+
+        toscaModelImportCassandraDao.importOnly(modelName, toscaImportByModels);
+    }
+
+    private void handleExistedImports(final String dataTypeYml, final List<ToscaImportByModel> schemaImportsByModel,
+                                      final List<ToscaImportByModel> toscaImportByModels) {
+        final Iterator<ToscaImportByModel> toscaImportByModelIterator = schemaImportsByModel.iterator();
+        while (toscaImportByModelIterator.hasNext()) {
+            final ToscaImportByModel toscaImportByModel = new ToscaImportByModel();
+            final ToscaImportByModel next = toscaImportByModelIterator.next();
+            toscaImportByModel.setModelId(next.getModelId());
+            toscaImportByModel.setFullPath(next.getFullPath());
+            toscaImportByModel.setContent("");
+
+            final String content = next.getContent();
+            final Map<String, Object> map = (Map<String, Object>) new Yaml().load(content);
+
+            final Iterator dataTypeYmlIterator = ((Map<String, Object>) new Yaml().load(dataTypeYml)).entrySet().iterator();
+            while (dataTypeYmlIterator.hasNext()) {
+                final Entry dataTypeYmlEntry = (Entry) dataTypeYmlIterator.next();
+                final String dataTypeYmlKey = (String) dataTypeYmlEntry.getKey();
+
+                if (map.containsKey(dataTypeYmlKey)) {
+                    map.remove(dataTypeYmlKey, map.get(dataTypeYmlKey));
+                }
+            }
+
+            final StringBuilder stringBuilder = new StringBuilder();
+            map.entrySet().forEach(entry -> {
+                final Map<Object, Object> hashMap = new HashMap<>();
+                hashMap.put(entry.getKey(), entry.getValue());
+                final String newContent = new YamlUtil().objectToYaml(hashMap);
+                stringBuilder.append("\n").append(newContent);
+            });
+            toscaImportByModel.setContent(stringBuilder.toString());
+            toscaImportByModels.add(toscaImportByModel);
+        }
+    }
+
+    private void removeDuplicated(final String dataTypeYml, final Map<String, Object> originalContent) {
+        final Iterator dataTypeYmlIterator = ((Map<String, Object>) new Yaml().load(dataTypeYml)).entrySet().iterator();
+        while (dataTypeYmlIterator.hasNext()) {
+            final Entry dataTypeYmlEntry = (Entry) dataTypeYmlIterator.next();
+            final String dataTypeYmlKey = (String) dataTypeYmlEntry.getKey();
+
+            final Map<String, Object> duplicatedToRemove = new HashMap<>();
+            final Iterator contentIterator = originalContent.entrySet().iterator();
+            while (contentIterator.hasNext()) {
+                final Entry contentEntry = (Entry) contentIterator.next();
+                final String contentKey = (String) contentEntry.getKey();
+
+                if (contentKey.equals(dataTypeYmlKey)) {
+                    duplicatedToRemove.put(contentKey, originalContent.get(contentKey));
+                }
+            }
+            duplicatedToRemove.entrySet().forEach(element -> originalContent.remove(element.getKey(), element.getValue()));
+        }
+    }
+
+    private StringBuilder buildContent(final String dataTypeYml, final Map<String, Object> originalContent) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        originalContent.entrySet().forEach(entry -> {
+            final Map<Object, Object> hashMap = new HashMap<>();
+            hashMap.put(entry.getKey(), entry.getValue());
+            final String newContent = new YamlUtil().objectToYaml(hashMap);
+            stringBuilder.append("\n").append(newContent);
+        });
+        ((Map<String, Object>) new Yaml().load(dataTypeYml)).entrySet().forEach(dataTypeYmlEntry -> {
+            final String dataTypeYmlKey = (String) dataTypeYmlEntry.getKey();
+            final Object dataTypeYmlValue = dataTypeYmlEntry.getValue();
+            final Map<Object, Object> hashMap = new HashMap<>();
+            hashMap.put(dataTypeYmlKey, dataTypeYmlValue);
+            final String newContent = new YamlUtil().objectToYaml(hashMap);
+            stringBuilder.append("\n").append(newContent);
+        });
+        return stringBuilder;
     }
 
     public enum ElementTypeEnum {

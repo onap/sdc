@@ -59,6 +59,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.CommonImportManager;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
+import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -84,40 +85,14 @@ class TypesUploadEndpointTest extends JerseySpringBaseTest {
     private static PropertyOperation propertyOperation;
     private static ComponentsUtils componentUtils;
     private static OperationUtils operationUtils;
-
-    @org.springframework.context.annotation.Configuration
-    @Import(BaseTestConfig.class)
-    static class TypesUploadTestConfig {
-
-        @Bean
-        TypesUploadEndpoint typesUploadEndpoint() {
-            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
-            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
-            return new TypesUploadEndpoint(userBusinessLogic, componentsUtils, commonImportManager(),
-                annotationTypeOperations(), accessValidations);
-        }
-
-        @Bean
-        CommonImportManager commonImportManager() {
-            return new CommonImportManager(componentUtils, propertyOperation);
-        }
-
-        @Bean
-        AnnotationTypeOperations annotationTypeOperations() {
-            return new AnnotationTypeOperations(commonTypeOperations());
-        }
-
-        @Bean
-        CommonTypeOperations commonTypeOperations() {
-            return new CommonTypeOperations(janusGraphGenericDao, propertyOperation, operationUtils);
-        }
-    }
+    private static ToscaModelImportCassandraDao toscaModelImportCassandraDao;
 
     @BeforeAll
     public static void initClass() {
         janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
         accessValidations = mock(AccessValidations.class);
         propertyOperation = mock(PropertyOperation.class);
+        toscaModelImportCassandraDao = mock(ToscaModelImportCassandraDao.class);
         componentUtils = Mockito.mock(ComponentsUtils.class);
         operationUtils = Mockito.mock(OperationUtils.class);
     }
@@ -257,5 +232,33 @@ class TypesUploadEndpointTest extends JerseySpringBaseTest {
         typeActionResults.add(new ImmutablePair(dummyDefition, false));
         typeActionResults.add(new ImmutablePair(dummyDefition, null));
         assertThat(TypesUploadEndpoint.getHttpStatus(typeActionResults).value()).isEqualTo(HttpStatus.BAD_REQUEST_400);
+    }
+
+    @org.springframework.context.annotation.Configuration
+    @Import(BaseTestConfig.class)
+    static class TypesUploadTestConfig {
+
+        @Bean
+        TypesUploadEndpoint typesUploadEndpoint() {
+            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+            return new TypesUploadEndpoint(userBusinessLogic, componentsUtils, commonImportManager(),
+                annotationTypeOperations(), accessValidations);
+        }
+
+        @Bean
+        CommonImportManager commonImportManager() {
+            return new CommonImportManager(componentUtils, propertyOperation, toscaModelImportCassandraDao);
+        }
+
+        @Bean
+        AnnotationTypeOperations annotationTypeOperations() {
+            return new AnnotationTypeOperations(commonTypeOperations());
+        }
+
+        @Bean
+        CommonTypeOperations commonTypeOperations() {
+            return new CommonTypeOperations(janusGraphGenericDao, propertyOperation, operationUtils);
+        }
     }
 }
