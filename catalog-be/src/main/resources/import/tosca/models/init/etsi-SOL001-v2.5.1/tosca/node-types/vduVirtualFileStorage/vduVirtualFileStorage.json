@@ -1,0 +1,16 @@
+{
+	"payloadName": "vduVirtualFileStorage.yml",
+	"contactId": "jh0003",
+	"name": "VDU VirtualFileStorage",
+	"model": "ETSI SOL001 v2.5.1",
+	"description": "VDU VirtualFileStorage",
+	"resourceIconPath": "objectStorage",
+	"resourceType": "VFC",
+	"categories": [{
+		"name": "Generic",
+		"subcategories": [{
+			"name": "Infrastructure"
+		}]
+	}],
+	"tags": ["VDU VirtualFileStorage"]
+}
