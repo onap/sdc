@@ -1,8 +1,0 @@
-{
-  "beHost": "localhost",
-  "bePort": "8080",
-  "adminUser": "jh0003",
-  "resourceLen": 63,
-  "retryTime": 10,
-  "retryAttempt": 10
-}
