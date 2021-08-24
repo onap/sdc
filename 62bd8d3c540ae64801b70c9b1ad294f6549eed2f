@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "33de1aee_bcf7b2c7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ModelBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T10:34:17Z",
+      "side": 1,
+      "message": "I suggest to change to dataTypesYaml",
+      "range": {
+        "startLine": 54,
+        "startChar": 61,
+        "endLine": 54,
+        "endChar": 70
+      },
+      "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30b30ef5_11e2a840",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T10:34:17Z",
+      "side": 1,
+      "message": "I would suggest to change to vertexLabel",
+      "range": {
+        "startLine": 590,
+        "startChar": 21,
+        "endLine": 590,
+        "endChar": 23
+      },
+      "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33892918_e5db7b13",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T10:34:17Z",
+      "side": 1,
+      "message": "could replace for:\nreturn modelVertices.left().value().stream.anyMatch(vertexPair -\u003e modelVertexMatchesModel(vertexPair.getLeft(), model));",
+      "range": {
+        "startLine": 596,
+        "startChar": 12,
+        "endLine": 600,
+        "endChar": 13
+      },
+      "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9751ff58_22d46b8a",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T10:34:17Z",
+      "side": 1,
+      "message": "same suggestion with stream().anyMatch",
+      "range": {
+        "startLine": 612,
+        "startChar": 12,
+        "endLine": 616,
+        "endChar": 13
+      },
+      "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
