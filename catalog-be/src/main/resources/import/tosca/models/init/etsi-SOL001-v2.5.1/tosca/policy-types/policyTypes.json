@@ -1,0 +1,58 @@
+{
+  "tosca.policies.Root": {
+    "displayName": "Root",
+    "icon": "policy-root"
+  },
+  "tosca.policies.Placement": {
+    "displayName": "Placement",
+    "icon": "policy-placement"
+  },
+  "tosca.policies.nfv.InstantiationLevels": {
+    "displayName": "NFV InstantiationLevels",
+    "icon": "policy-nfv-instantiationlevels"
+  },
+  "tosca.policies.nfv.VduInstantiationLevels": {
+    "displayName": "NFV Vdu InstantiationLevels",
+    "icon": "policy-nfv-vdu-instantiationlevels"
+  },
+  "tosca.policies.nfv.VirtualLinkInstantiationLevels": {
+    "displayName": "NFV VirtualLink InstantiationLevels",
+    "icon": "policy-nfv-vl-instantiationlevels"
+  },
+  "tosca.policies.nfv.ScalingAspects": {
+    "displayName": "NFV ScalingAspects",
+    "icon": "policy-nfv-scalingaspects"
+  },
+  "tosca.policies.nfv.VduScalingAspectDeltas": {
+    "displayName": "NFV Vdu ScalingAspectDeltas",
+    "icon": "policy-nfv-vdu-scalingAspectdeltas"
+  },
+  "tosca.policies.nfv.VirtualLinkBitrateScalingAspectDeltas": {
+    "displayName": "NFV VirtualLinkBitrate ScalingAspectDeltas",
+    "icon": "policy-nfv-vlbitrate-scalingAspectdeltas"
+  },
+  "tosca.policies.nfv.VduInitialDelta": {
+    "displayName": "NFV Vdu InitialDelta",
+    "icon": "policy-nfv-vdu-initialdelta"
+  },
+  "tosca.policies.nfv.VirtualLinkBitrateInitialDelta": {
+    "displayName": "NFV VirtualLinkBitrate InitialDelta",
+    "icon": "policy-nfv-vlbitrate-initialdelta"
+  },
+  "tosca.policies.nfv.AffinityRule": {
+  "displayName": "NFV AffinityRule",
+  "icon": "policy-nfv-affinityrule"
+  },
+  "tosca.policies.nfv.AntiAffinityRule": {
+    "displayName": "NFV AntiAffinityRule",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.SecurityGroupRule": {
+    "displayName": "NFV SecurityGroupRule",
+    "icon": "policy-nfv-anti-affinityrule"
+  },
+  "tosca.policies.nfv.SupportedVnfInterface": {
+    "displayName": "NFV Supported VnfInterface",
+    "icon": "policy-nfv-supported-vnfinterface"
+  }
+}
