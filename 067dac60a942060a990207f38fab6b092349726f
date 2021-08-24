@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f527e9e3_b8b4b550",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ModelServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T17:03:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4a0961a_4438e89c",
+      "range": {
+        "startLine": 144,
+        "startChar": 129,
+        "endLine": 144,
+        "endChar": 130
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "23cf15af_0e9075fa",
         "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/api/ActionStatus.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "067dac60a942060a990207f38fab6b092349726f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26f646a8_bf4cd245",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/api/ActionStatus.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T17:03:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "23cf15af_0e9075fa",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 57,
+        "endChar": 22
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "89b009b0_be8e6edc",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/ModelData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T17:03:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "480e8ef6_53c79afc",
+      "range": {
+        "startLine": 35,
+        "startChar": 69,
+        "endLine": 35,
+        "endChar": 75
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "99f7618a_119f85ee",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ModelTypeEnum.java",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "c743ede0_aa0be86f",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ModelTypeEnum.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T17:03:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99f7618a_119f85ee",
+      "range": {
+        "startLine": 32,
+        "startChar": 18,
+        "endLine": 32,
+        "endChar": 31
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "de24f97b_2eb4dc83",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ModelTypeEnum.java",
         "patchSetId": 1
@@ -114,6 +210,30 @@
       "revId": "067dac60a942060a990207f38fab6b092349726f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b47d9d9_f193f32b",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ModelTypeEnum.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T17:03:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de24f97b_2eb4dc83",
+      "range": {
+        "startLine": 33,
+        "startChar": 8,
+        "endLine": 39,
+        "endChar": 19
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
