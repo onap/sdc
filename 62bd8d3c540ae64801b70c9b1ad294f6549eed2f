@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "efd02f4a_9c3f6567",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ModelBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T15:21:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33de1aee_bcf7b2c7",
+      "range": {
+        "startLine": 54,
+        "startChar": 61,
+        "endLine": 54,
+        "endChar": 70
+      },
+      "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30b30ef5_11e2a840",
         "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57ff5801_f89b70f3",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T15:21:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30b30ef5_11e2a840",
+      "range": {
+        "startLine": 590,
+        "startChar": 21,
+        "endLine": 590,
+        "endChar": 23
+      },
+      "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "065ad386_178253d2",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T15:21:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33892918_e5db7b13",
+      "range": {
+        "startLine": 596,
+        "startChar": 12,
+        "endLine": 600,
+        "endChar": 13
+      },
+      "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9751ff58_22d46b8a",
         "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
         "patchSetId": 2
@@ -91,6 +163,30 @@
       "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc9b2e17_0a01693a",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/jsongraph/JanusGraphDao.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-24T15:21:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9751ff58_22d46b8a",
+      "range": {
+        "startLine": 612,
+        "startChar": 12,
+        "endLine": 616,
+        "endChar": 13
+      },
+      "revId": "62bd8d3c540ae64801b70c9b1ad294f6549eed2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
