@@ -1489,7 +1489,7 @@ public class ResourceBusinessLogicTest {
         roleProp.setName("role");
         roleProp.setType("string");
         vduCp.getProperties().add(roleProp);
-        when(toscaOperationFacade.getByToscaResourceNameMatchingVendorRelease("tosca.nodes.nfv.VduCp", "1.0.0")).thenReturn(Either.left(vduCp));
+        when(toscaOperationFacade.getLatestByToscaResourceNameAndModel("tosca.nodes.nfv.VduCp", "testModel")).thenReturn(Either.left(vduCp));
 
 
         when(yamlTemplateParsingHandler.parseResourceInfoFromYAML(any(), any(), any(), any(), any(), any())).thenReturn(parsedToscaYamlInfo);
