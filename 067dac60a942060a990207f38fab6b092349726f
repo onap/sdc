@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4a0961a_4438e89c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ModelServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T12:30:40Z",
+      "side": 1,
+      "message": "remove space",
+      "range": {
+        "startLine": 144,
+        "startChar": 129,
+        "endLine": 144,
+        "endChar": 130
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23cf15af_0e9075fa",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/api/ActionStatus.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T12:30:40Z",
+      "side": 1,
+      "message": "I believe you forgot to add this error to the errors config file (catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml)",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 57,
+        "endChar": 22
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "480e8ef6_53c79afc",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/ModelData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T12:30:40Z",
+      "side": 1,
+      "message": "it would be good to force only ModelTypeEnum types",
+      "range": {
+        "startLine": 35,
+        "startChar": 69,
+        "endLine": 35,
+        "endChar": 75
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99f7618a_119f85ee",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ModelTypeEnum.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T12:30:40Z",
+      "side": 1,
+      "message": "I would recommend to return Optional\u003cModelTypeEnum\u003e",
+      "range": {
+        "startLine": 32,
+        "startChar": 18,
+        "endLine": 32,
+        "endChar": 31
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de24f97b_2eb4dc83",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/enums/ModelTypeEnum.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T12:30:40Z",
+      "side": 1,
+      "message": "I suggest to use streams here:\nreturn Arrays.stream(ModelTypeEnum.values()).anyMatch(modelTypeEnum -\u003e modelTypeEnum.getValue().equals(value))",
+      "range": {
+        "startLine": 33,
+        "startChar": 8,
+        "endLine": 39,
+        "endChar": 19
+      },
+      "revId": "067dac60a942060a990207f38fab6b092349726f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
