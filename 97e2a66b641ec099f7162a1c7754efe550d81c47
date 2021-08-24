@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f67c5c12_aa607abf",
+        "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-24T09:32:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d971805_4f7ab2ff",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 64,
+        "endChar": 64
+      },
+      "revId": "97e2a66b641ec099f7162a1c7754efe550d81c47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84f3eb60_507ea051",
         "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "97e2a66b641ec099f7162a1c7754efe550d81c47",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fbb3113d_b72e7f35",
+        "filename": "catalog-ui/src/app/ng2/pages/catalog/catalog.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-24T09:32:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84f3eb60_507ea051",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 159,
+        "endChar": 87
+      },
+      "revId": "97e2a66b641ec099f7162a1c7754efe550d81c47",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
