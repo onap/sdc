@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "731c271e_68db6d14",
+        "filename": "catalog-model/src/test/resources/config/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-24T13:31:26Z",
+      "side": 1,
+      "message": "shouldn\u0027t be deleted?",
+      "range": {
+        "startLine": 330,
+        "startChar": 0,
+        "endLine": 330,
+        "endChar": 78
+      },
+      "revId": "d5718b76c1b871db40577550204448009e422015",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90729fa8_f18485e9",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/components/ComponentMetadataDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-24T13:31:26Z",
+      "side": 1,
+      "message": "it\u0027s possible to do same with @Setter and exclude some fields with \n@Setter(AccessLevel.NONE)",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 11
+      },
+      "revId": "d5718b76c1b871db40577550204448009e422015",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
