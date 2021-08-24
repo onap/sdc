@@ -1,0 +1,10 @@
+{
+  "tosca.groups.Root": {
+    "displayName": "Root",
+    "icon": "group-root"
+  },
+  "tosca.groups.nfv.PlacementGroup": {
+    "displayName": "NFV PlacementGroup",
+    "icon": "group-nfv-placementgroup"
+  }
+}
