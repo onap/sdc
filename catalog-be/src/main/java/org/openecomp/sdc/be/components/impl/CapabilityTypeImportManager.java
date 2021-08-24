@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
@@ -48,20 +49,30 @@ public class CapabilityTypeImportManager {
     private final ModelOperation modelOperation;
 
     @Autowired
-    public CapabilityTypeImportManager(CapabilityTypeOperation capabilityTypeOperation, CommonImportManager commonImportManager, ModelOperation modelOperation) {
+    public CapabilityTypeImportManager(CapabilityTypeOperation capabilityTypeOperation, CommonImportManager commonImportManager,
+                                       ModelOperation modelOperation) {
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.commonImportManager = commonImportManager;
         this.modelOperation = modelOperation;
     }
 
-    public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(final String capabilityTypesYml, final String modelName) {
-        return commonImportManager.createElementTypes(capabilityTypesYml, capabilityTypesFromYml -> createCapabilityTypesFromYml(capabilityTypesYml, modelName), this::upsertCapabilityTypesByDao,
-            CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE);
+    public Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> createCapabilityTypes(final String capabilityTypesYml,
+                                                                                                                final String modelName,
+                                                                                                                final boolean include) {
+        final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
+            capabilityTypesYml, capabilityTypesFromYml -> createCapabilityTypesFromYml(capabilityTypesYml, modelName),
+            this::upsertCapabilityTypesByDao, ElementTypeEnum.CAPABILITY_TYPE);
+        if (include && StringUtils.isNotEmpty(modelName)) {
+            commonImportManager.addTypesToImport(capabilityTypesYml, modelName);
+        }
+        return elementTypes;
     }
 
-    private Either<List<CapabilityTypeDefinition>, ActionStatus> createCapabilityTypesFromYml(final String capabilityTypesYml, final String modelName) {
-        final Either<List<CapabilityTypeDefinition>, ActionStatus> capabilityTypes = commonImportManager.createElementTypesFromYml(capabilityTypesYml, this::createCapabilityType);
-        if (capabilityTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+    private Either<List<CapabilityTypeDefinition>, ActionStatus> createCapabilityTypesFromYml(final String capabilityTypesYml,
+                                                                                              final String modelName) {
+        final Either<List<CapabilityTypeDefinition>, ActionStatus> capabilityTypes = commonImportManager.createElementTypesFromYml(capabilityTypesYml,
+            this::createCapabilityType);
+        if (capabilityTypes.isLeft() && StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
                 capabilityTypes.left().value().forEach(capabilityType -> capabilityType.setModel(modelName));
@@ -75,7 +86,8 @@ public class CapabilityTypeImportManager {
     private Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> upsertCapabilityTypesByDao(
         List<CapabilityTypeDefinition> capabilityTypesToCreate) {
         return commonImportManager.createElementTypesByDao(capabilityTypesToCreate, capabilityType -> Either.left(ActionStatus.OK),
-            capabilityType -> new ImmutablePair<>(CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE, UniqueIdBuilder.buildCapabilityTypeUid(capabilityType.getModel(), capabilityType.getType())),
+            capabilityType -> new ImmutablePair<>(CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE,
+                UniqueIdBuilder.buildCapabilityTypeUid(capabilityType.getModel(), capabilityType.getType())),
             capabilityTypeOperation::getCapabilityType, capabilityTypeOperation::addCapabilityType, this::updateCapabilityType);
     }
 
