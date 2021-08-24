@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fac27ba0_d36a299f",
+        "filename": "catalog-model/src/test/resources/config/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T17:31:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "731c271e_68db6d14",
+      "range": {
+        "startLine": 330,
+        "startChar": 0,
+        "endLine": 330,
+        "endChar": 78
+      },
+      "revId": "d5718b76c1b871db40577550204448009e422015",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "90729fa8_f18485e9",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/components/ComponentMetadataDataDefinition.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "d5718b76c1b871db40577550204448009e422015",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d7fada5_394a2a2d",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/components/ComponentMetadataDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-24T17:31:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90729fa8_f18485e9",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 11
+      },
+      "revId": "d5718b76c1b871db40577550204448009e422015",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
