@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8067459c_158e1eb7",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/capability-types/capabilityTypes.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-25T14:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "294e6825_5ec838a9",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 164
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "11b364bb_189188bf",
         "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/categories/categoryTypes.yml",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "894a1d7c_c47dc184",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/categories/categoryTypes.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-25T14:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "11b364bb_189188bf",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 9
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "2210aa30_855479ee",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/compute/compute.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-25T14:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae7b63b8_00de294e",
+      "range": {
+        "startLine": 2,
+        "startChar": 18,
+        "endLine": 2,
+        "endChar": 29
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "940109a1_2687962c",
         "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/compute/compute.json",
         "patchSetId": 2
@@ -91,6 +163,30 @@
       "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f09a677_54af0839",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/compute/compute.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-25T14:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "940109a1_2687962c",
+      "range": {
+        "startLine": 4,
+        "startChar": 11,
+        "endLine": 4,
+        "endChar": 18
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "25f37f01_d6d550ad",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/compute/compute.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-25T14:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52f478cd_a4baba9f",
+      "range": {
+        "startLine": 19,
+        "startChar": 5,
+        "endLine": 19,
+        "endChar": 12
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f4377778_cc05e535",
         "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/vduCp/vduCp.json",
         "patchSetId": 2
@@ -137,6 +257,30 @@
       "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "922ca3dc_e42f5346",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/vduCp/vduCp.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-08-25T14:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f4377778_cc05e535",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 34
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
