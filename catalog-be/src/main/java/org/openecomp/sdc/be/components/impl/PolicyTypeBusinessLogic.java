@@ -29,31 +29,27 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
-import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Component("policyTypeBusinessLogic")
 public class PolicyTypeBusinessLogic {
 
     private PolicyTypeOperation policyTypeOperation;
     private JanusGraphDao janusGraphDao;
-    private ComponentsUtils componentsUtils;
     private UserValidations userValidations;
 
-    public PolicyTypeBusinessLogic(PolicyTypeOperation policyTypeOperation, JanusGraphDao janusGraphDao, ComponentsUtils componentsUtils,
-                                   UserValidations userValidations) {
+    @Autowired
+    public PolicyTypeBusinessLogic(PolicyTypeOperation policyTypeOperation, JanusGraphDao janusGraphDao, UserValidations userValidations) {
         this.policyTypeOperation = policyTypeOperation;
         this.janusGraphDao = janusGraphDao;
-        this.componentsUtils = componentsUtils;
         this.userValidations = userValidations;
     }
 
-    @Transactional
     public List<PolicyTypeDefinition> getAllPolicyTypes(String userId, String internalComponentType, String modelName) {
         Set<String> excludedPolicyTypes = getExcludedPolicyTypes(internalComponentType);
         userValidations.validateUserExists(userId);

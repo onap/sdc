@@ -21,7 +21,7 @@ package org.openecomp.sdc.asdctool.impl.validator.executor;
 
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 
 import java.util.ArrayList;
 import java.util.function.Function;
