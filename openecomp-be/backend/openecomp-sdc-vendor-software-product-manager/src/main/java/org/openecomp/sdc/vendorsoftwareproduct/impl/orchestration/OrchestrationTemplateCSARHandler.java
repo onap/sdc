@@ -93,6 +93,8 @@ public class OrchestrationTemplateCSARHandler extends BaseOrchestrationTemplateH
         } catch (final CoreException coreException) {
             logger.error(coreException.getMessage(), coreException);
             uploadFileResponse.addStructureError(SdcCommon.UPLOAD_FILE, new ErrorMessage(ErrorLevel.ERROR, coreException.getMessage()));
+        } catch (final Exception ex) {
+            logger.error(ex.getMessage(), ex);
         }
         return uploadFileResponse;
     }
