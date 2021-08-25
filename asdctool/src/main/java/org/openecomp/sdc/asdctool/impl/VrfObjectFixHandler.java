@@ -36,7 +36,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.openecomp.sdc.asdctool.migration.tasks.handlers.XlsOutputHandler;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;

@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.openecomp.sdc.asdctool.impl.ArtifactUuidFix;
 import org.openecomp.sdc.be.components.distribution.engine.ServiceDistributionArtifactsBuilder;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;

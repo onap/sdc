@@ -23,7 +23,7 @@ import org.openecomp.sdc.asdctool.impl.VrfObjectFixHandler;
 import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
 import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

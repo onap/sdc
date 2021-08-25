@@ -22,7 +22,7 @@ package org.openecomp.sdc.asdctool.configuration;
 import org.openecomp.sdc.asdctool.impl.internal.tool.DeleteComponentHandler;
 import org.openecomp.sdc.be.config.CatalogModelSpringConfig;
 import org.openecomp.sdc.be.dao.config.DAOSpringConfig;
-import org.openecomp.sdc.be.dao.jsongraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.springframework.context.annotation.Bean;

@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.dao.jsongraph;
+package org.openecomp.sdc.be.dao.janusgraph;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
@@ -49,8 +49,7 @@ import org.janusgraph.core.JanusGraphVertex;
 import org.janusgraph.core.JanusGraphVertexQuery;
 import org.janusgraph.core.PropertyKey;
 import org.janusgraph.graphdb.query.JanusGraphPredicate;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
@@ -68,7 +67,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 public class JanusGraphDao {
 
-    private static Logger logger = Logger.getLogger(JanusGraphDao.class.getName());
+    private static final Logger logger = Logger.getLogger(JanusGraphDao.class);
     JanusGraphClient janusGraphClient;
 
     public JanusGraphDao(@Qualifier("janusgraph-client") JanusGraphClient janusGraphClient) {
