@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "294e6825_5ec838a9",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/capability-types/capabilityTypes.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-25T09:05:30Z",
+      "side": 1,
+      "message": "duplicated",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 164
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11b364bb_189188bf",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/categories/categoryTypes.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-25T09:05:30Z",
+      "side": 1,
+      "message": "remove file - we dont have functionality for adding category types to a model",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 9
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae7b63b8_00de294e",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/compute/compute.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-25T09:05:30Z",
+      "side": 1,
+      "message": "rename to vduCompute.yml and rename this file to vduCompute.json",
+      "range": {
+        "startLine": 2,
+        "startChar": 18,
+        "endLine": 2,
+        "endChar": 29
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "940109a1_2687962c",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/compute/compute.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-25T09:05:30Z",
+      "side": 1,
+      "message": "change to \"VDU Compute\"",
+      "range": {
+        "startLine": 4,
+        "startChar": 11,
+        "endLine": 4,
+        "endChar": 18
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52f478cd_a4baba9f",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/compute/compute.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-25T09:05:30Z",
+      "side": 1,
+      "message": "change to \"VDU Compute\"",
+      "range": {
+        "startLine": 19,
+        "startChar": 5,
+        "endLine": 19,
+        "endChar": 12
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4377778_cc05e535",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/node-types/vduCp/vduCp.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-08-25T09:05:30Z",
+      "side": 1,
+      "message": "fix indentation",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 34
+      },
+      "revId": "8c6ab5ba3dcfc283aeb827218934b71495ecaf16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
