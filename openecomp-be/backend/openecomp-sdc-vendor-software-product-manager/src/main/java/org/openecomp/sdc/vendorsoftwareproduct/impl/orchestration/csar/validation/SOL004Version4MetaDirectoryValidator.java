@@ -32,7 +32,7 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.csar.ToscaMetaEntry;
+import org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 
 /**
@@ -71,7 +71,7 @@ class SOL004Version4MetaDirectoryValidator extends SOL004MetaDirectoryValidator 
 
     @Override
     protected void handleOtherEntry(final Map.Entry<String, String> entry) {
-        if (!ToscaMetaEntry.OTHER_DEFINITIONS.getName().equals(entry.getKey())) {
+        if (!ToscaMetaEntryVersion261.OTHER_DEFINITIONS.getName().equals(entry.getKey())) {
             reportError(ErrorLevel.ERROR, Messages.METADATA_UNSUPPORTED_ENTRY.formatMessage(entry.getKey()));
             LOGGER.warn(Messages.METADATA_UNSUPPORTED_ENTRY.getErrorMessage(), entry.getKey());
         } else {
