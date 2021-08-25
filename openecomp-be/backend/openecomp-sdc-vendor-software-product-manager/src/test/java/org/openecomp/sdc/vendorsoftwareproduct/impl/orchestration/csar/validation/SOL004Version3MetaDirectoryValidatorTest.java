@@ -19,7 +19,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.OTHER_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.OTHER_DEFINITIONS;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_DEFINITION_FILEPATH;
 
 import org.openecomp.sdc.tosca.csar.ManifestTokenType;

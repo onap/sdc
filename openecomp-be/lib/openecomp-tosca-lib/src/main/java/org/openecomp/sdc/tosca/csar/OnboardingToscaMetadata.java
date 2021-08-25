@@ -21,7 +21,7 @@ package org.openecomp.sdc.tosca.csar;
 
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntry.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ENTRY_DEFINITIONS;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
