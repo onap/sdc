@@ -21,7 +21,30 @@
 
 package org.openecomp.sdc.tosca.csar;
 
-public interface ToscaMetaEntry {
+import java.util.Arrays;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    String getName();
+/**
+ * Represents entry keys in a TOSCA.meta file.
+ */
+@AllArgsConstructor
+@Getter
+public enum ToscaMetaEntryVersion251 implements ToscaMetaEntry {
+    TOSCA_META_FILE_VERSION_ENTRY("TOSCA-Meta-File-Version"),
+    CSAR_VERSION_ENTRY("CSAR-Version"),
+    CREATED_BY_ENTRY("Created-By"),
+    ENTRY_DEFINITIONS("Entry-Definitions"),
+    ENTRY_MANIFEST("Entry-Manifest"),
+    ENTRY_CHANGE_LOG("Entry-Change-Log"),
+    ENTRY_TESTS("Entry-Tests"),
+    ENTRY_LICENSES("Entry-Licenses"),
+    ENTRY_CERTIFICATE("Entry-Certificate");
+
+    private final String name;
+
+    public static Optional<ToscaMetaEntryVersion251> parse(final String name) {
+        return Arrays.stream(values()).filter(toscaMetaEntry -> toscaMetaEntry.getName().equals(name)).findFirst();
+    }
 }
