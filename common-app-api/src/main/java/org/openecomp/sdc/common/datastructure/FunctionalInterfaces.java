@@ -79,7 +79,7 @@ public class FunctionalInterfaces {
          */
         void accept(T1 t1, T2 t2);
     }
-    
+
     @FunctionalInterface
     public interface ConsumerThreeParam<T1, T2, T3> {
 
@@ -91,6 +91,20 @@ public class FunctionalInterfaces {
          * @param t3
          */
         void accept(T1 t1, T2 t2, T3 t3);
+    }
+
+    @FunctionalInterface
+    public interface ConsumerFourParam<T1, T2, T3, T4> {
+
+        /**
+         * Same Accept method, but takes four parameters
+         *
+         * @param t1
+         * @param t2
+         * @param t3
+         * @param t4
+         */
+        void accept(T1 t1, T2 t2, T3 t3, T4 t4);
     }
 
     /**

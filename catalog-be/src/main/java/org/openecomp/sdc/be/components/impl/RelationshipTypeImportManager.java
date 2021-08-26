@@ -52,21 +52,31 @@ public class RelationshipTypeImportManager {
         this.modelOperation = modelOperation;
     }
 
-    public Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(final String relationshipYml, final String modelName) {
-        return createRelationshipTypes(relationshipYml, modelName, false);
+    public Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(final String relationshipYml,
+                                                                                                                    final String modelName,
+                                                                                                                    final boolean includeToModelDefaultImports) {
+        return createRelationshipTypes(relationshipYml, modelName, false, includeToModelDefaultImports);
     }
 
     private Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypes(final String relationshipTypeYml,
-                                                                                                                     final String modelName, final boolean inTransaction) {
-        return commonImportManager
+                                                                                                                     final String modelName,
+                                                                                                                     final boolean inTransaction,
+                                                                                                                     final boolean includeToModelDefaultImports) {
+        final Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager
             .createElementTypes(relationshipTypeYml, relationshipTypesFromYml -> createRelationshipTypesFromYml(relationshipTypeYml, modelName),
                 relationshipTypesToCreate -> createRelationshipTypesByDao(relationshipTypesToCreate, inTransaction),
                 ElementTypeEnum.RELATIONSHIP_TYPE);
+        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+            commonImportManager.addTypesToDefaultImports(relationshipTypeYml, modelName);
+        }
+        return elementTypes;
     }
 
-    private Either<List<RelationshipTypeDefinition>, ActionStatus> createRelationshipTypesFromYml(final String relationshipTypeYml, final String modelName) {
-        final Either<List<RelationshipTypeDefinition>, ActionStatus> relationshipTypes =  commonImportManager.createElementTypesFromYml(relationshipTypeYml, this::createRelationshipType);
-        if (relationshipTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+    private Either<List<RelationshipTypeDefinition>, ActionStatus> createRelationshipTypesFromYml(final String relationshipTypeYml,
+                                                                                                  final String modelName) {
+        final Either<List<RelationshipTypeDefinition>, ActionStatus> relationshipTypes = commonImportManager.createElementTypesFromYml(
+            relationshipTypeYml, this::createRelationshipType);
+        if (relationshipTypes.isLeft() && StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
                 relationshipTypes.left().value().forEach(relationshipType -> relationshipType.setModel(modelName));
@@ -80,7 +90,8 @@ public class RelationshipTypeImportManager {
     private Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> createRelationshipTypesByDao(
         List<RelationshipTypeDefinition> relationshipTypesToCreate, boolean inTransaction) {
         return commonImportManager.createElementTypesByDao(relationshipTypesToCreate, this::validateRelationshipType,
-            relationshipType -> new ImmutablePair<>(ElementTypeEnum.RELATIONSHIP_TYPE, UniqueIdBuilder.buildRelationshipTypeUid(relationshipType.getModel(), relationshipType.getType())),
+            relationshipType -> new ImmutablePair<>(ElementTypeEnum.RELATIONSHIP_TYPE,
+                UniqueIdBuilder.buildRelationshipTypeUid(relationshipType.getModel(), relationshipType.getType())),
             relationshipTypeUid -> relationshipTypeOperation.getRelationshipTypeByUid(relationshipTypeUid).right()
                 .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus),
             relationshipType -> relationshipTypeOperation.addRelationshipType(relationshipType, inTransaction),

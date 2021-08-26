@@ -50,10 +50,10 @@ public class ModelBusinessLogic {
         this.modelOperation = modelOperation;
         this.dataTypeImportManager = dataTypeImportManager;
     }
-    
+
     public Model createModel(final Model model, final String datatypesYaml) {
         createModel(model);
-        dataTypeImportManager.createDataTypes(datatypesYaml, model.getName());
+        dataTypeImportManager.createDataTypes(datatypesYaml, model.getName(), false);
         return model;
     }
 
