@@ -37,7 +37,6 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
@@ -61,14 +60,21 @@ public class DataTypeImportManager {
     @Resource
     private ModelOperation modelOperation;
 
-    public Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypes(final String dataTypeYml, final String modelName) {
-        return commonImportManager
-            .createElementTypes(dataTypeYml, dataTypesFromYml -> createDataTypesFromYml(dataTypeYml, modelName), this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
+    public Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypes(final String dataTypeYml, final String modelName,
+                                                                                                    final boolean includeToModelDefaultImports) {
+        final var elementTypes = commonImportManager.createElementTypes(
+            dataTypeYml, dataTypesFromYml -> createDataTypesFromYml(dataTypeYml, modelName), this::createDataTypesByDao, ElementTypeEnum.DATA_TYPE);
+
+        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+            commonImportManager.addTypesToDefaultImports(dataTypeYml, modelName);
+        }
+        return elementTypes;
     }
-    
+
     private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName) {
-        final Either<List<DataTypeDefinition>, ActionStatus> dataTypes = commonImportManager.createElementTypesFromYml(dataTypesYml, this::createDataType);
-        if (dataTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+        final Either<List<DataTypeDefinition>, ActionStatus> dataTypes = commonImportManager.createElementTypesFromYml(dataTypesYml,
+            this::createDataType);
+        if (dataTypes.isLeft() && StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
                 dataTypes.left().value().forEach(dataType -> dataType.setModel(modelName));
@@ -83,7 +89,8 @@ public class DataTypeImportManager {
         List<DataTypeDefinition> dataTypesToCreate) {
         return commonImportManager.createElementTypesByDao(dataTypesToCreate, this::validateDataType,
             dataType -> new ImmutablePair<>(ElementTypeEnum.DATA_TYPE, UniqueIdBuilder.buildDataTypeUid(dataType.getModel(), dataType.getName())),
-            dataTypeUid -> propertyOperation.getDataTypeByUidWithoutDerived(dataTypeUid, true), dataType -> propertyOperation.addDataType(dataType),
+            dataTypeUid -> propertyOperation.getDataTypeByUidWithoutDerived(dataTypeUid, true),
+            dataType -> propertyOperation.addDataType(dataType),
             (newDataType, oldDataType) -> propertyOperation.updateDataType(newDataType, oldDataType));
     }
 
@@ -136,7 +143,8 @@ public class DataTypeImportManager {
         }
         String derivedDataType = dataType.getDerivedFromName();
         if (derivedDataType != null) {
-            Either<DataTypeDefinition, StorageOperationStatus> derivedDataTypeByName = propertyOperation.getDataTypeByName(derivedDataType, dataType.getModel());
+            Either<DataTypeDefinition, StorageOperationStatus> derivedDataTypeByName = propertyOperation.getDataTypeByName(derivedDataType,
+                dataType.getModel());
             if (derivedDataTypeByName.isRight()) {
                 StorageOperationStatus status = derivedDataTypeByName.right().value();
                 if (status == StorageOperationStatus.NOT_FOUND) {
