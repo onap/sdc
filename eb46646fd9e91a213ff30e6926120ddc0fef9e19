@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "205bc129_8074453b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T13:35:29Z",
+      "side": 1,
+      "message": "unnecessary cast",
+      "range": {
+        "startLine": 268,
+        "startChar": 62,
+        "endLine": 268,
+        "endChar": 83
+      },
+      "revId": "eb46646fd9e91a213ff30e6926120ddc0fef9e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a4e6d26_0a6b122d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T13:35:29Z",
+      "side": 1,
+      "message": "we could simplify to:\n .keySet().forEach(existingImportYamlMap::remove);\nRemove already checks if the key exists or not.",
+      "range": {
+        "startLine": 270,
+        "startChar": 64,
+        "endLine": 275,
+        "endChar": 15
+      },
+      "revId": "eb46646fd9e91a213ff30e6926120ddc0fef9e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6555fec_5944fc9c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T13:35:29Z",
+      "side": 1,
+      "message": ".forEach((key, value)",
+      "range": {
+        "startLine": 278,
+        "startChar": 33,
+        "endLine": 278,
+        "endChar": 52
+      },
+      "revId": "eb46646fd9e91a213ff30e6926120ddc0fef9e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

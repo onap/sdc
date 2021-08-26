@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b02df685_574ddd33",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T13:35:29Z",
+      "side": 1,
+      "message": "unnecessary cast",
+      "range": {
+        "startLine": 252,
+        "startChar": 52,
+        "endLine": 252,
+        "endChar": 73
+      },
+      "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d20f5f7c_30de71ab",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T13:35:29Z",
+      "side": 1,
+      "message": "typesYaml",
+      "range": {
+        "startLine": 259,
+        "startChar": 79,
+        "endLine": 259,
+        "endChar": 90
+      },
+      "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8806d7aa_66a1b9db",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T13:35:29Z",
+      "side": 1,
+      "message": "typesYaml",
+      "range": {
+        "startLine": 287,
+        "startChar": 77,
+        "endLine": 287,
+        "endChar": 88
+      },
+      "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d261725_8919c407",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T13:35:29Z",
+      "side": 1,
+      "message": "typesYamlMap",
+      "range": {
+        "startLine": 290,
+        "startChar": 34,
+        "endLine": 290,
+        "endChar": 48
+      },
+      "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d33faf6_23f2970d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T13:35:29Z",
+      "side": 1,
+      "message": ".forEach((key, value)",
+      "range": {
+        "startLine": 293,
+        "startChar": 23,
+        "endLine": 293,
+        "endChar": 48
+      },
+      "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
