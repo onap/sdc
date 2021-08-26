@@ -19,10 +19,11 @@
 package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
-
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
@@ -45,20 +47,22 @@ import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Model;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.resources.data.ModelData;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.yaml.snakeyaml.Yaml;
 
 @Component("model-operation")
 public class ModelOperation {
 
     private static final Logger log = Logger.getLogger(ModelOperation.class);
+    private static final String ADDITIONAL_TYPE_DEFINITIONS = "additional_type_definitions.yml";
 
     private final JanusGraphGenericDao janusGraphGenericDao;
     private final JanusGraphDao janusGraphDao;
@@ -104,21 +108,23 @@ public class ModelOperation {
             }
         }
     }
-    
+
     private void addDerivedFromRelation(final Model model) {
         final String derivedFrom = model.getDerivedFrom();
         if (derivedFrom == null) {
             return;
         }
         log.debug("Adding derived from relation between model {} to its parent {}",
-                model.getName(), derivedFrom);
+            model.getName(), derivedFrom);
         final Optional<Model> derivedFromModelOptional = this.findModelByName(derivedFrom);
         if (derivedFromModelOptional.isPresent()) {
-            final Either<GraphRelation, StorageOperationStatus> result = derivedFromOperation.addDerivedFromRelation(UniqueIdBuilder.buildModelUid(model.getName()), 
-                    UniqueIdBuilder.buildModelUid(derivedFromModelOptional.get().getName()), NodeTypeEnum.Model);
-            if(result.isRight()) {
+            final Either<GraphRelation, StorageOperationStatus> result = derivedFromOperation.addDerivedFromRelation(
+                UniqueIdBuilder.buildModelUid(model.getName()),
+                UniqueIdBuilder.buildModelUid(derivedFromModelOptional.get().getName()), NodeTypeEnum.Model);
+            if (result.isRight()) {
                 throw new OperationException(ActionStatus.GENERAL_ERROR,
-                    String.format("Failed to create relationship from model % to derived from model %s on JanusGraph with %s error", model, derivedFrom, result.right().value()));
+                    String.format("Failed to create relationship from model % to derived from model %s on JanusGraph with %s error", model,
+                        derivedFrom, result.right().value()));
             }
         }
     }
@@ -204,8 +210,8 @@ public class ModelOperation {
         final String modelName = (String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME);
 
         final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> parentNode =
-                        janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
-                                        GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model, ModelData.class);
+            janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
+                GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model, ModelData.class);
         log.debug("After retrieving DERIVED_FROM node of {}. status is {}", modelName, parentNode);
         if (parentNode.isRight()) {
             final JanusGraphOperationStatus janusGraphOperationStatus = parentNode.right().value();
@@ -220,6 +226,93 @@ public class ModelOperation {
             return new Model((String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME), parentModel.getName());
         }
     }
+
+    public void addTypesToDefaultImports(final String typesYaml, final String modelName) {
+        final List<ToscaImportByModel> allSchemaImportsByModel = toscaModelImportCassandraDao.findAllByModel(modelName);
+        final Optional<ToscaImportByModel> additionalTypeDefinitionsOptional = allSchemaImportsByModel.stream()
+            .filter(t -> ADDITIONAL_TYPE_DEFINITIONS.equals(t.getFullPath())).findAny();
+        final ToscaImportByModel toscaImportByModelAdditionalTypeDefinitions;
+        final List<ToscaImportByModel> schemaImportsByModel;
+        if (additionalTypeDefinitionsOptional.isPresent()) {
+            toscaImportByModelAdditionalTypeDefinitions = additionalTypeDefinitionsOptional.get();
+            schemaImportsByModel = allSchemaImportsByModel.stream()
+                .filter(toscaImportByModel -> !ADDITIONAL_TYPE_DEFINITIONS.equals(toscaImportByModel.getFullPath()))
+                .collect(Collectors.toList());
+        } else {
+            toscaImportByModelAdditionalTypeDefinitions = new ToscaImportByModel();
+            toscaImportByModelAdditionalTypeDefinitions.setModelId(modelName);
+            toscaImportByModelAdditionalTypeDefinitions.setFullPath(ADDITIONAL_TYPE_DEFINITIONS);
+            toscaImportByModelAdditionalTypeDefinitions.setContent(typesYaml);
+            schemaImportsByModel = new ArrayList<>(allSchemaImportsByModel);
+        }
+
+        final List<ToscaImportByModel> toscaImportByModels = removeExistingDefaultImports(typesYaml, schemaImportsByModel);
+
+        final Map<String, Object> originalContent = (Map<String, Object>) new Yaml().load(toscaImportByModelAdditionalTypeDefinitions.getContent());
+        removeDuplicated(typesYaml, originalContent);
+
+        toscaImportByModelAdditionalTypeDefinitions.setContent(buildAdditionalTypeDefinitionsContent(typesYaml, originalContent).toString());
+        toscaImportByModels.add(toscaImportByModelAdditionalTypeDefinitions);
+
+        toscaModelImportCassandraDao.importOnly(modelName, toscaImportByModels);
+    }
+
+    private List<ToscaImportByModel> removeExistingDefaultImports(final String dataTypeYml, final List<ToscaImportByModel> schemaImportsByModel) {
+        final List<ToscaImportByModel> toscaImportByModels = new ArrayList<>();
+        schemaImportsByModel.forEach(toscaImportByModel -> {
+            final ToscaImportByModel toscaImportByModelNew = new ToscaImportByModel();
+            toscaImportByModelNew.setModelId(toscaImportByModel.getModelId());
+            toscaImportByModelNew.setFullPath(toscaImportByModel.getFullPath());
+
+            final String content = toscaImportByModel.getContent();
+            final Map<String, Object> existingImportYamlMap = (Map<String, Object>) new Yaml().load(content);
+
+            ((Map<String, Object>) new Yaml().load(dataTypeYml)).keySet().forEach(dataTypeYmlKey -> {
+                if (existingImportYamlMap.containsKey(dataTypeYmlKey)) {
+                    existingImportYamlMap.remove(dataTypeYmlKey, existingImportYamlMap.get(dataTypeYmlKey));
+                }
+
+            });
+
+            final StringBuilder stringBuilder = new StringBuilder();
+            existingImportYamlMap.entrySet().forEach(entry -> {
+                final Map<Object, Object> hashMap = new HashMap<>();
+                hashMap.put(entry.getKey(), entry.getValue());
+                stringBuilder.append("\n").append(new YamlUtil().objectToYaml(hashMap));
+            });
+            toscaImportByModelNew.setContent(stringBuilder.toString());
+            toscaImportByModels.add(toscaImportByModelNew);
+        });
+        return toscaImportByModels;
+    }
+
+    private void removeDuplicated(final String dataTypeYml, final Map<String, Object> originalContent) {
+        final Map<String, Object> duplicatedToRemove = new HashMap<>();
+        ((Map<String, Object>) new Yaml().load(dataTypeYml)).keySet().forEach(dataTypeYmlKey -> {
+            if (originalContent.containsKey(dataTypeYmlKey)) {
+                duplicatedToRemove.put(dataTypeYmlKey, originalContent.get(dataTypeYmlKey));
+            }
+        });
+        duplicatedToRemove.entrySet().forEach(element -> originalContent.remove(element.getKey(), element.getValue()));
+    }
+
+    private StringBuilder buildAdditionalTypeDefinitionsContent(final String dataTypeYml, final Map<String, Object> originalContent) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        originalContent.entrySet().forEach(entry -> {
+            final Map<Object, Object> hashMap = new HashMap<>();
+            hashMap.put(entry.getKey(), entry.getValue());
+            final String newContent = new YamlUtil().objectToYaml(hashMap);
+            stringBuilder.append("\n").append(newContent);
+        });
+        ((Map<String, Object>) new Yaml().load(dataTypeYml)).entrySet().forEach(dataTypeYmlEntry -> {
+            final String dataTypeYmlKey = (String) dataTypeYmlEntry.getKey();
+            final Object dataTypeYmlValue = dataTypeYmlEntry.getValue();
+            final Map<Object, Object> hashMap = new HashMap<>();
+            hashMap.put(dataTypeYmlKey, dataTypeYmlValue);
+            final String newContent = new YamlUtil().objectToYaml(hashMap);
+            stringBuilder.append("\n").append(newContent);
+        });
+        return stringBuilder;
+    }
+
 }
-
-
