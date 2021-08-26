@@ -1492,7 +1492,7 @@ public class ResourceBusinessLogicTest {
         roleProp.setName("role");
         roleProp.setType("string");
         vduCp.getProperties().add(roleProp);
-        when(toscaOperationFacade.getLatestByToscaResourceNameAndModel("tosca.nodes.nfv.VduCp", "testModel")).thenReturn(Either.left(vduCp));
+        when(toscaOperationFacade.getLatestByToscaResourceNameAndModel("tosca.nodes.nfv.VduCp", "testModel_myVnf1.0")).thenReturn(Either.left(vduCp));
 
 
         when(yamlTemplateParsingHandler.parseResourceInfoFromYAML(any(), any(), any(), any(), any(), any())).thenReturn(parsedToscaYamlInfo);
@@ -1536,7 +1536,6 @@ public class ResourceBusinessLogicTest {
         }).
         when(toscaOperationFacade).associateOrAddCalculatedCapReq(any(), any(), any());
 
-
         when(toscaOperationFacade.updateCalculatedCapabilitiesRequirements(any(), any(), any())).thenReturn(StorageOperationStatus.OK);
         when(groupBusinessLogic.validateUpdateVfGroupNames(any(), any())).thenReturn(Either.left(Collections.EMPTY_MAP));
 
@@ -1556,7 +1555,6 @@ public class ResourceBusinessLogicTest {
         doAnswer(invocation -> {
             return Either.left(resourceResponse);
         }).when(toscaOperationFacade).getToscaFullElement("myVnf");
-
 
         Resource result = bl.createResourceFromCsar(resourceResponse, user, csar, "1234");
 
