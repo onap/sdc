@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ed26dad6_03322ce0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-26T10:06:53Z",
+      "side": 1,
+      "message": "please, surround in curly brackets.\nI believe there should be no artifact without name. Is that possible? If so, I think we should address the issue by not allowing to get here without a name.",
+      "range": {
+        "startLine": 464,
+        "startChar": 8,
+        "endLine": 465,
+        "endChar": 115
+      },
+      "revId": "9e6562e7587713e1051aa7b2fad3b19d6204c46a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
