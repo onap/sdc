@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
@@ -460,7 +461,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         artifactDefinition.setArtifactType(ArtifactTypeEnum.WORKFLOW.getType());
         artifactDefinition.setArtifactGroupType(ArtifactGroupTypeEnum.DEPLOYMENT);
         artifactDefinition.setArtifactLabel(operation.getName() + ".workflowArtifact");
-        artifactDefinition.setArtifactName(operation.getWorkflowName() + "_" + operation.getWorkflowVersion());
+        if (!StringUtils.isEmpty(operation.getWorkflowName()))
+            artifactDefinition.setArtifactName(operation.getWorkflowName() + "_" + operation.getWorkflowVersion());
         return artifactDefinition;
     }
 
