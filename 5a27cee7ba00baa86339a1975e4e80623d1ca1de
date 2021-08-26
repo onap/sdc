@@ -389,6 +389,30 @@
     },
     {
       "key": {
+        "uuid": "6d6458aa_8f3faf23",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CommonImportManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 566,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-26T13:23:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f22a92d_1d11f520",
+      "range": {
+        "startLine": 564,
+        "startChar": 8,
+        "endLine": 566,
+        "endChar": 87
+      },
+      "revId": "5a27cee7ba00baa86339a1975e4e80623d1ca1de",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7629a7e9_81d0a7ee",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CommonImportManager.java",
         "patchSetId": 2
