@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.api.TypeOperations;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -64,11 +65,15 @@ public class CommonImportManager {
     private static final Logger log = Logger.getLogger(CommonImportManager.class.getName());
     private final ComponentsUtils componentsUtils;
     private final PropertyOperation propertyOperation;
+    private final ModelOperation modelOperation;
 
     @Autowired
-    public CommonImportManager(ComponentsUtils componentsUtils, PropertyOperation propertyOperation) {
+    public CommonImportManager(final ComponentsUtils componentsUtils,
+                               final PropertyOperation propertyOperation,
+                               final ModelOperation modelOperation) {
         this.componentsUtils = componentsUtils;
         this.propertyOperation = propertyOperation;
+        this.modelOperation = modelOperation;
     }
 
     public static void setProperties(Map<String, Object> toscaJson, Consumer<List<PropertyDefinition>> consumer) {
@@ -527,6 +532,10 @@ public class CommonImportManager {
         }
         return elementTypeDaoCreater.apply(elementTypes.left().value());
 
+    }
+
+    public void addTypesToDefaultImports(final String typesYaml, final String modelName) {
+        modelOperation.addTypesToDefaultImports(typesYaml, modelName);
     }
 
     public enum ElementTypeEnum {

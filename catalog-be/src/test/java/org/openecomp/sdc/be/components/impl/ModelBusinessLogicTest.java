@@ -46,8 +46,8 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.model.Model;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
@@ -80,7 +80,7 @@ class ModelBusinessLogicTest {
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo(model.getName());
     }
-    
+
     @Test
     void createModelWithDataTypesTest() {
         final String dataTypes = "dummyString";
@@ -88,8 +88,8 @@ class ModelBusinessLogicTest {
         final Model result = modelBusinessLogic.createModel(model, dataTypes);
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo(model.getName());
-        
-        verify(dataTypeImportManager).createDataTypes(dataTypes, model.getName());
+
+        verify(dataTypeImportManager).createDataTypes(dataTypes, model.getName(), false);
     }
 
     @Test
