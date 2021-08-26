@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "5025d4ce_5617078a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-26T14:41:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d20f5f7c_30de71ab",
+      "range": {
+        "startLine": 259,
+        "startChar": 79,
+        "endLine": 259,
+        "endChar": 90
+      },
+      "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8806d7aa_66a1b9db",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
         "patchSetId": 10
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "85a89ec6_bb20ee0e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-26T14:41:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8806d7aa_66a1b9db",
+      "range": {
+        "startLine": 287,
+        "startChar": 77,
+        "endLine": 287,
+        "endChar": 88
+      },
+      "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9d261725_8919c407",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
         "patchSetId": 10
@@ -91,6 +139,30 @@
       "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc9647c5_465c1c91",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-26T14:41:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d261725_8919c407",
+      "range": {
+        "startLine": 290,
+        "startChar": 34,
+        "endLine": 290,
+        "endChar": 48
+      },
+      "revId": "1d97e20330d1088842e7b0c143119bdca7f31e83",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
