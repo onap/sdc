@@ -44,6 +44,7 @@ import { ConstraintObject } from "../../components/logic/service-dependencies/se
 import { Requirement } from "../../../models/requirement";
 import { Capability } from "../../../models/capability";
 import { OutputBEModel } from "app/models/attributes-outputs/output-be-model";
+import { HttpHelperService } from '../http-hepler.service';
 
 /*
 PLEASE DO NOT USE THIS SERVICE IN ANGULAR2! Use the topology-template.service instead
@@ -235,14 +236,10 @@ export class ComponentServiceNg2 {
             payloadData: oldOperation.artifactData
         };
 
-
-        JSON.stringify(payload);
-        const payloadString = JSON.stringify(payload, null, '  ');
-        const md5Result = md5(payloadString).toLowerCase();
-        const headers = new HttpHeaders().append('Content-MD5', btoa(md5Result));
+        const headers = new HttpHeaders().append('Content-MD5', HttpHelperService.getHeaderMd5(payload));
 
         return this.http.post(this.baseUrl + component.getTypeUrl() + component.uuid + '/interfaces/' + newOperation.interfaceId + '/operations/' + newOperation.uniqueId + '/artifacts/' + newOperation.implementation.artifactUUID,
-                payload, {headers}
+                payload, {headers: headers}
             ).map((res: any) => {
                 const fileName = res.artifactDisplayName || res.artifactName;
                 newOperation.artifactFileName = fileName;
