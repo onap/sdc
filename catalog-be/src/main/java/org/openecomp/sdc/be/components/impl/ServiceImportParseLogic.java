@@ -571,7 +571,7 @@ public class ServiceImportParseLogic {
                                                                            Map.Entry<String, List<CapabilityDefinition>> typeEntry,
                                                                            boolean inTransaction) {
         Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation
-            .getCapabilityType(typeEntry.getKey(), inTransaction);
+            .getCapabilityType(UniqueIdBuilder.buildCapabilityTypeUid(resource.getModel(), typeEntry.getKey()), inTransaction);
         if (eitherCapTypeFound.isRight()) {
             if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance()
@@ -623,7 +623,7 @@ public class ServiceImportParseLogic {
                                                                            boolean inTransaction) {
         try {
             Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation
-                .getCapabilityType(type, inTransaction);
+                .getCapabilityType(UniqueIdBuilder.buildCapabilityTypeUid(resource.getModel(), type), inTransaction);
             if (eitherCapTypeFound.isRight()) {
                 if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
                     BeEcompErrorManager.getInstance()

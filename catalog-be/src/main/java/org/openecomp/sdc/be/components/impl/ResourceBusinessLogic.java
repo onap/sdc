@@ -3842,7 +3842,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                                          Resource resource, List<?> validationObjects, AuditingActionEnum actionEnum,
                                                                          Either<Boolean, ResponseFormat> eitherResult, String type,
                                                                          boolean inTransaction) {
-        Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation.getCapabilityType(type, inTransaction);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation.getCapabilityType(UniqueIdBuilder.buildCapabilityTypeUid(resource.getModel(), type), inTransaction);
         if (eitherCapTypeFound.isRight()) {
             if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance().logBeGraphObjectMissingError(CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES, "Capability Type", type);
@@ -3867,7 +3867,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                                          Either<Boolean, ResponseFormat> eitherResult,
                                                                          Entry<String, List<CapabilityDefinition>> typeEntry, boolean inTransaction) {
         Either<CapabilityTypeDefinition, StorageOperationStatus> eitherCapTypeFound = capabilityTypeOperation
-            .getCapabilityType(typeEntry.getKey(), inTransaction);
+            .getCapabilityType(UniqueIdBuilder.buildCapabilityTypeUid(resource.getModel(), typeEntry.getKey()), inTransaction);
         if (eitherCapTypeFound.isRight()) {
             if (eitherCapTypeFound.right().value() == StorageOperationStatus.NOT_FOUND) {
                 BeEcompErrorManager.getInstance()
