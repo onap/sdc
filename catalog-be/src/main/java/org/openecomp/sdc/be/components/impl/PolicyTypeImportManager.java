@@ -69,13 +69,21 @@ public class PolicyTypeImportManager {
         this.modelOperation = modelOperation;
     }
 
-    public Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> createPolicyTypes(ToscaTypeImportData toscaTypeImportData, String modelName) {
-        return commonImportManager.createElementTypes(toscaTypeImportData, this::createPolicyTypesFromYml, this::upsertPolicyTypesByDao, modelName);
+    public Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> createPolicyTypes(final ToscaTypeImportData toscaTypeImportData,
+                                                                                                        final String modelName,
+                                                                                                        final boolean includeToModelDefaultImports) {
+        final Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
+            toscaTypeImportData, this::createPolicyTypesFromYml, this::upsertPolicyTypesByDao, modelName);
+        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
+            commonImportManager.addTypesToDefaultImports(toscaTypeImportData.getToscaTypesYml(), modelName);
+        }
+        return elementTypes;
     }
 
     private Either<List<PolicyTypeDefinition>, ActionStatus> createPolicyTypesFromYml(String policyTypesYml, String modelName) {
-        Either<List<PolicyTypeDefinition>, ActionStatus> policyTypes = commonImportManager.createElementTypesFromYml(policyTypesYml, this::createPolicyType);
-        if (policyTypes.isLeft() && StringUtils.isNotEmpty(modelName)){
+        Either<List<PolicyTypeDefinition>, ActionStatus> policyTypes = commonImportManager.createElementTypesFromYml(policyTypesYml,
+            this::createPolicyType);
+        if (policyTypes.isLeft() && StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
                 policyTypes.left().value().forEach(policyType -> policyType.setModel(modelName));
@@ -90,7 +98,8 @@ public class PolicyTypeImportManager {
         List<PolicyTypeDefinition> policyTypesToCreate, String modelName) {
         return commonImportManager.createElementTypesWithVersionByDao(policyTypesToCreate, this::validatePolicyType,
             policyType -> new ImmutablePair<>(ElementTypeEnum.POLICY_TYPE, UniqueIdBuilder.buildPolicyTypeUid(policyType.getModel(),
-                policyType.getType(), policyType.getVersion(), NodeTypeEnum.PolicyType.getName()).toLowerCase()), policyTypeOperation::getLatestPolicyTypeByType,
+                policyType.getType(), policyType.getVersion(), NodeTypeEnum.PolicyType.getName()).toLowerCase()),
+            policyTypeOperation::getLatestPolicyTypeByType,
             policyTypeOperation::addPolicyType, this::updatePolicyType, modelName);
     }
 
