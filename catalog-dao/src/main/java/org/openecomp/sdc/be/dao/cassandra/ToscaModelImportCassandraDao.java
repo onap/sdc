@@ -99,6 +99,12 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
         );
     }
 
+    public void importOnly(final String modelId, final List<ToscaImportByModel> toscaImportByModelList) {
+        toscaImportByModelList.stream()
+            .filter(toscaImportByModel -> modelId.equals(toscaImportByModel.getModelId()))
+            .forEach(toscaImportByModelMapper::save);
+    }
+
     public List<ToscaImportByModel> findAllByModel(final String modelId) {
         return toscaImportByModelAccessor.findAllByModel(modelId).all();
     }
