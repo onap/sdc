@@ -37,7 +37,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -130,7 +129,7 @@ class TypesUploadServletTest extends JerseyTest {
     @Test
     void creatingCapabilityTypeSuccessTest() {
         final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(emptyList());
-        when(importManager.createCapabilityTypes(Mockito.anyString(), Mockito.isNull())).thenReturn(either);
+        when(importManager.createCapabilityTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip", new File("src/test/resources/types/capabilityTypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -140,11 +139,11 @@ class TypesUploadServletTest extends JerseyTest {
 
         assertEquals(HttpStatus.CREATED_201, response.getStatus());
     }
-    
+
     @Test
     void creatingCapabilityTypeWithModelSuccessTest() {
         final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(emptyList());
-        when(importManager.createCapabilityTypes(Mockito.anyString(), Mockito.eq("testModel"))).thenReturn(either);
+        when(importManager.createCapabilityTypes(Mockito.anyString(), Mockito.eq("testModel"), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip", new File("src/test/resources/types/capabilityTypes.zip"));
         FormDataMultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);

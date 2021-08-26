@@ -29,9 +29,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -66,6 +64,7 @@ import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -76,11 +75,10 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerThreeParam;
+import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerFourParam;
 import org.openecomp.sdc.common.datastructure.FunctionalInterfaces.ConsumerTwoParam;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
@@ -88,12 +86,14 @@ import org.springframework.stereotype.Controller;
 @Path("/v1/catalog/uploadType")
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
-@Tags({@Tag(name = "SDCE-2 APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@Tag(name = "SDCE-2 APIs")
+@Server(url = "/sdc2/rest")
 @Controller
 public class TypesUploadServlet extends AbstractValidationsServlet {
 
-    public static final String CREATE = "Create ";
+    private static final String CREATE = "Create ";
+    private static final String START_HANDLE_REQUEST_OF = "Start handle request of {}";
+    private static final String CREATE_FAILED_WITH_EXCEPTION = "create {} failed with exception:";
     private static final Logger log = Logger.getLogger(TypesUploadServlet.class);
     private final CapabilityTypeImportManager capabilityTypeImportManager;
     private final InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager;
@@ -132,11 +132,13 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCapabilityType(@Parameter(description = "FileInputStream") @FormDataParam("capabilityTypeZip") File file,
                                          @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                         @Parameter(description = "model") @FormDataParam("model") String modelName) {
-        final String sanitizedModelName = ValidationUtils.sanitizeInputString(modelName);
-        ConsumerThreeParam<Wrapper<Response>, String, String> createElementsMethod = (responseWrapper, ymlPayload, model) -> createElementsType(responseWrapper,
-            () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload, sanitizedModelName));
-        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name(), sanitizedModelName);
+                                         @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                         @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+        ConsumerFourParam<Wrapper<Response>, String, String, Boolean> createElementsMethod = (responseWrapper, ymlPayload, model, includeToModelImport) ->
+            createElementsType(responseWrapper, () -> capabilityTypeImportManager.createCapabilityTypes(ymlPayload, modelName,
+                includeToModelDefaultImports));
+        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.CapabilityType.name(), modelName,
+            includeToModelDefaultImports);
     }
 
     @POST
@@ -150,9 +152,10 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadRelationshipType(@Parameter(description = "FileInputStream") @FormDataParam("relationshipTypeZip") File file,
                                            @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                           @Parameter(description = "model") @FormDataParam("model") String modelName) {
-        modelName = ValidationUtils.sanitizeInputString(modelName);
-        return uploadElementTypeServletLogic(this::createRelationshipTypes, file, request, creator, NodeTypeEnum.RelationshipType.getName(), modelName);
+                                           @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                           @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+        return uploadElementTypeServletLogic(
+            this::createRelationshipTypes, file, request, creator, NodeTypeEnum.RelationshipType.getName(), modelName, includeToModelDefaultImports);
     }
 
     @POST
@@ -166,10 +169,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadInterfaceLifecycleType(@Parameter(description = "FileInputStream") @FormDataParam("interfaceLifecycleTypeZip") File file,
                                                  @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                                 @Parameter(description = "model") @FormDataParam("model") String modelName) {
-        final String sanitizedModelName = ValidationUtils.sanitizeInputString(modelName);
-        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper,
-            () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload, sanitizedModelName));
+                                                 @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                                 @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) ->
+            createElementsType(responseWrapper, () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload, modelName,
+                includeToModelDefaultImports));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "Interface Types");
     }
 
@@ -184,8 +188,8 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCategories(@Parameter(description = "FileInputStream") @FormDataParam("categoriesZip") File file,
                                      @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) -> createElementsType(responseWrapper,
-            () -> categoriesImportManager.createCategories(ymlPayload));
+        ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) ->
+            createElementsType(responseWrapper, () -> categoriesImportManager.createCategories(ymlPayload));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "categories");
     }
 
@@ -200,9 +204,10 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadDataTypes(@Parameter(description = "FileInputStream") @FormDataParam("dataTypesZip") File file,
                                     @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
-                                    @Parameter(description = "model") @FormDataParam("model") String modelName) {
-        modelName = ValidationUtils.sanitizeInputString(modelName);
-        return uploadElementTypeServletLogic(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName);
+                                    @Parameter(description = "model") @FormDataParam("model") String modelName,
+                                    @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+        return uploadElementTypeServletLogic(this::createDataTypes, file, request, creator, NodeTypeEnum.DataType.getName(), modelName,
+            includeToModelDefaultImports);
     }
 
     @POST
@@ -217,10 +222,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadGroupTypes(@Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
                                      @Parameter(description = "model") @FormDataParam("model") String modelName,
                                      @Parameter(description = "FileInputStream") @FormDataParam("groupTypesZip") File file,
-                                     @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        modelName = ValidationUtils.sanitizeInputString(modelName);
+                                     @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                     @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         Map<String, ToscaTypeMetadata> typesMetadata = getTypesMetadata(toscaTypesMetaData);
-        return uploadTypesWithMetaData(this::createGroupTypes, typesMetadata, file, request, creator, NodeTypeEnum.GroupType.getName(), modelName);
+        return uploadTypesWithMetaData(this::createGroupTypes, typesMetadata, file, request, creator, NodeTypeEnum.GroupType.getName(), modelName,
+            includeToModelDefaultImports);
     }
 
     @POST
@@ -235,10 +241,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     public Response uploadPolicyTypes(@Parameter(description = "toscaTypeMetadata") @FormDataParam("toscaTypeMetadata") String toscaTypesMetaData,
                                       @Parameter(description = "model") @FormDataParam("model") String modelName,
                                       @Parameter(description = "FileInputStream") @FormDataParam("policyTypesZip") File file,
-                                      @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
-        modelName = ValidationUtils.sanitizeInputString(modelName);
+                                      @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                      @Parameter(description = "includeToModelImport") @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
         Map<String, ToscaTypeMetadata> typesMetadata = getTypesMetadata(toscaTypesMetaData);
-        return uploadTypesWithMetaData(this::createPolicyTypes, typesMetadata, file, request, creator, NodeTypeEnum.PolicyType.getName(), modelName);
+        return uploadTypesWithMetaData(this::createPolicyTypes, typesMetadata, file, request, creator, NodeTypeEnum.PolicyType.getName(), modelName,
+            includeToModelDefaultImports);
     }
 
     private Map<String, ToscaTypeMetadata> getTypesMetadata(String toscaTypesMetaData) {
@@ -247,13 +254,13 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     private Response uploadElementTypeServletLogic(ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod, File file,
-            final HttpServletRequest request, String creator, String elementTypeName) {
+                                                   final HttpServletRequest request, String creator, String elementTypeName) {
         init();
         String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
         try {
             Wrapper<String> yamlStringWrapper = new Wrapper<>();
             String url = request.getMethod() + " " + request.getRequestURI();
-            log.debug("Start handle request of {}", url);
+            log.debug(START_HANDLE_REQUEST_OF, url);
             Wrapper<Response> responseWrapper = doUploadTypeValidations(request, userId, file);
             if (responseWrapper.isEmpty()) {
                 fillZipContents(yamlStringWrapper, file);
@@ -263,30 +270,31 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             }
             return responseWrapper.getInnerElement();
         } catch (Exception e) {
-            log.debug("create {} failed with exception:", elementTypeName, e);
+            log.debug(CREATE_FAILED_WITH_EXCEPTION, elementTypeName, e);
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
-    
-    private Response uploadElementTypeServletLogic(final ConsumerThreeParam<Wrapper<Response>, String, String> createElementsMethod,
-            final File file, final HttpServletRequest request, final String creator, final String elementTypeName, final String modelName) {
+
+    private Response uploadElementTypeServletLogic(final ConsumerFourParam<Wrapper<Response>, String, String, Boolean> createElementsMethod,
+                                                   final File file, final HttpServletRequest request, final String creator,
+                                                   final String elementTypeName, final String modelName, final boolean includeToModelDefaultImports) {
         init();
         final String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
         try {
             final Wrapper<String> yamlStringWrapper = new Wrapper<>();
             final String url = request.getMethod() + " " + request.getRequestURI();
-            log.debug("Start handle request of {}", url);
+            log.debug(START_HANDLE_REQUEST_OF, url);
             final Wrapper<Response> responseWrapper = doUploadTypeValidations(request, userId, file);
             if (responseWrapper.isEmpty()) {
                 fillZipContents(yamlStringWrapper, file);
             }
             if (responseWrapper.isEmpty()) {
-                createElementsMethod.accept(responseWrapper, yamlStringWrapper.getInnerElement(), modelName);
+                createElementsMethod.accept(responseWrapper, yamlStringWrapper.getInnerElement(), modelName, includeToModelDefaultImports);
             }
             return responseWrapper.getInnerElement();
         } catch (final Exception e) {
-            log.debug("create {} failed with exception:", elementTypeName, e);
+            log.debug(CREATE_FAILED_WITH_EXCEPTION, elementTypeName, e);
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
@@ -296,7 +304,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         validateUserExist(responseWrapper, userWrapper, userId);
         if (responseWrapper.isEmpty()) {
             validateUserRole(responseWrapper, userWrapper.getInnerElement());
@@ -307,9 +315,9 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         return responseWrapper;
     }
 
-    private Response uploadTypesWithMetaData(ConsumerThreeParam<Wrapper<Response>, ToscaTypeImportData, String> createElementsMethod,
+    private Response uploadTypesWithMetaData(ConsumerFourParam<Wrapper<Response>, ToscaTypeImportData, String, Boolean> createElementsMethod,
                                              Map<String, ToscaTypeMetadata> typesMetaData, File file, final HttpServletRequest request,
-                                             String creator, String elementTypeName, String modelName) {
+                                             String creator, String elementTypeName, String modelName, final boolean includeToModelDefaultImports) {
         init();
         String userId = initHeaderParam(creator, request, Constants.USER_ID_HEADER);
         Wrapper<String> yamlStringWrapper = new Wrapper<>();
@@ -320,11 +328,11 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             }
             if (responseWrapper.isEmpty()) {
                 ToscaTypeImportData toscaTypeImportData = new ToscaTypeImportData(yamlStringWrapper.getInnerElement(), typesMetaData);
-                createElementsMethod.accept(responseWrapper, toscaTypeImportData, modelName);
+                createElementsMethod.accept(responseWrapper, toscaTypeImportData, modelName, includeToModelDefaultImports);
             }
             return responseWrapper.getInnerElement();
         } catch (Exception e) {
-            log.debug("create {} failed with exception:", elementTypeName, e);
+            log.debug(CREATE_FAILED_WITH_EXCEPTION, elementTypeName, e);
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
@@ -349,55 +357,54 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     // data types
-    private void createDataTypes(Wrapper<Response> responseWrapper, String dataTypesYml, final String modelName) {
-        final Supplier<Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> dataTypeImportManager
-            .createDataTypes(dataTypesYml, modelName);
+    private void createDataTypes(Wrapper<Response> responseWrapper, String dataTypesYml, final String modelName, final boolean includeToModelDefaultImports) {
+        final Supplier<Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () ->
+            dataTypeImportManager.createDataTypes(dataTypesYml, modelName, includeToModelDefaultImports);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.DATA_TYPE_ALREADY_EXIST,
             NodeTypeEnum.DataType.name());
     }
 
     // group types
-    private void createGroupTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData, String modelName) {
-        final Supplier<Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> groupTypeImportManager
-            .createGroupTypes(toscaTypeImportData, modelName);
+    private void createGroupTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData, String modelName,
+                                  final boolean includeToModelDefaultImports) {
+        final Supplier<Either<List<ImmutablePair<GroupTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () ->
+            groupTypeImportManager.createGroupTypes(toscaTypeImportData, modelName, includeToModelDefaultImports);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.GROUP_TYPE_ALREADY_EXIST,
             NodeTypeEnum.GroupType.name());
     }
 
     // policy types
-    private void createPolicyTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData, String modelName) {
-        final Supplier<Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> policyTypeImportManager
-            .createPolicyTypes(toscaTypeImportData, modelName);
+    private void createPolicyTypes(Wrapper<Response> responseWrapper, ToscaTypeImportData toscaTypeImportData, String modelName,
+                                   final boolean includeToModelDefaultImports) {
+        final Supplier<Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () ->
+            policyTypeImportManager.createPolicyTypes(toscaTypeImportData, modelName, includeToModelDefaultImports);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.POLICY_TYPE_ALREADY_EXIST,
             NodeTypeEnum.PolicyType.name());
     }
 
     // data types
-    private <ElementTypeDefinition> void buildStatusForElementTypeCreate(Wrapper<Response> responseWrapper,
-                                                                         Supplier<Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml,
-                                                                         ActionStatus alreadyExistStatus, String elementTypeName) {
-        Either<List<ImmutablePair<ElementTypeDefinition, Boolean>>, ResponseFormat> eitherResult = generateElementTypeFromYml.get();
+    private <T extends ToscaDataDefinition> void buildStatusForElementTypeCreate(Wrapper<Response> responseWrapper,
+                                                                                 Supplier<Either<List<ImmutablePair<T, Boolean>>, ResponseFormat>> generateElementTypeFromYml,
+                                                                                 ActionStatus alreadyExistStatus, String elementTypeName) {
+        Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> eitherResult = generateElementTypeFromYml.get();
         if (eitherResult.isRight()) {
             Response response = buildErrorResponse(eitherResult.right().value());
             responseWrapper.setInnerElement(response);
         } else {
             Object representation;
             try {
-                List<ImmutablePair<ElementTypeDefinition, Boolean>> list = eitherResult.left().value();
+                List<ImmutablePair<T, Boolean>> list = eitherResult.left().value();
                 ActionStatus status = ActionStatus.OK;
                 if (list != null) {
                     // Group result by the right value - true or false.
-
-                    // I.e., get the number of data types which are new and
-
-                    // which are old.
-                    Map<Boolean, List<ImmutablePair<ElementTypeDefinition, Boolean>>> collect = list.stream()
-                        .collect(Collectors.groupingBy(ImmutablePair<ElementTypeDefinition, Boolean>::getRight));
+                    // I.e., get the number of data types which are new and which are old.
+                    Map<Boolean, List<ImmutablePair<T, Boolean>>> collect = list.stream()
+                        .collect(Collectors.groupingBy(ImmutablePair<T, Boolean>::getRight));
                     if (collect != null) {
                         Set<Boolean> keySet = collect.keySet();
                         if (keySet.size() == 1) {
                             Boolean isNew = keySet.iterator().next();
-                            if (isNew) {
+                            if (Boolean.TRUE.equals(isNew)) {
                                 // all data types created at the first time
                                 status = ActionStatus.CREATED;
                             } else {
@@ -420,9 +427,12 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     }
 
     // relationship types
-    private void createRelationshipTypes(final Wrapper<Response> responseWrapper, final String relationshipTypesYml, final String modelName) {
+    private void createRelationshipTypes(final Wrapper<Response> responseWrapper,
+                                         final String relationshipTypesYml,
+                                         final String modelName,
+                                         final boolean includeToModelDefaultImports) {
         final Supplier<Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () -> relationshipTypeImportManager
-            .createRelationshipTypes(relationshipTypesYml, modelName);
+            .createRelationshipTypes(relationshipTypesYml, modelName, includeToModelDefaultImports);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.RELATIONSHIP_TYPE_ALREADY_EXIST,
             NodeTypeEnum.RelationshipType.name());
     }
