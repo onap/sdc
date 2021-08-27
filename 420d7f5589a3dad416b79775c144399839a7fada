@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef0b4f22_bbb83193",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 831,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-27T17:35:19Z",
+      "side": 1,
+      "message": "deprecated method",
+      "range": {
+        "startLine": 831,
+        "startChar": 16,
+        "endLine": 831,
+        "endChar": 21
+      },
+      "revId": "420d7f5589a3dad416b79775c144399839a7fada",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4d33323_9672b086",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/ModelOperationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-08-27T17:35:19Z",
+      "side": 1,
+      "message": "Assertion arguments should be passed in the correct order",
+      "range": {
+        "startLine": 333,
+        "startChar": 0,
+        "endLine": 333,
+        "endChar": 54
+      },
+      "revId": "420d7f5589a3dad416b79775c144399839a7fada",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
