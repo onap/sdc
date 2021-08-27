@@ -22,6 +22,30 @@
       "revId": "f95605a3f4b64734254f7d0154f2fcc5488913b5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abccd81e_b743844e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-27T09:11:36Z",
+      "side": 1,
+      "message": "Now both paths will be matched",
+      "parentUuid": "622d7aeb_628e525a",
+      "range": {
+        "startLine": 479,
+        "startChar": 0,
+        "endLine": 479,
+        "endChar": 53
+      },
+      "revId": "f95605a3f4b64734254f7d0154f2fcc5488913b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
