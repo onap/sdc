@@ -341,23 +341,22 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     private <T> void createElementsType(Wrapper<Response> responseWrapper, Supplier<Either<T, ResponseFormat>> elementsCreater) {
         Either<T, ResponseFormat> eitherResult = elementsCreater.get();
         if (eitherResult.isRight()) {
-            Response response = buildErrorResponse(eitherResult.right().value());
-            responseWrapper.setInnerElement(response);
+            responseWrapper.setInnerElement(buildErrorResponse(eitherResult.right().value()));
         } else {
             try {
                 Response response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED),
                     RepresentationUtils.toRepresentation(eitherResult.left().value()));
                 responseWrapper.setInnerElement(response);
             } catch (Exception e) {
-                Response response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-                responseWrapper.setInnerElement(response);
+                responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
                 log.error("#createElementsType - json serialization failed with error: ", e);
             }
         }
     }
 
     // data types
-    private void createDataTypes(Wrapper<Response> responseWrapper, String dataTypesYml, final String modelName, final boolean includeToModelDefaultImports) {
+    private void createDataTypes(Wrapper<Response> responseWrapper, String dataTypesYml, final String modelName,
+                                 final boolean includeToModelDefaultImports) {
         final Supplier<Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat>> generateElementTypeFromYml = () ->
             dataTypeImportManager.createDataTypes(dataTypesYml, modelName, includeToModelDefaultImports);
         buildStatusForElementTypeCreate(responseWrapper, generateElementTypeFromYml, ActionStatus.DATA_TYPE_ALREADY_EXIST,
@@ -388,18 +387,17 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                                                                                  ActionStatus alreadyExistStatus, String elementTypeName) {
         Either<List<ImmutablePair<T, Boolean>>, ResponseFormat> eitherResult = generateElementTypeFromYml.get();
         if (eitherResult.isRight()) {
-            Response response = buildErrorResponse(eitherResult.right().value());
-            responseWrapper.setInnerElement(response);
+            responseWrapper.setInnerElement(buildErrorResponse(eitherResult.right().value()));
         } else {
-            Object representation;
+
             try {
-                List<ImmutablePair<T, Boolean>> list = eitherResult.left().value();
+                final List<ImmutablePair<T, Boolean>> list = eitherResult.left().value();
                 ActionStatus status = ActionStatus.OK;
                 if (list != null) {
                     // Group result by the right value - true or false.
                     // I.e., get the number of data types which are new and which are old.
-                    Map<Boolean, List<ImmutablePair<T, Boolean>>> collect = list.stream()
-                        .collect(Collectors.groupingBy(ImmutablePair<T, Boolean>::getRight));
+                    final Map<Boolean, List<ImmutablePair<T, Boolean>>> collect =
+                        list.stream().collect(Collectors.groupingBy(ImmutablePair<T, Boolean>::getRight));
                     if (collect != null) {
                         Set<Boolean> keySet = collect.keySet();
                         if (keySet.size() == 1) {
@@ -414,14 +412,12 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                         }
                     }
                 }
-                representation = RepresentationUtils.toRepresentation(eitherResult.left().value());
-                Response response = buildOkResponse(getComponentsUtils().getResponseFormat(status), representation);
-                responseWrapper.setInnerElement(response);
+                final Object representation = RepresentationUtils.toRepresentation(eitherResult.left().value());
+                responseWrapper.setInnerElement(buildOkResponse(getComponentsUtils().getResponseFormat(status), representation));
             } catch (IOException e) {
                 BeEcompErrorManager.getInstance().logBeRestApiGeneralError(CREATE + elementTypeName);
                 log.debug("failed to convert {} to json", elementTypeName, e);
-                Response response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-                responseWrapper.setInnerElement(response);
+                responseWrapper.setInnerElement(buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR)));
             }
         }
     }

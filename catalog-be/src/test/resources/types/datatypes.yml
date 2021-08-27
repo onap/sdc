@@ -1,0 +1,59 @@
+tosca.datatypes.Root:
+  description: The TOSCA root Data Type all other TOSCA base Data Types derive from
+  properties:
+    rootProperty:
+      type: string
+      description: Added to allow import
+
+tosca.datatypes.nfv.L2AddressData:
+  derived_from: tosca.datatypes.Root
+  description: Describes the information on the MAC addresses to be assigned to a connection point.
+  properties:
+    mac_address_assignment:
+      type: boolean
+      description: Specifies if the address assignment is the responsibility of management and orchestration function or not. If it is set to True, it is the management and orchestration function responsibility
+      required: true
+
+tosca.datatypes.nfv.L3AddressData:
+  derived_from: tosca.datatypes.Root
+  description: Provides information about Layer 3 level addressing scheme and parameters applicable to a CP
+  properties:
+    ip_address_assignment:
+      type: boolean
+      description: Specifies if the address assignment is the responsibility of management and orchestration function or not. If it is set to True, it is the management and orchestration function responsibility
+      required: true
+    floating_ip_activated:
+      type: boolean
+      description: Specifies if the floating IP scheme is activated on the Connection Point or not
+      required: true
+    ip_address_type:
+      type: string
+      description: Defines address type. The address type should be aligned with the address type supported by the layer_protocols properties of the parent VnfExtCp
+      required: false
+      constraints:
+        - valid_values: [ ipv4, ipv6 ]
+    number_of_ip_address:
+      type: integer
+      description: Minimum number of IP addresses to be assigned
+      required: false
+      constraints:
+        - greater_than: 0
+
+tosca.datatypes.nfv.AddressData:
+  derived_from: tosca.datatypes.Root
+  description: Describes information about the addressing scheme and parameters applicable to a CP
+  properties:
+    address_type:
+      type: string
+      description: Describes the type of the address to be assigned to a connection point. The content type shall be aligned with the address type supported by the layerProtocol property of the connection point
+      required: true
+      constraints:
+        - valid_values: [ mac_address, ip_address ]
+    l2_address_data:
+      type: tosca.datatypes.nfv.L2AddressData
+      description: Provides the information on the MAC addresses to be assigned to a connection point.
+      required: false
+    l3_address_data:
+      type: tosca.datatypes.nfv.L3AddressData
+      description: Provides the information on the IP addresses to be assigned to a connection point
+      required: false
