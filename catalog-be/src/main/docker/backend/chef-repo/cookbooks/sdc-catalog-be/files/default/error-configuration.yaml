@@ -2588,3 +2588,11 @@ errors:
         message: "The Model '%1' is not allowed for the imported Vendor Software Product. Allowed Models: '%2'",
         messageId: "SVC4157"
     }
+
+    #---------SVC4158-----------------------------
+    # %1 - Valid artifact label name
+    INVALID_ARTIFACT_LABEL_NAME: {
+        code: 400,
+        message: "Invalid label name. Only the following characters are allowed in label name: '%1'",
+        messageId: "SVC4158"
+    }

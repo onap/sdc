@@ -169,6 +169,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private static final String COMMIT = "all changes committed";
     private static final String UPDATE_ARTIFACT = "Update Artifact";
     private static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
+    private static final String VALID_ARTIFACT_LABEL_NAME = "'A-Z', 'a-z', '0-9', '-', '@', '+' and space.";
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
     @javax.annotation.Resource
     private IInterfaceLifecycleOperation interfaceLifecycleOperation;
@@ -1530,7 +1531,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             artifactInfo.setArtifactDisplayName(displayName);
             if (!ValidationUtils.validateArtifactLabel(artifactLabel)) {
                 log.debug("Invalid format form Artifact label : {}", artifactLabel);
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_ARTIFACT_LABEL_NAME, VALID_ARTIFACT_LABEL_NAME));
             }
             artifactLabel = ValidationUtils.normalizeArtifactLabel(artifactLabel);
             if (artifactLabel.isEmpty()) {
