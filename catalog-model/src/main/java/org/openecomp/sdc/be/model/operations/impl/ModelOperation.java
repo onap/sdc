@@ -177,6 +177,25 @@ public class ModelOperation {
     }
 
     /**
+     * Find all the model default imports, with the option to include the default imports from the parent model.
+     *
+     * @param modelId       the model id
+     * @param includeParent a flag to include the parent model imports.
+     * @return the list of model default imports, or an empty list if no imports were found.
+     */
+    public List<ToscaImportByModel> findAllModelImports(final String modelId, final boolean includeParent) {
+        final List<ToscaImportByModel> toscaImportByModelList = toscaModelImportCassandraDao.findAllByModel(modelId);
+        if (includeParent) {
+            findModelByName(modelId).ifPresent(model -> {
+                if (model.getDerivedFrom() != null) {
+                    toscaImportByModelList.addAll(toscaModelImportCassandraDao.findAllByModel(model.getDerivedFrom()));
+                }
+            });
+        }
+        return toscaImportByModelList;
+    }
+
+    /**
      * Finds all the models.
      *
      * @return the list of models

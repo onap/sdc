@@ -89,7 +89,7 @@ class ModelBusinessLogicTest {
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo(model.getName());
 
-        verify(dataTypeImportManager).createDataTypes(dataTypes, model.getName(), false);
+        verify(dataTypeImportManager).createDataTypes(dataTypes, model.getName(), true);
     }
 
     @Test
