@@ -35,11 +35,14 @@ import static org.mockito.Mockito.when;
 
 import fj.data.Either;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,11 +52,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
+import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
@@ -228,8 +232,8 @@ class ModelOperationTest extends ModelTestBase {
         when(expectedVertex.getMetadataProperty(GraphPropertyEnum.NAME)).thenReturn(modelName);
         when(expectedVertex.getMetadataProperty(GraphPropertyEnum.MODEL_TYPE)).thenReturn(ModelTypeEnum.NORMATIVE.getValue());
         when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.MODEL), mapArgumentCaptor.capture())).thenReturn(Either.left(List.of(expectedVertex)));
-        when(janusGraphGenericDao.getChild("uid", UniqueIdBuilder.buildModelUid(modelName), GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model,
-            ModelData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
+            GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model, ModelData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         final Optional<Model> modelByNameOpt = modelOperation.findModelByName(modelName);
 
         final Map<GraphPropertyEnum, Object> value = mapArgumentCaptor.getValue();
@@ -263,8 +267,8 @@ class ModelOperationTest extends ModelTestBase {
         when(expectedVertex.getMetadataProperty(GraphPropertyEnum.NAME)).thenReturn(modelName);
         when(expectedVertex.getMetadataProperty(GraphPropertyEnum.MODEL_TYPE)).thenReturn(ModelTypeEnum.NORMATIVE.getValue());
         when(janusGraphDao.getByCriteria(VertexTypeEnum.MODEL, Collections.emptyMap())).thenReturn(Either.left(List.of(expectedVertex)));
-        when(janusGraphGenericDao.getChild("uid", UniqueIdBuilder.buildModelUid(modelName), GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model,
-            ModelData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
+            GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model, ModelData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
 
         final List<Model> actualModelList = modelOperation.findAllModels();
         assertFalse(actualModelList.isEmpty());
@@ -294,5 +298,47 @@ class ModelOperationTest extends ModelTestBase {
         final var actualException = assertThrows(OperationException.class, () -> modelOperation.findAllModels());
         final var expectedException = ModelOperationExceptionSupplier.failedToRetrieveModels(JanusGraphOperationStatus.GENERAL_ERROR).get();
         assertEquals(expectedException.getMessage(), actualException.getMessage());
+    }
+
+    @Test
+    void findAllModelImportsTest() {
+        //given
+        final var modelName = "modelName";
+        final var parentModelName = "parentModelName";
+        final GraphVertex expectedVertex = mock(GraphVertex.class);
+        when(expectedVertex.getMetadataProperty(GraphPropertyEnum.NAME)).thenReturn(modelName);
+        when(expectedVertex.getMetadataProperty(GraphPropertyEnum.MODEL_TYPE)).thenReturn(ModelTypeEnum.NORMATIVE_EXTENSION.getValue());
+        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.MODEL), anyMap())).thenReturn(Either.left(List.of(expectedVertex)));
+
+        final var modelData = new ModelData(parentModelName, parentModelName, ModelTypeEnum.NORMATIVE);
+        final ImmutablePair<ModelData, GraphEdge> modelDataGraphEdgePair = new ImmutablePair<>(modelData, null);
+
+        when(janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
+            GraphEdgeLabels.DERIVED_FROM, NodeTypeEnum.Model, ModelData.class)).thenReturn(Either.left(modelDataGraphEdgePair));
+
+        final ArrayList<ToscaImportByModel> childModelImportList = new ArrayList<>();
+        childModelImportList.add(createModelImport(modelName, "anyPath1"));
+        childModelImportList.add(createModelImport(modelName, "anyPath2"));
+        when(toscaModelImportCassandraDao.findAllByModel(modelName)).thenReturn(new ArrayList<>(childModelImportList));
+        final ArrayList<ToscaImportByModel> parentModelImportList = new ArrayList<>();
+        parentModelImportList.add(createModelImport(parentModelName, "anyPath1"));
+        parentModelImportList.add(createModelImport(parentModelName, "anyPath2"));
+        when(toscaModelImportCassandraDao.findAllByModel(parentModelName)).thenReturn(parentModelImportList);
+
+        //when
+        final List<ToscaImportByModel> actualModelImportList = modelOperation.findAllModelImports(modelName, true);
+
+        //then
+        assertFalse(actualModelImportList.isEmpty());
+        assertEquals(childModelImportList.size() + parentModelImportList.size(), actualModelImportList.size());
+        Stream.concat(childModelImportList.stream(), parentModelImportList.stream())
+            .forEach(toscaImportByModel -> assertTrue(actualModelImportList.contains(toscaImportByModel)));
+    }
+
+    private ToscaImportByModel createModelImport(final String parentModelName, final String importPath) {
+        var toscaImportByModel = new ToscaImportByModel();
+        toscaImportByModel.setModelId(parentModelName);
+        toscaImportByModel.setFullPath(importPath);
+        return toscaImportByModel;
     }
 }

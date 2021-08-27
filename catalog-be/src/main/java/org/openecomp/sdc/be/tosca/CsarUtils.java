@@ -62,10 +62,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.text.WordUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.apache.commons.text.WordUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -77,7 +78,6 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
-import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
@@ -95,6 +95,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
@@ -103,6 +104,7 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
 import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -121,8 +123,6 @@ public class CsarUtils {
 
     public static final String NODES_YML = "nodes.yml";
     public static final String ARTIFACTS_PATH = "Artifacts/";
-    public static final String WORKFLOW_ARTIFACT_DIR = "Workflows" + File.separator + "BPMN" + File.separator;
-    public static final String DEPLOYMENT_ARTIFACTS_DIR = "Deployment" + File.separator;
     public static final String ARTIFACTS = "Artifacts";
     public static final String ARTIFACT_CREATED_FROM_CSAR = "Artifact created from csar";
     private static final Logger log = Logger.getLogger(CsarUtils.class);
@@ -160,32 +160,40 @@ public class CsarUtils {
             + VALID_ENGLISH_ARTIFACT_NAME_WITH_DIGITS + DEL_PATTERN + VALID_ENGLISH_ARTIFACT_NAME_WITH_DIGITS + DEL_PATTERN
             + VALID_ENGLISH_ARTIFACT_NAME_WITH_DIGITS;
     private static final String BLOCK_0_TEMPLATE = "SDC-TOSCA-Meta-File-Version: %s\nSDC-TOSCA-Definitions-Version: %s\n";
-    @Autowired
-    protected ToscaOperationFacade toscaOperationFacade;
-    @Autowired
-    private SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
-    @Autowired
-    private ArtifactCassandraDao artifactCassandraDao;
-    @Autowired
-    private ComponentsUtils componentsUtils;
-    @Autowired
-    private ToscaExportHandler toscaExportUtils;
-    @Autowired(required = false)
-    private List<CsarEntryGenerator> generators;
-    @Autowired(required = false)
-    private ToscaModelImportCassandraDao toscaModelImportCassandraDao;
-    private String versionFirstThreeOctets;
 
-    public CsarUtils() {
-        if (SDC_VERSION != null && !SDC_VERSION.isEmpty()) {
-            // change regex to avoid DoS sonar issue
-            Matcher matcher = Pattern.compile("(?!\\.)(\\d{1,9}(\\.\\d{1,9}){1,9})(?![\\d\\.])").matcher(SDC_VERSION);
-            matcher.find();
-            setVersionFirstThreeOctets(matcher.group(0));
-        } else {
-            setVersionFirstThreeOctets("");
-        }
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao;
+    private final ArtifactCassandraDao artifactCassandraDao;
+    private final ComponentsUtils componentsUtils;
+    private final ToscaExportHandler toscaExportUtils;
+    private final List<CsarEntryGenerator> generators;
+    private final ModelOperation modelOperation;
+    private final String versionFirstThreeOctets;
+
+    @Autowired
+    public CsarUtils(final ToscaOperationFacade toscaOperationFacade, final SdcSchemaFilesCassandraDao sdcSchemaFilesCassandraDao,
+                     final ArtifactCassandraDao artifactCassandraDao, final ComponentsUtils componentsUtils,
+                     final ToscaExportHandler toscaExportUtils, final List<CsarEntryGenerator> generators, final ModelOperation modelOperation) {
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.sdcSchemaFilesCassandraDao = sdcSchemaFilesCassandraDao;
+        this.artifactCassandraDao = artifactCassandraDao;
+        this.componentsUtils = componentsUtils;
+        this.toscaExportUtils = toscaExportUtils;
+        this.generators = generators;
+        this.modelOperation = modelOperation;
+        this.versionFirstThreeOctets = readVersionFirstThreeOctets();
     }
+
+    private String readVersionFirstThreeOctets() {
+        if (StringUtils.isEmpty(SDC_VERSION)) {
+            return "";
+        }
+        // change regex to avoid DoS sonar issue
+        Matcher matcher = Pattern.compile("(?!\\.)(\\d{1,9}(\\.\\d{1,9}){1,9})(?![\\d\\.])").matcher(SDC_VERSION);
+        matcher.find();
+        return matcher.group(0);
+    }
+
 
     private static <L, R> F<L, Either<L, R>> iff(Predicate<L> p, Function<L, Either<L, R>> ifTrue) {
         return l -> p.test(l) ? ifTrue.apply(l) : Either.left(l);
@@ -809,18 +817,19 @@ public class CsarUtils {
             .bind(iff(List::isEmpty, () -> schemaFileFetchError(fto), s -> Either.left(s.iterator().next().getPayloadAsArray())));
     }
 
-    private void addSchemaFilesByModel(final ZipOutputStream zipOutputStream, final String model) {
+    private void addSchemaFilesByModel(final ZipOutputStream zipOutputStream, final String modelName) {
         try {
-            final List<ToscaImportByModel> schemaImportsByModel = toscaModelImportCassandraDao.findAllByModel(model);
-            for (ToscaImportByModel toscaImportByModel : schemaImportsByModel) {
-                final ZipEntry zipEntry = new ZipEntry(DEFINITIONS_PATH + toscaImportByModel.getFullPath());
+            final List<ToscaImportByModel> modelDefaultImportList = modelOperation.findAllModelImports(modelName, true);
+            for (final ToscaImportByModel toscaImportByModel : modelDefaultImportList) {
+                final var zipEntry = new ZipEntry(DEFINITIONS_PATH + toscaImportByModel.getFullPath());
                 zipOutputStream.putNextEntry(zipEntry);
                 final byte[] content = toscaImportByModel.getContent().getBytes(StandardCharsets.UTF_8);
                 zipOutputStream.write(content, 0, content.length);
                 zipOutputStream.closeEntry();
             }
-        } catch (IOException e) {
-            log.error("Error while writing the schema files by model to the CSAR " + "{}", e);
+        } catch (final IOException e) {
+            log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, CsarUtils.class.getName(),
+                "Error while writing the schema files by model to the CSAR", e);
             throw new ByResponseFormatComponentException(componentsUtils.getResponseFormat(ActionStatus.CSAR_TOSCA_IMPORTS_ERROR));
         }
     }
@@ -1230,10 +1239,6 @@ public class CsarUtils {
 
     public String getVersionFirstThreeOctets() {
         return versionFirstThreeOctets;
-    }
-
-    public void setVersionFirstThreeOctets(String versionFirstThreeOctetes) {
-        this.versionFirstThreeOctets = versionFirstThreeOctetes;
     }
 
     private Map<String, List<ArtifactDefinition>> getComponentInstanceSpecificArtifacts(Map<String, ArtifactDefinition> componentArtifacts,

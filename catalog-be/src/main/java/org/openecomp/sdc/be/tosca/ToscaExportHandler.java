@@ -44,7 +44,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import lombok.NoArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -56,7 +55,6 @@ import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.SdcResourceNotFoundException;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
-import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
@@ -102,6 +100,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
 import org.openecomp.sdc.be.tosca.builder.ToscaRelationshipBuilder;
 import org.openecomp.sdc.be.tosca.exception.ToscaConversionException;
@@ -142,7 +141,6 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
 
-@NoArgsConstructor
 @org.springframework.stereotype.Component("tosca-export-handler")
 public class ToscaExportHandler {
 
@@ -159,19 +157,18 @@ public class ToscaExportHandler {
     private static final List<String> EXCLUDED_CATEGORY_SPECIFIC_METADATA = List
         .of("Service Function", "Service Role", "Naming Policy", "Service Type");
     private static final YamlUtil yamlUtil = new YamlUtil();
-    private static final String COULD_NOT_PARSE_COMPONENT_ATTRIBUTES_COMPONENT_UNIQUE_ID = "Could not parse component '{}' attributes. Component unique id '{}'.";
-    private ApplicationDataTypeCache applicationDataTypeCache;
-    private ToscaOperationFacade toscaOperationFacade;
-    private CapabilityRequirementConverter capabilityRequirementConverter;
-    private PolicyExportParser policyExportParser;
-    private GroupExportParser groupExportParser;
-    private PropertyConvertor propertyConvertor;
-    private AttributeConverter attributeConverter;
-    private InputConverter inputConverter;
-    private OutputConverter outputConverter;
-    private InterfaceLifecycleOperation interfaceLifecycleOperation;
-    private InterfacesOperationsConverter interfacesOperationsConverter;
-    private ToscaModelImportCassandraDao toscaModelImportCassandraDao;
+    private final ApplicationDataTypeCache applicationDataTypeCache;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final CapabilityRequirementConverter capabilityRequirementConverter;
+    private final PolicyExportParser policyExportParser;
+    private final GroupExportParser groupExportParser;
+    private final PropertyConvertor propertyConvertor;
+    private final AttributeConverter attributeConverter;
+    private final InputConverter inputConverter;
+    private final OutputConverter outputConverter;
+    private final InterfaceLifecycleOperation interfaceLifecycleOperation;
+    private final InterfacesOperationsConverter interfacesOperationsConverter;
+    private final ModelOperation modelOperation;
 
     @Autowired
     public ToscaExportHandler(final ApplicationDataTypeCache applicationDataTypeCache,
@@ -185,7 +182,7 @@ public class ToscaExportHandler {
                               final OutputConverter outputConverter,
                               final InterfaceLifecycleOperation interfaceLifecycleOperation,
                               final InterfacesOperationsConverter interfacesOperationsConverter,
-                              final ToscaModelImportCassandraDao toscaModelImportCassandraDao) {
+                              final ModelOperation modelOperation) {
         this.applicationDataTypeCache = applicationDataTypeCache;
         this.toscaOperationFacade = toscaOperationFacade;
         this.capabilityRequirementConverter = capabilityRequirementConverter;
@@ -197,7 +194,7 @@ public class ToscaExportHandler {
         this.outputConverter = outputConverter;
         this.interfaceLifecycleOperation = interfaceLifecycleOperation;
         this.interfacesOperationsConverter = interfacesOperationsConverter;
-        this.toscaModelImportCassandraDao = toscaModelImportCassandraDao;
+        this.modelOperation = modelOperation;
     }
 
     public static String getInterfaceFilename(String artifactName) {
@@ -303,13 +300,14 @@ public class ToscaExportHandler {
         }
     }
 
-    public List<Map<String, Map<String, String>>> getDefaultToscaImports(final String model) {
-        if (model == null) {
+    public List<Map<String, Map<String, String>>> getDefaultToscaImports(final String modelId) {
+        if (modelId == null) {
             return getDefaultToscaImportConfig();
         }
-        final List<ToscaImportByModel> importsByModel = toscaModelImportCassandraDao.findAllByModel(model);
+        
+        final List<ToscaImportByModel> allModelImports = modelOperation.findAllModelImports(modelId, true);
         final List<Map<String, Map<String, String>>> importList = new ArrayList<>();
-        for(ToscaImportByModel toscaImportByModel: importsByModel) {
+        for(final ToscaImportByModel toscaImportByModel: allModelImports) {
             final String fileName = FilenameUtils.getBaseName(toscaImportByModel.getFullPath());
             importList.add(Map.of(fileName, Map.of("file", toscaImportByModel.getFullPath())));
         }

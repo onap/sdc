@@ -237,7 +237,7 @@ class InterfacesOperationsConverterTest {
             .getInterfacesMap(component, null, component.getInterfaces(), null, false, true);
         ToscaNodeType nodeType = new ToscaNodeType();
         nodeType.setInterfaces(interfacesMap);
-        ToscaExportHandler handler = new ToscaExportHandler();
+        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null, null, null);
         ToscaTemplate template = new ToscaTemplate(NODE_TYPE_NAME);
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         nodeTypes.put(NODE_TYPE_NAME, nodeType);
