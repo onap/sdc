@@ -55,8 +55,8 @@ public class CategoriesImportManager {
     @javax.annotation.Resource
     private ComponentsUtils componentsUtils;
 
-    public Either<Map<String, List<CategoryDefinition>>, ResponseFormat> createCategories(String categoriesTypesYml) {
-        Map<String, List<CategoryDefinition>> allCategories = createCategoriesFromYml(categoriesTypesYml);
+    public Either<Map<String, List<CategoryDefinition>>, ResponseFormat> createCategories(final String categoriesTypesYml, final String modelName) {
+        Map<String, List<CategoryDefinition>> allCategories = createCategoriesFromYml(categoriesTypesYml, modelName);
         return createCategoriesByDao(allCategories);
     }
 
@@ -72,7 +72,7 @@ public class CategoriesImportManager {
                 nodeTypeCategory, nodeTypeSubCategory, nodeTypeGroup);
             List<CategoryDefinition> newCategoriesvalue = new ArrayList<>();
             for (CategoryDefinition category : entry.getValue()) {
-                Either<CategoryDefinition, ResponseFormat> createdCategoryRes = createCategorieDeo(entry, category, nodeTypeCategory);
+                Either<CategoryDefinition, ResponseFormat> createdCategoryRes = createCategoriesDao(entry, category, nodeTypeCategory);
                 if (createdCategoryRes.isRight()) {
                     return Either.right(createdCategoryRes.right().value());
                 }
@@ -99,7 +99,7 @@ public class CategoriesImportManager {
                                             NodeTypeEnum nodeTypeGroup, CategoryDefinition category, CategoryDefinition newcategory,
                                             List<SubCategoryDefinition> newsubcategories, List<SubCategoryDefinition> subcategories) {
         for (SubCategoryDefinition subcategory : subcategories) {
-            Either<SubCategoryDefinition, ResponseFormat> createdSubCategory = createSubCategorieDeo(entry, newcategory, subcategory,
+            Either<SubCategoryDefinition, ResponseFormat> createdSubCategory = createSubCategoriesDao(entry, newcategory, subcategory,
                 nodeTypeSubCategory);
             if (createdSubCategory.isRight()) {
                 return false;
@@ -109,7 +109,7 @@ public class CategoriesImportManager {
             if (groupings != null) {
                 List<GroupingDefinition> newgroupings = new ArrayList<>();
                 for (GroupingDefinition grouping : groupings) {
-                    Either<GroupingDefinition, ResponseFormat> createdGrouping = createGroupingDeo(entry, grouping, subcategory, category,
+                    Either<GroupingDefinition, ResponseFormat> createdGrouping = createGroupingDao(entry, grouping, subcategory, category,
                         nodeTypeGroup);
                     if (createdGrouping.isRight()) {
                         return false;
@@ -123,7 +123,7 @@ public class CategoriesImportManager {
         return true;
     }
 
-    private Either<GroupingDefinition, ResponseFormat> createGroupingDeo(Map.Entry<String, List<CategoryDefinition>> entry,
+    private Either<GroupingDefinition, ResponseFormat> createGroupingDao(Map.Entry<String, List<CategoryDefinition>> entry,
                                                                          GroupingDefinition grouping, SubCategoryDefinition subcategory,
                                                                          CategoryDefinition category, NodeTypeEnum nodeTypeGroup) {
         log.debug("createGroupingDeo: creating grouping  {}", grouping);
@@ -148,9 +148,9 @@ public class CategoriesImportManager {
         return Either.left(createdGrouping.left().value());
     }
 
-    private Either<SubCategoryDefinition, ResponseFormat> createSubCategorieDeo(Map.Entry<String, List<CategoryDefinition>> entry,
-                                                                                CategoryDefinition newcategory, SubCategoryDefinition subcategory,
-                                                                                NodeTypeEnum nodeTypeSubCategory) {
+    private Either<SubCategoryDefinition, ResponseFormat> createSubCategoriesDao(Map.Entry<String, List<CategoryDefinition>> entry,
+                                                                                 CategoryDefinition newcategory, SubCategoryDefinition subcategory,
+                                                                                 NodeTypeEnum nodeTypeSubCategory) {
         log.debug("createSubCategorieDeo: creating subcategory  {}", subcategory);
         Either<SubCategoryDefinition, ActionStatus> createdSubCategory = elementOperation
             .createSubCategory(newcategory.getUniqueId(), subcategory, nodeTypeSubCategory);
@@ -170,8 +170,8 @@ public class CategoriesImportManager {
         return Either.left(createdSubCategory.left().value());
     }
 
-    private Either<CategoryDefinition, ResponseFormat> createCategorieDeo(Map.Entry<String, List<CategoryDefinition>> entry,
-                                                                          CategoryDefinition category, NodeTypeEnum nodeTypeCategory) {
+    private Either<CategoryDefinition, ResponseFormat> createCategoriesDao(Map.Entry<String, List<CategoryDefinition>> entry,
+                                                                           CategoryDefinition category, NodeTypeEnum nodeTypeCategory) {
         log.debug("createCategorieDeo: creating category {}", category);
         Either<CategoryDefinition, ActionStatus> createdCategory = elementOperation.createCategory(category, nodeTypeCategory);
         if (createdCategory.isRight() && ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS == createdCategory.right().value()) {
@@ -187,8 +187,8 @@ public class CategoriesImportManager {
         return Either.left(createdCategory.left().value());
     }
 
-    private Map<String, List<CategoryDefinition>> createCategoriesFromYml(String categoriesTypesYml) {
-        Map<String, Object> toscaJson = (Map<String, Object>) new Yaml().load(categoriesTypesYml);
+    private Map<String, List<CategoryDefinition>> createCategoriesFromYml(final String categoriesTypesYml, final String modelName) {
+        Map<String, Object> toscaJson = new Yaml().load(categoriesTypesYml);
         Map<String, List<CategoryDefinition>> allCategories = new HashMap<>();
         Iterator<Entry<String, Object>> categoryEntryItr = toscaJson.entrySet().iterator();
         while (categoryEntryItr.hasNext()) {
@@ -199,11 +199,11 @@ public class CategoriesImportManager {
             switch (categoryType) {
                 case ComponentTypeEnum.SERVICE_PARAM_NAME:
                     categoryPerType = (Map<String, Object>) categoryTypeEntry.getValue();
-                    categoriesPerType = createServiceCategories(categoryPerType);
+                    categoriesPerType = createServiceCategories(categoryPerType, modelName);
                     break;
                 case ComponentTypeEnum.RESOURCE_PARAM_NAME:
                     categoryPerType = (Map<String, Object>) categoryTypeEntry.getValue();
-                    categoriesPerType = createResourceCategories(categoryPerType);
+                    categoriesPerType = createResourceCategories(categoryPerType, modelName);
                     break;
                 case ComponentTypeEnum.PRODUCT_PARAM_NAME:
                     // TODO
@@ -219,7 +219,7 @@ public class CategoriesImportManager {
         return allCategories;
     }
 
-    private List<CategoryDefinition> createServiceCategories(Map<String, Object> categories) {
+    private List<CategoryDefinition> createServiceCategories(final Map<String, Object> categories, final String modelName) {
         List<CategoryDefinition> categoriesDef = new ArrayList<>();
         String catName = null;
         List<String> icons = null;
@@ -232,6 +232,7 @@ public class CategoriesImportManager {
             catDef.setIcons(icons);
             String normalizedName = ValidationUtils.normalizeCategoryName4Uniqueness(catName);
             catDef.setNormalizedName(normalizedName);
+            catDef.setModel(modelName);
             final Object useServiceSubstitutionForNestedServicesProperty = category.get("useServiceSubstitutionForNestedServices");
             final boolean useServiceSubstitutionForNestedServices =
                 useServiceSubstitutionForNestedServicesProperty == null ? false : (Boolean) useServiceSubstitutionForNestedServicesProperty;
@@ -262,7 +263,7 @@ public class CategoriesImportManager {
         return metadataKeyDefs;
     }
 
-    private List<CategoryDefinition> createResourceCategories(Map<String, Object> categoryPerType) {
+    private List<CategoryDefinition> createResourceCategories(final Map<String, Object> categoryPerType, final String modelName) {
         List<CategoryDefinition> categroiesDef = new ArrayList<>();
         for (Map.Entry<String, Object> entry : categoryPerType.entrySet()) {
             Map<String, Object> category = (Map<String, Object>) entry.getValue();
@@ -271,6 +272,7 @@ public class CategoriesImportManager {
             catDef.setName(catName);
             String normalizedName = ValidationUtils.normalizeCategoryName4Uniqueness(catName);
             catDef.setNormalizedName(normalizedName);
+            catDef.setModel(modelName);
             Map<String, Object> subcategories = (Map<String, Object>) category.get("subcategories");
             List<SubCategoryDefinition> subcateDef = new ArrayList<>();
             for (Entry<String, Object> subcategory : subcategories.entrySet()) {

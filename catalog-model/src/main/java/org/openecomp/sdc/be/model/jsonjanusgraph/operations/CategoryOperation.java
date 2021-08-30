@@ -42,12 +42,13 @@ public class CategoryOperation extends BaseOperation {
 
     /**
      * @param name
+     * @param model
      * @param type
      * @return
      */
-    public Either<GraphVertex, StorageOperationStatus> getCategory(String name, VertexTypeEnum type) {
+    public Either<GraphVertex, StorageOperationStatus> getCategory(String name, String model, VertexTypeEnum type) {
         if (name != null) {
-            String categoryUid = UniqueIdBuilder.buildComponentCategoryUid(name, type);
+            String categoryUid = UniqueIdBuilder.buildComponentCategoryUid(name, model, type);
             Map<GraphPropertyEnum, Object> props = new HashMap<>();
             props.put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(name));
             Either<List<GraphVertex>, JanusGraphOperationStatus> either = janusGraphDao.getByCriteria(type, props);

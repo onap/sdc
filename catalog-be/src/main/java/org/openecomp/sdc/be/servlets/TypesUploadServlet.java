@@ -187,9 +187,10 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "409", description = "Category already exist")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response uploadCategories(@Parameter(description = "FileInputStream") @FormDataParam("categoriesZip") File file,
+                                     @Parameter(description = "model") @FormDataParam("model") String modelName,
                                      @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
         ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) ->
-            createElementsType(responseWrapper, () -> categoriesImportManager.createCategories(ymlPayload));
+            createElementsType(responseWrapper, () -> categoriesImportManager.createCategories(ymlPayload, modelName));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "categories");
     }
 

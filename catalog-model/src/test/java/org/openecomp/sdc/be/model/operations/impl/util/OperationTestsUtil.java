@@ -42,7 +42,7 @@ public class OperationTestsUtil {
         categoryData.getCategoryDataDefinition()
                 .setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(category));
         categoryData.getCategoryDataDefinition().setUniqueId(UniqueIdBuilder.buildCategoryUid(
-                ValidationUtils.normalizeCategoryName4Uniqueness(category), NodeTypeEnum.ServiceNewCategory));
+            ValidationUtils.normalizeCategoryName4Uniqueness(category), null, NodeTypeEnum.ServiceNewCategory));
         janusGraphDao.deleteNode(categoryData, CategoryData.class);
         Either<CategoryData, JanusGraphOperationStatus> createNode = janusGraphDao.createNode(categoryData, CategoryData.class);
         return (String) createNode.left().value().getUniqueId();
@@ -56,7 +56,7 @@ public class OperationTestsUtil {
         categoryData.getCategoryDataDefinition()
                 .setNormalizedName(ValidationUtils.normalizeCategoryName4Uniqueness(category));
         categoryData.getCategoryDataDefinition().setUniqueId(UniqueIdBuilder.buildCategoryUid(
-                ValidationUtils.normalizeCategoryName4Uniqueness(category), NodeTypeEnum.ResourceNewCategory));
+                ValidationUtils.normalizeCategoryName4Uniqueness(category), null, NodeTypeEnum.ResourceNewCategory));
 
         SubCategoryData subcategoryData = new SubCategoryData(NodeTypeEnum.ResourceSubcategory);
         subcategoryData.getSubCategoryDataDefinition().setName(subcategory);

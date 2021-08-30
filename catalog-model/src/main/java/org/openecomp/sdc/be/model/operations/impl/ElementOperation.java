@@ -136,7 +136,7 @@ public class ElementOperation implements IElementOperation {
     @Override
     public Either<CategoryDefinition, ActionStatus> createCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction) {
         Either<CategoryDefinition, ActionStatus> result = null;
-        category.setUniqueId(UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), nodeType));
+        category.setUniqueId(UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), category.getModel(), nodeType));
         CategoryData categoryData = new CategoryData(nodeType, category);
         try {
             Either<CategoryData, JanusGraphOperationStatus> createNode = janusGraphGenericDao.createNode(categoryData, CategoryData.class);
@@ -172,7 +172,7 @@ public class ElementOperation implements IElementOperation {
     @Override
     public Either<CategoryDefinition, ActionStatus> updateCategory(CategoryDefinition category, NodeTypeEnum nodeType, boolean inTransaction) {
         Either<CategoryDefinition, ActionStatus> result = null;
-        category.setUniqueId(UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), nodeType));
+        category.setUniqueId(UniqueIdBuilder.buildCategoryUid(category.getNormalizedName(), category.getModel(), nodeType));
         CategoryData categoryData = new CategoryData(nodeType, category);
         try {
             Either<CategoryData, JanusGraphOperationStatus> updatedNode = janusGraphGenericDao.updateNode(categoryData, CategoryData.class);

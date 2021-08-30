@@ -36,6 +36,7 @@ public class CategoryDataDefinition extends ToscaDataDefinition {
 
     private String name;
     private String normalizedName;
+    private String model;
     private String uniqueId;
     private List<String> icons;
     private boolean useServiceSubstitutionForNestedServices = false;
@@ -44,6 +45,7 @@ public class CategoryDataDefinition extends ToscaDataDefinition {
     public CategoryDataDefinition(CategoryDataDefinition c) {
         this.name = c.name;
         this.normalizedName = c.normalizedName;
+        this.model = c.model;
         this.uniqueId = c.uniqueId;
         this.icons = c.icons;
         this.useServiceSubstitutionForNestedServices = c.useServiceSubstitutionForNestedServices;

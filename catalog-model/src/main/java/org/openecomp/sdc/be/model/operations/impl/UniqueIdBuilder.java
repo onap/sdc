@@ -144,12 +144,13 @@ public class UniqueIdBuilder {
     }
 
     // New logic
-    public static String buildCategoryUid(String categoryName, NodeTypeEnum type) {
-        return type.getName() + DOT + categoryName;
+    public static String buildCategoryUid(String categoryName, String modelName, NodeTypeEnum type) {
+        return StringUtils.isEmpty(modelName) ? type.getName() + DOT + categoryName : modelName + DOT + type.getName() + DOT + categoryName;
     }
 
-    public static String buildComponentCategoryUid(String categoryName, VertexTypeEnum type) {
-        return type.getName() + DOT + ValidationUtils.normalizeCategoryName4Uniqueness(categoryName);
+    public static String buildComponentCategoryUid(String categoryName, String modelName, VertexTypeEnum type) {
+        return StringUtils.isEmpty(modelName) ? type.getName() + DOT + ValidationUtils.normalizeCategoryName4Uniqueness(categoryName)
+            : modelName + DOT + type.getName() + DOT + ValidationUtils.normalizeCategoryName4Uniqueness(categoryName);
     }
 
     public static String buildSubCategoryUid(String categoryUid, String subCategoryName) {
