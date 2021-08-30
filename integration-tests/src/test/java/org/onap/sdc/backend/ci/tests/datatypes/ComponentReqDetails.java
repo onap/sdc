@@ -45,6 +45,7 @@ public abstract class ComponentReqDetails {
 	protected String version;
 	protected String UUID;
 	protected List<CategoryDefinition> categories;
+	protected List<String> models = new ArrayList<>();
 	protected String projectCode;
 	protected String csarUUID;
 	protected String csarVersion;
@@ -269,4 +270,11 @@ public abstract class ComponentReqDetails {
 		this.invariantUUID = invariantUUID;
 	}
 
+	public List<String> getModels() {
+		return models;
+	}
+
+	public void setModels(List<String> models) {
+		this.models = models;
+	}
 }

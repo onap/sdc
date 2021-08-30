@@ -55,6 +55,7 @@ public class ServiceUIUtils {
         SetupCDTest.getExtendTest().log(Status.INFO, "Fill in metadata values in general page");
         ServiceGeneralPage.defineName(service.getName());
         ServiceGeneralPage.defineDescription(service.getDescription());
+        /*ServiceGeneralPage.defineModel(DEFAULT_MODEL_NAME);*/
         ServiceGeneralPage.defineCategory(service.getCategories().get(0).getName());
         ServiceGeneralPage.defineServiceFunction(service.getServiceFunction());
         ServiceGeneralPage.defineNamingPolicy(service.getNamingPolicy());
@@ -84,6 +85,7 @@ public class ServiceUIUtils {
         SetupCDTest.getExtendTest().log(Status.INFO, String.format("Defining General Page fields"));
         ServiceGeneralPage.defineName(service.getName());
         ServiceGeneralPage.defineDescription(service.getDescription());
+        /*ServiceGeneralPage.defineModel(DEFAULT_MODEL_NAME);*/
         ServiceGeneralPage.defineCategory(service.getCategories().get(0).getName());
         ServiceGeneralPage.defineProjectCode(service.getProjectCode());
         ServiceGeneralPage.defineInstantiationType(service.getInstantiationType());
