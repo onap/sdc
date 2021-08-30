@@ -20,34 +20,34 @@
 
 package org.onap.sdc.frontend.ci.tests.execute.sanity;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.openecomp.sdc.common.api.Constants.DEFAULT_MODEL_NAME;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
+
 import com.aventstack.extentreports.Status;
+import java.awt.AWTException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import org.onap.sdc.backend.ci.tests.datatypes.ResourceReqDetails;
+import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ArtifactTypeEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.NormativeTypesEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.backend.ci.tests.utils.rest.ResourceRestUtils;
 import org.onap.sdc.backend.ci.tests.utils.validation.ErrorValidationUtils;
-import org.onap.sdc.frontend.ci.tests.verificator.DeploymentViewVerificator;
-import org.onap.sdc.frontend.ci.tests.verificator.ServiceVerificator;
-import org.onap.sdc.frontend.ci.tests.verificator.VfVerificator;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.LifecycleStateEnum;
-import org.openecomp.sdc.be.model.Resource;
-import org.openecomp.sdc.be.model.User;
 import org.onap.sdc.frontend.ci.tests.datatypes.ArtifactInfo;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasElement;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasManager;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.ResourceReqDetails;
-import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
 import org.onap.sdc.frontend.ci.tests.datatypes.TopMenuButtonsEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.pages.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.DeploymentArtifactPage;
@@ -64,21 +64,22 @@ import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.ResourceUIUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.ServiceUIUtils;
+import org.onap.sdc.frontend.ci.tests.verificator.DeploymentViewVerificator;
+import org.onap.sdc.frontend.ci.tests.verificator.ServiceVerificator;
+import org.onap.sdc.frontend.ci.tests.verificator.VfVerificator;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.AssertJUnit;
 import org.testng.TestException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertTrue;
 
 public class Service extends SetupCDTest {
 
@@ -146,6 +147,7 @@ public class Service extends SetupCDTest {
         serviceMetadata.setProjectCode("654321");
         serviceMetadata.setContactId("cs6543");
         serviceMetadata.getTags().addAll(Arrays.asList("updatedTag", "oneMoreUpdatedTag", "lastOne UpdatedTag"));
+        serviceMetadata.setModels(Collections.singletonList(DEFAULT_MODEL_NAME));
         ServiceUIUtils.setServiceCategory(serviceMetadata, ServiceCategoriesEnum.VOIP);
         ServiceUIUtils.fillServiceGeneralPage(serviceMetadata);
         GeneralPageElements.clickCreateButton();

@@ -77,6 +77,10 @@ public class ServiceGeneralPage extends ResourceGeneralPage {
         namingPolicyTextbox.sendKeys(namingPolicyText);
     }
 
+    public static void defineModel(final String model) {
+        GeneralUIUtils.getSelectList(model, getModelDataTestsIdAttribute());
+    }
+
 	public static String getServiceFunctionText(){
 		return getServiceFunctionField().getAttribute("value");
 	}

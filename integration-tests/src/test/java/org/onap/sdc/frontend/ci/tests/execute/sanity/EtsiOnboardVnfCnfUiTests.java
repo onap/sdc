@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
+import static org.openecomp.sdc.common.api.Constants.DEFAULT_MODEL_NAME;
 
 import com.aventstack.extentreports.Status;
 import java.util.Map;
@@ -165,6 +166,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
     private ServiceCreateData createServiceFormData() {
         final ServiceCreateData serviceCreateData = new ServiceCreateData();
         serviceCreateData.setRandomName(ElementFactory.addRandomSuffixToName(ElementFactory.getServicePrefix()));
+        serviceCreateData.setModel(DEFAULT_MODEL_NAME);
         serviceCreateData.setCategory(ServiceCategoriesEnum.E2E_SERVICE.getValue());
         serviceCreateData.setDescription("aDescription");
         return serviceCreateData;
