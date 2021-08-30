@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c4c3663d_b80aa01f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 831,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-30T08:40:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef0b4f22_bbb83193",
+      "range": {
+        "startLine": 831,
+        "startChar": 16,
+        "endLine": 831,
+        "endChar": 21
+      },
+      "revId": "420d7f5589a3dad416b79775c144399839a7fada",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b4d33323_9672b086",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/ModelOperationTest.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "420d7f5589a3dad416b79775c144399839a7fada",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c8c8ac3_3993a8f8",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/operations/impl/ModelOperationTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-08-30T08:40:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4d33323_9672b086",
+      "range": {
+        "startLine": 333,
+        "startChar": 0,
+        "endLine": 333,
+        "endChar": 54
+      },
+      "revId": "420d7f5589a3dad416b79775c144399839a7fada",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
