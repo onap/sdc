@@ -607,7 +607,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private StorageOperationStatus associateServiceMetadataToCategory(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
         String categoryName = topologyTemplate.getCategories().get(0).getName();
-        Either<GraphVertex, StorageOperationStatus> category = categoryOperation.getCategory(categoryName, VertexTypeEnum.SERVICE_CATEGORY);
+        Either<GraphVertex, StorageOperationStatus> category = categoryOperation.getCategory(categoryName,
+            VertexTypeEnum.SERVICE_CATEGORY);
         if (category.isRight()) {
             log.trace("NO category {} for service {}", categoryName, topologyTemplate.getUniqueId());
             return StorageOperationStatus.CATEGORY_NOT_FOUND;
@@ -1174,6 +1175,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         }.getType();
         List<String> iconsfromJsonCat = getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.ICONS.getProperty()), listTypeCat);
         category.setIcons(iconsfromJsonCat);
+        category.setModels((getGson().fromJson((String) metadataProperties.get(GraphPropertyEnum.MODEL.getProperty()), listTypeCat)));
         final Type metadataKeysTypeCat = new TypeToken<List<MetadataKeyDataDefinition>>() {
         }.getType();
         final List<MetadataKeyDataDefinition> metadataKeysfromJsonCat = getGson()

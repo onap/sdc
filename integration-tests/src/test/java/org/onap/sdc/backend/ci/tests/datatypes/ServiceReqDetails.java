@@ -20,6 +20,8 @@
 
 package org.onap.sdc.backend.ci.tests.datatypes;
 
+import static org.openecomp.sdc.common.api.Constants.DEFAULT_MODEL_NAME;
+
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceInstantiationType;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -94,7 +96,7 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		categoryDefinition.setIcons(Collections.singletonList(icon));
 		categories = new ArrayList<>();
 		categories.add(categoryDefinition);
-
+		models.add(DEFAULT_MODEL_NAME);
 	}
 
 	public ServiceReqDetails(Service service) {
@@ -110,6 +112,7 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		this.uniqueId = service.getUniqueId();
 		this.UUID = service.getUUID();
 		this.version = service.getVersion();
+		this.models = Collections.singletonList(service.getModel());
 
 	}
 

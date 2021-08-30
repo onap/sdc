@@ -85,7 +85,7 @@
                                     data-ng-disabled="!isCreateMode()"
                                     data-ng-model="component.model"
                                     data-ng-change="onModelChange()"
-                                    data-tests-id="modelName"
+                                    data-tests-id="SelectModelName"
                                     ng-required="isModelRequired">
                               <option ng-repeat="model in models" value="{{model.id}}">{{model.name}}</option>
                             </select>
@@ -104,8 +104,7 @@
                                         data-ng-change="onCategoryChange()"
                                         data-ng-disabled="component.isAlreadyCertified() || (component.isCsarComponent() && component.selectedCategory && component.selectedCategory!=='') || isHiddenCategorySelected"
                                         data-ng-model="componentCategories.selectedCategory"
-                                        data-tests-id="selectGeneralCategory"
-                                >
+                                        data-tests-id="selectGeneralCategory">
                                     <option value="">Select category</option>
                                     <optgroup ng-if="component.isResource()" data-ng-repeat="mainCategory in categories | orderBy:['name']" label="{{mainCategory.name}}" data-tests-id="{{mainCategory.name}}">
                                         <option data-ng-repeat="subCategory in mainCategory.subcategories track by $index"
