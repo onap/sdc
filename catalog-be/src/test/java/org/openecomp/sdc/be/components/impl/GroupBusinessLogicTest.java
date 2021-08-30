@@ -41,12 +41,13 @@ import static org.mockito.Mockito.when;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,6 +65,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
@@ -247,7 +249,7 @@ class GroupBusinessLogicTest {
         when(groupsOperation.updateGroup(component, updatedGroup)).thenReturn(Either.left(updatedGroup));
         GroupDefinition Gdefinition = test.updateGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
             "USR01", updatedGroup);
-        Assert.assertEquals(Gdefinition, updatedGroup);
+        Assertions.assertEquals(Gdefinition, updatedGroup);
     }
 
     @Test
@@ -309,6 +311,60 @@ class GroupBusinessLogicTest {
 
         GroupDefinition Gdefinition = test.deleteGroup("compid", ComponentTypeEnum.SERVICE, "GRP.01",
             "USR01");
-        Assert.assertEquals(Gdefinition, updatedGroup);
+        Assertions.assertEquals(Gdefinition, updatedGroup);
+    }
+
+    @Test
+    void testValidateGenerateVfModuleGroupNames_pass() {
+
+        final List<ArtifactTemplateInfo> allGroups = new ArrayList<>();
+        final ArtifactTemplateInfo artifactTemplateInfo1 = new ArtifactTemplateInfo();
+        final ArtifactTemplateInfo artifactTemplateInfo2 = new ArtifactTemplateInfo();
+        artifactTemplateInfo1.setGroupName("ArtTmpInfoName1");
+        artifactTemplateInfo1.setDescription("ArtTmpInfoDesc1");
+        artifactTemplateInfo2.setGroupName("ArtTmpInfoName2");
+        artifactTemplateInfo2.setDescription("ArtTmpInfoDesc2");
+        allGroups.add(artifactTemplateInfo1);
+        allGroups.add(artifactTemplateInfo2);
+
+        final Either<Boolean, ResponseFormat> result = test.validateGenerateVfModuleGroupNames(allGroups, "resourceSystemName", 0);
+
+        Assertions.assertEquals(2, allGroups.size());
+        Assertions.assertEquals("resourceSystemName..ArtTmpInfoDesc1..module-0", allGroups.get(0).getGroupName());
+        Assertions.assertEquals("resourceSystemName..ArtTmpInfoDesc2..module-1", allGroups.get(1).getGroupName());
+        Assertions.assertTrue(result.left().value());
+    }
+
+    @Test
+    void testValidateGenerateVfModuleGroupNames_emptyArtifactDescriptionFail() {
+
+        final List<ArtifactTemplateInfo> allGroups = new ArrayList<>();
+        allGroups.add(new ArtifactTemplateInfo());
+        final ResponseFormat expectedResponse = new ResponseFormat(400);
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_VF_MODULE_NAME)).thenReturn(new ResponseFormat(400));
+
+        final Either<Boolean, ResponseFormat> result = test.validateGenerateVfModuleGroupNames(allGroups, "resourceSystemName", 0);
+
+        Assertions.assertEquals(1, allGroups.size());
+        Assertions.assertNull(allGroups.get(0).getGroupName());
+        Assertions.assertEquals(expectedResponse.getStatus(), result.right().value().getStatus());
+     }
+
+    @Test
+    void testValidateGenerateVfModuleGroupNames_invalidArtifactDescriptionFail() {
+
+        final List<ArtifactTemplateInfo> allGroups = new ArrayList<>();
+        final ArtifactTemplateInfo artifactTemplateInfo1 = new ArtifactTemplateInfo();
+        artifactTemplateInfo1.setGroupName("ArtTmpInfoName1");
+        artifactTemplateInfo1.setDescription("!ArtTmpInfoDesc1!");
+        allGroups.add(artifactTemplateInfo1);
+        final ResponseFormat expectedResponse = new ResponseFormat(400);
+        when(componentsUtils.getResponseFormat(ActionStatus.INVALID_VF_MODULE_NAME)).thenReturn(new ResponseFormat(400));
+
+        final Either<Boolean, ResponseFormat> result = test.validateGenerateVfModuleGroupNames(allGroups, "resourceSystemName", 0);
+
+        Assertions.assertEquals(1, allGroups.size());
+        Assertions.assertEquals("ArtTmpInfoName1", allGroups.get(0).getGroupName());
+        Assertions.assertEquals(expectedResponse.getStatus(), result.right().value().getStatus());
     }
 }
