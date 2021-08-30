@@ -1409,14 +1409,14 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         when(
             capabilityRequirementConverter
                 .buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq(capabilityName), eq(
-                    capabilityPreviousName)))
+                    capabilityPreviousName), any()))
             .thenReturn(Either.left(builtCapabilityName));
 
         final String builtRequirementName = "builtRequirementName";
         when(
             capabilityRequirementConverter
                 .buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq(requirementName), eq(
-                    requirementPreviousName)))
+                    requirementPreviousName), any()))
             .thenReturn(Either.left(builtRequirementName));
 
         final Map<String, ToscaTemplateRequirement> actualRequirementMap =
@@ -1487,7 +1487,7 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         when(
             capabilityRequirementConverter
-                .buildSubstitutedName(anyMap(), any(Component.class), anyList(), anyString(), anyString()))
+                .buildSubstitutedName(anyMap(), any(Component.class), anyList(), anyString(), anyString(), any()))
             .thenReturn(Either.right(false));
 
         final String expectedErrorMsg =
@@ -1520,12 +1520,12 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
 
         when(
             capabilityRequirementConverter
-                .buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq("cap"), anyString()))
+                .buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq("cap"), anyString(), any()))
             .thenReturn(Either.left("buildCapNameRes"));
 
         when(
             capabilityRequirementConverter
-                .buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq("req"), anyString()))
+                .buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq("req"), anyString(), any()))
             .thenReturn(Either.left("buildReqNameRes"));
 
         // default test
@@ -1557,8 +1557,10 @@ public class ToscaExportHandlerTest extends BeConfDependentTest {
         relationship.setRequirement("req");
 
         final String builtCapabilityOrRequirementName = "builtCapabilityOrRequirementName";
-        when(capabilityRequirementConverter.buildSubstitutedName(any(), any(), any(), any(), any()))
+        when(capabilityRequirementConverter.buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq("cap"), any(), any()))
             .thenReturn(Either.left(builtCapabilityOrRequirementName));
+        when(capabilityRequirementConverter.buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq("req"), any(), any()))
+        .thenReturn(Either.left(builtCapabilityOrRequirementName));
 
         final Map<String, ToscaTemplateRequirement> requirementMap = Deencapsulation
             .invoke(testSubject, "buildRequirement", fromOriginComponent, toOriginComponent, capability, requirement,
