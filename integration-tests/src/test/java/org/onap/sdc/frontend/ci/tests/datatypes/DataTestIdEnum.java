@@ -166,6 +166,7 @@ public final class DataTestIdEnum {
     public enum ResourceMetadataEnum {
         RESOURCE_NAME("name"),
         DESCRIPTION("description"),
+        MODEL("selectModelName"),
         CATEGORY("selectGeneralCategory"),
         VENDOR_NAME("vendorName"),
         VENDOR_RELEASE("vendorRelease"),
