@@ -65,6 +65,7 @@ public class ServiceCreatePage extends ComponentPage {
      */
     public void fillForm(final ServiceCreateData serviceCreateData) {
         fillName(serviceCreateData.getName());
+        setModel(serviceCreateData.getModel());
         setCategory(serviceCreateData.getCategory());
         setEtsiVersion(serviceCreateData.getEtsiVersion());
         fillDescription(serviceCreateData.getDescription());
@@ -76,6 +77,14 @@ public class ServiceCreatePage extends ComponentPage {
         }
         final Select categorySelect = new Select(waitForElementVisibility(By.xpath(XpathSelector.ETSI_VERSION_SELECT.getXpath())));
         categorySelect.selectByVisibleText(etsiVersion);
+    }
+
+    private void setModel(final String model) {
+        if (model == null) {
+            return;
+        }
+        final Select modelSelect = new Select(findElement(By.xpath(XpathSelector.MODEL_SELECT.getXpath())));
+        modelSelect.selectByVisibleText(model);
     }
 
     private void setCategory(final String category) {
@@ -114,6 +123,7 @@ public class ServiceCreatePage extends ComponentPage {
     @AllArgsConstructor
     private enum XpathSelector {
         NAME_INPUT("name", "//input[@data-tests-id='%s']"),
+        MODEL_SELECT("selectModelName", "//select[@data-tests-id='%s']"),
         CATEGORY_SELECT("selectGeneralCategory", "//select[@data-tests-id='%s']"),
         ETSI_VERSION_SELECT("ETSI Version", "//select[@data-tests-id='%s']"),
         DESCRIPTION_TEXT_AREA("description", "//textarea[@data-tests-id='%s']");

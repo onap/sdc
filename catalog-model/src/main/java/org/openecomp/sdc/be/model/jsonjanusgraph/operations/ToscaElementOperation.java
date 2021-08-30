@@ -1054,6 +1054,9 @@ public abstract class ToscaElementOperation extends BaseOperation {
         CategoryDefinition category = new CategoryDefinition();
         category.setUniqueId((String) categoryV.property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value());
         category.setNormalizedName(categoryNormalizedName);
+        category.setModels(categoryV.property(GraphPropertyEnum.MODEL.getProperty()).isPresent() ? getGson()
+            .fromJson((String) categoryV.property(GraphPropertyEnum.MODEL.getProperty()).value(), new TypeToken<List<String>>() {
+            }.getType()) : Collections.emptyList());
         category.setName((String) categoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
         category.setUseServiceSubstitutionForNestedServices(
             (Boolean) categoryV.property(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES.getProperty()).orElse(false));

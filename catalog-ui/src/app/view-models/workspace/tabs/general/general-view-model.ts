@@ -36,7 +36,7 @@ import {EventListenerService, ProgressService} from "app/services";
 import {CacheService, ElementService, ModelService, ImportVSPService, OnboardingService} from "app/services-ng2";
 import {Component, IAppConfigurtaion, ICsarComponent, IMainCategory, IMetadataKey, ISubCategory, IValidate, Resource, Service} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
-import {CATEGORY_SERVICE_METADATA_KEYS, PREVIOUS_CSAR_COMPONENT} from "../../../../utils/constants";
+import {CATEGORY_SERVICE_METADATA_KEYS, PREVIOUS_CSAR_COMPONENT, DEFAULT_MODEL_NAME} from "../../../../utils/constants";
 import {Observable} from "rxjs";
 import {Model} from "../../../../models/model";
 
@@ -93,9 +93,10 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     convertCategoryStringToOneArray(category:string, subcategory:string):Array<IMainCategory>;
     onCategoryChange():void;
     onEcompGeneratedNamingChange():void;
+    onModelChange():void;
     onBaseTypeChange():void;
     openOnBoardingModal():void;
-    initCategoreis():void;
+    initCategories():void;
     initEnvironmentContext():void;
     initInstantiationTypes():void;
     initBaseTypes():void;
@@ -252,7 +253,7 @@ export class GeneralViewModel {
         this.$scope.component.tags = _.without(this.$scope.component.tags, this.$scope.component.name);
 
         // Init categories
-        this.$scope.initCategoreis();
+        this.$scope.initCategories();
 
         // Init Environment Context
         this.$scope.initEnvironmentContext();
@@ -413,11 +414,11 @@ export class GeneralViewModel {
         });
 
         return tempCategories;
-    };    
-   
+    };
+
     private initScopeMethods = ():void => {
 
-        this.$scope.initCategoreis = ():void => {
+        this.$scope.initCategories = ():void => {
             if (this.$scope.componentType === ComponentType.RESOURCE) {
                 this.$scope.categories = this.cacheService.get('resourceCategories');
 
@@ -431,7 +432,7 @@ export class GeneralViewModel {
                     //Flag to disbale category if service is created through External API
                     this.$scope.isHiddenCategorySelected = this.isHiddenCategory(this.$scope.component.selectedCategory);
                 }
-                
+
             }
         };
 
@@ -469,8 +470,11 @@ export class GeneralViewModel {
         this.$scope.initModel = ():void => {
             this.$scope.isModelRequired = false;
             this.$scope.models = [];
-            this.$scope.defaultModelOption = 'SDC AID';
+            this.$scope.defaultModelOption = DEFAULT_MODEL_NAME;
             this.$scope.showDefaultModelOption = true;
+            if (this.$scope.componentType === ComponentType.SERVICE) {
+                this.filterCategoriesByModel(this.$scope.component.model);
+            }
             if (this.$scope.isCreateMode() && this.$scope.isVspImport()) {
                 if (this.$scope.component.componentMetadata.models) {
                     this.$scope.isModelRequired = true;
@@ -580,7 +584,7 @@ export class GeneralViewModel {
 
                 return;
             }
-	    
+
             let subtype:string = ComponentType.RESOURCE == this.$scope.componentType ? this.$scope.component.getComponentSubType() : undefined;
             if (subtype == "SRVC") {
                 subtype = "VF"
@@ -721,14 +725,9 @@ export class GeneralViewModel {
             if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component.categories[0]) {
 	            let modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
 	            this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
-		
-                    if(this.$scope.isCreateMode()){
-                        this.$scope.baseTypes = []
-                        this.$scope.baseTypeVersions = []
-                        data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
-                        data[0].versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-                        this.$scope.component.derivedFromGenericType = data[0].toscaResourceName;
-                        this.$scope.component.derivedFromGenericVersion = data[0].versions[0];
+
+                    if(this.$scope.isCreateMode() && this.$scope.categories){
+                        this.loadBaseTypes(data);
                     } else {
                         var isValidForBaseType:boolean = false;
                         data.forEach(baseType => {if (!this.$scope.component.derivedFromGenericType || baseType.toscaResourceName === this.$scope.component.derivedFromGenericType){
@@ -737,7 +736,7 @@ export class GeneralViewModel {
                         this.$scope.editForm['category'].$setValidity('validForBaseType', isValidForBaseType);
                     }
                 });
-            }   
+            }
         };
 
         this.$scope.onEcompGeneratedNamingChange = (): void => {
@@ -760,16 +759,10 @@ export class GeneralViewModel {
         };
 
         this.$scope.onModelChange = (): void => {
-            if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.component.categories) {
+            if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.categories) {
                 let modelName = this.$scope.component.model ? this.$scope.component.model : null;
-                this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
-                    this.$scope.baseTypes = []
-                    this.$scope.baseTypeVersions = []
-                    data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
-                    data[0].versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-                    this.$scope.component.derivedFromGenericType = data[0].toscaResourceName;
-                    this.$scope.component.derivedFromGenericVersion = data[0].versions[0];
-                });
+                this.filterCategoriesByModel(modelName);
+                this.filterBaseTypesByModelAndCategory(modelName)
             }
         };
 
@@ -791,7 +784,7 @@ export class GeneralViewModel {
             if (metadataKey) {
                 return metadataKey.validValues;
             }
-            return [];	
+            return [];
         }
 
         this.$scope.isMetadataKeyForComponentCategory = (key: string): boolean => {
@@ -809,6 +802,28 @@ export class GeneralViewModel {
             }
             return metadatakey != null;
          }
+    }
+
+    private filterCategoriesByModel(modelName:string) {
+        // reload categories
+        this.$scope.initCategories();
+        this.$scope.categories = this.$scope.categories.filter(category =>
+            !modelName ? category.models === null : category.models !== null && category.models.indexOf(modelName) !== -1);
+    }
+
+    private filterBaseTypesByModelAndCategory(modelName:string) {
+        this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
+            this.loadBaseTypes(data);
+        });
+    }
+
+    private loadBaseTypes(data:BaseTypeResponse[]) {
+        this.$scope.baseTypes = [];
+        this.$scope.baseTypeVersions = [];
+        data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
+        data[0].versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
+        this.$scope.component.derivedFromGenericType = data[0].toscaResourceName;
+        this.$scope.component.derivedFromGenericVersion = data[0].versions[0];
     }
 
     private setUnsavedChanges = (hasChanges: boolean): void => {
