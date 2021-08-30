@@ -48,6 +48,7 @@ public class CategoryData extends GraphNode {
         this(NodeTypeEnum.getByName((String) properties.get(GraphPropertiesDictionary.LABEL.getProperty())));
         categoryDataDefinition.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
         categoryDataDefinition.setNormalizedName((String) properties.get(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty()));
+        categoryDataDefinition.setModel((String) properties.get(GraphPropertiesDictionary.MODEL.getProperty()));
         categoryDataDefinition.setName((String) properties.get(GraphPropertiesDictionary.NAME.getProperty()));
         final Object useServiceSubstitutionForNestedServicesProperty = properties
             .get(GraphPropertiesDictionary.USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES.getProperty());
@@ -80,9 +81,7 @@ public class CategoryData extends GraphNode {
         addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, categoryDataDefinition.getUniqueId());
         addIfExists(map, GraphPropertiesDictionary.NAME, categoryDataDefinition.getName());
         addIfExists(map, GraphPropertiesDictionary.NORMALIZED_NAME, categoryDataDefinition.getNormalizedName());
-        // String icons=getGson().toJson(categoryDataDefinition.getIcons());
-
-        // addIfExists(map, GraphPropertiesDictionary.ICONS, icons);
+        addIfExists(map, GraphPropertiesDictionary.MODEL, categoryDataDefinition.getModel());
         addIfExists(map, GraphPropertiesDictionary.ICONS, categoryDataDefinition.getIcons());
         addIfExists(map, GraphPropertiesDictionary.USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES,
             categoryDataDefinition.isUseServiceSubstitutionForNestedServices());

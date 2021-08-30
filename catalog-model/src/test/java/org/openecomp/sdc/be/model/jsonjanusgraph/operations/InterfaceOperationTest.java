@@ -143,7 +143,7 @@ public class InterfaceOperationTest extends ModelTestBase {
     private void createResourceCategory() {
         GraphVertex cat = new GraphVertex(VertexTypeEnum.RESOURCE_CATEGORY);
         Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>();
-        String catId = UniqueIdBuilder.buildComponentCategoryUid(categoryName, VertexTypeEnum.RESOURCE_CATEGORY);
+        String catId = UniqueIdBuilder.buildComponentCategoryUid(categoryName, null, VertexTypeEnum.RESOURCE_CATEGORY);
         cat.setUniqueId(catId);
         metadataProperties.put(GraphPropertyEnum.UNIQUE_ID, catId);
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.RESOURCE_CATEGORY.getName());
@@ -174,7 +174,7 @@ public class InterfaceOperationTest extends ModelTestBase {
     private void createServiceCategory() {
         GraphVertex cat = new GraphVertex(VertexTypeEnum.SERVICE_CATEGORY);
         Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>();
-        String catId = UniqueIdBuilder.buildComponentCategoryUid(categoryName, VertexTypeEnum.SERVICE_CATEGORY);
+        String catId = UniqueIdBuilder.buildComponentCategoryUid(categoryName, null, VertexTypeEnum.SERVICE_CATEGORY);
         cat.setUniqueId(catId);
         metadataProperties.put(GraphPropertyEnum.UNIQUE_ID, catId);
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.SERVICE_CATEGORY.getName());

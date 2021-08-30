@@ -20,16 +20,33 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import fj.data.Either;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.apache.tinkerpop.gremlin.structure.io.IoCore;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
-import fj.data.Either;
-import org.apache.tinkerpop.gremlin.structure.io.IoCore;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -59,16 +76,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:application-context-test.xml")
@@ -297,13 +304,14 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
         GraphVertex cat = new GraphVertex(VertexTypeEnum.RESOURCE_CATEGORY);
         Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>();
-        String catId = UniqueIdBuilder.buildComponentCategoryUid(categoryName, VertexTypeEnum.RESOURCE_CATEGORY);
+        String catId = UniqueIdBuilder.buildComponentCategoryUid(categoryName, null, VertexTypeEnum.RESOURCE_CATEGORY);
         cat.setUniqueId(catId);
         metadataProperties.put(GraphPropertyEnum.UNIQUE_ID, catId);
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.RESOURCE_CATEGORY.getName());
         metadataProperties.put(GraphPropertyEnum.NAME, categoryName);
         metadataProperties.put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
         metadataProperties.put(GraphPropertyEnum.METADATA_KEYS, "[]");
+        metadataProperties.put(GraphPropertyEnum.MODEL, "[]");
         cat.setMetadataProperties(metadataProperties);
         cat.updateMetadataJsonWithCurrentMetadataProperties();
 
@@ -333,13 +341,14 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
 
         GraphVertex cat = new GraphVertex(VertexTypeEnum.SERVICE_CATEGORY);
         Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>();
-        String catId = UniqueIdBuilder.buildComponentCategoryUid(categoryName, VertexTypeEnum.SERVICE_CATEGORY);
+        String catId = UniqueIdBuilder.buildComponentCategoryUid(categoryName, null, VertexTypeEnum.SERVICE_CATEGORY);
         cat.setUniqueId(catId);
         metadataProperties.put(GraphPropertyEnum.UNIQUE_ID, catId);
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.SERVICE_CATEGORY.getName());
         metadataProperties.put(GraphPropertyEnum.NAME, categoryName);
         metadataProperties.put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
         metadataProperties.put(GraphPropertyEnum.METADATA_KEYS, "[]");
+        metadataProperties.put(GraphPropertyEnum.MODEL, "[]");
         cat.setMetadataProperties(metadataProperties);
         cat.updateMetadataJsonWithCurrentMetadataProperties();
 
