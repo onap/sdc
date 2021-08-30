@@ -46,6 +46,10 @@ public class ResourceGeneralPage extends GeneralPageElements {
         return GeneralUIUtils.getWebElementByTestID(DataTestIdEnum.ServiceMetadataEnum.DESCRIPTION.getValue());
     }
 
+    public static String getModelDataTestsIdAttribute() {
+        return DataTestIdEnum.ResourceMetadataEnum.MODEL.getValue();
+    }
+
     public static String getCategoryDataTestsIdAttribute() {
         return DataTestIdEnum.ResourceMetadataEnum.CATEGORY.getValue();
     }

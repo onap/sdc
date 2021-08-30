@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
+import static org.openecomp.sdc.common.api.Constants.DEFAULT_MODEL_NAME;
 
 import com.aventstack.extentreports.Status;
 import java.util.HashMap;
@@ -272,6 +273,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     private ServiceCreateData createServiceFormData() {
         final ServiceCreateData serviceCreateData = new ServiceCreateData();
         serviceCreateData.setRandomName("EtsiNfvNetworkService");
+        serviceCreateData.setModel(DEFAULT_MODEL_NAME);
         serviceCreateData.setCategory(ServiceCategoriesEnum.ETSI_NFV_NETWORK_SERVICE.getValue());
         serviceCreateData.setEtsiVersion("2.5.1");
         serviceCreateData.setDescription("aDescription");
