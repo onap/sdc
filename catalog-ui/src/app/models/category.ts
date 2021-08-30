@@ -27,6 +27,7 @@ export interface ICategoryBase {
     name:string;
     normalizedName:string;
     uniqueId:string;
+    models:Array<string>;
     icons:Array<string>;
     metadataKeys: IMetadataKey[];
 
