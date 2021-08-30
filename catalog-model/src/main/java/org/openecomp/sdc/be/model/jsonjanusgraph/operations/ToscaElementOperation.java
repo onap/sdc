@@ -441,7 +441,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         String subcategoryName = nodeType.getCategories().get(0).getSubcategories().get(0).getName();
         String categoryName = nodeType.getCategories().get(0).getName();
         Either<GraphVertex, StorageOperationStatus> getCategoryVertex = getResourceCategoryVertex(nodeType.getUniqueId(), subcategoryName,
-            categoryName);
+            categoryName, nodeType.getCategories().get(0).getModel());
         if (getCategoryVertex.isRight()) {
             return getCategoryVertex.right().value();
         }
@@ -478,8 +478,9 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return modelVertexByNameOptional.get();
     }
 
-    protected Either<GraphVertex, StorageOperationStatus> getResourceCategoryVertex(String elementId, String subcategoryName, String categoryName) {
-        Either<GraphVertex, StorageOperationStatus> category = categoryOperation.getCategory(categoryName, VertexTypeEnum.RESOURCE_CATEGORY);
+    protected Either<GraphVertex, StorageOperationStatus> getResourceCategoryVertex(String elementId, String subcategoryName, String categoryName,
+                                                                                    String categoryModel) {
+        Either<GraphVertex, StorageOperationStatus> category = categoryOperation.getCategory(categoryName, categoryModel, VertexTypeEnum.RESOURCE_CATEGORY);
         if (category.isRight()) {
             log.trace("Failed to fetch category {} for resource {} error {}", categoryName, elementId, category.right().value());
             return Either.right(category.right().value());
@@ -1032,6 +1033,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         CategoryDefinition category = new CategoryDefinition();
         category.setUniqueId((String) categoryV.property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value());
         category.setNormalizedName(categoryNormalizedName);
+        category.setModel((String) categoryV.property(GraphPropertyEnum.MODEL.getProperty()).value());
         category.setName((String) categoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
         category.addSubCategory(subcategory);
         categories.add(category);
@@ -1054,6 +1056,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         CategoryDefinition category = new CategoryDefinition();
         category.setUniqueId((String) categoryV.property(GraphPropertyEnum.UNIQUE_ID.getProperty()).value());
         category.setNormalizedName(categoryNormalizedName);
+        category.setModel((String) categoryV.property(GraphPropertyEnum.MODEL.getProperty()).value());
         category.setName((String) categoryV.property(GraphPropertyEnum.NAME.getProperty()).value());
         category.setUseServiceSubstitutionForNestedServices(
             (Boolean) categoryV.property(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES.getProperty()).orElse(false));
@@ -1103,6 +1106,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         CategoryDefinition category = new CategoryDefinition();
         category.setUniqueId(categoryV.getUniqueId());
         category.setNormalizedName((String) metadataProperties.get(GraphPropertyEnum.NORMALIZED_NAME));
+        category.setModel((String) metadataProperties.get(GraphPropertyEnum.MODEL));
         category.setName((String) metadataProperties.get(GraphPropertyEnum.NAME));
         Type listTypeCat = new TypeToken<List<String>>() {
         }.getType();
@@ -1267,7 +1271,7 @@ public abstract class ToscaElementOperation extends BaseOperation {
         }
         if (categoryWasChanged) {
             Either<GraphVertex, StorageOperationStatus> getCategoryVertex = getResourceCategoryVertex(elementV.getUniqueId(), newSubCategoryName,
-                newCategoryName);
+                newCategoryName, newCategory.getModel());
             if (getCategoryVertex.isRight()) {
                 return getCategoryVertex.right().value();
             }

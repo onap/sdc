@@ -607,9 +607,11 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
 
     private StorageOperationStatus associateServiceMetadataToCategory(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate) {
         String categoryName = topologyTemplate.getCategories().get(0).getName();
-        Either<GraphVertex, StorageOperationStatus> category = categoryOperation.getCategory(categoryName, VertexTypeEnum.SERVICE_CATEGORY);
+        String categoryModel = topologyTemplate.getCategories().get(0).getModel();
+        Either<GraphVertex, StorageOperationStatus> category = categoryOperation.getCategory(categoryName, categoryModel,
+            VertexTypeEnum.SERVICE_CATEGORY);
         if (category.isRight()) {
-            log.trace("NO category {} for service {}", categoryName, topologyTemplate.getUniqueId());
+            log.trace("NO category {} with model {} for service {}", categoryName, categoryModel, topologyTemplate.getUniqueId());
             return StorageOperationStatus.CATEGORY_NOT_FOUND;
         }
         GraphVertex categoryV = category.left().value();
@@ -1165,6 +1167,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         CategoryDefinition category = new CategoryDefinition();
         category.setUniqueId(categoryV.getUniqueId());
         category.setNormalizedName((String) metadataProperties.get(GraphPropertyEnum.NORMALIZED_NAME));
+        category.setModel((String) metadataProperties.get(GraphPropertyEnum.MODEL));
         category.setName((String) metadataProperties.get(GraphPropertyEnum.NAME));
         final Boolean useServiceSubstitutionForNestedServices = (Boolean) metadataProperties
             .get(GraphPropertyEnum.USE_SUBSTITUTION_FOR_NESTED_SERVICES);
@@ -1371,7 +1374,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (newCategoryName != null && !newCategoryName.equals(categoryNameCurrent)) {
             // the category was changed
             Either<GraphVertex, StorageOperationStatus> getCategoryVertex = categoryOperation
-                .getCategory(newCategoryName, VertexTypeEnum.SERVICE_CATEGORY);
+                .getCategory(newCategoryName, newCategory.getModel(), VertexTypeEnum.SERVICE_CATEGORY);
             if (getCategoryVertex.isRight()) {
                 return getCategoryVertex.right().value();
             }

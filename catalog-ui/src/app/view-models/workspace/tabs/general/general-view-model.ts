@@ -36,7 +36,7 @@ import {EventListenerService, ProgressService} from "app/services";
 import {CacheService, ElementService, ModelService, ImportVSPService, OnboardingService} from "app/services-ng2";
 import {Component, IAppConfigurtaion, ICsarComponent, IMainCategory, IMetadataKey, ISubCategory, IValidate, Resource, Service} from "app/models";
 import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view-model";
-import {CATEGORY_SERVICE_METADATA_KEYS, PREVIOUS_CSAR_COMPONENT} from "../../../../utils/constants";
+import {CATEGORY_SERVICE_METADATA_KEYS, PREVIOUS_CSAR_COMPONENT, DEFAULT_MODEL_NAME} from "../../../../utils/constants";
 import {Observable} from "rxjs";
 import {Model} from "../../../../models/model";
 
@@ -93,9 +93,10 @@ export interface IGeneralScope extends IWorkspaceViewModelScope {
     convertCategoryStringToOneArray(category:string, subcategory:string):Array<IMainCategory>;
     onCategoryChange():void;
     onEcompGeneratedNamingChange():void;
+    onModelChange():void;
     onBaseTypeChange():void;
     openOnBoardingModal():void;
-    initCategoreis():void;
+    initCategories():void;
     initEnvironmentContext():void;
     initInstantiationTypes():void;
     initBaseTypes():void;
@@ -252,7 +253,7 @@ export class GeneralViewModel {
         this.$scope.component.tags = _.without(this.$scope.component.tags, this.$scope.component.name);
 
         // Init categories
-        this.$scope.initCategoreis();
+        this.$scope.initCategories();
 
         // Init Environment Context
         this.$scope.initEnvironmentContext();
@@ -417,7 +418,7 @@ export class GeneralViewModel {
    
     private initScopeMethods = ():void => {
 
-        this.$scope.initCategoreis = ():void => {
+        this.$scope.initCategories = ():void => {
             if (this.$scope.componentType === ComponentType.RESOURCE) {
                 this.$scope.categories = this.cacheService.get('resourceCategories');
 
@@ -468,7 +469,8 @@ export class GeneralViewModel {
 
         this.$scope.initModel = ():void => {
             this.$scope.isModelRequired = false;
-            this.$scope.models = [{id: '', name: 'SDC AID'}];
+            this.$scope.models = [{id: '', name: DEFAULT_MODEL_NAME}];
+            this.filterCategoriesByModel(this.$scope.component.model);
             if (this.$scope.isCreateMode() && this.$scope.isVspImport()) {
                 if (this.$scope.component.componentMetadata.models) {
                     this.$scope.isModelRequired = true;
@@ -768,16 +770,11 @@ export class GeneralViewModel {
         };
 
         this.$scope.onModelChange = (): void => {
-            if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.component.categories) {
+            if (this.$scope.componentType === ComponentType.SERVICE || this.$scope.componentType === ComponentType.RESOURCE
+                && this.$scope.component && this.$scope.categories) {
+                this.$scope.baseTypes = [];
                 let modelName = this.$scope.component.model ? this.$scope.component.model : null;
-                this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
-                    this.$scope.baseTypes = []
-                    this.$scope.baseTypeVersions = []
-                    data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
-                    data[0].versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-                    this.$scope.component.derivedFromGenericType = data[0].toscaResourceName;
-                    this.$scope.component.derivedFromGenericVersion = data[0].versions[0];
-                });
+                this.filterCategoriesByModel(modelName);
             }
         };
 
@@ -817,6 +814,13 @@ export class GeneralViewModel {
             }
             return metadatakey != null;
          }
+    }
+
+    private filterCategoriesByModel(modelName:string) {
+        // reload categories
+        this.$scope.initCategories();
+        this.$scope.categories = this.$scope.categories.filter(category =>
+            category.model === (modelName === DEFAULT_MODEL_NAME || modelName === undefined ? null : modelName));
     }
 
     private setUnsavedChanges = (hasChanges: boolean): void => {
