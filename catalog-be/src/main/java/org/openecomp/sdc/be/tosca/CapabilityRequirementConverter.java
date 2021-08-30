@@ -322,7 +322,7 @@ public class CapabilityRequirementConverter {
                 (StringUtils.isEmpty(r.getExternalName()) ?
                     addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getName(), r.getParentName(), ""),
                         r.getPreviousName(), r.getOwnerId(), r.getPath()): 
-                    addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getExternalName(), r.getName(), ""),
+                    addEntry(componentsCache, toscaRequirements, component, new SubstitutionEntry(r.getExternalName(), r.getPreviousName() == null ? r.getName(): r.getPreviousName(), ""),
                         r.getPreviousName(), r.getOwnerId(), r.getPath(), false))
                     ).findAny();
     }
@@ -667,7 +667,15 @@ public class CapabilityRequirementConverter {
      * @return
      */
     public Either<String, Boolean> buildSubstitutedName(Map<String, Component> componentsCache, Component originComponent, List<String> path,
-                                                        String name, String previousName) {
+                    String name, String previousName) {
+        return buildSubstitutedName(componentsCache, originComponent, path, name, previousName, null);
+    }
+    
+    public Either<String, Boolean> buildSubstitutedName(Map<String, Component> componentsCache, Component originComponent, List<String> path,
+                                                        String name, String previousName, String externalName) {
+        if (StringUtils.isNotEmpty(externalName)) {
+            return Either.left(externalName);
+        }
         if (StringUtils.isNotEmpty(previousName)) {
             return Either.left(name);
         }

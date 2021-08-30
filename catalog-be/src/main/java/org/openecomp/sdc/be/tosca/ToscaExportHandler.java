@@ -1379,7 +1379,7 @@ public class ToscaExportHandler {
         }
         final RelationshipInfo relationshipInfo = capabilityRequirementRelationship.getRelation();
         final Either<String, Boolean> capabilityNameEither = capabilityRequirementConverter.buildSubstitutedName(componentCache,
-            toOriginComponent, reducedPath, relationshipInfo.getCapability(), capability.getPreviousName());
+            toOriginComponent, reducedPath, relationshipInfo.getCapability(), capability.getPreviousName(), capability.getExternalName());
         if (capabilityNameEither.isRight()) {
             final String errorMsg = String.format(
                 "Failed to build a substituted capability name for the capability with name %s on a component with uniqueId %s",
@@ -1390,7 +1390,7 @@ public class ToscaExportHandler {
         }
         final Either<String, Boolean> requirementNameEither = capabilityRequirementConverter
             .buildSubstitutedName(componentCache, fromOriginComponent,
-                requirement.getPath(), relationshipInfo.getRequirement(), requirement.getPreviousName());
+                requirement.getPath(), relationshipInfo.getRequirement(), requirement.getPreviousName(), requirement.getExternalName());
         if (requirementNameEither.isRight()) {
             final String errorMsg = String.format("Failed to build a substituted requirement name for the requirement "
                     + "with name %s on a component with uniqueId %s",
