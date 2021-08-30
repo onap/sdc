@@ -34,6 +34,7 @@ public class ServiceCreateData {
     private String description;
     private String contactId;
     private Boolean hasGeneratedNaming;
+    private String model;
     private String namingPolicy;
     private String serviceType;
     private String serviceRole;
