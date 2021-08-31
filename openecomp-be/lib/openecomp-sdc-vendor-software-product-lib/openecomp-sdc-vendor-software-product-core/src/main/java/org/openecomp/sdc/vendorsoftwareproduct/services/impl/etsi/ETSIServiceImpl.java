@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,8 +190,8 @@ public class ETSIServiceImpl implements ETSIService {
         try {
             Map<String, String> metadata = getManifest(handler).getMetadata();
             if (metadata.containsKey(COMPATIBLE_SPECIFICATION_VERSIONS.getToken())) {
-                return Arrays.asList(metadata.get(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()).split(",")).stream().map(Semver::new)
-                    .max((v1, v2) -> v1.compareTo(v2)).orElse(new Semver(ETSI_VERSION_2_6_1));
+                return Arrays.stream(metadata.get(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()).split(",")).map(String::trim).map(Semver::new)
+                    .max(Comparator.naturalOrder()).orElse(new Semver(ETSI_VERSION_2_6_1));
             }
         } catch (Exception ex) {
             LOGGER.error("An error occurred while getting highest compatible version from manifest file", ex);
