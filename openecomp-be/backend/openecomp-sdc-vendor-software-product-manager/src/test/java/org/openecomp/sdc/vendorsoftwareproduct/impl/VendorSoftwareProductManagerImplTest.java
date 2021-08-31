@@ -21,8 +21,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -44,10 +47,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -92,65 +94,65 @@ import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.VersionInfo;
 import org.openecomp.sdc.versioning.types.VersionableEntityAction;
 
-public class VendorSoftwareProductManagerImplTest {
+class VendorSoftwareProductManagerImplTest {
 
-  private static final String VSP_ID = "vspId";
-  private static final Version VERSION01 = new Version("0, 1");
-  private static final Version VERSION10 = new Version("1, 0");
-  private static final String USER1 = "vspTestUser1";
-  private static final String USER2 = "vspTestUser2";
+    private static final String VSP_ID = "vspId";
+    private static final Version VERSION01 = new Version("0, 1");
+    private static final Version VERSION10 = new Version("1, 0");
+    private static final String USER1 = "vspTestUser1";
+    private static final String USER2 = "vspTestUser2";
 
-  @Mock
-  private ActionVersioningManager versioningManagerMock;
-  @Mock
-  private OrchestrationTemplateDao orchestrationTemplateDataDaoMock;
-  @Mock
-  private VendorLicenseFacade vendorLicenseFacadeMock;
-  @Mock
-  private ServiceModelDao<ToscaServiceModel> serviceModelDaoMock;
-  @Mock
-  private EnrichedServiceModelDao<ToscaServiceModel> enrichedServiceModelDaoMock;
-  @Mock
-  private HealingManager healingManagerMock;
-  @Mock
-  private VendorLicenseArtifactsService licenseArtifactsServiceMock;
-  @Mock
-  private CompositionEntityDataManager compositionEntityDataManagerMock;
-  @Mock
-  private InformationArtifactGenerator informationArtifactGeneratorMock;
-  @Mock
-  private PackageInfoDao packageInfoDao;
-  @Mock
-  private VendorSoftwareProductInfoDao vspInfoDaoMock;
-  @Mock
-  private ManualVspToscaManager manualVspToscaManager;
-  @Mock
-  private DeploymentFlavorDao deploymentFlavorDaoMock;
-  @Spy
-  @InjectMocks
-  private VendorSoftwareProductManagerImpl vendorSoftwareProductManager;
-  @Mock
-  private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManagerMock;
-  @Mock
-  private ComponentDependencyModelDao componentDependencyModelDao;
-  private OrchestrationTemplateCandidateManager candidateManager;
-  private MonitoringUploadsManager monitoringUploadsManager;
+    @Mock
+    private ActionVersioningManager versioningManagerMock;
+    @Mock
+    private OrchestrationTemplateDao orchestrationTemplateDataDaoMock;
+    @Mock
+    private VendorLicenseFacade vendorLicenseFacadeMock;
+    @Mock
+    private ServiceModelDao<ToscaServiceModel> serviceModelDaoMock;
+    @Mock
+    private EnrichedServiceModelDao<ToscaServiceModel> enrichedServiceModelDaoMock;
+    @Mock
+    private HealingManager healingManagerMock;
+    @Mock
+    private VendorLicenseArtifactsService licenseArtifactsServiceMock;
+    @Mock
+    private CompositionEntityDataManager compositionEntityDataManagerMock;
+    @Mock
+    private InformationArtifactGenerator informationArtifactGeneratorMock;
+    @Mock
+    private PackageInfoDao packageInfoDao;
+    @Mock
+    private VendorSoftwareProductInfoDao vspInfoDaoMock;
+    @Mock
+    private ManualVspToscaManager manualVspToscaManager;
+    @Mock
+    private DeploymentFlavorDao deploymentFlavorDaoMock;
+    @Spy
+    @InjectMocks
+    private VendorSoftwareProductManagerImpl vendorSoftwareProductManager;
+    @Mock
+    private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManagerMock;
+    @Mock
+    private ComponentDependencyModelDao componentDependencyModelDao;
+    private OrchestrationTemplateCandidateManager candidateManager;
+    private MonitoringUploadsManager monitoringUploadsManager;
 
-  @Captor
-  private ArgumentCaptor<ActivityLogEntity> activityLogEntityArg;
+    @Captor
+    private ArgumentCaptor<ActivityLogEntity> activityLogEntityArg;
 
-  @Before
-  public void setUp() {
-    MockitoAnnotations.initMocks(this);
-  }
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-  @After
-  public void tearDown() {
-    vendorSoftwareProductManager = null;
-  }
+    @AfterEach
+    void tearDown() {
+        vendorSoftwareProductManager = null;
+    }
 
     @Test
-    public void testCreatePackageEtsiVNF() throws IOException {
+    void testCreatePackageEtsiVNF() throws IOException {
         try (
             final InputStream metadataInput = getClass()
                 .getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
@@ -178,29 +180,27 @@ public class VendorSoftwareProductManagerImplTest {
         }
     }
 
-  @Test(expected = IOException.class)
-  public void testCreatePackageEtsiNoManifest() throws IOException {
-    try(InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta"))
-    {
-      FileContentHandler handler = new FileContentHandler();
-      handler.addFile(TOSCA_META_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
-      ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
-      when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata );
-      VspDetails vsp =
-              createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
-                      "category", "subCategory", "123", null);
-      //want to avoid triggering populateVersionsForVlm method
-      vsp.setVlmVersion(null);
+    @Test
+    void testCreatePackageEtsiNoManifest() throws IOException {
+        try (InputStream metadataInput = getClass().getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta")) {
+            FileContentHandler handler = new FileContentHandler();
+            handler.addFile(TOSCA_META_PATH_FILE_NAME, IOUtils.toByteArray(metadataInput));
+            ToscaServiceModel toscaMetadata = new ToscaServiceModel(handler, new HashMap<>(), "");
+            when(enrichedServiceModelDaoMock.getServiceModel(any(), any())).thenReturn(toscaMetadata);
+            VspDetails vsp =
+                createVspDetails("0", new Version(), "Vsp_PNF", "Test-vsp-pnf", "vendorName", "esy", "icon",
+                    "category", "subCategory", "123", null);
+            //want to avoid triggering populateVersionsForVlm method
+            vsp.setVlmVersion(null);
 
-      when(vspInfoDaoMock.get(any())).thenReturn(vsp);
-      when(licenseArtifactsServiceMock.createLicenseArtifacts(any(),any(), any(), any())).thenReturn(new FileContentHandler());
-      vendorSoftwareProductManager.createPackage("0", new Version());
-      fail();
+            when(vspInfoDaoMock.get(any())).thenReturn(vsp);
+            when(licenseArtifactsServiceMock.createLicenseArtifacts(any(), any(), any(), any())).thenReturn(new FileContentHandler());
+            assertThrows(IOException.class, () -> vendorSoftwareProductManager.createPackage("0", new Version()));
+        }
     }
-  }
 
     @Test
-    public void testCreatePackageEtsiPnfWithoutNonMano() throws IOException {
+    void testCreatePackageEtsiPnfWithoutNonMano() throws IOException {
         try (
             final InputStream metadataInput = getClass()
                 .getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
@@ -229,7 +229,7 @@ public class VendorSoftwareProductManagerImplTest {
     }
 
     @Test
-    public void testCreatePackageEtsiPnfWithNonManoArtifacts() throws IOException {
+    void testCreatePackageEtsiPnfWithNonManoArtifacts() throws IOException {
         try (
             final InputStream metadataInput = getClass()
                 .getResourceAsStream("/vspmanager.csar/metadata/ValidETSItosca.meta");
@@ -279,278 +279,278 @@ public class VendorSoftwareProductManagerImplTest {
         }
     }
 
-  @Test
-  public void testCreate() {
-    doReturn("{}")
-        .when(vendorSoftwareProductManager).getVspQuestionnaireSchema(nullable(SchemaTemplateInput.class));
+    @Test
+    void testCreate() {
+        doReturn("{}")
+            .when(vendorSoftwareProductManager).getVspQuestionnaireSchema(nullable(SchemaTemplateInput.class));
 
-    VspDetails vspToCreate =
-        createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "123", null);
+        VspDetails vspToCreate =
+            createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+                "category", "subCategory", "123", null);
 
-    VspDetails vsp = vendorSoftwareProductManager.createVsp(vspToCreate);
+        VspDetails vsp = vendorSoftwareProductManager.createVsp(vspToCreate);
 
-    Assert.assertNotNull(vsp);
-    vspToCreate.setId(vsp.getId());
-    vspToCreate.setVersion(VERSION01);
-    assertVspsEquals(vsp, vspToCreate);
-  }
+        assertNotNull(vsp);
+        vspToCreate.setId(vsp.getId());
+        vspToCreate.setVersion(VERSION01);
+        assertVspsEquals(vsp, vspToCreate);
+    }
 
-  @Test(expected = CoreException.class)
-  public void testUpdateWithExistingName_negative() {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Write);
+    @Test
+    void testUpdateWithExistingName_negative() {
+        VersionInfo versionInfo = new VersionInfo();
+        versionInfo.setActiveVersion(VERSION01);
+        doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Write);
 
-    VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-existingVsp", "vendorName", "vlm1Id",
-            "icon", "category", "subCategory", "123", null);
-    VspDetails updatedVsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1_updated", "Test-existingVsp", "vendorName",
-            "vlm1Id", "icon", "category", "subCategory", "123", null);
-    doReturn(existingVsp).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
-    doThrow(new CoreException(
-        new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).build()))
-        .when(vendorSoftwareProductManager)
-        .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
+        VspDetails existingVsp =
+            createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-existingVsp", "vendorName", "vlm1Id",
+                "icon", "category", "subCategory", "123", null);
+        VspDetails updatedVsp =
+            createVspDetails(VSP_ID, VERSION01, "Vsp1_updated", "Test-existingVsp", "vendorName",
+                "vlm1Id", "icon", "category", "subCategory", "123", null);
+        doReturn(existingVsp).when(vspInfoDaoMock)
+            .get(any(VspDetails.class));
+        doThrow(new CoreException(
+            new ErrorCode.ErrorCodeBuilder().withCategory(ErrorCategory.APPLICATION).build()))
+            .when(vendorSoftwareProductManager)
+            .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
 
-    vendorSoftwareProductManager.updateVsp(updatedVsp);
-  }
+        assertThrows(CoreException.class, () -> vendorSoftwareProductManager.updateVsp(updatedVsp));
+    }
 
-  @Test
-  public void testUpdate() {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Write);
-    VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
-            "category",
-            "subCategory", "456", null);
-    VspDetails updatedVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
-            "category_updated",
-            "subCategory", "456", null);
-    doReturn(existingVsp).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
-    doNothing().when(vendorSoftwareProductManager)
-        .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
+    @Test
+    void testUpdate() {
+        VersionInfo versionInfo = new VersionInfo();
+        versionInfo.setActiveVersion(VERSION01);
+        doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Write);
+        VspDetails existingVsp =
+            createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+                "category",
+                "subCategory", "456", null);
+        VspDetails updatedVsp =
+            createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
+                "category_updated",
+                "subCategory", "456", null);
+        doReturn(existingVsp).when(vspInfoDaoMock)
+            .get(any(VspDetails.class));
+        doNothing().when(vendorSoftwareProductManager)
+            .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
 
-    vendorSoftwareProductManager.updateVsp(updatedVsp);
+        vendorSoftwareProductManager.updateVsp(updatedVsp);
 
-    verify(vspInfoDaoMock).update(updatedVsp);
-  }
+        verify(vspInfoDaoMock).update(updatedVsp);
+    }
 
-  @Test
-  public void testUpdateRemoveFG() {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Write);
-    List<String> fgs = new ArrayList<>();
-    fgs.add("fg1");
-    fgs.add("fg2");
-    VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
-            "category",
-            "subCategory", "456", fgs);
+    @Test
+    void testUpdateRemoveFG() {
+        VersionInfo versionInfo = new VersionInfo();
+        versionInfo.setActiveVersion(VERSION01);
+        doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Write);
+        List<String> fgs = new ArrayList<>();
+        fgs.add("fg1");
+        fgs.add("fg2");
+        VspDetails existingVsp =
+            createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+                "category",
+                "subCategory", "456", fgs);
 
-    List<String> updFgs = new ArrayList<>();
-    VspDetails updatedVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
-            "category_updated",
-            "subCategory", "456", updFgs);
-    doReturn(existingVsp).when(vspInfoDaoMock)
-        .get(any(VspDetails.class));
-    doNothing().when(vendorSoftwareProductManager)
-        .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
+        List<String> updFgs = new ArrayList<>();
+        VspDetails updatedVsp =
+            createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
+                "category_updated",
+                "subCategory", "456", updFgs);
+        doReturn(existingVsp).when(vspInfoDaoMock)
+            .get(any(VspDetails.class));
+        doNothing().when(vendorSoftwareProductManager)
+            .updateUniqueName(existingVsp.getName(), updatedVsp.getName());
 
-    DeploymentFlavorEntity dfEntity = new DeploymentFlavorEntity(VSP_ID, VERSION01, "DF_ID");
-    DeploymentFlavor flavor = new DeploymentFlavor();
-    flavor.setFeatureGroupId("fg1");
-    dfEntity.setDeploymentFlavorCompositionData(flavor);
+        DeploymentFlavorEntity dfEntity = new DeploymentFlavorEntity(VSP_ID, VERSION01, "DF_ID");
+        DeploymentFlavor flavor = new DeploymentFlavor();
+        flavor.setFeatureGroupId("fg1");
+        dfEntity.setDeploymentFlavorCompositionData(flavor);
 
-    List<DeploymentFlavorEntity> dfList = new ArrayList<>();
-    dfList.add(dfEntity);
+        List<DeploymentFlavorEntity> dfList = new ArrayList<>();
+        dfList.add(dfEntity);
 
-    doReturn(dfList).when(deploymentFlavorDaoMock).list(any(DeploymentFlavorEntity.class));
+        doReturn(dfList).when(deploymentFlavorDaoMock).list(any(DeploymentFlavorEntity.class));
 
-    vendorSoftwareProductManager.updateVsp(updatedVsp);
+        vendorSoftwareProductManager.updateVsp(updatedVsp);
 
-    verify(deploymentFlavorDaoMock).update(dfEntity);
+        verify(deploymentFlavorDaoMock).update(dfEntity);
 
-    Assert.assertNull(dfEntity.getDeploymentFlavorCompositionData().getFeatureGroupId());
+        assertNull(dfEntity.getDeploymentFlavorCompositionData().getFeatureGroupId());
 
-  }
+    }
 
-  @Test(expected = CoreException.class)
-  public void testGetNonExistingVersion_negative() {
-    Version notExistversion = new Version("43, 8");
-    doReturn(null).when(vspInfoDaoMock).get(any(VspDetails.class));
-    vendorSoftwareProductManager.getVsp(VSP_ID, notExistversion);
-  }
+    @Test
+    void testGetNonExistingVersion_negative() {
+        var notExistVersion = new Version("43, 8");
+        doReturn(null).when(vspInfoDaoMock).get(any(VspDetails.class));
+        assertThrows(CoreException.class, () -> vendorSoftwareProductManager.getVsp(VSP_ID, notExistVersion));
+    }
 
-  @Test
-  public void testGetCheckedOutVersion() {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION01);
-    versionInfo.setStatus(VersionStatus.Locked);
-    versionInfo.setLockingUser(USER1);
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Read);
+    @Test
+    void testGetCheckedOutVersion() {
+        VersionInfo versionInfo = new VersionInfo();
+        versionInfo.setActiveVersion(VERSION01);
+        versionInfo.setStatus(VersionStatus.Locked);
+        versionInfo.setLockingUser(USER1);
+        doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Read);
 
-    VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
-            "category",
-            "subCategory", "456", null);
-    doReturn(existingVsp).when(vspInfoDaoMock).get(any(VspDetails.class));
+        VspDetails existingVsp =
+            createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+                "category",
+                "subCategory", "456", null);
+        doReturn(existingVsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
-    VspDetails actualVsp =
-        vendorSoftwareProductManager.getVsp(VSP_ID, VERSION01);
+        VspDetails actualVsp =
+            vendorSoftwareProductManager.getVsp(VSP_ID, VERSION01);
 
-    assertVspsEquals(actualVsp, existingVsp);
-  }
+        assertVspsEquals(actualVsp, existingVsp);
+    }
 
-  @Test
-  public void testGetOldVersion() {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(new Version("0, 2"));
-    versionInfo.setViewableVersions(Arrays.asList(VERSION01, new Version("0, 2")));
-    versionInfo.setStatus(VersionStatus.Locked);
-    versionInfo.setLockingUser(USER2);
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Read);
+    @Test
+    void testGetOldVersion() {
+        VersionInfo versionInfo = new VersionInfo();
+        versionInfo.setActiveVersion(new Version("0, 2"));
+        versionInfo.setViewableVersions(Arrays.asList(VERSION01, new Version("0, 2")));
+        versionInfo.setStatus(VersionStatus.Locked);
+        versionInfo.setLockingUser(USER2);
+        doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Read);
 
-    VspDetails existingVsp =
-        createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
-            "category",
-            "subCategory", "456", null);
-    doReturn(existingVsp)
-        .when(vspInfoDaoMock).get(any(VspDetails.class));
+        VspDetails existingVsp =
+            createVspDetails(VSP_ID, VERSION01, "VSP1", null, "vendorName", "vlm1Id", "icon",
+                "category",
+                "subCategory", "456", null);
+        doReturn(existingVsp)
+            .when(vspInfoDaoMock).get(any(VspDetails.class));
 
-    VspDetails actualVsp =
-        vendorSoftwareProductManager.getVsp(VSP_ID, VERSION01);
+        VspDetails actualVsp =
+            vendorSoftwareProductManager.getVsp(VSP_ID, VERSION01);
 
-    VspDetails expectedVsp =
-        vspInfoDaoMock
-            .get(new VspDetails(VSP_ID, VERSION01));
-    assertVspsEquals(actualVsp, expectedVsp);
-  }
+        VspDetails expectedVsp =
+            vspInfoDaoMock
+                .get(new VspDetails(VSP_ID, VERSION01));
+        assertVspsEquals(actualVsp, expectedVsp);
+    }
 
-  @Test
-  public void testCreatePackage() throws IOException {
-    VersionInfo versionInfo = new VersionInfo();
-    versionInfo.setActiveVersion(VERSION10);
-    doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
-        VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
-        VersionableEntityAction.Read);
+    @Test
+    void testCreatePackage() throws IOException {
+        VersionInfo versionInfo = new VersionInfo();
+        versionInfo.setActiveVersion(VERSION10);
+        doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
+            VendorSoftwareProductConstants.VENDOR_SOFTWARE_PRODUCT_VERSIONABLE_TYPE, VSP_ID, USER1,
+            VersionableEntityAction.Read);
 
-    doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(), "")).when
-        (enrichedServiceModelDaoMock).getServiceModel(VSP_ID, VERSION10);
-    doNothing().when(vendorSoftwareProductManager).populateVersionsForVlm(anyString(), any(Version.class));
-    VspDetails vsp = new VspDetails(VSP_ID, VERSION10);
-    vsp.setVendorId("vendorId");
-    vsp.setVlmVersion(VERSION10);
-    vsp.setFeatureGroups(Arrays.asList("fg1", "fg2"));
-    vsp.setModelIdList(List.of("aModel"));
-    doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
+        doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(), "")).when
+            (enrichedServiceModelDaoMock).getServiceModel(VSP_ID, VERSION10);
+        doNothing().when(vendorSoftwareProductManager).populateVersionsForVlm(anyString(), any(Version.class));
+        VspDetails vsp = new VspDetails(VSP_ID, VERSION10);
+        vsp.setVendorId("vendorId");
+        vsp.setVlmVersion(VERSION10);
+        vsp.setFeatureGroups(Arrays.asList("fg1", "fg2"));
+        vsp.setModelIdList(List.of("aModel"));
+        doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
-    doReturn(new FileContentHandler()).when(licenseArtifactsServiceMock)
-        .createLicenseArtifacts(VSP_ID, vsp.getVendorId(), VERSION10, vsp.getFeatureGroups()
-        );
+        doReturn(new FileContentHandler()).when(licenseArtifactsServiceMock)
+            .createLicenseArtifacts(VSP_ID, vsp.getVendorId(), VERSION10, vsp.getFeatureGroups()
+            );
 
-    PackageInfo packageInfo = vendorSoftwareProductManager.createPackage(VSP_ID, VERSION10);
-    Assert.assertNotNull(packageInfo.getVspId());
-    assertEquals("1.0", packageInfo.getVendorRelease());
-  }
+        PackageInfo packageInfo = vendorSoftwareProductManager.createPackage(VSP_ID, VERSION10);
+        assertNotNull(packageInfo.getVspId());
+        assertEquals("1.0", packageInfo.getVendorRelease());
+    }
 
-  @Test
-  public void testValidateWithCandidateDataNotProcessed() throws IOException {
-    VspDetails vsp =
-        createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
-            "category", "subCategory", "licenseAgreementId",
-            Collections.singletonList("featureGroupId"));
-    vsp.setOnboardingMethod("NetworkPackage");
-    doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
+    @Test
+    void testValidateWithCandidateDataNotProcessed() throws IOException {
+        VspDetails vsp =
+            createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
+                "category", "subCategory", "licenseAgreementId",
+                Collections.singletonList("featureGroupId"));
+        vsp.setOnboardingMethod("NetworkPackage");
+        doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
-    OrchestrationTemplateCandidateData orchestrationTemplateCandidateData = new
-        OrchestrationTemplateCandidateData();
-    orchestrationTemplateCandidateData.setFileSuffix("zip");
-    orchestrationTemplateCandidateData.setFilesDataStructure("testdata");
-    orchestrationTemplateCandidateData.setValidationData("");
-    doReturn(Optional.of(orchestrationTemplateCandidateData))
-        .when(orchestrationTemplateCandidateManagerMock)
-        .getInfo(VSP_ID, VERSION01);
-    ValidationResponse validationResponse =
-        vendorSoftwareProductManager.validate(vsp);
-    Assert.assertNotNull(validationResponse);
-    Assert.assertFalse(validationResponse.isValid());
-    Assert.assertNotNull(validationResponse.getVspErrors());
-    Assert.assertEquals(1, validationResponse.getVspErrors().size());
+        OrchestrationTemplateCandidateData orchestrationTemplateCandidateData = new
+            OrchestrationTemplateCandidateData();
+        orchestrationTemplateCandidateData.setFileSuffix("zip");
+        orchestrationTemplateCandidateData.setFilesDataStructure("testdata");
+        orchestrationTemplateCandidateData.setValidationData("");
+        doReturn(Optional.of(orchestrationTemplateCandidateData))
+            .when(orchestrationTemplateCandidateManagerMock)
+            .getInfo(VSP_ID, VERSION01);
+        ValidationResponse validationResponse =
+            vendorSoftwareProductManager.validate(vsp);
+        assertNotNull(validationResponse);
+        assertFalse(validationResponse.isValid());
+        assertNotNull(validationResponse.getVspErrors());
+        assertEquals(1, validationResponse.getVspErrors().size());
 
-  }
+    }
 
-  @Test
-  public void testValidateWithCandidateProcessedIsInvalid() throws IOException {
-    VspDetails vsp = createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-VSP", "vendorName",
-        "vl1Id", "icond", "category", "subcategory", "licenseAgreementId", Collections
-            .singletonList("featureGroupId"));
-    vsp.setOnboardingMethod("NetworkPackage");
-    doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
+    @Test
+    void testValidateWithCandidateProcessedIsInvalid() throws IOException {
+        VspDetails vsp = createVspDetails(VSP_ID, VERSION01, "Vsp1", "Test-VSP", "vendorName",
+            "vl1Id", "icond", "category", "subcategory", "licenseAgreementId", Collections
+                .singletonList("featureGroupId"));
+        vsp.setOnboardingMethod("NetworkPackage");
+        doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
-    OrchestrationTemplateCandidateData orchestrationTemplateCandidateData = new
-        OrchestrationTemplateCandidateData();
-    orchestrationTemplateCandidateData.setFileSuffix("zip");
-    orchestrationTemplateCandidateData.setValidationData("Invalid processed data");
-    doReturn(Optional.of(orchestrationTemplateCandidateData))
-        .when(orchestrationTemplateCandidateManagerMock)
-        .getInfo(VSP_ID, VERSION01);
-    ValidationResponse validationResponse =
-        vendorSoftwareProductManager.validate(vsp);
-    Assert.assertNotNull(validationResponse);
-    Assert.assertFalse(validationResponse.isValid());
-    Assert.assertNotNull(validationResponse.getVspErrors());
-    Assert.assertEquals(1, validationResponse.getVspErrors().size());
-  }
+        OrchestrationTemplateCandidateData orchestrationTemplateCandidateData = new
+            OrchestrationTemplateCandidateData();
+        orchestrationTemplateCandidateData.setFileSuffix("zip");
+        orchestrationTemplateCandidateData.setValidationData("Invalid processed data");
+        doReturn(Optional.of(orchestrationTemplateCandidateData))
+            .when(orchestrationTemplateCandidateManagerMock)
+            .getInfo(VSP_ID, VERSION01);
+        ValidationResponse validationResponse =
+            vendorSoftwareProductManager.validate(vsp);
+        assertNotNull(validationResponse);
+        assertFalse(validationResponse.isValid());
+        assertNotNull(validationResponse.getVspErrors());
+        assertEquals(1, validationResponse.getVspErrors().size());
+    }
 
-  private static VspDetails createVspDetails(String id, Version version, String name, String desc,
-                                     String vendorName, String vlm, String icon,
-                                     String category, String subCategory,
-                                     String licenseAgreement, List<String> featureGroups) {
-    VspDetails vspDetails = new VspDetails(id, version);
-    vspDetails.setName(name);
-    vspDetails.setDescription(desc);
-    vspDetails.setIcon(icon);
-    vspDetails.setCategory(category);
-    vspDetails.setSubCategory(subCategory);
-    vspDetails.setVendorName(vendorName);
-    vspDetails.setVendorId(vlm);
-    vspDetails.setVlmVersion(new Version("1, 0"));
-    vspDetails.setLicenseAgreement(licenseAgreement);
-    vspDetails.setFeatureGroups(featureGroups);
-    vspDetails.setOnboardingMethod("HEAT");
-    return vspDetails;
-  }
+    private static VspDetails createVspDetails(String id, Version version, String name, String desc,
+                                               String vendorName, String vlm, String icon,
+                                               String category, String subCategory,
+                                               String licenseAgreement, List<String> featureGroups) {
+        VspDetails vspDetails = new VspDetails(id, version);
+        vspDetails.setName(name);
+        vspDetails.setDescription(desc);
+        vspDetails.setIcon(icon);
+        vspDetails.setCategory(category);
+        vspDetails.setSubCategory(subCategory);
+        vspDetails.setVendorName(vendorName);
+        vspDetails.setVendorId(vlm);
+        vspDetails.setVlmVersion(new Version("1, 0"));
+        vspDetails.setLicenseAgreement(licenseAgreement);
+        vspDetails.setFeatureGroups(featureGroups);
+        vspDetails.setOnboardingMethod("HEAT");
+        return vspDetails;
+    }
 
-  private static void assertVspsEquals(VspDetails actual, VspDetails expected) {
-    Assert.assertEquals(actual.getId(), expected.getId());
-    Assert.assertEquals(actual.getVersion(), expected.getVersion());
-    Assert.assertEquals(actual.getName(), expected.getName());
-    Assert.assertEquals(actual.getDescription(), expected.getDescription());
-    Assert.assertEquals(actual.getIcon(), expected.getIcon());
-    Assert.assertEquals(actual.getCategory(), expected.getCategory());
-    Assert.assertEquals(actual.getSubCategory(), expected.getSubCategory());
-    Assert.assertEquals(actual.getVendorName(), expected.getVendorName());
-    Assert.assertEquals(actual.getVendorId(), expected.getVendorId());
-    Assert.assertEquals(actual.getLicenseAgreement(), expected.getLicenseAgreement());
-    Assert.assertEquals(actual.getFeatureGroups(), expected.getFeatureGroups());
-  }
+    private static void assertVspsEquals(VspDetails actual, VspDetails expected) {
+        assertEquals(actual.getId(), expected.getId());
+        assertEquals(actual.getVersion(), expected.getVersion());
+        assertEquals(actual.getName(), expected.getName());
+        assertEquals(actual.getDescription(), expected.getDescription());
+        assertEquals(actual.getIcon(), expected.getIcon());
+        assertEquals(actual.getCategory(), expected.getCategory());
+        assertEquals(actual.getSubCategory(), expected.getSubCategory());
+        assertEquals(actual.getVendorName(), expected.getVendorName());
+        assertEquals(actual.getVendorId(), expected.getVendorId());
+        assertEquals(actual.getLicenseAgreement(), expected.getLicenseAgreement());
+        assertEquals(actual.getFeatureGroups(), expected.getFeatureGroups());
+    }
 
 }
