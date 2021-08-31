@@ -25,10 +25,10 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
@@ -63,7 +63,7 @@ public class CapabilityTypeImportManager {
             capabilityTypesYml, capabilityTypesFromYml -> createCapabilityTypesFromYml(capabilityTypesYml, modelName),
             this::upsertCapabilityTypesByDao, ElementTypeEnum.CAPABILITY_TYPE);
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
-            commonImportManager.addTypesToDefaultImports(capabilityTypesYml, modelName);
+            commonImportManager.addTypesToDefaultImports(ElementTypeEnum.CAPABILITY_TYPE, capabilityTypesYml, modelName);
         }
         return elementTypes;
     }
@@ -86,7 +86,7 @@ public class CapabilityTypeImportManager {
     private Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> upsertCapabilityTypesByDao(
         List<CapabilityTypeDefinition> capabilityTypesToCreate) {
         return commonImportManager.createElementTypesByDao(capabilityTypesToCreate, capabilityType -> Either.left(ActionStatus.OK),
-            capabilityType -> new ImmutablePair<>(CommonImportManager.ElementTypeEnum.CAPABILITY_TYPE,
+            capabilityType -> new ImmutablePair<>(ElementTypeEnum.CAPABILITY_TYPE,
                 UniqueIdBuilder.buildCapabilityTypeUid(capabilityType.getModel(), capabilityType.getType())),
             capabilityTypeOperation::getCapabilityType, capabilityTypeOperation::addCapabilityType, this::updateCapabilityType);
     }

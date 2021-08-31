@@ -84,7 +84,14 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
         LOGGER.info("{} successfully initialized", ToscaModelImportCassandraDao.class.getName());
     }
 
-    public void importAll(final String modelId, final List<ToscaImportByModel> toscaImportByModelList) {
+    /**
+     * Completely replaces the previous model imports by the imports on the given list that are from the same model.
+     * New imports will be added, existing will be replaced and the remaining will be deleted.
+     *
+     * @param modelId                the model id
+     * @param toscaImportByModelList the new list of imports
+     */
+    public void replaceImports(final String modelId, final List<ToscaImportByModel> toscaImportByModelList) {
         final List<ToscaImportByModel> importOfModelList = toscaImportByModelList.stream()
             .filter(toscaImportByModel -> modelId.equals(toscaImportByModel.getModelId()))
             .collect(Collectors.toList());
@@ -99,7 +106,13 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
         );
     }
 
-    public void importOnly(final String modelId, final List<ToscaImportByModel> toscaImportByModelList) {
+    /**
+     * Saves all imports provided on the list that are from the given modelId.
+     *
+     * @param modelId                the model id
+     * @param toscaImportByModelList the list of imports to save
+     */
+    public void saveAll(final String modelId, final List<ToscaImportByModel> toscaImportByModelList) {
         toscaImportByModelList.stream()
             .filter(toscaImportByModel -> modelId.equals(toscaImportByModel.getModelId()))
             .forEach(toscaImportByModelMapper::save);

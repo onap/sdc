@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.normatives.ToscaTypeMetadata;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.api.TypeOperations;
@@ -534,12 +535,8 @@ public class CommonImportManager {
 
     }
 
-    public void addTypesToDefaultImports(final String typesYaml, final String modelName) {
-        modelOperation.addTypesToDefaultImports(typesYaml, modelName);
-    }
-
-    public enum ElementTypeEnum {
-        POLICY_TYPE, GROUP_TYPE, DATA_TYPE, CAPABILITY_TYPE, INTERFACE_LIFECYCLE_TYPE, RELATIONSHIP_TYPE
+    public void addTypesToDefaultImports(final ElementTypeEnum elementTypeEnum, final String typesYaml, final String modelName) {
+        modelOperation.addTypesToDefaultImports(elementTypeEnum, typesYaml, modelName);
     }
 
     public interface ICreateElementType<T1, T2, T3> {

@@ -1,0 +1,9 @@
+tosca.datatypes.nfv.ServiceAvailability:
+  derived_from: tosca.datatypes.Root
+  description: additional type
+tosca.datatypes.nfv.L2AddressData:
+  derived_from: tosca.datatypes.Root
+  description: additional type
+tosca.datatypes.nfv.Unknown:
+  derived_from: tosca.datatypes.Root
+  description: additional type

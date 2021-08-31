@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.RelationshipTypeDefinition;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.RelationshipTypeOperation;
@@ -67,7 +67,7 @@ public class RelationshipTypeImportManager {
                 relationshipTypesToCreate -> createRelationshipTypesByDao(relationshipTypesToCreate, inTransaction),
                 ElementTypeEnum.RELATIONSHIP_TYPE);
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
-            commonImportManager.addTypesToDefaultImports(relationshipTypeYml, modelName);
+            commonImportManager.addTypesToDefaultImports(ElementTypeEnum.RELATIONSHIP_TYPE, relationshipTypeYml, modelName);
         }
         return elementTypes;
     }

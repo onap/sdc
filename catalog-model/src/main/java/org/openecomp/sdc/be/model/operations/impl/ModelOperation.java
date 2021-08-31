@@ -20,15 +20,15 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.ModelData;
@@ -64,7 +65,7 @@ import org.yaml.snakeyaml.Yaml;
 public class ModelOperation {
 
     private static final Logger log = Logger.getLogger(ModelOperation.class);
-    private static final String ADDITIONAL_TYPE_DEFINITIONS = "additional_type_definitions.yml";
+    static final Path ADDITIONAL_TYPE_DEFINITIONS_PATH = Path.of("additional_type_definitions.yaml");
 
     private final JanusGraphGenericDao janusGraphGenericDao;
     private final JanusGraphDao janusGraphDao;
@@ -173,7 +174,7 @@ public class ModelOperation {
                 toscaImportByModel.setContent(content);
                 return toscaImportByModel;
             }).collect(Collectors.toList());
-        toscaModelImportCassandraDao.importAll(modelId, toscaImportByModelList);
+        toscaModelImportCassandraDao.replaceImports(modelId, toscaImportByModelList);
     }
 
     /**
@@ -257,75 +258,61 @@ public class ModelOperation {
         }
     }
 
-    public void addTypesToDefaultImports(final String typesYaml, final String modelName) {
-        final List<ToscaImportByModel> allSchemaImportsByModel = toscaModelImportCassandraDao.findAllByModel(modelName);
-        final Optional<ToscaImportByModel> additionalTypeDefinitionsOptional = allSchemaImportsByModel.stream()
-            .filter(t -> ADDITIONAL_TYPE_DEFINITIONS.equals(t.getFullPath())).findAny();
-        final ToscaImportByModel toscaImportByModelAdditionalTypeDefinitions;
-        final List<ToscaImportByModel> schemaImportsByModel;
-        if (additionalTypeDefinitionsOptional.isPresent()) {
-            toscaImportByModelAdditionalTypeDefinitions = additionalTypeDefinitionsOptional.get();
-            schemaImportsByModel = allSchemaImportsByModel.stream()
-                .filter(toscaImportByModel -> !ADDITIONAL_TYPE_DEFINITIONS.equals(toscaImportByModel.getFullPath()))
+    public void addTypesToDefaultImports(final ElementTypeEnum elementTypeEnum, final String typesYaml, final String modelName) {
+        final List<ToscaImportByModel> modelImportList = toscaModelImportCassandraDao.findAllByModel(modelName);
+        final Optional<ToscaImportByModel> additionalTypeDefinitionsImportOptional = modelImportList.stream()
+            .filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
+        final ToscaImportByModel additionalTypeDefinitionsImport;
+        final List<ToscaImportByModel> rebuiltModelImportList;
+        if (additionalTypeDefinitionsImportOptional.isPresent()) {
+            additionalTypeDefinitionsImport = additionalTypeDefinitionsImportOptional.get();
+            rebuiltModelImportList = modelImportList.stream()
+                .filter(toscaImportByModel -> !ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(toscaImportByModel.getFullPath())))
                 .collect(Collectors.toList());
         } else {
-            toscaImportByModelAdditionalTypeDefinitions = new ToscaImportByModel();
-            toscaImportByModelAdditionalTypeDefinitions.setModelId(modelName);
-            toscaImportByModelAdditionalTypeDefinitions.setFullPath(ADDITIONAL_TYPE_DEFINITIONS);
-            toscaImportByModelAdditionalTypeDefinitions.setContent(typesYaml);
-            schemaImportsByModel = new ArrayList<>(allSchemaImportsByModel);
+            additionalTypeDefinitionsImport = new ToscaImportByModel();
+            additionalTypeDefinitionsImport.setModelId(modelName);
+            additionalTypeDefinitionsImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+            additionalTypeDefinitionsImport.setContent(createAdditionalTypeDefinitionsHeader());
+            rebuiltModelImportList = new ArrayList<>(modelImportList);
         }
 
-        final List<ToscaImportByModel> toscaImportByModels = removeExistingDefaultImports(typesYaml, schemaImportsByModel);
+        final Map<String, Object> typesYamlMap = new Yaml().load(typesYaml);
+        removeExistingTypesFromDefaultImports(elementTypeEnum, typesYamlMap, rebuiltModelImportList);
 
-        final Map<String, Object> originalContent = (Map<String, Object>) new Yaml().load(toscaImportByModelAdditionalTypeDefinitions.getContent());
-        toscaImportByModelAdditionalTypeDefinitions.setContent(buildAdditionalTypeDefinitionsContent(typesYaml, originalContent).toString());
-        toscaImportByModels.add(toscaImportByModelAdditionalTypeDefinitions);
+        final Map<String, Object> originalContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
+        additionalTypeDefinitionsImport.setContent(buildAdditionalTypeDefinitionsContent(elementTypeEnum, typesYamlMap, originalContent));
+        rebuiltModelImportList.add(additionalTypeDefinitionsImport);
 
-        toscaModelImportCassandraDao.importOnly(modelName, toscaImportByModels);
+        toscaModelImportCassandraDao.saveAll(modelName, rebuiltModelImportList);
     }
 
-    private List<ToscaImportByModel> removeExistingDefaultImports(final String typesYaml, final List<ToscaImportByModel> schemaImportsByModel) {
-        final List<ToscaImportByModel> toscaImportByModels = new ArrayList<>();
-        schemaImportsByModel.forEach(toscaImportByModel -> {
-            final ToscaImportByModel toscaImportByModelNew = new ToscaImportByModel();
-            toscaImportByModelNew.setModelId(toscaImportByModel.getModelId());
-            toscaImportByModelNew.setFullPath(toscaImportByModel.getFullPath());
-
-            final Map<String, Object> existingImportYamlMap = (Map<String, Object>) new Yaml().load(toscaImportByModel.getContent());
-
-            ((Map<String, Object>) new Yaml().load(typesYaml)).keySet().forEach(existingImportYamlMap::remove);
-
-            final StringBuilder stringBuilder = new StringBuilder();
-            existingImportYamlMap.forEach((key, value) -> {
-                final Map<Object, Object> hashMap = new HashMap<>();
-                hashMap.put(key, value);
-                stringBuilder.append("\n").append(new YamlUtil().objectToYaml(hashMap));
-            });
-
-            toscaImportByModelNew.setContent(stringBuilder.toString());
-            toscaImportByModels.add(toscaImportByModelNew);
-        });
-        return toscaImportByModels;
-    }
-
-    private StringBuilder buildAdditionalTypeDefinitionsContent(final String typesYaml, final Map<String, Object> originalContent) {
-        final var stringBuilder = new StringBuilder();
-
-        final Map<String, Object> typesYamlMap = (Map<String, Object>) new Yaml().load(typesYaml);
-        final Set<String> typeYmlKeySet = typesYamlMap.keySet();
-
-        originalContent.forEach((key, value) -> {
-            final Map<Object, Object> hashMap = new HashMap<>();
-            if (typeYmlKeySet.contains(key)) {
-                hashMap.put(key, typesYamlMap.get(key));
-            } else {
-                hashMap.put(key, value);
+    private void removeExistingTypesFromDefaultImports(final ElementTypeEnum elementTypeEnum, final Map<String, Object> typesYaml,
+                                                       final List<ToscaImportByModel> defaultImportList) {
+        defaultImportList.forEach(toscaImportByModel -> {
+            final Map<String, Object> existingImportYamlMap = new Yaml().load(toscaImportByModel.getContent());
+            final Map<String, Object> currentTypeYamlMap = (Map<String, Object>) existingImportYamlMap.get(elementTypeEnum.getToscaEntryName());
+            if (MapUtils.isNotEmpty(currentTypeYamlMap)) {
+                typesYaml.keySet().forEach(currentTypeYamlMap::remove);
             }
-            final String newContent = new YamlUtil().objectToYaml(hashMap);
-            stringBuilder.append("\n").append(newContent);
+            toscaImportByModel.setContent(new YamlUtil().objectToYaml(existingImportYamlMap));
         });
-        return stringBuilder;
+    }
+
+    private String buildAdditionalTypeDefinitionsContent(final ElementTypeEnum elementTypeEnum, final Map<String, Object> typesYamlMap,
+                                                         final Map<String, Object> originalContent) {
+        final Map<String, Object> originalTypeContent = (Map<String, Object>) originalContent.get(elementTypeEnum.getToscaEntryName());
+        if (MapUtils.isEmpty(originalTypeContent)) {
+            originalContent.put(elementTypeEnum.getToscaEntryName(), new LinkedHashMap<>(typesYamlMap));
+        } else {
+            originalTypeContent.putAll(typesYamlMap);
+        }
+        return new YamlUtil().objectToYaml(originalContent);
+    }
+
+    private String createAdditionalTypeDefinitionsHeader() {
+        return "tosca_definitions_version: tosca_simple_yaml_1_3" + "\n"
+            + "description: Auto-generated file that contains package custom types or types added after system installation." + "\n";
     }
 
 }

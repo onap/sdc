@@ -95,7 +95,7 @@ class ToscaModelImportCassandraDaoTest {
         when(findAllByModelResult.all()).thenReturn(List.of(toscaImportByModel1, toscaImportByModelDatabase1));
         when(toscaImportByModelAccessorMock.findAllByModel(modelId)).thenReturn(findAllByModelResult);
 
-        toscaModelImportCassandraDao.importAll(modelId, importModelList);
+        toscaModelImportCassandraDao.replaceImports(modelId, importModelList);
 
         verify(toscaImportByModelMapperMock).save(toscaImportByModel1);
         verify(toscaImportByModelMapperMock).save(toscaImportByModel2);

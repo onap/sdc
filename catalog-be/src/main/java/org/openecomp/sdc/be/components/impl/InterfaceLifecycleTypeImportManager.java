@@ -39,6 +39,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
@@ -72,7 +73,7 @@ public class InterfaceLifecycleTypeImportManager {
         }
         final Either<List<InterfaceDefinition>, ResponseFormat> elementTypes = createInterfacesByDao(interfaces.left().value());
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
-            commonImportManager.addTypesToDefaultImports(interfaceLifecycleTypesYml, modelName);
+            commonImportManager.addTypesToDefaultImports(ElementTypeEnum.INTERFACE_LIFECYCLE_TYPE, interfaceLifecycleTypesYml, modelName);
         }
         return elementTypes;
     }

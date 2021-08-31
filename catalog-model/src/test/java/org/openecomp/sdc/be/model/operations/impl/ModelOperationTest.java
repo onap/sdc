@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model.operations.impl;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,9 +33,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.model.operations.impl.ModelOperation.ADDITIONAL_TYPE_DEFINITIONS_PATH;
 
 import fj.data.Either;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,6 +73,7 @@ import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.resources.data.ModelData;
 import org.springframework.test.context.ContextConfiguration;
@@ -162,16 +168,16 @@ class ModelOperationTest extends ModelTestBase {
         toscaImport2.setFullPath(pathEntry2);
         final List<ToscaImportByModel> toscaImportByModelList = List.of(toscaImport1, toscaImport2);
 
-        verify(toscaModelImportCassandraDao).importAll(modelId, toscaImportByModelList);
+        verify(toscaModelImportCassandraDao).replaceImports(modelId, toscaImportByModelList);
     }
 
     @Test
     void createModelImportsTest_emptyZipContent() {
         var modelId = "modelId";
         modelOperation.createModelImports(modelId, Collections.emptyMap());
-        verify(toscaModelImportCassandraDao, never()).importAll(eq(modelId), anyList());
+        verify(toscaModelImportCassandraDao, never()).replaceImports(eq(modelId), anyList());
         modelOperation.createModelImports(modelId, null);
-        verify(toscaModelImportCassandraDao, never()).importAll(eq(null), anyList());
+        verify(toscaModelImportCassandraDao, never()).replaceImports(eq(null), anyList());
     }
 
     @Test
@@ -333,6 +339,123 @@ class ModelOperationTest extends ModelTestBase {
         assertEquals(childModelImportList.size() + parentModelImportList.size(), actualModelImportList.size());
         Stream.concat(childModelImportList.stream(), parentModelImportList.stream())
             .forEach(toscaImportByModel -> assertTrue(actualModelImportList.contains(toscaImportByModel)));
+    }
+
+    @Test
+    void addTypesToDefaultImportsTest_nonExistingAdditionalTypesImport() throws IOException {
+        var modelName = "model";
+        final Path testResourcePath = Path.of("src/test/resources/modelOperation");
+
+        final var dataTypesPath = testResourcePath.resolve(Path.of("input-data_types.yaml"));
+        final var dataTypes = Files.readString(dataTypesPath);
+
+        final Path import1RelativePath = Path.of("original-import-1.yaml");
+        final Path import1Path = testResourcePath.resolve(import1RelativePath);
+        final Path import2RelativePath = Path.of("original-import-2.yaml");
+        final Path import2Path = testResourcePath.resolve(import2RelativePath);
+
+        var toscaImportByModel1 = new ToscaImportByModel();
+        toscaImportByModel1.setModelId(modelName);
+        toscaImportByModel1.setFullPath(import1RelativePath.toString());
+        toscaImportByModel1.setContent(Files.readString(import1Path));
+
+        var toscaImportByModel2 = new ToscaImportByModel();
+        toscaImportByModel2.setModelId(modelName);
+        toscaImportByModel2.setFullPath(import2RelativePath.toString());
+        toscaImportByModel2.setContent(Files.readString(import2Path));
+
+        final List<ToscaImportByModel> modelImports = new ArrayList<>();
+        modelImports.add(toscaImportByModel1);
+        modelImports.add(toscaImportByModel2);
+        when(toscaModelImportCassandraDao.findAllByModel(modelName)).thenReturn(modelImports);
+
+        modelOperation.addTypesToDefaultImports(ElementTypeEnum.DATA_TYPE, dataTypes, modelName);
+        ArgumentCaptor<List<ToscaImportByModel>> importListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(toscaModelImportCassandraDao).saveAll(eq(modelName), importListArgumentCaptor.capture());
+
+        final List<ToscaImportByModel> actualImportList = importListArgumentCaptor.getValue();
+        assertEquals(3, actualImportList.size());
+        assertTrue(actualImportList.contains(toscaImportByModel1));
+        assertTrue(actualImportList.contains(toscaImportByModel2));
+
+        var expectedAdditionalTypesImport = new ToscaImportByModel();
+        expectedAdditionalTypesImport.setModelId(modelName);
+        expectedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        expectedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-1.yaml"))));
+        final ToscaImportByModel actualAdditionalTypesImport =
+            actualImportList.stream().filter(expectedAdditionalTypesImport::equals).findFirst().orElse(null);
+        assertNotNull(actualAdditionalTypesImport);
+        assertEquals(expectedAdditionalTypesImport.getContent(), actualAdditionalTypesImport.getContent());
+
+        var expectedImport1 = new ToscaImportByModel();
+        expectedImport1.setModelId(modelName);
+        expectedImport1.setFullPath(import1RelativePath.toString());
+        expectedImport1.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-import-1.yaml"))));
+        final ToscaImportByModel actualImport1 = actualImportList.stream().filter(expectedImport1::equals).findFirst().orElse(null);
+        assertNotNull(actualImport1);
+        assertEquals(expectedImport1.getContent(), actualImport1.getContent());
+
+        var expectedImport2 = new ToscaImportByModel();
+        expectedImport2.setModelId(modelName);
+        expectedImport2.setFullPath(import2RelativePath.toString());
+        expectedImport2.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-import-2.yaml"))));
+        final ToscaImportByModel actualImport2 = actualImportList.stream().filter(expectedImport2::equals).findFirst().orElse(null);
+        assertNotNull(actualImport2);
+        assertEquals(expectedImport2.getContent(), actualImport2.getContent());
+    }
+
+    @Test
+    void addTypesToDefaultImportsTest_existingAdditionalTypesImport() throws IOException {
+        var modelName = "model";
+        final Path testResourcePath = Path.of("src/test/resources/modelOperation");
+
+        final var dataTypesPath = testResourcePath.resolve(Path.of("input-data_types.yaml"));
+        final var dataTypes = Files.readString(dataTypesPath);
+
+        final Path import1RelativePath = Path.of("original-import-1.yaml");
+        final Path import1Path = testResourcePath.resolve(import1RelativePath);
+
+        var toscaImportByModel1 = new ToscaImportByModel();
+        toscaImportByModel1.setModelId(modelName);
+        toscaImportByModel1.setFullPath(import1RelativePath.toString());
+        toscaImportByModel1.setContent(Files.readString(import1Path));
+
+        var originalAdditionalTypesImport = new ToscaImportByModel();
+        originalAdditionalTypesImport.setModelId(modelName);
+        originalAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        final Path originalAdditionalTypesImportPath = testResourcePath.resolve(Path.of("original-additional_types-1.yaml"));
+        originalAdditionalTypesImport.setContent(Files.readString(originalAdditionalTypesImportPath));
+
+        final List<ToscaImportByModel> modelImports = new ArrayList<>();
+        modelImports.add(toscaImportByModel1);
+        modelImports.add(originalAdditionalTypesImport);
+        when(toscaModelImportCassandraDao.findAllByModel(modelName)).thenReturn(modelImports);
+
+        modelOperation.addTypesToDefaultImports(ElementTypeEnum.DATA_TYPE, dataTypes, modelName);
+        ArgumentCaptor<List<ToscaImportByModel>> importListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(toscaModelImportCassandraDao).saveAll(eq(modelName), importListArgumentCaptor.capture());
+
+        final List<ToscaImportByModel> actualImportList = importListArgumentCaptor.getValue();
+        assertEquals(2, actualImportList.size());
+        assertTrue(actualImportList.contains(toscaImportByModel1));
+
+        var expectedAdditionalTypesImport = new ToscaImportByModel();
+        expectedAdditionalTypesImport.setModelId(modelName);
+        expectedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        expectedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-2.yaml"))));
+        final ToscaImportByModel actualAdditionalTypesImport =
+            actualImportList.stream().filter(expectedAdditionalTypesImport::equals).findFirst().orElse(null);
+        assertNotNull(actualAdditionalTypesImport);
+        assertEquals(expectedAdditionalTypesImport.getContent(), actualAdditionalTypesImport.getContent());
+
+        var expectedImport1 = new ToscaImportByModel();
+        expectedImport1.setModelId(modelName);
+        expectedImport1.setFullPath(import1RelativePath.toString());
+        expectedImport1.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-import-1.yaml"))));
+        final ToscaImportByModel actualImport1 = actualImportList.stream().filter(expectedImport1::equals).findFirst().orElse(null);
+        assertNotNull(actualImport1);
+        assertEquals(expectedImport1.getContent(), actualImport1.getContent());
+
     }
 
     private ToscaImportByModel createModelImport(final String parentModelName, final String importPath) {

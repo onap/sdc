@@ -23,9 +23,11 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Table(keyspace = "sdcartifact", name = "tosca_import_by_model")
+@EqualsAndHashCode
 public class ToscaImportByModel {
 
     @PartitionKey
@@ -35,6 +37,7 @@ public class ToscaImportByModel {
     @Column(name = "full_path")
     private String fullPath;
     @Column(name = "content")
+    @EqualsAndHashCode.Exclude
     private String content;
 
 }

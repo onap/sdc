@@ -26,7 +26,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.openecomp.sdc.be.components.impl.CommonImportManager.ElementTypeEnum;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.components.impl.utils.PolicyTypeImportUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -36,6 +35,7 @@ import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.normatives.ElementTypeEnum;
 import org.openecomp.sdc.be.model.operations.api.IPolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
@@ -75,7 +75,7 @@ public class PolicyTypeImportManager {
         final Either<List<ImmutablePair<PolicyTypeDefinition, Boolean>>, ResponseFormat> elementTypes = commonImportManager.createElementTypes(
             toscaTypeImportData, this::createPolicyTypesFromYml, this::upsertPolicyTypesByDao, modelName);
         if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
-            commonImportManager.addTypesToDefaultImports(toscaTypeImportData.getToscaTypesYml(), modelName);
+            commonImportManager.addTypesToDefaultImports(ElementTypeEnum.POLICY_TYPE, toscaTypeImportData.getToscaTypesYml(), modelName);
         }
         return elementTypes;
     }
