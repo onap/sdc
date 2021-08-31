@@ -17,14 +17,15 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -57,7 +58,6 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.model.dao.EnrichedServiceModelDao;
 import org.openecomp.core.model.dao.ServiceModelDao;
-import org.openecomp.core.model.types.ServiceElement;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -85,6 +85,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.informationArtifact.InformationArtifactGenerator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.ValidationResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.composition.DeploymentFlavor;
+import org.openecomp.sdc.vendorsoftwareproduct.types.schemagenerator.SchemaTemplateInput;
 import org.openecomp.sdc.versioning.ActionVersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
@@ -261,6 +262,9 @@ public class VendorSoftwareProductManagerImplTest {
             when(licenseArtifactsServiceMock.createLicenseArtifacts(any(), any(), any(), any()))
                 .thenReturn(new FileContentHandler());
             final PackageInfo packageInfo = vendorSoftwareProductManager.createPackage("0", new Version());
+            assertThat("PackageInfo vendor release should be based on the manifest compatible_specification_versions highest version",
+                packageInfo.getVendorRelease(), equalTo("3.3.1"));
+            System.out.println(packageInfo.getVendorRelease());
             assertThat("Package Info should contain resource type", packageInfo.getResourceType(),
                 equalTo(ResourceTypeEnum.PNF.name()));
             assertThat("Should not contain moved artifact", toscaMetadata.getArtifactFiles().getFileList(),
@@ -277,9 +281,8 @@ public class VendorSoftwareProductManagerImplTest {
 
   @Test
   public void testCreate() {
-    //doReturn(VERSION01).when(versioningManagerMock).create(anyObject(), anyObject(), anyObject());
     doReturn("{}")
-        .when(vendorSoftwareProductManager).getVspQuestionnaireSchema(anyObject());
+        .when(vendorSoftwareProductManager).getVspQuestionnaireSchema(nullable(SchemaTemplateInput.class));
 
     VspDetails vspToCreate =
         createVspDetails(null, null, "Vsp1", "Test-vsp", "vendorName", "vlm1Id", "icon",
@@ -358,7 +361,6 @@ public class VendorSoftwareProductManagerImplTest {
             "subCategory", "456", fgs);
 
     List<String> updFgs = new ArrayList<>();
-    //updFgs.add("fg2");
     VspDetails updatedVsp =
         createVspDetails(VSP_ID, VERSION01, "VSP1_updated", null, "vendorName", "vlm1Id", "icon",
             "category_updated",
@@ -376,7 +378,7 @@ public class VendorSoftwareProductManagerImplTest {
     List<DeploymentFlavorEntity> dfList = new ArrayList<>();
     dfList.add(dfEntity);
 
-    doReturn(dfList).when(deploymentFlavorDaoMock).list(anyObject());
+    doReturn(dfList).when(deploymentFlavorDaoMock).list(any(DeploymentFlavorEntity.class));
 
     vendorSoftwareProductManager.updateVsp(updatedVsp);
 
@@ -444,8 +446,6 @@ public class VendorSoftwareProductManagerImplTest {
 
   @Test
   public void testCreatePackage() throws IOException {
-    /*VspDetails vspDetailsMock = new VspDetails("vspId", new Version(1, 0));
-    doReturn(vspDetailsMock).when(vspInfoDaoMock).get(anyObject());*/
     VersionInfo versionInfo = new VersionInfo();
     versionInfo.setActiveVersion(VERSION10);
     doReturn(versionInfo).when(versioningManagerMock).getEntityVersionInfo(
@@ -454,11 +454,12 @@ public class VendorSoftwareProductManagerImplTest {
 
     doReturn(new ToscaServiceModel(new FileContentHandler(), new HashMap<>(), "")).when
         (enrichedServiceModelDaoMock).getServiceModel(VSP_ID, VERSION10);
-    doNothing().when(vendorSoftwareProductManager).populateVersionsForVlm(anyObject(), anyObject());
+    doNothing().when(vendorSoftwareProductManager).populateVersionsForVlm(anyString(), any(Version.class));
     VspDetails vsp = new VspDetails(VSP_ID, VERSION10);
     vsp.setVendorId("vendorId");
     vsp.setVlmVersion(VERSION10);
     vsp.setFeatureGroups(Arrays.asList("fg1", "fg2"));
+    vsp.setModelIdList(List.of("aModel"));
     doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     doReturn(new FileContentHandler()).when(licenseArtifactsServiceMock)
@@ -467,6 +468,7 @@ public class VendorSoftwareProductManagerImplTest {
 
     PackageInfo packageInfo = vendorSoftwareProductManager.createPackage(VSP_ID, VERSION10);
     Assert.assertNotNull(packageInfo.getVspId());
+    assertEquals("1.0", packageInfo.getVendorRelease());
   }
 
   @Test
@@ -476,7 +478,7 @@ public class VendorSoftwareProductManagerImplTest {
             "category", "subCategory", "licenseAgreementId",
             Collections.singletonList("featureGroupId"));
     vsp.setOnboardingMethod("NetworkPackage");
-    doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
+    doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     OrchestrationTemplateCandidateData orchestrationTemplateCandidateData = new
         OrchestrationTemplateCandidateData();
@@ -501,7 +503,7 @@ public class VendorSoftwareProductManagerImplTest {
         "vl1Id", "icond", "category", "subcategory", "licenseAgreementId", Collections
             .singletonList("featureGroupId"));
     vsp.setOnboardingMethod("NetworkPackage");
-    doReturn(vsp).when(vspInfoDaoMock).get(anyObject());
+    doReturn(vsp).when(vspInfoDaoMock).get(any(VspDetails.class));
 
     OrchestrationTemplateCandidateData orchestrationTemplateCandidateData = new
         OrchestrationTemplateCandidateData();
