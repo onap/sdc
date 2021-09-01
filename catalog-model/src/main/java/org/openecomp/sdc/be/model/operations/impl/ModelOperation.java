@@ -193,6 +193,13 @@ public class ModelOperation {
                 }
             });
         }
+        toscaImportByModelList.sort((o1, o2) -> {
+            final int modelIdComparison = o1.getModelId().compareTo(o2.getModelId());
+            if (modelIdComparison == 0) {
+                return o1.getFullPath().compareTo(o2.getFullPath());
+            }
+            return modelIdComparison;
+        });
         return toscaImportByModelList;
     }
 
