@@ -27,7 +27,7 @@ def main(sdc_be_proxy):
 
     model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy))
     try:
-        model_import_manager.update_models()
+        model_import_manager.deploy_models()
     except Exception as ex:
         logger.log("An error has occurred while uploading the models: ", str(ex))
         raise ex
