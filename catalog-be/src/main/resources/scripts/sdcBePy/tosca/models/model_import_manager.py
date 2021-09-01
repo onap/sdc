@@ -30,7 +30,8 @@ class ModelImportManager:
     IMPORTS_FOLDER_NAME = 'imports'
     ACTION_UPGRADE = 'upgrade'
     ACTION_INIT = 'init'
-    NODE_TYPES = 'node-types/'
+    TYPES_FOLDER = 'tosca'
+    NODE_FOLDER = 'node-types'
 
     def __init__(self, model_imports_path, model_client):
         self.__model_base_path = model_imports_path
@@ -38,25 +39,27 @@ class ModelImportManager:
         self.__model_upgrade_path = self.__model_base_path / self.UPGRADE_FOLDER_NAME
         self.__model_client = model_client
 
-    def create_models(self):
-        for model_folder_name in self.__get_model_init_list():
+    def create_models(self, init_models=[]):
+        for model_folder_name in init_models if init_models else self.__get_model_init_list():
             model_imports_zip_path = self.__zip_model_imports(model_folder_name, self.ACTION_INIT)
             model_payload_dict = self.__read_model_payload(model_folder_name, self.ACTION_INIT)
             self.__model_client.create_model(model_payload_dict, model_imports_zip_path)
-            tosca_path = self.__get_model_tosca_path(self.ACTION_INIT, model_folder_name)
-            self.__model_client.import_model_elements(model_payload_dict, tosca_path)
-            if os.path.isdir(tosca_path + self.NODE_TYPES):
-                self.__model_client.import_model_types(model_payload_dict, self.__get_model_normative_type_candidate(tosca_path), False)
-            self.__model_client.import_model_elements(model_payload_dict, tosca_path, True)
+            self.__init_model_non_node_types(model_folder_name, model_payload_dict)
+            self.__init_model_node_types(model_folder_name, model_payload_dict)
+            self.__init_model_non_node_types(model_folder_name, model_payload_dict, True);
 
     def update_models(self):
+        existing_models = self.__model_client.get_model_list()
         for model_folder_name in self.__get_model_upgrade_list():
+            if (not existing_models or not any(m for m in existing_models if model_payload_dict['name'] == m['name'])):
+                self.create_models([model_folder_name])
+                continue
             model_imports_zip_path = self.__zip_model_imports(model_folder_name, self.ACTION_UPGRADE)
             model_payload_dict = self.__read_model_payload(model_folder_name, self.ACTION_UPGRADE)
             self.__model_client.update_model_imports(model_payload_dict, model_imports_zip_path)
-            tosca_path = self.__get_model_tosca_path(self.ACTION_UPGRADE, model_folder_name)
-            if os.path.isdir(tosca_path + self.NODE_TYPES):
-                self.__model_client.import_model_types(model_payload_dict, self.__get_model_normative_type_candidate(tosca_path), True)
+            self.__upgrade_model_non_node_types(model_folder_name, model_payload_dict)
+            self.__upgrade_model_node_types(model_folder_name, model_payload_dict)
+            self.__upgrade_model_non_node_types(model_folder_name, model_payload_dict, True)
 
     def __get_model_init_list(self):
         return self.__get_model_list(self.__model_init_path)
@@ -72,9 +75,8 @@ class ModelImportManager:
             break
         return model_list
 
-    def __get_model_normative_type_candidate(self, tosca_path):
-        path = tosca_path + self.NODE_TYPES
-        return [NormativeTypeCandidate(path, self.__read_model_type_json(path))]
+    def __get_node_type_list(self, path):
+        return [NormativeTypeCandidate(str(os.path.join(path, '')), self.__read_model_type_json(path))]
 
     def __zip_model_imports(self, model, action_type) -> Path:
         base_path = self.__get_base_action_path(action_type)
@@ -96,7 +98,7 @@ class ModelImportManager:
         return json.dumps(json_data)
 
     def __read_model_type_json(self, tosca_path):
-        path = tosca_path + "types.json"
+        path = tosca_path / "types.json"
         if not os.path.isfile(path):
             return []
         json_file = open(path)
@@ -111,5 +113,25 @@ class ModelImportManager:
     def __get_base_action_path(self, action_type) -> Path:
         return self.__model_init_path if action_type == self.INIT_FOLDER_NAME else self.__model_upgrade_path
 
-    def __get_model_tosca_path(self, action, model):
-        return str(self.__get_base_action_path(action) / model) + "/tosca/"
+    def __get_tosca_path(self, action, model):
+        return self.__get_base_action_path(action) / model / self.TYPES_FOLDER
+
+    def __init_model_non_node_types(self, model, model_payload_dict, with_metadata=False):
+        path = self.__get_tosca_path(self.ACTION_INIT, model)
+        if os.path.isdir(path):
+            self.__model_client.import_model_elements(model_payload_dict, str(os.path.join(path, '')) , with_metadata)
+
+    def __upgrade_model_non_node_types(self, model, model_payload_dict, with_metadata=False):
+        path = self.__get_tosca_path(self.ACTION_UPGRADE, model)
+        if os.path.isdir(path):
+            self.__model_client.import_model_elements(model_payload_dict, str(os.path.join(path, '')), with_metadata)
+
+    def __init_model_node_types(self, model, model_payload_dict, upgrade=False):
+        path = self.__get_tosca_path(self.ACTION_INIT, model) / self.NODE_FOLDER
+        if os.path.isdir(path):
+            self.__model_client.import_model_types(model_payload_dict, self.__get_node_type_list(path), upgrade)
+
+    def __upgrade_model_node_types(self, model, model_payload_dict, upgrade=True):
+        path = self.__get_tosca_path(self.ACTION_UPGRADE, model) / self.NODE_FOLDER
+        if os.path.isdir(path):
+            self.__model_client.import_model_types(model_payload_dict, self.__get_node_type_list(path), upgrade)

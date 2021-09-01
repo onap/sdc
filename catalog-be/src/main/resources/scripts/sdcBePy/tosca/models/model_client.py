@@ -77,7 +77,7 @@ class ModelClient:
             raise Exception(error_msg)
         logger.log("Updated model", model_name)
 
-    def import_model_elements(self, model_payload_dict, tosca_elements_import_path, with_metadata=False):
+    def import_model_elements(self, model_payload_dict, tosca_elements_import_path, with_metadata):
         model_name = model_payload_dict['name']
         logger.debug("Starting import of normative elements for model '{}'".format(model_name))
         if with_metadata:
@@ -91,6 +91,14 @@ class ModelClient:
         logger.debug("Starting import of normative types for model '{}'".format(model_name))
         process_type_list(types_list, self.__sdc_be_proxy, upgrade)
         logger.log("Finished importing normative types for model", model_name)
+
+    def get_model_list(self):
+        response = self.__sdc_be_proxy.get_model_list()
+        if response == 200:
+            models = self.__sdc_be_proxy.get_response_from_buffer()
+            return json.loads(models)
+        else:
+            return []
 
     @staticmethod
     def __parse_to_json_str(model_payload_dict):
