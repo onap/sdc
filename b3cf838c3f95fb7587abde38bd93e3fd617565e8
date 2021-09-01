@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "181663cf_19e9cf00",
+        "filename": "catalog-be/src/main/resources/scripts/sdcBePy/tosca/models/model_import_manager.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-01T08:54:05Z",
+      "side": 1,
+      "message": "unless I\u0027m misreading this, this can set action to self.ACTION_INIT only if it is already self.ACTION_INIT (i.e. not self.ACTION_UPGRADE).\n\ni dont see where we check if the model is already created and proceed to deploy the types in the init folder only if the model doesnt already exist",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 68,
+        "endChar": 37
+      },
+      "revId": "b3cf838c3f95fb7587abde38bd93e3fd617565e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
