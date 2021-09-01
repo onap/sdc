@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3c017f7_f7858a6a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-01T13:36:20Z",
+      "side": 1,
+      "message": "there is no need to have a separate param for model, we can include it in the category definition yaml itself (unlike the other types we are not constrained in what we can put in the yaml as categories are not a tosca standard type).\nAlso it would be good to support a list of models rather than a single model where the same category can be used for more then one model",
+      "range": {
+        "startLine": 190,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 112
+      },
+      "revId": "4b4e3cf0804d0d1ccc1ce642696daf903de5f8bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
