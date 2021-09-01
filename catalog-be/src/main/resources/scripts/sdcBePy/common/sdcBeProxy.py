@@ -5,7 +5,6 @@ import pycurl
 
 from sdcBePy.common.helpers import check_arguments_not_none
 
-
 def get_url(ip, port, protocol):
     return "%s://%s:%s" % (protocol, ip, port)
 
@@ -54,6 +53,9 @@ class SdcBeProxy:
 
     def get_normatives(self):
         return self.con.get("/sdc2/rest/v1/screen", with_buffer=True)
+
+    def get_model_list(self, buffer):
+        return self.con.get("/sdc2/rest/v1/catalog/model", buffer=buffer, with_buffer=True)
 
     def post_file(self, path, multi_part_form_data, buffer=None):
         return self.con.post_file(path, multi_part_form_data, buffer)
