@@ -28,11 +28,13 @@ import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_INPUT;
 import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_PROPERTY;
 
 import fj.data.Either;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -307,9 +309,12 @@ public class ToscaExportHandler {
         
         final List<ToscaImportByModel> allModelImports = modelOperation.findAllModelImports(modelId, true);
         final List<Map<String, Map<String, String>>> importList = new ArrayList<>();
+        final Set<Path> addedPathList = new HashSet<>();
         for(final ToscaImportByModel toscaImportByModel: allModelImports) {
-            final String fileName = FilenameUtils.getBaseName(toscaImportByModel.getFullPath());
-            importList.add(Map.of(fileName, Map.of("file", toscaImportByModel.getFullPath())));
+            final Path importPath = ToscaDefaultImportHelper.buildImportEntryPath(Path.of(toscaImportByModel.getFullPath()), addedPathList);
+            final String fileName = FilenameUtils.getBaseName(importPath.toString());
+            importList.add(Map.of(fileName, Map.of("file", importPath.toString())));
+            addedPathList.add(importPath);
         }
         return importList;
     }

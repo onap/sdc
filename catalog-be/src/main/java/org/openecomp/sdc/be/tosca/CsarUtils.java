@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -820,9 +821,15 @@ public class CsarUtils {
     private void addSchemaFilesByModel(final ZipOutputStream zipOutputStream, final String modelName) {
         try {
             final List<ToscaImportByModel> modelDefaultImportList = modelOperation.findAllModelImports(modelName, true);
+            final Set<Path> writtenEntryPathList = new HashSet<>();
+            final Path definitionsPath = Path.of(DEFINITIONS_PATH);
             for (final ToscaImportByModel toscaImportByModel : modelDefaultImportList) {
-                final var zipEntry = new ZipEntry(DEFINITIONS_PATH + toscaImportByModel.getFullPath());
+                final Path importPath =
+                    ToscaDefaultImportHelper.buildImportEntryPath(Path.of(toscaImportByModel.getFullPath()), writtenEntryPathList);
+                final Path entryPath = definitionsPath.resolve(importPath);
+                final var zipEntry = new ZipEntry(entryPath.toString());
                 zipOutputStream.putNextEntry(zipEntry);
+                writtenEntryPathList.add(entryPath);
                 final byte[] content = toscaImportByModel.getContent().getBytes(StandardCharsets.UTF_8);
                 zipOutputStream.write(content, 0, content.length);
                 zipOutputStream.closeEntry();
