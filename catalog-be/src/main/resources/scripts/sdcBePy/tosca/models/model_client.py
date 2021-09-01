@@ -77,7 +77,7 @@ class ModelClient:
             raise Exception(error_msg)
         logger.log("Updated model", model_name)
 
-    def import_model_elements(self, model_payload_dict, tosca_elements_import_path, with_metadata=False):
+    def import_model_elements(self, model_payload_dict, tosca_elements_import_path, with_metadata):
         model_name = model_payload_dict['name']
         logger.debug("Starting import of normative elements for model '{}'".format(model_name))
         if with_metadata:
