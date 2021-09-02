@@ -2596,3 +2596,19 @@ errors:
         message: "Invalid label name. Only the following characters are allowed in label name: '%1'",
         messageId: "SVC4158"
     }
+
+    #---------SVC4159-----------------------------
+    # %1 - The model name
+    COULD_NOT_DELETE_MODEL: {
+        code: 500,
+        message: "Could not delete the model '%1'.",
+        messageId: "SVC4159"
+    }
+
+    #---------SVC4160-----------------------------
+    # %1 - The model name
+    COULD_NOT_DELETE_MODEL_ELEMENTS: {
+        code: 500,
+        message: "Could not delete the model '%1' elements.",
+        messageId: "SVC4160"
+    }

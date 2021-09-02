@@ -48,6 +48,7 @@ import org.janusgraph.core.JanusGraphVertexQuery;
 import org.janusgraph.core.PropertyKey;
 import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.dao.api.exception.JanusGraphException;
 import org.openecomp.sdc.be.dao.graph.GraphElementFactory;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
@@ -59,6 +60,7 @@ import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.resources.data.GraphNodeLock;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -1316,6 +1318,58 @@ public class JanusGraphGenericDao {
             return Either.right(JanusGraphOperationStatus.NOT_FOUND);
         }
         return Either.left(immutablePairs);
+    }
+
+    public <T extends GraphNode> JanusGraphOperationStatus deleteAllChildrenNodes(String key, String uniqueId, GraphEdgeLabels edgeType) {
+        final JanusGraph janusGraph = getJanusGraph();
+        final Iterable<JanusGraphVertex> vertices = janusGraph.query().has(key, uniqueId).vertices();
+        if (vertices == null || !vertices.iterator().hasNext()) {
+            return JanusGraphOperationStatus.NOT_FOUND;
+        }
+        final Vertex rootVertex = vertices.iterator().next();
+        final Iterator<Edge> outEdges = rootVertex.edges(Direction.OUT, edgeType.getProperty());
+        while (outEdges.hasNext()) {
+            final Edge edge = outEdges.next();
+            final Vertex vertexIn = edge.inVertex();
+            final Iterator<Edge> outSubEdges = vertexIn.edges(Direction.OUT);
+            while (outSubEdges.hasNext()) {
+                Edge subEdge = outSubEdges.next();
+                Vertex vertex = subEdge.inVertex();
+                Map<String, Object> properties = getProperties(vertex);
+                if (properties != null) {
+                    String label = (String) properties.get(GraphPropertiesDictionary.LABEL.getProperty());
+                    if (label.equals("property")) {
+                        vertex.remove();
+                    }
+                }
+            }
+            Map<String, Object> properties = getProperties(vertexIn);
+            if (properties != null) {
+                String label = (String) properties.get(GraphPropertiesDictionary.LABEL.getProperty());
+                GraphNode node = GraphElementFactory
+                    .createElement(label, GraphElementTypeEnum.Node, properties, GraphNode.class);
+                if (node != null) {
+                    vertexIn.remove();
+                }
+            }
+        }
+        return JanusGraphOperationStatus.OK;
+    }
+
+    /**
+     * Gets the JanusGraph instance.
+     *
+     * @return the JanusGraph instance
+     * @throws JanusGraphException when the graph was not created
+     */
+    public JanusGraph getJanusGraph() {
+        final Either<JanusGraph, JanusGraphOperationStatus> graphRes = janusGraphClient.getGraph();
+        if (graphRes.isRight()) {
+            final var errorMsg = String.format("Failed to retrieve graph. Status was '%s'", graphRes.right().value());
+            log.error(EcompLoggerErrorCode.SCHEMA_ERROR, JanusGraphGenericDao.class.getName(), errorMsg);
+            throw new JanusGraphException(graphRes.right().value(), errorMsg);
+        }
+        return graphRes.left().value();
     }
 
     public Either<List<ImmutablePair<JanusGraphVertex, Edge>>, JanusGraphOperationStatus> getChildrenVertecies(String key, String uniqueId,

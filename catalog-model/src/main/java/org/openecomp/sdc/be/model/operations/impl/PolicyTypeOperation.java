@@ -18,8 +18,8 @@
  * ============LICENSE_END=========================================================
  */
 package org.openecomp.sdc.be.model.operations.impl;
+
 import static org.openecomp.sdc.be.dao.janusgraph.JanusGraphUtils.buildNotInPredicate;
-import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
 import fj.data.Either;
 import java.util.ArrayList;
@@ -31,6 +31,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraph;
 import org.janusgraph.graphdb.query.JanusGraphPredicate;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
@@ -60,13 +63,17 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
     private static final Logger log = Logger.getLogger(PolicyTypeOperation.class.getName());
     private static final String CREATE_FLOW_CONTEXT = "CreatePolicyType";
     private static final String GET_FLOW_CONTEXT = "GetPolicyType";
-    @Autowired
-    private PropertyOperation propertyOperation;
-    @Autowired
-    private DerivedFromOperation derivedFromOperation;
-    @Autowired
-    private OperationUtils operationUtils;
+    private final PropertyOperation propertyOperation;
+    private final DerivedFromOperation derivedFromOperation;
+    private final OperationUtils operationUtils;
 
+    @Autowired
+    public PolicyTypeOperation(final PropertyOperation propertyOperation, final DerivedFromOperation derivedFromOperation,
+                               final OperationUtils operationUtils) {
+        this.propertyOperation = propertyOperation;
+        this.derivedFromOperation = derivedFromOperation;
+        this.operationUtils = operationUtils;
+    }
 
     @Override
     public Either<PolicyTypeDefinition, StorageOperationStatus> getLatestPolicyTypeByType(String type, String model) {
@@ -327,5 +334,19 @@ public class PolicyTypeOperation extends AbstractOperation implements IPolicyTyp
         updatedTypeDefinition.setUniqueId(currTypeDefinition.getUniqueId());
         updatedTypeDefinition.setCreationTime(currTypeDefinition.getCreationTime());
         updatedTypeDefinition.setModificationTime(System.currentTimeMillis());
+    }
+
+    public void deletePolicyTypesByModelId(final String modelId) {
+        final JanusGraph janusGraph = janusGraphGenericDao.getJanusGraph();
+        final GraphTraversalSource traversal = janusGraph.traversal();
+        final List<Vertex> policyTypeList = traversal.V()
+            .has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), modelId)
+            .out(GraphEdgeLabels.MODEL_ELEMENT.getProperty())
+            .has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.PolicyType.getName())
+            .toList();
+        policyTypeList.forEach(policyTypeVertex -> {
+            traversal.V(policyTypeVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();
+            policyTypeVertex.remove();
+        });
     }
 }
