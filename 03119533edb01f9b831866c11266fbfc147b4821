@@ -46,6 +46,30 @@
       "revId": "03119533edb01f9b831866c11266fbfc147b4821",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f7d7277_efbffe13",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-02T15:22:40Z",
+      "side": 1,
+      "message": "We will, where the definition is common for different models there will be no issue",
+      "parentUuid": "cef4e2b5_e9e61590",
+      "range": {
+        "startLine": 147,
+        "startChar": 3,
+        "endLine": 154,
+        "endChar": 5
+      },
+      "revId": "03119533edb01f9b831866c11266fbfc147b4821",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
