@@ -367,4 +367,63 @@ class GroupBusinessLogicTest {
         Assertions.assertEquals("ArtTmpInfoName1", allGroups.get(0).getGroupName());
         Assertions.assertEquals(expectedResponse.getStatus(), result.right().value().getStatus());
     }
+
+    @Test
+    void testGetNextVfModuleNameCounter_groupNull() {
+
+        final int resultCollection = test.getNextVfModuleNameCounter((Collection <GroupDefinition>) null);
+        final int resultMap = test.getNextVfModuleNameCounter((Map<String, GroupDefinition>) null);
+
+        Assertions.assertEquals(0, resultCollection);
+        Assertions.assertEquals(0, resultMap);
+    }
+
+    @Test
+    void testGetNextVfModuleNameCounter_groupEmpty() {
+
+        final int resultCollection = test.getNextVfModuleNameCounter(new ArrayList<>());
+        final int resultMap = test.getNextVfModuleNameCounter(new HashMap<>());
+
+        Assertions.assertEquals(0, resultCollection);
+        Assertions.assertEquals(0, resultMap);
+    }
+
+    @Test
+    void testGetNextVfModuleNameCounter_takesCollectionPass() {
+
+        final Collection<GroupDefinition> group = new ArrayList<>();
+        final GroupDefinition groupDefinition1 = new GroupDefinition();
+        final GroupDefinition groupDefinition2 = new GroupDefinition();
+        final GroupDefinition groupDefinition3 = new GroupDefinition();
+        groupDefinition1.setName("resourceSystemName..ArtTmpInfoDesc1..module-0");
+        groupDefinition2.setName("resourceSystemName..ArtTmpInfoDesc1..module-9");
+        groupDefinition3.setName("resourceSystemName..ArtTmpInfoDesc2..module-1");
+        group.add(groupDefinition1);
+        group.add(groupDefinition2);
+        group.add(groupDefinition3);
+
+        final int result = test.getNextVfModuleNameCounter(group);
+
+        Assertions.assertEquals(10, result);
+    }
+
+    @Test
+    void testGetNextVfModuleNameCounter_takesMapPass() {
+
+        final Map<String, GroupDefinition> group = new HashMap<>();
+        final GroupDefinition groupDefinition1 = new GroupDefinition();
+        final GroupDefinition groupDefinition2 = new GroupDefinition();
+        final GroupDefinition groupDefinition3 = new GroupDefinition();
+        groupDefinition1.setName("resourceSystemName..ArtTmpInfoDesc1..module-0");
+        groupDefinition2.setName("resourceSystemName..ArtTmpInfoDesc1..module-9");
+        groupDefinition3.setName("resourceSystemName..ArtTmpInfoDesc2..module-1");
+
+        group.put("first", groupDefinition1);
+        group.put("second", groupDefinition2);
+        group.put("third", groupDefinition3);
+
+        final int result = test.getNextVfModuleNameCounter(group);
+
+        Assertions.assertEquals(10, result);
+    }
 }
