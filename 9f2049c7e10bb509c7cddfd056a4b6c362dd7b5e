@@ -46,6 +46,30 @@
       "revId": "9f2049c7e10bb509c7cddfd056a4b6c362dd7b5e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d753dee8_29bb207a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 828,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-09-02T14:07:20Z",
+      "side": 1,
+      "message": "Done. If the model contains invalid file characters it will be a problem. But I think this is not likely to happen.",
+      "parentUuid": "75e7caad_56bb7641",
+      "range": {
+        "startLine": 828,
+        "startChar": 0,
+        "endLine": 828,
+        "endChar": 131
+      },
+      "revId": "9f2049c7e10bb509c7cddfd056a4b6c362dd7b5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
