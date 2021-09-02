@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eddab4bc_a26b121f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-02T10:56:21Z",
+      "side": 1,
+      "message": "No need to include the model in the uid, the model will just be a property in the vertex same as the other properties of the category",
+      "range": {
+        "startLine": 147,
+        "startChar": 3,
+        "endLine": 154,
+        "endChar": 5
+      },
+      "revId": "03119533edb01f9b831866c11266fbfc147b4821",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
