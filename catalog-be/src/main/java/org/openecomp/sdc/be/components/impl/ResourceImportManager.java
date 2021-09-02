@@ -844,7 +844,7 @@ public class ResourceImportManager {
                 log.debug("Invalid occurrenses format.  Max occurrence is {}", maxObj);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_OCCURRENCES);
             }
-            if (maxOccurrences <= 0 || maxOccurrences < minOccurrences) {
+            if (maxOccurrences < 0 || maxOccurrences < minOccurrences) {
                 log.debug("Invalid occurrenses format.  min occurrence is {}, Max occurrence is {}", minOccurrences, maxOccurrences);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_OCCURRENCES);
             }
