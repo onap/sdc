@@ -22,6 +22,30 @@
       "revId": "4b4e3cf0804d0d1ccc1ce642696daf903de5f8bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ae70f59_20aecdc8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-09-02T09:41:55Z",
+      "side": 1,
+      "message": "I have pushed the changes only including a single model for now, as I`m working on to get the Integration tests fixed and then I will try to push the support for a list of models before code free.",
+      "parentUuid": "f3c017f7_f7858a6a",
+      "range": {
+        "startLine": 190,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 112
+      },
+      "revId": "4b4e3cf0804d0d1ccc1ce642696daf903de5f8bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
