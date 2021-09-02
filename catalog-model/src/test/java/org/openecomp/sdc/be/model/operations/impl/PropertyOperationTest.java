@@ -73,12 +73,12 @@ public class PropertyOperationTest extends ModelTestBase {
 
     final DataTypeOperation dataTypeOperation = mock(DataTypeOperation.class);
 
-    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null, dataTypeOperation);
+    PropertyOperation propertyOperation = new PropertyOperation(janusGraphGenericDao, null);
 
     @Before
     public void setup() {
+        propertyOperation.setDataTypeOperation(dataTypeOperation);
         propertyOperation.setJanusGraphGenericDao(janusGraphGenericDao);
-
     }
 
     private PropertyDefinition buildPropertyDefinition() {
@@ -456,9 +456,11 @@ public class PropertyOperationTest extends ModelTestBase {
 
 	}
 
-	private PropertyOperation createTestSubject() {
-		return new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null, dataTypeOperation);
-	}
+    private PropertyOperation createTestSubject() {
+        final var propertyOperation = new PropertyOperation(new HealingJanusGraphGenericDao(new JanusGraphClient()), null);
+        propertyOperation.setDataTypeOperation(dataTypeOperation);
+        return propertyOperation;
+    }
 
 	@Test
 	public void testConvertPropertyDataToPropertyDefinition() throws Exception {

@@ -24,15 +24,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraph;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
+import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.slf4j.Logger;
@@ -45,12 +47,16 @@ public class DataTypeOperation extends AbstractOperation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataTypeOperation.class);
 
-    private final ModelOperation modelOperation;
+    private ModelOperation modelOperation;
 
     @Autowired
-    public DataTypeOperation(final HealingJanusGraphGenericDao janusGraphGenericDao,
-                             final ModelOperation modelOperation) {
+    public DataTypeOperation(final HealingJanusGraphGenericDao janusGraphGenericDao) {
         this.janusGraphGenericDao = janusGraphGenericDao;
+    }
+
+    //circular dependency ModelOperation->ModelElementOperation->DataTypeOperation
+    @Autowired
+    public void setModelOperation(final ModelOperation modelOperation) {
         this.modelOperation = modelOperation;
     }
 
@@ -130,6 +136,20 @@ public class DataTypeOperation extends AbstractOperation {
             return Collections.emptyList();
         }
         return getDataTypes.left().value();
+    }
+
+    public void deleteDataTypesByModelId(final String modelId) {
+        final JanusGraph janusGraph = janusGraphGenericDao.getJanusGraph();
+        final GraphTraversalSource traversal = janusGraph.traversal();
+        final List<Vertex> dataTypeList = traversal.V()
+            .has(GraphPropertiesDictionary.UNIQUE_ID.getProperty(), modelId)
+            .out(GraphEdgeLabels.MODEL_ELEMENT.getProperty())
+            .has(GraphPropertiesDictionary.LABEL.getProperty(), NodeTypeEnum.DataType.getName())
+            .toList();
+        dataTypeList.forEach(dataTypeVertex -> {
+            traversal.V(dataTypeVertex).out(GraphEdgeLabels.PROPERTY.getProperty()).drop().iterate();
+            dataTypeVertex.remove();
+        });
     }
 
 }
