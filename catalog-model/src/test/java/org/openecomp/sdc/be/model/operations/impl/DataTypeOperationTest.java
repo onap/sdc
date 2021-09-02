@@ -113,14 +113,6 @@ class DataTypeOperationTest {
         assertThat(dataTypesFound).isEmpty();
     }
 
-    @Test
-    void mapDataTypesDefinitionByModelTest() {
-        final var allDataTypesMappedByModel =
-            dataTypeOperation.mapDataTypesDefinitionByModel(allDataTypesFoundDefinitionMap);
-        assertThat(allDataTypesMappedByModel.get(modelName).size()).isEqualTo(2);
-        assertThat(allDataTypesMappedByModel.get(null)).isNotEmpty();
-    }
-
 
     private void initTestData() {
         model = new Model(modelName, ModelTypeEnum.NORMATIVE);

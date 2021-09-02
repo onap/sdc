@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -69,8 +70,40 @@ public class DataTypeOperation extends AbstractOperation {
         }
         return dataTypesFound;
     }
+    
+    public Map<String, List<String>> getAllDataTypeUidsToModels() {
+        final Map<String, List<String>> dataTypesFound = new HashMap<>();
+        final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesWithNullModel =
+            janusGraphGenericDao.getByCriteria(NodeTypeEnum.DataType, null, DataTypeData.class);
 
-    public List<DataTypeData> getAllDataTypesWithModel() {
+        final var dataTypesValidated = validateDataType(getAllDataTypesWithNullModel, null);
+        
+        for (DataTypeData dataType: dataTypesValidated) {
+            if (!dataTypesFound.containsKey(dataType.getUniqueId())){
+                dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
+            }
+            dataTypesFound.get(dataType.getUniqueId()).add(null);
+        }
+        
+        modelOperation.findAllModels()
+            .forEach(model -> {
+                for (DataTypeData dataType: getAllDataTypesWithModel(model.getName())) {
+                    if (!dataTypesFound.containsKey(dataType.getUniqueId())){
+                        dataTypesFound.put(dataType.getUniqueId(), new ArrayList<>());
+                    }
+                    dataTypesFound.get(dataType.getUniqueId()).add(model.getName());
+                }
+        });
+        return dataTypesFound;
+    }
+    
+    private List<DataTypeData> getAllDataTypesWithModel(final String modelName) {
+        final Either<List<DataTypeData>, JanusGraphOperationStatus> getAllDataTypesByModel = janusGraphGenericDao
+            .getByCriteriaForModel(NodeTypeEnum.DataType, null, modelName, DataTypeData.class);
+        return validateDataType(getAllDataTypesByModel, modelName);
+    }
+
+    private List<DataTypeData> getAllDataTypesWithModel() {
         final List<DataTypeData> dataTypesWithModel = new ArrayList<>();
         modelOperation.findAllModels()
             .forEach(model -> {
@@ -97,30 +130,6 @@ public class DataTypeOperation extends AbstractOperation {
             return Collections.emptyList();
         }
         return getDataTypes.left().value();
-    }
-
-    public Map<String, Map<String, DataTypeDefinition>> mapDataTypesDefinitionByModel(final Map<String, DataTypeDefinition> allDataTypes) {
-        final Map<String, DataTypeDefinition> dataTypesWithNullModelMap = new HashMap<>();
-        final Map<String, DataTypeDefinition> dataTypesWithModelMap = new HashMap<>();
-        final Map<String, Map<String, DataTypeDefinition>> dataTypesMappedByModel = new HashMap<>();
-        allDataTypes.values().stream().forEach(dataTypeDefinition -> {
-            final var model = dataTypeDefinition.getModel();
-            final var dataTypeDefinitionName = dataTypeDefinition.getName();
-            if (model == null) {
-                dataTypesWithNullModelMap.put(dataTypeDefinitionName, dataTypeDefinition);
-            } else {
-                dataTypesWithModelMap.put(dataTypeDefinitionName, dataTypeDefinition);
-                if (dataTypesMappedByModel.containsKey(model)) {
-                    dataTypesMappedByModel.get(model).put(dataTypeDefinitionName, dataTypeDefinition);
-                } else {
-                    dataTypesMappedByModel.put(model, dataTypesWithModelMap);
-                }
-            }
-        });
-        if(MapUtils.isNotEmpty(dataTypesWithNullModelMap)) {
-            dataTypesMappedByModel.put(null, dataTypesWithNullModelMap);
-        }
-        return dataTypesMappedByModel;
     }
 
 }
