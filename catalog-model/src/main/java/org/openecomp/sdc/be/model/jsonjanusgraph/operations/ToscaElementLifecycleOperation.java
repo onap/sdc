@@ -60,10 +60,12 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
@@ -71,10 +73,12 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
 import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("tosca-element-lifecycle-operation")
 /**
@@ -87,6 +91,12 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
     private static final String FAILED_TO_DELETE_LAST_STATE_EDGE_STATUS_IS = "Failed to delete last state edge. Status is {}. ";
     private static final String FAILED_TO_GET_VERTICES = "Failed to get vertices by id {}. Status is {}. ";
     private static final Logger log = Logger.getLogger(ToscaElementLifecycleOperation.class);
+    private final ModelOperation modelOperation;
+
+    @Autowired
+    public ToscaElementLifecycleOperation(ModelOperation modelOperation) {
+        this.modelOperation = modelOperation;
+    }
 
     static StorageOperationStatus handleFailureToPrepareParameters(final JanusGraphOperationStatus status, final String toscaElementId) {
         CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
@@ -223,12 +233,12 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
      * @param toscaElementId
      * @return
      */
-    public Either<ToscaElement, StorageOperationStatus> undoCheckout(String toscaElementId) {
+    public Either<ToscaElement, StorageOperationStatus> undoCheckout(String toscaElementId, String model) {
         try {
             return janusGraphDao.getVertexById(toscaElementId, JsonParseFlagEnum.ParseMetadata).right().map(errorStatus -> {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, FAILED_TO_GET_VERTICES, toscaElementId);
                 return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(errorStatus);
-            }).left().bind(this::retrieveAndUpdatePreviousVersion).left().bind(this::updateEdgeToCatalogRootAndReturnPreVersionElement);
+            }).left().bind(this::retrieveAndUpdatePreviousVersion).left().bind(tuple -> updateEdgeToCatalogRootAndReturnPreVersionElement(tuple, model));
         } catch (Exception e) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Exception occurred during undo checkout tosca element {}. {}", toscaElementId,
                 e.getMessage());
@@ -260,13 +270,17 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
     }
 
     private Either<ToscaElement, StorageOperationStatus> updateEdgeToCatalogRootAndReturnPreVersionElement(
-        final P2<GraphVertex, JanusGraphVertex> tuple) {
+        final P2<GraphVertex, JanusGraphVertex> tuple, final String model) {
         final GraphVertex currVersionV = tuple._1();
         final JanusGraphVertex preVersionVertex = tuple._2();
         StorageOperationStatus updateCatalogRes = updateEdgeToCatalogRootByUndoCheckout(preVersionVertex, currVersionV);
         if (updateCatalogRes != StorageOperationStatus.OK) {
             return Either.right(updateCatalogRes);
         } else {
+            final Optional<Model> modelOptional = modelOperation.findModelByName(model);
+            if (modelOptional.isPresent() && modelOptional.get().getModelType() == ModelTypeEnum.NORMATIVE_EXTENSION) {
+                modelOperation.deleteModel(modelOptional.get(), false);
+            }
             final ToscaElementOperation operation = getToscaElementOperation(currVersionV.getLabel());
             return operation.deleteToscaElement(currVersionV).left().bind(discarded -> getUpdatedPreVersionElement(operation, preVersionVertex));
         }

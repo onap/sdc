@@ -262,7 +262,7 @@ public class ToscaElementLifecycleOperationTest extends ModelTestBase {
         expectedIds.add(vertex4.getUniqueId());
         verifyInCatalogData(4, expectedIds);
 
-        lifecycleOperation.undoCheckout(vertex4.getUniqueId());
+        lifecycleOperation.undoCheckout(vertex4.getUniqueId(), null);
         expectedIds.remove(vertex4.getUniqueId());
         verifyInCatalogData(3, expectedIds);
 
