@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19154644_df1b9c41",
+        "filename": "catalog-be/src/main/resources/scripts/sdcBePy/tosca/models/model_import_manager.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-02T10:41:23Z",
+      "side": 1,
+      "message": "existence of the upgrade folder does not guarantee the model has already been deployed. It will depend on the \u0027from\u0027 version in the upgrade path. The condition should be if the model is in \u0027models\u0027 then upgrade otherwise init",
+      "range": {
+        "startLine": 123,
+        "startChar": 0,
+        "endLine": 123,
+        "endChar": 31
+      },
+      "revId": "1f39134c34056b8dac58e39fd7039fea90d872b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
