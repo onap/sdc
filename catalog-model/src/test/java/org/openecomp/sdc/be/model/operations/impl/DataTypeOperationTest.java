@@ -38,7 +38,6 @@ import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
-import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -51,8 +50,6 @@ class DataTypeOperationTest {
     private ModelOperation modelOperation;
     @Mock
     private HealingJanusGraphGenericDao janusGraphGenericDao;
-    @Mock
-    private ApplicationDataTypeCache applicationDataTypeCache;
 
     private final String modelName = "ETSI-SDC-MODEL-TEST";
     private final List<DataTypeData> dataTypesWithoutModel = new ArrayList<>();
@@ -61,10 +58,10 @@ class DataTypeOperationTest {
     final Map<String, DataTypeDefinition> allDataTypesFoundDefinitionMap = new HashMap<>();
     private Model model;
 
-
     @BeforeEach
     void beforeEachInit() {
         MockitoAnnotations.openMocks(this);
+        dataTypeOperation.setModelOperation(modelOperation);
         initTestData();
     }
 

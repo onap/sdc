@@ -35,7 +35,13 @@ public class OperationException extends BusinessException {
         params = new String[0];
     }
 
-    public OperationException(final ActionStatus actionStatus, String... params) {
+    public OperationException(final ActionStatus actionStatus, final String... params) {
+        this.actionStatus = actionStatus;
+        this.params = params;
+    }
+
+    public OperationException(final Throwable cause, final ActionStatus actionStatus, final String... params) {
+        super(cause);
         this.actionStatus = actionStatus;
         this.params = params;
     }

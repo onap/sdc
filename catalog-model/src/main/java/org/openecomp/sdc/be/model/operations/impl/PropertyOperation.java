@@ -119,15 +119,19 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     private static final String THE_VALUE_OF_PROPERTY_FROM_TYPE_IS_INVALID = "The value {} of property from type {} is invalid";
     private static final String PROPERTY = "Property";
     private static final String UPDATE_DATA_TYPE = "UpdateDataType";
-    private static Logger log = Logger.getLogger(PropertyOperation.class.getName());
-    private DerivedFromOperation derivedFromOperation;
+    private static final Logger log = Logger.getLogger(PropertyOperation.class.getName());
+    private final DerivedFromOperation derivedFromOperation;
     private DataTypeOperation dataTypeOperation;
 
     @Autowired
-    public PropertyOperation(HealingJanusGraphGenericDao janusGraphGenericDao, DerivedFromOperation derivedFromOperation,
-                             DataTypeOperation dataTypeOperation) {
+    public PropertyOperation(final HealingJanusGraphGenericDao janusGraphGenericDao, final DerivedFromOperation derivedFromOperation) {
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.derivedFromOperation = derivedFromOperation;
+    }
+
+    //circular dependency DataTypeOperation->ModelOperation->ModelElementOperation->PropertyOperation
+    @Autowired
+    public void setDataTypeOperation(DataTypeOperation dataTypeOperation) {
         this.dataTypeOperation = dataTypeOperation;
     }
 
@@ -2264,4 +2268,5 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             return null;
         }
     }
+
 }

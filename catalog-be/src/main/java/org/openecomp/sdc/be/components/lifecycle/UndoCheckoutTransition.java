@@ -106,7 +106,7 @@ public class UndoCheckoutTransition extends LifeCycleTransition {
         Either<? extends Component, ResponseFormat> result = null;
         log.debug("start performing undo-checkout for resource {}", component.getUniqueId());
         try {
-            Either<ToscaElement, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(component.getUniqueId());
+            Either<ToscaElement, StorageOperationStatus> undoCheckoutResourceResult = lifeCycleOperation.undoCheckout(component.getUniqueId(), component.getModel());
             if (undoCheckoutResourceResult.isRight()) {
                 log.debug("checkout failed on graph");
                 StorageOperationStatus response = undoCheckoutResourceResult.right().value();

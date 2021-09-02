@@ -38,10 +38,10 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ToscaModelImportCassandraDao;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
@@ -71,6 +71,7 @@ public class ModelOperation {
     private final JanusGraphDao janusGraphDao;
     private final ToscaModelImportCassandraDao toscaModelImportCassandraDao;
     private final DerivedFromOperation derivedFromOperation;
+    private ModelElementOperation modelElementOperation;
 
     @Autowired
     public ModelOperation(final JanusGraphGenericDao janusGraphGenericDao,
@@ -320,6 +321,56 @@ public class ModelOperation {
     private String createAdditionalTypeDefinitionsHeader() {
         return "tosca_definitions_version: tosca_simple_yaml_1_3" + "\n"
             + "description: Auto-generated file that contains package custom types or types added after system installation." + "\n";
+    }
+
+    /**
+     * Deletes the given model if it exists, along with its MODEL_ELEMENT edges and import files.
+     *
+     * @param model         the model
+     * @param inTransaction if the operation is called in the middle of a janusgraph transaction
+     */
+    public void deleteModel(final Model model, final boolean inTransaction) {
+        boolean rollback = false;
+
+        try {
+            final GraphVertex modelVertexByName = findModelVertexByName(model.getName()).orElse(null);
+            if (modelVertexByName == null) {
+                return;
+            }
+            toscaModelImportCassandraDao.deleteAllByModel(model.getName());
+            modelElementOperation.deleteModelElements(model, inTransaction);
+            deleteModel(model);
+        } catch (final OperationException e) {
+            rollback = true;
+            throw e;
+        } catch (final Exception e) {
+            rollback = true;
+            throw new OperationException(e, ActionStatus.COULD_NOT_DELETE_MODEL, model.getName());
+        } finally {
+            if (!inTransaction) {
+                if (rollback) {
+                    janusGraphGenericDao.rollback();
+                } else {
+                    janusGraphGenericDao.commit();
+                }
+            }
+        }
+    }
+
+    private void deleteModel(final Model model) {
+        final var modelData = new ModelData(model.getName(), UniqueIdBuilder.buildModelUid(model.getName()), model.getModelType());
+        final Either<ModelData, JanusGraphOperationStatus> deleteParentNodeByModel = janusGraphGenericDao.deleteNode(modelData, ModelData.class);
+        if (deleteParentNodeByModel.isRight()) {
+            final var janusGraphOperationStatus = deleteParentNodeByModel.right().value();
+            log.error(EcompLoggerErrorCode.DATA_ERROR, ModelOperation.class.getName(),
+                "Failed to delete model {} on JanusGraph with status {}", new Object[] {model.getName(), janusGraphOperationStatus});
+            throw new OperationException(ActionStatus.COULD_NOT_DELETE_MODEL, model.getName());
+        }
+    }
+
+    @Autowired
+    public void setModelElementOperation(final ModelElementOperation modelElementOperation) {
+        this.modelElementOperation = modelElementOperation;
     }
 
 }
