@@ -1514,17 +1514,15 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         final Map<String, Map<String, DataTypeDefinition>> dataTypes = new HashMap<>();
         Either<Map<String, Map<String, DataTypeDefinition>>, JanusGraphOperationStatus> result = Either.left(dataTypes);
         final Map<String, DataTypeDefinition> allDataTypesFound = new HashMap<>();
-        final List<DataTypeData> list = dataTypeOperation.getAllDataTypeNodes();
-        if (list != null) {
-            log.trace("Number of data types to load is {}", list.size());
-            List<String> collect = list.stream().map(p -> p.getDataTypeDataDefinition().getName()).collect(Collectors.toList());
-            log.trace("The data types to load are {}", collect);
-            for (DataTypeData dataTypeData : list) {
-                final String dataTypeName = dataTypeData.getDataTypeDataDefinition().getName();
-                final String dataTypeUniqueId = dataTypeData.getUniqueId();
-                log.trace("Going to fetch data type {}. uid is {}", dataTypeName, dataTypeUniqueId);
+        
+        final Map<String, List<String>> dataTypeUidstoModels = dataTypeOperation.getAllDataTypeUidsToModels();
+
+        if (dataTypeUidstoModels != null) {
+            log.trace("Number of data types to load is {}", dataTypeUidstoModels.size());
+            for (String dataTypeUid : dataTypeUidstoModels.keySet()) {
+                log.trace("Going to fetch data type with uid {}", dataTypeUid);
                 Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeByUid = this
-                    .getAndAddDataTypeByUid(dataTypeUniqueId, allDataTypesFound);
+                    .getAndAddDataTypeByUid(dataTypeUid, allDataTypesFound);
                 if (dataTypeByUid.isRight()) {
                     JanusGraphOperationStatus status = dataTypeByUid.right().value();
                     if (status == JanusGraphOperationStatus.NOT_FOUND) {
@@ -1532,8 +1530,15 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                     }
                     return Either.right(status);
                 }
-                result = Either.left(dataTypeOperation.mapDataTypesDefinitionByModel(allDataTypesFound));
+                for (final String model: dataTypeUidstoModels.get(dataTypeUid)) {
+                    if (!dataTypes.containsKey(model)) {
+                        dataTypes.put(model, new HashMap<String, DataTypeDefinition>());
+                    }
+                    DataTypeDefinition dataTypeDefinition = allDataTypesFound.get(dataTypeUid);
+                    dataTypes.get(model).put(dataTypeDefinition.getName(), dataTypeDefinition);
+                }
             }
+            
         }
         if (log.isTraceEnabled()) {
             if (result.isRight()) {
