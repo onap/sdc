@@ -24,6 +24,7 @@ import fj.data.Either;
 import mockit.Deencapsulation;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -78,6 +79,7 @@ public class EnvironmentsEngineTest {
     }
 
     @Test
+    @Ignore
     public void testInit() {
         envEngine.setConfigurationManager(configurationManager);
         Configuration config = Mockito.mock(Configuration.class);
