@@ -44,35 +44,10 @@ public class ModelBusinessLogic {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelBusinessLogic.class);
     private final ModelOperation modelOperation;
-    private final DataTypeImportManager dataTypeImportManager;
 
     @Autowired
-    public ModelBusinessLogic(final ModelOperation modelOperation, final DataTypeImportManager dataTypeImportManager) {
+    public ModelBusinessLogic(final ModelOperation modelOperation) {
         this.modelOperation = modelOperation;
-        this.dataTypeImportManager = dataTypeImportManager;
-    }
-
-    /**
-     * Creates a model along with given data types. The data types must be provided in a yaml format, where each entry is one data type object, for
-     * example:
-     * <pre>
-     * tosca.datatypes.TimeInterval:
-     *   derived_from: tosca.datatypes.Root
-     *   [...]
-     *
-     * tosca.datatypes.network.NetworkInfo:
-     *   derived_from: tosca.datatypes.Root
-     *   [...]
-     * </pre>
-     *
-     * @param model         the model to create
-     * @param datatypesYaml the data types to create in yaml format. It can contain multiple data types entries.
-     * @return the created model.
-     */
-    public Model createModel(final Model model, final String datatypesYaml) {
-        createModel(model);
-        dataTypeImportManager.createDataTypes(datatypesYaml, model.getName(), true);
-        return model;
     }
 
     public Model createModel(final Model model) {
