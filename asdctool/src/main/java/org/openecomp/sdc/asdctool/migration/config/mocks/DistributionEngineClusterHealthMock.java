@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 public class DistributionEngineClusterHealthMock extends DistributionEngineClusterHealth {
 
     @Override
-    protected void init() {
+    protected void init(final String publicApiKey) {
     }
 
     @Override

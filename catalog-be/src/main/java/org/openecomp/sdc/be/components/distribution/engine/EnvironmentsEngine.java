@@ -168,6 +168,7 @@ public class EnvironmentsEngine implements INotificationHandler {
         String envId = opEnvEntry.getEnvironmentId();
         DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager()
             .getDistributionEngineConfiguration();
+        distributionEngineClusterHealth.init(opEnvEntry.getUebApikey());
         DistributionEnginePollingTask distributionEnginePollingTask = new DistributionEnginePollingTask(distributionEngineConfiguration,
             distributionCompleteReporter, componentUtils, distributionEngineClusterHealth, opEnvEntry);
         String envName = configurationManager.getDistributionEngineConfiguration().getEnvironments().get(0);
@@ -430,8 +431,24 @@ public class EnvironmentsEngine implements INotificationHandler {
     private Map<String, OperationalEnvironmentEntry> populateEnvironments() {
         Map<String, OperationalEnvironmentEntry> envs = getEnvironmentsFromDb();
         OperationalEnvironmentEntry confEntry = readEnvFromConfig();
+        readKeyFromDbOrCreate(envs, confEntry);
         envs.put(confEntry.getEnvironmentId(), confEntry);
         return envs;
+    }
+    
+    private void readKeyFromDbOrCreate(Map<String, OperationalEnvironmentEntry> envs, OperationalEnvironmentEntry confEntry) {
+        if (envs.get(confEntry.getEnvironmentId()) == null){
+            log.debug("Creating UEB API key");
+            Wrapper<Boolean> errorWrapper = new Wrapper<>();
+            createUebKeys(errorWrapper, confEntry);
+            confEntry.setStatus(EnvironmentStatusEnum.COMPLETED);
+            log.debug("Saving UEB API key to DB");
+            operationalEnvironmentDao.save(confEntry);
+        } else {
+            log.debug("Reading UEB API key from DB");
+            confEntry.setUebApikey(envs.get(confEntry.getEnvironmentId()).getUebApikey());
+            confEntry.setUebSecretKey(envs.get(confEntry.getEnvironmentId()).getUebSecretKey());
+        }
     }
 
     private OperationalEnvironmentEntry readEnvFromConfig() {

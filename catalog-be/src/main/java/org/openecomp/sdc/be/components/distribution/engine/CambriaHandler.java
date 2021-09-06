@@ -62,10 +62,6 @@ public class CambriaHandler implements ICambriaHandler {
     private static final Logger log = Logger.getLogger(CambriaHandler.class.getName());
     private static final String PARTITION_KEY = "asdc" + "aa";
     private static final String SEND_NOTIFICATION = "send notification";
-    private static final String CONSUMER_ID = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration()
-        .getDistributionStatusTopic().getConsumerId();
-    private static final boolean USE_HTTPS_WITH_DMAAP = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration()
-        .isUseHttpsWithDmaap();
     private final Gson gson = new Gson();
 
     /**
@@ -284,7 +280,9 @@ public class CambriaHandler implements ICambriaHandler {
                                                                                                String managerSecretKey) {
         AbstractAuthenticatedManagerBuilder<CambriaTopicManager> clientBuilder = createTopicManagerBuilder(hostSet)
             .authenticatedBy(managerApiKey, managerSecretKey);
-        if (USE_HTTPS_WITH_DMAAP) {
+        final boolean useHttpsWithDmaap = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration()
+                .isUseHttpsWithDmaap();
+        if (useHttpsWithDmaap) {
             clientBuilder = clientBuilder.usingHttps();
         }
         return clientBuilder;
@@ -506,7 +504,9 @@ public class CambriaHandler implements ICambriaHandler {
         Either<ApiCredential, CambriaErrorResponse> result;
         try {
             CambriaIdentityManager createIdentityManager = buildCambriaClient(new IdentityManagerBuilder().usingHosts(hostSet));
-            String description = String.format("ASDC Key for %s", CONSUMER_ID);
+            final String consumerId = ConfigurationManager.getConfigurationManager().getDistributionEngineConfiguration()
+                    .getDistributionStatusTopic().getConsumerId();
+            String description = String.format("ASDC Key for %s", consumerId);
             ApiCredential credential = createIdentityManager.createApiKey("", description);
             createIdentityManager.setApiCredentials(credential.getApiKey(), credential.getApiSecret());
             result = Either.left(credential);

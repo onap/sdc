@@ -31,7 +31,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -66,9 +65,8 @@ public class DistributionEngineClusterHealth {
     private HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNKNOWN.getHealthCheckInfo();
     private Map<String, AtomicBoolean> envNamePerStatus = null;
     private ScheduledFuture<?> scheduledFuture = null;
-
-    @PostConstruct
-    protected void init() {
+    
+    protected void init(final String publicApiKey) {
         logger.trace("Enter init method of DistributionEngineClusterHealth");
         Long reconnectIntervalConfig = ConfigurationManager.getConfigurationManager().getConfiguration()
             .getUebHealthCheckReconnectIntervalInSeconds();
@@ -82,7 +80,7 @@ public class DistributionEngineClusterHealth {
         DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager()
             .getDistributionEngineConfiguration();
         this.uebServers = distributionEngineConfiguration.getUebServers();
-        this.publicApiKey = distributionEngineConfiguration.getUebPublicKey();
+        this.publicApiKey = publicApiKey;
         this.healthCheckScheduledTask = new HealthCheckScheduledTask(this.uebServers);
         logger.trace("Exit init method of DistributionEngineClusterHealth");
     }
