@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "54be3c19_e432e1ef",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1518,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-09-06T14:34:22Z",
+      "side": 1,
+      "message": "I believe the data type unique id is composed by \"model name\" + \"data type name\", therefore the relationship from a model to a data type id is always one to one,  no need for the second map value to be a List.\n\nIf so, we should simplify the logic and I would recommend to invert it to become Map\u003c\"Model\", \"DataTypeUid\"\u003e instead Map\u003c\"DataTypeUid\", \"Model\"\u003e.",
+      "range": {
+        "startLine": 1518,
+        "startChar": 40,
+        "endLine": 1518,
+        "endChar": 60
+      },
+      "revId": "d8c0f962f7b789ef10a0b9550520d2d3456c5568",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4198f67e_ff5cdb3a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1522,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-09-06T14:34:22Z",
+      "side": 1,
+      "message": "could be replaced by an entrySet() loop",
+      "range": {
+        "startLine": 1522,
+        "startChar": 12,
+        "endLine": 1522,
+        "endChar": 70
+      },
+      "revId": "d8c0f962f7b789ef10a0b9550520d2d3456c5568",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
