@@ -298,7 +298,7 @@ public class StepsTenantIsolation {
     @SuppressWarnings("unchecked")
     @Then("^trying to create Ueb keys (.*)$")
     public void trying_to_create_ueb_keys(boolean isActivated) throws Throwable {
-        verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated)))
+        verify(envEngine, Mockito.times(getNumberOfCallsToValidate(isActivated) + 1))
             .createUebKeys(Mockito.any(Wrapper.class), Mockito.any(OperationalEnvironmentEntry.class));
     }
 

@@ -36,10 +36,12 @@ import javax.annotation.PreDestroy;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
+import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
 import org.openecomp.sdc.common.api.HealthCheckInfo.HealthCheckStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("distribution-engine-cluster-health")
@@ -66,7 +68,9 @@ public class DistributionEngineClusterHealth {
     private HealthCheckInfo healthCheckInfo = HealthCheckInfoResult.UNKNOWN.getHealthCheckInfo();
     private Map<String, AtomicBoolean> envNamePerStatus = null;
     private ScheduledFuture<?> scheduledFuture = null;
-
+    @Autowired
+    private EnvironmentsEngine environmentsEngine;
+    
     @PostConstruct
     protected void init() {
         logger.trace("Enter init method of DistributionEngineClusterHealth");
@@ -81,8 +85,13 @@ public class DistributionEngineClusterHealth {
         }
         DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager()
             .getDistributionEngineConfiguration();
+        String envName = distributionEngineConfiguration.getEnvironments().size() == 1
+                ? distributionEngineConfiguration.getEnvironments().get(0) : "AUTO";   
         this.uebServers = distributionEngineConfiguration.getUebServers();
-        this.publicApiKey = distributionEngineConfiguration.getUebPublicKey();
+        final OperationalEnvironmentEntry operationalEnvironmentEntry = environmentsEngine.getEnvironmentById(envName);
+        if (operationalEnvironmentEntry != null) {
+            this.publicApiKey = operationalEnvironmentEntry.getUebApikey();
+        }
         this.healthCheckScheduledTask = new HealthCheckScheduledTask(this.uebServers);
         logger.trace("Exit init method of DistributionEngineClusterHealth");
     }
@@ -132,6 +141,10 @@ public class DistributionEngineClusterHealth {
      */
     public void setHealthCheckUebIsDisabled() {
         healthCheckInfo = HealthCheckInfoResult.DISABLED.getHealthCheckInfo();
+    }
+    
+    void setEnvironmentsEngine(EnvironmentsEngine environmentsEngine) {
+        this.environmentsEngine = environmentsEngine;
     }
 
     /**

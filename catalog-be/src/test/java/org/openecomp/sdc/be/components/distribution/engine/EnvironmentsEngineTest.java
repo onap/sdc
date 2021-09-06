@@ -51,11 +51,12 @@ import java.util.List;
 import java.util.Map;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
-
+import com.att.nsa.apiClient.credentials.ApiCredential;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 public class EnvironmentsEngineTest {
@@ -70,6 +71,8 @@ public class EnvironmentsEngineTest {
     private DistributionEngineConfiguration distributionEngineConfiguration;
     @Mock
     private AaiRequestHandler aaiRequestHandler;
+    @Mock 
+    private CambriaHandler cambriaHandler;
 
     @Before
     public void preStart() {
@@ -94,8 +97,10 @@ public class EnvironmentsEngineTest {
         when(configurationManager.getConfiguration()).thenReturn(config);
         when(config.getDmaapConsumerConfiguration()).thenReturn(dmaapConf);
         when(dmaapConf.isActive()).thenReturn(false);
+        ApiCredential apiCredential = new ApiCredential("apiKey", "apiSecret");
+        when(cambriaHandler.createUebKeys(any())).thenReturn(Either.left(apiCredential));
         envEngine.init();
-
+        
         Map<String, OperationalEnvironmentEntry> mapEnvs = envEngine.getEnvironments();
         assertEquals("unexpected size of map",3, mapEnvs.size());
     }

@@ -20,6 +20,10 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
@@ -30,20 +34,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
 public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 
 	private DistributionEngineClusterHealth createTestSubject() {
 		return new DistributionEngineClusterHealth();
-	}
-
-	@Test
-	public void testInit() throws Exception {
-		DistributionEngineClusterHealth testSubject;
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "init");
 	}
 
 	@Test
@@ -67,14 +63,14 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 	}
 
 	@Test
-	public void testStartHealthCheckTask_1() throws Exception {
-		DistributionEngineClusterHealth testSubject;
-		Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.init();
-		testSubject.startHealthCheckTask(envNamePerStatus);
+	public void testStartHealthCheckTask_1() {
+	    final DistributionEngineClusterHealth distributionEngineClusterHealth = new DistributionEngineClusterHealth();
+	    final Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
+	    final EnvironmentsEngine environmentsEngineMock = mock(EnvironmentsEngine.class);
+	    distributionEngineClusterHealth.setEnvironmentsEngine(environmentsEngineMock);
+	    when(environmentsEngineMock.getEnvironmentById(anyString())).thenReturn(new OperationalEnvironmentEntry());
+	    distributionEngineClusterHealth.init();
+	    distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
 	}
 
 	@Test

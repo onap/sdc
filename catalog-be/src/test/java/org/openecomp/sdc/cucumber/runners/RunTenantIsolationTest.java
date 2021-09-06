@@ -22,6 +22,7 @@ package org.openecomp.sdc.cucumber.runners;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 
