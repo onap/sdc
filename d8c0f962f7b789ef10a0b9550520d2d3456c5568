@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "baa35b6e_1b5597c7",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1518,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-09-06T15:19:14Z",
+      "side": 1,
+      "message": "Sorry, my mistake. A data type can belong to more than one model because of the hierarchy.",
+      "parentUuid": "54be3c19_e432e1ef",
+      "range": {
+        "startLine": 1518,
+        "startChar": 40,
+        "endLine": 1518,
+        "endChar": 60
+      },
+      "revId": "d8c0f962f7b789ef10a0b9550520d2d3456c5568",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4198f67e_ff5cdb3a",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
         "patchSetId": 1
@@ -41,6 +65,29 @@
         "startChar": 12,
         "endLine": 1522,
         "endChar": 70
+      },
+      "revId": "d8c0f962f7b789ef10a0b9550520d2d3456c5568",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c6f9190_11570ccd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1538,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-09-06T15:19:14Z",
+      "side": 1,
+      "message": "I believe that the child data type should take precedence in relation to the parent data type, and the current solution is not handling that. \nThis is a limitation that we can deal later, we should open a ticket for that.",
+      "range": {
+        "startLine": 1538,
+        "startChar": 20,
+        "endLine": 1538,
+        "endChar": 95
       },
       "revId": "d8c0f962f7b789ef10a0b9550520d2d3456c5568",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
