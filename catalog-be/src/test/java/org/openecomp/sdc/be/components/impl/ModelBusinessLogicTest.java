@@ -82,17 +82,6 @@ class ModelBusinessLogicTest {
     }
 
     @Test
-    void createModelWithDataTypesTest() {
-        final String dataTypes = "dummyString";
-        when(modelOperation.createModel(model, false)).thenReturn(model);
-        final Model result = modelBusinessLogic.createModel(model, dataTypes);
-        assertThat(result).isNotNull();
-        assertThat(result.getName()).isEqualTo(model.getName());
-
-        verify(dataTypeImportManager).createDataTypes(dataTypes, model.getName(), true);
-    }
-
-    @Test
     void createModelFailTest() {
         when(modelOperation.createModel(model, false))
             .thenThrow(ModelOperationExceptionSupplier.modelAlreadyExists(model.getName()).get());
