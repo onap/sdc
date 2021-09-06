@@ -40,12 +40,15 @@ import org.springframework.util.CollectionUtils;
 @org.springframework.stereotype.Component("dataTypeBusinessLogic")
 public class DataTypeBusinessLogic extends BaseBusinessLogic {
 
+    final DataTypeImportManager dataTypeImportManager;
+
     @Autowired
     public DataTypeBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                                  IGroupTypeOperation groupTypeOperation, InterfaceOperation interfaceOperation,
-                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation) {
+                                 InterfaceLifecycleOperation interfaceLifecycleTypeOperation, ArtifactsOperations artifactToscaOperation, DataTypeImportManager dataTypeImportManager) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
+        this.dataTypeImportManager = dataTypeImportManager;
     }
 
     /**
@@ -138,5 +141,26 @@ public class DataTypeBusinessLogic extends BaseBusinessLogic {
         }
         // return deleted data type if ok
         return Either.left(dataTypeResult.get());
+    }
+
+    /**
+     * Creates given data types. The data types must be provided in a yaml format, where each entry is one data type object, for
+     * example:
+     * <pre>
+     * tosca.datatypes.TimeInterval:
+     *   derived_from: tosca.datatypes.Root
+     *   [...]
+     *
+     * tosca.datatypes.network.NetworkInfo:
+     *   derived_from: tosca.datatypes.Root
+     *   [...]
+     * </pre>
+     *
+     * @param datatypesYaml the data types to create in yaml format. It can contain multiple data types entries.
+     * @param model Model name to associate with data type
+     * @param includeToModelDefaultImports Add data type entry to default imports for model
+     */
+    public void createDataTypeFromYaml(final String datatypesYml, final String model,final boolean includeToModelDefaultImports) {
+        dataTypeImportManager.createDataTypes(datatypesYml, model, true);
     }
 }
