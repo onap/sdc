@@ -46,6 +46,30 @@
       "revId": "4b4e3cf0804d0d1ccc1ce642696daf903de5f8bc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a0a3b54_f34d8ab8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-09-06T09:09:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1ae70f59_20aecdc8",
+      "range": {
+        "startLine": 190,
+        "startChar": 0,
+        "endLine": 190,
+        "endChar": 112
+      },
+      "revId": "4b4e3cf0804d0d1ccc1ce642696daf903de5f8bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
