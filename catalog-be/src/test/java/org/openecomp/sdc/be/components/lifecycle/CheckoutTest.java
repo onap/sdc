@@ -29,10 +29,12 @@ import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CompositionBusinessLogic;
+import org.openecomp.sdc.be.components.impl.DataTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
 import org.openecomp.sdc.be.components.impl.OutputsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyBusinessLogic;
+import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -70,6 +72,8 @@ public class CheckoutTest extends LifecycleTestBase {
     private final ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
     private final PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
     private final ModelBusinessLogic modelBusinessLogic = Mockito.mock(ModelBusinessLogic.class);
+    private final DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
+    private final PolicyTypeBusinessLogic policyTypeBusinessLogic = Mockito.mock(PolicyTypeBusinessLogic.class);
     @InjectMocks
     ResourceBusinessLogic bl = new ResourceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
         groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
@@ -77,7 +81,8 @@ public class CheckoutTest extends LifecycleTestBase {
         resourceDataMergeBusinessLogic, csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils,
         uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation, propertyBusinessLogic,
         componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
-            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator ,policyBusinessLogic, modelBusinessLogic);
+        componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator ,policyBusinessLogic, modelBusinessLogic,
+        dataTypeBusinessLogic, policyTypeBusinessLogic);
 
     @Before
     public void setup() {

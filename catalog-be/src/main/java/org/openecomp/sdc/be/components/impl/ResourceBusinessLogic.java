@@ -29,6 +29,7 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStr
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 import static org.openecomp.sdc.common.api.Constants.DEFAULT_GROUP_VF_MODULE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +47,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -124,6 +126,7 @@ import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -182,7 +185,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+
 import com.google.common.annotations.VisibleForTesting;
+
 import fj.data.Either;
 
 @org.springframework.stereotype.Component("resourceBusinessLogic")
@@ -217,6 +222,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private final ModelBusinessLogic modelBusinessLogic;
     private IInterfaceLifecycleOperation interfaceTypeOperation;
     private LifecycleBusinessLogic lifecycleBusinessLogic;
+    private final DataTypeBusinessLogic dataTypeBusinessLogic;
+    private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
+
     @Autowired
     private ICapabilityTypeOperation capabilityTypeOperation;
     @Autowired
@@ -247,7 +255,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                  final ComponentValidator componentValidator, final ComponentIconValidator componentIconValidator,
                                  final ComponentProjectCodeValidator componentProjectCodeValidator,
                                  final ComponentDescriptionValidator componentDescriptionValidator, final PolicyBusinessLogic policyBusinessLogic,
-                                 final ModelBusinessLogic modelBusinessLogic) {
+                                 final ModelBusinessLogic modelBusinessLogic,
+                                 final DataTypeBusinessLogic dataTypeBusinessLogic, final PolicyTypeBusinessLogic policyTypeBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -264,6 +273,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.propertyBusinessLogic = propertyBusinessLogic;
         this.policyBusinessLogic = policyBusinessLogic;
         this.modelBusinessLogic = modelBusinessLogic;
+        this.dataTypeBusinessLogic = dataTypeBusinessLogic;
+        this.policyTypeBusinessLogic = policyTypeBusinessLogic;
     }
 
     static <T> Either<T, RuntimeException> rollbackWithEither(final JanusGraphDao janusGraphDao, final ActionStatus actionStatus,
@@ -1031,19 +1042,18 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 user.getUserId());
         CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, csarUIPayload, csarUUID);
         Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
-        if (StringUtils.isNotEmpty(resource.getModel())) {
-            final Map<String, Object> dataTypesToCreate = new HashMap<>();
-            for (final String dataType: csarInfo.getDataTypes().keySet()) {
-                final Either<DataTypeDefinition, StorageOperationStatus> result = propertyOperation.getDataTypeByName(dataType, resource.getModel());
-                if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
-                    dataTypesToCreate.put(dataType, csarInfo.getDataTypes().get(dataType));
-                }
+        final String model = resource.getModel();
+        if (StringUtils.isNotEmpty(model)) {
+            final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(model, csarInfo.getDataTypes());
+            final Map<String, Object> policyTypesToCreate = getPolicytypesToCreate(model, csarInfo.getPolicyTypes());
+            if (MapUtils.isNotEmpty(dataTypesToCreate) || MapUtils.isNotEmpty(policyTypesToCreate)) {
+                createModel(resource, csarInfo.getVfResourceName());
             }
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
-                final String nameForGeneratedModel = resource.getModel() + "_" + csarInfo.getVfResourceName() + resource.getCsarVersion();
-                final Model model = new Model(nameForGeneratedModel, resource.getModel(), ModelTypeEnum.NORMATIVE_EXTENSION);
-                modelBusinessLogic.createModel(model, new Yaml().dump(dataTypesToCreate));
-                resource.setModel(nameForGeneratedModel);
+                dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), model, true);
+            }
+            if (MapUtils.isNotEmpty(policyTypesToCreate)) {
+                policyTypeBusinessLogic.createPolicyTypeFromYaml(new Yaml().dump(policyTypesToCreate), model, true);
             }
         }
         
@@ -1146,6 +1156,37 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private Map<String, Object> getAllNodeTypesInTemplate(final Map<String, Object> mappedToscaTemplate) {
         return ImportUtils.findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES).left().orValue(HashMap::new);
+    }
+
+    private void createModel(final Resource resource, final String vfResourcename) {
+        final String nameForGeneratedModel = resource.getModel() + "_" + vfResourcename + resource.getCsarVersion();
+        Model model = new Model(nameForGeneratedModel, resource.getModel(), ModelTypeEnum.NORMATIVE_EXTENSION);
+        modelBusinessLogic.createModel(model);
+        resource.setModel(nameForGeneratedModel);
+    }
+
+    private Map<String, Object> getDatatypesToCreate(final String model, final Map<String, Object> dataTypes) {
+        final Map<String, Object> dataTypesToCreate = new HashMap<>();
+        for (final String dataType : dataTypes.keySet()) {
+            final Either<DataTypeDefinition, StorageOperationStatus> result =
+                    propertyOperation.getDataTypeByName(dataType, model);
+            if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+                dataTypesToCreate.put(dataType, dataTypes.get(dataType));
+            }
+        }
+        return dataTypesToCreate;
+    }
+
+    private Map<String, Object> getPolicytypesToCreate(final String model, final Map<String, Object> policyTypes) {
+        final Map<String, Object> policyTypesToCreate = new HashMap<>();
+        for (final String policyType : policyTypes.keySet()) {
+            final Either<PolicyTypeDefinition, StorageOperationStatus> result =
+                    policyTypeOperation.getLatestPolicyTypeByType(policyType, model);
+            if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+                policyTypesToCreate.put(policyType, policyTypes.get(policyType));
+            }
+        }
+        return policyTypesToCreate;
     }
 
     private void createNodeTypes(String yamlName, Resource resource, boolean needLock,

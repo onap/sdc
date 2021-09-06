@@ -73,7 +73,7 @@ public class TypeUtils {
         //functions
         GET_INPUT("get_input"),
         // Definitions
-        DATA_TYPES("data_types"), NODE_TYPES("node_types"), IMPORTS("imports"),
+        DATA_TYPES("data_types"), NODE_TYPES("node_types"), POLICY_TYPES("policy_types"),  IMPORTS("imports"),
         //Operations
         IMPLEMENTATION("implementation"),
 

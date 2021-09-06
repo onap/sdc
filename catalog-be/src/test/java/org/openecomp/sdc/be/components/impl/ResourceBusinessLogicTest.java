@@ -34,7 +34,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-import fj.data.Either;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -50,7 +49,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import javax.servlet.ServletContext;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -85,8 +86,8 @@ import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
@@ -131,6 +132,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -150,6 +152,8 @@ import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
+
+import fj.data.Either;
 
 public class ResourceBusinessLogicTest {
 
@@ -208,7 +212,10 @@ public class ResourceBusinessLogicTest {
 	private final MergeInstanceUtils mergeInstanceUtils = Mockito.mock(MergeInstanceUtils.class);
 	private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
 	private final ToscaExportHandler toscaExportHandler = Mockito.mock(ToscaExportHandler.class);
+	private final PolicyTypeOperation policyTypeOperation = Mockito.mock(PolicyTypeOperation.class);
 	private final PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
+	private final DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
+	private final PolicyTypeBusinessLogic policyTypeBusinessLogic = Mockito.mock(PolicyTypeBusinessLogic.class);
 
 	private YamlTemplateParsingHandler yamlTemplateParsingHandler = Mockito.mock(YamlTemplateParsingHandler.class);
 	@InjectMocks
@@ -306,7 +313,8 @@ public class ResourceBusinessLogicTest {
 		Map<String, DataTypeDefinition> emptyDataTypes = new HashMap<>();
 		when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(emptyDataTypes));
 		when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
-
+		when(policyTypeOperation.getLatestPolicyTypeByType(any(String.class), any(String.class)))
+		        .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 		// BL object
 		artifactManager.setNodeTemplateOperation(nodeTemplateOperation);
 		bl = new ResourceBusinessLogic(mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
@@ -315,7 +323,7 @@ public class ResourceBusinessLogicTest {
 				csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
 				artifactToscaOperation, propertyBusinessLogic, componentContactIdValidator, componentNameValidator,
 				componentTagsValidator, componentValidator,	componentIconValidator, componentProjectCodeValidator,
-				componentDescriptionValidator, policyBusinessLogic, modelBusinessLogic);
+				componentDescriptionValidator, policyBusinessLogic, modelBusinessLogic, dataTypeBusinessLogic, policyTypeBusinessLogic);
 		bl.setElementDao(mockElementDao);
 		bl.setUserAdmin(mockUserAdmin);
 		bl.setCapabilityTypeOperation(capabilityTypeOperation);
@@ -334,6 +342,7 @@ public class ResourceBusinessLogicTest {
 		bl.setToscaOperationFacade(toscaOperationFacade);
 		bl.setUserValidations(userValidations);
 		bl.setInterfaceTypeOperation(interfaceTypeOperation);
+		bl.setPolicyTypeOperation(policyTypeOperation);
 
 		csarBusinessLogic.setCsarOperation(csarOperation);
 		Resource resourceCsar = createResourceObjectCsar(true);
