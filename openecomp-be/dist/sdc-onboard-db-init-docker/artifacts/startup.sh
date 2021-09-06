@@ -16,7 +16,7 @@ fi
 echo "$(date) [Info] Going to initialize sdc onboard cassandra: user=$SDC_USER; host=$CS_HOST; port=$CS_PORT"
 
 echo "$(date) [Info] Initializing onboard keyspaces"
-cqlsh -u "$SDC_USER" -p "$SDC_PASSWORD" -f init_keyspaces.cql "$CS_HOST" "$CS_PORT"
+cqlsh -u $SDC_USER -p $SDC_PASSWORD -f init_keyspaces.cql $CS_HOST $CS_PORT
 rc=$?
 
 if [ $rc != 0 ]; then
@@ -26,7 +26,7 @@ fi
 echo "$(date) [Info] Finished initializing onboard keyspaces"
 
 echo "$(date) [Info] Initializing onboard schemas"
-cqlsh -u "$SDC_USER" -p "$SDC_PASSWORD" -f init_schemas.cql "$CS_HOST" "$CS_PORT"
+cqlsh -u $SDC_USER -p $SDC_PASSWORD -f init_schemas.cql $CS_HOST $CS_PORT
 rc=$?
 
 if [ $rc != 0 ]; then
@@ -39,7 +39,7 @@ echo "$(date) [Info] Upgrading onboard schemas"
 for entry in "$SDC_HOME/upgrade-scripts"/*
 do
   echo "$(date) Running upgrade file '$entry'"
-  cqlsh -u "$SDC_USER" -p "$SDC_PASSWORD" -f "$entry" "$CS_HOST" "$CS_PORT"
+  cqlsh -u $SDC_USER -p $SDC_PASSWORD -f $entry $CS_HOST $CS_PORT
   rc=$?
   if [ $rc != 0 ]; then
     echo "$(date) [Warn] Upgrade failed for file '$entry'. It is possible that the upgrade was previously applied.";
