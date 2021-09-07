@@ -23,18 +23,13 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
-import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
-import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
-import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handles the Resource Create Page UI actions
@@ -76,6 +71,15 @@ public class ResourceCreatePage extends ComponentPage {
 
     private void fillName(final String name) {
         setInputField(By.xpath(XpathSelector.NAME_INPUT.getXpath()), name);
+    }
+
+    /**
+     * Gets the name field value.
+     *
+     * @return the name field value
+     */
+    public String getName() {
+        return findElement(XpathSelector.NAME_INPUT.getXpath()).getText();
     }
 
     private void setCategory(final String category) {

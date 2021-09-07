@@ -75,6 +75,16 @@ public abstract class AbstractPageObject implements PageObject {
     }
 
     /**
+     * Find an element based on the provided xpath.
+     *
+     * @param xpath the xpath expression to search for the element
+     * @return the WebElement if found, otherwise throws an exception
+     */
+    protected WebElement findElement(final String xpath) {
+        return webDriver.findElement(By.xpath(xpath));
+    }
+
+    /**
      * Find elements based on the provided locator.
      *
      * @param locator the By locator
