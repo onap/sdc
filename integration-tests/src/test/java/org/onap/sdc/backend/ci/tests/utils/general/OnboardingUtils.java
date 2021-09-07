@@ -24,8 +24,7 @@ package org.onap.sdc.backend.ci.tests.utils.general;
 import static org.onap.sdc.backend.ci.tests.utils.general.FileHandling.filterFileNamesListFromFolder;
 
 import java.io.File;
-import java.nio.file.Paths;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.PackageTypeEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpHeaderEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.http.HttpRequest;
 import org.onap.sdc.backend.ci.tests.datatypes.http.RestResponse;
@@ -190,8 +189,8 @@ public class OnboardingUtils {
 	 * @return
 	 * The method returns XNF names list from Files directory under sdc repository
 	 */
-	public static List<String> getXnfNamesFileList(XnfTypeEnum xnfTypeEnum) {
-		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum);
+	public static List<String> getXnfNamesFileList(PackageTypeEnum packageTypeEnum) {
+		String filepath = FileHandling.getPackageRepositoryPath(packageTypeEnum);
 		List<String> fileNamesFromFolder = FileHandling.getZipFileNamesFromFolder(filepath);
 		fileNamesFromFolder.removeAll(excludeXnfList);
 		return fileNamesFromFolder;
@@ -201,8 +200,8 @@ public class OnboardingUtils {
 	 * @return
 	 * The method returns names list of invalid XNF packages from Files directory under sdc repository
 	 */
-	public static List<String> getInvalidXnfNamesFileList(XnfTypeEnum xnfTypeEnum) {
-		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum) + File.separator + INVALID_XNFS_SUBPATH;
+	public static List<String> getInvalidXnfNamesFileList(PackageTypeEnum packageTypeEnum) {
+		String filepath = FileHandling.getPackageRepositoryPath(packageTypeEnum) + File.separator + INVALID_XNFS_SUBPATH;
 		return FileHandling.getZipFileNamesFromFolder(filepath);
 	}
 
@@ -210,8 +209,8 @@ public class OnboardingUtils {
 	 * @return
 	 * The method returns names list of XNF packages with warnings from Files directory under sdc repository
 	 */
-	public static List<String> getXnfNamesWithWarningsFileList(XnfTypeEnum xnfTypeEnum) {
-		String filepath = FileHandling.getXnfRepositoryPath(xnfTypeEnum) + File.separator + WITH_WARNINGS_XNFS_SUBPATH;
+	public static List<String> getXnfNamesWithWarningsFileList(PackageTypeEnum packageTypeEnum) {
+		String filepath = FileHandling.getPackageRepositoryPath(packageTypeEnum) + File.separator + WITH_WARNINGS_XNFS_SUBPATH;
 		return FileHandling.getZipFileNamesFromFolder(filepath);
 	}
 
@@ -236,7 +235,7 @@ public class OnboardingUtils {
 	 * @return a list of VFC files
 	 */
 	public static List<String> getVfcFilenameList() {
-		final String filepath = FileHandling.getXnfRepositoryPath(XnfTypeEnum.VFC);
+		final String filepath = FileHandling.getPackageRepositoryPath(PackageTypeEnum.VFC);
 		List<String> fileNamesListFromFolder = filterFileNamesListFromFolder(filepath, ".yml");
 		fileNamesListFromFolder.addAll(filterFileNamesListFromFolder(filepath, ".yaml"));
 		return fileNamesListFromFolder;
@@ -247,7 +246,7 @@ public class OnboardingUtils {
 	 * The method returns VNF names list from Files directory under sdc-vnfs repository excluding zip files that known as failed in tosca parser
 	 */
 	public static List<String> getVnfNamesFileListExcludeToscaParserFailure() {
-		List<String> fileNamesFromFolder = getXnfNamesFileList(XnfTypeEnum.VNF);
+		List<String> fileNamesFromFolder = getXnfNamesFileList(PackageTypeEnum.VNF);
 		fileNamesFromFolder.removeAll(excludeXnfListForToscaParser);
 		return fileNamesFromFolder;
 	}

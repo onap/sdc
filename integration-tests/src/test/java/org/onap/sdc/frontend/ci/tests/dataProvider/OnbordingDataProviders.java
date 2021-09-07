@@ -21,7 +21,7 @@
 
 package org.onap.sdc.frontend.ci.tests.dataProvider;
 
-import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.PackageTypeEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtils;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.logging.api.Logger;
@@ -52,25 +52,25 @@ public class OnbordingDataProviders {
 
     @DataProvider(name = "VNF_List", parallel = true)
     private static Object[][] VnfList() throws Exception {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
         return provideData(fileNamesFromFolder, filepath);
     }
 
     @DataProvider(name = "CNF_List", parallel = true)
     private static Object[][] cnfList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF);
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.CNF);
         return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
     }
 
     @DataProvider(name = "CNF_Helm_Validator_List", parallel = true)
     private static Object[][] cnfForHelmValidatorList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.CNF_HELM);
         return provideData(fileNamesFromFolder, FileHandling.getCnfForHelmValidatorRepositoryPath());
     }
 
     @DataProvider(name = "CNF_With_Warning_Helm_Validator_List", parallel = true)
     private static Object[][] cnfWithWarningForHelmValidatorList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesWithWarningsFileList(XnfTypeEnum.CNF_HELM);
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesWithWarningsFileList(PackageTypeEnum.CNF_HELM);
         Object[][] objects = provideData(fileNamesFromFolder,
             FileHandling.getCnfWithWarningForHelmValidatorRepositoryPath());
         return objects;
@@ -78,13 +78,13 @@ public class OnbordingDataProviders {
 
     @DataProvider(name = "Invalid_CNF_Helm_Validator_List", parallel = true)
     private static Object[][] invalidCnfForHelmValidatorList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(PackageTypeEnum.CNF_HELM);
         return provideData(fileNamesFromFolder, FileHandling.getInvalidCnfForHelmValidatorRepositoryPath());
     }
 
     @DataProvider(name = "Invalid_CNF_List", parallel = true)
     private static Object[][] invalidCnfList() {
-        List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF);
+        List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(PackageTypeEnum.CNF);
         return provideData(fileNamesFromFolder, FileHandling.getCnfRepositoryPath());
     }
 
@@ -110,7 +110,7 @@ public class OnbordingDataProviders {
     @DataProvider(name = "Single_Vsp_Test_Csar", parallel = true)
     private static Object[][] singleVspTestCsar() throws Exception {
 
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
         if (!fileNamesFromFolder.contains(VSP_VGW_CSAR)) {
             Assert.fail("Vsp Test file is not exits in the path");
         }
