@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,9 +43,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.onap.sdc.backend.ci.tests.api.ComponentBaseTest;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.PackageTypeEnum;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.yaml.snakeyaml.Yaml;
 
@@ -59,9 +59,9 @@ public class FileHandling {
 		Map<?, ?> map = (Map<?, ?>) yaml.load(inputStream);
 		return map;
 	}
-	
+
 	/**
-	 * The method return map fetched objects by pattern from yaml file 
+	 * The method return map fetched objects by pattern from yaml file
 	 * @param yamlFile
 	 * @param pattern
 	 * @return
@@ -72,19 +72,19 @@ public class FileHandling {
 		Map<String, Object> objectMap = getObjectMapByPattern(yamlFileToMap, pattern);
 		return objectMap;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> getObjectMapByPattern(Map<?, ?> parseUpdetedEnvFile, String pattern) {
 		Map<String, Object> objectMap = null;
-		
+
 		Object objectUpdetedEnvFile = parseUpdetedEnvFile.get(pattern);
 		if(objectUpdetedEnvFile instanceof HashMap){
 			objectMap = (Map<String, Object>) objectUpdetedEnvFile;
 		}
 		return objectMap;
 	}
-	
-	
+
+
 	public static Map<String, DataTypeDefinition> parseDataTypesYaml(String filePath) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, DataTypeDefinition> dataTypesMap = (Map<String, DataTypeDefinition>) parseYamlFile(filePath);
@@ -104,11 +104,11 @@ public class FileHandling {
 	public static String getBasePath() {
 		return System.getProperty("user.dir") + File.separator;
 	}
-	
+
 	public static String getSdcVnfsPath() {
 		return  getBasePath() + Paths.get("..", "..", "sdc-vnfs").toString();
 	}
-	
+
 	public static String getDriversPath() {
 		return getBasePath() + "src" + File.separator + "test" + File.separator + "resources"
 				+ File.separator + "ci" + File.separator + "drivers" + File.separator;
@@ -117,7 +117,7 @@ public class FileHandling {
 	public static String getResourcesFilesPath() {
 		return getSdcVnfsPath()+ File.separator + "ui-tests" + File.separator + "Files" + File.separator;
 	}
-	
+
 	public static String getResourcesEnvFilesPath() {
 		return getBasePath() + File.separator + "src" + File.separator + "test" + File.separator + "resources"
 				+ File.separator + "Files" + File.separator + "ResourcesEnvFiles" +File.separator;
@@ -132,14 +132,13 @@ public class FileHandling {
 		return getCiFilesPath() + File.separator + "conf" + File.separator;
 	}
 
-
-	private static EnumMap<XnfTypeEnum, String> XNF_REPOSITORY_PATHS_MAP = new EnumMap<>(Map.of(
-		XnfTypeEnum.PNF, getPnfRepositoryPath(),
-		XnfTypeEnum.CNF, getCnfRepositoryPath(),
-		XnfTypeEnum.CNF_HELM, getCnfRepositoryForHelmValidatorPath(),
-		XnfTypeEnum.VNF, getVnfRepositoryPath(),
-		XnfTypeEnum.ETSI, getEtsiRepositoryPath(),
-		XnfTypeEnum.VFC, getVfcRepositoryPath()
+	private static final EnumMap<PackageTypeEnum, String> PACKAGE_REPOSITORY_PATHS_MAP = new EnumMap<>(Map.of(
+		PackageTypeEnum.PNF, getPnfRepositoryPath(),
+		PackageTypeEnum.CNF, getCnfRepositoryPath(),
+		PackageTypeEnum.CNF_HELM, getCnfRepositoryForHelmValidatorPath(),
+		PackageTypeEnum.VNF, getVnfRepositoryPath(),
+		PackageTypeEnum.ETSI, getEtsiRepositoryPath(),
+		PackageTypeEnum.VFC, getVfcRepositoryPath()
 	));
 
 	public static String getVnfRepositoryPath() {
@@ -162,14 +161,14 @@ public class FileHandling {
 
 	private static String getVfcRepositoryPath() { return getFilePath("VFCs"); }
 
-	public static String getXnfRepositoryPath(XnfTypeEnum xnfTypeEnum) {
-		return XNF_REPOSITORY_PATHS_MAP.get(xnfTypeEnum);
+	public static String getPackageRepositoryPath(PackageTypeEnum packageTypeEnum) {
+		return PACKAGE_REPOSITORY_PATHS_MAP.get(packageTypeEnum);
 	}
 
 	public static String getPortMirroringRepositoryPath() {
 		return getFilePath("PortMirroring");
 	}
-	
+
 	public static File getConfigFile(String configFileName) throws Exception {
 		File configFile = new File(FileHandling.getBasePath() + File.separator + "conf" + File.separator + configFileName);
 		if (!configFile.exists()) {
@@ -182,13 +181,13 @@ public class FileHandling {
 		try {
 			File dir = new File(filepath);
 			List<String> filenames = new ArrayList<String>();
-			
+
 			FilenameFilter extensionFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return name.endsWith(extension);
 				}
 			};
-			
+
 			if (dir.isDirectory()) {
 				for (File file : dir.listFiles(extensionFilter)) {
 					filenames.add(file.getName());
@@ -206,13 +205,13 @@ public class FileHandling {
 		List<String> filenames = new ArrayList<String>();
 		try {
 			File dir = new File(filepath);
-			
+
 			FilenameFilter extensionFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					return name.endsWith(extension);
 				}
 			};
-			
+
 			if (dir.isDirectory()) {
 				for (File file : dir.listFiles(extensionFilter)) {
 					filenames.add(file.getName());
@@ -225,18 +224,18 @@ public class FileHandling {
 		}
 		return filenames;
 	}
-	
+
 	public static String[] getArtifactsFromZip(String filepath, String zipFilename){
 		try {
 			ZipFile zipFile = new ZipFile(filepath + File.separator + zipFilename);
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			
+
 			String[] artifactNames = new String[zipFile.size() - 1];
 
 			int i = 0;
 			while(entries.hasMoreElements()){
 				ZipEntry nextElement = entries.nextElement();
-				if (!nextElement.isDirectory()){ 
+				if (!nextElement.isDirectory()){
 					if (!nextElement.getName().equals("MANIFEST.json")){
 						String name = nextElement.getName();
 						artifactNames[i++] = name;
@@ -246,28 +245,28 @@ public class FileHandling {
 			zipFile.close();
 			return artifactNames;
 		} catch(ZipException zipEx) {
-			System.err.println("Error in zip file named : " +  zipFilename);	
+			System.err.println("Error in zip file named : " +  zipFilename);
 			zipEx.printStackTrace();
 		} catch (IOException e) {
 			System.err.println("Unhandled exception : ");
 			e.printStackTrace();
 		}
-		
+
 		return null;
-		
+
 	}
 
 	public static List<String> getFileNamesFromZip(String zipFileLocation){
 		try{
 			ZipFile zipFile = new ZipFile(zipFileLocation);
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			
+
 			List<String> artifactNames = new ArrayList<>();
 
 			int i = 0;
 			while(entries.hasMoreElements()){
 				ZipEntry nextElement = entries.nextElement();
-				if (!nextElement.isDirectory()){ 
+				if (!nextElement.isDirectory()){
 					String name = nextElement.getName();
 					artifactNames.add(name);
 				}
@@ -276,7 +275,7 @@ public class FileHandling {
 			return artifactNames;
 		}
 		catch(ZipException zipEx){
-			System.err.println("Error in zip file named : " +  zipFileLocation);	
+			System.err.println("Error in zip file named : " +  zipFileLocation);
 			zipEx.printStackTrace();
 		} catch (IOException e) {
 			System.err.println("Unhandled exception : ");
@@ -284,7 +283,7 @@ public class FileHandling {
 		}
 		return null;
 	}
-	
+
 	public static List<String> getZipFileNamesFromFolder(String filepath) {
 		List<String> fileNamesListFromFolder = filterFileNamesListFromFolder(filepath, ".zip");
 		fileNamesListFromFolder.addAll(filterFileNamesListFromFolder(filepath, ".csar"));
@@ -301,7 +300,7 @@ public class FileHandling {
 		}
 		return fileCounter;
 	}
-	
+
 	/**
 	 * @param dirPath
 	 * @return last modified file name from dirPath directory
@@ -336,7 +335,7 @@ public class FileHandling {
 			System.out.println("Failed to clean " + dir);
 		}
 	}
-	
+
 	public static void createDirectory(String directoryPath) {
 		File directory = new File(String.valueOf(directoryPath));
 	    if (! directory.exists()){
@@ -385,7 +384,7 @@ public class FileHandling {
 
 		return dir.getPath();
 	}
-	
+
 	public static boolean isFileDownloaded(String downloadPath, String fileName) {
 		boolean flag = false;
 		File dir = new File(downloadPath);
@@ -396,13 +395,13 @@ public class FileHandling {
 		}
 		return flag;
 	}
-	
+
 	public static String getMD5OfFile(File file) throws IOException {
 		String content = FileUtils.readFileToString(file);
 		String md5 = GeneralUtility.calculateMD5Base64EncodedByString(content);
 		return md5;
 	}
-	
+
 	public static File createEmptyFile(String fileToCreate) {
 		File file= new File(fileToCreate);
 		try {
@@ -417,7 +416,7 @@ public class FileHandling {
 		}
 		return file;
 	}
-	
+
 	public static File createEmptyFile(File fileToCreate) {
 		try {
 			if(fileToCreate.exists()){
@@ -431,9 +430,9 @@ public class FileHandling {
 		}
 		return fileToCreate;
 	}
-	
+
 	public static void deleteFile(File file){
-		
+
 		try{
     		if(file.exists()){
     			file.deleteOnExit();
@@ -446,8 +445,8 @@ public class FileHandling {
     	}
 
 	}
-	
-	
+
+
 	/**
 	 * get file list from directory by extension array
 	 * @param directory
@@ -455,10 +454,10 @@ public class FileHandling {
 	 * @return
 	 */
 	public static List<File> getHeatAndHeatEnvArtifactsFromZip(File directory, String[] okFileExtensions){
-		
+
 			List<File> fileList = new ArrayList<>();
 			File[] files = directory.listFiles();
-			
+
 			for (String extension : okFileExtensions){
 				for(File file : files){
 					if (file.getName().toLowerCase().endsWith(extension)){

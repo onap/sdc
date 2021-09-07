@@ -41,7 +41,7 @@ import org.onap.sdc.backend.ci.tests.datatypes.ServiceReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.VendorLicenseModel;
 import org.onap.sdc.backend.ci.tests.datatypes.VendorSoftwareProductObject;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.PackageTypeEnum;
 import org.onap.sdc.backend.ci.tests.utils.Utils;
 import org.onap.sdc.backend.ci.tests.utils.general.AtomicOperationUtils;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
@@ -51,7 +51,10 @@ import org.onap.sdc.backend.ci.tests.utils.general.VendorSoftwareProductRestUtil
 import org.onap.sdc.frontend.ci.tests.dataProvider.OnbordingDataProviders;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasElement;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasManager;
+import org.onap.sdc.frontend.ci.tests.datatypes.CategorySelect;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspOnboardingProcedure;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
@@ -147,7 +150,7 @@ public class OnboardingFlowsUi extends SetupCDTest {
 
     @Test
     public void onboardVNFTestSanity() throws Exception {
-        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
+        List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
         String vnfFile = fileNamesFromFolder.get(0);
         ResourceReqDetails resourceReqDetails = ElementFactory.getDefaultResource();
         ServiceReqDetails serviceReqDetails = ElementFactory.getDefaultService();
@@ -391,7 +394,12 @@ public class OnboardingFlowsUi extends SetupCDTest {
             String.format("Creating VSP '%s' by onboarding package '%s' with software version '%s'",
                 resourceName, pnfFile, swVersionsToString));
         final WebDriver webDriver = DriverFactory.getDriver();
-        final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, pnfFile, rootFolder);
+        var vspCreateData = new VspCreateData();
+        vspCreateData.setName(resourceName);
+        vspCreateData.setCategory(CategorySelect.COMMON_NETWORK_RESOURCES);
+        vspCreateData.setDescription("description");
+        vspCreateData.setOnboardingProcedure(VspOnboardingProcedure.NETWORK_PACKAGE);
+        final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, vspCreateData, pnfFile, rootFolder);
         createVspFlow.run(new TopNavComponent(webDriver));
 
         final ImportVspFlow importVspFlow = new ImportVspFlow(webDriver, resourceName);

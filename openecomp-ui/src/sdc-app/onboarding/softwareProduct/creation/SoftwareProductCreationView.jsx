@@ -387,7 +387,7 @@ const ModelSelection = ({
                     data-test-id="model-option-default"
                 />
                 <Input
-                    label={i18n('vsp.model.select.label')}
+                    label={i18n('vsp.model.select.other.label')}
                     checked={modelOption === ModelOption.SELECTED}
                     isValid={genericFieldInfo.modelOption.isValid}
                     errorText={genericFieldInfo.modelOption.errorText}
@@ -398,7 +398,7 @@ const ModelSelection = ({
                         )
                     }
                     type="radio"
-                    data-test-id="model-option-selected"
+                    data-test-id="model-option-other"
                     groupClassName="no-bottom-margin"
                 />
             </GridItem>
@@ -413,6 +413,7 @@ const ModelSelection = ({
                         onMultiSelectChanged={onSelectChanged}
                         value={selectedModelList}
                         clearable={true}
+                        data-test-id="model-option-select"
                         placeholder={i18n('vsp.model.select.label')}
                         multi
                     />

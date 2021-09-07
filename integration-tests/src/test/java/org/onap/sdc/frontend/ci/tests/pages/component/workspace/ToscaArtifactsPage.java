@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
+import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class ToscaArtifactsPage extends AbstractPageObject {
+public class ToscaArtifactsPage extends ComponentPage {
 
     private final List<String> downloadedArtifactList = new ArrayList<>();
     private WebElement wrappingElement;
