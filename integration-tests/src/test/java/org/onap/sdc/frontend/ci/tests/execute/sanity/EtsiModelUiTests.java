@@ -22,6 +22,7 @@
 package org.onap.sdc.frontend.ci.tests.execute.sanity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -34,18 +35,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.PackageTypeEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.frontend.ci.tests.datatypes.CategorySelect;
+import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentProperty;
 import org.onap.sdc.frontend.ci.tests.datatypes.ModelName;
+import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
 import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
 import org.onap.sdc.frontend.ci.tests.datatypes.VspOnboardingProcedure;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
+import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
+import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CheckComponentPropertiesFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFromVspFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CreateServiceFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
@@ -54,8 +62,12 @@ import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.ComponentPage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesAssignmentPage;
+import org.onap.sdc.frontend.ci.tests.pages.ServiceComponentPage;
+import org.onap.sdc.frontend.ci.tests.pages.ServiceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.TopNavComponent;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
+import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
@@ -68,22 +80,47 @@ public class EtsiModelUiTests extends SetupCDTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtsiModelUiTests.class);
 
     private WebDriver webDriver;
+    private String resourceName;
 
     @Test
     public void etsiNetworkServiceTest() throws UnzipException {
         webDriver = DriverFactory.getDriver();
 
         createVlm();
-        final String resourceName = createVsp();
+        resourceName = createVsp();
         ResourceCreatePage resourceCreatePage = importVsp(resourceName);
         resourceCreatePage = createVf(resourceName, resourceCreatePage);
         resourceCreatePage.isLoaded();
+        resourceCreatePage.certifyComponent();
+        ExtentTestActions.takeScreenshot(Status.INFO, "resource-certified", String.format("Resource '%s' was certified", resourceName));
         final ResourcePropertiesAssignmentPage resourcePropertiesAssignmentPage = checkVfProperties(resourceCreatePage);
         resourcePropertiesAssignmentPage.isLoaded();
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(resourcePropertiesAssignmentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
         toscaArtifactsPage.isLoaded();
+        final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
+        checkCsarPackage(resourceName, downloadedCsarName);
+        toscaArtifactsPage.goToHomePage();
+    }
+
+    @Test(dependsOnMethods = "etsiNetworkServiceTest")
+    public void createServiceWithModel() throws UnzipException {
+        webDriver = DriverFactory.getDriver();
+        final ServiceCreateData serviceCreateData = createServiceFormData();
+        createService(serviceCreateData);
+        //adding vf to composition
+        ComponentPage componentPage = loadComponentPage();
+        componentPage = addVfToComposition(resourceName, serviceCreateData, componentPage);
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        ExtentTestActions.takeScreenshot(Status.INFO, "service-certified", String.format("Service '%s' was certified",
+            serviceCreateData.getName()));
+
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(componentPage);
+        final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
+        assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
         final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
         checkCsarPackage(resourceName, downloadedCsarName);
         toscaArtifactsPage.goToHomePage();
@@ -189,6 +226,60 @@ public class EtsiModelUiTests extends SetupCDTest {
 
     private Map<String, Object> loadYamlObject(final byte[] mainDefinitionFileBytes) {
         return new Yaml().load(new String(mainDefinitionFileBytes));
+    }
+
+    private ServiceCreateData createServiceFormData() {
+        final ServiceCreateData serviceCreateData = new ServiceCreateData();
+        serviceCreateData.setRandomName("CI-Service-For-Model");
+        serviceCreateData.setModel(ModelName.ETSI_SOL001_v2_5_1.getName());
+        serviceCreateData.setCategory(ServiceCategoriesEnum.ETSI_NFV_NETWORK_SERVICE.getValue());
+        serviceCreateData.setDescription("aDescription");
+        return serviceCreateData;
+    }
+
+    private ServiceCreatePage createService(final ServiceCreateData serviceCreateData) {
+        final CreateServiceFlow createServiceFlow = new CreateServiceFlow(webDriver, serviceCreateData);
+        return createServiceFlow.run(new HomePage(webDriver))
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ServiceCreatePage"));
+    }
+    /**
+     * Loads Component Page
+     *
+     * @return ComponentPage
+     */
+    private ComponentPage loadComponentPage() {
+        final ComponentPage componentPage = Optional.of(new ComponentPage(webDriver))
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ComponentPage"));
+        componentPage.isLoaded();
+        return componentPage;
+    }
+
+    private ServiceComponentPage addVfToComposition(final String resourceName, final ServiceCreateData serviceCreateData,
+                                                    final ComponentPage componentPage) {
+        final ComponentData parentComponent = new ComponentData();
+        parentComponent.setName(serviceCreateData.getName());
+        parentComponent.setVersion("0.1");
+        parentComponent.setComponentType(ComponentType.SERVICE);
+        final ComponentData resourceToAdd = new ComponentData();
+        resourceToAdd.setName(resourceName);
+        resourceToAdd.setVersion("1.0");
+        resourceToAdd.setComponentType(ComponentType.RESOURCE);
+        CompositionPage compositionPage = componentPage.goToComposition();
+        AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToComposition(parentComponent, resourceToAdd, compositionPage);
+        addNodeToCompositionFlow.getCreatedComponentInstance()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Could not get the created component instance"));
+        final ServiceComponentPage serviceComponentPage = compositionPage.goToServiceGeneral();
+        serviceComponentPage.isLoaded();
+        return serviceComponentPage;
+    }
+
+
+    public AddNodeToCompositionFlow addNodeToComposition(final ComponentData parentComponent, final ComponentData resourceToAdd,
+                                                         CompositionPage compositionPage) {
+
+        final AddNodeToCompositionFlow addNodeToCompositionFlow = new AddNodeToCompositionFlow(webDriver, parentComponent, resourceToAdd);
+        addNodeToCompositionFlow.run(compositionPage);
+        return addNodeToCompositionFlow;
     }
 
 }

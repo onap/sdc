@@ -189,7 +189,6 @@ public class VspCreationModal extends AbstractPageObject {
         DEFAULT_MODEL_RADIO("model-option-default", "//input[@data-test-id='%s']/parent::label"),
         OTHER_MODEL_RADIO("model-option-other", "//input[@data-test-id='%s']/parent::label"),
         MODEL_SELECT("model-option-select", "//div[@data-test-id='%s']//input"),
-//        MODEL_SELECT("model-option-select", "//div[@data-test-id='%s']"),
         CREATE_BTN("form-submit-button", "//*[@data-test-id='%s']");
 
         @Getter

@@ -181,7 +181,7 @@ public abstract class SetupCDTest extends DriverFactory {
                     LOGGER.info(msg);
                     getExtendTest().log(Status.INFO, msg);
                     quitDriver();
-                } else if (!getUser().getRole().toLowerCase().equals(UserRoleEnum.ADMIN.name().toLowerCase())) {
+                } else if (!getUser().getRole().equalsIgnoreCase(UserRoleEnum.ADMIN.name())) {
                     boolean navigateToHomePageSuccess = HomePage.navigateToHomePage();
                     if (!navigateToHomePageSuccess) {
                         final String msg = "Navigating to homepage failed, reopening driver";

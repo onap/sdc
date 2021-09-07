@@ -145,9 +145,6 @@ public final class Constants {
     public static final String HC_COMPONENT_ECOMP_PORTAL = "PORTAL";
     //Plugin BL
     public static final String PLUGIN_BL_COMPONENT = "pluginStatusBL";
-    public static final String DEFAULT_MODEL_NAME = "SDC AID";
-
-
 
     private Constants() {
     }
