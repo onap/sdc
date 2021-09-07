@@ -34,6 +34,7 @@ import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.frontend.ci.tests.datatypes.CategorySelect;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
+import org.onap.sdc.frontend.ci.tests.datatypes.ModelName;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
 import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
 import org.onap.sdc.frontend.ci.tests.datatypes.VspOnboardingProcedure;
@@ -165,6 +166,7 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
     private ServiceCreateData createServiceFormData() {
         final ServiceCreateData serviceCreateData = new ServiceCreateData();
         serviceCreateData.setRandomName(ElementFactory.addRandomSuffixToName(ElementFactory.getServicePrefix()));
+        serviceCreateData.setModel(ModelName.DEFAULT_MODEL_NAME.getName());
         serviceCreateData.setCategory(ServiceCategoriesEnum.E2E_SERVICE.getValue());
         serviceCreateData.setDescription("aDescription");
         return serviceCreateData;

@@ -20,12 +20,12 @@
 
 package org.onap.sdc.backend.ci.tests.datatypes;
 
-import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceInstantiationType;
-import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.model.category.CategoryDefinition;
-
 import java.util.ArrayList;
 import java.util.Collections;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceInstantiationType;
+import org.onap.sdc.frontend.ci.tests.datatypes.ModelName;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 
 public class ServiceReqDetails extends ComponentReqDetails {
 	
@@ -94,7 +94,7 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		categoryDefinition.setIcons(Collections.singletonList(icon));
 		categories = new ArrayList<>();
 		categories.add(categoryDefinition);
-
+		models.add(ModelName.DEFAULT_MODEL_NAME.getName());
 	}
 
 	public ServiceReqDetails(Service service) {
@@ -110,6 +110,7 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		this.uniqueId = service.getUniqueId();
 		this.UUID = service.getUUID();
 		this.version = service.getVersion();
+		this.models = Collections.singletonList(service.getModel());
 
 	}
 
