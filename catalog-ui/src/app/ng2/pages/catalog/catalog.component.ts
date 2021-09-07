@@ -27,7 +27,6 @@ import { SdcMenuToken, IAppMenu } from "../../config/sdc-menu.config";
 import { Component, ICategoryBase, IMainCategory, ISubCategory, IConfigStatuses, ICatalogSelector, CatalogSelectorTypes } from "app/models";
 import { ResourceNamePipe } from "../../pipes/resource-name.pipe";
 import { EntityFilterPipe, IEntityFilterObject, ISearchFilter} from "../../pipes/entity-filter.pipe";
-import { Model } from "app/models/model";
 import { DEFAULT_MODEL_NAME } from "app/utils/constants";
 
 interface Gui {
@@ -78,7 +77,7 @@ export class CatalogComponent {
     public checkboxesFilterKeys:ICheckboxesFilterKeys;
     public gui:Gui;
     public categories:Array<IMainCategory>;
-    public models: Array<string> = new Array();
+    public models: Array<any> = new Array();
     public filteredCategories:Array<IMainCategory>;
     public confStatus:IConfigStatuses;
     public componentTypes:{[key:string]: Array<string>};
@@ -157,8 +156,17 @@ export class CatalogComponent {
         this.numberOfItemToDisplay = 0;
         this.categories = this.makeSortedCategories(this.cacheService.get('serviceCategories').concat(this.cacheService.get('resourceCategories')))
             .map((cat) => <IMainCategory>cat);
-        this.models = this.cacheService.get('models').map((model:Model) => model.name);
-        this.models.unshift(DEFAULT_MODEL_NAME);
+
+        var modelList = this.cacheService.get('models');
+        modelList.sort((o:any, o1:any) => new String(o.modelType).localeCompare(o1.modelType));
+        modelList.forEach(m => {
+            if (m.derivedFrom) {
+                this.models[m.derivedFrom].push(m.name);
+            } else {
+                this.models[m.name] = [];
+            }
+        });
+        this.models[DEFAULT_MODEL_NAME] = [];
         this.confStatus = this.sdcMenu.statuses;
         this.expandedSection = ["type", "category", "status", "model"];
         this.catalogItems = [];
@@ -229,14 +237,17 @@ export class CatalogComponent {
 
     private buildChecklistModelForModels() {
         this.modelsChecklistModel = new SdcUiCommon.ChecklistModel(this.checkboxesFilterKeys.models._main,
-            this.models.map((model) => new SdcUiCommon.ChecklistItemModel(
-                model, 
-                false, 
-                this.checkboxesFilterKeys.models._main.indexOf(model) !== -1, 
-                null, 
-                this.getTestIdForCheckboxByText(model), 
-                model))
-        );
+            Object.keys(this.models).map((modelName) => {
+                var modelList = this.models[modelName];
+                modelList.unshift(modelName);
+                return new SdcUiCommon.ChecklistItemModel(
+                    modelName,
+                    false,
+                    this.checkboxesFilterKeys.models._main.indexOf(modelName) !== -1,
+                    null,
+                    this.getTestIdForCheckboxByText(modelName),
+                    modelList);
+        }));
     }
 
     private buildChecklistModelForStatuses() {

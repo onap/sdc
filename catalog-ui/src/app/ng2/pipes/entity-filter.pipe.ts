@@ -135,11 +135,11 @@ export class EntityFilterPipe implements PipeTransform{
         // --------------------------------------------------------------------------
         if (filter.selectedModels && filter.selectedModels.length > 0) {
             let filteredModels = [];
-            let defaultModelPresent = filter.selectedModels.indexOf(DEFAULT_MODEL_NAME) > -1;
+            let allSelectedModels =  [].concat.apply([], filter.selectedModels);
             angular.forEach(filteredComponents, (component:Component):void => {
-                if (filter.selectedModels.indexOf(component.model) > -1) {
+                if (component.model && allSelectedModels.indexOf(component.model) > -1) {
                     filteredModels.push(component);
-                } else if (!component.model && defaultModelPresent) {
+                } else if (!component.model && allSelectedModels.indexOf(DEFAULT_MODEL_NAME) > -1) {
 	                filteredModels.push(component);
                 }
             });
