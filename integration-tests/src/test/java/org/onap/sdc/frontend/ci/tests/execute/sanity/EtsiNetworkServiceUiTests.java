@@ -27,7 +27,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.fail;
-import static org.openecomp.sdc.common.api.Constants.DEFAULT_MODEL_NAME;
 
 import com.aventstack.extentreports.Status;
 import java.util.HashMap;
@@ -39,12 +38,13 @@ import java.util.Set;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Assertions;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.PackageTypeEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.frontend.ci.tests.datatypes.CategorySelect;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentProperty;
+import org.onap.sdc.frontend.ci.tests.datatypes.ModelName;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
 import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
 import org.onap.sdc.frontend.ci.tests.datatypes.VspOnboardingProcedure;
@@ -296,7 +296,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     private ServiceCreateData createServiceFormData() {
         final ServiceCreateData serviceCreateData = new ServiceCreateData();
         serviceCreateData.setRandomName("EtsiNfvNetworkService");
-        serviceCreateData.setModel(DEFAULT_MODEL_NAME);
+        serviceCreateData.setModel(ModelName.DEFAULT_MODEL_NAME.getName());
         serviceCreateData.setCategory(ServiceCategoriesEnum.ETSI_NFV_NETWORK_SERVICE.getValue());
         serviceCreateData.setEtsiVersion("2.5.1");
         serviceCreateData.setDescription("aDescription");

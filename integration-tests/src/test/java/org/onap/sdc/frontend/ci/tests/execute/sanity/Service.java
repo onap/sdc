@@ -21,7 +21,6 @@
 package org.onap.sdc.frontend.ci.tests.execute.sanity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.openecomp.sdc.common.api.Constants.DEFAULT_MODEL_NAME;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
@@ -47,6 +46,7 @@ import org.onap.sdc.frontend.ci.tests.datatypes.CanvasElement;
 import org.onap.sdc.frontend.ci.tests.datatypes.CanvasManager;
 import org.onap.sdc.frontend.ci.tests.datatypes.DataTestIdEnum;
 import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
+import org.onap.sdc.frontend.ci.tests.datatypes.ModelName;
 import org.onap.sdc.frontend.ci.tests.datatypes.TopMenuButtonsEnum;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.pages.CompositionPage;
@@ -147,7 +147,7 @@ public class Service extends SetupCDTest {
         serviceMetadata.setProjectCode("654321");
         serviceMetadata.setContactId("cs6543");
         serviceMetadata.getTags().addAll(Arrays.asList("updatedTag", "oneMoreUpdatedTag", "lastOne UpdatedTag"));
-        serviceMetadata.setModels(Collections.singletonList(DEFAULT_MODEL_NAME));
+        serviceMetadata.setModels(Collections.singletonList(ModelName.DEFAULT_MODEL_NAME.getName()));
         ServiceUIUtils.setServiceCategory(serviceMetadata, ServiceCategoriesEnum.VOIP);
         ServiceUIUtils.fillServiceGeneralPage(serviceMetadata);
         GeneralPageElements.clickCreateButton();
