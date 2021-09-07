@@ -34,21 +34,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Assertions;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
+import org.onap.sdc.frontend.ci.tests.datatypes.CategorySelect;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
+import org.onap.sdc.frontend.ci.tests.datatypes.ComponentProperty;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspOnboardingProcedure;
 import org.onap.sdc.frontend.ci.tests.datatypes.composition.RelationshipInformation;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.execute.setup.SetupCDTest;
 import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
-import org.onap.sdc.frontend.ci.tests.flow.CheckEtsiNsPropertiesFlow;
+import org.onap.sdc.frontend.ci.tests.flow.CheckComponentPropertiesFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateResourceFromVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateServiceFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow;
@@ -100,17 +105,17 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         final ServiceCreateData serviceCreateData = createServiceFormData();
         final CreateServiceFlow createServiceFlow = createService(serviceCreateData);
 
-        final CheckEtsiNsPropertiesFlow checkEtsiNsPropertiesFlow = checkServiceProperties();
-        ServiceComponentPage serviceComponentPage = checkEtsiNsPropertiesFlow.getLandedPage()
+        final CheckComponentPropertiesFlow checkComponentPropertiesFlow = checkServiceProperties();
+        ComponentPage componentPage = checkComponentPropertiesFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ServiceComponentPage"));
 
         //adding node
-        addNodesAndCreateRelationships(resourceName, serviceCreateData, serviceComponentPage);
+        componentPage = addNodesAndCreateRelationships(resourceName, serviceCreateData, componentPage);
 
         final Map<String, Object> propertyMap = createPropertyToEditMap();
-        editProperties(serviceComponentPage, propertyMap);
+        editProperties(componentPage, propertyMap);
 
-        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(serviceComponentPage);
+        final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(componentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected ToscaArtifactsPage"));
 
@@ -121,8 +126,8 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         checkEtsiNsPackage(createServiceFlow.getServiceCreateData().getName(), downloadedCsarName, propertyMap);
     }
 
-    private void addNodesAndCreateRelationships(final String resourceName, final ServiceCreateData serviceCreateData,
-                                                final ServiceComponentPage serviceComponentPage) {
+    private ServiceComponentPage addNodesAndCreateRelationships(final String resourceName, final ServiceCreateData serviceCreateData,
+                                                                final ComponentPage componentPage) {
         //add first VF node
         final ComponentData parentComponent = new ComponentData();
         parentComponent.setName(serviceCreateData.getName());
@@ -132,7 +137,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         resourceToAdd.setName(resourceName);
         resourceToAdd.setVersion("1.0");
         resourceToAdd.setComponentType(ComponentType.RESOURCE);
-        CompositionPage compositionPage = serviceComponentPage.goToComposition();
+        CompositionPage compositionPage = componentPage.goToComposition();
         AddNodeToCompositionFlow addNodeToCompositionFlow = addNodeToComposition(parentComponent, resourceToAdd, compositionPage);
         virtualLinkableVnf1 = addNodeToCompositionFlow.getCreatedComponentInstance()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Could not get the created component instance"));
@@ -160,7 +165,9 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         createRelationshipFlow = new CreateRelationshipFlow(webDriver, relationshipInfoVirtualLinkToVnf2);
         compositionPage = (CompositionPage) createRelationshipFlow.run(compositionPage)
             .orElseThrow(() -> new UiTestFlowRuntimeException("Expecting a CompositionPage instance"));
-        compositionPage.goToServiceGeneral();
+        final ServiceComponentPage serviceComponentPage = compositionPage.goToServiceGeneral();
+        serviceComponentPage.isLoaded();
+        return serviceComponentPage;
     }
 
     private ResourceCreatePage createAndCertifyVf(final String resourceName, final ResourceCreatePage resourceCreatePage) {
@@ -213,7 +220,12 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         final String resourceName = ElementFactory.addRandomSuffixToName(ElementFactory.getResourcePrefix());
         final String virtualLinkableVnf = "etsi-vnf-virtual-linkable.csar";
         final String rootFolder = org.onap.sdc.backend.ci.tests.utils.general.FileHandling.getXnfRepositoryPath(XnfTypeEnum.VNF);
-        final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, virtualLinkableVnf, rootFolder);
+        var vspCreateData = new VspCreateData();
+        vspCreateData.setName(resourceName);
+        vspCreateData.setCategory(CategorySelect.COMMON_NETWORK_RESOURCES);
+        vspCreateData.setDescription("description");
+        vspCreateData.setOnboardingProcedure(VspOnboardingProcedure.NETWORK_PACKAGE);
+        final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, vspCreateData, virtualLinkableVnf, rootFolder);
         createVspFlow.run(new TopNavComponent(webDriver));
         return resourceName;
     }
@@ -238,20 +250,31 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         return createServiceFlow;
     }
 
-    private CheckEtsiNsPropertiesFlow checkServiceProperties() {
-        final CheckEtsiNsPropertiesFlow checkEtsiNsPropertiesFlow = new CheckEtsiNsPropertiesFlow(webDriver);
-        checkEtsiNsPropertiesFlow.run();
-        return checkEtsiNsPropertiesFlow;
+    private CheckComponentPropertiesFlow checkServiceProperties() {
+        final Set<ComponentProperty<?>> componentPropertySet = Set.of(
+            new ComponentProperty<>("descriptor_id"),
+            new ComponentProperty<>("designer"),
+            new ComponentProperty<>("flavour_id"),
+            new ComponentProperty<>("invariant_id"),
+            new ComponentProperty<>("name"),
+            new ComponentProperty<>("ns_profile"),
+            new ComponentProperty<>("version"),
+            new ComponentProperty<>("service_availability_level")
+        );
+
+        final var checkVfPropertiesFlow = new CheckComponentPropertiesFlow(componentPropertySet, webDriver);
+        checkVfPropertiesFlow.run();
+        return checkVfPropertiesFlow;
     }
 
-    private void editProperties(final ServiceComponentPage serviceComponentPage, final Map<String, Object> propertyMap) {
+    private void editProperties(final ComponentPage componentPage, final Map<String, Object> propertyMap) {
         final EditComponentPropertiesFlow editComponentPropertiesFlow = new EditComponentPropertiesFlow(webDriver, propertyMap);
-        editComponentPropertiesFlow.run(serviceComponentPage);
+        editComponentPropertiesFlow.run(componentPage);
     }
 
-    private DownloadCsarArtifactFlow downloadCsarArtifact(final ServiceComponentPage serviceComponentPage) {
+    private DownloadCsarArtifactFlow downloadCsarArtifact(final ComponentPage componentPage) {
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
-        downloadCsarArtifactFlow.run(serviceComponentPage);
+        downloadCsarArtifactFlow.run(componentPage);
         return downloadCsarArtifactFlow;
     }
 

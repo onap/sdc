@@ -49,6 +49,7 @@
           <include name="addComponentInput"/>
         </methods>
       </class>
+      <class name="org.onap.sdc.frontend.ci.tests.execute.sanity.EtsiV251ModelUiTests"/>
     </classes>
   </test>
 </suite>

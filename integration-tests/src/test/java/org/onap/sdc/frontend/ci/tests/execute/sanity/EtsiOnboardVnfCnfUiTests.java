@@ -32,8 +32,11 @@ import org.onap.sdc.backend.ci.tests.data.providers.OnboardingDataProviders;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceCategoriesEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
+import org.onap.sdc.frontend.ci.tests.datatypes.CategorySelect;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceCreateData;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspOnboardingProcedure;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
@@ -96,7 +99,12 @@ public class EtsiOnboardVnfCnfUiTests extends SetupCDTest {
      * @param vnfCnfFile file to be onboarded
      */
     private void runOnboardEtsiVnfCnf(final String resourceName, final String rootFolder, final String vnfCnfFile) {
-        final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, resourceName, vnfCnfFile, rootFolder);
+        var vspCreateData = new VspCreateData();
+        vspCreateData.setName(resourceName);
+        vspCreateData.setCategory(CategorySelect.COMMON_NETWORK_RESOURCES);
+        vspCreateData.setDescription("description");
+        vspCreateData.setOnboardingProcedure(VspOnboardingProcedure.NETWORK_PACKAGE);
+        final CreateVspFlow createVspFlow = new CreateVspFlow(webDriver, vspCreateData, vnfCnfFile, rootFolder);
         createVspFlow.run(topNavComponent);
         final ImportVspFlow importVspFlow = new ImportVspFlow(webDriver, resourceName);
         ResourceCreatePage resourceCreatePage = importVspFlow.run()
