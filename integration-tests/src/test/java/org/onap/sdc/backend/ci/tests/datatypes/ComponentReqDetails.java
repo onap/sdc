@@ -32,6 +32,7 @@ public abstract class ComponentReqDetails {
 	protected String name;
 	protected String description;
 	protected List<String> tags = new ArrayList<>();
+	protected List<String> models = new ArrayList<>();
 	protected String contactId;
 	protected String icon;
 	protected String uniqueId;
@@ -267,6 +268,14 @@ public abstract class ComponentReqDetails {
 
 	public void setInvariantUUID(String invariantUUID) {
 		this.invariantUUID = invariantUUID;
+	}
+
+	public List<String> getModels() {
+		return models;
+	}
+
+	public void setModels(List<String> models) {
+		this.models = models;
 	}
 
 }
