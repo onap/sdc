@@ -387,7 +387,8 @@
   "VendorSoftwareProduct/vendorName": "Vendor",
   "VendorSoftwareProduct/onboardingOrigin": "Onboarding Origin",
   "VendorSoftwareProduct/networkPackageName": "Network Package Name",
-  "vsp.model.select.label": "Other Models",
+  "vsp.model.select.other.label": "Other Models",
+  "vsp.model.select.label": "Select Model(s)",
 
   "EntitlementPool" : "Entitlement Pool",
   "EntitlementPool/name" : "Name",

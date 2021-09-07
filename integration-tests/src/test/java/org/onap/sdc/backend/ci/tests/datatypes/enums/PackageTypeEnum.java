@@ -25,7 +25,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum XnfTypeEnum {
+public enum PackageTypeEnum {
 
     CNF("CNF"),
     CNF_HELM("CNF_HELM"),

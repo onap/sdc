@@ -21,12 +21,15 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.aventstack.extentreports.Status;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
 import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
@@ -35,11 +38,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
-import com.aventstack.extentreports.Status;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Handles the Resource Properties Assignment Properties Tab UI actions
@@ -126,6 +124,32 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         }
 
         throw new UnsupportedOperationException("Cannot set property value of type: " + value.getClass());
+    }
+
+    /**
+     * Gets the property value. Only properties with a text value like string, float, integer or a list of string, float, integer are supported.
+     *
+     * @param propertyName the property name
+     * @return the value of the given property
+     */
+    public Object getPropertyValue(final String propertyName) {
+        isPropertiesTableLoaded();
+        final Map<String, String> propertyNamesAndTypes = getPropertyNamesAndTypes();
+        final String propertyType = propertyNamesAndTypes.get(propertyName);
+        final WebElement propertyRow = getPropertyRow(propertyName);
+        switch (propertyType) {
+            case "string":
+            case "float":
+            case "integer":
+                final WebElement propertyInput = propertyRow.findElement(By.xpath(XpathSelector.INPUT_PROPERTY.getXpath(propertyName)));
+                return propertyInput.getAttribute("value");
+            case "list":
+                final List<WebElement> elements = propertyRow
+                    .findElements(By.xpath(XpathSelector.INPUT_PROPERTY_LIST_STRING_TYPE_VALUE.getXpath(propertyName)));
+                return elements.stream().map(webElement -> webElement.getAttribute("value")).collect(Collectors.toList());
+            default:
+                throw new UnsupportedOperationException(String.format("Retrieve value of property type %s is not yet supported", propertyType));
+        }
     }
 
     /**
@@ -346,6 +370,7 @@ public class ResourcePropertiesAssignmentTab extends AbstractPageObject {
         PROPERTY_ADD_VALUE_COMPLEX_TYPE("//a[contains(@data-tests-id, 'add-to-list-%s')]"),
         INPUT_PROPERTY_COMPLEX_TYPE_KEY("//input[contains(@data-tests-id, 'value-prop-key-%s')]"),
         INPUT_PROPERTY_COMPLEX_TYPE_VALUE("//input[contains(@data-tests-id, 'value-prop-%s')]"),
+        INPUT_PROPERTY_LIST_STRING_TYPE_VALUE("//input[starts-with(@data-tests-id, 'value-prop-%s')]"),
         INPUT_PROPERTY("//input[@data-tests-id='value-prop-%s']"),
         SELECT_INPUT_PROPERTY("//select[@data-tests-id='value-prop-%s']"),
         PROPERTY_TYPES("//*[contains(@data-tests-id, 'propertyType')]"),

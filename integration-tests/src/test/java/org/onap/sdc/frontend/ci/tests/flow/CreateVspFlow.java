@@ -24,6 +24,7 @@ import static org.hamcrest.core.Is.is;
 
 import com.aventstack.extentreports.Status;
 import java.util.Optional;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.OnboardHomePage;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
@@ -38,14 +39,14 @@ import org.openqa.selenium.WebDriver;
  */
 public class CreateVspFlow extends AbstractUiTestFlow {
 
-    private final String resourceName;
+    private final VspCreateData vspCreateData;
     private final String packageFile;
     private final String rootFolder;
     private HomePage homePage;
 
-    public CreateVspFlow(final WebDriver webDriver, final String resourceName, final String packageFile, final String rootFolder) {
+    public CreateVspFlow(final WebDriver webDriver, final VspCreateData vspCreateData, final String packageFile, final String rootFolder) {
         super(webDriver);
-        this.resourceName = resourceName;
+        this.vspCreateData = vspCreateData;
         this.packageFile = packageFile;
         this.rootFolder = rootFolder;
     }
@@ -53,7 +54,7 @@ public class CreateVspFlow extends AbstractUiTestFlow {
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
         extendTest.log(Status.INFO,
-            String.format("Creating VSP '%s' by onboarding ETSI VNF/CNF package '%s'", resourceName, packageFile));
+            String.format("Creating VSP '%s' by onboarding ETSI VNF/CNF package '%s'", vspCreateData.getName(), packageFile));
         final TopNavComponent topNavComponent = findParameter(pageObjects, TopNavComponent.class);
         extendTest.log(Status.INFO, "Accessing the Onboard Home Page");
         topNavComponent.isLoaded();
@@ -93,15 +94,15 @@ public class CreateVspFlow extends AbstractUiTestFlow {
         extendTest.log(Status.INFO, "Creating a new VSP");
         final VspCreationModal vspCreationModal = onboardHomePage.clickOnCreateNewVsp();
         vspCreationModal.isLoaded();
-        vspCreationModal.fillCreationForm(resourceName);
+        vspCreationModal.fillCreationForm(vspCreateData);
         ExtentTestActions.takeScreenshot(Status.INFO, "vsp-creation-form",
             "Creating VSP with given information");
         final SoftwareProductOnboarding softwareProductOnboarding = vspCreationModal.clickOnCreate();
         softwareProductOnboarding.isLoaded();
-        extendTest.log(Status.INFO, String.format("VSP '%s' created", resourceName));
+        extendTest.log(Status.INFO, String.format("VSP '%s' created", vspCreateData.getName()));
         final String actualResourceName = softwareProductOnboarding.getResourceName();
-        assertThat(String.format("Should be in the Software Product '%s' page", resourceName),
-            actualResourceName, is(resourceName));
+        assertThat(String.format("Should be in the Software Product '%s' page", vspCreateData.getName()),
+            actualResourceName, is(vspCreateData.getName()));
         return softwareProductOnboarding;
     }
 
@@ -112,12 +113,12 @@ public class CreateVspFlow extends AbstractUiTestFlow {
      */
     private void uploadPackage(final SoftwareProductOnboarding softwareProductOnboarding) {
         extendTest.log(Status.INFO,
-            String.format("Uploading package '%s' to VSP '%s'", packageFile, resourceName)
+            String.format("Uploading package '%s' to VSP '%s'", packageFile, vspCreateData.getName())
         );
         softwareProductOnboarding.uploadFile(rootFolder + packageFile);
         softwareProductOnboarding.attachmentScreenIsLoaded();
         extendTest.log(Status.INFO,
-            String.format("Package '%s' was uploaded to VSP '%s'.", packageFile, resourceName)
+            String.format("Package '%s' was uploaded to VSP '%s'.", packageFile, vspCreateData.getName())
         );
     }
 
