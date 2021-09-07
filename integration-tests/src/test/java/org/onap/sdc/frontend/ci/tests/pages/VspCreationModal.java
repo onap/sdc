@@ -21,7 +21,11 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.onap.sdc.frontend.ci.tests.datatypes.CategorySelect;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspCreateData;
+import org.onap.sdc.frontend.ci.tests.datatypes.VspOnboardingProcedure;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -49,17 +53,17 @@ public class VspCreationModal extends AbstractPageObject {
     }
 
     /**
-     * Fills the creation form for the given vsp name.
+     * Fills the creation form with the given data.
      *
-     * @param vspName the name of the Vendor Software Product
+     * @param vspCreateData the data to fill the Vendor Software Product create form
      */
-    public void fillCreationForm(final String vspName) {
-        fillName(vspName);
-        selectVendorFirstVendor();
-        selectCategory("resourceNewCategory.network l4+.common network resources");
-        fillDescription(vspName);
-        selectNetworkPackageOnboardingProcedure();
-        selectDefaultModel();
+    public void fillCreationForm(final VspCreateData vspCreateData) {
+        fillName(vspCreateData.getName());
+        selectVendorOrElseAny(vspCreateData.getVendor());
+        selectCategory(vspCreateData.getCategory());
+        fillDescription(vspCreateData.getDescription());
+        selectOnboardingProcedure(vspCreateData.getOnboardingProcedure());
+        selectModel(vspCreateData.getModel());
     }
 
     /**
@@ -91,6 +95,19 @@ public class VspCreationModal extends AbstractPageObject {
     }
 
     /**
+     * Selects the given vendor option. If a null value is given, selects the first option available.
+     *
+     * @param vendor the vendor option to select
+     */
+    public void selectVendorOrElseAny(final String vendor) {
+        if (vendor == null) {
+            selectVendorFirstVendor();
+            return;
+        }
+        setSelectValue(XpathSelector.VENDOR_SELECT, vendor);
+    }
+
+    /**
      * Selects the first vendor in the vendor list.
      */
     public void selectVendorFirstVendor() {
@@ -104,20 +121,41 @@ public class VspCreationModal extends AbstractPageObject {
         clickElement(XpathSelector.DEFAULT_MODEL_RADIO);
     }
 
+    public void selectModel(final String model) {
+        if (model == null) {
+            selectDefaultModel();
+            return;
+        }
+        clickElement(XpathSelector.OTHER_MODEL_RADIO);
+        final WebElement modelSelect = findSubElement(wrappingElement, XpathSelector.MODEL_SELECT.getXpath());
+        modelSelect.sendKeys(model);
+        modelSelect.sendKeys(Keys.ENTER);
+    }
+
     /**
      * Selects a category in the category list based on the option value.
      *
      * @param categoryOptionValue the option value
      */
-    public void selectCategory(final String categoryOptionValue) {
-        setSelectValue(XpathSelector.CATEGORY_SELECT, categoryOptionValue);
+    public void selectCategory(final CategorySelect categoryOptionValue) {
+        setSelectValue(XpathSelector.CATEGORY_SELECT, categoryOptionValue.getOption());
     }
 
     /**
      * Selects the network package onboarding procedure option.
+     *
+     * @param vspOnboardingProcedure the onboarding procedure to select
      */
-    public void selectNetworkPackageOnboardingProcedure() {
-        wrappingElement.findElement(By.xpath(XpathSelector.ONBOARDING_METHOD_RADIO.getXpath())).click();
+    public void selectOnboardingProcedure(final VspOnboardingProcedure vspOnboardingProcedure) {
+        if (VspOnboardingProcedure.MANUAL == vspOnboardingProcedure) {
+            wrappingElement.findElement(By.xpath(XpathSelector.ONBOARDING_MANUAL_PROCEDURE_RADIO.getXpath())).click();
+            return;
+        }
+        if (VspOnboardingProcedure.NETWORK_PACKAGE == vspOnboardingProcedure) {
+            wrappingElement.findElement(By.xpath(XpathSelector.ONBOARDING_PACKAGE_PROCEDURE_RADIO.getXpath())).click();
+            return;
+        }
+        throw new UnsupportedOperationException(String.format("Onboarding procedure option '%s' not yet supported", vspOnboardingProcedure));
     }
 
     private void setInputValue(final XpathSelector inputTestId, final String value) {
@@ -146,8 +184,11 @@ public class VspCreationModal extends AbstractPageObject {
         VENDOR_SELECT("new-vsp-vendor", "//select[@data-test-id='%s']"),
         CATEGORY_SELECT("new-vsp-category", "//select[@data-test-id='%s']"),
         DESCRIPTION_TXT("new-vsp-description", "//textarea[@data-test-id='%s']"),
-        ONBOARDING_METHOD_RADIO("new-vsp-creation-procedure-heat", "//input[@data-test-id='%s']/parent::label"),
+        ONBOARDING_PACKAGE_PROCEDURE_RADIO("new-vsp-creation-procedure-heat", "//input[@data-test-id='%s']/parent::label"),
+        ONBOARDING_MANUAL_PROCEDURE_RADIO("new-vsp-creation-procedure-manual", "//input[@data-test-id='%s']/parent::label"),
         DEFAULT_MODEL_RADIO("model-option-default", "//input[@data-test-id='%s']/parent::label"),
+        OTHER_MODEL_RADIO("model-option-other", "//input[@data-test-id='%s']/parent::label"),
+        MODEL_SELECT("model-option-select", "//div[@data-test-id='%s']//input"),
         CREATE_BTN("form-submit-button", "//*[@data-test-id='%s']");
 
         @Getter

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
-import org.onap.sdc.backend.ci.tests.datatypes.enums.XnfTypeEnum;
+import org.onap.sdc.backend.ci.tests.datatypes.enums.PackageTypeEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.FileHandling;
 import org.onap.sdc.backend.ci.tests.utils.general.OnboardingUtils;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ import org.testng.annotations.DataProvider;
 public final class OnboardingDataProviders {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OnboardingDataProviders.class);
-    private static final String VNF_FILE_PATH = FileHandling.getXnfRepositoryPath(XnfTypeEnum.VNF);
+    private static final String VNF_FILE_PATH = FileHandling.getPackageRepositoryPath(PackageTypeEnum.VNF);
 
     private OnboardingDataProviders() {
 
@@ -61,55 +61,55 @@ public final class OnboardingDataProviders {
 
     @DataProvider(name = "VNF_List", parallel = true)
     private static Object[][] vnfList() {
-        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
         LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
         return provideData(fileNamesFromFolder, VNF_FILE_PATH);
     }
 
     @DataProvider(name = "PNF_List", parallel = true)
     private static Object[][] pnfList() {
-        return provideData(OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.PNF),
-            FileHandling.getXnfRepositoryPath(XnfTypeEnum.PNF));
+        return provideData(OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.PNF),
+            FileHandling.getPackageRepositoryPath(PackageTypeEnum.PNF));
     }
 
     @DataProvider(name = "CNF_List", parallel = true)
     private static Object[][] cnfList() {
-        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF);
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.CNF);
         LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
-        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF));
+        return provideData(fileNamesFromFolder, FileHandling.getPackageRepositoryPath(PackageTypeEnum.CNF));
     }
 
     @DataProvider(name = "Invalid_CNF_List", parallel = true)
     private static Object[][] invalidCnfList() {
-        final List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF);
+        final List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(PackageTypeEnum.CNF);
         LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
-        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF) + File.separator + OnboardingUtils.INVALID_XNFS_SUBPATH);
+        return provideData(fileNamesFromFolder, FileHandling.getPackageRepositoryPath(PackageTypeEnum.CNF) + File.separator + OnboardingUtils.INVALID_XNFS_SUBPATH);
     }
 
     @DataProvider(name = "CNF_Helm_Validator_List", parallel = true)
     private static Object[][] cnfForHelmValidatorList() {
-        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.CNF_HELM);
         LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
-        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF_HELM));
+        return provideData(fileNamesFromFolder, FileHandling.getPackageRepositoryPath(PackageTypeEnum.CNF_HELM));
     }
 
     @DataProvider(name = "CNF_With_Warning_Helm_Validator_List", parallel = true)
     private static Object[][] cnfWithWarningForHelmValidatorList() {
-        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesWithWarningsFileList(XnfTypeEnum.CNF_HELM);
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesWithWarningsFileList(PackageTypeEnum.CNF_HELM);
         LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
-        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF_HELM) + File.separator + OnboardingUtils.WITH_WARNINGS_XNFS_SUBPATH);
+        return provideData(fileNamesFromFolder, FileHandling.getPackageRepositoryPath(PackageTypeEnum.CNF_HELM) + File.separator + OnboardingUtils.WITH_WARNINGS_XNFS_SUBPATH);
     }
 
     @DataProvider(name = "Invalid_CNF_Helm_Validator_List", parallel = true)
     private static Object[][] invalidCnfForHelmValidatorList() {
-        final List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(XnfTypeEnum.CNF_HELM);
+        final List<String> fileNamesFromFolder = OnboardingUtils.getInvalidXnfNamesFileList(PackageTypeEnum.CNF_HELM);
         LOGGER.debug(String.format("There are %s package file(s) to test", fileNamesFromFolder.size()));
-        return provideData(fileNamesFromFolder, FileHandling.getXnfRepositoryPath(XnfTypeEnum.CNF_HELM) + File.separator + OnboardingUtils.INVALID_XNFS_SUBPATH);
+        return provideData(fileNamesFromFolder, FileHandling.getPackageRepositoryPath(PackageTypeEnum.CNF_HELM) + File.separator + OnboardingUtils.INVALID_XNFS_SUBPATH);
     }
 
     @DataProvider(name = "Single_VNF", parallel = true)
     private static Object[][] singleVNF() {
-        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.VNF);
+        final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.VNF);
         final List<String> newList = new ArrayList<>();
         newList.add(fileNamesFromFolder.get(0));
         LOGGER.debug(String.format("There are %s zip file(s) to test", fileNamesFromFolder.size()));
@@ -118,7 +118,7 @@ public final class OnboardingDataProviders {
 
     @DataProvider(name = "softwareInformationPnf", parallel = true)
     private static Object[][] softwareInformationPnf() {
-        final List<String> pnfPackageFileNameList = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.PNF);
+        final List<String> pnfPackageFileNameList = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.PNF);
         if (CollectionUtils.isEmpty(pnfPackageFileNameList)) {
             fail("Could not create softwareInformationPnf datasource");
         }
@@ -130,7 +130,7 @@ public final class OnboardingDataProviders {
                 pnfPackage));
         }
 
-        final String folderPath = FileHandling.getXnfRepositoryPath(XnfTypeEnum.PNF);
+        final String folderPath = FileHandling.getPackageRepositoryPath(PackageTypeEnum.PNF);
         final Object[][] parametersArray = new Object[1][];
         parametersArray[0] = new Object[]{folderPath, softwareInformationPnfPackage.get(),
             Arrays.asList("5gDUv18.05.201", "5gDUv18.06.205")};
@@ -139,7 +139,7 @@ public final class OnboardingDataProviders {
 
     @DataProvider(name = "etsiVnfCnfOnboardPackages")
     private static Object[][] etsiVnf() {
-        final List<String> vnfPackageFileNameList = OnboardingUtils.getXnfNamesFileList(XnfTypeEnum.ETSI);
+        final List<String> vnfPackageFileNameList = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.ETSI);
         if (CollectionUtils.isEmpty(vnfPackageFileNameList)) {
             fail("Could not create etsiSingleVnfCnf datasource");
         }
@@ -153,7 +153,7 @@ public final class OnboardingDataProviders {
                 etsiPackages));
         }
 
-        final String folderPath = FileHandling.getXnfRepositoryPath(XnfTypeEnum.ETSI);
+        final String folderPath = FileHandling.getPackageRepositoryPath(PackageTypeEnum.ETSI);
         final Object[][] parametersArray = new Object[2][];
         parametersArray[0] = new Object[]{folderPath, etsiPackages.get(0)};
         parametersArray[1] = new Object[]{folderPath, etsiPackages.get(1)};
@@ -176,7 +176,7 @@ public final class OnboardingDataProviders {
             fail(String.format("Could not create vfcList datasource, one of the vfc file '%s' was not found", vfcFiles));
         }
 
-        final String folderPath = FileHandling.getXnfRepositoryPath(XnfTypeEnum.VFC);
+        final String folderPath = FileHandling.getPackageRepositoryPath(PackageTypeEnum.VFC);
         final Object[][] parametersArray = new Object[2][];
         parametersArray[0] = new Object[]{folderPath, vfcFiles.get(0)};
         parametersArray[1] = new Object[]{folderPath, vfcFiles.get(1)};

@@ -22,18 +22,16 @@ package org.onap.sdc.frontend.ci.tests.pages;
 import com.aventstack.extentreports.Status;
 import java.util.List;
 import java.util.Map;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Handles the Resource Properties Assignment Page UI actions.
  */
-public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
+public class ResourcePropertiesAssignmentPage extends ComponentPage {
 
     private ResourcePropertiesAssignmentTab resourcePropertiesAssignmentTab;
     private ResourcePropertiesAssignmentInputTab resourcePropertiesAssignmentInputTab;
@@ -46,6 +44,7 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
 
     @Override
     public void isLoaded() {
+        super.isLoaded();
         waitForElementVisibility((By.xpath(XpathSelector.MAIN_DIV.getXpath())));
         waitForElementVisibility(By.xpath(XpathSelector.TITLE_DIV.getXpath()));
         resourcePropertiesAssignmentTab.isLoaded();
@@ -73,6 +72,16 @@ public class ResourcePropertiesAssignmentPage extends AbstractPageObject {
 
     public void setPropertyValue(final String propertyName, final Object value) {
         resourcePropertiesAssignmentTab.setPropertyValue(propertyName, value);
+    }
+
+    /**
+     * Retrieves a property value.
+     *
+     * @param propertyName the property name
+     * @return the property value
+     */
+    public Object getPropertyValue(final String propertyName) {
+        return resourcePropertiesAssignmentTab.getPropertyValue(propertyName);
     }
 
     public boolean isPropertyPresent(final String propertyName) {
