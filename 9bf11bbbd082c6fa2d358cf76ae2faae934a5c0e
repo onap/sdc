@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8ed150f_7a2dc6fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-09-08T16:28:48Z",
+      "side": 1,
+      "message": "I suggest to change to:\n\nGroupBusinessLogic#getNextVfModuleNameCounter",
+      "range": {
+        "startLine": 7,
+        "startChar": 9,
+        "endLine": 7,
+        "endChar": 35
+      },
+      "revId": "9bf11bbbd082c6fa2d358cf76ae2faae934a5c0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
