@@ -2,24 +2,45 @@ services:
     Mobility:
       name: "Mobility"
       icons: ['mobility']
+      models: [
+          "SDC AID"
+      ]
     Network_L1_3:
       name: "Network L1-3"
       icons: ['network_l_1-3']
+      models: [
+          "SDC AID"
+      ]
     Network_L4:
       name: "Network L4+"
       icons: ['network_l_4']
+      models: [
+          "SDC AID"
+      ]
     VoIP_Call_Control:
       name: "VoIP Call Control"
       icons: ['call_controll']
+      models: [
+          "SDC AID"
+      ]
     E2E_Service:
       name: "E2E Service"
       icons: ['network_l_1-3']
+      models: [
+          "SDC AID"
+      ]
     Network_Service:
       name: "Network Service"
       icons: ['network_l_1-3']
+      models: [
+          "SDC AID"
+      ]
     Partner_Domain_Service:
       name: "Partner Domain Service"
       icons: ['partner_domain_service']
+      models: [
+          "SDC AID"
+      ]
     ETSI_NFV_Network_Service:
       name: "ETSI NFV Network Service"
       icons: ['etsi_nfv_network_service']
@@ -29,6 +50,10 @@ services:
           validValues: [ '3.3.1', '2.7.1', '2.5.1' ]
           default: '2.5.1'
           mandatory: true
+      models: [
+          "ETSI SOL001 v2.5.1",
+          "SDC AID"
+      ]
 resources:
   NetworkLayer23:
     name: "Network L2-3"
