@@ -37,7 +37,8 @@ public class ModelCreateRequest {
     private String name;
 
     private String derivedFrom;
-    
+
+    @NotNull(message = "Model type cannot be null")
     private ModelTypeEnum modelType;
 
 }

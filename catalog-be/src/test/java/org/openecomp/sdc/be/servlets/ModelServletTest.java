@@ -59,6 +59,7 @@ import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
@@ -157,6 +158,7 @@ class ModelServletTest extends JerseyTest {
         model = new Model(modelName);
         modelCreateRequest = new ModelCreateRequest();
         modelCreateRequest.setName(modelName);
+        modelCreateRequest.setModelType(ModelTypeEnum.NORMATIVE);
     }
 
     @Override
@@ -207,6 +209,7 @@ class ModelServletTest extends JerseyTest {
         when(modelBusinessLogic.createModel(any(Model.class))).thenReturn(model);
         ModelCreateRequest derviedModelCreateRequest = new ModelCreateRequest();
         derviedModelCreateRequest.setName("derivedModel");
+        derviedModelCreateRequest.setModelType(ModelTypeEnum.NORMATIVE_EXTENSION);
         derviedModelCreateRequest.setDerivedFrom(model.getName());
         final FormDataMultiPart formDataMultiPart = buildCreateFormDataMultiPart(new byte[0], parseToJsonString(derviedModelCreateRequest));
         final var response = target(rootPath.toString()).request(MediaType.APPLICATION_JSON)
