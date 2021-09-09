@@ -45,6 +45,30 @@
       "revId": "bbb89a875606d9aba26663b58cd79e2d74eb5237",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd4a66c3_70bc311b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/cucumber/runners/RunTenantIsolationTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-09T07:26:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3c7e02be_45209e0d",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 24
+      },
+      "revId": "bbb89a875606d9aba26663b58cd79e2d74eb5237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
