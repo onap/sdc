@@ -468,18 +468,20 @@ export class GeneralViewModel {
 
         this.$scope.initModel = ():void => {
             this.$scope.isModelRequired = false;
-            this.$scope.models = [{id: '', name: 'SDC AID'}];
+            this.$scope.models = [];
+            this.$scope.defaultModelOption = 'SDC AID';
+            this.$scope.showDefaultModelOption = true;
             if (this.$scope.isCreateMode() && this.$scope.isVspImport()) {
                 if (this.$scope.component.componentMetadata.models) {
                     this.$scope.isModelRequired = true;
-                    const modelOptions = this.$scope.component.componentMetadata.models.map(value => {
-                        return {id: value, name: value};
-                    });
+                    const modelOptions = this.$scope.component.componentMetadata.models;
                     if (modelOptions.length == 1) {
                         this.$scope.models = modelOptions;
-                        this.$scope.component.model = modelOptions[0].id;
+                        this.$scope.component.model = modelOptions[0];
+                        this.$scope.showDefaultModelOption = false;
                     } else {
-                        this.$scope.models = [{id: '', name: 'Select'}, ...modelOptions];
+                        this.$scope.models = modelOptions.sort();
+                        this.$scope.defaultModelOption = 'Select';
                     }
                 }
                 return;
@@ -487,23 +489,13 @@ export class GeneralViewModel {
 
             if (!this.$scope.isCreateMode() && this.$scope.isVspImport()){
                 this.modelService.getModels().subscribe((modelsFound: Model[]) => {
-                    modelsFound.forEach(model => {this.$scope.models.push({id: model.name, name: model.name})});
-                });	
+                    modelsFound.sort().forEach(model => {this.$scope.models.push(model.name)});
+                });
             } else {
                 this.modelService.getModelsOfType("normative").subscribe((modelsFound: Model[]) => {
-                    modelsFound.forEach(model => {this.$scope.models.push({id: model.name, name: model.name})});
+                    modelsFound.sort().forEach(model => {this.$scope.models.push(model.name)});
                 });
             }
-
-            this.$scope.models.sort(function (model1, model2) {
-                if (model1.id > model2.id) {
-                    return 1;
-                }
-                if (model1.id < model2.id) {
-                    return -1;
-                }
-                return 0;
-            });
         };
 
         this.$scope.isVspImport = (): boolean => {

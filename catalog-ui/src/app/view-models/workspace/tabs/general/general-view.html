@@ -80,14 +80,15 @@
                           <div class="i-sdc-form-item">
                             <label class="i-sdc-form-label required">Model</label>
                             <select class="i-sdc-form-select"
-                                    name="modelName"
                                     data-ng-class="{'view-mode': isViewMode()}"
                                     data-ng-disabled="!isCreateMode()"
-                                    data-ng-model="component.model"
                                     data-ng-change="onModelChange()"
                                     data-tests-id="modelName"
-                                    ng-required="isModelRequired">
-                              <option ng-repeat="model in models" value="{{model.id}}">{{model.name}}</option>
+                                    data-ng-required="isModelRequired"
+                                    data-ng-model="component.model"
+                                    data-ng-options="model for model in models track by model"
+                            >
+                              <option ng-if="showDefaultModelOption" value="">{{defaultModelOption}}</option>
                             </select>
                           </div>
                           <!--------------------- Model -------------------->

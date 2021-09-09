@@ -55,11 +55,6 @@ import { IDependenciesServerResponse } from '../../ng2/services/responses/depend
 import { WorkspaceNg1BridgeService } from '../../ng2/pages/workspace/workspace-ng1-bridge-service';
 import { WorkspaceService } from '../../ng2/pages/workspace/workspace.service';
 
-interface ModelSelectOption {
-    id: string;
-    name: string;
-}
-
 export interface IWorkspaceViewModelScope extends ng.IScope {
 
     isLoading: boolean;
@@ -96,8 +91,7 @@ export interface IWorkspaceViewModelScope extends ng.IScope {
     unsavedChangesCallback: Function;
     unsavedFile: boolean;
     hasNoDependencies: boolean;
-    models: Array<ModelSelectOption>;
-
+    models: Array<string>;
 
     startProgress(message: string): void;
     stopProgress(): void;
