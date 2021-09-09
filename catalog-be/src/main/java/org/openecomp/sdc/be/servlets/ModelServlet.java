@@ -112,9 +112,6 @@ public class ModelServlet extends AbstractValidationsServlet {
         validateUser(ValidationUtils.sanitizeInputString(userId));
         final var modelName = ValidationUtils.sanitizeInputString(modelCreateRequest.getName().trim());
         try {
-            if (modelCreateRequest.getModelType() == null){
-                modelCreateRequest.setModelType(ModelTypeEnum.NORMATIVE);
-            }
             final Model createdModel = modelBusinessLogic
                 .createModel(new JMapper<>(Model.class, ModelCreateRequest.class).getDestination(modelCreateRequest));
             modelBusinessLogic.createModelImports(modelName, modelImportsZip);
