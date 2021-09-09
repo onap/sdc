@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "20c092ff_f77a5fec",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/distribution/engine/DistributionEngineClusterHealth.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-09T08:39:58Z",
+      "side": 1,
+      "message": "Constructor injection resulted in circular dependency so re-worked to remove circular dependency",
+      "parentUuid": "c4ba9eab_612e8d5a",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 72,
+        "endChar": 50
+      },
+      "revId": "bbb89a875606d9aba26663b58cd79e2d74eb5237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3c7e02be_45209e0d",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/cucumber/runners/RunTenantIsolationTest.java",
         "patchSetId": 2
