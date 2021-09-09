@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bc93bfec_9693b0ae",
+        "filename": "catalog-be/src/main/resources/scripts/sdcBePy/tosca/models/model_import_manager.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-09T07:23:34Z",
+      "side": 1,
+      "message": "The models not previously deployed are still not getting deployed in upgrade because you are reading from the upgrade folder rather than the init folder. Also the decision on install/upgrade needs to be taken at the model level rather than an over all level.\n\nChange to:\n\n    def deploy_models(self):\n        existing_models \u003d self.__model_client.get_model_list()\n        \n        for model_folder_name in self.__get_model_init_list():\n            model_payload_dict \u003d self.__read_model_payload(model_folder_name, self.ACTION_INIT)\n            if (not existing_models or not any(m for m in existing_models if model_payload_dict[\u0027name\u0027] \u003d\u003d m[\u0027name\u0027])):\n                self.__create_model(model_folder_name, model_payload_dict)\n                \n        for model_folder_name in self.__get_model_upgrade_list():\n            model_payload_dict \u003d self.__read_model_payload(model_folder_name, self.ACTION_UPGRADE)\n            if (existing_models and any(m for m in existing_models if model_payload_dict[\u0027name\u0027] \u003d\u003d m[\u0027name\u0027])):\n                self.__update_model(model_folder_name, model_payload_dict)\n            \n    def __create_model(self, model_folder_name, model_payload_dict):\n        model_imports_zip_path \u003d self.__zip_model_imports(model_folder_name, self.ACTION_INIT)\n        self.__model_client.create_model(model_payload_dict, model_imports_zip_path)\n        self.__init_model_non_node_types(model_folder_name, model_payload_dict)\n        self.__init_model_node_types(model_folder_name, model_payload_dict)\n        self.__init_model_non_node_types(model_folder_name, model_payload_dict, True);\n        \n    def __update_model(self, model_folder_name, model_payload_dict):\n        model_imports_zip_path \u003d self.__zip_model_imports(model_folder_name, self.ACTION_UPGRADE)\n        self.__model_client.update_model_imports(model_payload_dict, model_imports_zip_path)\n        self.__upgrade_model_non_node_types(model_folder_name, model_payload_dict)\n        self.__upgrade_model_node_types(model_folder_name, model_payload_dict)\n        self.__upgrade_model_non_node_types(model_folder_name, model_payload_dict, True)\n\n\nand call deploy_models from both upgrade/run.py and imports/run.py",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 92
+      },
+      "revId": "bd4aeddeb7fbfea291400f14c141896c4003ff40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
