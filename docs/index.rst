@@ -12,6 +12,7 @@ SDC Documentation
    configuration.rst
    consumedapis.rst
    offeredapis.rst
+   models.rst
    delivery.rst
    humaninterfaces.rst
    genericdesignerintegration.rst
