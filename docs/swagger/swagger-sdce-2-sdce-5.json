@@ -615,6 +615,13 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "description" : "model",
+          "in" : "query",
+          "name" : "model",
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -903,6 +910,13 @@
         "parameters" : [ {
           "in" : "header",
           "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "model",
+          "in" : "query",
+          "name" : "model",
           "schema" : {
             "type" : "string"
           }
@@ -1531,6 +1545,12 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "in" : "query",
+          "name" : "componentModel",
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -1845,6 +1865,13 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "description" : "model",
+          "in" : "query",
+          "name" : "model",
+          "schema" : {
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -2123,6 +2150,961 @@
           "variables" : { }
         } ],
         "summary" : "Returns interface lifecycle types",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/lock" : {
+      "post" : {
+        "description" : "Toggle disable locking",
+        "operationId" : "toggleDisableLocking",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "boolean"
+              }
+            }
+          },
+          "description" : "Disable Locking"
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Disable locking successfully updated"
+          },
+          "500" : {
+            "description" : "Update disable locking failed"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "allowedMethods" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "string"
+                      },
+                      "uniqueItems" : true
+                    },
+                    "cookies" : {
+                      "type" : "object",
+                      "additionalProperties" : {
+                        "type" : "object",
+                        "properties" : {
+                          "comment" : {
+                            "type" : "string"
+                          },
+                          "domain" : {
+                            "type" : "string"
+                          },
+                          "expiry" : {
+                            "type" : "string",
+                            "format" : "date-time"
+                          },
+                          "httpOnly" : {
+                            "type" : "boolean"
+                          },
+                          "maxAge" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          },
+                          "name" : {
+                            "type" : "string"
+                          },
+                          "path" : {
+                            "type" : "string"
+                          },
+                          "secure" : {
+                            "type" : "boolean"
+                          },
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "version" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      }
+                    },
+                    "date" : {
+                      "type" : "string",
+                      "format" : "date-time"
+                    },
+                    "entity" : {
+                      "type" : "object"
+                    },
+                    "entityTag" : {
+                      "type" : "object",
+                      "properties" : {
+                        "value" : {
+                          "type" : "string"
+                        },
+                        "weak" : {
+                          "type" : "boolean"
+                        }
+                      }
+                    },
+                    "headers" : {
+                      "type" : "object",
+                      "additionalProperties" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object"
+                        }
+                      }
+                    },
+                    "language" : {
+                      "type" : "object",
+                      "properties" : {
+                        "country" : {
+                          "type" : "string"
+                        },
+                        "displayCountry" : {
+                          "type" : "string"
+                        },
+                        "displayLanguage" : {
+                          "type" : "string"
+                        },
+                        "displayName" : {
+                          "type" : "string"
+                        },
+                        "displayScript" : {
+                          "type" : "string"
+                        },
+                        "displayVariant" : {
+                          "type" : "string"
+                        },
+                        "extensionKeys" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "uniqueItems" : true
+                        },
+                        "iso3Country" : {
+                          "type" : "string"
+                        },
+                        "iso3Language" : {
+                          "type" : "string"
+                        },
+                        "language" : {
+                          "type" : "string"
+                        },
+                        "script" : {
+                          "type" : "string"
+                        },
+                        "unicodeLocaleAttributes" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "uniqueItems" : true
+                        },
+                        "unicodeLocaleKeys" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          },
+                          "uniqueItems" : true
+                        },
+                        "variant" : {
+                          "type" : "string"
+                        }
+                      }
+                    },
+                    "lastModified" : {
+                      "type" : "string",
+                      "format" : "date-time"
+                    },
+                    "length" : {
+                      "type" : "integer",
+                      "format" : "int32"
+                    },
+                    "links" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object",
+                        "properties" : {
+                          "params" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "rel" : {
+                            "type" : "string"
+                          },
+                          "rels" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            }
+                          },
+                          "title" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "uri" : {
+                            "type" : "string",
+                            "format" : "uri"
+                          },
+                          "uriBuilder" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "uniqueItems" : true
+                    },
+                    "location" : {
+                      "type" : "string",
+                      "format" : "uri"
+                    },
+                    "mediaType" : {
+                      "type" : "object",
+                      "properties" : {
+                        "parameters" : {
+                          "type" : "object",
+                          "additionalProperties" : {
+                            "type" : "string"
+                          }
+                        },
+                        "subtype" : {
+                          "type" : "string"
+                        },
+                        "type" : {
+                          "type" : "string"
+                        },
+                        "wildcardSubtype" : {
+                          "type" : "boolean"
+                        },
+                        "wildcardType" : {
+                          "type" : "boolean"
+                        }
+                      }
+                    },
+                    "metadata" : {
+                      "type" : "object",
+                      "additionalProperties" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object"
+                        }
+                      }
+                    },
+                    "status" : {
+                      "type" : "integer",
+                      "format" : "int32"
+                    },
+                    "statusInfo" : {
+                      "type" : "object",
+                      "properties" : {
+                        "family" : {
+                          "type" : "string",
+                          "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                        },
+                        "reasonPhrase" : {
+                          "type" : "string"
+                        },
+                        "statusCode" : {
+                          "type" : "integer",
+                          "format" : "int32"
+                        }
+                      }
+                    },
+                    "stringHeaders" : {
+                      "type" : "object",
+                      "additionalProperties" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/model" : {
+      "get" : {
+        "description" : "List all the existing TOSCA models",
+        "operationId" : "listModels",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "modelType",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Listing successful"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Model"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "List TOSCA models",
+        "tags" : [ "SDCE-2 APIs" ]
+      },
+      "post" : {
+        "description" : "Create a TOSCA model, along with its imports files",
+        "operationId" : "createModel",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "model" : {
+                    "$ref" : "#/components/schemas/ModelCreateRequest"
+                  },
+                  "modelImportsZip" : {
+                    "type" : "object",
+                    "description" : "the model TOSCA imports zipped"
+                  }
+                },
+                "required" : [ "model", "modelImportsZip" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Model created"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "409" : {
+            "description" : "Model already exists"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Create a TOSCA model",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
+    "/v1/catalog/model/imports" : {
+      "put" : {
+        "description" : "Update a model TOSCA imports",
+        "operationId" : "updateModelImports",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "modelImportsZip" : {
+                    "type" : "object",
+                    "description" : "the model TOSCA imports zipped"
+                  },
+                  "modelName" : {
+                    "type" : "string",
+                    "description" : "model to be created"
+                  }
+                },
+                "required" : [ "modelImportsZip", "modelName" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "204" : {
+            "description" : "Model imports updated"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Model not found"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Update a model TOSCA imports",
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
@@ -2517,6 +3499,12 @@
             "type" : "string"
           }
         }, {
+          "in" : "query",
+          "name" : "componentModel",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "description" : "The user id",
           "in" : "header",
           "name" : "USER_ID",
@@ -2563,6 +3551,13 @@
         "parameters" : [ {
           "in" : "header",
           "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "model",
+          "in" : "query",
+          "name" : "model",
           "schema" : {
             "type" : "string"
           }
@@ -21384,6 +22379,14 @@
                     "type" : "string",
                     "format" : "binary",
                     "description" : "FileInputStream"
+                  },
+                  "includeToModelImport" : {
+                    "type" : "boolean",
+                    "description" : "includeToModelImport"
+                  },
+                  "model" : {
+                    "type" : "string",
+                    "description" : "model"
                   }
                 }
               }
@@ -21998,6 +23001,14 @@
                     "type" : "string",
                     "format" : "binary",
                     "description" : "FileInputStream"
+                  },
+                  "includeToModelImport" : {
+                    "type" : "boolean",
+                    "description" : "includeToModelImport"
+                  },
+                  "model" : {
+                    "type" : "string",
+                    "description" : "model"
                   }
                 }
               }
@@ -22306,6 +23317,14 @@
                     "format" : "binary",
                     "description" : "FileInputStream"
                   },
+                  "includeToModelImport" : {
+                    "type" : "boolean",
+                    "description" : "includeToModelImport"
+                  },
+                  "model" : {
+                    "type" : "string",
+                    "description" : "model"
+                  },
                   "toscaTypeMetadata" : {
                     "type" : "string",
                     "description" : "toscaTypeMetadata"
@@ -22612,10 +23631,18 @@
               "schema" : {
                 "type" : "object",
                 "properties" : {
+                  "includeToModelImport" : {
+                    "type" : "boolean",
+                    "description" : "includeToModelImport"
+                  },
                   "interfaceLifecycleTypeZip" : {
                     "type" : "string",
                     "format" : "binary",
                     "description" : "FileInputStream"
+                  },
+                  "model" : {
+                    "type" : "string",
+                    "description" : "model"
                   }
                 }
               }
@@ -22919,6 +23946,14 @@
               "schema" : {
                 "type" : "object",
                 "properties" : {
+                  "includeToModelImport" : {
+                    "type" : "boolean",
+                    "description" : "includeToModelImport"
+                  },
+                  "model" : {
+                    "type" : "string",
+                    "description" : "model"
+                  },
                   "policyTypesZip" : {
                     "type" : "string",
                     "format" : "binary",
@@ -23230,6 +24265,14 @@
               "schema" : {
                 "type" : "object",
                 "properties" : {
+                  "includeToModelImport" : {
+                    "type" : "boolean",
+                    "description" : "includeToModelImport"
+                  },
+                  "model" : {
+                    "type" : "string",
+                    "description" : "model"
+                  },
                   "relationshipTypeZip" : {
                     "type" : "string",
                     "format" : "binary",
@@ -23753,6 +24796,18 @@
           "name" : "internalComponentType",
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "componentModel",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "includeNormativeExtensionModels",
+          "schema" : {
+            "type" : "boolean"
           }
         }, {
           "in" : "header",
@@ -35840,7 +36895,7 @@
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
-    "/v1/catalog/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/attribute" : {
+    "/v1/catalog/{containerComponentType}/{componentId}/resourceInstance/{componentInstanceId}/attributes" : {
       "post" : {
         "description" : "Update resource instance attribute",
         "operationId" : "updateResourceInstanceAttribute",
@@ -35877,6 +36932,17 @@
             "type" : "string"
           }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "string"
+              }
+            }
+          },
+          "description" : "Component Instance Properties JSON Array",
+          "required" : true
+        },
         "responses" : {
           "201" : {
             "description" : "Resource instance created"
@@ -36150,7 +37216,7 @@
           "url" : "/sdc2/rest",
           "variables" : { }
         } ],
-        "summary" : "Returns updated resource instance attribute",
+        "summary" : "Returns updated resource instance property",
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
@@ -39610,6 +40676,329 @@
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
+    "/v1/catalog/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/capability" : {
+      "put" : {
+        "description" : "Update Component Instance Capability",
+        "operationId" : "updateInstanceRequirement",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "containerComponentType",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "containerComponentId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "componentInstanceUniqueId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ComponentInstanceCapabilityUpdateModel"
+              }
+            }
+          },
+          "description" : "Component instance capability to update",
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Resource instance capability successfully updated"
+          },
+          "400" : {
+            "description" : "Invalid content / Missing content"
+          },
+          "403" : {
+            "description" : "Restricted operation"
+          },
+          "404" : {
+            "description" : "Component/Component Instance/Capability not found"
+          },
+          "default" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "properties" : {
+                      "allowedMethods" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        },
+                        "uniqueItems" : true
+                      },
+                      "cookies" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "object",
+                          "properties" : {
+                            "comment" : {
+                              "type" : "string"
+                            },
+                            "domain" : {
+                              "type" : "string"
+                            },
+                            "expiry" : {
+                              "type" : "string",
+                              "format" : "date-time"
+                            },
+                            "httpOnly" : {
+                              "type" : "boolean"
+                            },
+                            "maxAge" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            },
+                            "name" : {
+                              "type" : "string"
+                            },
+                            "path" : {
+                              "type" : "string"
+                            },
+                            "secure" : {
+                              "type" : "boolean"
+                            },
+                            "value" : {
+                              "type" : "string"
+                            },
+                            "version" : {
+                              "type" : "integer",
+                              "format" : "int32"
+                            }
+                          }
+                        }
+                      },
+                      "date" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "entity" : {
+                        "type" : "object"
+                      },
+                      "entityTag" : {
+                        "type" : "object",
+                        "properties" : {
+                          "value" : {
+                            "type" : "string"
+                          },
+                          "weak" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "headers" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "language" : {
+                        "type" : "object",
+                        "properties" : {
+                          "country" : {
+                            "type" : "string"
+                          },
+                          "displayCountry" : {
+                            "type" : "string"
+                          },
+                          "displayLanguage" : {
+                            "type" : "string"
+                          },
+                          "displayName" : {
+                            "type" : "string"
+                          },
+                          "displayScript" : {
+                            "type" : "string"
+                          },
+                          "displayVariant" : {
+                            "type" : "string"
+                          },
+                          "extensionKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "iso3Country" : {
+                            "type" : "string"
+                          },
+                          "iso3Language" : {
+                            "type" : "string"
+                          },
+                          "language" : {
+                            "type" : "string"
+                          },
+                          "script" : {
+                            "type" : "string"
+                          },
+                          "unicodeLocaleAttributes" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "unicodeLocaleKeys" : {
+                            "type" : "array",
+                            "items" : {
+                              "type" : "string"
+                            },
+                            "uniqueItems" : true
+                          },
+                          "variant" : {
+                            "type" : "string"
+                          }
+                        }
+                      },
+                      "lastModified" : {
+                        "type" : "string",
+                        "format" : "date-time"
+                      },
+                      "length" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "links" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "properties" : {
+                            "params" : {
+                              "type" : "object",
+                              "additionalProperties" : {
+                                "type" : "string"
+                              }
+                            },
+                            "rel" : {
+                              "type" : "string"
+                            },
+                            "rels" : {
+                              "type" : "array",
+                              "items" : {
+                                "type" : "string"
+                              }
+                            },
+                            "title" : {
+                              "type" : "string"
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "uri" : {
+                              "type" : "string",
+                              "format" : "uri"
+                            },
+                            "uriBuilder" : {
+                              "type" : "object"
+                            }
+                          }
+                        },
+                        "uniqueItems" : true
+                      },
+                      "location" : {
+                        "type" : "string",
+                        "format" : "uri"
+                      },
+                      "mediaType" : {
+                        "type" : "object",
+                        "properties" : {
+                          "parameters" : {
+                            "type" : "object",
+                            "additionalProperties" : {
+                              "type" : "string"
+                            }
+                          },
+                          "subtype" : {
+                            "type" : "string"
+                          },
+                          "type" : {
+                            "type" : "string"
+                          },
+                          "wildcardSubtype" : {
+                            "type" : "boolean"
+                          },
+                          "wildcardType" : {
+                            "type" : "boolean"
+                          }
+                        }
+                      },
+                      "metadata" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "object"
+                          }
+                        }
+                      },
+                      "status" : {
+                        "type" : "integer",
+                        "format" : "int32"
+                      },
+                      "statusInfo" : {
+                        "type" : "object",
+                        "properties" : {
+                          "family" : {
+                            "type" : "string",
+                            "enum" : [ "INFORMATIONAL", "SUCCESSFUL", "REDIRECTION", "CLIENT_ERROR", "SERVER_ERROR", "OTHER" ]
+                          },
+                          "reasonPhrase" : {
+                            "type" : "string"
+                          },
+                          "statusCode" : {
+                            "type" : "integer",
+                            "format" : "int32"
+                          }
+                        }
+                      },
+                      "stringHeaders" : {
+                        "type" : "object",
+                        "additionalProperties" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Returns updated Component Instance Capability",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
     "/v1/catalog/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/capability/{capabilityType}/capabilityName/{capabilityName}/ownerId/{ownerId}/properties" : {
       "get" : {
         "description" : "Get component instance capability properties",
@@ -40594,7 +41983,7 @@
     "/v1/catalog/{containerComponentType}/{containerComponentId}/componentInstances/{componentInstanceUniqueId}/requirement/{capabilityType}/requirementName/{requirementName}" : {
       "put" : {
         "description" : "Update Instance Requirement",
-        "operationId" : "updateInstanceRequirement",
+        "operationId" : "updateInstanceRequirement_1",
         "parameters" : [ {
           "in" : "path",
           "name" : "containerComponentType",
@@ -42715,6 +44104,57 @@
         "tags" : [ "SDCE-2 APIs" ]
       }
     },
+    "/v1/category/{componentType}/{categoryName}/baseTypes" : {
+      "get" : {
+        "description" : "Get base types for category",
+        "operationId" : "getCategoryBaseTypes",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "categoryName",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "componentType",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "USER_ID",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "model",
+          "in" : "query",
+          "name" : "model",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Returns base types Ok"
+          },
+          "404" : {
+            "description" : "No base types were found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        },
+        "servers" : [ {
+          "url" : "/sdc2/rest",
+          "variables" : { }
+        } ],
+        "summary" : "Get base types for category",
+        "tags" : [ "SDCE-2 APIs" ]
+      }
+    },
     "/v1/category/{componentType}/{categoryUniqueId}" : {
       "delete" : {
         "description" : "Delete component category",
@@ -44541,6 +45981,9 @@
           "instanceUniqueId" : {
             "type" : "string"
           },
+          "model" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -44713,6 +46156,12 @@
           "empty" : {
             "type" : "boolean"
           },
+          "external" : {
+            "type" : "boolean"
+          },
+          "externalName" : {
+            "type" : "string"
+          },
           "leftOccurrences" : {
             "type" : "string"
           },
@@ -44785,6 +46234,12 @@
           },
           "empty" : {
             "type" : "boolean"
+          },
+          "external" : {
+            "type" : "boolean"
+          },
+          "externalName" : {
+            "type" : "string"
           },
           "leftOccurrences" : {
             "type" : "string"
@@ -44972,6 +46427,9 @@
             "type" : "string"
           },
           "lifecycleState" : {
+            "type" : "string"
+          },
+          "model" : {
             "type" : "string"
           },
           "name" : {
@@ -45312,6 +46770,9 @@
           "instanceUniqueId" : {
             "type" : "string"
           },
+          "model" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -45365,6 +46826,40 @@
             "type" : "string"
           }
         }
+      },
+      "ComponentInstanceCapabilityUpdateModel" : {
+        "type" : "object",
+        "properties" : {
+          "external" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          },
+          "ownerId" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          },
+          "ownerName" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          },
+          "type" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          },
+          "uniqueId" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 1
+          }
+        },
+        "required" : [ "external", "name", "ownerId", "ownerName", "type", "uniqueId" ]
       },
       "ComponentInstanceInput" : {
         "type" : "object",
@@ -45442,11 +46937,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -45512,6 +47013,10 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
           "type" : {
             "type" : "string"
           },
@@ -45563,6 +47068,9 @@
           "lastUpdateDate" : {
             "type" : "integer",
             "format" : "int64"
+          },
+          "model" : {
+            "type" : "string"
           },
           "operations" : {
             "type" : "object",
@@ -45634,6 +47142,9 @@
             "type" : "object"
           },
           "instanceUniqueId" : {
+            "type" : "string"
+          },
+          "model" : {
             "type" : "string"
           },
           "name" : {
@@ -45759,11 +47270,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -45822,6 +47339,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -45923,9 +47444,6 @@
           },
           "consumerBusinessLogic" : {
             "type" : "boolean"
-          },
-          "dcae" : {
-            "$ref" : "#/components/schemas/DcaeConfig"
           },
           "defaultImports" : {
             "type" : "array",
@@ -46173,10 +47691,6 @@
             "type" : "boolean"
           },
           "skipUpgradeVSPs" : {
-            "type" : "boolean",
-            "writeOnly" : true
-          },
-          "skipUpgradeVSPsFlag" : {
             "type" : "boolean"
           },
           "startMigrationFrom" : {
@@ -46184,10 +47698,6 @@
             "format" : "int32"
           },
           "supportAllottedResourcesAndProxy" : {
-            "type" : "boolean",
-            "writeOnly" : true
-          },
-          "supportAllottedResourcesAndProxyFlag" : {
             "type" : "boolean"
           },
           "switchoverDetector" : {
@@ -46416,6 +47926,9 @@
           "empty" : {
             "type" : "boolean"
           },
+          "model" : {
+            "type" : "string"
+          },
           "modificationTime" : {
             "type" : "integer",
             "format" : "int64"
@@ -46449,24 +47962,6 @@
             "type" : "string"
           },
           "version" : {
-            "type" : "string"
-          }
-        }
-      },
-      "DcaeConfig" : {
-        "type" : "object",
-        "properties" : {
-          "healthCheckUri" : {
-            "type" : "string"
-          },
-          "host" : {
-            "type" : "string"
-          },
-          "port" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "protocol" : {
             "type" : "string"
           }
         }
@@ -46946,6 +48441,9 @@
           "inputName" : {
             "type" : "string"
           },
+          "inputType" : {
+            "type" : "string"
+          },
           "list" : {
             "type" : "boolean"
           },
@@ -47283,11 +48781,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -47334,6 +48838,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -47391,6 +48899,9 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "modificationTime" : {
             "type" : "integer",
@@ -47599,11 +49110,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -47650,6 +49167,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -47741,11 +49262,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -47799,6 +49326,10 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
           "type" : {
             "type" : "string"
           },
@@ -47841,6 +49372,9 @@
           "lastUpdateDate" : {
             "type" : "integer",
             "format" : "int64"
+          },
+          "model" : {
+            "type" : "string"
           },
           "operations" : {
             "type" : "object",
@@ -48111,6 +49645,9 @@
       "MetadataKeyDataDefinition" : {
         "type" : "object",
         "properties" : {
+          "defaultValue" : {
+            "type" : "string"
+          },
           "empty" : {
             "type" : "boolean"
           },
@@ -48140,6 +49677,39 @@
             "type" : "string"
           }
         }
+      },
+      "Model" : {
+        "type" : "object",
+        "properties" : {
+          "derivedFrom" : {
+            "type" : "string"
+          },
+          "modelType" : {
+            "type" : "string",
+            "enum" : [ "NORMATIVE", "NORMATIVE_EXTENSION" ]
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ModelCreateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "derivedFrom" : {
+            "type" : "string"
+          },
+          "modelType" : {
+            "type" : "string",
+            "enum" : [ "NORMATIVE", "NORMATIVE_EXTENSION" ]
+          },
+          "name" : {
+            "type" : "string",
+            "maxLength" : 2147483647,
+            "minLength" : 2
+          }
+        },
+        "required" : [ "name" ]
       },
       "NameIdPair" : {
         "type" : "object",
@@ -48218,7 +49788,13 @@
       "OnboardingConfig" : {
         "type" : "object",
         "properties" : {
-          "downloadCsarUri" : {
+          "getLatestVspPackageUri" : {
+            "type" : "string"
+          },
+          "getVspPackageUri" : {
+            "type" : "string"
+          },
+          "getVspUri" : {
             "type" : "string"
           },
           "healthCheckUri" : {
@@ -48369,11 +49945,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -48429,6 +50011,10 @@
           },
           "toscaDefaultValue" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -48515,11 +50101,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -48566,6 +50158,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -48638,6 +50234,9 @@
             "type" : "object"
           },
           "instanceUniqueId" : {
+            "type" : "string"
+          },
+          "model" : {
             "type" : "string"
           },
           "name" : {
@@ -48765,11 +50364,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -48844,6 +50449,10 @@
               }
             }
           },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
           "type" : {
             "type" : "string"
           },
@@ -48899,6 +50508,9 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "modificationTime" : {
             "type" : "integer",
@@ -49011,11 +50623,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -49062,6 +50680,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -49140,11 +50762,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -49191,6 +50819,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -49342,6 +50974,9 @@
           "external" : {
             "type" : "boolean"
           },
+          "externalName" : {
+            "type" : "string"
+          },
           "leftOccurrences" : {
             "type" : "string"
           },
@@ -49407,6 +51042,9 @@
           },
           "external" : {
             "type" : "boolean"
+          },
+          "externalName" : {
+            "type" : "string"
           },
           "leftOccurrences" : {
             "type" : "string"
@@ -49735,6 +51373,9 @@
           "csarVersion" : {
             "type" : "string"
           },
+          "csarVersionId" : {
+            "type" : "string"
+          },
           "dataTypes" : {
             "type" : "array",
             "items" : {
@@ -49827,6 +51468,9 @@
             "type" : "string",
             "enum" : [ "CERTIFIED", "NOT_CERTIFIED_CHECKIN", "NOT_CERTIFIED_CHECKOUT" ]
           },
+          "model" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -49893,12 +51537,6 @@
           },
           "substitutionFilter" : {
             "$ref" : "#/components/schemas/SubstitutionFilterDataDefinition"
-          },
-          "substitutionFilterComponents" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/SubstitutionFilterDataDefinition"
-            }
           },
           "systemName" : {
             "type" : "string"
@@ -50233,6 +51871,9 @@
             "type" : "string",
             "enum" : [ "CERTIFIED", "NOT_CERTIFIED_CHECKIN", "NOT_CERTIFIED_CHECKOUT" ]
           },
+          "model" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -50314,12 +51955,6 @@
           },
           "substitutionFilter" : {
             "$ref" : "#/components/schemas/SubstitutionFilterDataDefinition"
-          },
-          "substitutionFilterComponents" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/SubstitutionFilterDataDefinition"
-            }
           },
           "systemName" : {
             "type" : "string"
