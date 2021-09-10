@@ -54,12 +54,14 @@ public class ResourceCreatePage extends ComponentPage {
     public void isLoaded() {
         super.isLoaded();
         waitForElementVisibility(By.xpath(XpathSelector.NAME_INPUT.getXpath()));
+        waitForElementVisibility(By.xpath(XpathSelector.MODEL_SELECT.getXpath()));
         waitForElementVisibility(By.xpath(XpathSelector.CATEGORY_SELECT.getXpath()));
         waitForElementVisibility(By.xpath(XpathSelector.DESCRIPTION_TEXT_AREA.getXpath()));
     }
 
     public void fillForm(final ResourceCreateData resourceCreateData) {
         fillName(resourceCreateData.getName());
+        setModel(resourceCreateData.getModel());
         setCategory(resourceCreateData.getCategory());
         defineTags(resourceCreateData.getTagList());
         fillDescription(resourceCreateData.getDescription());
@@ -80,6 +82,13 @@ public class ResourceCreatePage extends ComponentPage {
      */
     public String getName() {
         return findElement(XpathSelector.NAME_INPUT.getXpath()).getText();
+    }
+
+    private void setModel(final String model) {
+        if (model == null) {
+            return;
+        }
+        setSelectField(By.xpath(XpathSelector.MODEL_SELECT.getXpath()), model);
     }
 
     private void setCategory(final String category) {
@@ -135,6 +144,7 @@ public class ResourceCreatePage extends ComponentPage {
     @AllArgsConstructor
     private enum XpathSelector {
         NAME_INPUT("name", "//input[@data-tests-id='%s']"),
+        MODEL_SELECT("selectModelName", "//select[@data-tests-id='%s']"),
         CATEGORY_SELECT("selectGeneralCategory", "//select[@data-tests-id='%s']"),
         TAGS("i-sdc-tag-input", "//input[@data-tests-id='%s']"),
         DESCRIPTION_TEXT_AREA("description", "//textarea[@data-tests-id='%s']"),

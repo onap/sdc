@@ -30,7 +30,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ModelName {
-    ETSI_SOL001_v2_5_1("ETSI SOL001 v2.5.1");
+    ETSI_SOL001_v2_5_1("ETSI SOL001 v2.5.1"),
+    DEFAULT_MODEL_NAME("SDC AID");
 
     private String name;
 }
