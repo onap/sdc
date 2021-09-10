@@ -30,6 +30,7 @@ import lombok.Data;
 public class ResourceCreateData {
 
     private String name;
+    private String model;
     private String category;
     private List<String> tagList;
     private String description;

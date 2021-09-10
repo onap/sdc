@@ -37,6 +37,7 @@ import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ResourceCategoryEnum;
 import org.onap.sdc.backend.ci.tests.utils.general.ElementFactory;
 import org.onap.sdc.frontend.ci.tests.datatypes.ComponentData;
+import org.onap.sdc.frontend.ci.tests.datatypes.ModelName;
 import org.onap.sdc.frontend.ci.tests.datatypes.ResourceCreateData;
 import org.onap.sdc.frontend.ci.tests.exception.UnzipException;
 import org.onap.sdc.frontend.ci.tests.execute.setup.DriverFactory;
@@ -74,6 +75,7 @@ public class ImportVfcUiTest extends SetupCDTest {
     private ResourceCreateData vfcCreateData;
     private ResourceCreateData vfCreateData;
     private ComponentInstance createdComponentInstance;
+    private final String vfcCategory = ResourceCategoryEnum.NETWORK_L4.getSubCategory();
 
     @BeforeClass
     public void beforeClass() {
@@ -87,7 +89,7 @@ public class ImportVfcUiTest extends SetupCDTest {
         homePage = new HomePage(webDriver);
         // TC - Import VFC with root namespace
         String fileName = "org.openecomp.resource.VFC-root.yml";
-        CreateVfcFlow createVfcFlow = createVFC(fileName);
+        CreateVfcFlow createVfcFlow = createVFC(fileName, ModelName.DEFAULT_MODEL_NAME.getName(), vfcCategory);
 
         componentPage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
         componentPage.isLoaded();
@@ -101,7 +103,7 @@ public class ImportVfcUiTest extends SetupCDTest {
 
         // TC - Import hierarchy of VFCs
         fileName = "org.openecomp.resource.VFC-child.yml";
-        createVfcFlow = createVFC(fileName);
+        createVfcFlow = createVFC(fileName, ModelName.DEFAULT_MODEL_NAME.getName(), vfcCategory);
         componentPage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
         componentPage.isLoaded();
 
@@ -131,6 +133,17 @@ public class ImportVfcUiTest extends SetupCDTest {
         checkMetadata(yamlObject, vfCreateData);
         checkTopologyTemplate(yamlObject);
 
+    }
+
+    @Test
+    public void importVfcWithModel() {
+        final String fileName = "VFC-For-Model.yaml";
+        final CreateVfcFlow createVfcFlow = createVFC(fileName, ModelName.ETSI_SOL001_v2_5_1.getName(), vfcCategory);
+        final ComponentPage componentPage = createVfcFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        componentPage.isLoaded();
     }
 
     private ComponentPage manageAttributes(final ComponentPage componentPage) {
@@ -266,8 +279,8 @@ public class ImportVfcUiTest extends SetupCDTest {
         return downloadCsarArtifactFlow;
     }
 
-    private CreateVfcFlow createVFC(final String fileName) {
-        vfcCreateData = createVfcFormData();
+    private CreateVfcFlow createVFC(final String fileName, final String model, final String category) {
+        vfcCreateData = createVfcFormData(model, category);
         final CreateVfcFlow createVfcFlow = new CreateVfcFlow(webDriver, vfcCreateData, filePath + fileName);
         createVfcFlow.run(homePage);
         return createVfcFlow;
@@ -280,10 +293,11 @@ public class ImportVfcUiTest extends SetupCDTest {
         return createVfFlow;
     }
 
-    private ResourceCreateData createVfcFormData() {
+    private ResourceCreateData createVfcFormData(final String model, final String category) {
         final ResourceCreateData vfcCreateData = new ResourceCreateData();
         vfcCreateData.setRandomName(ElementFactory.getResourcePrefix() + "-VFC");
-        vfcCreateData.setCategory(ResourceCategoryEnum.NETWORK_L4.getSubCategory());
+        vfcCreateData.setModel(model);
+        vfcCreateData.setCategory(category);
         vfcCreateData.setTagList(Arrays.asList(vfcCreateData.getName(), "importVFC"));
         vfcCreateData.setDescription("aDescription");
         vfcCreateData.setVendorName("Ericsson");
