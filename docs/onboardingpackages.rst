@@ -44,16 +44,31 @@ in `ONAP wiki page <https://wiki.onap.org/display/DW/Csar+Structure>`_
 
 ETSI SOL004 Tosca CSAR Package
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The ETSI SOL004 Tosca CSAR Package is a zip archive with a .csar extension. The structure of the supported CSAR package
+The ETSI SOL004 Tosca CSAR Package is a zip archive with a .csar extension. The structure necessary for the supported CSAR package
+depends on the model used in onboarding
+
+**SDC AID**
+If the package is onboarded using the SDC AID model, the structure of the supported CSAR package
 is as described in `ETSI NFV-SOL 004v2.6.1`_ csar structure option 1 i.e. CSAR containing a TOSCA-Metadata directory.
 
-The supported descriptor included in the package is aligned to `ETSI NFV-SOL 001v2.5.1 <https://docbox.etsi.org/ISG/NFV/Open/Publications_pdf/Specs-Reports/NFV-SOL%20001v2.5.1%20-%20GS%20-%20TOSCA-based%20NFV%20descriptors%20spec.pdf>`_
+The supported descriptor included in the package is aligned to `ETSI NFV-SOL 001v2.5.1 <https://docbox.etsi.org/ISG/NFV/Open/Publications_pdf/Specs-Reports/NFV-SOL%20001v2.5.1%20-%20GS%20-%20TOSCA-based%20NFV%20descriptors%20spec.pdf>`_. The descriptor partially mapped into the SDC AID model. There is also limited support for v2.7.1 and 3.3.1
+
+**ETSI SOL001 v2.5.1**
+If the package is onboarded using the ETSI SOL001 v2.5.1 model, the structure of the supported CSAR package
+is as described in `ETSI NFV-SOL 004v2.5.1`_ csar structure option 1 i.e. CSAR containing a TOSCA-Metadata directory.
+
+The supported descriptor included in the package is aligned to `ETSI NFV-SOL 001v2.5.1 <https://docbox.etsi.org/ISG/NFV/Open/Publications_pdf/Specs-Reports/NFV-SOL%20001v2.5.1%20-%20GS%20-%20TOSCA-based%20NFV%20descriptors%20spec.pdf>`_. The tosca types defined in this version of the ETSI NFV-SOL 001 are used in the created VF (rather than the types defined in the SDC AID model).
+
+Note in relation to model selection:
+- More than one model can be selected during onboarding. In the subsequent VSP import one model from the list of models selected at onboarding time must be selected.
+- For a package to be used in service design it must be imported with the same model as is selected during service creation.
 
 Other Points to note when onboarding this package are:
 
 - During onboarding the ETSI NFV-SOL004 CSAR structure is transformed to the internal ONAP CSAR structure.
 - The original input CSAR is maintained and stored as the SDC artifact *ETSI_PACKAGE* in the xNF internal model. For existing legacy xNF, it can be stored as *ONBOARDED_PACKAGE* instead.
 - The non-mano artifacts are mapped to the corresponding SDC Artifact Type in the xNF internal model.
+
 
 Basic Helm package support for CNF
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -99,7 +114,11 @@ ONAP model.
 How does SDC determine which package type is being onboarded
 ------------------------------------------------------------
 SDC onboarding processes each of the package types differently. SDC determines which package type is being onboarded, and
-hence which logic to use, based on the following
+hence which logic to use.
+
+If the ETSI SOL001 v2.5.1 model is selected during onboarding, SDC will always threat the package as a `ETSI SOL004 Tosca CSAR Package`_.
+
+If the SDC AID model is selected during onboarding SDC will determine the package type based on the following.
 
 First SDC checks the extension of the package. If the package extension is *.zip* then the package is treated as a `Heat package`_ or `Basic Helm package support for CNF`_.
 

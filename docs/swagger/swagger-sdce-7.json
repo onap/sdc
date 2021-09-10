@@ -3878,6 +3878,9 @@
           "instanceUniqueId" : {
             "type" : "string"
           },
+          "model" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -3968,6 +3971,12 @@
           "empty" : {
             "type" : "boolean"
           },
+          "external" : {
+            "type" : "boolean"
+          },
+          "externalName" : {
+            "type" : "string"
+          },
           "leftOccurrences" : {
             "type" : "string"
           },
@@ -4040,6 +4049,12 @@
           },
           "empty" : {
             "type" : "boolean"
+          },
+          "external" : {
+            "type" : "boolean"
+          },
+          "externalName" : {
+            "type" : "string"
           },
           "leftOccurrences" : {
             "type" : "string"
@@ -4416,6 +4431,9 @@
           "instanceUniqueId" : {
             "type" : "string"
           },
+          "model" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -4546,11 +4564,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -4616,6 +4640,10 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
           "type" : {
             "type" : "string"
           },
@@ -4667,6 +4695,9 @@
           "lastUpdateDate" : {
             "type" : "integer",
             "format" : "int64"
+          },
+          "model" : {
+            "type" : "string"
           },
           "operations" : {
             "type" : "object",
@@ -4738,6 +4769,9 @@
             "type" : "object"
           },
           "instanceUniqueId" : {
+            "type" : "string"
+          },
+          "model" : {
             "type" : "string"
           },
           "name" : {
@@ -4863,11 +4897,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -4926,6 +4966,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -5016,6 +5060,9 @@
           "empty" : {
             "type" : "boolean"
           },
+          "model" : {
+            "type" : "string"
+          },
           "modificationTime" : {
             "type" : "integer",
             "format" : "int64"
@@ -5095,6 +5142,9 @@
             "type" : "string"
           },
           "inputName" : {
+            "type" : "string"
+          },
+          "inputType" : {
             "type" : "string"
           },
           "list" : {
@@ -5519,11 +5569,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -5570,6 +5626,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -5661,11 +5721,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -5719,6 +5785,10 @@
           "subPropertyInputPath" : {
             "type" : "string"
           },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
+          },
           "type" : {
             "type" : "string"
           },
@@ -5761,6 +5831,9 @@
           "lastUpdateDate" : {
             "type" : "integer",
             "format" : "int64"
+          },
+          "model" : {
+            "type" : "string"
           },
           "operations" : {
             "type" : "object",
@@ -5987,6 +6060,9 @@
       "MetadataKeyDataDefinition" : {
         "type" : "object",
         "properties" : {
+          "defaultValue" : {
+            "type" : "string"
+          },
           "empty" : {
             "type" : "boolean"
           },
@@ -6150,11 +6226,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -6210,6 +6292,10 @@
           },
           "toscaDefaultValue" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -6296,11 +6382,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -6347,6 +6439,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -6419,6 +6515,9 @@
             "type" : "object"
           },
           "instanceUniqueId" : {
+            "type" : "string"
+          },
+          "model" : {
             "type" : "string"
           },
           "name" : {
@@ -6532,11 +6631,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -6610,6 +6715,10 @@
                 "type" : "string"
               }
             }
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -6699,11 +6808,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -6750,6 +6865,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -6828,11 +6947,17 @@
           "label" : {
             "type" : "string"
           },
+          "mappedToComponentProperty" : {
+            "type" : "boolean"
+          },
           "metadata" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "model" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -6879,6 +7004,10 @@
           },
           "subPropertyInputPath" : {
             "type" : "string"
+          },
+          "toscaGetFunctionType" : {
+            "type" : "string",
+            "enum" : [ "GET_INPUT", "GET_PROPERTY", "GET_ATTRIBUTE" ]
           },
           "type" : {
             "type" : "string"
@@ -6999,6 +7128,9 @@
           "external" : {
             "type" : "boolean"
           },
+          "externalName" : {
+            "type" : "string"
+          },
           "leftOccurrences" : {
             "type" : "string"
           },
@@ -7064,6 +7196,9 @@
           },
           "external" : {
             "type" : "boolean"
+          },
+          "externalName" : {
+            "type" : "string"
           },
           "leftOccurrences" : {
             "type" : "string"
@@ -7392,6 +7527,9 @@
           "csarVersion" : {
             "type" : "string"
           },
+          "csarVersionId" : {
+            "type" : "string"
+          },
           "dataTypes" : {
             "type" : "array",
             "items" : {
@@ -7484,6 +7622,9 @@
             "type" : "string",
             "enum" : [ "CERTIFIED", "NOT_CERTIFIED_CHECKIN", "NOT_CERTIFIED_CHECKOUT" ]
           },
+          "model" : {
+            "type" : "string"
+          },
           "name" : {
             "type" : "string"
           },
@@ -7550,12 +7691,6 @@
           },
           "substitutionFilter" : {
             "$ref" : "#/components/schemas/SubstitutionFilterDataDefinition"
-          },
-          "substitutionFilterComponents" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/SubstitutionFilterDataDefinition"
-            }
           },
           "systemName" : {
             "type" : "string"
