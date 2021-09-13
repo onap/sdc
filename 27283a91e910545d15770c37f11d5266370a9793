@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9225f344_6de0e477",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/utilities/ServiceUIUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-09-13T10:35:30Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 63
+      },
+      "revId": "27283a91e910545d15770c37f11d5266370a9793",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfa1e5af_d95ffdb3",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/utilities/ServiceUIUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-09-13T10:35:30Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 63
+      },
+      "revId": "27283a91e910545d15770c37f11d5266370a9793",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
