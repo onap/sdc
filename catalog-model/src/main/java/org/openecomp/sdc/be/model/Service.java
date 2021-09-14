@@ -19,9 +19,11 @@
  */
 package org.openecomp.sdc.be.model;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -165,8 +167,9 @@ public class Service extends Component {
     }
 
     private String fetchToscaNameFromConfigBasedOnService(final String serviceCategory) {
-        return Optional.ofNullable(ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes())
-            .map(serviceNames -> serviceNames.get(serviceCategory)).orElse(null);
+        final Map<String, List<String>> serviceNodeTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes();
+        final List<String> stringList = ofNullable(serviceNodeTypes).map(serviceNames -> serviceNames.get(serviceCategory)).orElse(null);
+        return stringList != null ? stringList.get(0) : null;
     }
 
     @Override
