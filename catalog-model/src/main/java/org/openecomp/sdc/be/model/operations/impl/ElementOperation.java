@@ -40,10 +40,10 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -80,10 +80,12 @@ public class ElementOperation implements IElementOperation {
     private static final String COULDN_T_FETCH_janusGraph_GRAPH = "Couldn't fetch janusgraph graph";
     private static final String UNKNOWN_CATEGORY_TYPE = "Unknown category type {}";
     private static final Logger log = Logger.getLogger(ElementOperation.class.getName());
+    private static final String PROBLEM_WHILE_CREATING_CATEGORY_REASON = "Problem while creating category, reason {}";
     private JanusGraphGenericDao janusGraphGenericDao;
     private HealingJanusGraphDao janusGraphDao;
 
-    public ElementOperation(@Qualifier("janusgraph-generic-dao") JanusGraphGenericDao janusGraphGenericDao, @Qualifier("janusgraph-dao") HealingJanusGraphDao janusGraphDao) {
+    public ElementOperation(@Qualifier("janusgraph-generic-dao") JanusGraphGenericDao janusGraphGenericDao,
+                            @Qualifier("janusgraph-dao") HealingJanusGraphDao janusGraphDao) {
         super();
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.janusGraphDao = janusGraphDao;
@@ -143,7 +145,7 @@ public class ElementOperation implements IElementOperation {
             if (createNode.isRight()) {
                 JanusGraphOperationStatus value = createNode.right().value();
                 ActionStatus actionStatus = ActionStatus.GENERAL_ERROR;
-                log.debug("Problem while creating category, reason {}", value);
+                log.debug(PROBLEM_WHILE_CREATING_CATEGORY_REASON, value);
                 if (value == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
                     actionStatus = ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS;
                 }
@@ -179,7 +181,7 @@ public class ElementOperation implements IElementOperation {
             if (updatedNode.isRight()) {
                 JanusGraphOperationStatus value = updatedNode.right().value();
                 ActionStatus actionStatus = ActionStatus.GENERAL_ERROR;
-                log.debug("Problem while creating category, reason {}", value);
+                log.debug(PROBLEM_WHILE_CREATING_CATEGORY_REASON, value);
                 result = Either.right(actionStatus);
                 return result;
             }
@@ -228,7 +230,7 @@ public class ElementOperation implements IElementOperation {
                 .createNode(subCategoryData, SubCategoryData.class);
             if (subCategoryNode.isRight()) {
                 JanusGraphOperationStatus janusGraphOperationStatus = subCategoryNode.right().value();
-                log.debug("Problem while creating category, reason {}", janusGraphOperationStatus);
+                log.debug(PROBLEM_WHILE_CREATING_CATEGORY_REASON, janusGraphOperationStatus);
                 if (janusGraphOperationStatus == JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION) {
                     actionStatus = ActionStatus.COMPONENT_SUB_CATEGORY_EXISTS_FOR_CATEGORY;
                 }
@@ -380,50 +382,54 @@ public class ElementOperation implements IElementOperation {
     }
 
     @Override
-    public List<BaseType> getBaseTypes(final String categoryName, final String modelName){
+    public List<BaseType> getBaseTypes(final String categoryName, final String modelName) {
         final ArrayList<BaseType> baseTypes = new ArrayList<>();
-        final Map<String, String> categoriesSpecificBaseTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes();
-        final String categorySpecificBaseType = categoriesSpecificBaseTypes == null ? null : categoriesSpecificBaseTypes.get(categoryName);
+        final Map<String, List<String>> categoriesSpecificBaseTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes();
+        final List<String> categorySpecificBaseType = categoriesSpecificBaseTypes == null ? null : categoriesSpecificBaseTypes.get(categoryName);
         final String generalBaseType = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get("Service");
-        final String baseToscaResourceName = categorySpecificBaseType == null? generalBaseType : categorySpecificBaseType;
+        final List<String> baseToscaResourceNames = categorySpecificBaseType == null ? List.of(generalBaseType) : categorySpecificBaseType;
 
-        final Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
-        props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, baseToscaResourceName);
-        props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
-        final Either<List<GraphVertex>, JanusGraphOperationStatus> baseTypeVertex = janusGraphDao
+        baseToscaResourceNames.forEach(baseToscaResourceName -> {
+            final Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
+            props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, baseToscaResourceName);
+            props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.CERTIFIED.name());
+            final Either<List<GraphVertex>, JanusGraphOperationStatus> baseTypeVertex = janusGraphDao
                 .getByCriteria(VertexTypeEnum.NODE_TYPE, props, null, JsonParseFlagEnum.ParseAll, modelName);
-        
-        if (baseTypeVertex.isLeft()) {
-            BaseType baseType = new BaseType(baseToscaResourceName);
-            baseTypes.add(baseType);
 
-            final Map<String, List<String>> typesDerivedFromBaseType = new LinkedHashMap<>();
-            baseTypeVertex.left().value().forEach(v -> {
-                baseType.addVersion((String)v.getMetadataProperty(GraphPropertyEnum.VERSION));
-                addTypesDerivedFromVertex(typesDerivedFromBaseType, v);
-            });
+            if (baseTypeVertex.isLeft()) {
+                BaseType baseType = new BaseType(baseToscaResourceName);
+                baseTypes.add(baseType);
 
-            typesDerivedFromBaseType.forEach((k,v) -> baseTypes.add(new BaseType(k, v)));
-        }
+                final Map<String, List<String>> typesDerivedFromBaseType = new LinkedHashMap<>();
+                baseTypeVertex.left().value().forEach(v -> {
+                    baseType.addVersion((String) v.getMetadataProperty(GraphPropertyEnum.VERSION));
+                    addTypesDerivedFromVertex(typesDerivedFromBaseType, v);
+                });
+
+                typesDerivedFromBaseType.forEach((k, v) -> baseTypes.add(new BaseType(k, v)));
+            }
+        });
 
         return baseTypes;
     }
 
     private Map<String, List<String>> addTypesDerivedFromVertex(final Map<String, List<String>> types, final GraphVertex vertex) {
         final Either<List<GraphVertex>, JanusGraphOperationStatus> derivedFromVertex =
-                janusGraphDao.getParentVertices(vertex, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseAll);
+            janusGraphDao.getParentVertices(vertex, EdgeLabelEnum.DERIVED_FROM, JsonParseFlagEnum.ParseAll);
         if (derivedFromVertex.isLeft()) {
-            derivedFromVertex.left().value().stream().filter(v -> v.getMetadataProperty(GraphPropertyEnum.STATE).equals(LifecycleStateEnum.CERTIFIED.name()))
+            derivedFromVertex.left().value().stream()
+                .filter(v -> v.getMetadataProperty(GraphPropertyEnum.STATE).equals(LifecycleStateEnum.CERTIFIED.name()))
                 .forEach(v -> {
-                        addBaseTypeVersion(types, (String) v.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME), (String) v.getMetadataProperty(GraphPropertyEnum.VERSION));
-                        addTypesDerivedFromVertex(types, v);
+                    addBaseTypeVersion(types, (String) v.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME),
+                        (String) v.getMetadataProperty(GraphPropertyEnum.VERSION));
+                    addTypesDerivedFromVertex(types, v);
                 });
         }
         return types;
     }
 
     private void addBaseTypeVersion(final Map<String, List<String>> baseTypes, final String baseTypeToscaResourceName, final String baseTypeVersion) {
-        List<String> versions = baseTypes.get(baseTypeToscaResourceName) == null ? new ArrayList<>(): baseTypes.get(baseTypeToscaResourceName);
+        List<String> versions = baseTypes.get(baseTypeToscaResourceName) == null ? new ArrayList<>() : baseTypes.get(baseTypeToscaResourceName);
         versions.add(baseTypeVersion);
         baseTypes.put(baseTypeToscaResourceName, versions);
     }
@@ -619,7 +625,7 @@ public class ElementOperation implements IElementOperation {
             }
             Vertex artifactV = iterator.next();
             artifactV.remove();
-            ;
+
             SubCategoryDefinition deleted = new SubCategoryDefinition(subCategoryDataEither.left().value().getSubCategoryDataDefinition());
             result = Either.left(deleted);
             return result;
@@ -664,7 +670,7 @@ public class ElementOperation implements IElementOperation {
             }
             Vertex artifactV = iterator.next();
             artifactV.remove();
-            ;
+
             GroupingDefinition deleted = new GroupingDefinition(groupingDataEither.left().value().getGroupingDataDefinition());
             result = Either.left(deleted);
             return result;

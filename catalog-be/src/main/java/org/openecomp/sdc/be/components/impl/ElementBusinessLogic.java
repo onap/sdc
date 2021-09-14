@@ -116,7 +116,6 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
     private static final String COMPONENT_TYPE_IS_INVALID = "Component type {} is invalid";
     private static final String VALIDATION_OF_USER_ROLE_FAILED_USER_ID = "Validation of user role failed, userId {}";
     private final IElementOperation elementOperation;
-    private final UserBusinessLogic userAdminManager;
 
     @Autowired
     public ElementBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
@@ -126,7 +125,6 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.elementOperation = elementOperation;
-        this.userAdminManager = userAdminManager;
     }
 
     /**
@@ -324,7 +322,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             return Either.right(responseFormat);
         }
         Boolean isCategoryUnique = categoryUniqueEither.left().value();
-        if (!isCategoryUnique) {
+        if (Boolean.FALSE.equals(isCategoryUnique)) {
             log.debug("Category is not unique, name {}, componentType {}", categoryName, componentType);
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormat(ActionStatus.COMPONENT_CATEGORY_ALREADY_EXISTS, componentType, categoryName);
@@ -437,7 +435,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             return Either.right(responseFormat);
         }
         Boolean isSubUnique = subCategoryUniqueForCategory.left().value();
-        if (!isSubUnique) {
+        if (Boolean.FALSE.equals(isSubUnique)) {
             log.debug("Sub-category is not unique for category, parent name {}, subcategory norm name {}, componentType {}", parentCategoryName,
                 normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils
@@ -618,7 +616,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
             return Either.right(responseFormat);
         }
         Boolean isGroupingUnique = groupingUniqueForSubCategory.left().value();
-        if (!isGroupingUnique) {
+        if (Boolean.FALSE.equals(isGroupingUnique)) {
             log.debug("Grouping is not unique for sub-category, parent name {}, grouping norm name {}, componentType {}", parentSubCategoryName,
                 normalizedName, componentType);
             ResponseFormat responseFormat = componentsUtils
@@ -902,7 +900,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         return elementOperation.getDefaultHeatTimeout();
     }
 
-    public Either<Map<String, List<CatalogComponent>>, ResponseFormat> getCatalogComponents(String userId, List<OriginTypeEnum> excludeTypes) {
+    public Either<Map<String, List<CatalogComponent>>, ResponseFormat> getCatalogComponents(List<OriginTypeEnum> excludeTypes) {
         try {
             return toscaOperationFacade.getCatalogOrArchiveComponents(true, excludeTypes)
                 .bimap(this::groupByComponentType, err -> componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(err)));
@@ -1120,7 +1118,7 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
         CategoryData categoryData = categoryResult.left().value();
         Either<List<ImmutablePair<SubCategoryData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = janusGraphGenericDao
-            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), (String) categoryData.getUniqueId(),
+            .getChildrenNodes(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ResourceNewCategory), categoryData.getUniqueId(),
                 GraphEdgeLabels.SUB_CATEGORY, NodeTypeEnum.ResourceSubcategory, SubCategoryData.class);
         if (childrenNodes.isRight()) {
             return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(childrenNodes.right().value()));
@@ -1280,14 +1278,14 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public CatalogUpdateTimestamp getCatalogUpdateTime(String userId) {
+    public CatalogUpdateTimestamp getCatalogUpdateTime() {
         try {
             return toscaOperationFacade.getCatalogTimes();
         } finally {
             janusGraphDao.commit();
         }
     }
-    
+
     public Either<List<BaseType>, ActionStatus> getBaseTypes(final String categoryName, final String userId, final String modelName) {
         final ActionStatus status = validateUserExistsActionStatus(userId);
         if (ActionStatus.OK != status) {
