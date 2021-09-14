@@ -394,9 +394,12 @@ genericAssetNodeTypes:
   Service: org.openecomp.resource.abstract.nodes.service
   
 serviceNodeTypes:
-  CategoryA: org.openecomp.resource.abstract.nodes.A
-  CategoryB: org.openecomp.resource.abstract.nodes.B
-  CategoryC: org.openecomp.resource.abstract.nodes.C
+  CategoryA:
+    - org.openecomp.resource.abstract.nodes.A
+  CategoryB:
+    - org.openecomp.resource.abstract.nodes.B
+  CategoryC:
+    - org.openecomp.resource.abstract.nodes.C
 
 workloadContext: Production
 environmentContext:

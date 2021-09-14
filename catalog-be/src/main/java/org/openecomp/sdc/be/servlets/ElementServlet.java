@@ -19,12 +19,20 @@
  */
 package org.openecomp.sdc.be.servlets;
 
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.servers.Server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +48,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ElementBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ModelBusinessLogic;
@@ -75,19 +82,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
-import io.swagger.v3.oas.annotations.tags.Tags;
-
 @Path("/v1/")
 /**
  *
@@ -96,8 +90,8 @@ import io.swagger.v3.oas.annotations.tags.Tags;
  *
  */
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@Tags({@io.swagger.v3.oas.annotations.tags.Tag(name = "SDCE-2 APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@io.swagger.v3.oas.annotations.tags.Tag(name = "SDCE-2 APIs")
+@Server(url = "/sdc2/rest")
 @Controller
 public class ElementServlet extends BeGenericServlet {
 
@@ -197,24 +191,25 @@ public class ElementServlet extends BeGenericServlet {
             throw e;
         }
     }
-    
+
     @GET
     @Path("/category/{componentType}/{categoryName}/baseTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Get base types for category", method = "GET", summary = "Get base types for category",
-            responses = {@ApiResponse(responseCode = "200", description = "Returns base types Ok"),
-                    @ApiResponse(responseCode = "404", description = "No base types were found"),
-                    @ApiResponse(responseCode = "500", description = "Internal Server Error")})
+        responses = {@ApiResponse(responseCode = "200", description = "Returns base types Ok"),
+            @ApiResponse(responseCode = "404", description = "No base types were found"),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response getCategoryBaseTypes(@PathParam(value = "categoryName") final String categoryName,
-            @PathParam(value = "componentType") final String componentType, @Context final HttpServletRequest request,
-            @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
-            @Parameter(description = "model", required = false) @QueryParam("model") String modelName) {
+                                         @PathParam(value = "componentType") final String componentType,
+                                         @Context final HttpServletRequest request,
+                                         @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                                         @Parameter(description = "model", required = false) @QueryParam("model") String modelName) {
         try {
             final ElementBusinessLogic elementBL = getElementBL(request.getSession().getServletContext());
             final Either<List<BaseType>, ActionStatus> either = elementBL.getBaseTypes(categoryName, userId, modelName);
-            
+
             if (either.isRight() || either.left().value() == null) {
                 log.debug("No base types were found");
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT));
@@ -553,7 +548,7 @@ public class ElementServlet extends BeGenericServlet {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug(START_HANDLE_REQUEST_OF, url);
             Either<Map<String, List<CatalogComponent>>, ResponseFormat> catalogData = getElementBL(request.getSession().getServletContext())
-                .getCatalogComponents(userId, excludeTypes);
+                .getCatalogComponents(excludeTypes);
             if (catalogData.isRight()) {
                 log.debug("failed to get catalog data");
                 return buildErrorResponse(catalogData.right().value());
@@ -625,7 +620,7 @@ public class ElementServlet extends BeGenericServlet {
     public Response getCatalogUpdateTime(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug("(post) Start handle request of {}", url);
-        CatalogUpdateTimestamp catalogUpdateTimestamp = getElementBL(request.getSession().getServletContext()).getCatalogUpdateTime(userId);
+        CatalogUpdateTimestamp catalogUpdateTimestamp = getElementBL(request.getSession().getServletContext()).getCatalogUpdateTime();
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), catalogUpdateTimestamp);
     }
 
