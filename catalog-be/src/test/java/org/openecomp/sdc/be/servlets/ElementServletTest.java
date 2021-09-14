@@ -28,11 +28,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+import fj.data.Either;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -40,7 +40,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.text.StrSubstitutor;
 import org.apache.http.HttpStatus;
 import org.assertj.core.util.Lists;
@@ -92,8 +91,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
-
 class ElementServletTest extends JerseyTest {
 
     public static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
@@ -103,8 +100,7 @@ class ElementServletTest extends JerseyTest {
     public static final BeGenericServlet beGenericServlet = Mockito.mock(BeGenericServlet.class);
     public static final Resource resource = Mockito.mock(Resource.class);
     public static final UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
-    public static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito
-        .mock(ComponentInstanceBusinessLogic.class);
+    public static final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
     public static final ArtifactsBusinessLogic artifactsBusinessLogic = Mockito.mock(ArtifactsBusinessLogic.class);
 
     private static final ServletContext servletContext = Mockito.mock(ServletContext.class);
@@ -113,15 +109,13 @@ class ElementServletTest extends JerseyTest {
     private static final ServletUtils servletUtils = Mockito.mock(ServletUtils.class);
     private static final UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
     private static final ComponentsUtils componentUtils = Mockito.mock(ComponentsUtils.class);
-    private static final ComponentsCleanBusinessLogic componentsCleanBusinessLogic = Mockito
-        .mock(ComponentsCleanBusinessLogic.class);
+    private static final ComponentsCleanBusinessLogic componentsCleanBusinessLogic = Mockito.mock(ComponentsCleanBusinessLogic.class);
     private static final ElementBusinessLogic elementBusinessLogic = Mockito.mock(ElementBusinessLogic.class);
     private static final ModelBusinessLogic modelBusinessLogic = Mockito.mock(ModelBusinessLogic.class);
 
     private static final ResponseFormat okResponseFormat = new ResponseFormat(HttpStatus.SC_OK);
     private static final ResponseFormat conflictResponseFormat = new ResponseFormat(HttpStatus.SC_CONFLICT);
-    private static final ResponseFormat generalErrorResponseFormat = new ResponseFormat(
-        HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    private static final ResponseFormat generalErrorResponseFormat = new ResponseFormat(HttpStatus.SC_INTERNAL_SERVER_ERROR);
     private static final ResponseFormat createdResponseFormat = new ResponseFormat(HttpStatus.SC_CREATED);
     private static final ResponseFormat noContentResponseFormat = new ResponseFormat(HttpStatus.SC_NO_CONTENT);
     private static final ResponseFormat unauthorizedResponseFormat = Mockito.mock(ResponseFormat.class);
@@ -137,8 +131,7 @@ class ElementServletTest extends JerseyTest {
 
     /* Users */
     private static User designerUser = new User("designer", "designer", "designer", "designer@email.com",
-        Role.DESIGNER.name(), System
-        .currentTimeMillis());
+        Role.DESIGNER.name(), System.currentTimeMillis());
 
     private static ConfigurationManager configurationManager;
 
@@ -146,14 +139,12 @@ class ElementServletTest extends JerseyTest {
     public static void setup() {
 
         //Needed for User Authorization
-        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
-            .thenReturn(webAppContextWrapper);
+        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getUserAdmin()).thenReturn(userAdmin);
         when(servletUtils.getComponentsUtils()).thenReturn(componentUtils);
-        when(componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION))
-            .thenReturn(unauthorizedResponseFormat);
+        when(componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION)).thenReturn(unauthorizedResponseFormat);
         when(unauthorizedResponseFormat.getStatus()).thenReturn(HttpStatus.SC_UNAUTHORIZED);
 
         when(componentUtils.getResponseFormat(ActionStatus.OK)).thenReturn(okResponseFormat);
@@ -161,8 +152,7 @@ class ElementServletTest extends JerseyTest {
         when(componentUtils.getResponseFormat(ActionStatus.NO_CONTENT)).thenReturn(noContentResponseFormat);
         when(componentUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(badRequestResponseFormat);
         when(componentUtils.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(generalErrorResponseFormat);
-        when(componentUtils.getResponseFormat(any(ComponentException.class)))
-            .thenReturn(generalErrorResponseFormat);
+        when(componentUtils.getResponseFormat(any(ComponentException.class))).thenReturn(generalErrorResponseFormat);
 
         ByResponseFormatComponentException ce = Mockito.mock(ByResponseFormatComponentException.class);
         when(ce.getResponseFormat()).thenReturn(unauthorizedResponseFormat);
@@ -1044,7 +1034,7 @@ class ElementServletTest extends JerseyTest {
 
         Either<Map<String, List<CatalogComponent>>, ResponseFormat> screenEither = Either
             .right(badRequestResponseFormat);
-        when(elementBusinessLogic.getCatalogComponents(eq(designerUser.getUserId()), any()))
+        when(elementBusinessLogic.getCatalogComponents(any()))
             .thenReturn(screenEither);
 
         Response response = target()
@@ -1061,7 +1051,7 @@ class ElementServletTest extends JerseyTest {
     void screenExceptionDuringProcessingTest() {
         String path = "/v1/screen";
 
-        when(elementBusinessLogic.getCatalogComponents(eq(designerUser.getUserId()), any()))
+        when(elementBusinessLogic.getCatalogComponents(any()))
             .thenThrow(new RuntimeException("Test exception: screen"));
 
         Response response = target()
@@ -1079,7 +1069,7 @@ class ElementServletTest extends JerseyTest {
         String path = "/v1/screen";
 
         Either<Map<String, List<CatalogComponent>>, ResponseFormat> screenEither = Either.left(new HashMap<>());
-        when(elementBusinessLogic.getCatalogComponents(eq(designerUser.getUserId()), any()))
+        when(elementBusinessLogic.getCatalogComponents(any()))
             .thenReturn(screenEither);
 
         Response response = target()
@@ -1095,7 +1085,7 @@ class ElementServletTest extends JerseyTest {
     @Override
     protected Application configure() {
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
-		forceSet(TestProperties.CONTAINER_PORT, "0");
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig(ElementServlet.class)
             .register(new AbstractBinder() {
 
@@ -1112,13 +1102,12 @@ class ElementServletTest extends JerseyTest {
             })
             .property("contextConfig", context);
     }
-    
+
     @Test
     void getBaseTypesTest() {
         String path = "/v1/category/services/CAT1/baseTypes";
         Either<List<BaseType>, ActionStatus> baseTypesEither = Either.left(new ArrayList<>());
-        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId(), null))
-            .thenReturn(baseTypesEither);
+        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId(), null)).thenReturn(baseTypesEither);
 
         Response response = target()
             .path(path)
@@ -1129,14 +1118,13 @@ class ElementServletTest extends JerseyTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
     }
-    
+
     @Test
     void getBaseTypesNoBaseTypesFoundTest() {
         String path = "/v1/category/services/CAT1/baseTypes";
         Either<List<BaseType>, ActionStatus> baseTypesEither = Either.right(ActionStatus.NO_CONTENT);
 
-        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId(), null))
-            .thenReturn(baseTypesEither);
+        when(elementBusinessLogic.getBaseTypes("CAT1", designerUser.getUserId(), null)).thenReturn(baseTypesEither);
 
         Response response = target()
             .path(path)
@@ -1147,5 +1135,5 @@ class ElementServletTest extends JerseyTest {
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
     }
-    
+
 }
