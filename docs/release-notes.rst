@@ -5,6 +5,80 @@
 Release Notes
 =============
 
+Version: 1.9.1
+==============
+
+:Release Date: 2021-09-15
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.6.6
+
+Release Purpose
+----------------
+SDC Istanbul Release
+
+**Epics**
+
+* `SDC-3583 <https://jira.onap.org/browse/SDC-3583>`_ - SDC Multi Model Support Istanbul
+* `SDC-3635 <https://jira.onap.org/browse/SDC-3635>`_ - Large CSAR handling
+
+**Stories**
+
+The full list of implemented stories is available on `JIRA ISTANBUL TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20story%20AND%20fixVersion%20%3D%20%22Istanbul%20Release%22>`_
+
+**Tasks**
+
+The full list of implemented tasks is available on `JIRA ISTANBUL TASKS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20Task%20AND%20fixVersion%20%3D%20%22Istanbul%20Release%22>`_
+
+**Bug Fixes**
+
+The full list of fixed bugs is available on `JIRA ISTANBUL BUGS <https://jira.onap.org/issues/?jql=project%20%3D%20SDC%20AND%20issuetype%20%3D%20Bug%20AND%20fixVersion%20%3D%20%22Istanbul%20Release%22>`_
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+-  [`SDC-3634 <https://jira.onap.org/browse/SDC-3634>`__\ ] - Fix security vulnerabilities
+-  [`SDC-3572 <https://jira.onap.org/browse/SDC-3572>`__\ ] - Update Vulnerable package dependencies for I release
+
+*Known Security Issues*
+
+-  [`OJSI-94 <https://jira.onap.org/browse/OJSI-94>`__\ ] - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+
 Version: 1.8.5
 ==============
 
