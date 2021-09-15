@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d664fb4b_b942fcf5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ModelBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-09-15T08:11:03Z",
+      "side": 1,
+      "message": "Why do we need to change the ModelBusinessLogic?",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 31
+      },
+      "revId": "b620edc03c729c915b8ce668fc832a9ab0f34b25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
