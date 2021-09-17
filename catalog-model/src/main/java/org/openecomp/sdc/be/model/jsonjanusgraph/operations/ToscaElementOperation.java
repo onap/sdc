@@ -206,7 +206,10 @@ public abstract class ToscaElementOperation extends BaseOperation {
             }
         }
         if (result == null) {
-            result = createModelEdge(previousToscaElement, nextToscaElement, user, createdToscaElementVertex);
+            result =
+                VertexTypeEnum.TOPOLOGY_TEMPLATE.equals(previousToscaElement.getLabel())
+                    ? createModelEdge(previousToscaElement, nextToscaElement, user, createdToscaElementVertex, EdgeLabelEnum.MODEL)
+                    : createModelEdge(previousToscaElement, nextToscaElement, user, createdToscaElementVertex, EdgeLabelEnum.MODEL_ELEMENT);
         }
         if (result == null) {
             status = janusGraphDao.createEdge(user.getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.LAST_MODIFIER, new HashMap<>());
@@ -269,20 +272,23 @@ public abstract class ToscaElementOperation extends BaseOperation {
      * @param nextToscaElement latest element version
      * @param user user
      * @param createdToscaElementVertex created tosca element
+     * @param edgeLabelEnum
      * @return
      */
     private Either<GraphVertex, StorageOperationStatus> createModelEdge(final GraphVertex previousToscaElement,
                                                                         final GraphVertex nextToscaElement, GraphVertex user,
-                                                                        final GraphVertex createdToscaElementVertex) {
+                                                                        final GraphVertex createdToscaElementVertex,
+                                                                        final EdgeLabelEnum edgeLabelEnum) {
         Either<GraphVertex, StorageOperationStatus> result = null;
         final Either<GraphVertex, JanusGraphOperationStatus> modelElementVertexResponse = janusGraphDao
-            .getParentVertex(previousToscaElement, EdgeLabelEnum.MODEL, JsonParseFlagEnum.NoParse);
+            .getParentVertex(previousToscaElement, edgeLabelEnum, JsonParseFlagEnum.NoParse);
         if (modelElementVertexResponse.isLeft()) {
             final JanusGraphOperationStatus status = janusGraphDao
-                .createEdge(modelElementVertexResponse.left().value().getVertex(), createdToscaElementVertex.getVertex(), EdgeLabelEnum.MODEL, new HashMap<>());
+                .createEdge(modelElementVertexResponse.left().value().getVertex(), createdToscaElementVertex.getVertex(), edgeLabelEnum,
+                    new HashMap<>());
             if (JanusGraphOperationStatus.OK != status) {
                 CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
-                    FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, EdgeLabelEnum.MODEL,
+                    FAILED_TO_CREATE_EDGE_WITH_LABEL_FROM_USER_VERTEX_TO_TOSCA_ELEMENT_VERTEX_ON_GRAPH_STATUS_IS, edgeLabelEnum,
                     user.getUniqueId(), nextToscaElement.getMetadataProperty(GraphPropertyEnum.NORMALIZED_NAME), status);
                 result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
             }
