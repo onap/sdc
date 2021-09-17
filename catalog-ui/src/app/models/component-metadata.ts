@@ -60,6 +60,7 @@ export interface IComponentMetadata {
     resourceType: string;
     csarUUID: string;
     csarVersion: string;
+    csarVersionId: string;
     derivedList: string[];
     vendorName: string;
     vendorRelease: string;
@@ -187,6 +188,7 @@ export class ComponentMetadata implements IComponentMetadata {
         this.resourceType = response.resourceType;
         this.csarUUID = response.csarUUID;
         this.csarVersion = response.csarVersion;
+        this.csarVersionId = response.csarVersionId;
         this.state = response.state;
         this.ecompGeneratedNaming = response.ecompGeneratedNaming;
         this.namingPolicy = response.namingPolicy;

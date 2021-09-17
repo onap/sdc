@@ -2432,10 +2432,10 @@ public class ToscaOperationFacade {
                     log.debug("getLatestResourceByCsarOrName - getByCriteria(by system name) returned 2 latest CERTIFIED versions");
                     return Either.right(StorageOperationStatus.GENERAL_ERROR);
                 }
-                if (resourceMetadataData.getJsonMetadataField(JsonPresentationFields.CSAR_UUID) != null && !((String) resourceMetadataData
-                    .getJsonMetadataField(JsonPresentationFields.CSAR_UUID)).equals(csarUUID)) {
+                final Object csarUuid = resourceMetadataData.getJsonMetadataField(JsonPresentationFields.CSAR_UUID);
+                if (csarUuid != null && !csarUuid.equals(csarUUID)) {
                     log.debug("getLatestResourceByCsarOrName - same system name {} but different csarUUID. exist {} and new {} ", systemName,
-                        resourceMetadataData.getJsonMetadataField(JsonPresentationFields.CSAR_UUID), csarUUID);
+                        csarUuid, csarUUID);
                     // correct error will be returned from create flow. with all
 
                     // correct audit records!!!!!
