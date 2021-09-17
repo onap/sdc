@@ -120,6 +120,10 @@ public class GraphPropertiesDictionaryExtractor {
         return (String) properties.get(GraphPropertiesDictionary.CSAR_VERSION.getProperty());
     }
 
+    public String getCsarVersionId() {
+        return (String) properties.get(GraphPropertiesDictionary.CSAR_VERSION_ID.getProperty());
+    }
+
     public String getImportedToscaChecksum() {
         return (String) properties.get(GraphPropertiesDictionary.IMPORTED_TOSCA_CHECKSUM.getProperty());
     }

@@ -36,29 +36,31 @@ public class ResourceMetadataData extends ComponentMetadataData {
         super(NodeTypeEnum.Resource, metadataDataDefinition);
     }
 
-    public ResourceMetadataData(GraphPropertiesDictionaryExtractor extractor) {
+    public ResourceMetadataData(final GraphPropertiesDictionaryExtractor extractor) {
         super(NodeTypeEnum.Resource, new ResourceMetadataDataDefinition(), extractor);
-        ((ResourceMetadataDataDefinition) metadataDataDefinition).setVendorName(extractor.getVendorName());
-        ((ResourceMetadataDataDefinition) metadataDataDefinition).setVendorRelease(extractor.getVendorRelease());
-        ((ResourceMetadataDataDefinition) metadataDataDefinition).setResourceType(extractor.getResourceType());
-        ((ResourceMetadataDataDefinition) metadataDataDefinition).setAbstract(extractor.isAbstract());
-        ((ResourceMetadataDataDefinition) metadataDataDefinition).setCost(extractor.getCost());
-        ((ResourceMetadataDataDefinition) metadataDataDefinition).setLicenseType(extractor.getLicenseType());
-        ((ResourceMetadataDataDefinition) metadataDataDefinition).setToscaResourceName(extractor.getToscaResourceName());
+        final var resourceMetadataDataDefinition = (ResourceMetadataDataDefinition) metadataDataDefinition;
+        resourceMetadataDataDefinition.setVendorName(extractor.getVendorName());
+        resourceMetadataDataDefinition.setVendorRelease(extractor.getVendorRelease());
+        resourceMetadataDataDefinition.setResourceType(extractor.getResourceType());
+        resourceMetadataDataDefinition.setAbstract(extractor.isAbstract());
+        resourceMetadataDataDefinition.setCost(extractor.getCost());
+        resourceMetadataDataDefinition.setLicenseType(extractor.getLicenseType());
+        resourceMetadataDataDefinition.setToscaResourceName(extractor.getToscaResourceName());
+        resourceMetadataDataDefinition.setCsarVersionId(extractor.getCsarVersionId());
     }
 
     @Override
     public Map<String, Object> toGraphMap() {
-        Map<String, Object> graphMap = super.toGraphMap();
-        addIfExists(graphMap, GraphPropertiesDictionary.VENDOR_NAME, ((ResourceMetadataDataDefinition) metadataDataDefinition).getVendorName());
-        addIfExists(graphMap, GraphPropertiesDictionary.VENDOR_RELEASE, ((ResourceMetadataDataDefinition) metadataDataDefinition).getVendorRelease());
-        addIfExists(graphMap, GraphPropertiesDictionary.RESOURCE_TYPE,
-            ((ResourceMetadataDataDefinition) metadataDataDefinition).getResourceType().name());
-        addIfExists(graphMap, GraphPropertiesDictionary.IS_ABSTRACT, ((ResourceMetadataDataDefinition) metadataDataDefinition).isAbstract());
-        addIfExists(graphMap, GraphPropertiesDictionary.COST, ((ResourceMetadataDataDefinition) metadataDataDefinition).getCost());
-        addIfExists(graphMap, GraphPropertiesDictionary.LICENSE_TYPE, ((ResourceMetadataDataDefinition) metadataDataDefinition).getLicenseType());
-        addIfExists(graphMap, GraphPropertiesDictionary.TOSCA_RESOURCE_NAME,
-            ((ResourceMetadataDataDefinition) metadataDataDefinition).getToscaResourceName());
+        final Map<String, Object> graphMap = super.toGraphMap();
+        final ResourceMetadataDataDefinition resourceMetadataDataDefinition = (ResourceMetadataDataDefinition) metadataDataDefinition;
+        addIfExists(graphMap, GraphPropertiesDictionary.VENDOR_NAME, resourceMetadataDataDefinition.getVendorName());
+        addIfExists(graphMap, GraphPropertiesDictionary.VENDOR_RELEASE, resourceMetadataDataDefinition.getVendorRelease());
+        addIfExists(graphMap, GraphPropertiesDictionary.RESOURCE_TYPE, resourceMetadataDataDefinition.getResourceType().name());
+        addIfExists(graphMap, GraphPropertiesDictionary.IS_ABSTRACT, resourceMetadataDataDefinition.isAbstract());
+        addIfExists(graphMap, GraphPropertiesDictionary.COST, resourceMetadataDataDefinition.getCost());
+        addIfExists(graphMap, GraphPropertiesDictionary.LICENSE_TYPE, resourceMetadataDataDefinition.getLicenseType());
+        addIfExists(graphMap, GraphPropertiesDictionary.TOSCA_RESOURCE_NAME, resourceMetadataDataDefinition.getToscaResourceName());
+        addIfExists(graphMap, GraphPropertiesDictionary.CSAR_VERSION_ID, resourceMetadataDataDefinition.getCsarVersionId());
         return graphMap;
     }
 }

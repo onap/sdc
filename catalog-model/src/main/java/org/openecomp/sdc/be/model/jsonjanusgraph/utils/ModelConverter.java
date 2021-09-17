@@ -253,6 +253,7 @@ public class ModelConverter {
             TopologyTemplate topologyTemplate = (TopologyTemplate) toscaElement;
             if (resource.getResourceType() == ResourceTypeEnum.VF || resource.getResourceType() == ResourceTypeEnum.PNF) {
                 resource.setCsarUUID((String) topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_UUID));
+                resource.setCsarVersionId((String) topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_VERSION_ID));
                 resource.setCsarVersion((String) topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_VERSION));
                 resource.setImportedToscaChecksum((String) topologyTemplate.getMetadataValue(JsonPresentationFields.IMPORTED_TOSCA_CHECKSUM));
                 convertInterfaces(topologyTemplate, resource);
@@ -1112,6 +1113,7 @@ public class ModelConverter {
             topologyTemplate.setResourceType(resource.getResourceType());
             topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_UUID, resource.getCsarUUID());
             topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_VERSION, resource.getCsarVersion());
+            topologyTemplate.setMetadataValue(JsonPresentationFields.CSAR_VERSION_ID, resource.getCsarVersionId());
             topologyTemplate.setMetadataValue(JsonPresentationFields.IMPORTED_TOSCA_CHECKSUM, resource.getImportedToscaChecksum());
             convertTopologyTemplateInterfaces(resource, topologyTemplate);
         }

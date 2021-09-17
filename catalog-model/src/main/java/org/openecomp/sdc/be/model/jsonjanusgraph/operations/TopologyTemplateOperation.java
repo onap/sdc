@@ -590,6 +590,8 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             nodeTypeVertex.setJson(topologyTemplate.getCompositions());
         }
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.CSAR_UUID, topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_UUID));
+        nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.CSAR_VERSION_UUID,
+            topologyTemplate.getMetadataValue(JsonPresentationFields.CSAR_VERSION_ID));
         nodeTypeVertex.addMetadataProperty(GraphPropertyEnum.DISTRIBUTION_STATUS,
             topologyTemplate.getMetadataValue(JsonPresentationFields.DISTRIBUTION_STATUS));
         return nodeTypeVertex;

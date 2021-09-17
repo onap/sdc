@@ -65,6 +65,7 @@ public enum GraphPropertiesDictionary {
     ENTRY_SCHEMA		("entry_schema",			String.class,				false,		false),
     CSAR_UUID			("csarUuid",				String.class,				false,		true),
     CSAR_VERSION		("csarVersion",				String.class,				false,		true),
+    CSAR_VERSION_ID			("csarUuid",				String.class,				false,		true),
     IMPORTED_TOSCA_CHECKSUM	("importedToscaChecksum",				String.class,				false,		true),
     GENERATED			("generated",				Boolean.class,				false,		false),
     // User

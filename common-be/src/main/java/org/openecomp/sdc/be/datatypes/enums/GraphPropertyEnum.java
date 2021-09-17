@@ -44,6 +44,7 @@ public enum GraphPropertyEnum {
     IS_ABSTRACT("abstract", Boolean.class, false, true),
     INVARIANT_UUID("invariantUuid", String.class, false, true),
     CSAR_UUID("csarUuid", String.class, false, true),
+    CSAR_VERSION_UUID("csarVersionUuid", String.class, false, true),
     //used for user (old format, no json for users)
     USERID("userId", String.class, true, true),
     ROLE("role", String.class, false, false),

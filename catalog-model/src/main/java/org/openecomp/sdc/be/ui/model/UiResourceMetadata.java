@@ -43,6 +43,7 @@ public class UiResourceMetadata extends UiComponentMetadata {
     private String toscaResourceName;
     private List<String> derivedFrom;
     private Map<String, String> categorySpecificMetadata;
+    private String csarVersionId;
 
     public UiResourceMetadata(List<CategoryDefinition> categories, List<String> derivedFrom, ResourceMetadataDataDefinition metadata) {
         super(categories, metadata);
@@ -55,5 +56,6 @@ public class UiResourceMetadata extends UiComponentMetadata {
         this.toscaResourceName = metadata.getToscaResourceName();
         this.derivedFrom = derivedFrom;
         this.categorySpecificMetadata = metadata.getCategorySpecificMetadata();
+        this.csarVersionId = metadata.getCsarVersionId();
     }
 }
