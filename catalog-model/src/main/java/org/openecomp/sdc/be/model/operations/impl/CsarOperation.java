@@ -74,4 +74,8 @@ public class CsarOperation {
         return onboardingClient.findVendorSoftwareProduct(id, versionId, user.getUserId());
     }
 
+    public Optional<VendorSoftwareProduct> findLatestVsp(final String id, final User user) {
+        return onboardingClient.findLatestVendorSoftwareProduct(id, user.getUserId());
+    }
+
 }

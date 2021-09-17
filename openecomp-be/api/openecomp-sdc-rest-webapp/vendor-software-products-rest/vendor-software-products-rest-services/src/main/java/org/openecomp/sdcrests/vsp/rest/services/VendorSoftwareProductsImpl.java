@@ -208,6 +208,15 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         return Response.ok(vspDetailsDto).build();
     }
 
+    @Override
+    public Response getLatestVsp(final String vspId, final String user) {
+        final List<Version> versions = versioningManager.list(vspId);
+        final Version version = versions.stream().filter(ver -> VersionStatus.Certified == ver.getStatus())
+            .max(Comparator.comparingDouble(o -> Double.parseDouble(o.getName())))
+            .orElseThrow(() -> new CoreException(new PackageNotFoundErrorBuilder(vspId).build()));
+        return getVsp(vspId, version.getId(), user);
+    }
+
     private void submitHealedVersion(VspDetails vspDetails, String baseVersionId, String user) {
         try {
             if (vspDetails.getVlmVersion() != null) {

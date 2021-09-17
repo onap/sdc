@@ -76,6 +76,12 @@ public interface VendorSoftwareProducts extends VspEntities {
                       @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
     @GET
+    @Path("/{vspId}")
+    @Parameter(description = "Get details of the latest certified vendor software product")
+    Response getLatestVsp(@PathParam("vspId") String vspId,
+                          @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+
+    @GET
     @Path("/{vspId}/versions/{versionId}")
     @Parameter(description = "Get details of a vendor software product")
     Response getVsp(@PathParam("vspId") String vspId, @PathParam("versionId") String versionId,

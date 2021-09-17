@@ -223,7 +223,11 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
     private VendorSoftwareProduct getCsar(final Resource resource, final User user) {
         final Optional<VendorSoftwareProduct> vendorSoftwareProductOpt;
         try {
-            vendorSoftwareProductOpt = csarOperation.findVsp(resource.getCsarUUID(), resource.getCsarVersionId(), user);
+            if (resource.getCsarVersionId() == null) {
+                vendorSoftwareProductOpt = csarOperation.findLatestVsp(resource.getCsarUUID(), user);
+            } else {
+                vendorSoftwareProductOpt = csarOperation.findVsp(resource.getCsarUUID(), resource.getCsarVersionId(), user);
+            }
         } catch (final Exception exception) {
             log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, CsarBusinessLogic.class.getName(), exception.getMessage());
             auditGetCsarError(resource, user, resource.getCsarUUID(), StorageOperationStatus.GENERAL_ERROR);

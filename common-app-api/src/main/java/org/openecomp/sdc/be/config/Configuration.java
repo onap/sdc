@@ -351,6 +351,7 @@ public class Configuration extends BasicConfiguration {
         private String getLatestVspPackageUri;
         private String getVspPackageUri;
         private String getVspUri;
+        private String getLatestVspUri;
         @ToString.Exclude
         private String healthCheckUri;
     }

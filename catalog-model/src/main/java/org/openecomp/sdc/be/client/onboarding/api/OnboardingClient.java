@@ -50,4 +50,13 @@ public interface OnboardingClient {
      */
     Optional<VendorSoftwareProduct> findVendorSoftwareProduct(String id, String versionId, String userId);
 
+    /**
+     * Finds the latest version of the Vendor Software Product (VSP) from the onboarding repository.
+     *
+     * @param id        the VSP id
+     * @param userId    the logged user id
+     * @return a VSP representation if found, empty otherwise.
+     */
+    Optional<VendorSoftwareProduct> findLatestVendorSoftwareProduct(String id, String userId);
+
 }

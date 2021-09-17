@@ -143,6 +143,53 @@ public class OnboardingClientImpl implements OnboardingClient {
         return Optional.of(vendorSoftwareProduct);
     }
 
+    @Override
+    public Optional<VendorSoftwareProduct> findLatestVendorSoftwareProduct(final String id, final String userId) {
+        final Either<Map<String, byte[]>, StorageOperationStatus> csarEither = this.findLatestPackage(id, userId);
+        if (csarEither.isRight()) {
+            final StorageOperationStatus operationStatus = csarEither.right().value();
+            if (operationStatus == StorageOperationStatus.CSAR_NOT_FOUND || operationStatus == StorageOperationStatus.NOT_FOUND) {
+                return Optional.empty();
+            }
+            var errorMsg = String.format("An error has occurred while retrieving the latest package with for '%s': '%s'",
+                id, operationStatus);
+            throw new OnboardingClientException(errorMsg);
+        }
+        final String url = buildGetLatestVspUrl(id);
+        final Properties headers = buildDefaultHeader(userId);
+        headers.put(ACCEPT, APPLICATION_JSON);
+        LOGGER.debug("Find VSP built url '{}', with headers '{}'", url, headers);
+        final HttpResponse<String> httpResponse;
+        try {
+            httpResponse = HttpRequest.get(url, headers);
+        } catch (final Exception e) {
+            throw new OnboardingClientException("An error has occurred while retrieving the package", e);
+        }
+
+        if (httpResponse.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+            return Optional.empty();
+        }
+
+        if (httpResponse.getStatusCode() != HttpStatus.SC_OK) {
+            var errorMsg = String.format("An error has occurred while retrieving the package. Http status was %s", httpResponse.getStatusCode());
+            throw new OnboardingClientException(errorMsg);
+        }
+
+        final String responseData = httpResponse.getResponse();
+        LOGGER.debug("Find vsp response data: '{}'", responseData);
+
+        final VendorSoftwareProductDto vendorSoftwareProductDto;
+        try {
+            vendorSoftwareProductDto = new ObjectMapper().readValue(responseData, VendorSoftwareProductDto.class);
+        } catch (final JsonProcessingException e) {
+            throw new OnboardingClientException("Could not parse retrieve package response to VendorSoftwareProductDto.class.", e);
+        }
+        final Map<String, byte[]> csarFileMap = csarEither.left().value();
+        final var vendorSoftwareProduct = VendorSoftwareProductMapper.mapFrom(vendorSoftwareProductDto);
+        vendorSoftwareProduct.setFileMap(csarFileMap);
+        return Optional.of(vendorSoftwareProduct);
+    }
+
     private Properties buildDefaultHeader(final String userId) {
         final var headers = new Properties();
         if (userId != null) {
@@ -177,6 +224,15 @@ public class OnboardingClientImpl implements OnboardingClient {
         final String host = onboardingConfig.getHost();
         final Integer port = onboardingConfig.getPort();
         final var uri = String.format(onboardingConfig.getGetVspUri(), id, versionId);
+        return String.format("%s://%s:%s%s", protocol, host, port, uri);
+    }
+
+    private String buildGetLatestVspUrl(final String id) {
+        final var onboardingConfig = getOnboardingConfig();
+        final String protocol = onboardingConfig.getProtocol();
+        final String host = onboardingConfig.getHost();
+        final Integer port = onboardingConfig.getPort();
+        final var uri = String.format(onboardingConfig.getGetLatestVspUri(), id);
         return String.format("%s://%s:%s%s", protocol, host, port, uri);
     }
 
