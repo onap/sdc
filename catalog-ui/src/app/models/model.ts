@@ -19,10 +19,12 @@
 
 export class Model {
   name: string;
+  derivedFrom: string;
 
   constructor(param?: any) {
     if (param) {
-      this.name = param;
+      this.name = param.name;
+      this.derivedFrom = param.derivedFrom;
     }
   }
 

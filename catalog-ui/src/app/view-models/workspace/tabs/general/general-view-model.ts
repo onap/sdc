@@ -488,8 +488,10 @@ export class GeneralViewModel {
             }
 
             if (!this.$scope.isCreateMode() && this.$scope.isVspImport()){
-                this.modelService.getModels().subscribe((modelsFound: Model[]) => {
-                    modelsFound.sort().forEach(model => {this.$scope.models.push(model.name)});
+                this.modelService.getModelsOfType("normative_extension").subscribe((modelsFound: Model[]) => {
+                    modelsFound.sort().forEach(model => {
+                        this.$scope.component.model = model.derivedFrom;
+                        this.$scope.models.push(model.derivedFrom)});
                 });
             } else {
                 this.modelService.getModelsOfType("normative").subscribe((modelsFound: Model[]) => {
