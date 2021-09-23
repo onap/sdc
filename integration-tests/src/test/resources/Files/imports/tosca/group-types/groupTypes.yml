@@ -1,0 +1,9 @@
+tosca.groups.nfv.NsPlacementGroup:
+  derived_from: tosca.groups.Root
+  description: NsPlacementGroup is used for describing the affinity or anti-affinity relationship applicable between VNF instances created using different VNFDs, the Virtual Link instances created using different VLDs or the nested NS instances created using different NSDs when used in a NSD.
+  properties:
+    description:
+      type: string
+      description: Human readable description of the group
+      required: true
+  members: [tosca.nodes.nfv.VNF, tosca.nodes.nfv.NsVirtualLink, tosca.nodes.nfv.NS]
