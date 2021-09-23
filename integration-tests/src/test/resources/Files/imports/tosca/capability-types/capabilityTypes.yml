@@ -1,0 +1,2 @@
+tosca.capabilities.network.Linkable:
+  derived_from: tosca.capabilities.Root

@@ -1,0 +1,6 @@
+{
+	"tosca.policies.Scaling": {
+		"displayName": "Scaling",
+		"icon": "policy-scaling"
+	}
+}
