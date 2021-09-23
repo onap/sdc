@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6cd2e0f5_5ec2a6aa",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-09-23T10:34:19Z",
+      "side": 1,
+      "message": "In the cas where the csar has no csar specific node types, the normative model will be used i.e. there will not be a normative_extension model. Havent tested by looks like this will cause an issue here?",
+      "range": {
+        "startLine": 491,
+        "startChar": 32,
+        "endLine": 491,
+        "endChar": 73
+      },
+      "revId": "14181bb813f60a3cb09ea821231772f2e0db887f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
