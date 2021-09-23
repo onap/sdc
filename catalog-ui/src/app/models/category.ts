@@ -50,6 +50,7 @@ export interface IGroup extends ICategoryBase {
 
 export interface IMetadataKey {
 	name:string;
+	displayName:string;
 	mandatory:boolean;
 	validValues: string[];
 	defaultValue: string;
