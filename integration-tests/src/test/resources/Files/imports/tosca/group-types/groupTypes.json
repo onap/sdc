@@ -1,0 +1,6 @@
+{
+	"tosca.groups.nfv.NsPlacementGroup": {
+		"displayName": "NFV NS PlacementGroup",
+		"icon": "group-nfv-placementgroup"
+	}
+}

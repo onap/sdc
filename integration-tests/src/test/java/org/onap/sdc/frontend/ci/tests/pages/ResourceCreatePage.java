@@ -144,7 +144,7 @@ public class ResourceCreatePage extends ComponentPage {
     @AllArgsConstructor
     private enum XpathSelector {
         NAME_INPUT("name", "//input[@data-tests-id='%s']"),
-        MODEL_SELECT("selectModelName", "//select[@data-tests-id='%s']"),
+        MODEL_SELECT("modelName", "//select[@data-tests-id='%s']"),
         CATEGORY_SELECT("selectGeneralCategory", "//select[@data-tests-id='%s']"),
         TAGS("i-sdc-tag-input", "//input[@data-tests-id='%s']"),
         DESCRIPTION_TEXT_AREA("description", "//textarea[@data-tests-id='%s']"),
