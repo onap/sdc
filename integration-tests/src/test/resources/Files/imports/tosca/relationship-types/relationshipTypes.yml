@@ -1,0 +1,9 @@
+tosca.relationships.ConnectsTo:
+  derived_from: tosca.relationships.Root
+  description: This type represents a network connection relationship between two nodes.
+  valid_target_types:
+  - tosca.capabilities.Endpoint
+  properties:
+    credential:
+      type: tosca.datatypes.Credential
+      required: false
