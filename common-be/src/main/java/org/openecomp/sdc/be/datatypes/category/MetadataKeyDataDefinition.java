@@ -34,12 +34,14 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class MetadataKeyDataDefinition extends ToscaDataDefinition {
 
     private String name;
+    public String displayName;
     private List<String> validValues;
     private boolean mandatory;
     private String defaultValue;
 
     public MetadataKeyDataDefinition(MetadataKeyDataDefinition metadataKeyDataDefinition) {
         this.name = metadataKeyDataDefinition.name;
+        this.displayName = metadataKeyDataDefinition.displayName;
         this.validValues = metadataKeyDataDefinition.validValues;
         this.mandatory = metadataKeyDataDefinition.mandatory;
         this.defaultValue = metadataKeyDataDefinition.defaultValue;
