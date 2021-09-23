@@ -1,0 +1,14 @@
+tosca.datatypes.nfv.AdditionalServiceData:
+  derived_from: tosca.datatypes.Root
+  description: describes the additional service data of the VirtualCp used to expose properties of the VirtualCp to NFV-MANO.
+  properties:
+    portData:
+      type: list
+      description: Service port numbers exposed by the VirtualCp.
+      required: false
+      entry_schema:
+        type: tosca.datatypes.nfv.ServicePortData
+    serviceData:
+      type: string
+      description: Service matching information exposed by the VirtualCp.
+      required: false
