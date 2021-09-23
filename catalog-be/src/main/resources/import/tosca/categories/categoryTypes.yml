@@ -47,6 +47,7 @@ services:
       metadataKeys:
         etsiVersion:
           name: "ETSI Version"
+          displayName: "ETSI Version"
           validValues: [ '3.3.1', '2.7.1', '2.5.1' ]
           default: '2.5.1'
           mandatory: true

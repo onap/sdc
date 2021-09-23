@@ -252,6 +252,7 @@ public class CategoriesImportManager {
             MetadataKeyDataDefinition metadataKeyDef = new MetadataKeyDataDefinition();
             String metadataKeyName = (String) metadataKeyInfo.get(MetadataKeyEnum.NAME.getName());
             metadataKeyDef.setName(metadataKeyName);
+            metadataKeyDef.setDisplayName((String) metadataKeyInfo.get(MetadataKeyEnum.DISPLAY_NAME.getName()));
             final Object mandatoryProperty = metadataKeyInfo.get(MetadataKeyEnum.MANDATORY.getName());
             final boolean mandatory = mandatoryProperty == null ? false : (Boolean) mandatoryProperty;
             metadataKeyDef.setMandatory(mandatory);
