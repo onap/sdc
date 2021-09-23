@@ -801,6 +801,14 @@ export class GeneralViewModel {
             return [];
         }
 
+        this.$scope.getMetadataDisplayName = (key: string): string => {
+            let metadataKey = this.getMetadataKey(this.$scope.component.categories, key);
+            if (metadataKey) {
+                return metadataKey.displayName ? metadataKey.displayName : metadataKey.name;
+            }
+            return "";
+        }
+
         this.$scope.isMetadataKeyForComponentCategory = (key: string): boolean => {
             return this.getMetadataKey(this.$scope.component.categories, key) != null;
         }
