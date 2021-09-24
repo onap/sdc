@@ -22,6 +22,30 @@
       "revId": "14181bb813f60a3cb09ea821231772f2e0db887f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "066cba3d_16d44a78",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 491,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-09-24T08:33:56Z",
+      "side": 1,
+      "message": "Thanks Michael, i didn\u0027t think of with no node types scenario. Rectified the code accordingly.",
+      "parentUuid": "6cd2e0f5_5ec2a6aa",
+      "range": {
+        "startLine": 491,
+        "startChar": 32,
+        "endLine": 491,
+        "endChar": 73
+      },
+      "revId": "14181bb813f60a3cb09ea821231772f2e0db887f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
