@@ -769,6 +769,29 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>clean.sdctool.tar</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>clean</goal>
+                </goals>
+                <configuration>
+                  <filesets>
+                    <fileset>
+                      <directory>${basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default</directory>
+                      <includes>
+                        <include>sdctool.tar</include>
+                      </includes>
+                    </fileset>
+                  </filesets>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-resources-plugin</artifactId>
             <executions>
               <execution>
@@ -781,6 +804,7 @@
                   <outputDirectory>
                     ${basedir}/sdc-cassandra-init/chef-repo/cookbooks/cassandra-actions/files/default
                   </outputDirectory>
+                  <overwrite>true</overwrite>
                   <resources>
                     <resource>
                       <directory>${project.parent.basedir}/asdctool/target</directory>
