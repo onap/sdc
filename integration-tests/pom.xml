@@ -32,7 +32,7 @@ limitations under the License.
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>sdc-main</artifactId>
-        <version>1.9.2-SNAPSHOT</version>
+        <version>1.9.3-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -49,7 +49,7 @@ limitations under the License.
         <it.chef.config>${project.build.directory}/chef-config</it.chef.config>
         <it.sdc-be.plugins>${project.build.directory}/plugins/sdc-be</it.sdc-be.plugins>
         <it.shared.volume>/tmp/sdc-integration-tests</it.shared.volume>
-        <it.docker.version>latest</it.docker.version>
+        <it.docker.version>1.9.2</it.docker.version>
         <it.ui.firefox.version>86.0</it.ui.firefox.version>
         <it.helm-validator.disabled>true</it.helm-validator.disabled>
         <it.helm-validator.version>1.2.2</it.helm-validator.version>
@@ -735,7 +735,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-simulator:${it.docker.version}</name>
+                            <name>onap/sdc-simulator:latest</name>
                             <alias>sdc-simulator</alias>
                             <run>
                                 <dependsOn>

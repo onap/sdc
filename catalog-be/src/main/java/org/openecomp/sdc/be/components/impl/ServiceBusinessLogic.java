@@ -1641,7 +1641,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 payloadWrapper.getInnerElement());
             if (createVfModuleArtifact.isLeft()) {
                 vfModuleAertifact = createVfModuleArtifact.left().value();
-            } else {
+            } else {VfModuleArtifactPayload
                 responseWrapper.setInnerElement(createVfModuleArtifact.right().value());
             }
         }
