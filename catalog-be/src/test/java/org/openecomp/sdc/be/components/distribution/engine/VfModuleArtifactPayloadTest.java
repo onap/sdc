@@ -21,10 +21,12 @@
 package org.openecomp.sdc.be.components.distribution.engine;
 
 import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupInstanceProperty;
-
+import com.google.gson.Gson;
+import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,39 @@ public class VfModuleArtifactPayloadTest {
 	@Test
 	public void testConstructor() {
 		new VfModuleArtifactPayload(new GroupInstance());
+	}
+	
+	@Test 
+	public void toJson() {
+	   final Gson gson = new Gson();
+	   
+	   final GroupInstance group = new GroupInstance();
+	   final String groupName = "groupName";
+	   final String invariantUUID = "123abc";
+	   final String version = "1.0";
+	   final String groupUuid = "abc123";
+	   final String customizationUUID = "abc987";
+	   final List<PropertyDataDefinition> properties = new ArrayList<>();
+	   final PropertyDataDefinition property = new PropertyDataDefinition();
+       property.setName("isBase");
+       property.setValue("true");
+       properties.add(property );
+
+       group.setGroupName(groupName);
+       group.setInvariantUUID(invariantUUID);
+       group.setVersion(version);
+       group.setGroupUUID(groupUuid);
+       group.setCustomizationUUID(customizationUUID);
+       group.setProperties(properties);
+       
+       final String asJson = gson.toJson(new VfModuleArtifactPayload(group));
+
+       assertTrue(asJson.contains(groupName));
+       assertTrue(asJson.contains(invariantUUID));
+       assertTrue(asJson.contains(version));
+       assertTrue(asJson.contains(groupUuid));
+       assertTrue(asJson.contains(customizationUUID));
+       assertTrue(asJson.contains("isBase"));       
 	}
 
 	
