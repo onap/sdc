@@ -23,32 +23,66 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.GroupInstanceProperty;
+import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.common.api.Constants;
 
 public class VfModuleArtifactPayload {
 
-    private String vfModuleModelName;
+    private String vfModuleModelName, vfModuleModelInvariantUUID, vfModuleModelVersion, vfModuleModelUUID, vfModuleModelCustomizationUUID, vfModuleModelDescription; 
+    private Boolean isBase;
     private List<String> artifacts;
     private Map<String, Object> properties;
 
     public VfModuleArtifactPayload(GroupDefinition group) {
         vfModuleModelName = group.getName();
+        vfModuleModelInvariantUUID = group.getInvariantUUID();
+        vfModuleModelVersion = group.getVersion();
+        vfModuleModelUUID = group.getGroupUUID();
+        vfModuleModelDescription = group.getDescription();
         artifacts = group.getArtifactsUuid();
         // Base Value is set from properties
+        setBaseValue(group);
     }
 
     public VfModuleArtifactPayload(GroupInstance group) {
         vfModuleModelName = group.getGroupName();
+        vfModuleModelInvariantUUID = group.getInvariantUUID();
+        vfModuleModelVersion = group.getVersion();
+        vfModuleModelUUID = group.getGroupUUID();
+        vfModuleModelCustomizationUUID = group.getCustomizationUUID();
+        vfModuleModelDescription = group.getDescription();
         artifacts = new ArrayList<>(group.getArtifactsUuid() != null ? group.getArtifactsUuid() : new LinkedList<>());
         artifacts.addAll(group.getGroupInstanceArtifactsUuid() != null ? group.getGroupInstanceArtifactsUuid() : new LinkedList<>());
         // Base Value is set from properties
+        setBaseValue(group);
         if (group.convertToGroupInstancesProperties() != null) {
             setProperties(group.convertToGroupInstancesProperties());
+        }
+    }
+
+    private void setBaseValue(GroupInstance group) {
+        if (group.convertToGroupInstancesProperties() != null) {
+            Optional<GroupInstanceProperty> findBaseProperty = group.convertToGroupInstancesProperties().stream()
+                .filter(p -> p.getName().equals(Constants.IS_BASE)).findAny();
+            if (findBaseProperty.isPresent()) {
+                isBase = Boolean.valueOf(findBaseProperty.get().getValue());
+            }
+        }
+    }
+
+    private void setBaseValue(GroupDefinition group) {
+        if (group.getProperties() != null) {
+            Optional<GroupProperty> findBaseProperty = group.convertToGroupProperties().stream().filter(p -> p.getName().equals(Constants.IS_BASE))
+                .findAny();
+            if (findBaseProperty.isPresent()) {
+                isBase = Boolean.valueOf(findBaseProperty.get().getValue());
+            }
         }
     }
 
