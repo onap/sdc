@@ -24,6 +24,7 @@
 import * as _ from "lodash";
 import {ArtifactType} from './../utils';
 import {HeatParameterModel} from "./heat-parameters";
+import {PropertyBEModel} from "./properties-inputs/property-be-model";
 
 //this object contains keys, each key contain ArtifactModel
 export class ArtifactGroupModel {
@@ -76,6 +77,7 @@ export class ArtifactModel {
     originalDescription:string;
     envArtifact:ArtifactModel;
     allowDeleteAndUpdate: boolean;
+    properties:Array<PropertyBEModel>;
 
     constructor(artifact?:ArtifactModel) {
         if (artifact) {
@@ -104,6 +106,7 @@ export class ArtifactModel {
             this.selected = artifact.selected ? artifact.selected : false;
             this.originalDescription = artifact.description;
             this.isFromCsar = artifact.isFromCsar;
+            this.properties = _.sortBy(_.cloneDeep(artifact.properties), 'name');
         }
     }
 

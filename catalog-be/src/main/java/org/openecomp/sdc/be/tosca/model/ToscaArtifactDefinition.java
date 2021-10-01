@@ -1,12 +1,14 @@
 /*
- * ============LICENSE_START=======================================================
- *  Copyright (C) 2021 Nordix Foundation
+ * -
+ *  ============LICENSE_START=======================================================
+ *  Copyright (C) 2021 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,26 +18,24 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.ui.model;
+package org.openecomp.sdc.be.tosca.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 @Getter
 @Setter
-public class OperationUi {
+public class ToscaArtifactDefinition {
 
-    private String interfaceType;
-    private String operationType;
-    private Object implementation;
-    private List<PropertyAssignmentUi> inputs;
-
-    public void addToInputs(final PropertyAssignmentUi input) {
-        if (inputs == null) {
-            inputs = new ArrayList<>();
-        }
-        inputs.add(input);
-    }
+    private String type;
+    private String file;
+    private String repository;
+    private String description;
+    private String deploy_path;
+    private String artifact_version;
+    private String checksum;
+    private String checksum_algorithm;
+    private Map<String, PropertyDataDefinition> properties;
 }

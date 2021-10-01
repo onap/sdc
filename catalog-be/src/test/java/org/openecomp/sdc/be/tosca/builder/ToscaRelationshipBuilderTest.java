@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -55,13 +56,13 @@ class ToscaRelationshipBuilderTest {
         final OperationUi operationUi1 = new OperationUi();
         operationUi1.setInterfaceType("interfaceType1");
         operationUi1.setOperationType("operation1");
-        operationUi1.setImplementation("implementation");
+        operationUi1.setImplementation(new ArtifactDataDefinition());
         operationList.add(operationUi1);
 
         final OperationUi operationUi2 = new OperationUi();
         operationUi2.setInterfaceType("interfaceType1");
         operationUi2.setOperationType("operation2");
-        operationUi2.setImplementation("implementation");
+        operationUi2.setImplementation(new ArtifactDataDefinition());
         operationList.add(operationUi2);
         final List<PropertyAssignmentUi> operation2InputList = new ArrayList<>();
         final PropertyAssignmentUi propertyAssignmentUi1 = new PropertyAssignmentUi();
@@ -79,7 +80,7 @@ class ToscaRelationshipBuilderTest {
         final OperationUi operationUi3 = new OperationUi();
         operationUi3.setInterfaceType("interfaceType2");
         operationUi3.setOperationType("operation1");
-        operationUi3.setImplementation("implementation");
+        operationUi3.setImplementation(new ArtifactDataDefinition());
         operationList.add(operationUi3);
 
         relationship.setOperations(operationList);
