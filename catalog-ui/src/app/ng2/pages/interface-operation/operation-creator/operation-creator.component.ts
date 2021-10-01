@@ -211,7 +211,7 @@ export class OperationCreatorComponent implements OperationCreatorInput {
         if (inputOperation) {
             this.onSelectInterface(new DropDownOption(this.operation.interfaceType));
 
-            this.operation.artifactFileName = this.operation.artifactFileName || this.operation.implementation.artifactName;
+            this.operation.artifactFileName = this.operation.artifactFileName;
 
             if (this.enableWorkflowAssociation && inputOperation.workflowVersionId && this.isUsingExistingWF(inputOperation)) {
                 this.assignInputParameters[this.operation.workflowId] = {[inputOperation.workflowVersionId]: []};

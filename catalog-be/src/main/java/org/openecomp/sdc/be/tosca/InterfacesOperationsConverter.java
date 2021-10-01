@@ -32,10 +32,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -43,9 +46,11 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
+import org.openecomp.sdc.be.tosca.model.ToscaArtifactDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaInput;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceNodeType;
+import org.openecomp.sdc.be.tosca.model.ToscaInterfaceOperationImplementation;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
@@ -285,12 +290,32 @@ public class InterfacesOperationsConverter {
                                                         final Entry<String, OperationDataDefinition> operationEntry,
                                                         final ToscaLifecycleOperationDefinition toscaOperation) {
         final String operationArtifactPath;
+        final ToscaInterfaceOperationImplementation toscaInterfaceOperationImplementation = new ToscaInterfaceOperationImplementation();
+        toscaInterfaceOperationImplementation.setPrimary(new ToscaArtifactDefinition());
+        final ToscaArtifactDefinition toscaArtifactDefinition = toscaInterfaceOperationImplementation.getPrimary();
         if (isArtifactPresent(operationEntry) && StringUtils.isNotEmpty(operationEntry.getValue().getImplementation().getArtifactName())) {
             operationArtifactPath = OperationArtifactUtil
                 .createOperationArtifactPath(component, componentInstance, operationEntry.getValue(), isAssociatedComponent);
-            toscaOperation.setImplementation(operationArtifactPath);
+            toscaArtifactDefinition.setFile(operationArtifactPath);
+            toscaArtifactDefinition.setArtifact_version(!operationEntry.getValue().getImplementation().getArtifactVersion()
+                .equals(NumberUtils.INTEGER_ZERO.toString()) ? operationEntry.getValue().getImplementation().getArtifactVersion() : null);
+            toscaArtifactDefinition.setType(operationEntry.getValue().getImplementation().getArtifactType());
+            handleInterfaceOperationImplementationProperties(operationEntry, toscaArtifactDefinition);
+            toscaOperation.setImplementation(
+                toscaArtifactDefinition.getType() != null ? toscaInterfaceOperationImplementation : operationArtifactPath);
         } else {
-            toscaOperation.setImplementation(operationEntry.getValue().getImplementation().getArtifactName());
+            toscaArtifactDefinition.setFile(operationEntry.getValue().getImplementation().getArtifactName());
+            toscaOperation.setImplementation(toscaInterfaceOperationImplementation);
+        }
+    }
+
+    private void handleInterfaceOperationImplementationProperties(final Entry<String, OperationDataDefinition> operationEntry,
+                                                                  final ToscaArtifactDefinition toscaArtifactDefinition) {
+        final var properties = operationEntry.getValue().getImplementation().getProperties();
+        if (CollectionUtils.isNotEmpty(properties)) {
+            final Map<String, PropertyDataDefinition> propertiesMap = new HashMap<>();
+            properties.forEach(propertyDefinition -> propertiesMap.put(propertyDefinition.getName(), propertyDefinition));
+            toscaArtifactDefinition.setProperties(propertiesMap);
         }
     }
 

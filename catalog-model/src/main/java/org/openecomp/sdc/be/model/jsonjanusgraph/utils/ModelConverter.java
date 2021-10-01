@@ -425,9 +425,9 @@ public class ModelConverter {
                 operationUi.setOperationType(operationEntry.getKey());
                 operationUi.setInterfaceType(interfaceDataDefinition.getType());
                 final OperationDataDefinition operationDataDefinition = operationEntry.getValue();
-                final ArtifactDataDefinition implementation = operationDataDefinition.getImplementation();
-                if (implementation != null) {
-                    operationUi.setImplementation(implementation.getArtifactName());
+                final ArtifactDataDefinition artifactDataDefinition = operationDataDefinition.getImplementation();
+                if (artifactDataDefinition != null) {
+                    operationUi.setImplementation(artifactDataDefinition);
                 }
                 final ListDataDefinition<OperationInputDefinition> inputs = operationDataDefinition.getInputs();
                 if (inputs != null && !inputs.isEmpty()) {

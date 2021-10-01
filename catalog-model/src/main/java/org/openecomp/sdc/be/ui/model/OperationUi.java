@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 
 @Getter
 @Setter
@@ -29,7 +30,7 @@ public class OperationUi {
 
     private String interfaceType;
     private String operationType;
-    private String implementation;
+    private ArtifactDataDefinition implementation;
     private List<PropertyAssignmentUi> inputs;
 
     public void addToInputs(final PropertyAssignmentUi input) {

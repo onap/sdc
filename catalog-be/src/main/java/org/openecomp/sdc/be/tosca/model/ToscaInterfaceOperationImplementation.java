@@ -1,12 +1,14 @@
 /*
- * ============LICENSE_START=======================================================
- *  Copyright (C) 2021 Nordix Foundation
+ * -
+ *  ============LICENSE_START=======================================================
+ *  Copyright (C) 2021 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,16 +20,17 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
-import java.util.Map;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 
 @Getter
 @Setter
-public class ToscaOperationAssignment {
+public class ToscaInterfaceOperationImplementation {
 
-    private String description;
-    private ArtifactDataDefinition implementation;
-    private Map<String, ToscaPropertyAssignment> inputs;
+    private ToscaArtifactDefinition primary;
+    private List<ArtifactDataDefinition> dependencies;
+    private Integer timeout;
+    private String operation_host;
 }

@@ -1718,9 +1718,9 @@ public class NodeTemplateOperation extends BaseOperation {
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setName(operation.getOperationType());
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
-        final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
-        implementation.setArtifactName(operation.getImplementation());
-        operationDataDefinition.setImplementation(implementation);
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        artifactDataDefinition.setArtifactName(operation.getImplementation().getArtifactName());
+        operationDataDefinition.setImplementation(artifactDataDefinition);
         if (CollectionUtils.isNotEmpty(operation.getInputs())) {
             final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
             operation.getInputs().forEach(input -> {
