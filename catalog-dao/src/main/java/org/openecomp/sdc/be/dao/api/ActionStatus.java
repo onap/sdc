@@ -125,5 +125,8 @@ public enum ActionStatus {
     //Abstract template related
     ABSTRACT, NORMAL,
     //including default imports in CSAR related
-    CSAR_TOSCA_IMPORTS_ERROR
+    CSAR_TOSCA_IMPORTS_ERROR,
+    //TOSCA node types
+    INVALID_NODE_TYPES_YAML
+
 }

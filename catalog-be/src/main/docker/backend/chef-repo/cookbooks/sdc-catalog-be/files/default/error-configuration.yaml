@@ -2612,3 +2612,9 @@ errors:
         message: "Could not delete the model '%1' elements.",
         messageId: "SVC4160"
     }
+    #---------SVC4161-----------------------------
+    INVALID_NODE_TYPES_YAML: {
+        code: 400,
+        message: "Invalid node_types TOSCA yaml",
+        messageId: "SVC4161"
+    }

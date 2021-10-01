@@ -23,7 +23,9 @@ import pycurl
 
 from sdcBePy.common import logger
 from sdcBePy.common.normative.main import process_element_list, process_type_list
-from sdcBePy.tosca.models.normativeElementsList import get_normative_element_candidate_list, get_normative_element_with_metadata_list
+from sdcBePy.tosca.models.normativeElementsList import get_normative_element_candidate_list, \
+    get_normative_element_with_metadata_list
+
 
 class ModelClient:
 
@@ -86,8 +88,7 @@ class ModelClient:
             process_element_list(get_normative_element_candidate_list(tosca_elements_import_path), self.__sdc_be_proxy, model=model_name)
         logger.log("Finished importing normative elements for model", model_name)
 
-    def import_model_types(self, model_payload_dict, types_list, upgrade):
-        model_name = model_payload_dict['name']
+    def import_model_types(self, model_name, types_list, upgrade):
         logger.debug("Starting import of normative types for model '{}'".format(model_name))
         process_type_list(types_list, self.__sdc_be_proxy, upgrade)
         logger.log("Finished importing normative types for model", model_name)

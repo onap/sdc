@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.servlets;
 
 import com.jcabi.aspects.Loggable;
+import fj.data.Either;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -29,8 +30,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.HeaderParam;
@@ -54,12 +59,15 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.model.NodeTypesMetadataList;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.util.ValidationUtils;
+import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -80,7 +88,7 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
     public static final String USER_TYPE_RESOURCE_UI_IMPORT = "user-resource-ui-import";
     private static final Logger log = LoggerFactory.getLogger(ResourceUploadServlet.class);
 
-    private ModelBusinessLogic modelBusinessLogic;
+    private final ModelBusinessLogic modelBusinessLogic;
 
     @Inject
     public ResourceUploadServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
@@ -144,6 +152,59 @@ public class ResourceUploadServlet extends AbstractValidationsServlet {
             throw e;
         } catch (final Exception e) {
             var errorMsg = String.format("Unexpected error while uploading Resource '%s'", resourceInfoJsonString);
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
+            log.error(errorMsg, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+    }
+
+    @POST
+    @Path("/resource/import")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    @Operation(description = "Import node types from a TOSCA yaml, along with the types metadata", method = "POST",
+        summary = "Creates node types from a TOSCA yaml file", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "201", description = "Resources created"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "409", description = "One of the resources already exists")}
+    )
+    public Response bulkImport(@Parameter(description = "The nodes metadata JSON", required = true)
+                               @NotNull @FormDataParam("nodeTypeMetadataJson") final NodeTypesMetadataList nodeTypeMetadata,
+                               @Parameter(description = "The node types TOSCA definition yaml", required = true)
+                               @NotNull @FormDataParam("nodeTypesYaml") final InputStream nodeTypesYamlInputStream,
+                               @Parameter(description = "The model name to associate the node types to")
+                               @DefaultValue("true") @FormDataParam("createNewVersion") boolean createNewVersion,
+                               @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+                               @Context final HttpServletRequest request) {
+        userId = ValidationUtils.sanitizeInputString(userId);
+        final Either<User, ResponseFormat> userEither = getUser(request, userId);
+        if (userEither.isRight()) {
+            return buildErrorResponse(userEither.right().value());
+        }
+
+        final User user = userEither.left().value();
+
+        final String nodeTypesYamlString;
+        try {
+            nodeTypesYamlString = new String(nodeTypesYamlInputStream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (final IOException e) {
+            var errorMsg = "Could not read the given node types yaml";
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
+            log.error(errorMsg, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_NODE_TYPES_YAML));
+        }
+
+        try {
+            resourceImportManager
+                .importAllNormativeResource(nodeTypesYamlString, nodeTypeMetadata, user, createNewVersion, false);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), null);
+        } catch (final BusinessException e) {
+            throw e;
+        } catch (final Exception e) {
+            var errorMsg = "Unexpected error while importing the node types";
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
             log.error(errorMsg, e);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));

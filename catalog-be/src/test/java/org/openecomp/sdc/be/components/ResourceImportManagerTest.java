@@ -32,20 +32,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import fj.data.Either;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
@@ -61,6 +64,7 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -68,6 +72,8 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.NodeTypeMetadata;
+import org.openecomp.sdc.be.model.NodeTypesMetadataList;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
@@ -88,34 +94,23 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import fj.data.Either;
-
 public class ResourceImportManagerTest {
 
-    static ResourceImportManager importManager;
-    static AuditingManager auditingManager = Mockito.mock(AuditingManager.class);
-    static ResponseFormatManager responseFormatManager = Mockito.mock(ResponseFormatManager.class);
-    static ResourceBusinessLogic resourceBusinessLogic = Mockito.mock(ResourceBusinessLogic.class);
-    static InterfaceOperationBusinessLogic interfaceOperationBusinessLogic = Mockito.mock(InterfaceOperationBusinessLogic.class);
-    static InterfaceDefinitionHandler interfaceDefinitionHandler =
-        new InterfaceDefinitionHandler(interfaceOperationBusinessLogic);
+    private ResourceImportManager importManager;
 
-    static UserBusinessLogic userAdmin = Mockito.mock(UserBusinessLogic.class);
-    static ToscaOperationFacade toscaOperationFacade =  Mockito.mock(ToscaOperationFacade.class);
-
-    protected static final ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
-    private static final CapabilityTypeOperation capabilityTypeOperation = Mockito.mock(CapabilityTypeOperation.class);
+    private final AuditingManager auditingManager = mock(AuditingManager.class);
+    private final ResponseFormatManager responseFormatManager = mock(ResponseFormatManager.class);
+    private final ResourceBusinessLogic resourceBusinessLogic = mock(ResourceBusinessLogic.class);
+    private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic = mock(InterfaceOperationBusinessLogic.class);
+    private final InterfaceDefinitionHandler interfaceDefinitionHandler = new InterfaceDefinitionHandler(interfaceOperationBusinessLogic);
+    private final JanusGraphDao janusGraphDao = mock(JanusGraphDao.class);
+    private final UserBusinessLogic userAdmin = mock(UserBusinessLogic.class);
+    private final ToscaOperationFacade toscaOperationFacade =  mock(ToscaOperationFacade.class);
+    private final ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+    private final CapabilityTypeOperation capabilityTypeOperation = mock(CapabilityTypeOperation.class);
 
     @BeforeAll
     public static void beforeClass() {
-        importManager = new ResourceImportManager(componentsUtils, capabilityTypeOperation, interfaceDefinitionHandler);
-        importManager.setAuditingManager(auditingManager);
-        when(toscaOperationFacade.getLatestByToscaResourceName(Mockito.anyString(), Mockito.any())).thenReturn(Either.left(null));
-        when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(Mockito.anyString(), Mockito.any())).thenReturn(Either.left(null));
-        importManager.setResponseFormatManager(responseFormatManager);
-        importManager.setResourceBusinessLogic(resourceBusinessLogic);
-        importManager.setToscaOperationFacade(toscaOperationFacade);
-        
         String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         final ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
@@ -127,7 +122,13 @@ public class ResourceImportManagerTest {
 
     @BeforeEach
     public void beforeTest() {
-        Mockito.reset(auditingManager, responseFormatManager, resourceBusinessLogic, userAdmin);
+        importManager = new ResourceImportManager(componentsUtils, capabilityTypeOperation, interfaceDefinitionHandler, janusGraphDao);
+        importManager.setAuditingManager(auditingManager);
+        when(toscaOperationFacade.getLatestByToscaResourceName(anyString(), any())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceNameAndModel(anyString(), any())).thenReturn(Either.left(null));
+        importManager.setResponseFormatManager(responseFormatManager);
+        importManager.setResourceBusinessLogic(resourceBusinessLogic);
+        importManager.setToscaOperationFacade(toscaOperationFacade);
         Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
         when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
             any(JsonParseFlagEnum.class), any())).thenReturn(notFound);
@@ -142,13 +143,14 @@ public class ResourceImportManagerTest {
         user.setRole("ADMIN");
         user.setFirstName("Jhon");
         user.setLastName("Doh");
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
 
-        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        ImmutablePair<Resource, ActionStatus> createResource =
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
         Resource resource = createResource.left;
 
         testSetConstantMetaData(resource);
@@ -157,15 +159,74 @@ public class ResourceImportManagerTest {
         testSetDerivedFrom(resource);
         testSetProperties(resource);
 
-        Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(eq(user), eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
+        verify(resourceBusinessLogic).propagateStateToCertified(eq(user), eq(resource), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
     }
+
+    @Test
+    void importAllNormativeResourceSuccessTest() {
+        final List<NodeTypeMetadata> nodeMetadataList = new ArrayList<>();
+        var nodeTypeMetadata1 = new NodeTypeMetadata();
+        nodeTypeMetadata1.setToscaName("my.tosca.Type");
+        nodeMetadataList.add(nodeTypeMetadata1);
+        var nodeTypeMetadata2 = new NodeTypeMetadata();
+        nodeTypeMetadata2.setToscaName("my.tosca.not.in.the.Yaml");
+        nodeMetadataList.add(nodeTypeMetadata2);
+        var nodeTypesMetadataList = new NodeTypesMetadataList();
+        nodeTypesMetadataList.setNodeMetadataList(nodeMetadataList);
+        var user = new User();
+        var yaml = "node_types:\n"
+            + "  my.tosca.Type:\n"
+            + "    description: a description";
+
+        when(toscaOperationFacade.getLatestByName(any(), any())).thenReturn(Either.left(null));
+        when(resourceBusinessLogic
+            .createOrUpdateResourceByImport(any(Resource.class), any(User.class), eq(true), eq(true), eq(false), eq(null), eq(null), eq(false)))
+            .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK));
+
+        importManager.importAllNormativeResource(yaml, nodeTypesMetadataList, user, false, false);
+        verify(janusGraphDao).commit();
+    }
+
+    @Test
+    void importAllNormativeResourceTest_invalidYaml() {
+        var invalidYaml = "node_types: my.tosca.Type:";
+
+        final ByActionStatusComponentException actualException = assertThrows(ByActionStatusComponentException.class,
+            () -> importManager.importAllNormativeResource(invalidYaml, new NodeTypesMetadataList(), new User(), false, false));
+        assertEquals(ActionStatus.INVALID_NODE_TYPES_YAML, actualException.getActionStatus());
+    }
+
+    @Test
+    void importAllNormativeResourceTest_exceptionDuringImportShouldTriggerRolback() {
+        when(responseFormatManager.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(mock(ResponseFormat.class));
+        when(toscaOperationFacade.getLatestByName(any(), any())).thenThrow(new RuntimeException());
+
+        final List<NodeTypeMetadata> nodeMetadataList = new ArrayList<>();
+        var nodeTypeMetadata1 = new NodeTypeMetadata();
+        nodeTypeMetadata1.setToscaName("my.tosca.Type");
+        nodeMetadataList.add(nodeTypeMetadata1);
+        var nodeTypeMetadata2 = new NodeTypeMetadata();
+        nodeTypeMetadata2.setToscaName("my.tosca.not.in.the.Yaml");
+        nodeMetadataList.add(nodeTypeMetadata2);
+        var nodeTypesMetadataList = new NodeTypesMetadataList();
+        nodeTypesMetadataList.setNodeMetadataList(nodeMetadataList);
+        var user = new User();
+        var yaml = "node_types:\n"
+            + "  my.tosca.Type:\n"
+            + "    description: a description";
+
+        assertThrows(ComponentException.class,
+            () -> importManager.importAllNormativeResource(yaml, nodeTypesMetadataList, user, false, false));
+        verify(janusGraphDao).rollback();
+    }
+
 
     @Test()
     void testResourceCreationFailed() {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
         ResponseFormat dummyResponseFormat = createGeneralErrorInfo();
 
         when(responseFormatManager.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(dummyResponseFormat);
@@ -174,15 +235,17 @@ public class ResourceImportManagerTest {
         String jsonContent = "this is an invalid yml!";
         ComponentException errorInfoFromTest = null;
         try {
-            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
         }catch (ComponentException e){
             errorInfoFromTest = e;
         }
         assertNotNull(errorInfoFromTest);
         assertEquals(ActionStatus.GENERAL_ERROR, errorInfoFromTest.getActionStatus());
 
-        Mockito.verify(resourceBusinessLogic, Mockito.times(0)).createOrUpdateResourceByImport(Mockito.any(Resource.class), eq(user), eq(true), eq(false), eq(true), eq(null), eq(null), eq(false));
-        Mockito.verify(resourceBusinessLogic, Mockito.times(0)).propagateStateToCertified(eq(user), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
+        verify(resourceBusinessLogic, times(0))
+            .createOrUpdateResourceByImport(any(Resource.class), eq(user), eq(true), eq(false), eq(true), eq(null), eq(null), eq(false));
+        verify(resourceBusinessLogic, times(0))
+            .propagateStateToCertified(eq(user), any(Resource.class), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
     }
 
     @Test
@@ -190,34 +253,37 @@ public class ResourceImportManagerTest {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml");
 
-        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        ImmutablePair<Resource, ActionStatus> createResource =
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
         Resource resource = createResource.left;
         testSetCapabilities(resource);
 
-        Mockito.verify(resourceBusinessLogic, Mockito.times(1)).propagateStateToCertified(eq(user), eq(resource), Mockito.any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
-        Mockito.verify(resourceBusinessLogic, Mockito.times(1)).createOrUpdateResourceByImport(resource, user, true, false, true, null, null, false);
+        verify(resourceBusinessLogic)
+            .propagateStateToCertified(eq(user), eq(resource), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
+        verify(resourceBusinessLogic).createOrUpdateResourceByImport(resource, user, true, false, true, null, null, false);
 
     }
 
     @Test
-    void testResourceCreationWithRequirments() throws IOException {
+    void testResourceCreationWithRequirements() throws IOException {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-port.yml");
 
-        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
-        testSetRequirments(createResource.left);
+        ImmutablePair<Resource, ActionStatus> createResource =
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+        testSetRequirements(createResource.left);
 
     }
 
@@ -226,7 +292,7 @@ public class ResourceImportManagerTest {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
@@ -241,8 +307,8 @@ public class ResourceImportManagerTest {
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
 		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
-        final ImmutablePair<Resource, ActionStatus> createResource = importManager
-            .importNormativeResource(jsonContent, resourceMD, user, true, true);
+        final ImmutablePair<Resource, ActionStatus> createResource =
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
         assertSetInterfaceImplementation(createResource.left);
     }
 
@@ -251,7 +317,7 @@ public class ResourceImportManagerTest {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
@@ -266,7 +332,8 @@ public class ResourceImportManagerTest {
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
 		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
-        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        ImmutablePair<Resource, ActionStatus> createResource =
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
         assertNull(createResource.left.getInterfaces());
     }
 
@@ -275,7 +342,7 @@ public class ResourceImportManagerTest {
         UploadResourceInfo resourceMD = createDummyResourceMD();
         User user = new User();
         user.setUserId(resourceMD.getContactId());
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
 
@@ -290,7 +357,8 @@ public class ResourceImportManagerTest {
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
 		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 		
-        ImmutablePair<Resource, ActionStatus> createResource = importManager.importNormativeResource(jsonContent, resourceMD, user, true, true);
+        ImmutablePair<Resource, ActionStatus> createResource =
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
         assertNull(createResource.left.getInterfaces());
     }
     
@@ -303,10 +371,10 @@ public class ResourceImportManagerTest {
         user.setRole("ADMIN");
         user.setFirstName("Jhon");
         user.setLastName("Doh");
-        when(userAdmin.getUser(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(user);
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
         setResourceBusinessLogicMock();
-        final Either<Component, StorageOperationStatus> foundResourceEither = Either.left(Mockito.mock(Resource.class));
+        final Either<Component, StorageOperationStatus> foundResourceEither = Either.left(mock(Resource.class));
         when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
             any(JsonParseFlagEnum.class), any())).thenReturn(foundResourceEither);
         when(toscaOperationFacade.isNodeAssociatedToModel(eq(null), any(Resource.class))).thenReturn(true);
@@ -314,37 +382,38 @@ public class ResourceImportManagerTest {
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
 
         var actualException = assertThrows(ByActionStatusComponentException.class,
-            () -> importManager.importNormativeResource(jsonContent, resourceMD, user, true, true));
+            () -> importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false));
         assertEquals(ActionStatus.COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS, actualException.getActionStatus());
     }
 
     private void setResourceBusinessLogicMock() {
         when(resourceBusinessLogic.getUserAdmin()).thenReturn(userAdmin);
-        when(resourceBusinessLogic.createOrUpdateResourceByImport(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.anyBoolean(), Mockito.anyBoolean(), Mockito.anyBoolean(), eq(null), eq(null), eq(false)))
+        when(resourceBusinessLogic.createOrUpdateResourceByImport(any(Resource.class), any(User.class), anyBoolean(), anyBoolean(), anyBoolean(), eq(null), eq(null), eq(false)))
                 .thenAnswer((Answer<ImmutablePair<Resource, ActionStatus>>) invocation -> {
                     Object[] args = invocation.getArguments();
                     return new ImmutablePair<>((Resource) args[0], ActionStatus.CREATED);
 
                 });
-        when(resourceBusinessLogic.propagateStateToCertified(Mockito.any(User.class), Mockito.any(Resource.class), Mockito.any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false)))
+        when(resourceBusinessLogic.propagateStateToCertified(any(User.class), any(Resource.class), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false)))
                 .thenAnswer((Answer<Resource>) invocation -> {
                     Object[] args = invocation.getArguments();
                     return (Resource) args[1];
 
                 });
-        when(resourceBusinessLogic.createResourceByDao(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), Mockito.anyBoolean(), Mockito.anyBoolean())).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
+        when(resourceBusinessLogic.createResourceByDao(
+            any(Resource.class), any(User.class), any(AuditingActionEnum.class), anyBoolean(), anyBoolean())).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
             Object[] args = invocation.getArguments();
             return Either.left((Resource) args[0]);
 
         });
-        when(resourceBusinessLogic.validateResourceBeforeCreate(Mockito.any(Resource.class), Mockito.any(User.class), Mockito.any(AuditingActionEnum.class), eq(false), eq(null))).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
+        when(resourceBusinessLogic.validateResourceBeforeCreate(
+            any(Resource.class), any(User.class), any(AuditingActionEnum.class), eq(false), eq(null))).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
             Object[] args = invocation.getArguments();
             return Either.left((Resource) args[0]);
 
         });
 
-        Boolean either = true;
-        when(resourceBusinessLogic.validatePropertiesDefaultValues(Mockito.any(Resource.class))).thenReturn(either);
+        when(resourceBusinessLogic.validatePropertiesDefaultValues(any(Resource.class))).thenReturn(true);
     }
 
     private ResponseFormat createGeneralErrorInfo() {
@@ -421,7 +490,7 @@ public class ResourceImportManagerTest {
 
     }
 
-    private void testSetRequirments(Resource resource) {
+    private void testSetRequirements(Resource resource) {
         Map<String, List<RequirementDefinition>> requirements = resource.getRequirements();
         assertEquals(2, requirements.size());
 

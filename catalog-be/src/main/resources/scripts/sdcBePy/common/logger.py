@@ -12,8 +12,11 @@ def debug(desc, *args):
         print(desc, join_strings(args))
 
 
-def log(desc, arg):
-    print(desc, arg)
+def log(desc, arg=None):
+    if arg:
+        print(desc, arg)
+    else:
+        print(desc)
 
 
 def print_and_exit(error_code, error_desc):
