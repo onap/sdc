@@ -21,10 +21,12 @@ package org.openecomp.sdc.be.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 import org.openecomp.sdc.common.api.UploadArtifactInfo;
 
+@NoArgsConstructor
 public class UploadResourceInfo {
 
     private String payloadData;
@@ -39,7 +41,6 @@ public class UploadResourceInfo {
 
     public UploadResourceInfo(String payload, String payloadName, String description, String category, List<String> tags,
                               List<UploadArtifactInfo> artifactsList, String modelName) {
-        super();
         this.payloadData = payload;
         this.payloadName = payloadName;
         this.description = description;
@@ -58,9 +59,6 @@ public class UploadResourceInfo {
                 categories.add(catDef);
             }
         }
-    }
-
-    public UploadResourceInfo() {
     }
 
     public String getPayloadData() {
