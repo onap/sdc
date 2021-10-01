@@ -9,6 +9,7 @@ from sdcBePy.common.normative.main import process_element_list, process_type_lis
 from sdcBePy.tosca.main import parse_and_create_proxy
 from sdcBePy.tosca.models.model_client import ModelClient
 from sdcBePy.tosca.models.model_import_manager import ModelImportManager
+from sdcBePy.tosca.models.node_type_client import NodeTypeClient
 from sdcBePy.tosca.models.normativeElementsList import get_normative_element_candidate_list, \
     get_normative_element_with_metadata_list
 from sdcBePy.tosca.models.normativeToUpdateList import TypesToUpdate, get_heat_and_normative_to_update_list, \
@@ -25,7 +26,8 @@ def main(sdc_be_proxy):
     base_file_location = os.getcwd() + "/"
     logger.debug("working directory =" + base_file_location)
 
-    model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy))
+    model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy),
+                                              NodeTypeClient(sdc_be_proxy))
     try:
         model_import_manager.deploy_models()
     except Exception as ex:

@@ -656,7 +656,8 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
             importedResourceStatus = importResourceFromUICsar(resourceInfoObject, user, resourceUniqueId);
         } else if (!authority.isUserTypeResource()) {
             log.debug("import normative type resource");
-            createOrUpdateResponse = resourceImportManager.importNormativeResource(yamlAsString, resourceInfoObject, user, createNewVersion, true);
+            createOrUpdateResponse =
+                resourceImportManager.importNormativeResource(yamlAsString, resourceInfoObject, user, createNewVersion, true, false);
         } else {
             log.debug("import user resource (not normative type)");
             createOrUpdateResponse = resourceImportManager.importUserDefinedResource(yamlAsString, resourceInfoObject, user, false);

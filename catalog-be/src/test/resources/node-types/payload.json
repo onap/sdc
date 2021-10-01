@@ -1,0 +1,304 @@
+{
+  "nodeMetadataList": [
+    {
+      "contactId": "jh0003",
+      "toscaName": "tosca.nodes.Root",
+      "name": "Root",
+      "model": "ETSI SOL001 v2.5.3",
+      "description": "The TOSCA Node Type all other TOSCA base Node Types derive from",
+      "resourceIconPath": "defaulticon",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Abstract"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "Root",
+        "tosca.nodes.Root"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "tosca.nodes.nfv.VNF",
+      "name": "VNF",
+      "model": "ETSI SOL001 v2.5.3",
+      "description": "The generic abstract type from which all VNF specific abstract node types shall be derived to form, together with other node types, the TOSCA service template(s) representing the VNFD",
+      "resourceIconPath": "compute",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "VNF",
+        "tosca.nodes.nfv.VNF"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.Cp",
+      "name": "Cp",
+      "model": "ETSI SOL001 v2.5.3",
+      "description": "Provides information regarding the purpose of the connection point",
+      "contactId": "jh0003",
+      "resourceIconPath": "compute",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "Cp",
+        "tosca.nodes.nfv.Cp"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.VnfExtCp",
+      "name": "VNF External CP",
+      "model": "ETSI SOL001 v2.5.3",
+      "description": "Describes a logical external connection point, exposed by the VNF enabling connection with an external Virtual Link",
+      "contactId": "jh0003",
+      "resourceIconPath": "network",
+      "resourceType": "CP",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "VNF External CP",
+        "tosca.nodes.nfv.VnfExtCp"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.VnfVirtualLink",
+      "name": "VnfVirtualLink",
+      "model": "ETSI SOL001 v2.5.3",
+      "contactId": "jh0003",
+      "description": "Describes the information about an internal VNF VL",
+      "resourceIconPath": "network",
+      "resourceType": "VL",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "VnfVirtualLink",
+        "tosca.nodes.nfv.VnfVirtualLink"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.Vdu.VirtualObjectStorage",
+      "name": "VDU VirtualObjectStorage",
+      "description": "This node type describes the specifications of requirements related to virtual object storage resources",
+      "model": "ETSI SOL001 v2.5.3",
+      "contactId": "jh0003",
+      "resourceIconPath": "objectStorage",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "VDU VirtualObjectStorage",
+        "tosca.nodes.nfv.Vdu.VirtualObjectStorage"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.Vdu.VirtualFileStorage",
+      "name": "VDU VirtualFileStorage",
+      "description": "This node type describes the specifications of requirements related to virtual file storage resources",
+      "model": "ETSI SOL001 v2.5.3",
+      "contactId": "jh0003",
+      "resourceIconPath": "objectStorage",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "VDU VirtualFileStorage",
+        "tosca.nodes.nfv.Vdu.VirtualFileStorage"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.Vdu.VirtualBlockStorage",
+      "name": "VDU VirtualBlockStorage",
+      "description": "This node type describes the specifications of requirements related to virtual block storage resources",
+      "model": "ETSI SOL001 v2.5.3",
+      "contactId": "jh0003",
+      "resourceIconPath": "objectStorage",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "VDU VirtualBlockStorage",
+        "tosca.nodes.nfv.Vdu.VirtualBlockStorage"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.NsVirtualLink",
+      "name": "NsVirtualLink",
+      "description": "Node definition of Virtual Links",
+      "model": "ETSI SOL001 v2.5.3",
+      "contactId": "jh0003",
+      "resourceIconPath": "network",
+      "resourceType": "VL",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "NsVirtualLink",
+        "tosca.nodes.nfv.NsVirtualLink"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.NS",
+      "name": "NS",
+      "contactId": "jh0003",
+      "description": "ETSI Network Service",
+      "model": "ETSI SOL001 v2.5.3",
+      "resourceIconPath": "network",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Network Elements"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "NS",
+        "tosca.nodes.nfv.NS"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.Vdu.Compute",
+      "name": "VDU Compute",
+      "contactId": "jh0003",
+      "description": "Represents a real or virtual machine or server. Information specified on the Compute node will be used to find the machine that fits the given requirements in the cloud available machines. If no sizing information are specified the cloud provider default machine will be used. It is strongly recommended to specify the required CPUs and memory at least.",
+      "model": "ETSI SOL001 v2.5.3",
+      "resourceIconPath": "compute",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "VDU Compute",
+        "tosca.nodes.nfv.Vdu.Compute"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.Sap",
+      "name": "Sap",
+      "contactId": "jh0003",
+      "description": "Node definition of SAP",
+      "model": "ETSI SOL001 v2.5.3",
+      "resourceIconPath": "network",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "vendorName": "ETSI",
+      "vendorRelease": "2.5.1",
+      "tags": [
+        "Sap",
+        "tosca.nodes.nfv.Sap"
+      ]
+    },
+    {
+      "toscaName": "tosca.nodes.nfv.VduCp",
+      "name": "VDU Cp",
+      "contactId": "jh0003",
+      "description": "Describes network connectivity between a VNFC instance based on this VDU and an internal VL",
+      "model": "ETSI SOL001 v2.5.3",
+      "resourceIconPath": "port",
+      "resourceType": "CP",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Network Elements"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "VDU Cp",
+        "tosca.nodes.nfv.VduCp"
+      ]
+    }
+  ]
+}
+

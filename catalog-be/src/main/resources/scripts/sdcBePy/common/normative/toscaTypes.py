@@ -31,13 +31,13 @@ def print_and_check_results(results, update_version, exit_on_success=False):
         for result in results:
             print_name_and_return_code(result[0], result[1], with_line=False)
         print("----------------------------------------")
-        check_results_and_exit(results, update_version, exit_on_success)
+        check_results_and_exit(results, exit_on_success)
     else:
         raise ResourceCreationError("Results is none -> error occurred!!", 1)
 
 
-def check_results_and_exit(results, update_version, exit_on_success):
-    if not _results_ok(results, _get_response_code(update_version)):
+def check_results_and_exit(results, exit_on_success):
+    if not _results_ok(results, _get_response_code()):
         raise ResourceCreationError("Failed to create the normatives types !!", 1)
     else:
         if exit_on_success:
@@ -46,7 +46,7 @@ def check_results_and_exit(results, update_version, exit_on_success):
 
 def _create_normatives_type(file_dir, sdc_be_proxy, types, update_version):
     results = []
-    response_codes = _get_response_code(update_version)
+    response_codes = _get_response_code()
     for normative_type in types:
         result = _send_request(sdc_be_proxy, file_dir, normative_type, update_version)
         results.append(result)
@@ -113,7 +113,7 @@ def _results_ok(results, response_codes):
     return True
 
 
-def _get_response_code(update_version):
+def _get_response_code():
     response_codes = [200, 201, 409]
     return response_codes
 
