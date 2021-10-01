@@ -20,13 +20,12 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 
 public class ArtifactDataDefinition extends ToscaDataDefinition {
@@ -78,7 +77,9 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
         }
         this.setGeneratedFromId(a.getGeneratedFromId());
         this.setIsFromCsar(a.getIsFromCsar());
-
+        if (a.getProperties() != null) {
+            this.setProperties(new ArrayList<>(a.getProperties()));
+        }
 
     }
 
@@ -364,6 +365,14 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.GENERATED_FROM_ID, generatedFromId);
     }
 
+
+    public List<PropertyDataDefinition> getProperties() {
+        return (List<PropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
+    }
+
+    private void setProperties(final List<PropertyDataDefinition> properties) {
+        setToscaPresentationValue(JsonPresentationFields.PROPERTIES, properties);
+    }
 
     @Override
     public String toString() {

@@ -19,7 +19,7 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {Component} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {UIInterfaceModel} from "../interface-operations.component";
 import {
     InputOperationParameter,
@@ -27,6 +27,12 @@ import {
     IOperationParamsList
 } from "../../../../../models/interfaceOperation";
 import {TranslateService} from "../../../../shared/translator/translate.service";
+import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
+import {DropdownValue} from "../../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {ArtifactModel} from "../../../../../models/artifacts";
+import {PropertyBEModel} from "../../../../../models/properties-inputs/property-be-model";
+import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
+import {PropertyFEModel} from "../../../../../models/properties-inputs/property-fe-model";
 
 @Component({
     selector: 'operation-handler',
@@ -36,19 +42,31 @@ import {TranslateService} from "../../../../shared/translator/translate.service"
 })
 
 export class InterfaceOperationHandlerComponent {
+    @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
 
     input: {
+        toscaArtifactTypes: Array<DropdownValue>;
         selectedInterface: UIInterfaceModel;
         selectedInterfaceOperation: InterfaceOperationModel;
         validityChangedCallback: Function;
     };
 
     interfaceType: string;
+    artifactVersion: string;
+    artifactName: string;
     interfaceOperationName: string;
     operationToUpdate: InterfaceOperationModel;
     inputs: Array<InputOperationParameter> = [];
+    properties: Array<PropertyParamRowComponent> = [];
     isLoading: boolean = false;
     readonly: boolean;
+
+    toscaArtifactTypeSelected: string;
+    toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
+
+    toscaArtifactTypes: Array<DropdownValue> = [];
+
+    enableAddArtifactImplementation: boolean;
 
     ngOnInit() {
         this.interfaceType = this.input.selectedInterface.displayType();
@@ -60,9 +78,82 @@ export class InterfaceOperationHandlerComponent {
                 listToscaDataDefinition: Array<InputOperationParameter> = [];
             }
         }
+
         this.inputs = this.operationToUpdate.inputs.listToscaDataDefinition;
         this.removeImplementationQuote();
         this.validityChanged();
+        this.loadInterfaceOperationImplementation();
+    }
+
+    private loadInterfaceOperationImplementation() {
+        this.toscaArtifactTypes = this.input.toscaArtifactTypes;
+        this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
+        this.artifactName = this.operationToUpdate.implementation.artifactName;
+        this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
+        this.getArtifactTypesSelected();
+    }
+
+    onDescriptionChange= (value: any): void => {
+        this.operationToUpdate.description = value;
+    }
+
+    onImplementationNameChange(value: any) {
+        this.readonly = true
+        if (value) {
+            let artifact = new ArtifactModel();
+            artifact.artifactName = value;
+            this.operationToUpdate.implementation = artifact;
+            this.enableAddArtifactImplementation = false;
+            this.readonly = false;
+        }
+    }
+
+    onPropertyValueChange = (propertyValue) => {
+        this.emitter.emit(propertyValue);
+    }
+
+    onMarkToAddArtifactToImplementation(event: any) {
+        if (!event) {
+            this.toscaArtifactTypeSelected = undefined;
+            this.artifactVersion = undefined;
+            if (this.operationToUpdate.implementation.artifactType) {
+                this.artifactName = undefined;
+            }
+            this.toscaArtifactTypeProperties = undefined;
+        } else {
+            this.getArtifactTypesSelected();
+        }
+        this.enableAddArtifactImplementation = event;
+        this.validateRequiredField();
+    }
+
+    onSelectToscaArtifactType(type: IDropDownOption) {
+        if (type) {
+            let toscaArtifactType = type.value;
+            let artifact = new ArtifactModel();
+            this.artifactName = undefined;
+            this.artifactVersion = undefined;
+            artifact.artifactType = toscaArtifactType.type;
+            artifact.properties = toscaArtifactType.properties;
+            this.toscaArtifactTypeProperties = artifact.properties;
+            this.toscaArtifactTypeSelected = artifact.artifactType;
+            this.operationToUpdate.implementation = artifact;
+            this.getArtifactTypesSelected();
+        }
+        this.validateRequiredField();
+    }
+
+    onArtifactFileChange(value: any) {
+        if (value) {
+            this.operationToUpdate.implementation.artifactName = value;
+        }
+        this.validateRequiredField();
+    }
+
+    onArtifactVersionChange(value: any) {
+        if (value) {
+            this.operationToUpdate.implementation.artifactVersion = value;
+        }
     }
 
     onAddInput(inputOperationParameter?: InputOperationParameter): void {
@@ -73,10 +164,30 @@ export class InterfaceOperationHandlerComponent {
         this.validityChanged();
     }
 
+    propertyValueValidation = (propertyValue): void => {
+        this.onPropertyValueChange(propertyValue);
+        this.readonly = !propertyValue.isValid;
+    }
+
     onRemoveInput = (inputParam: InputOperationParameter): void => {
         let index = this.inputs.indexOf(inputParam);
         this.inputs.splice(index, 1);
         this.validityChanged();
+    }
+
+    private removeImplementationQuote(): void {
+        if (this.operationToUpdate.implementation) {
+            if (!this.operationToUpdate.implementation
+                || !this.operationToUpdate.implementation.artifactName) {
+                return;
+            }
+
+            let implementation = this.operationToUpdate.implementation.artifactName.trim();
+
+            if (implementation.startsWith("'") && implementation.endsWith("'")) {
+                this.operationToUpdate.implementation.artifactName = implementation.slice(1, -1);
+            }
+        }
     }
 
     private generateUniqueId = (): string => {
@@ -97,8 +208,24 @@ export class InterfaceOperationHandlerComponent {
         }
     }
 
-    onDescriptionChange= (value: any): void => {
-        this.operationToUpdate.description = value;
+    private getArtifactTypesSelected() {
+        if (this.operationToUpdate.implementation && this.operationToUpdate.implementation.artifactType) {
+            this.artifactName = this.operationToUpdate.implementation.artifactName;
+            this.toscaArtifactTypeSelected = this.operationToUpdate.implementation.artifactType;
+            this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
+            this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
+            this.enableAddArtifactImplementation = true;
+        }
+        this.validateRequiredField();
+    }
+
+    validateRequiredField = () => {
+        this.readonly = true;
+        let requiredFieldSelected = this.toscaArtifactTypeSelected && this.artifactName ? true : false;
+        this.input.validityChangedCallback(requiredFieldSelected);
+        if (requiredFieldSelected) {
+            this.readonly = false;
+        }
     }
 
     private checkFormValidForSubmit = (): boolean => {
@@ -114,17 +241,8 @@ export class InterfaceOperationHandlerComponent {
         return isValid;
     }
 
-    private removeImplementationQuote(): void {
-        if (!this.operationToUpdate.implementation
-            || !this.operationToUpdate.implementation.artifactName) {
-            return;
-        }
-
-        let implementation = this.operationToUpdate.implementation.artifactName.trim();
-
-        if (implementation.startsWith("'") && implementation.endsWith("'")) {
-            this.operationToUpdate.implementation.artifactName = implementation.slice(1, -1);
-        }
+    toDropDownOption(val: string) {
+        return { value : val, label: val };
     }
 
 }

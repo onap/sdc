@@ -30,11 +30,14 @@ import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {UiElementsModule} from '../../../../components/ui/ui-elements.module';
 import {InputParamRowComponent} from './input-param-row/input-param-row.component';
 import {InterfaceOperationHandlerComponent} from "./interface-operation-handler.component";
+import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
+import {PropertyTableModule} from "../../../../components/logic/properties-table/property-table.module";
 
 @NgModule({
   declarations: [
     InterfaceOperationHandlerComponent,
-    InputParamRowComponent
+    InputParamRowComponent,
+    PropertyParamRowComponent
   ],
   imports: [
     CommonModule,
@@ -42,9 +45,12 @@ import {InterfaceOperationHandlerComponent} from "./interface-operation-handler.
     FormsModule,
     FormElementsModule,
     TranslateModule,
-    UiElementsModule
+    UiElementsModule,
+    PropertyTableModule
   ],
-  exports: [],
+  exports: [
+    PropertyParamRowComponent
+  ],
   entryComponents: [
     InterfaceOperationHandlerComponent
   ],
