@@ -20,10 +20,9 @@
 
 package org.openecomp.sdc.be.tosca.model;
 
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Map;
 
 public class ToscaLifecycleOperationDefinitionTest {
 
@@ -34,7 +33,7 @@ public class ToscaLifecycleOperationDefinitionTest {
 	@Test
 	public void testGetImplementation() throws Exception {
 		ToscaLifecycleOperationDefinition testSubject;
-		String result;
+		Object result;
 
 		// default test
 		testSubject = createTestSubject();
@@ -44,11 +43,10 @@ public class ToscaLifecycleOperationDefinitionTest {
 	@Test
 	public void testSetImplementation() throws Exception {
 		ToscaLifecycleOperationDefinition testSubject;
-		String implementation = "";
 
 		// default test
 		testSubject = createTestSubject();
-		testSubject.setImplementation(implementation);
+		testSubject.setImplementation(new ToscaInterfaceOperationImplementation());
 	}
 
 	@Test

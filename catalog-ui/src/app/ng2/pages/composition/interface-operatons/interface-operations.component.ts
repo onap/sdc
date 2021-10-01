@@ -19,7 +19,7 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {Component, ComponentRef, Input} from '@angular/core';
+import {Component, ComponentRef, Inject, Input} from '@angular/core';
 import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {ModalService } from 'app/ng2/services/modal.service';
@@ -45,15 +45,17 @@ import {
   InterfaceModel,
   InputBEModel,
   ModalModel,
-  ComponentInstance
+  ComponentInstance, ArtifactModel
 } from 'app/models';
+import {ArtifactGroupType} from "../../../../utils/constants";
+import {DropdownValue} from "../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {ToscaArtifactService} from "../../../services/tosca-artifact.service";
+import {ToscaArtifactModel} from "../../../../models/toscaArtifact";
 
 export class UIInterfaceOperationModel extends InterfaceOperationModel {
   isCollapsed: boolean = true;
   isEllipsis: boolean;
   MAX_LENGTH = 75;
-  _description: string;
-
   constructor(operation: InterfaceOperationModel) {
     super(operation);
 
@@ -119,7 +121,6 @@ export class UIInterfaceModel extends ComponentInstanceInterfaceModel {
 })
 export class InterfaceOperationsComponent {
   interfaces: UIInterfaceModel[];
-  selectedOperation: InterfaceOperationModel;
   inputs: Array<InputBEModel>;
   isLoading: boolean;
   interfaceTypes: { [interfaceType: string]: string[] };
@@ -129,6 +130,9 @@ export class InterfaceOperationsComponent {
   modalInstance: ComponentRef<ModalComponent>;
   modalTranslation: ModalTranslation;
   componentInstancesInterfaces: Map<string, InterfaceModel[]>;
+
+  deploymentArtifactsFilePath: Array<DropdownValue> = [];
+  toscaArtifactTypes: Array<DropdownValue> = [];
 
   @Input() component: ComponentInstance;
   @Input() readonly: boolean;
@@ -141,8 +145,10 @@ export class InterfaceOperationsComponent {
       private TranslateService: TranslateService,
       private PluginsService: PluginsService,
       private topologyTemplateService: TopologyTemplateService,
+      private toscaArtifactService: ToscaArtifactService,
       private modalServiceNg2: ModalService,
       private workspaceService: WorkspaceService,
+      @Inject("Notification") private Notification: any,
   ) {
     this.modalTranslation = new ModalTranslation(TranslateService);
   }
@@ -150,6 +156,8 @@ export class InterfaceOperationsComponent {
   ngOnInit(): void {
     this.componentMetaData = this.workspaceService.metadata;
     this.loadComponentInstances();
+    this.loadDeployedArtifacts();
+    this.loadToscaArtifacts()
   }
 
   private loadComponentInstances() {
@@ -167,7 +175,7 @@ export class InterfaceOperationsComponent {
     this.sortInterfaces();
   }
 
-  private initInterfaces(interfaces: InterfaceModel[]): void {
+  private initInterfaces(interfaces: ComponentInstanceInterfaceModel[]): void {
     this.interfaces = _.map(interfaces, (interfaceModel) => new UIInterfaceModel(interfaceModel));
   }
 
@@ -201,7 +209,7 @@ export class InterfaceOperationsComponent {
   }
 
   private enableOrDisableSaveButton = (): boolean => {
-    return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
+    return this.modalInstance.instance.dynamicContent.instance.readonly;
   }
 
   onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
@@ -215,6 +223,8 @@ export class InterfaceOperationsComponent {
         this.modalInstance,
         InterfaceOperationHandlerComponent,
         {
+          deploymentArtifactsFilePath: this.deploymentArtifactsFilePath,
+          toscaArtifactTypes: this.toscaArtifactTypes,
           selectedInterface: interfaceModel,
           selectedInterfaceOperation: operation,
           validityChangedCallback: this.enableOrDisableSaveButton
@@ -235,13 +245,43 @@ export class InterfaceOperationsComponent {
         this.componentMetaData.uniqueId,
         this.componentMetaData.componentType,
         this.componentInstanceSelected.uniqueId,
-        operationUpdated)
-    .subscribe((updatedComponentInstance: ComponentInstance) => {
-      this.componentInstanceSelected = new ComponentInstance(updatedComponentInstance);
-      this.initComponentInstanceInterfaceOperations();
+        operationUpdated).subscribe((updatedComponentInstance: ComponentInstance) => {
+          this.componentInstanceSelected = new ComponentInstance(updatedComponentInstance);
+          this.initComponentInstanceInterfaceOperations();
     });
     this.modalServiceNg2.closeCurrentModal();
     this.isLoading = false;
+  }
+
+  loadDeployedArtifacts() {
+    this.topologyTemplateService.getArtifactsByType(this.componentMetaData.componentType, this.componentMetaData.uniqueId, ArtifactGroupType.DEPLOYMENT)
+    .subscribe(response => {
+      let artifactsDeployment = response.deploymentArtifacts;
+      if (artifactsDeployment) {
+        let deploymentArtifactsFound = <ArtifactModel[]>_.values(artifactsDeployment)
+        deploymentArtifactsFound.forEach(value => {
+          this.deploymentArtifactsFilePath.push(new DropdownValue(value, value.artifactType.concat('->').concat(value.artifactName)));
+        });
+      }}, error => {
+      this.Notification.error({
+        message: 'Failed to Load the Deployed Artifacts:' + error,
+        title: 'Failure'
+      });
+    });
+  }
+
+  loadToscaArtifacts() {
+    this.toscaArtifactService.getToscaArtifacts(this.componentMetaData.model).subscribe(response => {
+      if (response) {
+        let toscaArtifactsFound = <ToscaArtifactModel[]>_.values(response);
+        toscaArtifactsFound.forEach(value => this.toscaArtifactTypes.push(new DropdownValue(value, value.type)));
+      }
+    }, error => {
+      this.Notification.error({
+        message: 'Failed to Load Tosca Artifacts:' + error,
+        title: 'Failure'
+      });
+    });
   }
 
 }

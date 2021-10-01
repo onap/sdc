@@ -27,6 +27,6 @@ import lombok.Setter;
 public class ToscaOperationAssignment {
 
     private String description;
-    private String implementation;
+    private Object implementation;
     private Map<String, ToscaPropertyAssignment> inputs;
 }

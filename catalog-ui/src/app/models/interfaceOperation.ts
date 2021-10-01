@@ -19,6 +19,8 @@
 
 'use strict';
 
+import {ArtifactModel} from "./artifacts";
+
 export class InputOperationParameter {
     name: string;
     type: string;
@@ -36,6 +38,22 @@ export class InputOperationParameter {
     }
 }
 
+export class PropertyOperationParameter {
+    name: string;
+    type: string;
+    value?: string;
+    propertyId: string;
+
+    constructor(param?: any) {
+        if (param) {
+            this.name = param.name;
+            this.type = param.type;
+            this.value = param.value;
+            this.propertyId = param.propertyId;
+        }
+    }
+}
+
 export interface IOperationParamsList {
     listToscaDataDefinition: Array<InputOperationParameter>;
 }
@@ -45,7 +63,7 @@ export class BEInterfaceOperationModel {
     description: string;
     uniqueId: string;
     inputs: IOperationParamsList;
-    implementation?: InterfaceOperationImplementation;
+    implementation: ArtifactModel;
 
     constructor(operation?: any) {
         if (operation) {
@@ -64,8 +82,8 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
     operationType: string;
     description: string;
     uniqueId: string;
-    implementation?: InterfaceOperationImplementation;
     inputParams: IOperationParamsList;
+    implementation: ArtifactModel;
 
     constructor(operation?: any) {
         super(operation);
@@ -76,16 +94,13 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
             this.operationType = operation.operationType;
             this.uniqueId = operation.uniqueId;
             this.inputParams = operation.inputParams;
+            this.implementation = operation.implementation;
         }
     }
 
     public displayType(): string {
         return displayType(this.interfaceType);
     }
-}
-
-export class InterfaceOperationImplementation {
-    artifactName: string;
 }
 
 export class ComponentInstanceInterfaceModel {
