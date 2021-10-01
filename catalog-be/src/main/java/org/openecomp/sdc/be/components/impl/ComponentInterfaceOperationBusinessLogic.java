@@ -175,7 +175,7 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
     }
 
     private void updateOperationDefinitionImplementation(final OperationDataDefinition updatedOperationDataDefinition) {
-        final ArtifactDataDefinition artifactInfo = new ArtifactDataDefinition();
+        final ArtifactDataDefinition artifactInfo = new ArtifactDataDefinition(updatedOperationDataDefinition.getImplementation());
         artifactInfo.setArtifactName(String.format("'%s'", updatedOperationDataDefinition.getImplementation().getArtifactName()));
         updatedOperationDataDefinition.setImplementation(artifactInfo);
     }

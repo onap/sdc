@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <div class="i-sdc-form-item">
+        <div class="form-item">
             <sdc-input
                 label="{{'OPERATION_DESCRIPTION' | translate}}"
                 [(value)]="operationToUpdate.description"
@@ -50,12 +50,73 @@
             </sdc-input>
         </div>
 
-        <div class="i-sdc-form-item">
-            <sdc-input
-                label="{{'IMPLEMENTATION_NAME' | translate}}"
-                testId="interface-operation-implementation-name"
-                [(value)]="operationToUpdate.implementation.artifactName">
-            </sdc-input>
+        <div class="group-with-border content-row">
+            <label class="occurrences-label"> {{ 'INTERFACE_OPERATION_IMPLEMENTATION' | translate}}</label>
+            <div class="form-item">
+                <checkbox [label]="'Add Artifact To Implementation'"
+                          [(checked)]="enableAddArtifactImplementation"
+                          (checkedChange)="onMarkToAddArtifactToImplementation($event)">
+                </checkbox>
+            </div>
+            <div class="form-item" *ngIf="!enableAddArtifactImplementation">
+                <sdc-input
+                    label="{{'INTERFACE_OPERATION_IMPLEMENTATION_NAME' | translate}}"
+                    testId="interface-operation-implementation-name"
+                    [(value)]="operationToUpdate.implementation.artifactName"
+                    (valueChange)="onImplementationNameChange($event)">
+                </sdc-input>
+            </div>
+
+            <div class="side-by-side" *ngIf="enableAddArtifactImplementation">
+                <div class="form-item" *ngIf="toscaArtifactTypes">
+                    <sdc-dropdown
+                        label="{{ 'TOSCA_ARTIFACT_TYPE' | translate }}"
+                        testId="selectToscaArtifactType"
+                        [required]="true"
+                        [selectedOption]="toscaArtifactTypeSelected"
+                        placeHolder="{{toscaArtifactTypeSelected != undefined ? toscaArtifactTypeSelected : 'Select...'}}"
+                        (changed)="onSelectToscaArtifactType($event)"
+                        [options]="toscaArtifactTypes">
+                    </sdc-dropdown>
+                </div>
+                <div class="form-item" *ngIf="toscaArtifactTypeSelected && enableAddArtifactImplementation">
+                    <sdc-input
+                        label="{{ 'INTERFACE_OPERATION_IMPLEMENTATION_FILE' | translate }}"
+                        data-tests-id="artifactFile"
+                        [(value)]="artifactFile"
+                        [required]="true"
+                        (valueChange)="onArtifactFileChange($event)">
+                    </sdc-input>
+                </div>
+                <div class="form-item">
+                    <sdc-input
+                        label="{{ 'ARTIFACT_VERSION' | translate }}"
+                        data-tests-id="artifactVersion"
+                        [(value)]="artifactVersion"
+                        (valueChange)="onArtifactVersionChange($event)">
+                    </sdc-input>
+                </div>
+            </div>
+            <div class="form-item" *ngIf="toscaArtifactTypeSelected && enableAddArtifactImplementation">
+                <label class="sdc-input__label">{{ 'ENTITY_VIEWER_PROPERTIES_TAB' | translate }}</label>
+                <div class="generic-table">
+                    <div class="header-row table-row">
+                        <span class="cell header-cell field-name">{{ 'IMPLEMENTATION_ARTIFACT_PROPERTY_NAME' | translate }}</span>
+                        <span class="cell header-cell field-type">{{ 'IMPLEMENTATION_ARTIFACT_PROPERTY_TYPE' | translate }}</span>
+                        <span class="cell header-cell field-type">{{ 'IMPLEMENTATION_ARTIFACT_PROPERTY_VALUE' | translate }}</span>
+                    </div>
+
+                    <div class="empty-msg data-row" *ngIf="!toscaArtifactTypeProperties.length">
+                        <div>{{ 'EMPTY_PARAM_TABLE_HEADER' | translate }}</div>
+                    </div>
+                    <property-param-row
+                        *ngFor="let property of toscaArtifactTypeProperties"
+                        class="data-row"
+                        [artifactProperty]="property"
+                        [isPropertyValueValid]="propertyValueValidation">
+                    </property-param-row>
+                </div>
+            </div>
         </div>
 
         <div class="separator-buttons">

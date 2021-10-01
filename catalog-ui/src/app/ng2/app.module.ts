@@ -101,6 +101,7 @@ import {InterfaceOperationHandlerModule} from "./pages/composition/interface-ope
 import {AttributesOutputsModule} from "./pages/attributes-outputs/attributes-outputs.module";
 import { ElementService } from "./services/element.service";
 import { ModelService } from "./services/model.service";
+import {ToscaArtifactService} from "./services/tosca-artifact.service";
 
 
 declare const __ENV__: string;
@@ -201,6 +202,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     OnboardingService,
     ElementService,
     ModelService,
+    ToscaArtifactService,
     ServiceServiceNg2,
     AutomatedUpgradeService,
     WorkflowServiceNg2,

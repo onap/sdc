@@ -70,6 +70,7 @@ import { UrlToBase64Service } from '../services/url-tobase64-service';
 import { FileUtils } from '../utils/file-utils';
 import { ValidationUtils } from '../utils/validation-utils';
 import {ReqAndCapabilitiesService} from "../ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service";
+import {ToscaArtifactService} from "../ng2/services/tosca-artifact.service";
 
 const moduleName: string = 'Sdc.Services';
 const serviceModule: ng.IModule = angular.module(moduleName, []);
@@ -131,3 +132,4 @@ serviceModule.service('OnboardingService', downgradeInjectable(OnboardingService
 serviceModule.service('ElementService', downgradeInjectable(ElementService));
 serviceModule.service('ModelService', downgradeInjectable(ModelService));
 serviceModule.service('ImportVSPService', downgradeInjectable(ImportVSPService));
+serviceModule.service('ToscaArtifactService', downgradeInjectable(ToscaArtifactService));

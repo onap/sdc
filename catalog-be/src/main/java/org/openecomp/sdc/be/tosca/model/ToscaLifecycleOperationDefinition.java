@@ -16,56 +16,17 @@
 package org.openecomp.sdc.be.tosca.model;
 
 import java.util.Map;
-import java.util.Objects;
+import lombok.Data;
 
 /**
  * @author KATYR
  * @since March 26, 2018
  */
+@Data
 public class ToscaLifecycleOperationDefinition {
 
     private String description;
-    private String implementation;
+    private Object implementation;
     private Map<String, ToscaProperty> inputs;
 
-    public String getImplementation() {
-        return implementation;
-    }
-
-    public void setImplementation(String implementation) {
-        this.implementation = implementation;
-    }
-
-    public Map<String, ToscaProperty> getInputs() {
-        return inputs;
-    }
-
-    public void setInputs(Map<String, ToscaProperty> inputs) {
-        this.inputs = inputs;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ToscaLifecycleOperationDefinition that = (ToscaLifecycleOperationDefinition) o;
-        return Objects.equals(implementation, that.implementation) && Objects.equals(inputs, that.inputs);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(implementation, inputs);
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }
