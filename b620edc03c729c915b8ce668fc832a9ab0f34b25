@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "abb6be2d_e054bfd7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ModelBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-10-05T09:11:23Z",
+      "side": 1,
+      "message": "Felt like we should move the handling of datatypes to the datatype business logic",
+      "parentUuid": "d664fb4b_b942fcf5",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 31
+      },
+      "revId": "b620edc03c729c915b8ce668fc832a9ab0f34b25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "093d4a6b_b11f6b0c",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "672da5b2_279bf975",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1169,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-10-05T09:11:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "093d4a6b_b11f6b0c",
+      "range": {
+        "startLine": 1169,
+        "startChar": 53,
+        "endLine": 1169,
+        "endChar": 89
+      },
+      "revId": "b620edc03c729c915b8ce668fc832a9ab0f34b25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6763ab13_e0c1eeed",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "b620edc03c729c915b8ce668fc832a9ab0f34b25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e356f8a5_e131cd2c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1181,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-10-05T09:11:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6763ab13_e0c1eeed",
+      "range": {
+        "startLine": 1181,
+        "startChar": 55,
+        "endLine": 1181,
+        "endChar": 91
+      },
+      "revId": "b620edc03c729c915b8ce668fc832a9ab0f34b25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
