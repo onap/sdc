@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fae99786_4549735b",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-10-05T08:59:39Z",
+      "side": 1,
+      "message": "Yes, from sdc-backend only the ETSI category is using metadata",
+      "parentUuid": "94936e7a_ff87f0d9",
+      "range": {
+        "startLine": 141,
+        "startChar": 86,
+        "endLine": 141,
+        "endChar": 113
+      },
+      "revId": "f0414d446fb794a9c5ab7f666d66a5dbdc0c5300",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d3b54182_ca55aa94",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/category/MetadataKeyDataDefinition.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2021-09-27T08:58:33Z",
       "side": 1,
       "message": "why public?",
+      "range": {
+        "startLine": 37,
+        "startChar": 4,
+        "endLine": 37,
+        "endChar": 30
+      },
+      "revId": "f0414d446fb794a9c5ab7f666d66a5dbdc0c5300",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3c98275_81edd922",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/category/MetadataKeyDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 7592
+      },
+      "writtenOn": "2021-10-05T08:59:39Z",
+      "side": 1,
+      "message": "accident",
+      "parentUuid": "d3b54182_ca55aa94",
       "range": {
         "startLine": 37,
         "startChar": 4,
