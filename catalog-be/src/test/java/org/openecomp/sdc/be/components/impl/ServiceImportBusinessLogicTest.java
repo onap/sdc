@@ -1131,10 +1131,10 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = new HashMap<>();
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
 
-        Assertions.assertThrows(ComponentException.class, () -> sIB1
-                .createRIAndRelationsFromYaml(yamlName, service, uploadComponentInstanceInfoMap,
-                        topologyTemplateYaml, nodeTypesNewCreatedArtifacts, nodeTypesInfo,
-                        csarInfo, nodeTypesArtifactsToCreate, nodeName));
+        Assertions.assertNotNull(sIB1
+            .createRIAndRelationsFromYaml(yamlName, service, uploadComponentInstanceInfoMap,
+                topologyTemplateYaml, nodeTypesNewCreatedArtifacts, nodeTypesInfo,
+                csarInfo, nodeTypesArtifactsToCreate, nodeName));
     }
 
     @Test
