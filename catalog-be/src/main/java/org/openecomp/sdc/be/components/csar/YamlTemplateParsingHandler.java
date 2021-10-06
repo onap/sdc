@@ -274,15 +274,18 @@ public class YamlTemplateParsingHandler {
 
     private Map<String, UploadComponentInstanceInfo> getInstances(String yamlName, Map<String, Object> toscaJson,
                                                                   Map<String, String> createdNodesToscaResourceNames) {
-        Map<String, Object> nodeTemlates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES).left().on(err -> failIfNoNodeTemplates(yamlName));
-        return getInstances(toscaJson, createdNodesToscaResourceNames, nodeTemlates);
+        Map<String, Object> nodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES).left().on(err -> new HashMap<>());
+        if (nodeTemplates.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return getInstances(toscaJson, createdNodesToscaResourceNames, nodeTemplates);
     }
 
     private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames,
-                                                                  Map<String, Object> nodeTemlates) {
+                                                                  Map<String, Object> nodeTemplates) {
         Map<String, UploadComponentInstanceInfo> moduleComponentInstances;
         Map<String, Object> substitutionMappings = getSubstitutionMappings(toscaJson);
-        moduleComponentInstances = nodeTemlates.entrySet().stream()
+        moduleComponentInstances = nodeTemplates.entrySet().stream()
             .map(node -> buildModuleComponentInstanceInfo(node, substitutionMappings, createdNodesToscaResourceNames))
             .collect(Collectors.toMap(UploadComponentInstanceInfo::getName, i -> i));
         return moduleComponentInstances;

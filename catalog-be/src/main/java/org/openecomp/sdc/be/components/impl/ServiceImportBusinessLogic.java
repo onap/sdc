@@ -251,9 +251,6 @@ public class ServiceImportBusinessLogic {
         try {
             ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic
                 .getParsedToscaYamlInfo(topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo, nodeName, service);
-            if (MapUtils.isEmpty(parsedToscaYamlInfo.getInstances())) {
-                throw new ComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, yamlName);
-            }
             log.debug("#createResourceFromYaml - Going to create resource {} and RIs ", service.getName());
             csfyp.setYamlName(yamlName);
             csfyp.setParsedToscaYamlInfo(parsedToscaYamlInfo);
@@ -1294,13 +1291,15 @@ public class ServiceImportBusinessLogic {
         log.debug("************* Going to create all nodes {}", yamlName);
         handleServiceNodeTypes(yamlName, service, topologyTemplateYaml, false, nodeTypesArtifactsToCreate, nodeTypesNewCreatedArtifacts,
             nodeTypesInfo, csarInfo, nodeName);
-        log.debug("************* Going to create all resource instances {}", yamlName);
-        service = createServiceInstances(yamlName, service, uploadComponentInstanceInfoMap, csarInfo.getCreatedNodes());
-        log.debug("************* Going to create all relations {}", yamlName);
-        service = createServiceInstancesRelations(csarInfo.getModifier(), yamlName, service, uploadComponentInstanceInfoMap);
-        log.debug("************* Going to create positions {}", yamlName);
-        compositionBusinessLogic.setPositionsForComponentInstances(service, csarInfo.getModifier().getUserId());
-        log.debug("************* Finished to set positions {}", yamlName);
+        if (!MapUtils.isEmpty(uploadComponentInstanceInfoMap)) {
+            log.debug("************* Going to create all resource instances {}", yamlName);
+            service = createServiceInstances(yamlName, service, uploadComponentInstanceInfoMap, csarInfo.getCreatedNodes());
+            log.debug("************* Going to create all relations {}", yamlName);
+            service = createServiceInstancesRelations(csarInfo.getModifier(), yamlName, service, uploadComponentInstanceInfoMap);
+            log.debug("************* Going to create positions {}", yamlName);
+            compositionBusinessLogic.setPositionsForComponentInstances(service, csarInfo.getModifier().getUserId());
+            log.debug("************* Finished to set positions {}", yamlName);
+        }
         return service;
     }
 
