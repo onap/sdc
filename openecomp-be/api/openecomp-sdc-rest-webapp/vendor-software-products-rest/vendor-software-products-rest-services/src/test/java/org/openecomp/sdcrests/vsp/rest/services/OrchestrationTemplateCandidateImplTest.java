@@ -32,6 +32,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,14 +51,18 @@ import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
+import org.openecomp.sdc.be.csar.storage.MinIoArtifactInfo;
+import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig;
+import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.Credentials;
+import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.EndPoint;
 import org.openecomp.sdc.be.csar.storage.PackageSizeReducer;
-import org.openecomp.sdc.be.csar.storage.PersistentStorageArtifactInfo;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -88,6 +94,7 @@ class OrchestrationTemplateCandidateImplTest {
     private ArtifactStorageManager artifactStorageManager;
     @Mock
     private PackageSizeReducer packageSizeReducer;
+    @InjectMocks
     private OrchestrationTemplateCandidateImpl orchestrationTemplateCandidate;
 
     @BeforeEach
@@ -132,20 +139,15 @@ class OrchestrationTemplateCandidateImplTest {
                 ArgumentMatchers.eq(candidateId),
                 ArgumentMatchers.any())).thenReturn(Optional.of(fds));
 
-            orchestrationTemplateCandidate =
-                new OrchestrationTemplateCandidateImpl(candidateManager, vendorSoftwareProductManager, activityLogManager,
-                    artifactStorageManager, packageSizeReducer);
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
 
     @Test
-    void uploadSignedTest() {
+    void uploadSignedTest() throws IOException {
         Response response = orchestrationTemplateCandidate
-            .upload("1", "1", mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")),
-                "1");
+            .upload("1", "1", mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }
@@ -153,7 +155,7 @@ class OrchestrationTemplateCandidateImplTest {
     @Test
     void uploadNotSignedTest() throws IOException {
         Response response = orchestrationTemplateCandidate.upload("1", "1",
-            mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), "1");
+            mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }
@@ -161,23 +163,29 @@ class OrchestrationTemplateCandidateImplTest {
     @Test
     void uploadNotSignedArtifactStorageManagerIsEnabledTest() throws IOException {
         when(artifactStorageManager.isEnabled()).thenReturn(true);
+        when(artifactStorageManager.getStorageConfiguration()).thenReturn(
+            new MinIoStorageArtifactStorageConfig(true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath"));
+
         final Path path = Path.of("src/test/resources/files/sample-not-signed.csar");
-        when(artifactStorageManager.upload(anyString(), anyString(), any())).thenReturn(new PersistentStorageArtifactInfo(path));
+        when(artifactStorageManager.upload(anyString(), anyString(), any())).thenReturn(new MinIoArtifactInfo("vspId", "name"));
         final byte[] bytes = Files.readAllBytes(path);
         when(packageSizeReducer.reduce(any())).thenReturn(bytes);
 
         Response response = orchestrationTemplateCandidate.upload("1", "1",
-            mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), "1");
+            mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }
 
-    private Attachment mockAttachment(final String fileName, final URL fileToUpload) {
+    private Attachment mockAttachment(final String fileName, final URL fileToUpload) throws IOException {
         final Attachment attachment = Mockito.mock(Attachment.class);
+        final InputStream inputStream = Mockito.mock(InputStream.class);
         when(attachment.getContentDisposition()).thenReturn(new ContentDisposition("test"));
         final DataHandler dataHandler = Mockito.mock(DataHandler.class);
         when(dataHandler.getName()).thenReturn(fileName);
         when(attachment.getDataHandler()).thenReturn(dataHandler);
+        when(dataHandler.getInputStream()).thenReturn(inputStream);
+        when(inputStream.transferTo(any(OutputStream.class))).thenReturn(0L);
         byte[] bytes = "upload package Test".getBytes();
         if (Objects.nonNull(fileToUpload)) {
             try {
@@ -192,9 +200,9 @@ class OrchestrationTemplateCandidateImplTest {
     }
 
     @Test
-    void uploadSignNotValidTest() {
+    void uploadSignNotValidTest() throws IOException {
         Response response = orchestrationTemplateCandidate
-            .upload("1", "1", mockAttachment("filename.zip", null), "1");
+            .upload("1", "1", mockAttachment("filename.zip", null), user);
         assertEquals(Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatus());
         assertFalse(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }

@@ -52,6 +52,16 @@ public interface ArtifactStorageManager {
      *
      * @return {@code true} if enable, {@code false} otherwise
      */
-    boolean isEnabled();
+    default boolean isEnabled() {
+        return false;
+    }
 
+    /**
+     * @return Storage Configuration
+     */
+    ArtifactStorageConfig getStorageConfiguration();
+
+    InputStream get(final ArtifactInfo artifactInfo);
+
+    void delete(ArtifactInfo artifactInfo);
 }
