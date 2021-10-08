@@ -31,7 +31,6 @@ import com.amdocs.zusammen.utils.fileutils.FileUtils;
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,12 +38,8 @@ import org.openecomp.core.utilities.json.JsonUtil;
 import org.openecomp.core.utilities.orchestration.OnboardingTypesEnum;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
-import org.openecomp.sdc.be.csar.storage.ArtifactStorageConfig;
 import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
-import org.openecomp.sdc.be.csar.storage.PersistentVolumeArtifactStorageConfig;
-import org.openecomp.sdc.be.csar.storage.PersistentVolumeArtifactStorageManager;
-import org.openecomp.sdc.common.CommonConfigurationManager;
-import org.openecomp.sdc.common.errors.Messages;
+import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.datatypes.model.ElementType;
 import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.logging.api.Logger;
@@ -56,15 +51,15 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class OrchestrationTemplateCandidateDaoZusammenImpl implements OrchestrationTemplateCandidateDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrchestrationTemplateCandidateDaoZusammenImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateCandidateDaoZusammenImpl.class);
     private static final String EMPTY_DATA = "{}";
-    private static final String EXTERNAL_CSAR_STORE = "externalCsarStore";
     private final ZusammenAdaptor zusammenAdaptor;
     private final ArtifactStorageManager artifactStorageManager;
 
     public OrchestrationTemplateCandidateDaoZusammenImpl(final ZusammenAdaptor zusammenAdaptor) {
         this.zusammenAdaptor = zusammenAdaptor;
-        this.artifactStorageManager = new PersistentVolumeArtifactStorageManager(readArtifactStorageConfiguration());
+        LOGGER.info("Instantiating artifactStorageManager");
+        this.artifactStorageManager = new StorageFactory().createArtifactStorageManager();
     }
 
     @Override
@@ -74,14 +69,14 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
 
     @Override
     public Optional<OrchestrationTemplateCandidateData> get(String vspId, Version version) {
-        logger.info("Getting orchestration template for vsp id {}", vspId);
+        LOGGER.info("Getting orchestration template for vsp id {}", vspId);
         SessionContext context = createSessionContext();
         ElementContext elementContext = new ElementContext(vspId, version.getId());
         Optional<Element> candidateElement = zusammenAdaptor
             .getElementByName(context, elementContext, null, ElementType.OrchestrationTemplateCandidate.name());
         if (!candidateElement.isPresent() || VspZusammenUtil.hasEmptyData(candidateElement.get().getData()) || candidateElement.get().getSubElements()
             .isEmpty()) {
-            logger.info("Orchestration template for vsp id {} does not exist / has empty data", vspId);
+            LOGGER.info("Orchestration template for vsp id {} does not exist / has empty data", vspId);
             return Optional.empty();
         }
         OrchestrationTemplateCandidateData candidate = new OrchestrationTemplateCandidateData();
@@ -89,26 +84,26 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         candidateElement.get().getSubElements().stream()
             .map(element -> zusammenAdaptor.getElement(context, elementContext, element.getElementId().toString()))
             .forEach(element -> element.ifPresent(candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, true)));
-        logger.info("Finished getting orchestration template for vsp id {}", vspId);
+        LOGGER.info("Finished getting orchestration template for vsp id {}", vspId);
         return candidate.getFileSuffix() == null ? Optional.empty() : Optional.of(candidate);
     }
 
     @Override
     public Optional<OrchestrationTemplateCandidateData> getInfo(String vspId, Version version) {
-        logger.info("Getting orchestration template info for vsp id {}", vspId);
+        LOGGER.info("Getting orchestration template info for vsp id {}", vspId);
         SessionContext context = createSessionContext();
         ElementContext elementContext = new ElementContext(vspId, version.getId());
         Optional<ElementInfo> candidateElement = zusammenAdaptor
             .getElementInfoByName(context, elementContext, null, ElementType.OrchestrationTemplateCandidate.name());
         if (!candidateElement.isPresent() || candidateElement.get().getSubElements().isEmpty()) {
-            logger.info("Orchestration template info for vsp id {} does not exist", vspId);
+            LOGGER.info("Orchestration template info for vsp id {} does not exist", vspId);
             return Optional.empty();
         }
         OrchestrationTemplateCandidateData candidate = new OrchestrationTemplateCandidateData();
         candidateElement.get().getSubElements().stream()
             .map(elementInfo -> zusammenAdaptor.getElement(context, elementContext, elementInfo.getId().toString()))
             .forEach(element -> element.ifPresent(candidateInfoElement -> populateCandidate(candidate, candidateInfoElement, false)));
-        logger.info("Finished getting orchestration template info for vsp id {}", vspId);
+        LOGGER.info("Finished getting orchestration template info for vsp id {}", vspId);
         return candidate.getFileSuffix() == null ? Optional.empty() : Optional.of(candidate);
     }
 
@@ -149,7 +144,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
 
     @Override
     public void update(final String vspId, final Version version, final OrchestrationTemplateCandidateData candidateData) {
-        logger.info("Uploading candidate data entity for vsp id {}", vspId);
+        LOGGER.info("Uploading candidate data entity for vsp id {}", vspId);
         final ZusammenElement candidateElement = buildStructuralElement(ElementType.OrchestrationTemplateCandidate, Action.UPDATE);
         candidateElement.setData(new ByteArrayInputStream(candidateData.getFilesDataStructure().getBytes()));
         final ZusammenElement candidateContentElement = buildStructuralElement(ElementType.OrchestrationTemplateCandidateContent, Action.UPDATE);
@@ -170,7 +165,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
                     throw new OrchestrationTemplateCandidateDaoZusammenException("No artifact info provided");
                 }
                 final ArtifactInfo artifactInfo = artifactStorageManager.persist(vspId, versionId, candidateArtifactInfo);
-                originalPackageElement.setData(new ByteArrayInputStream(artifactInfo.getPath().toString().getBytes(StandardCharsets.UTF_8)));
+                originalPackageElement.setData(new ByteArrayInputStream(artifactInfo.getInfo().getBytes(StandardCharsets.UTF_8)));
             } else {
                 originalPackageElement.setData(new ByteArrayInputStream(candidateData.getOriginalFileContentData().array()));
             }
@@ -185,12 +180,12 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         final var context = createSessionContext();
         final var elementContext = new ElementContext(vspId, versionId);
         zusammenAdaptor.saveElement(context, elementContext, candidateElement, "Update Orchestration Template Candidate");
-        logger.info("Finished uploading candidate data entity for vsp id {}", vspId);
+        LOGGER.info("Finished uploading candidate data entity for vsp id {}", vspId);
     }
 
     @Override
     public void updateValidationData(String vspId, Version version, ValidationStructureList validationData) {
-        logger.info("Updating validation data of orchestration template candidate for VSP id {} ", vspId);
+        LOGGER.info("Updating validation data of orchestration template candidate for VSP id {} ", vspId);
         ZusammenElement validationDataElement = buildStructuralElement(ElementType.OrchestrationTemplateCandidateValidationData, Action.UPDATE);
         validationDataElement.setData(validationData == null ? new ByteArrayInputStream(EMPTY_DATA.getBytes())
             : new ByteArrayInputStream(JsonUtil.object2Json(validationData).getBytes()));
@@ -199,23 +194,23 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         SessionContext context = createSessionContext();
         ElementContext elementContext = new ElementContext(vspId, version.getId());
         zusammenAdaptor.saveElement(context, elementContext, candidateElement, "Update Orchestration Template Candidate validation data");
-        logger.info("Finished updating validation data of orchestration template candidate for VSP id {}", vspId);
+        LOGGER.info("Finished updating validation data of orchestration template candidate for VSP id {}", vspId);
     }
 
     @Override
     public void updateStructure(String vspId, Version version, FilesDataStructure fileDataStructure) {
-        logger.info("Updating orchestration template for VSP id {}", vspId);
+        LOGGER.info("Updating orchestration template for VSP id {}", vspId);
         ZusammenElement candidateElement = buildStructuralElement(ElementType.OrchestrationTemplateCandidate, Action.UPDATE);
         candidateElement.setData(new ByteArrayInputStream(JsonUtil.object2Json(fileDataStructure).getBytes()));
         SessionContext context = createSessionContext();
         ElementContext elementContext = new ElementContext(vspId, version.getId());
         zusammenAdaptor.saveElement(context, elementContext, candidateElement, "Update Orchestration Template Candidate structure");
-        logger.info("Finished uploading candidate data entity for vsp id {}", vspId);
+        LOGGER.info("Finished uploading candidate data entity for vsp id {}", vspId);
     }
 
     @Override
     public Optional<String> getStructure(String vspId, Version version) {
-        logger.info("Getting orchestration template candidate structure for vsp id {}", vspId);
+        LOGGER.info("Getting orchestration template candidate structure for vsp id {}", vspId);
         SessionContext context = createSessionContext();
         ElementContext elementContext = new ElementContext(vspId, version.getId());
         Optional<Element> element = zusammenAdaptor
@@ -223,22 +218,8 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
         if (element.isPresent() && !VspZusammenUtil.hasEmptyData(element.get().getData())) {
             return Optional.of(new String(FileUtils.toByteArray(element.get().getData())));
         }
-        logger.info("Finished getting orchestration template candidate structure for vsp id {}", vspId);
+        LOGGER.info("Finished getting orchestration template candidate structure for vsp id {}", vspId);
         return Optional.empty();
-    }
-
-    private ArtifactStorageConfig readArtifactStorageConfiguration() {
-        final var commonConfigurationManager = CommonConfigurationManager.getInstance();
-        final boolean isEnabled = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "storeCsarsExternally", false);
-        logger.info("ArtifactConfig.isEnabled: '{}'", isEnabled);
-        final String storagePathString = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "fullPath", null);
-        logger.info("ArtifactConfig.storagePath: '{}'", storagePathString);
-        if (isEnabled && storagePathString == null) {
-            throw new OrchestrationTemplateCandidateDaoZusammenException(
-                Messages.EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING_FULL_PATH.getErrorMessage());
-        }
-        final var storagePath = storagePathString == null ? null : Path.of(storagePathString);
-        return new PersistentVolumeArtifactStorageConfig(isEnabled, storagePath);
     }
 
     @Getter

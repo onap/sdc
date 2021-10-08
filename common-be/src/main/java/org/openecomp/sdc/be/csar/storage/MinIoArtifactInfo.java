@@ -20,13 +20,19 @@
 
 package org.openecomp.sdc.be.csar.storage;
 
-import java.nio.file.Path;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
-public class PersistentVolumeArtifactStorageConfig implements ArtifactStorageConfig {
+@AllArgsConstructor
+@Getter
+public class MinIoArtifactInfo implements ArtifactInfo {
 
-    private final boolean isEnabled;
-    private final Path storagePath;
+    private final String bucket;
+    private final String objectName;
 
+    @Override
+    public String getInfo() {
+        return String.format("bucket: %s\n"
+            + "object: %s", bucket, objectName);
+    }
 }
