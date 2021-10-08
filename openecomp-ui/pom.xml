@@ -157,7 +157,7 @@
             <configuration>
               <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>
               <arguments>test-build ${jest.command}</arguments>
-              <skip>${skipTests}</skip>
+              <skip>${maven.test.skip}</skip>
             </configuration>
             <!-- for some reason does not fail on test phase -->
             <phase>test</phase>
