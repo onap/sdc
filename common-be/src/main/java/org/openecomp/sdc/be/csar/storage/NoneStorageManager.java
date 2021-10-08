@@ -20,14 +20,35 @@
 
 package org.openecomp.sdc.be.csar.storage;
 
-import java.nio.file.Path;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.io.InputStream;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-public class PersistentStorageArtifactInfo implements ArtifactInfo {
+@NoArgsConstructor
+public class NoneStorageManager implements ArtifactStorageManager {
 
-    @Getter
-    private final Path path;
+    @Override
+    public ArtifactInfo persist(final String vspId, final String versionId, final ArtifactInfo uploadedArtifactInfo) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ArtifactInfo upload(final String vspId, final String versionId, final InputStream fileToUpload) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ArtifactStorageConfig getStorageConfiguration() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream get(final ArtifactInfo artifactInfo) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void delete(final ArtifactInfo artifactInfo) {
+        throw new UnsupportedOperationException();
+    }
 
 }

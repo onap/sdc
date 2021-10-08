@@ -19,12 +19,12 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.security;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 import com.google.common.collect.ImmutableSet;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,7 +56,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
@@ -69,7 +70,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
-import org.openecomp.sdc.common.errors.SdcRuntimeException;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageConfig;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
+import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
@@ -83,9 +86,10 @@ public class SecurityManager {
     public static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = Set.of("cms");
     public static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = Set.of("cert", "crt");
     private static final String CERTIFICATE_DEFAULT_LOCATION = "cert";
-    private static final Logger logger = LoggerFactory.getLogger(SecurityManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityManager.class);
     private static final String UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION = "Unexpected error occurred during signature validation!";
     private static final String COULD_NOT_VERIFY_SIGNATURE = "Could not verify signature!";
+    private static final String EXTERNAL_CSAR_STORE = "externalCsarStore";
 
     static {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
@@ -120,7 +124,7 @@ public class SecurityManager {
         //if file number in certificate directory changed reload certs
         String[] certFiles = certificateDirectory.list();
         if (certFiles == null) {
-            logger.error("Certificate directory is empty!");
+            LOGGER.error("Certificate directory is empty!");
             return ImmutableSet.copyOf(new HashSet<>());
         }
         if (trustedCertificates.size() != certFiles.length) {
@@ -160,7 +164,7 @@ public class SecurityManager {
             }
             return verify(packageCert, new CMSSignedData(new CMSProcessableByteArray(innerPackageFile), ContentInfo.getInstance(parsedObject)));
         } catch (final IOException | CMSException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new SecurityManagerException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
         }
     }
@@ -168,14 +172,27 @@ public class SecurityManager {
     public boolean verifyPackageSignedData(final OnboardSignedPackage signedPackage, final ArtifactInfo artifactInfo)
         throws SecurityManagerException {
         boolean fail = false;
+
+        final StorageFactory storageFactory = new StorageFactory();
+        final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
+        final ArtifactStorageConfig storageConfiguration = artifactStorageManager.getStorageConfiguration();
+
         final var fileContentHandler = signedPackage.getFileContentHandler();
         byte[] packageCert = null;
         final Optional<String> certificateFilePath = signedPackage.getCertificateFilePath();
         if (certificateFilePath.isPresent()) {
             packageCert = fileContentHandler.getFileContent(certificateFilePath.get());
         }
-        final var path = artifactInfo.getPath();
-        final var target = Path.of(path.toString() + "." + UUID.randomUUID());
+
+        final Path folder = Path.of(storageConfiguration.getTempPath());
+        try {
+            Files.createDirectories(folder);
+        } catch (final IOException e) {
+            fail = true;
+            throw new SecurityManagerException(String.format("Failed to create directory '%s'", folder), e);
+        }
+
+        final var target = folder.resolve(UUID.randomUUID().toString());
 
         try (final var signatureStream = new ByteArrayInputStream(fileContentHandler.getFileContent(signedPackage.getSignatureFilePath()));
             final var pemParser = new PEMParser(new InputStreamReader(signatureStream))) {
@@ -185,16 +202,18 @@ public class SecurityManager {
                 throw new SecurityManagerException("Signature is not recognized");
             }
 
-            if (!findCSARandExtract(path, target)) {
-                fail = true;
-                return false;
+            try (final InputStream inputStream = artifactStorageManager.get(artifactInfo)) {
+                if (!findCSARandExtract(inputStream, target)) {
+                    fail = true;
+                    return false;
+                }
             }
             final var verify = verify(packageCert, new CMSSignedData(new CMSProcessableFile(target.toFile()), ContentInfo.getInstance(parsedObject)));
             fail = !verify;
             return verify;
         } catch (final IOException e) {
             fail = true;
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new SecurityManagerException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
         } catch (final CMSException e) {
             fail = true;
@@ -205,7 +224,7 @@ public class SecurityManager {
         } finally {
             deleteFile(target);
             if (fail) {
-                deleteFile(path);
+                artifactStorageManager.delete(artifactInfo);
             }
         }
     }
@@ -214,7 +233,7 @@ public class SecurityManager {
         try {
             Files.delete(filePath);
         } catch (final IOException e) {
-            logger.warn("Failed to delete '{}' after verifying package signed data", filePath, e);
+            LOGGER.warn("Failed to delete '{}' after verifying package signed data", filePath, e);
         }
     }
 
@@ -246,20 +265,25 @@ public class SecurityManager {
         }
     }
 
-    private boolean findCSARandExtract(final Path path, final Path target) throws IOException {
+    private boolean findCSARandExtract(final InputStream inputStream, final Path target) throws IOException {
         final AtomicBoolean found = new AtomicBoolean(false);
-        try (final var zf = new ZipFile(path.toString())) {
-            zf.entries().asIterator().forEachRemaining(entry -> {
-                final var entryName = entry.getName();
-                if (!entry.isDirectory() && entryName.toLowerCase().endsWith(".csar")) {
-                    try {
-                        Files.copy(zf.getInputStream(entry), target, REPLACE_EXISTING);
-                    } catch (final IOException e) {
-                        throw new SdcRuntimeException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
+
+        final var zipInputStream = new ZipInputStream(inputStream);
+        ZipEntry zipEntry;
+        byte[] buffer = new byte[2048];
+        while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+            final var entryName = zipEntry.getName();
+            if (!zipEntry.isDirectory() && entryName.toLowerCase().endsWith(".csar")) {
+                try (final FileOutputStream fos = new FileOutputStream(target.toFile());
+                    final BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length)) {
+
+                    int len;
+                    while ((len = zipInputStream.read(buffer)) > 0) {
+                        bos.write(buffer, 0, len);
                     }
-                    found.set(true);
                 }
-            });
+                found.set(true);
+            }
         }
         return found.get();
     }
@@ -289,12 +313,12 @@ public class SecurityManager {
 
     private void processCertificateDir() throws SecurityManagerException {
         if (!certificateDirectory.exists() || !certificateDirectory.isDirectory()) {
-            logger.error("Issue with certificate directory, check if exists!");
+            LOGGER.error("Issue with certificate directory, check if exists!");
             return;
         }
         File[] files = certificateDirectory.listFiles();
         if (files == null) {
-            logger.error("Certificate directory is empty!");
+            LOGGER.error("Certificate directory is empty!");
             return;
         }
         for (File f : files) {
@@ -399,10 +423,10 @@ public class SecurityManager {
         try {
             cert.checkValidity();
         } catch (CertificateExpiredException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return true;
         } catch (CertificateNotYetValidException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return false;
         }
         return false;

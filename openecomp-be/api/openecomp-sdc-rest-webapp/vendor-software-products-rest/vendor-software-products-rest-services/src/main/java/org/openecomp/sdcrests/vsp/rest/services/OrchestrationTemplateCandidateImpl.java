@@ -28,13 +28,14 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder.getErrorWithParameters;
 import static org.openecomp.sdc.common.errors.Messages.ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT;
 import static org.openecomp.sdc.common.errors.Messages.ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE;
-import static org.openecomp.sdc.common.errors.Messages.EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING_FULL_PATH;
 import static org.openecomp.sdc.common.errors.Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_PROCESS_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,8 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.UUID;
+import javax.activation.DataHandler;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,13 +56,8 @@ import org.openecomp.sdc.activitylog.dao.type.ActivityType;
 import org.openecomp.sdc.be.csar.storage.ArtifactInfo;
 import org.openecomp.sdc.be.csar.storage.ArtifactStorageConfig;
 import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
-import org.openecomp.sdc.be.csar.storage.CsarPackageReducerConfiguration;
-import org.openecomp.sdc.be.csar.storage.CsarSizeReducer;
 import org.openecomp.sdc.be.csar.storage.PackageSizeReducer;
-import org.openecomp.sdc.be.csar.storage.PersistentVolumeArtifactStorageConfig;
-import org.openecomp.sdc.be.csar.storage.PersistentVolumeArtifactStorageManager;
-import org.openecomp.sdc.be.exception.BusinessException;
-import org.openecomp.sdc.common.CommonConfigurationManager;
+import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -98,7 +94,6 @@ import org.springframework.stereotype.Service;
 public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplateCandidate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateCandidateImpl.class);
-    private static final String EXTERNAL_CSAR_STORE = "externalCsarStore";
     private final OrchestrationTemplateCandidateManager candidateManager;
     private final VendorSoftwareProductManager vendorSoftwareProductManager;
     private final ActivityLogManager activityLogManager;
@@ -110,9 +105,10 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
         this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
         LOGGER.info("Instantiating artifactStorageManager");
-        this.artifactStorageManager = new PersistentVolumeArtifactStorageManager(readArtifactStorageConfiguration());
+        final StorageFactory storageFactory = new StorageFactory();
+        this.artifactStorageManager = storageFactory.createArtifactStorageManager();
         LOGGER.info("Instantiating packageSizeReducer");
-        this.packageSizeReducer = new CsarSizeReducer(readPackageReducerConfiguration());
+        this.packageSizeReducer = storageFactory.createPackageSizeReducer().orElse(null);
     }
 
     // Constructor used in test to avoid mock static
@@ -128,56 +124,45 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         this.packageSizeReducer = packageSizeReducer;
     }
 
-    private CsarPackageReducerConfiguration readPackageReducerConfiguration() {
-        final var commonConfigurationManager = CommonConfigurationManager.getInstance();
-        final List<String> foldersToStrip = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "foldersToStrip", new ArrayList<>());
-        final int sizeLimit = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "sizeLimit", 1000000);
-        final int thresholdEntries = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "thresholdEntries", 10000);
-        LOGGER.info("Folders to strip: '{}'", String.join(", ", foldersToStrip));
-        final Set<Path> foldersToStripPathSet = foldersToStrip.stream().map(Path::of).collect(Collectors.toSet());
-        return new CsarPackageReducerConfiguration(foldersToStripPathSet, sizeLimit, thresholdEntries);
-    }
-
-    private ArtifactStorageConfig readArtifactStorageConfiguration() {
-        final var commonConfigurationManager = CommonConfigurationManager.getInstance();
-        final boolean isEnabled = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "storeCsarsExternally", false);
-        LOGGER.info("ArtifactConfig.isEnabled: '{}'", isEnabled);
-        final String storagePathString = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "fullPath", null);
-        LOGGER.info("ArtifactConfig.storagePath: '{}'", storagePathString);
-        if (isEnabled && storagePathString == null) {
-            throw new OrchestrationTemplateCandidateException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING_FULL_PATH.getErrorMessage());
-        }
-        final var storagePath = storagePathString == null ? null : Path.of(storagePathString);
-        return new PersistentVolumeArtifactStorageConfig(isEnabled, storagePath);
-    }
-
     @Override
     public Response upload(String vspId, String versionId, final Attachment fileToUpload, final String user) {
         vspId = ValidationUtils.sanitizeInputString(vspId);
         versionId = ValidationUtils.sanitizeInputString(versionId);
         final byte[] fileToUploadBytes;
-        final var filename = ValidationUtils.sanitizeInputString(fileToUpload.getDataHandler().getName());
+        final DataHandler dataHandler = fileToUpload.getDataHandler();
+        final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
         ArtifactInfo artifactInfo = null;
         if (artifactStorageManager.isEnabled()) {
-            final InputStream packageInputStream;
+            final Path tempArtifactPath;
             try {
-                packageInputStream = fileToUpload.getDataHandler().getInputStream();
-            } catch (final IOException e) {
+                final ArtifactStorageConfig storageConfiguration = artifactStorageManager.getStorageConfiguration();
+
+                final Path folder = Path.of(storageConfiguration.getTempPath()).resolve(vspId).resolve(versionId);
+                tempArtifactPath = folder.resolve(UUID.randomUUID().toString());
+                Files.createDirectories(folder);
+                try (final InputStream packageInputStream = dataHandler.getInputStream();
+                    final var fileOutputStream = new FileOutputStream(tempArtifactPath.toFile())) {
+                    packageInputStream.transferTo(fileOutputStream);
+                }
+            } catch (final Exception e) {
                 return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
                     new ErrorMessage(ErrorLevel.ERROR, UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename)))).build();
             }
-            try {
-                artifactInfo = artifactStorageManager.upload(vspId, versionId, packageInputStream);
-            } catch (final BusinessException e) {
+            try (final InputStream inputStream = Files.newInputStream(tempArtifactPath)) {
+                artifactInfo = artifactStorageManager.upload(vspId, versionId, inputStream);
+            } catch (final Exception e) {
+                LOGGER.error("Package Size Reducer not configured", e);
                 return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
                     new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename)))).build();
             }
             try {
-                fileToUploadBytes = packageSizeReducer.reduce(artifactInfo.getPath());
-            } catch (final BusinessException e) {
+                fileToUploadBytes = packageSizeReducer.reduce(tempArtifactPath);
+                Files.delete(tempArtifactPath);
+            } catch (final Exception e) {
+                LOGGER.error("Package Size Reducer not configured", e);
                 return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
-                        new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(artifactInfo.getPath()))))
-                    .build();
+                    new ErrorMessage(ErrorLevel.ERROR,
+                        ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(tempArtifactPath.toString())))).build();
             }
         } else {
             fileToUploadBytes = fileToUpload.getObject(byte[].class);
@@ -192,12 +177,16 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         if (onboardPackageInfo == null) {
             final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
                 new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)));
-            return Response.ok(uploadFileResponseDto)
-                .build();
+            return Response.ok(uploadFileResponseDto).build();
         }
         final var version = new Version(versionId);
         final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
-        return processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
+        final Response response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
+        final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
+        if (artifactStorageManager.isEnabled() && !entity.getErrors().isEmpty()) {
+            artifactStorageManager.delete(artifactInfo);
+        }
+        return response;
     }
 
     private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails,

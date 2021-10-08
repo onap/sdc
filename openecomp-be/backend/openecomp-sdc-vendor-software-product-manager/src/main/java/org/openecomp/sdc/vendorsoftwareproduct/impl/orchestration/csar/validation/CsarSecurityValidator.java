@@ -61,7 +61,7 @@ public class CsarSecurityValidator {
     }
 
     private boolean isArtifactInfoPresent(final ArtifactInfo artifactInfo) {
-        return artifactInfo != null && artifactInfo.getPath() != null;
+        return artifactInfo != null;
     }
 
 }

@@ -1,35 +1,35 @@
 catalogNotificationsConfig:
-    # catalog backend protocol
-    <% if node[:disableHttp] -%>
-    catalogBeProtocol: https
-    <% else %>
-    catalogBeProtocol: http
-    <% end -%>
-    catalogBeHttpPort: <%= @catalog_be_http_port %>
-    catalogBeSslPort: <%= @catalog_be_ssl_port %>
-    catalogBeFqdn: <%= @catalog_be_fqdn %>
-    # do not remove the "" from catalog_notification_url. it is escaping % characters coming from AUTO.json
-    catalogNotificationUrl: "<%= @catalog_notification_url %>"
+  # catalog backend protocol
+  <% if node[:disableHttp] -%>
+  catalogBeProtocol: https
+  <% else %>
+  catalogBeProtocol: http
+  <% end -%>
+  catalogBeHttpPort: <%= @catalog_be_http_port %>
+  catalogBeSslPort: <%= @catalog_be_ssl_port %>
+  catalogBeFqdn: <%= @catalog_be_fqdn %>
+  # do not remove the "" from catalog_notification_url. it is escaping % characters coming from AUTO.json
+  catalogNotificationUrl: "<%= @catalog_notification_url %>"
 
 notifications:
-    pollingIntervalMsec: 2000
-    selectionSize: 100
-    beHost: <%= @onboard_ip %>
-    beHttpPort: <%= @onboard_port %>
+  pollingIntervalMsec: 2000
+  selectionSize: 100
+  beHost: <%= @onboard_ip %>
+  beHttpPort: <%= @onboard_port %>
 
 cassandraConfig:
-    cassandraHosts: [<%= @cassandra_ip %>]
-    cassandraPort: <%= @cassandra_port %>
-    localDataCenter: <%= @DC_NAME %>
-    reconnectTimeout : 30000
-    socketReadTimeout: <%= @socket_read_timeout %>
-    socketConnectTimeout: <%= @socket_connect_timeout %>
-    authenticate: true
-    username: <%= @cassandra_usr %>
-    password: <%= @cassandra_pwd %>
-    ssl: <%= @cassandra_ssl_enabled %>
-    truststorePath: <%= node['jetty']['truststore_path'] %>
-    truststorePassword: <%= @cassandra_truststore_password %>
+  cassandraHosts: [ <%= @cassandra_ip %> ]
+  cassandraPort: <%= @cassandra_port %>
+  localDataCenter: <%= @DC_NAME %>
+  reconnectTimeout: 30000
+  socketReadTimeout: <%= @socket_read_timeout %>
+  socketConnectTimeout: <%= @socket_connect_timeout %>
+  authenticate: true
+  username: <%= @cassandra_usr %>
+  password: <%= @cassandra_pwd %>
+  ssl: <%= @cassandra_ssl_enabled %>
+  truststorePath: <%= node['jetty']['truststore_path'] %>
+  truststorePassword: <%= @cassandra_truststore_password %>
 
 # access restriction
 authCookie:
@@ -42,8 +42,8 @@ authCookie:
   isHttpOnly: true
   # redirect variable name from portal.properties file
   redirectURL: "redirect_url"
-  excludedUrls: ['/.*']
-  onboardingExcludedUrls: ['/.*']
+  excludedUrls: [ '/.*' ]
+  onboardingExcludedUrls: [ '/.*' ]
 
 basicAuth:
   enabled: <%= @basic_auth_enabled %>
@@ -55,9 +55,16 @@ zipValidation:
   ignoreManifest: false
 
 externalCsarStore:
-  storeCsarsExternally: false
-  fullPath: "/home/onap/temp/"
+  storageType: NONE # NONE, MINIO
+  endpoint:
+    host: 127.0.0.1
+    port: 9000
+    secure: false
+  credentials:
+    accessKey: "login"
+    secretKey: "password"
   foldersToStrip:
     - Files/images
   sizeLimit: 10000000
   thresholdEntries: 10000
+  tempPath: "/home/onap/temp/"

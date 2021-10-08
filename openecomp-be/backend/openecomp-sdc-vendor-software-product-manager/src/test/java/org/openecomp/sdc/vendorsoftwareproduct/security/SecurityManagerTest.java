@@ -22,29 +22,61 @@ package org.openecomp.sdc.vendorsoftwareproduct.security;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
+import static org.openecomp.sdc.be.csar.storage.StorageFactory.StorageType.MINIO;
 
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
+import io.minio.MinioClient;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openecomp.sdc.be.csar.storage.PersistentStorageArtifactInfo;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openecomp.sdc.be.csar.storage.MinIoArtifactInfo;
+import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardSignedPackage;
 
+@ExtendWith(MockitoExtension.class)
 class SecurityManagerTest {
 
     private File certDir;
     private String cerDirPath = "/tmp/cert/";
     private SecurityManager securityManager;
+    @Mock
+    private CommonConfigurationManager commonConfigurationManager;
+    @Mock
+    private MinioClient minioClient;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private MinioClient.Builder builderMinio;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private GetObjectArgs.Builder getObjectArgsBuilder;
+    @Mock
+    private GetObjectArgs getObjectArgs;
 
     private File prepareCertFiles(String origFilePath, String newFilePath) throws IOException, URISyntaxException {
         File origFile = new File(getClass().getResource(origFilePath).toURI());
@@ -60,12 +92,14 @@ class SecurityManagerTest {
 
     @BeforeEach
     public void setUp() throws IOException {
+        openMocks(this);
         certDir = new File(cerDirPath);
         if (certDir.exists()) {
             tearDown();
         }
         certDir.mkdirs();
         securityManager = new SecurityManager(certDir.getPath());
+
     }
 
     @AfterEach
@@ -123,18 +157,51 @@ class SecurityManagerTest {
     }
 
     @Test
-    void verifySignedDataTestCertIncludedIntoSignatureArtifactStorageManagerIsEnabled()
-        throws IOException, URISyntaxException, SecurityManagerException {
-        prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
-        byte[] fileToUploadBytes = readAllBytes("/cert/2-file-signed-package/2-file-signed-package.zip");
+    void verifySignedDataTestCertIncludedIntoSignatureArtifactStorageManagerIsEnabled() throws Exception {
 
-        final var onboardingPackageProcessor = new OnboardingPackageProcessor("2-file-signed-package.zip", fileToUploadBytes,
-            new CnfPackageValidator(),
-            new PersistentStorageArtifactInfo(Path.of("src/test/resources/cert/2-file-signed-package/2-file-signed-package.zip")));
-        final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+        final Map<String, Object> endpoint = new HashMap<>();
+        endpoint.put("host", "localhost");
+        endpoint.put("port", 9000);
+        final Map<String, Object> credentials = new HashMap<>();
+        credentials.put("accessKey", "login");
+        credentials.put("secretKey", "password");
 
-        assertTrue(securityManager
-            .verifyPackageSignedData((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(), onboardPackageInfo.getArtifactInfo()));
+        try (MockedStatic<CommonConfigurationManager> utilities = Mockito.mockStatic(CommonConfigurationManager.class)) {
+            utilities.when(CommonConfigurationManager::getInstance).thenReturn(commonConfigurationManager);
+            try (MockedStatic<MinioClient> minioUtilities = Mockito.mockStatic(MinioClient.class)) {
+                minioUtilities.when(MinioClient::builder).thenReturn(builderMinio);
+                when(builderMinio
+                    .endpoint(anyString(), anyInt(), anyBoolean())
+                    .credentials(anyString(), anyString())
+                    .build()
+                ).thenReturn(minioClient);
+
+                when(commonConfigurationManager.getConfigValue("externalCsarStore", "endpoint", null)).thenReturn(endpoint);
+                when(commonConfigurationManager.getConfigValue("externalCsarStore", "credentials", null)).thenReturn(credentials);
+                when(commonConfigurationManager.getConfigValue("externalCsarStore", "tempPath", null)).thenReturn("cert/2-file-signed-package");
+                when(commonConfigurationManager.getConfigValue(eq("externalCsarStore"), eq("storageType"), any())).thenReturn(MINIO.name());
+
+                prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
+                byte[] fileToUploadBytes = readAllBytes("/cert/2-file-signed-package/2-file-signed-package.zip");
+                when(getObjectArgsBuilder
+                    .bucket(anyString())
+                    .object(anyString())
+                    .build()
+                ).thenReturn(getObjectArgs);
+
+                when(minioClient.getObject(any(GetObjectArgs.class)))
+                    .thenReturn(new GetObjectResponse(null, "bucket", "", "objectName",
+                        new BufferedInputStream(new ByteArrayInputStream(fileToUploadBytes))));
+
+                final var onboardingPackageProcessor = new OnboardingPackageProcessor("2-file-signed-package.zip", fileToUploadBytes,
+                    new CnfPackageValidator(), new MinIoArtifactInfo("bucket", "objectName"));
+                final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+
+                assertTrue(securityManager
+                    .verifyPackageSignedData((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(),
+                        onboardPackageInfo.getArtifactInfo()));
+            }
+        }
     }
 
     @Test
@@ -158,18 +225,51 @@ class SecurityManagerTest {
     }
 
     @Test
-    void verifySignedDataTestCertNotIncludedIntoSignatureArtifactStorageManagerIsEnabled()
-        throws IOException, URISyntaxException, SecurityManagerException {
-        prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
-        byte[] fileToUploadBytes = readAllBytes("/cert/3-file-signed-package/3-file-signed-package.zip");
+    void verifySignedDataTestCertNotIncludedIntoSignatureArtifactStorageManagerIsEnabled() throws Exception {
 
-        final var onboardingPackageProcessor = new OnboardingPackageProcessor("3-file-signed-package.zip", fileToUploadBytes,
-            new CnfPackageValidator(),
-            new PersistentStorageArtifactInfo(Path.of("src/test/resources/cert/3-file-signed-package/3-file-signed-package.zip")));
-        final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+        final Map<String, Object> endpoint = new HashMap<>();
+        endpoint.put("host", "localhost");
+        endpoint.put("port", 9000);
+        final Map<String, Object> credentials = new HashMap<>();
+        credentials.put("accessKey", "login");
+        credentials.put("secretKey", "password");
 
-        assertTrue(securityManager
-            .verifyPackageSignedData((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(), onboardPackageInfo.getArtifactInfo()));
+        try (MockedStatic<CommonConfigurationManager> utilities = Mockito.mockStatic(CommonConfigurationManager.class)) {
+            utilities.when(CommonConfigurationManager::getInstance).thenReturn(commonConfigurationManager);
+            try (MockedStatic<MinioClient> minioUtilities = Mockito.mockStatic(MinioClient.class)) {
+                minioUtilities.when(MinioClient::builder).thenReturn(builderMinio);
+                when(builderMinio
+                    .endpoint(anyString(), anyInt(), anyBoolean())
+                    .credentials(anyString(), anyString())
+                    .build()
+                ).thenReturn(minioClient);
+
+                when(commonConfigurationManager.getConfigValue("externalCsarStore", "endpoint", null)).thenReturn(endpoint);
+                when(commonConfigurationManager.getConfigValue("externalCsarStore", "credentials", null)).thenReturn(credentials);
+                when(commonConfigurationManager.getConfigValue("externalCsarStore", "tempPath", null)).thenReturn("tempPath");
+                when(commonConfigurationManager.getConfigValue(eq("externalCsarStore"), eq("storageType"), any())).thenReturn(MINIO.name());
+
+                prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
+                byte[] fileToUploadBytes = readAllBytes("/cert/3-file-signed-package/3-file-signed-package.zip");
+                when(getObjectArgsBuilder
+                    .bucket(anyString())
+                    .object(anyString())
+                    .build()
+                ).thenReturn(getObjectArgs);
+
+                when(minioClient.getObject(any(GetObjectArgs.class)))
+                    .thenReturn(new GetObjectResponse(null, "bucket", "", "objectName",
+                        new BufferedInputStream(new ByteArrayInputStream(fileToUploadBytes))));
+
+                final var onboardingPackageProcessor = new OnboardingPackageProcessor("3-file-signed-package.zip", fileToUploadBytes,
+                    new CnfPackageValidator(), new MinIoArtifactInfo("bucket", "objectName"));
+                final OnboardPackageInfo onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+
+                assertTrue(securityManager
+                    .verifyPackageSignedData((OnboardSignedPackage) onboardPackageInfo.getOriginalOnboardPackage(),
+                        onboardPackageInfo.getArtifactInfo()));
+            }
+        }
     }
 
     @Test
