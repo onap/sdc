@@ -42,12 +42,12 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 
-class CsarSizeReducerTest {
+class MinIoStorageCsarSizeReducerTest {
 
     @Mock
     private CsarPackageReducerConfiguration csarPackageReducerConfiguration;
     @InjectMocks
-    private CsarSizeReducer csarSizeReducer;
+    private MinIoStorageCsarSizeReducer minIoStorageCsarSizeReducer;
 
     @BeforeEach
     void setUp() {
@@ -55,7 +55,7 @@ class CsarSizeReducerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"dummyToReduce.zip", "dummyToReduce.csar", "dummyToNotReduce.csar"})
+    @ValueSource(strings = {"dummyToReduce-3-files.zip", "dummyToReduce.csar", "dummyToNotReduce.csar", "dummyToReduce-2-files.zip"})
     void reduceByPathAndSizeTest(String fileName) throws ZipException {
         final var pathToReduce1 = Path.of("Files/images");
         final var pathToReduce2 = Path.of("Files/Scripts/my_script.sh");
@@ -68,7 +68,7 @@ class CsarSizeReducerTest {
 
         final Map<String, byte[]> originalCsar = ZipUtils.readZip(csarPath.toFile(), false);
 
-        final byte[] reduce = csarSizeReducer.reduce(csarPath);
+        final byte[] reduce = minIoStorageCsarSizeReducer.reduce(csarPath);
 
         final Map<String, byte[]> reducedCsar = ZipUtils.readZip(reduce, false);
 
@@ -113,7 +113,7 @@ class CsarSizeReducerTest {
             assertArrayEquals("".getBytes(StandardCharsets.UTF_8), reducedCsar.get(originalFilePath),
                 String.format("File '%s' expected to be reduced to empty string", originalFilePath));
         } else {
-            if (originalFilePath.endsWith(".csar") && csarSizeReducer.getReduced().get()) {
+            if (originalFilePath.endsWith(".csar") && minIoStorageCsarSizeReducer.getReduced().get()) {
                 assertNotEquals(originalBytes.length, reducedCsar.get(originalFilePath).length,
                     String.format("File '%s' expected to be NOT equal", originalFilePath));
             } else {

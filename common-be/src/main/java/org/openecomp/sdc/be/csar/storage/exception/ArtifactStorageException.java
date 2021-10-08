@@ -18,12 +18,17 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.csar.storage;
+package org.openecomp.sdc.be.csar.storage.exception;
 
-/**
- * Configurations for the {@link ArtifactStorageManager}
- */
-public interface ArtifactStorageConfig {
+import org.openecomp.sdc.be.exception.BusinessException;
 
-    String getTempPath();
+public class ArtifactStorageException extends BusinessException {
+
+    public ArtifactStorageException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public ArtifactStorageException(final String message) {
+        super(message);
+    }
 }

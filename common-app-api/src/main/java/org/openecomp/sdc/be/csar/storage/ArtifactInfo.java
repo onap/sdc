@@ -20,13 +20,11 @@
 
 package org.openecomp.sdc.be.csar.storage;
 
-import java.nio.file.Path;
-
 /**
  * Represents the stored artifact
  */
 public interface ArtifactInfo {
 
-    Path getPath();
+    String getInfo();
 
 }

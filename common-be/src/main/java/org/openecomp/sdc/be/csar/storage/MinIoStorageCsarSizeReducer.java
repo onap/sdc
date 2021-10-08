@@ -43,9 +43,9 @@ import org.openecomp.sdc.be.csar.storage.exception.CsarSizeReducerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CsarSizeReducer implements PackageSizeReducer {
+public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CsarSizeReducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MinIoStorageCsarSizeReducer.class);
     private static final Set<String> ALLOWED_SIGNATURE_EXTENSIONS = Set.of("cms");
     private static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = Set.of("cert", "crt");
     private static final String CSAR_EXTENSION = "csar";
@@ -55,7 +55,7 @@ public class CsarSizeReducer implements PackageSizeReducer {
 
     private final CsarPackageReducerConfiguration configuration;
 
-    public CsarSizeReducer(final CsarPackageReducerConfiguration configuration) {
+    public MinIoStorageCsarSizeReducer(final CsarPackageReducerConfiguration configuration) {
         this.configuration = configuration;
     }
 
