@@ -669,6 +669,7 @@ Modifications copyright (c) 2018-2019 Nokia
             </activation>
             <properties>
                 <checkstyle.skip>true</checkstyle.skip>
+                <maven.test.skip>true</maven.test.skip>
             </properties>
             <modules>
                 <module>onboarding</module>
