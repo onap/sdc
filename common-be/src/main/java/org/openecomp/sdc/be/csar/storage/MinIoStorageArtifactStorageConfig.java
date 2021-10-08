@@ -18,17 +18,35 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.csar.storage.exception;
+package org.openecomp.sdc.be.csar.storage;
 
-import org.openecomp.sdc.be.exception.BusinessException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public class PersistentVolumeArtifactStorageException extends BusinessException {
+@AllArgsConstructor
+@Getter
+public class MinIoStorageArtifactStorageConfig implements ArtifactStorageConfig {
 
-    public PersistentVolumeArtifactStorageException(final String message, final Throwable cause) {
-        super(message, cause);
+    private final boolean isEnabled;
+    private final EndPoint endPoint;
+    private final Credentials credentials;
+    private final String tempPath;
+
+    @AllArgsConstructor
+    @Getter
+    public static class EndPoint {
+
+        private final String host;
+        private final int port;
+        private final boolean secure;
     }
 
-    public PersistentVolumeArtifactStorageException(final String message) {
-        super(message);
+    @AllArgsConstructor
+    @Getter
+    public static class Credentials {
+
+        private final String accessKey;
+        private final String secretKey;
     }
+
 }
