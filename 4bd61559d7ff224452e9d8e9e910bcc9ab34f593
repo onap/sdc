@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a1fcaef9_7f4a3828",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourceUploadServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-10-11T09:14:04Z",
+      "side": 1,
+      "message": "Could add an unit test to cover this scenario.",
+      "range": {
+        "startLine": 193,
+        "startChar": 7,
+        "endLine": 198,
+        "endChar": 9
+      },
+      "revId": "4bd61559d7ff224452e9d8e9e910bcc9ab34f593",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
