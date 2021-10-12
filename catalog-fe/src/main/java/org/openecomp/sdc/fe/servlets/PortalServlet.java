@@ -113,7 +113,7 @@ public class PortalServlet extends HttpServlet {
      * @throws IOException
      */
     private void addRequestHeadersUsingWebseal(final HttpServletRequest request, final HttpServletResponse response)
-        throws ServletException, IOException, CipherUtilException {
+        throws ServletException, IOException {
         response.setContentType("text/html");
         // Create new request object to dispatch
         MutableHttpServletRequest mutableRequest = new MutableHttpServletRequest(request);
@@ -243,13 +243,12 @@ public class PortalServlet extends HttpServlet {
      * @param request
      * @param headers
      */
-    private void addCookies(final HttpServletResponse response, final HttpServletRequest request, final String[] headers)
-        throws CipherUtilException {
+    private void addCookies(final HttpServletResponse response, final HttpServletRequest request, final String[] headers) {
         for (var i = 0; i < headers.length; i++) {
             final var currHeader = ValidationUtils.sanitizeInputString(headers[i]);
             final var headerValue = ValidationUtils.sanitizeInputString(request.getHeader(currHeader));
             if (headerValue != null) {
-                final var cookie = new Cookie(currHeader, CipherUtil.encryptPKC(headerValue));
+                final var cookie = new Cookie(currHeader, headerValue);
                 cookie.setSecure(true);
                 response.addCookie(cookie);
             }
