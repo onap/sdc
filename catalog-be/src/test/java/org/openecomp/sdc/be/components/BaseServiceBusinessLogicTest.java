@@ -40,7 +40,6 @@ import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ServiceBusinessLogicTest;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.utils.ComponentBusinessLogicMock;
@@ -75,12 +74,9 @@ import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.AuditingFieldsKey;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogicMock {
-    private static final Logger log = LoggerFactory.getLogger(ServiceBusinessLogicTest.class);
     private static final String SERVICE_CATEGORY = "Mobility";
     private final ServletContext servletContext = Mockito.mock(ServletContext.class);
     private UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);

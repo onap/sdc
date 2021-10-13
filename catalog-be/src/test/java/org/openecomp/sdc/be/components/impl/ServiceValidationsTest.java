@@ -20,21 +20,21 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import fj.data.Either;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
-
-public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
+class ServiceValidationsTest extends ServiceBusinessLogicBaseTestSetup {
 
     @Test
-    public void testInvalidEnvironmentContext() {
+    void testInvalidEnvironmentContext() {
         Service newService = createServiceObject(false);
         newService.setEnvironmentContext("not valid");
         try {
@@ -47,7 +47,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testValidEnvironmentContext() {
+    void testValidEnvironmentContext() {
         Service newService = createServiceObject(false);
         newService.setEnvironmentContext("Critical_Revenue-Bearing");
         Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(newService, user, AuditingActionEnum.CREATE_RESOURCE);
@@ -55,14 +55,14 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testCreateServiceWithNoEnvironmentContext() {
+    void testCreateServiceWithNoEnvironmentContext() {
         Service newService = createServiceObject(false);
         Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(newService, user, AuditingActionEnum.CREATE_RESOURCE);
         assertThat(service.left().value().getEnvironmentContext()).isEqualTo("General_Revenue-Bearing");
     }
 
     @Test
-    public void testInvalidInstantiationType() {
+    void testInvalidInstantiationType() {
         Service newService = createServiceObject(false);
         newService.setInstantiationType("not valid");
         try {
@@ -75,7 +75,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testEmptyInstantiationType() {
+    void testEmptyInstantiationType() {
         Service newService = createServiceObject(false);
         newService.setInstantiationType(null);
         Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(newService, user, AuditingActionEnum.CREATE_RESOURCE);
@@ -83,7 +83,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testValidInstantiationType() {
+    void testValidInstantiationType() {
         Service newService = createServiceObject(false);
         newService.setInstantiationType("Macro");
         Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(newService, user, AuditingActionEnum.CREATE_RESOURCE);
@@ -91,7 +91,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testInvalidServiceRole() {
+    void testInvalidServiceRole() {
         Service newService = createServiceObject(false);
         newService.setServiceRole("gsg*");
         try {
@@ -104,7 +104,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testTooLongServiceRole() {
+    void testTooLongServiceRole() {
         Service newService = createServiceObject(false);
         newService.setServiceRole("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         try {
@@ -117,7 +117,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testValidServiceRole() {
+    void testValidServiceRole() {
         Service newService = createServiceObject(false);
         newService.setServiceRole("role");
         Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(newService, user, AuditingActionEnum.CREATE_RESOURCE);
@@ -125,7 +125,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testInvalidServiceType() {
+    void testInvalidServiceType() {
         Service newService = createServiceObject(false);
         newService.setServiceType("gsg*");
         try {
@@ -138,7 +138,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testValidServiceType() {
+    void testValidServiceType() {
         Service newService = createServiceObject(false);
         newService.setServiceType("type");
         Either<Service, ResponseFormat> service = bl.validateServiceBeforeCreate(newService, user, AuditingActionEnum.CREATE_RESOURCE);
@@ -146,7 +146,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testTooLongServiceType() {
+    void testTooLongServiceType() {
         Service newService = createServiceObject(false);
         newService.setServiceType("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         try {
@@ -159,7 +159,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testEcompGeneratedNamingIsMissing() {
+    void testEcompGeneratedNamingIsMissing() {
         Service newService = createServiceObject(false);
         newService.setEcompGeneratedNaming(null);
         try {
@@ -173,7 +173,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testNamingPolicyWIthEcompNamingFalse() {
+    void testNamingPolicyWIthEcompNamingFalse() {
         Service newService = createServiceObject(false);
         newService.setEcompGeneratedNaming(false);
         newService.setNamingPolicy("policy");
@@ -182,7 +182,7 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testInvalidNamingPolicy() {
+    void testInvalidNamingPolicy() {
         Service newService = createServiceObject(false);
         newService.setNamingPolicy("פוליסי");
         try {
@@ -195,9 +195,13 @@ public class ServiceValidationsTest extends ServiceBussinessLogicBaseTestSetup {
     }
 
     @Test
-    public void testTooLongNamingPolicy() {
+    void testTooLongNamingPolicy() {
         Service newService = createServiceObject(false);
-        newService.setNamingPolicy("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        newService.setNamingPolicy("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         try {
             bl.createService(newService, user);
         } catch (ComponentException exp) {

@@ -44,15 +44,6 @@ public class ServiceMetadataDataDefinition extends ComponentMetadataDataDefiniti
     private String vendorName;
     private String vendorRelease;
 
-    public ServiceMetadataDataDefinition(ServiceMetadataDataDefinition other) {
-        super(other);
-        serviceType = other.getServiceType();
-        serviceRole = other.getServiceRole();
-        this.importServiceType = other.getImportServiceType();
-        this.toscaServiceName = other.getToscaServiceName();
-        serviceFunction = other.getServiceFunction();
-    }
-
     public ServiceMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
         super(extractor);
         serviceType = extractor.getServiceType();
