@@ -33,7 +33,7 @@ public class BaseType  {
     @Setter
     private String toscaResourceName;
     
-    private List<Semver> versions = new ArrayList<>();
+    private final List<Semver> versions = new ArrayList<>();
     
     public BaseType(final String toscaResourceName) {
         this.toscaResourceName = toscaResourceName;

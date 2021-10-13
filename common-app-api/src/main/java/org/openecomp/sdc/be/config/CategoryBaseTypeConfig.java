@@ -1,12 +1,14 @@
 /*
- * ============LICENSE_START=======================================================
- *  Copyright (C) 2021 Nordix Foundation
+ * -
+ *  ============LICENSE_START=======================================================
+ *  Copyright (C) 2021 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,23 +18,20 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
-package org.openecomp.sdc.be.exception;
 
+package org.openecomp.sdc.be.config;
+
+import java.util.List;
 import lombok.Getter;
-import org.openecomp.sdc.be.tosca.ToscaError;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public class ToscaExportException extends Exception {
+@Getter
+@Setter
+@NoArgsConstructor
+public class CategoryBaseTypeConfig {
 
-    @Getter
-    private final ToscaError toscaError;
+    private boolean required;
+    private List<String> baseTypes;
 
-    public ToscaExportException(String message) {
-        super(message);
-        toscaError = null;
-    }
-
-    public ToscaExportException(final String message, final ToscaError toscaError) {
-        super(message);
-        this.toscaError = toscaError;
-    }
 }

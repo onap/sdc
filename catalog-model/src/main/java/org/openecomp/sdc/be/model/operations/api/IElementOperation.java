@@ -86,7 +86,15 @@ public interface IElementOperation {
 
     Either<List<CategoryDefinition>, ActionStatus> getAllCategories(NodeTypeEnum nodeType, boolean inTransaction);
     
-    List<BaseType> getBaseTypes(String categoryName, String modelName);
+    List<BaseType> getServiceBaseTypes(String categoryName, String modelName);
+
+    /**
+     * Checks if a category requires a base type.
+     *
+     * @param categoryName the category name
+     * @return {@code true} if a base type is required, {@code false} otherwise.
+     */
+    boolean isBaseTypeRequired(String categoryName);
 
     Either<CategoryDefinition, ActionStatus> getCategory(NodeTypeEnum nodeType, String categoryId);
 

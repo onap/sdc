@@ -274,7 +274,7 @@ public class ServiceTest {
     public void testFetchGenericTypeToscaNameFromConfigNoToscaTypesForCategories() throws Exception {
         Configuration existingConfiguration = configurationManager.getConfiguration();
         Configuration newConfiguration = new Configuration();
-        newConfiguration.setServiceNodeTypes(null);
+        newConfiguration.setServiceBaseNodeTypes(null);
         Map<String, String> genericAssetNodeTypes = new HashMap<>();
         genericAssetNodeTypes.put("Service", "org.openecomp.resource.abstract.nodes.service");
         newConfiguration.setGenericAssetNodeTypes(genericAssetNodeTypes);
@@ -310,7 +310,7 @@ public class ServiceTest {
 
         Configuration configuration = new Configuration();
 
-        configuration.setServiceNodeTypes(null);
+        configuration.setServiceBaseNodeTypes(null);
         configurationManager.setConfiguration(configuration);
     }
 }

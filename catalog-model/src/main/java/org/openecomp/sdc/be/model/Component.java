@@ -638,6 +638,11 @@ public abstract class Component implements PropertiesOwner {
     }
 
     public void setDerivedFromGenericInfo(Resource genericType) {
+        if (genericType == null) {
+            derivedFromGenericType = null;
+            derivedFromGenericVersion = null;
+            return;
+        }
         derivedFromGenericType = genericType.getToscaResourceName();
         derivedFromGenericVersion = genericType.getVersion();
     }

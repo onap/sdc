@@ -24,11 +24,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Lists;
@@ -42,8 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -72,28 +72,27 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.http.HttpStatus;
 
-public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup {
+class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
 
     private final static String DEFAULT_ICON = "defaulticon";
     private static final String ALREADY_EXIST = "alreadyExist";
-    private static final String DOES_NOT_EXIST = "doesNotExist";
 
     @Test
-    public void testGetComponentAuditRecordsCertifiedVersion() {
+    void testGetComponentAuditRecordsCertifiedVersion() {
         Either<List<Map<String, Object>>, ResponseFormat> componentAuditRecords = bl.getComponentAuditRecords(CERTIFIED_VERSION, COMPONNET_ID, user.getUserId());
         assertTrue(componentAuditRecords.isLeft());
         assertEquals(3, componentAuditRecords.left().value().size());
     }
 
     @Test
-    public void testGetComponentAuditRecordsUnCertifiedVersion() {
+    void testGetComponentAuditRecordsUnCertifiedVersion() {
         Either<List<Map<String, Object>>, ResponseFormat> componentAuditRecords = bl.getComponentAuditRecords(UNCERTIFIED_VERSION, COMPONNET_ID, user.getUserId());
         assertTrue(componentAuditRecords.isLeft());
         assertEquals(4, componentAuditRecords.left().value().size());
     }
 
     @Test
-    public void testHappyScenario() {
+    void testHappyScenario() {
         Service service = createServiceObject(false);
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
@@ -105,7 +104,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testServiceCreationPluginCall() {
+    void testServiceCreationPluginCall() {
         final Service service = createServiceObject(false);
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
         final List<ServiceCreationPlugin> serviceCreationPlugins = new ArrayList<>();
@@ -138,7 +137,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
 
     @Test
-    public void testCreateServiceWhenGenericTypeHasProperties() {
+    void testCreateServiceWhenGenericTypeHasProperties() {
         final Service service = createServiceObject(false);
 
         final Resource genericTypeResource = mockGenericTypeResource();
@@ -158,7 +157,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testCreateServiceWhenGenericTypeAndServiceHasProperties() {
+    void testCreateServiceWhenGenericTypeAndServiceHasProperties() {
         final Service service = createServiceObject(false);
         service.setProperties(mockPropertyList());
         service.getProperties().remove(0);
@@ -185,7 +184,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testHappyScenarioCRNullProjectCode() {
+    void testHappyScenarioCRNullProjectCode() {
         Service service = createServiceObject(false);
         service.setProjectCode(null);
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
@@ -198,7 +197,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testHappyScenarioCREmptyStringProjectCode() {
+    void testHappyScenarioCREmptyStringProjectCode() {
         createServiceValidator();
         Service service = createServiceObject(false);
         service.setProjectCode("");
@@ -242,7 +241,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     // Service name - start
 
     @Test
-    public void testFailedServiceValidations() {
+    void testFailedServiceValidations() {
 
         testServiceNameAlreadyExists();
         testServiceNameEmpty();
@@ -504,7 +503,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         fail();
     }
     @Test
-    public void markDistributionAsDeployedTestAlreadyDeployed() {
+    void markDistributionAsDeployedTestAlreadyDeployed() {
         String notifyAction = "DNotify";
         String requestAction = "DRequest";
         String resultAction = "DResult";
@@ -533,7 +532,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void markDistributionAsDeployedTestSuccess() {
+    void markDistributionAsDeployedTestSuccess() {
         String notifyAction = "DNotify";
         String requestAction = "DRequest";
         String did = "123456";
@@ -547,7 +546,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void markDistributionAsDeployedTestNotDistributed() {
+    void markDistributionAsDeployedTestNotDistributed() {
         String notifyAction = "DNotify";
         String requestAction = "DRequest";
         String did = "123456";
@@ -632,7 +631,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testDeleteMarkedServices() {
+    void testDeleteMarkedServices() {
         List<String> ids = new ArrayList<>();
         List<String> responseIds = new ArrayList<>();
         String resourceInUse = "123";
@@ -658,13 +657,12 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         assertFalse(resourceIdList.isEmpty());
         assertTrue(resourceIdList.contains(resourceFree));
         assertFalse(resourceIdList.contains(resourceInUse));
-
     }
 
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
-    public void testFindGroupInstanceOnRelatedComponentInstance() {
+    void testFindGroupInstanceOnRelatedComponentInstance() {
 
         Class<ServiceBusinessLogic> targetClass = ServiceBusinessLogic.class;
         String methodName = "findGroupInstanceOnRelatedComponentInstance";
@@ -739,21 +737,33 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         return (Service)createNewComponent();
     }
 
-
     @Test
-    public void testDerivedFromGeneric() {
+    void testDerivedFromGeneric() {
         Service service = createServiceObject(true);
+        service.setDerivedFromGenericInfo(genericService);
         when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(service));
         when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
         Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
         assertTrue(createResponse.isLeft());
         service = createResponse.left().value();
-        assertEquals(service.getDerivedFromGenericType(), genericService.getToscaResourceName());
-        assertEquals(service.getDerivedFromGenericVersion(), genericService.getVersion());
+        assertEquals(genericService.getToscaResourceName(), service.getDerivedFromGenericType());
+        assertEquals(genericService.getVersion(), service.getDerivedFromGenericVersion());
     }
 
     @Test
-    public void testUpdateMetadataNamingPolicy() {
+    void testServiceWithoutDerivedFromGeneric() {
+        final Service service = createServiceObject(true);
+        when(toscaOperationFacade.createToscaComponent(service)).thenReturn(Either.left(service));
+        when(genericTypeBusinessLogic.fetchDerivedFromGenericType(service, null)).thenReturn(Either.left(genericService));
+        final Either<Service, ResponseFormat> createResponse = bl.createService(service, user);
+        assertTrue(createResponse.isLeft());
+        final Service actualService = createResponse.left().value();
+        assertNull(actualService.getDerivedFromGenericType());
+        assertNull(actualService.getDerivedFromGenericVersion());
+    }
+
+    @Test
+    void testUpdateMetadataNamingPolicy() {
         Service currentService = createServiceObject(true);
         Service newService = createServiceObject(false);
         currentService.setEcompGeneratedNaming(false);
@@ -767,7 +777,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testUpdateMetadataToEmptyProjectCode() {
+    void testUpdateMetadataToEmptyProjectCode() {
         Service currentService = createServiceObject(true);
         Service newService = createServiceObject(false);
         currentService.setProjectCode("12345");
@@ -779,7 +789,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testUpdateMetadataFromEmptyProjectCode() {
+    void testUpdateMetadataFromEmptyProjectCode() {
         Service currentService = createServiceObject(true);
         Service newService = createServiceObject(false);
         currentService.setProjectCode("");
@@ -791,7 +801,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testUpdateMetadataProjectCode() {
+    void testUpdateMetadataProjectCode() {
         Service currentService = createServiceObject(true);
         Service newService = createServiceObject(false);
         currentService.setProjectCode("33333");
@@ -803,7 +813,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testUpdateMetadataServiceType() {
+    void testUpdateMetadataServiceType() {
         Service currentService = createServiceObject(true);
         Service newService = createServiceObject(false);
         currentService.setServiceType("alice");
@@ -824,13 +834,13 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testCreateDefaultMetadataServiceFunction() {
+    void testCreateDefaultMetadataServiceFunction() {
         Service currentService = createServiceObject(true);
         assertThat(currentService.getServiceFunction()).isEqualTo("");
     }
 
     @Test
-    public void testCreateCustomMetadataServiceFunction() {
+    void testCreateCustomMetadataServiceFunction() {
         String customServiceFunctionName = "customName";
         Service currentService = createServiceObject(true);
         currentService.setServiceFunction(customServiceFunctionName);
@@ -838,7 +848,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testUpdateMetadataServiceFunction() {
+    void testUpdateMetadataServiceFunction() {
         Service currentService = createServiceObject(true);
         Service newService = createServiceObject(false);
         currentService.setServiceFunction("alice");
@@ -862,7 +872,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
 
 
     @Test
-    public void testServiceFunctionExceedLength() {
+    void testServiceFunctionExceedLength() {
         String serviceName = "Service";
         String serviceFunction = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         Service serviceFunctionExceedLength = createServiceObject(false);
@@ -879,7 +889,7 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testServiceFunctionInvalidCharacter(){
+    void testServiceFunctionInvalidCharacter(){
         String serviceName = "Service";
         String serviceFunction = "a?";
         Service serviceFunctionExceedLength = createServiceObject(false);
@@ -896,30 +906,30 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
     }
 
     @Test
-    public void testAddPropertyServiceConsumptionServiceNotFound() {
+    void testAddPropertyServiceConsumptionServiceNotFound() {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
         Either<Operation, ResponseFormat> operationEither =
                 bl.addPropertyServiceConsumption("1", "2", "3",
                         user.getUserId(), new ServiceConsumptionData());
-        Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+        assertTrue(operationEither.isRight());
+        assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test
-    public void testAddPropertyServiceConsumptionParentServiceIsEmpty() {
+    void testAddPropertyServiceConsumptionParentServiceIsEmpty() {
         Either<Component, StorageOperationStatus> eitherService = Either.left(createNewComponent());
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
 
         Either<Operation, ResponseFormat> operationEither =
                 bl.addPropertyServiceConsumption("1", "2", "3",
                         user.getUserId(), new ServiceConsumptionData());
-        Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+        assertTrue(operationEither.isRight());
+        assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test
-    public void testAddPropertyServiceConsumptionNoMatchingComponent() {
+    void testAddPropertyServiceConsumptionNoMatchingComponent() {
         Service aService = createNewService();
         Either<Component, StorageOperationStatus> eitherService = Either.left(aService);
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
@@ -929,12 +939,12 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         Either<Operation, ResponseFormat> operationEither =
                 bl.addPropertyServiceConsumption("1", weirdUniqueServiceInstanceId, "3",
                         user.getUserId(), new ServiceConsumptionData());
-        Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+        assertTrue(operationEither.isRight());
+        assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test
-    public void testAddPropertyServiceConsumptionNotComponentInstancesInterfacesOnParentService() {
+    void testAddPropertyServiceConsumptionNotComponentInstancesInterfacesOnParentService() {
         Service aService = createNewService();
         aService.getComponentInstances().get(0).setUniqueId(aService.getUniqueId());
         Either<Component, StorageOperationStatus> eitherService = Either.left(aService);
@@ -943,12 +953,12 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         Either<Operation, ResponseFormat> operationEither =
                 bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
                         user.getUserId(), new ServiceConsumptionData());
-        Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+        assertTrue(operationEither.isRight());
+        assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test
-    public void testAddPropertyServiceConsumptionInterfaceCandidateNotPresent() {
+    void testAddPropertyServiceConsumptionInterfaceCandidateNotPresent() {
         Service aService = createNewService();
         aService.getComponentInstances().get(0).setUniqueId(aService.getUniqueId());
         Either<Component, StorageOperationStatus> eitherService = Either.left(aService);
@@ -964,12 +974,12 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         Either<Operation, ResponseFormat> operationEither =
                 bl.addPropertyServiceConsumption("1", aService.getUniqueId(), "3",
                         user.getUserId(), new ServiceConsumptionData());
-        Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+        assertTrue(operationEither.isRight());
+        assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     @Test
-    public void testAddPropertyServiceConsumptionNoInputsCandidate() {
+    void testAddPropertyServiceConsumptionNoInputsCandidate() {
         Service aService = createNewService();
         aService.getComponentInstances().get(0).setUniqueId(aService.getUniqueId());
         Either<Component, StorageOperationStatus> eitherService = Either.left(aService);
@@ -990,8 +1000,8 @@ public class ServiceBusinessLogicTest extends ServiceBussinessLogicBaseTestSetup
         Either<Operation, ResponseFormat> operationEither =
                 bl.addPropertyServiceConsumption("1", aService.getUniqueId(), operationId,
                         user.getUserId(), new ServiceConsumptionData());
-        Assert.assertTrue(operationEither.isRight());
-        Assert.assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
+        assertTrue(operationEither.isRight());
+        assertEquals(HttpStatus.NOT_FOUND.value(), operationEither.right().value().getStatus().intValue());
     }
 
     private Resource mockGenericTypeResource() {
