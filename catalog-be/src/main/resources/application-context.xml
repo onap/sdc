@@ -22,6 +22,7 @@
   <bean class="org.openecomp.sdc.be.config.CatalogModelSpringConfig"/>
   <bean class="org.openecomp.sdc.be.components.distribution.engine.config.DistributionEngineSpringConfig"/>
   <bean class="org.openecomp.sdc.config.CatalogBESpringConfig"/>
+  <bean class="org.openecomp.sdc.config.MicrometerSpringConfig"/>
 
 
   <aop:config>
