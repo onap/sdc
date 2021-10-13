@@ -38,6 +38,7 @@ import {
     PropertyBEModel,
     PropertyFEModel,
     PropertyInputDetail,
+    Service,
     SimpleFlatProperty
 } from "app/models";
 import {ResourceType} from "app/utils";
@@ -67,7 +68,6 @@ import {ToscaPresentationData} from "../../../models/tosca-presentation";
 import {Observable} from "rxjs";
 import {ToscaGetFunctionType} from "../../../models/tosca-get-function-type.enum";
 import {TranslateService} from "../../shared/translator/translate.service";
-import {Model} from '../../../models/model';
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -248,6 +248,13 @@ export class PropertiesAssignmentComponent {
 
     isSelf = (): boolean => {
         return this.selectedInstanceData && this.selectedInstanceData.uniqueId == this.component.uniqueId;
+    }
+
+    showAddProperties = (): boolean => {
+        if (this.component.isService() && !(<Service>this.component).isSubstituteCandidate()) {
+            return false;
+        }
+        return this.isSelf();
     }
 
     getServiceProperties() {

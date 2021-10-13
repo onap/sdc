@@ -431,9 +431,9 @@ public class CsarUtils {
         LifecycleStateEnum lifecycleState = component.getLifecycleState();
         addServiceMf(component, zip, lifecycleState, isInCertificationRequest, fileName, mainYaml);
         //US798487 - Abstraction of complex types
-        if (!ModelConverter.isAtomicComponent(component)) {
+        if (hasToWriteComponentSubstitutionType(component)) {
             log.debug("Component {} is complex - generating abstract type for it..", component.getName());
-            dependencies.addAll(writeComponentInterface(component, zip, fileName, false));
+            dependencies.addAll(writeComponentInterface(component, zip, fileName));
         }
         //UID <cassandraId,filename,component>
         Either<ZipOutputStream, ResponseFormat> zipOutputStreamOrResponseFormat = getZipOutputStreamResponseFormatEither(zip, dependencies);
@@ -648,11 +648,16 @@ public class CsarUtils {
             zip.putNextEntry(value._2);
             zip.write(value._1);
             // add component interface to zip
-            if (!ModelConverter.isAtomicComponent(innerComponent)) {
-                writeComponentInterface(innerComponent, zip, icFileName, true);
+            if (hasToWriteComponentSubstitutionType(innerComponent)) {
+                writeComponentInterface(innerComponent, zip, icFileName);
             }
         }
         return null;
+    }
+
+    private boolean hasToWriteComponentSubstitutionType(final Component component) {
+        return !ModelConverter.isAtomicComponent(component) &&
+            (component instanceof Service && ((Service) component).isSubstituteCandidate());
     }
 
     private Either<Tuple2<byte[], ZipEntry>, ResponseFormat> toZipEntry(ImmutableTriple<String, String, Component> cachedEntry) {
@@ -767,22 +772,18 @@ public class CsarUtils {
         return componentRI;
     }
 
-    private List<Triple<String, String, Component>> writeComponentInterface(Component component,
-        ZipOutputStream zip,
-        String fileName,
-        boolean isAssociatedComponent
-    ){
+    private List<Triple<String, String, Component>> writeComponentInterface(final Component component, final ZipOutputStream zip,
+                                                                            final String fileName) {
         final Either<ToscaRepresentation, ToscaError> interfaceRepresentation = toscaExportUtils.exportComponentInterface(component, false);
-        writeComponentInterface(interfaceRepresentation, zip, fileName, false);
+        writeComponentInterface(interfaceRepresentation, zip, fileName);
         return interfaceRepresentation.left().value().getDependencies().getOrElse(new ArrayList<>());
     }
 
 
-    private Either<ZipOutputStream, ResponseFormat> writeComponentInterface(
-        Either<ToscaRepresentation,ToscaError> interfaceRepresentation, ZipOutputStream zip, String fileName,
-                                                                            boolean isAssociatedComponent) {
+    private Either<ZipOutputStream, ResponseFormat> writeComponentInterface(Either<ToscaRepresentation, ToscaError> interfaceRepresentation,
+                                                                            ZipOutputStream zip, String fileName) {
         // TODO: This should not be done but we need this to keep the refactoring small enough to be easily reviewable
-        return writeComponentInterface(interfaceRepresentation, fileName, isAssociatedComponent, ZipWriter.live(zip))
+        return writeComponentInterface(interfaceRepresentation, fileName, ZipWriter.live(zip))
             .map(void0 -> Either.<ZipOutputStream, ResponseFormat>left(zip)).recover(th -> {
                 log.error("#writeComponentInterface - zip writing failed with error: ", th);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -790,7 +791,7 @@ public class CsarUtils {
     }
 
     private Try<Void> writeComponentInterface(
-            Either<ToscaRepresentation,ToscaError> interfaceRepresentation, String fileName, boolean isAssociatedComponent, ZipWriter zw) {
+            Either<ToscaRepresentation,ToscaError> interfaceRepresentation, String fileName, ZipWriter zw) {
         Either<byte[], ToscaError> yml = interfaceRepresentation.left()
             .map(ToscaRepresentation::getMainYaml);
         return fromEither(yml, ToscaErrorException::new).flatMap(zw.write(DEFINITIONS_PATH + ToscaExportHandler.getInterfaceFilename(fileName)));

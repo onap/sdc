@@ -220,6 +220,10 @@ export class Service extends Component {
         this.iconSprite = "sprite-services-icons";
     }
 
+    public isSubstituteCandidate(): boolean {
+        return !!this.derivedFromGenericType;
+    }
+
     public toJSON = ():any => {
         let temp = angular.copy(this);
         temp.componentService = undefined;
