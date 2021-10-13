@@ -26,10 +26,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.Configuration;
-import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.unittests.utils.ModelConfDependentTest;
 
@@ -212,7 +210,7 @@ public class ResourceTest extends ModelConfDependentTest {
 
         Configuration existingConfiguration = configurationManager.getConfiguration();
         Configuration newConfiguration = new Configuration();
-        newConfiguration.setServiceNodeTypes(null);
+        newConfiguration.setServiceBaseNodeTypes(null);
         Map<String, String> genericAssetNodeTypes = new HashMap<>();
         genericAssetNodeTypes.put("VFC", "org.openecomp.resource.abstract.nodes.VFC");
         newConfiguration.setGenericAssetNodeTypes(genericAssetNodeTypes);

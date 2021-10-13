@@ -1291,6 +1291,16 @@ public class ElementBusinessLogic extends BaseBusinessLogic {
         if (ActionStatus.OK != status) {
             return Either.right(status);
         }
-        return Either.left(elementOperation.getBaseTypes(categoryName, modelName));
+        return Either.left(elementOperation.getServiceBaseTypes(categoryName, modelName));
+    }
+
+    /**
+     * Checks if a category requires a base type.
+     *
+     * @param categoryName the category name
+     * @return {@code true} if a base type is required, {@code false} otherwise.
+     */
+    public boolean isBaseTypeRequired(final String categoryName) {
+        return elementOperation.isBaseTypeRequired(categoryName);
     }
 }

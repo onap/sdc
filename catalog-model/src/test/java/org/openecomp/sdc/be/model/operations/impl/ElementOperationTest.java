@@ -20,9 +20,10 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.isNull;
@@ -43,6 +44,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
+import org.openecomp.sdc.be.config.CategoryBaseTypeConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
@@ -77,9 +79,11 @@ public class ElementOperationTest extends ModelTestBase {
 
     @Mock
     private JanusGraphGenericDao janusGraphDao;
+    @Mock
+    private HealingJanusGraphDao healingJanusGraphDao;
 
-    private static String CATEGORY = "category";
-    private static String SUBCATEGORY = "subcategory";
+    private static final String CATEGORY = "category";
+    private static final String SUBCATEGORY = "subcategory";
 
     @BeforeAll
     public static void setupBeforeClass() {
@@ -448,13 +452,15 @@ public class ElementOperationTest extends ModelTestBase {
 
     @Test
     public void testBaseTypes_serviceSpecific() {
-        Map<String, List<String>> preExistingServiceNodeTypes = configurationManager.getConfiguration().getServiceNodeTypes();
+        Map<String, CategoryBaseTypeConfig> preExistingServiceNodeTypes = configurationManager.getConfiguration().getServiceBaseNodeTypes();
         Map<String, String> preExistingGenericNodeTypes = configurationManager.getConfiguration().getGenericAssetNodeTypes();
 
         try {
-            Map<String, List<String>> serviceNodeTypes = new HashMap<>();
-            serviceNodeTypes.put("serviceCategoryA", List.of("org.base.type"));
-            configurationManager.getConfiguration().setServiceNodeTypes(serviceNodeTypes);
+            final Map<String, CategoryBaseTypeConfig> serviceBaseNodeTypeConfigMap = new HashMap<>();
+            final var categoryBaseTypeConfig = new CategoryBaseTypeConfig();
+            categoryBaseTypeConfig.setBaseTypes(List.of("org.base.type"));
+            serviceBaseNodeTypeConfigMap.put("serviceCategoryA", categoryBaseTypeConfig);
+            configurationManager.getConfiguration().setServiceBaseNodeTypes(serviceBaseNodeTypeConfigMap);
 
             Map<String, String> genericNodeTypes = new HashMap<>();
             genericNodeTypes.put("service", "org.service.default");
@@ -483,7 +489,7 @@ public class ElementOperationTest extends ModelTestBase {
                 JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
             when(derivedTypeVertex.getMetadataProperty(GraphPropertyEnum.TOSCA_RESOURCE_NAME)).thenReturn("org.parent.type");
 
-            List<BaseType> baseTypes = elementOperation.getBaseTypes("serviceCategoryA", null);
+            List<BaseType> baseTypes = elementOperation.getServiceBaseTypes("serviceCategoryA", null);
 
             assertEquals(2, baseTypes.size());
             assertEquals("org.base.type", baseTypes.get(0).getToscaResourceName());
@@ -491,14 +497,14 @@ public class ElementOperationTest extends ModelTestBase {
             assertEquals("1.0", baseTypes.get(0).getVersions().get(0));
             assertEquals("org.parent.type", baseTypes.get(1).getToscaResourceName());
         } finally {
-            configurationManager.getConfiguration().setServiceNodeTypes(preExistingServiceNodeTypes);
+            configurationManager.getConfiguration().setServiceBaseNodeTypes(preExistingServiceNodeTypes);
             configurationManager.getConfiguration().setGenericAssetNodeTypes(preExistingGenericNodeTypes);
         }
     }
 
     @Test
     public void testBaseTypes_default() {
-        Map<String, List<String>> preExistingServiceNodeTypes = configurationManager.getConfiguration().getServiceNodeTypes();
+        Map<String, CategoryBaseTypeConfig> preExistingServiceNodeTypes = configurationManager.getConfiguration().getServiceBaseNodeTypes();
         Map<String, String> preExistingGenericNodeTypes =
             configurationManager.getConfiguration().getGenericAssetNodeTypes();
 
@@ -506,7 +512,7 @@ public class ElementOperationTest extends ModelTestBase {
             Map<String, String> genericNodeTypes = new HashMap<>();
             genericNodeTypes.put("Service", "org.service.default");
             configurationManager.getConfiguration().setGenericAssetNodeTypes(genericNodeTypes);
-            configurationManager.getConfiguration().setServiceNodeTypes(null);
+            configurationManager.getConfiguration().setServiceBaseNodeTypes(null);
 
             HealingJanusGraphDao healingJanusGraphDao = mock(HealingJanusGraphDao.class);
             final var elementOperation = new ElementOperation(new JanusGraphGenericDao(new JanusGraphClient()), healingJanusGraphDao);
@@ -519,14 +525,60 @@ public class ElementOperationTest extends ModelTestBase {
             when(healingJanusGraphDao.getParentVertices(baseTypeVertex, EdgeLabelEnum.DERIVED_FROM,
                 JsonParseFlagEnum.ParseAll)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
 
-            List<BaseType> baseTypes = elementOperation.getBaseTypes("serviceCategoryA", null);
+            List<BaseType> baseTypes = elementOperation.getServiceBaseTypes("serviceCategoryA", null);
 
             assertEquals(1, baseTypes.size());
             assertEquals("org.service.default", baseTypes.get(0).getToscaResourceName());
             assertEquals(1, baseTypes.get(0).getVersions().size());
         } finally {
-            configurationManager.getConfiguration().setServiceNodeTypes(preExistingServiceNodeTypes);
+            configurationManager.getConfiguration().setServiceBaseNodeTypes(preExistingServiceNodeTypes);
             configurationManager.getConfiguration().setGenericAssetNodeTypes(preExistingGenericNodeTypes);
         }
     }
+
+    @Test
+    public void testGetServiceBaseTypes_categoryWithRequiredBaseType() {
+        defaultBaseTypeMock();
+        final List<BaseType> actualBaseTypeList = elementOperation.getServiceBaseTypes("CategoryA", null);
+        assertEquals(actualBaseTypeList.size(), 1);
+        final BaseType expectedBaseType = actualBaseTypeList.get(0);
+        assertEquals(expectedBaseType.getToscaResourceName(), "org.openecomp.resource.abstract.nodes.A");
+
+    }
+
+    @Test
+    public void testGetServiceBaseTypes_categoryWithOptionalBaseType() {
+        defaultBaseTypeMock();
+        final List<BaseType> actualBaseTypeList = elementOperation.getServiceBaseTypes("CategoryC", null);
+        assertEquals(actualBaseTypeList.size(), 2);
+        assertEquals(actualBaseTypeList.get(0).getToscaResourceName(), "org.openecomp.resource.abstract.nodes.C1");
+        assertEquals(actualBaseTypeList.get(1).getToscaResourceName(), "org.openecomp.resource.abstract.nodes.C2");
+    }
+
+    @Test
+    public void testGetServiceBaseTypes_categoryWithNoBaseType() {
+        defaultBaseTypeMock();
+        final List<BaseType> actualBaseTypeList = elementOperation.getServiceBaseTypes("CategoryB", null);
+        assertTrue(actualBaseTypeList.isEmpty());
+    }
+
+    @Test
+    public void testGetServiceBaseTypes_notConfiguredCategoryThatFallsBackToGenericType() {
+        defaultBaseTypeMock();
+        final List<BaseType> actualBaseTypeList = elementOperation.getServiceBaseTypes("CategoryD", null);
+
+        assertEquals(actualBaseTypeList.size(), 1);
+        final BaseType expectedBaseType = actualBaseTypeList.get(0);
+        assertEquals(expectedBaseType.getToscaResourceName(), "org.openecomp.resource.abstract.nodes.service");
+    }
+
+    private void defaultBaseTypeMock() {
+        final GraphVertex baseTypeVertex = mock(GraphVertex.class);
+        when(baseTypeVertex.getMetadataProperty(GraphPropertyEnum.VERSION)).thenReturn("1.0");
+        when(healingJanusGraphDao.getByCriteria(eq(VertexTypeEnum.NODE_TYPE), anyMap(), isNull(), eq(JsonParseFlagEnum.ParseAll), isNull()))
+            .thenReturn(Either.left(Collections.singletonList(baseTypeVertex)));
+        when(healingJanusGraphDao.getParentVertices(eq(baseTypeVertex), eq(EdgeLabelEnum.DERIVED_FROM), eq(JsonParseFlagEnum.ParseAll)))
+            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+    }
+
 }

@@ -21,19 +21,24 @@ package org.openecomp.sdc.be.model.operations.impl;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
+import org.openecomp.sdc.be.config.CategoryBaseTypeConfig;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -382,13 +387,18 @@ public class ElementOperation implements IElementOperation {
     }
 
     @Override
-    public List<BaseType> getBaseTypes(final String categoryName, final String modelName) {
-        final ArrayList<BaseType> baseTypes = new ArrayList<>();
-        final Map<String, List<String>> categoriesSpecificBaseTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes();
-        final List<String> categorySpecificBaseType = categoriesSpecificBaseTypes == null ? null : categoriesSpecificBaseTypes.get(categoryName);
-        final String generalBaseType = ConfigurationManager.getConfigurationManager().getConfiguration().getGenericAssetNodeTypes().get("Service");
-        final List<String> baseToscaResourceNames = categorySpecificBaseType == null ? List.of(generalBaseType) : categorySpecificBaseType;
+    public List<BaseType> getServiceBaseTypes(final String categoryName, final String modelName) {
 
+        final CategoryBaseTypeConfig categoryBaseTypeConfig = getCategoryBaseTypeConfig(categoryName).orElse(null);
+        final List<String> baseToscaResourceNames;
+        if (categoryBaseTypeConfig == null) {
+            final String generalBaseType = getConfiguration().getGenericAssetNodeTypes().get("Service");
+            baseToscaResourceNames = List.of(generalBaseType);
+        } else {
+            baseToscaResourceNames = getCategoryBaseTypes(categoryName);
+        }
+
+        final ArrayList<BaseType> baseTypes = new ArrayList<>();
         baseToscaResourceNames.forEach(baseToscaResourceName -> {
             final Map<GraphPropertyEnum, Object> props = new EnumMap<>(GraphPropertyEnum.class);
             props.put(GraphPropertyEnum.TOSCA_RESOURCE_NAME, baseToscaResourceName);
@@ -411,6 +421,48 @@ public class ElementOperation implements IElementOperation {
         });
 
         return baseTypes;
+    }
+
+    private Configuration getConfiguration() {
+        return ConfigurationManager.getConfigurationManager().getConfiguration();
+    }
+
+    @Override
+    public boolean isBaseTypeRequired(final String categoryName) {
+        final Map<String, CategoryBaseTypeConfig> categoriesSpecificBaseTypeMap = getConfiguration().getServiceBaseNodeTypes();
+        if (MapUtils.isEmpty(categoriesSpecificBaseTypeMap)) {
+            return true;
+        }
+
+        final CategoryBaseTypeConfig categoryBaseTypeConfig = categoriesSpecificBaseTypeMap.get(categoryName);
+        if (categoryBaseTypeConfig == null) {
+            return true;
+        }
+
+        return categoryBaseTypeConfig.isRequired();
+    }
+
+    private List<String> getCategoryBaseTypes(final String categoryName) {
+        final Optional<CategoryBaseTypeConfig> categoryBaseTypeConfigOptional = getCategoryBaseTypeConfig(categoryName);
+        if (categoryBaseTypeConfigOptional.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final CategoryBaseTypeConfig categoryBaseTypeConfig = categoryBaseTypeConfigOptional.get();
+        if (CollectionUtils.isEmpty(categoryBaseTypeConfig.getBaseTypes())) {
+            return Collections.emptyList();
+        }
+
+        return categoryBaseTypeConfig.getBaseTypes();
+    }
+
+    private Optional<CategoryBaseTypeConfig> getCategoryBaseTypeConfig(final String categoryName) {
+        final Map<String, CategoryBaseTypeConfig> categoriesSpecificBaseTypes = getConfiguration().getServiceBaseNodeTypes();
+        if (categoriesSpecificBaseTypes == null) {
+            return Optional.empty();
+        }
+
+        return Optional.ofNullable(categoriesSpecificBaseTypes.get(categoryName));
     }
 
     private Map<String, List<String>> addTypesDerivedFromVertex(final Map<String, List<String>> types, final GraphVertex vertex) {
@@ -900,7 +952,7 @@ public class ElementOperation implements IElementOperation {
 
     @Override
     public Either<Configuration.HeatDeploymentArtifactTimeout, ActionStatus> getDefaultHeatTimeout() {
-        return Either.left(ConfigurationManager.getConfigurationManager().getConfiguration().getHeatArtifactDeploymentTimeout());
+        return Either.left(getConfiguration().getHeatArtifactDeploymentTimeout());
     }
 
     @Override

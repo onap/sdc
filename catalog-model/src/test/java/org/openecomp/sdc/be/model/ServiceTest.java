@@ -271,10 +271,10 @@ public class ServiceTest {
     }
 
     @Test
-    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypesForCategories() throws Exception {
+    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypesForCategories() {
         Configuration existingConfiguration = configurationManager.getConfiguration();
         Configuration newConfiguration = new Configuration();
-        newConfiguration.setServiceNodeTypes(null);
+        newConfiguration.setServiceBaseNodeTypes(null);
         Map<String, String> genericAssetNodeTypes = new HashMap<>();
         genericAssetNodeTypes.put("Service", "org.openecomp.resource.abstract.nodes.service");
         newConfiguration.setGenericAssetNodeTypes(genericAssetNodeTypes);
@@ -290,7 +290,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypeForRelevantCategory() throws Exception {
+    public void testFetchGenericTypeToscaNameFromConfigNoToscaTypeForRelevantCategory() {
         Service testSubject = createTestSubject();
         CategoryDefinition category = new CategoryDefinition();
         category.setName("CategoryD");
@@ -300,17 +300,17 @@ public class ServiceTest {
     }
 
     @Test
-    public void testFetchGenericTypeToscaNameFromConfigToscaTypeDefinedForCategory() throws Exception {
+    public void testFetchGenericTypeToscaNameFromConfigToscaTypeDefinedForCategory() {
         Service testSubject = createTestSubject();
         CategoryDefinition category = new CategoryDefinition();
-        category.setName("CategoryB");
+        category.setName("CategoryA");
         testSubject.addCategory(category);
         String result = testSubject.fetchGenericTypeToscaNameFromConfig();
-        assertEquals("org.openecomp.resource.abstract.nodes.B", result);
+        assertEquals("org.openecomp.resource.abstract.nodes.A", result);
 
         Configuration configuration = new Configuration();
 
-        configuration.setServiceNodeTypes(null);
+        configuration.setServiceBaseNodeTypes(null);
         configurationManager.setConfiguration(configuration);
     }
 }

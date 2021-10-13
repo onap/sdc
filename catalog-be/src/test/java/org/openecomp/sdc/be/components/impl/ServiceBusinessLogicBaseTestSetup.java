@@ -20,7 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.ServletContext;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -88,7 +88,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
-public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
+class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
 
     protected ServiceBusinessLogic bl;
     protected static final String SERVICE_CATEGORY = "Mobility";
@@ -142,7 +142,7 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
     protected static final String SERVICE_TYPE = JsonPresentationFields.SERVICE_TYPE.getPresentation();
     protected static final String SERVICE_FUNCTION = JsonPresentationFields.SERVICE_FUNCTION.getPresentation();
 
-    public ServiceBussinessLogicBaseTestSetup() {
+    public ServiceBusinessLogicBaseTestSetup() {
 
     }
 
@@ -161,7 +161,7 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
 
 
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         // Elements
@@ -177,10 +177,7 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
         when(mockUserAdmin.getUser("jh0003", false)).thenReturn(user);
         when(userValidations.validateUserExists(eq("jh0003"))).thenReturn(user);
         when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(user);
-//        when(userValidations.validateUserRole(user))
-        // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-//        when(servletContext.getAttribute(Constants.SERVICE_OPERATION_MANAGER)).thenReturn(new ServiceOperation());
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
         when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
@@ -265,10 +262,7 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
         List<String> tgs = new ArrayList<>();
         tgs.add(service.getName());
         service.setTags(tgs);
-        // service.setVendorName("Motorola");
-        // service.setVendorRelease("1.0.0");
         service.setIcon("defaulticon");
-        // service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         service.setContactId("aa1234");
         service.setProjectCode("12345");
         service.setEcompGeneratedNaming(true);
@@ -294,10 +288,8 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
         createResourceAudit.setStatus("201");
         createResourceAudit.setPrevVersion("");
         createResourceAudit.setAction("Create");
-        // fields.put("TIMESTAMP", "2015-11-22 09:19:12.977");
         createResourceAudit.setPrevState("");
         createResourceAudit.setResourceName("MyTestResource");
-        // createResourceAudit.setFields(fields);
 
         final ResourceAdminEvent checkInResourceAudit = new ResourceAdminEvent();
         checkInResourceAudit.setModifier("Carlos Santana(cs0008)");
@@ -311,7 +303,6 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
         checkInResourceAudit.setStatus("200");
         checkInResourceAudit.setPrevVersion("0.1");
         checkInResourceAudit.setAction("Checkin");
-        // fields.put("TIMESTAMP", "2015-11-22 09:25:03.797");
         checkInResourceAudit.setPrevState("NOT_CERTIFIED_CHECKOUT");
         checkInResourceAudit.setResourceName("MyTestResource");
 
@@ -327,44 +318,9 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
         checkOutResourceAudit.setStatus("200");
         checkOutResourceAudit.setPrevVersion("0.1");
         checkOutResourceAudit.setAction("Checkout");
-        // fields.put("TIMESTAMP", "2015-11-22 09:39:41.024");
         checkOutResourceAudit.setPrevState("NOT_CERTIFIED_CHECKIN");
         checkOutResourceAudit.setResourceName("MyTestResource");
-        // checkOutResourceAudit.setFields(fields);
-
-        // Mockito.doAnswer(new Answer<Either<List<ESTimeBasedEvent>,
-        // ActionStatus> >() {
-        // public Either<List<ESTimeBasedEvent>, ActionStatus>
-        // answer(InvocationOnMock invocation) {
-        // final Either<List<ESTimeBasedEvent>, ActionStatus> either;
-        // final List<ESTimeBasedEvent> list;
-        // Object[] args = invocation.getArguments();
-        // Map<AuditingFieldsKey, Object> filterMap =
-        // (Map<AuditingFieldsKey, Object>) args[0];
-        // if( filterMap.equals(FILTER_MAP_CERTIFIED_VERSION) ){
-        // list = new
-        // ArrayList<ESTimeBasedEvent>(){{add(createResourceAudit);add(checkInResourceAudit);add(checkOutResourceAudit);}};
-        // either = Either.left(list);
-        //
-        // }
-        // else if( filterMap.equals(FILTER_MAP_UNCERTIFIED_VERSION_PREV) ){
-        // list = new ArrayList<ESTimeBasedEvent>();
-        // either = Either.left(list);
-        // }
-        // else if( filterMap.equals(FILTER_MAP_UNCERTIFIED_VERSION_CURR) ){
-        // list = new
-        // ArrayList<ESTimeBasedEvent>(){{/*add(createResourceAudit);add(checkInResourceAudit);*/add(checkOutResourceAudit);}};
-        // either = Either.left(list);
-        // }
-        // else{
-        // either = null;
-        // }
-        // return either;
-        // }
-        // }).when(auditingDao).getFilteredResourceAdminAuditingEvents(Mockito.anyMap());
-        //
-        //
-        List<ResourceAdminEvent> list = new ArrayList<ResourceAdminEvent>() {
+        List<ResourceAdminEvent> list = new ArrayList<>() {
             {
                 add(createResourceAudit);
                 add(checkInResourceAudit);
@@ -378,7 +334,7 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
         Either<List<ResourceAdminEvent>, ActionStatus> resultPrev = Either.left(listPrev);
         Mockito.when(auditingDao.getAuditByServiceIdAndPrevVersion(Mockito.anyString(), Mockito.anyString())).thenReturn(resultPrev);
 
-        List<ResourceAdminEvent> listCurr = new ArrayList<ResourceAdminEvent>() {
+        List<ResourceAdminEvent> listCurr = new ArrayList<>() {
             {
                 add(checkOutResourceAudit);
             }
@@ -435,7 +391,7 @@ public class ServiceBussinessLogicBaseTestSetup extends BaseBusinessLogicMock{
     protected void assertResponse(ResponseFormat actualResponse, ActionStatus expectedStatus, String... variables) {
         ResponseFormat expectedResponse = responseManager.getResponseFormat(expectedStatus, variables);
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
-        assertEquals("assert error description", expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage(), "assert error description");
     }
 
 }
