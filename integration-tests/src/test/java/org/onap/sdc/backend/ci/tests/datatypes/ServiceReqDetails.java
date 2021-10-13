@@ -22,6 +22,8 @@ package org.onap.sdc.backend.ci.tests.datatypes;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import lombok.Getter;
+import lombok.Setter;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ServiceInstantiationType;
 import org.onap.sdc.frontend.ci.tests.datatypes.ModelName;
 import org.openecomp.sdc.be.model.Service;
@@ -35,6 +37,14 @@ public class ServiceReqDetails extends ComponentReqDetails {
 	protected Boolean ecompGeneratedNaming = true;
 	protected String instantiationType = ServiceInstantiationType.A_LA_CARTE.getValue();
 	protected String serviceFunction = "";
+	@Getter
+	@Setter
+	private String derivedFromGenericType;
+	@Getter
+	@Setter
+	private String derivedFromGenericVersion;
+
+
 
 	public String getServiceType() {
 		return serviceType;
@@ -110,8 +120,9 @@ public class ServiceReqDetails extends ComponentReqDetails {
 		this.uniqueId = service.getUniqueId();
 		this.UUID = service.getUUID();
 		this.version = service.getVersion();
+		this.derivedFromGenericType = service.getDerivedFromGenericType();
+		this.derivedFromGenericVersion = service.getDerivedFromGenericVersion();
 		this.models = Collections.singletonList(service.getModel());
-
 	}
 
 	public ServiceReqDetails() {

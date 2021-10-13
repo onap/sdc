@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.collections.MapUtils;
 
 @Getter
 public class ToscaTopolgyTemplate {
@@ -52,5 +53,15 @@ public class ToscaTopolgyTemplate {
             this.policies = new HashMap<>();
         }
         this.policies.putAll(policiesMap);
+    }
+
+    public boolean isEmpty() {
+        return substitution_mappings == null &&
+            MapUtils.isEmpty(inputs) &&
+            MapUtils.isEmpty(outputs) &&
+            MapUtils.isEmpty(node_templates) &&
+            MapUtils.isEmpty(groups) &&
+            MapUtils.isEmpty(policies) &&
+            MapUtils.isEmpty(relationshipTemplates);
     }
 }

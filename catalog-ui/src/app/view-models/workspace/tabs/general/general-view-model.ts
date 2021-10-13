@@ -248,7 +248,6 @@ export class GeneralViewModel {
         this.$scope.componentCategories = new componentCategories();
         this.$scope.componentCategories.selectedCategory = this.$scope.component.selectedCategory;
 
-
         // Init UIModel
         this.$scope.component.tags = _.without(this.$scope.component.tags, this.$scope.component.name);
 
@@ -454,15 +453,24 @@ export class GeneralViewModel {
 
         this.$scope.initBaseTypes = ():void => {
             if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.component.categories) {
+                if (!this.$scope.component.derivedFromGenericType) {
+                    this.$scope.component.derivedFromGenericVersion = undefined;
+                    this.$scope.showBaseTypeVersions = false;
+                    return;
+                }
                 let modelName = this.$scope.component.model ? this.$scope.component.model : null;
-                this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
+                const categoryName = this.$scope.component.categories[0].name;
+                this.elementService.getCategoryBaseTypes(categoryName, modelName).subscribe((data: ListBaseTypesResponse) => {
                     this.$scope.baseTypes = []
                     this.$scope.baseTypeVersions = []
-                    data.forEach(baseType => {
-                        this.$scope.baseTypes.push(baseType.toscaResourceName)
-                        if (baseType.toscaResourceName === this.$scope.component.derivedFromGenericType){
+                    this.$scope.isBaseTypeRequired = data.required;
+                    data.baseTypes.forEach(baseType => {
+                        this.$scope.baseTypes.push(baseType.toscaResourceName);
+                        if (baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
                             baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-                        }});
+                        }
+                    });
+                    this.$scope.showBaseTypeVersions = true;
                 })
             }
         };
@@ -734,16 +742,18 @@ export class GeneralViewModel {
                     }
                 }
                 if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component.categories[0]) {
-                    let modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
-                    this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
-
-                        if(this.$scope.isCreateMode()){
+                    const modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
+                    this.elementService.getCategoryBaseTypes(this.$scope.component.categories[0].name, modelName)
+                    .subscribe((data: ListBaseTypesResponse) => {
+                        if (this.$scope.isCreateMode()) {
                             this.loadBaseTypes(data);
                         } else {
-                            var isValidForBaseType:boolean = false;
-                            data.forEach(baseType => {if (!this.$scope.component.derivedFromGenericType || baseType.toscaResourceName === this.$scope.component.derivedFromGenericType){
-                                isValidForBaseType = true;
-                            };});
+                            let isValidForBaseType:boolean = false;
+                            data.baseTypes.forEach(baseType => {
+                                if (!this.$scope.component.derivedFromGenericType || baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
+                                    isValidForBaseType = true;
+                                }
+                            });
                             this.$scope.editForm['category'].$setValidity('validForBaseType', isValidForBaseType);
                         }
                     });
@@ -760,16 +770,24 @@ export class GeneralViewModel {
         };
 
         this.$scope.onBaseTypeChange = (): void => {
-            let modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
-            this.elementService.getCategoryBasetypes(this.$scope.component.categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
+            if (!this.$scope.component.derivedFromGenericType) {
+                this.$scope.component.derivedFromGenericVersion = undefined;
+                this.$scope.showBaseTypeVersions = false;
+                return;
+            }
+
+            const modelName : string = this.$scope.component.model ? this.$scope.component.model : null;
+            const categoryName = this.$scope.component.categories[0].name;
+            this.elementService.getCategoryBaseTypes(categoryName, modelName).subscribe((baseTypeResponseList: ListBaseTypesResponse) => {
                 this.$scope.baseTypeVersions = []
-                data.forEach(baseType => {
-                    if(baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
+                baseTypeResponseList.baseTypes.forEach(baseType => {
+                    if (baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
                         baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
                         this.$scope.component.derivedFromGenericVersion = baseType.versions[0];
-                    };
+                    }
                 });
-            })
+                this.$scope.showBaseTypeVersions = true;
+            });
         };
 
         this.$scope.onModelChange = (): void => {
@@ -785,8 +803,8 @@ export class GeneralViewModel {
                 this.$scope.component.icon = DEFAULT_ICON;
             }
         };
-        this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.$scope.reload);
 
+        this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.$scope.reload);
 
         this.$scope.isMetadataKeyMandatory = (key: string): boolean => {
             let metadataKey = this.getMetadataKey(this.$scope.component.categories, key);
@@ -837,22 +855,28 @@ export class GeneralViewModel {
     private filterBaseTypesByModelAndCategory(modelName:string) {
         let categories = this.$scope.component.categories;
         if (categories) {
-            this.elementService.getCategoryBasetypes(categories[0].name, modelName).subscribe((data: BaseTypeResponse[]) => {
+            this.elementService.getCategoryBaseTypes(categories[0].name, modelName).subscribe((data: ListBaseTypesResponse) => {
                 this.loadBaseTypes(data);
             });
         }
     }
 
-    private loadBaseTypes(data:BaseTypeResponse[]) {
+    private loadBaseTypes(baseTypeResponseList: ListBaseTypesResponse) {
+        this.$scope.isBaseTypeRequired = baseTypeResponseList.required;
         this.$scope.baseTypes = [];
         this.$scope.baseTypeVersions = [];
-        data.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
-        let baseType = data[0];
-        if (baseType) {
+        baseTypeResponseList.baseTypes.forEach(baseType => this.$scope.baseTypes.push(baseType.toscaResourceName));
+        if (this.$scope.isBaseTypeRequired) {
+            const baseType = baseTypeResponseList.baseTypes[0];
             baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
             this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
-            this.$scope.component.derivedFromGenericVersion = baseType.versions[0];
+            this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
+            this.$scope.showBaseTypeVersions = true;
+            return
         }
+        this.$scope.component.derivedFromGenericType = undefined;
+        this.$scope.component.derivedFromGenericVersion = undefined;
+        this.$scope.showBaseTypeVersions = false;
     }
 
     private setUnsavedChanges = (hasChanges: boolean): void => {

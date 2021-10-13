@@ -19,16 +19,15 @@
  */
 package org.openecomp.sdc.be.model;
 
-import static java.util.Optional.ofNullable;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.config.CategoryBaseTypeConfig;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.components.ComponentMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
@@ -143,7 +142,7 @@ public class Service extends Component {
     }
 
     private ServiceMetadataDataDefinition getServiceMetadataDefinition() {
-        return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
+        return getMetadataDefinition();
     }
 
     public String getServiceFunction() {
@@ -167,9 +166,18 @@ public class Service extends Component {
     }
 
     private String fetchToscaNameFromConfigBasedOnService(final String serviceCategory) {
-        final Map<String, List<String>> serviceNodeTypes = ConfigurationManager.getConfigurationManager().getConfiguration().getServiceNodeTypes();
-        final List<String> stringList = ofNullable(serviceNodeTypes).map(serviceNames -> serviceNames.get(serviceCategory)).orElse(null);
-        return stringList != null ? stringList.get(0) : null;
+        final Map<String, CategoryBaseTypeConfig> serviceNodeTypesConfig =
+            ConfigurationManager.getConfigurationManager().getConfiguration().getServiceBaseNodeTypes();
+        if (serviceNodeTypesConfig == null) {
+            return null;
+        }
+
+        final CategoryBaseTypeConfig categoryBaseTypeConfig = serviceNodeTypesConfig.get(serviceCategory);
+        if (categoryBaseTypeConfig == null || CollectionUtils.isEmpty(categoryBaseTypeConfig.getBaseTypes())) {
+            return null;
+        }
+
+        return categoryBaseTypeConfig.getBaseTypes().get(0);
     }
 
     @Override
@@ -182,14 +190,22 @@ public class Service extends Component {
     }
 
     public void setAbstract(Boolean isAbstract) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setIsAbstract(isAbstract);
+        getMetadataDefinition().setIsAbstract(isAbstract);
     }
 
     public void setVendorName(String vendorName) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setVendorName(vendorName);
+        getMetadataDefinition().setVendorName(vendorName);
     }
 
     public void setVendorRelease(String vendorRelease) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setVendorRelease(vendorRelease);
+        getMetadataDefinition().setVendorRelease(vendorRelease);
+    }
+
+    public boolean isSubstituteCandidate() {
+        return getDerivedFromGenericType() != null;
+    }
+
+    private ServiceMetadataDataDefinition getMetadataDefinition() {
+        return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
     }
 }

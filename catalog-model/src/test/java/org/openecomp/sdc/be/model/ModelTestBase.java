@@ -54,7 +54,8 @@ public class ModelTestBase {
                 appConfigDir);
         configurationManager = new ConfigurationManager(configurationSource);
 
-        Configuration configuration = new Configuration();
+        Configuration configuration = configurationManager.getConfiguration();
+        configuration.setCassandraConfig(null);
 
         configuration.setJanusGraphInMemoryGraph(true);
 		environmentContext.setDefaultValue("General_Revenue-Bearing");
@@ -64,11 +65,10 @@ public class ModelTestBase {
 		configuration.setHeatArtifactDeploymentTimeout(heatDeploymentArtifactTimeout);
         Map<String, Object> deploymentRIArtifacts = new HashMap<>();
         ArtifactDataDefinition artifactInfo = new ArtifactDataDefinition();
-        Object artifactDataObj = new HashMap<String, Object>();
-        ((HashMap) artifactDataObj).put("1", artifactInfo);
+        HashMap<String, Object> artifactDataObj = new HashMap<>();
+        artifactDataObj.put("1", artifactInfo);
         deploymentRIArtifacts.put("VfHeatEnv", artifactDataObj);
 
-        configurationManager.setConfiguration(configuration);
         configurationManager.getConfiguration().setDeploymentResourceInstanceArtifacts(deploymentRIArtifacts);
 	}
 

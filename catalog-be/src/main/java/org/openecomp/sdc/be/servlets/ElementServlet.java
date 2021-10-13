@@ -216,6 +216,7 @@ public class ElementServlet extends BeGenericServlet {
             } else {
                 final Map<String, Object> baseTypesMap = new HashMap<>();
                 baseTypesMap.put("baseTypes", either.left().value());
+                baseTypesMap.put("required", elementBL.isBaseTypeRequired(categoryName));
 
                 return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), baseTypesMap);
             }

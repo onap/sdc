@@ -20,9 +20,10 @@
 
 interface ListBaseTypesResponse {
   baseTypes: BaseTypeResponse[];
+  required: boolean;
 }
 
 interface BaseTypeResponse {
-	toscaResourceName:string;
-    versions:string[];
+  toscaResourceName: string;
+  versions: string[];
 }
