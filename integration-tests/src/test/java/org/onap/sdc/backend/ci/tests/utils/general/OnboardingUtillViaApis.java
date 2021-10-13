@@ -156,13 +156,14 @@ public class OnboardingUtillViaApis {
 	}
 	
 	public static ServiceReqDetails prepareServiceDetailsBeforeCreate(User user) {
-
 		ServiceReqDetails serviceDetails = ElementFactory.getDefaultService(ServiceCategoriesEnum.NETWORK_L4, user);
 		serviceDetails.setServiceType("MyServiceType");
 		serviceDetails.setServiceRole("MyServiceRole");
 		serviceDetails.setNamingPolicy("MyServiceNamingPolicy");
 		serviceDetails.setEcompGeneratedNaming(false);
-		
+		serviceDetails.setDerivedFromGenericType("org.openecomp.resource.abstract.nodes.service");
+		serviceDetails.setDerivedFromGenericVersion("1.0");
+
 		return serviceDetails;
 	}
 }

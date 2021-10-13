@@ -22,11 +22,12 @@ package org.openecomp.sdc.be.tosca;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteIfSameVersions;
 import static org.openecomp.sdc.be.tosca.ComponentCache.entry;
 
@@ -35,7 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,14 +58,13 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -95,9 +94,10 @@ import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.test.BaseConfDependent;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-public class CsarUtilsTest extends BeConfDependentTest {
+class CsarUtilsTest extends BaseConfDependent {
 
 	@InjectMocks
 	CsarUtils testSubject;
@@ -120,13 +120,25 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	@Mock
 	private ArtifactsBusinessLogic artifactsBusinessLogic;
 
+	private final List<String> nodesFromPackage = Arrays.asList("tosca.nodes.Root", "tosca.nodes.Container.Application");
+
+	private final byte[] contentData;
+
 	public CsarUtilsTest() throws IOException {
+		contentData = getFileResource("yamlValidation/resource-serviceTemplate.yml");
 	}
 
-	@Before
-	public void setUpMock() throws Exception {
+	@BeforeAll
+	public static void setupBeforeClass() {
+		componentName = "catalog-be";
+		confPath = "src/test/resources/config";
+		setUp();
+	}
+
+	@BeforeEach
+	public void setUpMock() {
 		ExternalConfiguration.setAppName("catalog-be");
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		initConfigurationManager();
 	}
 
@@ -140,18 +152,13 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		new ConfigurationManager(confSource);
 	}
 
-	private final List<String> nodesFromPackage = Arrays.asList("tosca.nodes.Root", "tosca.nodes.Container.Application");
-
-	private final byte[] contentData = getFileResource("yamlValidation/resource-serviceTemplate.yml");
-
-
 	private NonMetaArtifactInfo createNonMetaArtifactInfoTestSubject() {
 		return new CsarUtils.NonMetaArtifactInfo("mock", "mock", ArtifactTypeEnum.AAI_SERVICE_MODEL.getType(),
 				ArtifactGroupTypeEnum.DEPLOYMENT, new byte[0], "mock", true);
 	}
 
 	@Test
-	public void testCreateCsar() {
+	void testCreateCsar() {
 		Component component = new Resource();
 		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
 		ArtifactDefinition artifact = new ArtifactDefinition();
@@ -171,7 +178,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testCreateCsarWithGenerateCsarZipResponseIsLeft() {
+	void testCreateCsarWithGenerateCsarZipResponseIsLeft() {
 		Component component = new Resource();
 		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
 		ArtifactDefinition artifact = new ArtifactDefinition();
@@ -214,7 +221,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testPopulateZipWhenGetDependenciesIsRight() {
+	void testPopulateZipWhenGetDependenciesIsRight() {
 		Component component = new Service();
 		boolean getFromCS = false;
 
@@ -252,7 +259,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testPopulateZipWhenExportComponentIsRight() {
+	void testPopulateZipWhenExportComponentIsRight() {
 		Component component = new Resource();
 		boolean getFromCS = false;
 
@@ -284,7 +291,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testPopulateZipWhenComponentIsServiceAndCollectComponentCsarDefinitionIsRight() {
+	void testPopulateZipWhenComponentIsServiceAndCollectComponentCsarDefinitionIsRight() {
 		Component component = new Service();
 		boolean getFromCS = false;
 
@@ -355,7 +362,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testPopulateZipWhenGetEntryDataIsRight() {
+	void testPopulateZipWhenGetEntryDataIsRight() {
 		Component component = new Service();
 		boolean getFromCS = true;
 
@@ -404,7 +411,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testPopulateZipWhenGetEntryDataOfInnerComponentIsRight() {
+	void testPopulateZipWhenGetEntryDataOfInnerComponentIsRight() {
 		Component component = new Service();
 		boolean getFromCS = false;
 
@@ -454,7 +461,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testPopulateZipWhenLatestSchemaFilesFromCassandraIsRight() {
+	void testPopulateZipWhenLatestSchemaFilesFromCassandraIsRight() {
 		Component component = new Service();
 		boolean getFromCS = false;
 
@@ -507,7 +514,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testAddInnerComponentsToCache() {
+	void testAddInnerComponentsToCache() {
 		ComponentCache componentCache = ComponentCache.overwritable(overwriteIfSameVersions());
 		Component childComponent = new Resource();
 		Component componentRI = new Service();
@@ -540,7 +547,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testAddInnerComponentsToCacheWhenGetToscaElementIsRight() {
+	void testAddInnerComponentsToCacheWhenGetToscaElementIsRight() {
 		Map<String, ImmutableTriple<String, String, Component>> componentCache = new HashMap<>();
 		Component childComponent = new Resource();
 
@@ -573,7 +580,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testWriteComponentInterface() throws IOException {
+	void testWriteComponentInterface() throws IOException {
 		String fileName = "name.hello";
 		ToscaRepresentation tosca = ToscaRepresentation.make("value".getBytes());
 
@@ -582,14 +589,13 @@ public class CsarUtilsTest extends BeConfDependentTest {
 
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream(); ZipOutputStream zip = new ZipOutputStream(out)) {
-		    List<Triple<String, String, Component>> output = Deencapsulation.invoke(testSubject, "writeComponentInterface", new Resource(), zip, fileName, false);
-
+		    List<Triple<String, String, Component>> output = Deencapsulation.invoke(testSubject, "writeComponentInterface", new Resource(), zip, fileName);
 			assertNotNull(output);
 		}
 	}
 
 	@Test
-	public void testGetEntryData() {
+	void testGetEntryData() {
 		String cassandraId = "id";
 		Component childComponent = new Resource();
 
@@ -603,7 +609,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testGetLatestSchemaFilesFromCassandraWhenListOfSchemasIsEmpty() {
+	void testGetLatestSchemaFilesFromCassandraWhenListOfSchemasIsEmpty() {
 		List<SdcSchemaFilesData> filesData = new ArrayList<>();
 
 		Mockito.when(
@@ -617,7 +623,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testExtractVfcsArtifactsFromCsar() {
+	void testExtractVfcsArtifactsFromCsar() {
 		String key = "Artifacts/org.openecomp.resource.some/Deployment/to/resource";
 		byte[] data = "value".getBytes();
 
@@ -632,7 +638,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testAddExtractedVfcArtifactWhenArtifactsContainsExtractedArtifactKey() {
+	void testAddExtractedVfcArtifactWhenArtifactsContainsExtractedArtifactKey() {
 		ImmutablePair<String, ArtifactDefinition> extractedVfcArtifact = new ImmutablePair<String, ArtifactDefinition>(
 				"key", new ArtifactDefinition());
 		Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
@@ -644,7 +650,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testAddExtractedVfcArtifactWhenArtifactsDoesntContainsExtractedArtifactKey() {
+	void testAddExtractedVfcArtifactWhenArtifactsDoesntContainsExtractedArtifactKey() {
 		ImmutablePair<String, ArtifactDefinition> extractedVfcArtifact = new ImmutablePair<String, ArtifactDefinition>(
 				"key", new ArtifactDefinition());
 		Map<String, List<ArtifactDefinition>> artifacts = new HashMap<>();
@@ -658,7 +664,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testExtractVfcArtifact() {
+	void testExtractVfcArtifact() {
 		String path = "path/to/informational/artificat";
 		Map<String, byte[]> map = new HashMap<>();
 		map.put(path, "value".getBytes());
@@ -675,7 +681,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testDetectArtifactGroupTypeWithExceptionBeingCaught() {
+	void testDetectArtifactGroupTypeWithExceptionBeingCaught() {
 		Either<ArtifactGroupTypeEnum, Boolean> output = Deencapsulation.invoke(testSubject, "detectArtifactGroupType", "type", Map.class);
 
 		assertNotNull(output);
@@ -684,7 +690,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testDetectArtifactGroupTypeWWhenCollectedWarningMessagesContainesKey() {
+	void testDetectArtifactGroupTypeWWhenCollectedWarningMessagesContainesKey() {
 		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
 
 		collectedWarningMessages.put("Warning - unrecognized artifact group type {} was received.", new HashSet<>());
@@ -696,94 +702,94 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoCtor() {
+	void testNonMetaArtifactInfoCtor() {
 		createNonMetaArtifactInfoTestSubject();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetPath() {
+	void testNonMetaArtifactInfoGetPath() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.getPath();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetArtifactName() {
+	void testNonMetaArtifactInfoGetArtifactName() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.getArtifactName();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetArtifactType() {
+	void testNonMetaArtifactInfoGetArtifactType() {
 		final NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 		assertThat("The artifact type should be as expected",
 			testSubject.getArtifactType(), is(ArtifactTypeEnum.AAI_SERVICE_MODEL.getType()));
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetDisplayName() {
+	void testNonMetaArtifactInfoGetDisplayName() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.getDisplayName();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetArtifactGroupType() {
+	void testNonMetaArtifactInfoGetArtifactGroupType() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.getArtifactGroupType();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetArtifactLabel() {
+	void testNonMetaArtifactInfoGetArtifactLabel() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.getArtifactLabel();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetIsFromCsar() {
+	void testNonMetaArtifactInfoGetIsFromCsar() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.isFromCsar();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetPayloadData() {
+	void testNonMetaArtifactInfoGetPayloadData() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.getPayloadData();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetArtifaactChecksum() {
+	void testNonMetaArtifactInfoGetArtifaactChecksum() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.getArtifactChecksum();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfoGetArtifactUniqueId() {
+	void testNonMetaArtifactInfoGetArtifactUniqueId() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.getArtifactUniqueId();
 	}
 
 	@Test
-	public void testNonMetaArtifactInfosetArtifactUniqueId() {
+	void testNonMetaArtifactInfosetArtifactUniqueId() {
 		NonMetaArtifactInfo testSubject = createNonMetaArtifactInfoTestSubject();
 
 		testSubject.setArtifactUniqueId("artifactUniqueId");
 	}
 
 	@Test
-	public void testValidateNonMetaArtifactWithExceptionCaught() {
+	void testValidateNonMetaArtifactWithExceptionCaught() {
 		CsarUtils.validateNonMetaArtifact("", new byte[0], new HashMap<>());
 	}
 
 	@Test
-	public void testCollectComponentCsarDefinitionWhenComponentIsServiceAndGetToscaElementIsLeft() {
+	void testCollectComponentCsarDefinitionWhenComponentIsServiceAndGetToscaElementIsLeft() {
 		Component component = new Service();
 		component.setUniqueId("uniqueId");
 		List<ComponentInstance> resourceInstances = new ArrayList<>();
@@ -815,7 +821,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testCollectComponentTypeArtifactsWhenFetchedComponentHasComponentInstances() {
+	void testCollectComponentTypeArtifactsWhenFetchedComponentHasComponentInstances() {
 		Component component = new Service();
 		Component fetchedComponent = new Resource();
 		component.setUniqueId("uniqueId");
@@ -853,7 +859,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testCollectComponentTypeArtifactsWhenFetchedComponentDontHaveComponentInstances() {
+	void testCollectComponentTypeArtifactsWhenFetchedComponentDontHaveComponentInstances() {
 		Component component = new Service();
 		Component fetchedComponent = new Resource();
 		component.setUniqueId("uniqueId");
@@ -893,7 +899,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testValidateNonMetaArtifactHappyScenario() {
+	void testValidateNonMetaArtifactHappyScenario() {
 		String artifactPath = "Artifacts/Deployment/YANG_XML/myYang.xml";
 		byte[] payloadData = "some payload data".getBytes();
 		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
@@ -909,7 +915,7 @@ public class CsarUtilsTest extends BeConfDependentTest {
 	}
 
 	@Test
-	public void testValidateNonMetaArtifactScenarioWithWarnnings() {
+	void testValidateNonMetaArtifactScenarioWithWarnnings() {
 		String artifactPath = "Artifacts/Deployment/Buga/myYang.xml";
 		byte[] payloadData = "some payload data".getBytes();
 		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
@@ -921,42 +927,35 @@ public class CsarUtilsTest extends BeConfDependentTest {
 		eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath, payloadData, collectedWarningMessages);
 		assertTrue(eitherNonMetaArtifact.isLeft());
 
-		assertTrue(collectedWarningMessages.size() == 1);
-		assertTrue(collectedWarningMessages.values().iterator().next().size() == 2);
+		assertEquals(1, collectedWarningMessages.size());
+		assertEquals(2, collectedWarningMessages.values().iterator().next().size());
 	}
 
 	@Test
-	public void testValidateNonMetaArtifactUnhappyScenario() {
+	void testValidateNonMetaArtifactUnhappyScenario() {
 		String artifactPath = "Artifacts/Buga/YANG_XML/myYang.xml";
 		byte[] payloadData = "some payload data".getBytes();
 		Map<String, Set<List<String>>> collectedWarningMessages = new HashMap<>();
 		Either<NonMetaArtifactInfo, Boolean> eitherNonMetaArtifact = CsarUtils.validateNonMetaArtifact(artifactPath,
 				payloadData, collectedWarningMessages);
 		assertTrue(eitherNonMetaArtifact.isRight());
-		assertTrue(!collectedWarningMessages.isEmpty());
+		assertFalse(collectedWarningMessages.isEmpty());
 	}
 
-	@Test(expected = IOException.class)
-	public void testAddSchemaFilesFromCassandraAddingDuplicatedEntry() throws IOException {
+	@Test
+	void testAddSchemaFilesFromCassandraAddingDuplicatedEntry() throws IOException {
 		final String rootPath = System.getProperty("user.dir");
 		final Path path = Paths.get(rootPath + "/src/test/resources/sdc.zip");
-		try {
-			final byte[] data = Files.readAllBytes(path);
-			try (final ByteArrayOutputStream out = new ByteArrayOutputStream();
-				final ZipOutputStream zip = new ZipOutputStream(out);) {
-				Deencapsulation.invoke(testSubject, "addSchemaFilesFromCassandra",
-					zip, data, nodesFromPackage);
-				zip.putNextEntry(new ZipEntry("Definitions/nodes.yml"));
-				zip.finish();
-			}
-		} catch (final IOException e) {
-			Assert.assertTrue("duplicate entry: Definitions/nodes.yml".equals(e.getMessage()));
-			throw new IOException("Could not add Schema Files From Cassandra", e);
+		final byte[] data = Files.readAllBytes(path);
+		try (final ByteArrayOutputStream out = new ByteArrayOutputStream(); final ZipOutputStream zip = new ZipOutputStream(out)) {
+			Deencapsulation.invoke(testSubject, "addSchemaFilesFromCassandra", zip, data, nodesFromPackage);
+			final IOException actualException = assertThrows(IOException.class, () -> zip.putNextEntry(new ZipEntry("Definitions/nodes.yml")));
+			assertEquals("duplicate entry: Definitions/nodes.yml", actualException.getMessage());
 		}
 	}
 
 	@Test
-	public void testFindNonRootNodesFromPackage() {
+	void testFindNonRootNodesFromPackage() {
 		final Resource resource = new Resource();
 		resource.setDerivedList(nodesFromPackage);
 		final Component component = resource;

@@ -270,8 +270,8 @@ public class ElementOperationMock implements IElementOperation {
     }
 
     @Override
-    public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType, boolean inTransaction) {
-        // TODO Auto-generated method stub
+    public Either<SubCategoryDefinition, ActionStatus> createSubCategory(String categoryId, SubCategoryDefinition subCategory, NodeTypeEnum nodeType,
+                                                                         boolean inTransaction) {
         return null;
     }
     
@@ -282,9 +282,14 @@ public class ElementOperationMock implements IElementOperation {
     }
 
     @Override
-    public List<BaseType> getBaseTypes(String categoryName, String modelName) {
+    public List<BaseType> getServiceBaseTypes(String categoryName, String modelName) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public boolean isBaseTypeRequired(String categoryName) {
+        return true;
     }
 
 }

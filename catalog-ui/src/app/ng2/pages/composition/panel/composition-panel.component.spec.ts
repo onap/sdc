@@ -169,28 +169,49 @@ describe('composition-panel component', () => {
         expect(fixture).toMatchSnapshot();
     });
 
-    it('When Topology Template is Service and no instance is selected Expect (info, deployment, inputs, info and api)', () => {
-
+    it('When Topology Template is Service and no instance is selected Expect tabs info, deployment, inputs, info, api, substitution filter', () => {
         const selectedComponent: Service = new Service(null, null);
         selectedComponent.isResource = jest.fn(() => false);
-        selectedComponent.isService = jest.fn(() => true );
-
+        selectedComponent.isService = jest.fn(() => true);
+        selectedComponent.isSubstituteCandidate = jest.fn(() => true);
         fixture.componentInstance.store.select = jest.fn(() => Observable.of(selectedComponent));
 
-        // const pnfMock = Mock.of<Service>({ isResource : () => false });
         fixture.componentInstance.topologyTemplate = selectedComponent;
 
         // Call ngOnInit
         fixture.componentInstance.ngOnInit();
 
         // Expect that
-        expect (fixture.componentInstance.tabs.length).toBe(6);
-        expect (fixture.componentInstance.tabs[0]).toEqual(tabs.infoTab);
-        expect (fixture.componentInstance.tabs[1]).toEqual(tabs.deploymentArtifacts);
-        expect (fixture.componentInstance.tabs[2]).toEqual(tabs.inputs);
-        expect (fixture.componentInstance.tabs[3]).toEqual(tabs.infoArtifacts);
-        expect (fixture.componentInstance.tabs[4]).toEqual(tabs.apiArtifacts);
-        expect (fixture.componentInstance.tabs[5]).toEqual(tabs.substitutionFilter);
+        expect(fixture.componentInstance.tabs.length).toBe(6);
+        expect(fixture.componentInstance.tabs[0]).toEqual(tabs.infoTab);
+        expect(fixture.componentInstance.tabs[1]).toEqual(tabs.deploymentArtifacts);
+        expect(fixture.componentInstance.tabs[2]).toEqual(tabs.inputs);
+        expect(fixture.componentInstance.tabs[3]).toEqual(tabs.infoArtifacts);
+        expect(fixture.componentInstance.tabs[4]).toEqual(tabs.apiArtifacts);
+        expect(fixture.componentInstance.tabs[5]).toEqual(tabs.substitutionFilter);
+
+    });
+
+    it('When Topology Template is Service without base type, and no instance is selected. Expect tabs info, deployment, inputs, info and api', () => {
+
+        const selectedComponent: Service = new Service(null, null);
+        selectedComponent.isResource = jest.fn(() => false);
+        selectedComponent.isService = jest.fn(() => true);
+        selectedComponent.isSubstituteCandidate = jest.fn(() => false);
+        fixture.componentInstance.store.select = jest.fn(() => Observable.of(selectedComponent));
+
+        fixture.componentInstance.topologyTemplate = selectedComponent;
+
+        // Call ngOnInit
+        fixture.componentInstance.ngOnInit();
+
+        // Expect that
+        expect(fixture.componentInstance.tabs.length).toBe(5);
+        expect(fixture.componentInstance.tabs[0]).toEqual(tabs.infoTab);
+        expect(fixture.componentInstance.tabs[1]).toEqual(tabs.deploymentArtifacts);
+        expect(fixture.componentInstance.tabs[2]).toEqual(tabs.inputs);
+        expect(fixture.componentInstance.tabs[3]).toEqual(tabs.infoArtifacts);
+        expect(fixture.componentInstance.tabs[4]).toEqual(tabs.apiArtifacts);
 
     });
 
@@ -223,6 +244,7 @@ describe('composition-panel component', () => {
         const selectedComponent: Service = new Service(null, null);
         selectedComponent.isResource = jest.fn(() => false);
         selectedComponent.isService = jest.fn(() => true );
+        selectedComponent.isSubstituteCandidate = jest.fn(() => true );
 
         fixture.componentInstance.store.select = jest.fn(() => Observable.of(selectedComponent));
         fixture.componentInstance.selectedComponentIsServiceProxyInstance = jest.fn(() => true);

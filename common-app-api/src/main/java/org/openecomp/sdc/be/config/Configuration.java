@@ -119,7 +119,7 @@ public class Configuration extends BasicConfiguration {
     private Boolean consumerBusinessLogic;
     private Map<String, VfModuleProperty> vfModuleProperties;
     private Map<String, String> genericAssetNodeTypes;
-    private Map<String, List<String>> serviceNodeTypes;
+    private Map<String, CategoryBaseTypeConfig> serviceBaseNodeTypes;
     private Map<String, Map<String, String>> resourceNodeTypes;
     private String appVersion;
     private String artifactGeneratorConfig;

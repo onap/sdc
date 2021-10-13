@@ -591,24 +591,24 @@
                     <!--------------------- Instantiation Type -------------------->
 
                     <!--------------------- Base Type -------------------->
-
                     <div class="w-sdc-form-columns-wrapper">
                         <div class="w-sdc-form-column">
-		                    <div class="i-sdc-form-item" data-ng-if="component.isService()">
+		                    <div class="i-sdc-form-item" ng-if="component.isService()">
 		                        <label class="i-sdc-form-label">Base Type</label>
-		                        <select class="i-sdc-form-select"
-		                                name="baseType"
-		                                data-ng-class="{'view-mode': isViewMode()}"
-		                                data-ng-disabled="component.isCsarComponent() || !isCreateMode()"
-		                                data-ng-model="component.derivedFromGenericType"
-		                                data-ng-change="onBaseTypeChange()"
-		                                data-tests-id="selectBaseType">
-		                            <option ng-repeat="type in baseTypes">{{type}}</option>
-		                        </select>
+                            <select class="i-sdc-form-select"
+                                    name="baseType"
+                                    data-ng-class="{'view-mode': isViewMode()}"
+                                    data-ng-disabled="component.isCsarComponent() || !isCreateMode()"
+                                    data-ng-model="component.derivedFromGenericType"
+                                    data-ng-change="onBaseTypeChange()"
+                                    data-tests-id="selectBaseType"
+                                    data-ng-options="type for type in baseTypes track by type">
+                                <option value="" data-ng-if="!isBaseTypeRequired">None</option>
+                            </select>
 		                    </div>
                 		</div>
                 		<div class="w-sdc-form-column">
-		                    <div class="i-sdc-form-item" data-ng-if="component.isService()">
+		                    <div class="i-sdc-form-item" data-ng-if="component.isService() && showBaseTypeVersions">
 		                        <label class="i-sdc-form-label">Base Type Version</label>
 		                        <select class="i-sdc-form-select"
 		                                name="baseTypeVersion"

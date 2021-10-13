@@ -393,13 +393,19 @@ genericAssetNodeTypes:
   PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
   
-serviceNodeTypes:
+serviceBaseNodeTypes:
   CategoryA:
-    - org.openecomp.resource.abstract.nodes.A
+    required: true
+    baseTypes:
+      - org.openecomp.resource.abstract.nodes.A
   CategoryB:
-    - org.openecomp.resource.abstract.nodes.B
+    required: true
+    baseTypes:
+      - org.openecomp.resource.abstract.nodes.B
   CategoryC:
-    - org.openecomp.resource.abstract.nodes.C
+    required: true
+    baseTypes:
+      - org.openecomp.resource.abstract.nodes.C
 
 workloadContext: Production
 environmentContext:

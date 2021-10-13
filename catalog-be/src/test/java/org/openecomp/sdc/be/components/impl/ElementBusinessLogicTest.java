@@ -21,6 +21,9 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anySet;
@@ -35,15 +38,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -66,8 +66,7 @@ import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
+class ElementBusinessLogicTest extends BaseBusinessLogicMock {
 
     private User user;
 
@@ -89,9 +88,9 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
     @InjectMocks
     private ElementBusinessLogic elementBusinessLogic;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         elementBusinessLogic = new ElementBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
             groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation, elementDao, userAdminManager);
         elementBusinessLogic.setComponentsUtils(componentsUtils);
@@ -103,7 +102,7 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void testGetFollowed_givenUserWithDesignerRole_thenReturnsSuccessful() {
+    void testGetFollowed_givenUserWithDesignerRole_thenReturnsSuccessful() {
         user.setUserId("designer1");
         user.setRole(Role.DESIGNER.name());
 
@@ -123,23 +122,23 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
             .thenReturn(Either.left(services));
 
         Map<String, List<? extends Component>> result = elementBusinessLogic.getFollowed(user).left().value();
-        Assert.assertTrue(result.get("services").size() == 1);
-        Assert.assertTrue(result.get("resources").size() == 1);
+        assertEquals(1, result.get("services").size());
+        assertEquals(1, result.get("resources").size());
     }
 
 
     @Test
-    public void testGetFollowed_givenUserWithProductStrategistRole_thenReturnsEmptyList() {
+    void testGetFollowed_givenUserWithProductStrategistRole_thenReturnsEmptyList() {
         user.setUserId("pstra1");
         user.setRole(Role.PRODUCT_STRATEGIST.name());
 
         Map<String, List<? extends Component>> result = elementBusinessLogic.getFollowed(user).left().value();
-        Assert.assertEquals("products list should be empty", 0, result.get("products").size());
+        assertEquals(0, result.get("products").size(), "products list should be empty");
 
     }
 
     @Test
-    public void testGetFollowed_givenUserWithProductManagerRole_thenReturnsProducts() {
+    void testGetFollowed_givenUserWithProductManagerRole_thenReturnsProducts() {
         user.setUserId("pmanager1");
         user.setRole(Role.PRODUCT_MANAGER.name());
 
@@ -150,83 +149,79 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
             .thenReturn(Either.left(products));
 
         Map<String, List<? extends Component>> result = elementBusinessLogic.getFollowed(user).left().value();
-        Assert.assertEquals("1 product should exist", 1, result.get("products").size());
-
+        assertEquals(1, result.get("products").size(), "1 product should exist");
     }
 
     @Test
-    public void testGetFollowed_givenUserWithRoleAdminErrorOccursGettingResources_thenReturnsError() {
+    void testGetFollowed_givenUserWithRoleAdminErrorOccursGettingResources_thenReturnsError() {
         user.setUserId("admin1");
         user.setRole(Role.ADMIN.name());
 
         when(toscaOperationFacade.getFollowed(any(), anySet(), any(), eq(ComponentTypeEnum.RESOURCE)))
             .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
 
-        Assert.assertTrue(elementBusinessLogic.getFollowed(user).isRight());
+        assertTrue(elementBusinessLogic.getFollowed(user).isRight());
     }
 
     @Test
-    public void testGetAllCategories_givenUserIsNull_thenReturnsError() {
-        Assert.assertTrue(elementBusinessLogic.getAllCategories(null, null).isRight());
-    }
-
-    @Test(expected = ComponentException.class)
-    public void testGetAllCategories_givenValidationOfUserFails_thenReturnsError() {
-        doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserExists(eq(user.getUserId()));
-        elementBusinessLogic.getAllCategories(null, user.getUserId());
+    void testGetAllCategories_givenUserIsNull_thenReturnsError() {
+        assertTrue(elementBusinessLogic.getAllCategories(null, null).isRight());
     }
 
     @Test
-    public void testGetAllCategories_givenInvalidComponentType_thenReturnsError() {
-        when(userValidations.validateUserExists(eq(user.getUserId()))).thenReturn(user);
-
-        Assert.assertTrue(elementBusinessLogic.getAllCategories("NONE", user.getUserId()).isRight());
-
+    void testGetAllCategories_givenValidationOfUserFails_thenReturnsError() {
+        final String userId = user.getUserId();
+        doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserExists(userId);
+        assertThrows(ComponentException.class, () -> elementBusinessLogic.getAllCategories(null, userId));
     }
 
     @Test
-    public void testGetAllCategories_givenValidUserAndComponentType_thenReturnsSuccessful() {
+    void testGetAllCategories_givenInvalidComponentType_thenReturnsError() {
+        when(userValidations.validateUserExists(user.getUserId())).thenReturn(user);
 
+        assertTrue(elementBusinessLogic.getAllCategories("NONE", user.getUserId()).isRight());
+    }
+
+    @Test
+    void testGetAllCategories_givenValidUserAndComponentType_thenReturnsSuccessful() {
         List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
         categoryDefinitionList.add(new CategoryDefinition());
 
-        when(userValidations.validateUserExists(eq(user.getUserId()))).thenReturn(user);
+        when(userValidations.validateUserExists(user.getUserId())).thenReturn(user);
         when(elementDao.getAllCategories(NodeTypeEnum.ResourceNewCategory, false))
             .thenReturn(Either.left(categoryDefinitionList));
-        Assert.assertTrue(elementBusinessLogic.getAllCategories(ComponentTypeEnum.RESOURCE_PARAM_NAME, user.getUserId())
+        assertTrue(elementBusinessLogic.getAllCategories(ComponentTypeEnum.RESOURCE_PARAM_NAME, user.getUserId())
             .isLeft());
     }
 
     @Test
-    public void testGetAllCategories_givenValidUserId_thenReturnsSuccessful() {
-
+    void testGetAllCategories_givenValidUserId_thenReturnsSuccessful() {
         List<CategoryDefinition> dummyCategoryDefinitionList = new ArrayList<>();
         dummyCategoryDefinitionList.add(new CategoryDefinition());
 
-        when(userValidations.validateUserExists(eq(user.getUserId())))
+        when(userValidations.validateUserExists(user.getUserId()))
             .thenReturn(user);
         when(elementDao.getAllCategories(any(NodeTypeEnum.class), anyBoolean()))
             .thenReturn(Either.left(dummyCategoryDefinitionList));
 
-        Assert.assertTrue(elementBusinessLogic.getAllCategories(user.getUserId()).isLeft());
+        assertTrue(elementBusinessLogic.getAllCategories(user.getUserId()).isLeft());
     }
 
     @Test
-    public void testDeleteCategory_givenValidComponentTypeAndCategoryId_thenReturnsSuccessful() {
-
+    void testDeleteCategory_givenValidComponentTypeAndCategoryId_thenReturnsSuccessful() {
         when(elementDao.deleteCategory(any(NodeTypeEnum.class), anyString()))
             .thenReturn(Either.left(new CategoryDefinition()));
 
-        Assert.assertTrue(elementBusinessLogic.deleteCategory("cat1", "resources", user.getUserId()).isLeft());
+        assertTrue(elementBusinessLogic.deleteCategory("cat1", "resources", user.getUserId()).isLeft());
     }
 
     @Test
-    public void testCreateSubCategory_givenValidSubCategory_thenReturnsSuccessful() {
+    void testCreateSubCategory_givenValidSubCategory_thenReturnsSuccessful() {
         user.setRole(Role.ADMIN.name());
         SubCategoryDefinition subCatDef = new SubCategoryDefinition();
         subCatDef.setName("subCat1");
 
-        when(userValidations.validateUserExists(eq(user.getUserId())))
+        when(userValidations.validateUserExists(user.getUserId()))
             .thenReturn(user);
         when(elementDao.getCategory(any(NodeTypeEnum.class), anyString()))
             .thenReturn(Either.left(new CategoryDefinition()));
@@ -237,48 +232,49 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
         when(elementDao.createSubCategory(anyString(), any(SubCategoryDefinition.class), any(NodeTypeEnum.class)))
             .thenReturn(Either.left(subCatDef));
 
-        Assert.assertTrue(elementBusinessLogic.createSubCategory(subCatDef, "resources",
+        assertTrue(elementBusinessLogic.createSubCategory(subCatDef, "resources",
             "cat1", user.getUserId()).isLeft());
     }
 
     @Test
-    public void testCreateSubCategory_givenNullSubCategory_thenReturnsError() {
-        Assert.assertTrue(elementBusinessLogic.createSubCategory(null, "resources",
+    void testCreateSubCategory_givenNullSubCategory_thenReturnsError() {
+        assertTrue(elementBusinessLogic.createSubCategory(null, "resources",
             "cat1", user.getUserId()).isRight());
     }
 
-    @Test(expected = ComponentException.class)
-    public void testCreateSubCategory_givenUserValidationFails_thenReturnsException() {
+    @Test
+    void testCreateSubCategory_givenUserValidationFails_thenReturnsException() {
         SubCategoryDefinition subCategoryDefinition = new SubCategoryDefinition();
-        doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserExists(eq(user.getUserId()));
-        elementBusinessLogic.createSubCategory(subCategoryDefinition, "resources", "cat1", user.getUserId());
+        final String userId = user.getUserId();
+        doThrow(new ByResponseFormatComponentException(new ResponseFormat())).when(userValidations).validateUserExists(userId);
+        assertThrows(ComponentException.class,
+            () -> elementBusinessLogic.createSubCategory(subCategoryDefinition, "resources", "cat1", userId));
     }
 
-    @Test(expected = ComponentException.class)
-    public void testcreateCategory_VALIDATION_OF_USER_FAILED() {
+    @Test
+    void testcreateCategory_VALIDATION_OF_USER_FAILED() {
         CategoryDefinition catdefinition = new CategoryDefinition();
         String userid = "";
         ResponseFormat responseFormat = new ResponseFormat(7);
         when(userValidations.validateUserExists("")).thenThrow(new ByResponseFormatComponentException(responseFormat));
-        elementBusinessLogic.createCategory(catdefinition, "Service", userid);
+        assertThrows(ComponentException.class, () -> elementBusinessLogic.createCategory(catdefinition, "Service", userid));
     }
 
     @Test
-    public void testcreateCategory_MISSING_INFORMATION() throws Exception {
+    void testcreateCategory_MISSING_INFORMATION() {
         CategoryDefinition catdefinition = new CategoryDefinition();
         ResponseFormat responseFormat = new ResponseFormat(9);
         User user = new User();
         when(userValidations.validateUserExists("USR")).thenReturn(user);
         when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
         Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition, "Service", "USR");
-        Assert.assertTrue(response.isRight());
-        Assert.assertEquals((Integer) 9, response.right().value().getStatus());
+        assertTrue(response.isRight());
+        assertEquals((Integer) 9, response.right().value().getStatus());
     }
 
 
     @Test
-    public void testcreateCategory_Invalid_componentType() throws Exception {
-
+    void testcreateCategory_Invalid_componentType() {
         CategoryDefinition catdefinition = new CategoryDefinition();
         catdefinition.setName("CAT01");
         ResponseFormat responseFormat = new ResponseFormat(9);
@@ -287,13 +283,12 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
         when(userValidations.validateUserExists("USR")).thenReturn(user);
         when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
         Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition, "Service", "USR");
-        Assert.assertTrue(response.isRight());
-        Assert.assertEquals((Integer) 9, response.right().value().getStatus());
+        assertTrue(response.isRight());
+        assertEquals((Integer) 9, response.right().value().getStatus());
     }
 
     @Test
-    public void testcreateCategory_Invalid() throws Exception {
-
+    void testcreateCategory_Invalid() {
         CategoryDefinition catdefinition = new CategoryDefinition();
         catdefinition.setName("CAT01");
         ResponseFormat responseFormat = new ResponseFormat(9);
@@ -302,26 +297,26 @@ public class ElementBusinessLogicTest extends BaseBusinessLogicMock {
         when(userValidations.validateUserExists("USR")).thenReturn(user);
         when(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(responseFormat);
         Either<CategoryDefinition, ResponseFormat> response = elementBusinessLogic.createCategory(catdefinition, "SERVICE_PARAM_NAME", "USR");
-        Assert.assertTrue(response.isRight());
-        Assert.assertEquals((Integer) 9, response.right().value().getStatus());
+        assertTrue(response.isRight());
+        assertEquals((Integer) 9, response.right().value().getStatus());
     }
 
     @Test
-    public void testGetBaseTypes_givenValidUserAndComponentType_thenReturnsSuccessful() {
-
+    void testGetBaseTypes_givenValidUserAndComponentType_thenReturnsSuccessful() {
         List<BaseType> baseTypes = new ArrayList<>();
         baseTypes.add(new BaseType("org.openecomp.type"));
         String categoryName = "CAT01";
         String modelName = "MODEL01";
 
-        when(userValidations.validateUserExistsActionStatus(eq(user.getUserId()))).thenReturn(ActionStatus.OK);
-        when(elementDao.getBaseTypes(categoryName, modelName)).thenReturn(baseTypes);
-        Assert.assertTrue(elementBusinessLogic.getBaseTypes(categoryName, user.getUserId(), modelName).isLeft());
+        when(userValidations.validateUserExistsActionStatus(user.getUserId())).thenReturn(ActionStatus.OK);
+        when(elementDao.getServiceBaseTypes(categoryName, modelName)).thenReturn(baseTypes);
+        assertTrue(elementBusinessLogic.getBaseTypes(categoryName, user.getUserId(), modelName).isLeft());
     }
 
     @Test
-    public void testGetBaseTypes_givenUserValidationFails_thenReturnsException() {
-        when(userValidations.validateUserExistsActionStatus(eq(user.getUserId()))).thenReturn(ActionStatus.RESTRICTED_OPERATION);
-        Assert.assertTrue(elementBusinessLogic.getBaseTypes("CAT01", user.getUserId(), null).isRight());
+    void testGetBaseTypes_givenUserValidationFails_thenReturnsException() {
+        when(userValidations.validateUserExistsActionStatus(user.getUserId())).thenReturn(ActionStatus.RESTRICTED_OPERATION);
+        assertTrue(elementBusinessLogic.getBaseTypes("CAT01", user.getUserId(), null).isRight());
     }
+
 }
