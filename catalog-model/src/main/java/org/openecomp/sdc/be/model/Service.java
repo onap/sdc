@@ -143,7 +143,7 @@ public class Service extends Component {
     }
 
     private ServiceMetadataDataDefinition getServiceMetadataDefinition() {
-        return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
+        return getMetadataDefinition();
     }
 
     public String getServiceFunction() {
@@ -182,14 +182,22 @@ public class Service extends Component {
     }
 
     public void setAbstract(Boolean isAbstract) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setIsAbstract(isAbstract);
+        getMetadataDefinition().setIsAbstract(isAbstract);
     }
 
     public void setVendorName(String vendorName) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setVendorName(vendorName);
+        getMetadataDefinition().setVendorName(vendorName);
     }
 
     public void setVendorRelease(String vendorRelease) {
-        ((ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition()).setVendorRelease(vendorRelease);
+        getMetadataDefinition().setVendorRelease(vendorRelease);
+    }
+
+    public boolean isSubstituteCandidate() {
+        return getDerivedFromGenericType() != null;
+    }
+
+    private ServiceMetadataDataDefinition getMetadataDefinition() {
+        return (ServiceMetadataDataDefinition) getComponentMetadataDefinition().getMetadataDataDefinition();
     }
 }

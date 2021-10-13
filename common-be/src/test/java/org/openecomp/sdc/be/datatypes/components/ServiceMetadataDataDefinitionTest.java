@@ -54,15 +54,6 @@ public class ServiceMetadataDataDefinitionTest {
 	}
 
 	@Test
-	public void testCopyConstructor() throws Exception {
-		ServiceMetadataDataDefinition testSubject;
-
-		// default test
-		testSubject = createTestSubject();
-		ServiceMetadataDataDefinition serviceMetadataDataDefinition = new ServiceMetadataDataDefinition(testSubject);
-	}
-	
-	@Test
 	public void testGetDistributionStatus() throws Exception {
 		ServiceMetadataDataDefinition testSubject;
 		String result;

@@ -87,7 +87,7 @@
         </div>
         <div class="right-column">
             <div *ngIf="!isReadonly && !isInputsTabSelected" class="add-btn"
-                 (click)="addProperty(component.model)" data-tests-id="properties-add-button" [ngClass]="{'disabled': !isSelf()}">Add Property</div>
+                 (click)="addProperty(component.model)" data-tests-id="properties-add-button" [ngClass]="{'disabled': !showAddProperties()}">Add Property</div>
             <div *ngIf="!isReadonly && isInputsTabSelected" class="add-btn"
                  (click)="addInput()" [ngClass]="{'disabled': !isSelf()}">Add Input</div>
             <tabs #hierarchyNavTabs tabStyle="simple-tabs" class="gray-border">

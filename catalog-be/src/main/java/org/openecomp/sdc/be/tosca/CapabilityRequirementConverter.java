@@ -56,7 +56,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.utils.ComponentUtilities;
 import org.openecomp.sdc.be.tosca.ToscaUtils.SubstitutionEntry;
-import org.openecomp.sdc.be.tosca.model.SubstitutionMapping;
 import org.openecomp.sdc.be.tosca.model.ToscaCapability;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
@@ -198,24 +197,22 @@ public class CapabilityRequirementConverter {
     /**
      * Allows to convert component requirements to the tosca template substitution mappings requirements
      *
-     * @param componentsCache
      * @param component
-     * @param substitutionMappings
+     * @param componentsCache
      * @return
      */
-    public Either<SubstitutionMapping, ToscaError> convertSubstitutionMappingRequirements(Map<String, Component> componentsCache, Component component,
-                                                                                          SubstitutionMapping substitutionMappings) {
-        Either<SubstitutionMapping, ToscaError> result = Either.left(substitutionMappings);
+    public Either<Map<String, String[]>, ToscaError> convertSubstitutionMappingRequirements(final Component component,
+                                                                                            final Map<String, Component> componentsCache) {
         Either<Map<String, String[]>, ToscaError> toscaRequirementsRes = convertSubstitutionMappingRequirementsAsMap(componentsCache, component);
         if (toscaRequirementsRes.isRight()) {
-            result = Either.right(toscaRequirementsRes.right().value());
             logger.debug("Failed convert requirements for the component {}. ", component.getName());
-        } else if (MapUtils.isNotEmpty(toscaRequirementsRes.left().value())) {
-            substitutionMappings.setRequirements(toscaRequirementsRes.left().value());
-            result = Either.left(substitutionMappings);
-            logger.debug("Finish convert requirements for the component {}. ", component.getName());
+            return Either.right(toscaRequirementsRes.right().value());
         }
-        return result;
+        if (MapUtils.isNotEmpty(toscaRequirementsRes.left().value())) {
+            logger.debug("Finish convert requirements for the component {}. ", component.getName());
+            return Either.left(toscaRequirementsRes.left().value());
+        }
+        return Either.left(Collections.emptyMap());
     }
 
     /**

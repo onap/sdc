@@ -701,9 +701,11 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             createMandatoryArtifactsData(service, user);
             createServiceApiArtifactsData(service, user);
             setToscaArtifactsPlaceHolders(service, user);
-            final Resource genericType = fetchAndSetDerivedFromGenericType(service);
-            generatePropertiesFromGenericType(service, genericType);
-            generateAndAddInputsFromGenericTypeProperties(service, genericType);
+            if (service.isSubstituteCandidate()) {
+                final Resource genericType = fetchAndSetDerivedFromGenericType(service);
+                generatePropertiesFromGenericType(service, genericType);
+                generateAndAddInputsFromGenericTypeProperties(service, genericType);
+            }
             beforeCreate(service);
             Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
             if (dataModelResponse.isLeft()) {

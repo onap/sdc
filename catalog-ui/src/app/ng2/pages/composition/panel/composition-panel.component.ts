@@ -264,7 +264,7 @@ export class CompositionPanelComponent {
             this.tabs.push(tabs.apiArtifacts);
         }
 
-        if((component.isService() || this.isVF()) && !this.isComponentInstanceSelected()){
+        if (this.showSubstitutionFilterTab(component)) {
             this.tabs.push(tabs.substitutionFilter);
         }
 
@@ -277,6 +277,17 @@ export class CompositionPanelComponent {
             this.tabs.push(tabs.interfaceOperations);
         }
 
+    }
+
+    private showSubstitutionFilterTab(component): boolean {
+        if ((component.isService() || this.isVF()) && !this.isComponentInstanceSelected()) {
+            if (component.isService()) {
+                return (<Service>component).isSubstituteCandidate();
+            }
+            return true;
+        }
+
+        return false;
     }
 
     private toggleSidebarDisplay = () => {

@@ -18,9 +18,21 @@
  */
 package org.openecomp.sdc.be.exception;
 
+import lombok.Getter;
+import org.openecomp.sdc.be.tosca.ToscaError;
+
 public class ToscaExportException extends Exception {
+
+    @Getter
+    private final ToscaError toscaError;
 
     public ToscaExportException(String message) {
         super(message);
+        toscaError = null;
+    }
+
+    public ToscaExportException(final String message, final ToscaError toscaError) {
+        super(message);
+        this.toscaError = toscaError;
     }
 }
