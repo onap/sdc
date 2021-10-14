@@ -5,10 +5,10 @@
 Release Notes
 =============
 
-Version: 1.9.3
+Version: 1.9.4
 ==============
 
-:Release Date: 2021-09-30
+:Release Date: 2021-10-14
 
 SDC SDKs Versions
 -----------------
