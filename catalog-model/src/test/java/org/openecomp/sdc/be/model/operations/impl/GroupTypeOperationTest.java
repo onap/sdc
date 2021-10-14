@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,10 +38,9 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphVertex;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -61,11 +60,9 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
 import org.openecomp.sdc.be.resources.data.GroupTypeData;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@SpringJUnitConfig(locations = "classpath:application-context-test.xml")
 public class GroupTypeOperationTest extends ModelTestBase {
 
     private static final String TOSCA_GROUPS_ROOT = "tosca.groups.Root";
@@ -73,22 +70,22 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
     @Resource(name = "janusgraph-generic-dao")
     private HealingJanusGraphGenericDao janusGraphDao;
-    
+
     @Resource(name = "capability-type-operation")
     private CapabilityTypeOperation capabilityTypeOperation;
-    
+
     @Resource(name = "group-type-operation")
     private GroupTypeOperation groupTypeOperation;
 
     @Resource(name = "model-operation")
     private ModelOperation modelOperation;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupBeforeClass() {
         ModelTestBase.init();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         janusGraphDao.rollback();
         cleanUp();
@@ -105,8 +102,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
         List<GroupTypeDefinition> allGroupTypesNoExclusion = groupTypeOperation.getAllGroupTypes(null, null);
         assertThat(allGroupTypesNoExclusion)
-                .usingElementComparatorOnFields("type", "icon", "name")
-                .containsExactlyInAnyOrder(rootGroupDefinition, type1, type2);
+            .usingElementComparatorOnFields("type", "icon", "name")
+            .containsExactlyInAnyOrder(rootGroupDefinition, type1, type2);
     }
 
     @Test
@@ -120,45 +117,45 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
         List<GroupTypeDefinition> allGroupTypes = groupTypeOperation.getAllGroupTypes(newHashSet("type1", "type2"), null);
         assertThat(allGroupTypes)
-                .usingElementComparatorOnFields("type")
-                .containsExactly(rootGroupDefinition);
+            .usingElementComparatorOnFields("type")
+            .containsExactly(rootGroupDefinition);
     }
 
     @Test
     public void groupTypeWithoutCapabilityCreated() {
         GroupTypeData rootNode = getOrCreateRootGroupTypeNode();
-        
+
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         groupTypeDefinition.setDerivedFrom(TOSCA_GROUPS_ROOT);
         groupTypeDefinition.setDescription("groups l3-networks in network collection");
         groupTypeDefinition.setType("org.openecomp.groups.NetworkCollection");
         groupTypeDefinition.setVersion("1.0");
-        
+
         List<PropertyDefinition> properties = asList(
-                buildProperty("network_collection_type", "l3-network", "network collection type, defined with default value"),
-                buildProperty("network_collection_subtype", "sub-interface", "network collection subtype, defined with default value"),
-                buildProperty("network_collection_role", null, "network collection role"),
-                buildProperty("network_collection_description", null, "network collection description, free format text"));
-        
-        groupTypeDefinition.setProperties(properties );
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition, true);
+            buildProperty("network_collection_type", "l3-network", "network collection type, defined with default value"),
+            buildProperty("network_collection_subtype", "sub-interface", "network collection subtype, defined with default value"),
+            buildProperty("network_collection_role", null, "network collection role"),
+            buildProperty("network_collection_description", null, "network collection description, free format text"));
+
+        groupTypeDefinition.setProperties(properties);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition, true);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
-        
+
         addGroupTypeResult = groupTypeOperation.getGroupTypeByTypeAndVersion("org.openecomp.groups.NetworkCollection", "1.0", null);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
-        
+
         Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
             .getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupTypeDefinition.getType(), GroupTypeData.class);
         GroupTypeData groupTypeNode = extractVal(groupTypeResult);
-        
+
         Either<Edge, JanusGraphOperationStatus> edgeResult = janusGraphDao
             .getEdgeByNodes(groupTypeNode, rootNode, GraphEdgeLabels.DERIVED_FROM);
         validate(edgeResult);
     }
-    
+
     @Test
     public void groupTypeWithCapabilityAndPropsButCapTypeWithoutProps() {
         getOrCreateRootGroupTypeNode();
@@ -176,21 +173,20 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Map<String, CapabilityDefinition> mapCapabilities = new HashMap<>();
 
         ComponentInstanceProperty property = new ComponentInstanceProperty(
-                buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance"));
+            buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance"));
         CapabilityDefinition capabilityDef = buildCapabilityDefintion(asList(property));
         mapCapabilities.put("vlan_assignment", capabilityDef);
         groupTypeDefinition.setCapabilities(mapCapabilities);
 
-
         List<PropertyDefinition> properties = asList(
-                buildProperty("vfc_instance_group_role", null, "role of this VFC group"),
-                buildProperty("vfc_parent_port_role", null, "common role of parent ports of VFCs in this group"),
-                buildProperty("network_collection_role", null, "network collection role assigned to this group"),
-                buildProperty("subinterface_role", null, "common role of subinterfaces of VFCs in this group, criteria the group is created"));
+            buildProperty("vfc_instance_group_role", null, "role of this VFC group"),
+            buildProperty("vfc_parent_port_role", null, "common role of parent ports of VFCs in this group"),
+            buildProperty("network_collection_role", null, "network collection role assigned to this group"),
+            buildProperty("subinterface_role", null, "common role of subinterfaces of VFCs in this group, criteria the group is created"));
 
-        groupTypeDefinition.setProperties(properties );
+        groupTypeDefinition.setProperties(properties);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition, true);
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition, true);
         assertTrue(addGroupTypeResult.isRight());
         assertEquals(StorageOperationStatus.MATCH_NOT_FOUND, addGroupTypeResult.right().value());
     }
@@ -198,16 +194,16 @@ public class GroupTypeOperationTest extends ModelTestBase {
     @Test
     public void groupTypeWithCapabilityTypeAndEdgeCreated() {
         GroupTypeData rootNode = getOrCreateRootGroupTypeNode();
-        
+
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference",
-                buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance"));
+            buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance"));
 
         CapabilityTypeDefinition capabilityTypeDef = createCapabilityType(capTypeProperties);
         Either<CapabilityTypeData, JanusGraphOperationStatus> capabilityTypeResult = janusGraphDao
             .getNode(GraphPropertiesDictionary.TYPE.getProperty(), capabilityTypeDef.getType(), CapabilityTypeData.class);
         extractVal(capabilityTypeResult);
-        
+
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         groupTypeDefinition.setDerivedFrom(TOSCA_GROUPS_ROOT);
         groupTypeDefinition.setDescription("groups l3-networks in network collection");
@@ -215,28 +211,27 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
         Map<String, CapabilityDefinition> mapCapabilities = new HashMap<>();
         ComponentInstanceProperty property = new ComponentInstanceProperty(
-                buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance"));
+            buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance"));
         CapabilityDefinition capabilityDef = buildCapabilityDefintion(asList(property));
         mapCapabilities.put("vlan_assignment", capabilityDef);
         groupTypeDefinition.setCapabilities(mapCapabilities);
-        
-        
-        List<PropertyDefinition> properties = asList(
-                buildProperty("vfc_instance_group_role", null, "role of this VFC group"),
-                buildProperty("vfc_parent_port_role", null, "common role of parent ports of VFCs in this group"),
-                buildProperty("network_collection_role", null, "network collection role assigned to this group"),
-                buildProperty("subinterface_role", null, "common role of subinterfaces of VFCs in this group, criteria the group is created"));
 
-        groupTypeDefinition.setProperties(properties );
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition, true);
+        List<PropertyDefinition> properties = asList(
+            buildProperty("vfc_instance_group_role", null, "role of this VFC group"),
+            buildProperty("vfc_parent_port_role", null, "common role of parent ports of VFCs in this group"),
+            buildProperty("network_collection_role", null, "network collection role assigned to this group"),
+            buildProperty("subinterface_role", null, "common role of subinterfaces of VFCs in this group, criteria the group is created"));
+
+        groupTypeDefinition.setProperties(properties);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition, true);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
-        
+
         Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
             .getNode(GraphPropertiesDictionary.TYPE.getProperty(), groupTypeDefinition.getType(), GroupTypeData.class);
         GroupTypeData groupTypeNode = extractVal(groupTypeResult);
-        
+
         Either<GroupTypeDefinition, StorageOperationStatus> groupTypeDefResult = groupTypeOperation.getGroupTypeByUid(groupTypeNode.getUniqueId());
         assertTrue(groupTypeDefResult.isLeft());
         GroupTypeDefinition groupTypeDefinitionRetrieved = groupTypeDefResult.left().value();
@@ -247,17 +242,18 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertTrue(capabilityDefs.containsKey("vlan_assignment"));
         CapabilityDefinition updatedCapabilityDef = capabilityDefs.get("vlan_assignment");
         assertEquals(2, updatedCapabilityDef.getProperties().size());
-        
+
         Either<Edge, JanusGraphOperationStatus> edgeDerivedFromResult = janusGraphDao
             .getEdgeByNodes(groupTypeNode, rootNode, GraphEdgeLabels.DERIVED_FROM);
         validate(edgeDerivedFromResult);
     }
-    
+
     @Test
     public void groupTypeWithCapabilityTypeAndEdgeCreated_OverrideDefaultCapabilityTypeValue() {
         getOrCreateRootGroupTypeNode();
 
-        PropertyDefinition property = buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance");
+        PropertyDefinition property = buildProperty("vfc_instance_group_reference", null,
+            "Ability to recognize capability per vfc instance group on vnf instance");
 
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference", property);
@@ -278,16 +274,15 @@ public class GroupTypeOperationTest extends ModelTestBase {
         mapCapabilities.put("vlan_assignment", capabilityDef);
         groupTypeDefinition.setCapabilities(mapCapabilities);
 
-
         List<PropertyDefinition> properties = asList(
-                buildProperty("vfc_instance_group_role", null, "role of this VFC group"),
-                buildProperty("vfc_parent_port_role", null, "common role of parent ports of VFCs in this group"),
-                buildProperty("network_collection_role", null, "network collection role assigned to this group"),
-                buildProperty("subinterface_role", null, "common role of subinterfaces of VFCs in this group, criteria the group is created"));
+            buildProperty("vfc_instance_group_role", null, "role of this VFC group"),
+            buildProperty("vfc_parent_port_role", null, "common role of parent ports of VFCs in this group"),
+            buildProperty("network_collection_role", null, "network collection role assigned to this group"),
+            buildProperty("subinterface_role", null, "common role of subinterfaces of VFCs in this group, criteria the group is created"));
 
-        groupTypeDefinition.setProperties(properties );
+        groupTypeDefinition.setProperties(properties);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition, true);
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition, true);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
 
@@ -308,13 +303,14 @@ public class GroupTypeOperationTest extends ModelTestBase {
         assertEquals("new_value", capDefinition.getProperties().get(0).getValue());
         assertEquals(2, capDefinition.getProperties().size());
     }
-    
-    
+
+
     @Test
     public void updateGroupTypeWithCapability_FailedDueToCapabilityDeleteAttempt() {
         createRootGroupTypeNode();
 
-        PropertyDefinition property = buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance");
+        PropertyDefinition property = buildProperty("vfc_instance_group_reference", null,
+            "Ability to recognize capability per vfc instance group on vnf instance");
 
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference", property);
@@ -335,24 +331,26 @@ public class GroupTypeOperationTest extends ModelTestBase {
         mapCapabilities.put("vlan_assignment", capabilityDef);
         groupTypeDefinition.setCapabilities(mapCapabilities);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition);
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition);
         assertTrue(addGroupTypeResult.isLeft());
-        
+
         GroupTypeDefinition newGroupTypeDefinition = new GroupTypeDefinition();
         newGroupTypeDefinition.setDerivedFrom(TOSCA_GROUPS_ROOT);
         newGroupTypeDefinition.setDescription("groups l3-networks in network collection");
         newGroupTypeDefinition.setType("org.openecomp.groups.NetworkCollection");
-        Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeResult =  groupTypeOperation.updateGroupType(newGroupTypeDefinition, addGroupTypeResult.left().value());
+        Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeResult = groupTypeOperation.updateGroupType(newGroupTypeDefinition,
+            addGroupTypeResult.left().value());
         assertTrue(updateGroupTypeResult.isRight());
         assertEquals(StorageOperationStatus.MATCH_NOT_FOUND, updateGroupTypeResult.right().value());
 
     }
-    
+
     @Test
     public void updateGroupTypeWithCapability_FailedDueToCapabilityChangeTypeAttempt() {
         createRootGroupTypeNode();
 
-        PropertyDefinition property = buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance");
+        PropertyDefinition property = buildProperty("vfc_instance_group_reference", null,
+            "Ability to recognize capability per vfc instance group on vnf instance");
 
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference", property);
@@ -373,14 +371,14 @@ public class GroupTypeOperationTest extends ModelTestBase {
         mapCapabilities.put("vlan_assignment", capabilityDef);
         groupTypeDefinition.setCapabilities(mapCapabilities);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition);
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition);
         assertTrue(addGroupTypeResult.isLeft());
-        
+
         GroupTypeDefinition newGroupTypeDefinition = new GroupTypeDefinition();
         newGroupTypeDefinition.setDerivedFrom(TOSCA_GROUPS_ROOT);
         newGroupTypeDefinition.setDescription("groups l3-networks in network collection");
         newGroupTypeDefinition.setType("org.openecomp.groups.NetworkCollection");
-        
+
         Map<String, CapabilityDefinition> updatedMapCapabilities = new HashMap<>();
         property.setValue("new_value");
         ComponentInstanceProperty newCapDefProperty = new ComponentInstanceProperty(property);
@@ -388,17 +386,19 @@ public class GroupTypeOperationTest extends ModelTestBase {
         updatedCapabilityDef.setType("Another type");
         updatedMapCapabilities.put("vlan_assignment", updatedCapabilityDef);
         newGroupTypeDefinition.setCapabilities(updatedMapCapabilities);
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeResult =  groupTypeOperation.updateGroupType(newGroupTypeDefinition,  addGroupTypeResult.left().value());
+
+        Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeResult = groupTypeOperation.updateGroupType(newGroupTypeDefinition,
+            addGroupTypeResult.left().value());
         assertTrue(updateGroupTypeResult.isRight());
         assertEquals(StorageOperationStatus.MATCH_NOT_FOUND, updateGroupTypeResult.right().value());
     }
-    
+
     @Test
     public void updateGroupTypeWithCapability_Success() {
         createRootGroupTypeNode();
 
-        PropertyDefinition property = buildProperty("vfc_instance_group_reference", null, "Ability to recognize capability per vfc instance group on vnf instance");
+        PropertyDefinition property = buildProperty("vfc_instance_group_reference", null,
+            "Ability to recognize capability per vfc instance group on vnf instance");
 
         Map<String, PropertyDefinition> capTypeProperties = new HashMap<>();
         capTypeProperties.put("vfc_instance_group_reference", property);
@@ -419,22 +419,23 @@ public class GroupTypeOperationTest extends ModelTestBase {
         mapCapabilities.put("vlan_assignment", capabilityDef);
         groupTypeDefinition.setCapabilities(mapCapabilities);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition);
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition);
         assertTrue(addGroupTypeResult.isLeft());
-        
+
         GroupTypeDefinition newGroupTypeDefinition = new GroupTypeDefinition();
         newGroupTypeDefinition.setDerivedFrom(TOSCA_GROUPS_ROOT);
         newGroupTypeDefinition.setDescription("groups l3-networks in network collection");
         newGroupTypeDefinition.setType("org.openecomp.groups.NetworkCollection");
-        
+
         Map<String, CapabilityDefinition> updatedMapCapabilities = new HashMap<>();
         property.setValue("another_value");
         ComponentInstanceProperty newCapDefProperty = new ComponentInstanceProperty(property);
         CapabilityDefinition updatedCapabilityDef = buildCapabilityDefintion(asList(newCapDefProperty));
         updatedMapCapabilities.put("vlan_assignment", updatedCapabilityDef);
         newGroupTypeDefinition.setCapabilities(updatedMapCapabilities);
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeResult =  groupTypeOperation.updateGroupType(newGroupTypeDefinition,  addGroupTypeResult.left().value());
+
+        Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeResult = groupTypeOperation.updateGroupType(newGroupTypeDefinition,
+            addGroupTypeResult.left().value());
         assertTrue(updateGroupTypeResult.isLeft());
     }
 
@@ -448,23 +449,24 @@ public class GroupTypeOperationTest extends ModelTestBase {
         groupTypeDefinition.setVersion("1.0");
 
         List<PropertyDefinition> properties = singletonList(
-                buildProperty("network_collection_type", "l2-network", "network collection type, defined with default value"));
-        
-        groupTypeDefinition.setProperties(properties );
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition, true);
+            buildProperty("network_collection_type", "l2-network", "network collection type, defined with default value"));
+
+        groupTypeDefinition.setProperties(properties);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition, true);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
-        
+
         addGroupTypeResult = groupTypeOperation.getGroupTypeByTypeAndVersion("org.openecomp.groups.PrivateCollection", "1.0", null);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
- 
-        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition, groupTypeDefinition);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition,
+            groupTypeDefinition);
         assertNotNull(upgradeResult);
         assertTrue(upgradeResult.isLeft());
     }
-    
+
     @Test
     public void testUpdateNonExistingGroupType() {
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
@@ -472,70 +474,74 @@ public class GroupTypeOperationTest extends ModelTestBase {
         groupTypeDefinition.setDescription("groups l2-networks in network collection");
         groupTypeDefinition.setType("org.openecomp.groups.MyCollection");
         groupTypeDefinition.setVersion("1.0");
-                             
-        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition, groupTypeDefinition);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition,
+            groupTypeDefinition);
         assertNotNull(upgradeResult);
         assertTrue(upgradeResult.isRight());
     }
-    
+
     @Test
     public void testUpdateNotDerivedGroupType() {
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         groupTypeDefinition.setDescription("groups social-networks in school");
         groupTypeDefinition.setType("org.openecomp.groups.Teachers");
         groupTypeDefinition.setVersion("1.0");
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition, true);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition, true);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
-              
-        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition, groupTypeDefinition);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition,
+            groupTypeDefinition);
         assertNotNull(upgradeResult);
         assertTrue(upgradeResult.isLeft());
         assertThat(groupTypeDefinition).isEqualToIgnoringGivenFields(upgradeResult.left().value(), "properties", "capabilities");
     }
-    
+
     @Test
     public void testUpdateGroupTypeWithNonExistingParent() {
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         groupTypeDefinition.setDescription("groups social-networks in work");
         groupTypeDefinition.setType("org.openecomp.groups.Cowokers");
         groupTypeDefinition.setVersion("1.0");
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition, true);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition, true);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
-              
+
         groupTypeDefinition.setDerivedFrom("Non.existing.parent");
-        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition, groupTypeDefinition);
+        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition,
+            groupTypeDefinition);
         assertNotNull(upgradeResult);
         assertTrue(upgradeResult.isRight());
     }
-    
+
     @Test
     public void testUpgradeGroupType() {
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         groupTypeDefinition.setDescription("groups social-networks in university");
         groupTypeDefinition.setType("org.openecomp.groups.Students");
         groupTypeDefinition.setVersion("1.0");
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(groupTypeDefinition, true);
+
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(groupTypeDefinition, true);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(groupTypeDefinition, addGroupTypeResult.left().value());
-        
+
         GroupTypeDefinition parentGroupTypeDefinition = new GroupTypeDefinition();
         parentGroupTypeDefinition.setDescription("groups social-networks in university");
         parentGroupTypeDefinition.setType("org.openecomp.groups.Parents");
         parentGroupTypeDefinition.setVersion("1.0");
         parentGroupTypeDefinition.setHighestVersion(true);
 
-        
-        Either<GroupTypeDefinition, StorageOperationStatus> addParentGroupTypeResult =  groupTypeOperation.addGroupType(parentGroupTypeDefinition, true);
+        Either<GroupTypeDefinition, StorageOperationStatus> addParentGroupTypeResult = groupTypeOperation.addGroupType(parentGroupTypeDefinition,
+            true);
         assertTrue("check group type added", addParentGroupTypeResult.isLeft());
         compareBetweenCreatedToSent(parentGroupTypeDefinition, addParentGroupTypeResult.left().value());
-              
+
         groupTypeDefinition.setDerivedFrom("org.openecomp.groups.Parents");
-        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition, addGroupTypeResult.left().value());
+        Either<GroupTypeDefinition, StorageOperationStatus> upgradeResult = groupTypeOperation.updateGroupType(groupTypeDefinition,
+            addGroupTypeResult.left().value());
         assertNotNull(upgradeResult);
         assertTrue(upgradeResult.isLeft());
         assertThat(groupTypeDefinition).isEqualToIgnoringGivenFields(upgradeResult.left().value(), "properties", "capabilities");
@@ -546,37 +552,37 @@ public class GroupTypeOperationTest extends ModelTestBase {
         GroupTypeDefinition groupTypeDefinition = createGroupTypeDef();
         groupTypeDefinition.setModel("testModel");
         Model model = new Model("testModel", ModelTypeEnum.NORMATIVE);
-        modelOperation.createModel(model , true);
+        modelOperation.createModel(model, true);
 
         Either<GroupTypeDefinition, StorageOperationStatus> addGroupType = groupTypeOperation.addGroupType(groupTypeDefinition);
         assertTrue(addGroupType.isLeft());
         Either<GroupTypeDefinition, StorageOperationStatus> eitherGroupTypeFetched =
-                groupTypeOperation.getLatestGroupTypeByType(groupTypeDefinition.getType(), groupTypeDefinition.getModel());
+            groupTypeOperation.getLatestGroupTypeByType(groupTypeDefinition.getType(), groupTypeDefinition.getModel());
         assertTrue(eitherGroupTypeFetched.isLeft());
         assertEquals(groupTypeDefinition.getModel(), eitherGroupTypeFetched.left().value().getModel());
     }
 
-    
+
     private GroupTypeData getOrCreateRootGroupTypeNode() {
         Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
             .getNode(GraphPropertiesDictionary.TYPE.getProperty(), TOSCA_GROUPS_ROOT, GroupTypeData.class);
-        if(groupTypeResult.isLeft()) {
+        if (groupTypeResult.isLeft()) {
             return groupTypeResult.left().value();
         }
-        
+
         return createRootGroupTypeNode();
     }
-    
+
     private GroupTypeData createRootGroupTypeNode() {
         GroupTypeDefinition rootGroupDefinition = createRootGroupDefinition();
-        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult =  groupTypeOperation.addGroupType(rootGroupDefinition, false);
+        Either<GroupTypeDefinition, StorageOperationStatus> addGroupTypeResult = groupTypeOperation.addGroupType(rootGroupDefinition, false);
         assertTrue("check group type added", addGroupTypeResult.isLeft());
-        
+
         Either<GroupTypeData, JanusGraphOperationStatus> groupTypeResult = janusGraphDao
             .getNode(GraphPropertiesDictionary.TYPE.getProperty(), rootGroupDefinition.getType(), GroupTypeData.class);
-        return extractVal(groupTypeResult);        
+        return extractVal(groupTypeResult);
     }
-    
+
     private GroupTypeDefinition createRootGroupDefinition() {
         GroupTypeDefinition groupTypeDefinition = new GroupTypeDefinition();
         groupTypeDefinition.setDescription("The TOSCA Group Type all other TOSCA Group Types derive from");
@@ -593,14 +599,13 @@ public class GroupTypeOperationTest extends ModelTestBase {
         groupTypeDefinition.setIcon(type + "icon");
         return groupTypeDefinition;
     }
-    
+
     private CapabilityTypeDefinition createCapabilityType(Map<String, PropertyDefinition> properties) {
         CapabilityTypeDefinition rootCapabilityTypeDefinition = new CapabilityTypeDefinition();
         rootCapabilityTypeDefinition.setType("tosca.capabilities.Root");
         rootCapabilityTypeDefinition.setDescription("Dummy root type");
         rootCapabilityTypeDefinition.setVersion("1.0");
         capabilityTypeOperation.addCapabilityType(rootCapabilityTypeDefinition, true);
-
 
         CapabilityTypeDefinition parentCapabilityTypeDefinition = new CapabilityTypeDefinition();
         parentCapabilityTypeDefinition.setType("tosca.capabilities.Parent");
@@ -613,7 +618,6 @@ public class GroupTypeOperationTest extends ModelTestBase {
         parentCapabilityTypeDefinition.setProperties(capTypeProperties);
         capabilityTypeOperation.addCapabilityType(parentCapabilityTypeDefinition, true);
 
-
         CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition();
         capabilityTypeDefinition.setDescription("ability to expose routing information of the internal network");
         capabilityTypeDefinition.setType("org.openecomp.capabilities.VLANAssignment");
@@ -622,15 +626,16 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
         capabilityTypeDefinition.setProperties(properties);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityTypeResult = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityTypeResult = capabilityTypeOperation.addCapabilityType(
+            capabilityTypeDefinition, true);
         assertTrue("check capability type added", addCapabilityTypeResult.isLeft());
 
         CapabilityTypeDefinition capabilityTypeAdded = addCapabilityTypeResult.left().value();
         compareBetweenCreatedToSent(capabilityTypeDefinition, capabilityTypeAdded);
-        
+
         return capabilityTypeDefinition;
     }
-    
+
     private CapabilityDefinition buildCapabilityDefintion(List<ComponentInstanceProperty> properties) {
         CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
         capabilityDefinition.setName("vlan_assignment");
@@ -650,27 +655,27 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
         return property;
     }
-    
+
     private void compareBetweenCreatedToSent(CapabilityTypeDefinition expected, CapabilityTypeDefinition actual) {
         assertEquals(expected.getDerivedFrom(), actual.getDerivedFrom());
         assertEquals(expected.getType(), actual.getType());
         assertEquals(expected.getDescription(), actual.getDescription());
     }
-    
+
     private void compareBetweenCreatedToSent(GroupTypeDefinition expected, GroupTypeDefinition actual) {
         assertEquals(expected.getType(), actual.getType());
         assertEquals(expected.getDescription(), actual.getDescription());
     }
-    
+
     private <T> void validate(Either<T, JanusGraphOperationStatus> result) {
         extractVal(result);
     }
-    
+
     private <T> T extractVal(Either<T, JanusGraphOperationStatus> result) {
         assertTrue(result.isLeft());
         T t = result.left().value();
         assertNotNull(t);
-        
+
         return t;
     }
 
@@ -709,11 +714,12 @@ public class GroupTypeOperationTest extends ModelTestBase {
         updatedType.setIcon("icon");
         groupTypeOperation.updateGroupType(updatedType, currGroupType.left().value());
 
-        Either<GroupTypeDefinition, StorageOperationStatus> fetchedUpdatedType = groupTypeOperation.getLatestGroupTypeByType(createdType.getType(), createdType.getModel());
+        Either<GroupTypeDefinition, StorageOperationStatus> fetchedUpdatedType = groupTypeOperation.getLatestGroupTypeByType(createdType.getType(),
+            createdType.getModel());
         GroupTypeDefinition fetchedGroupType = fetchedUpdatedType.left().value();
         assertThat(fetchedGroupType.getProperties()).isEmpty();
         assertThat(fetchedGroupType)
-                .isEqualToIgnoringGivenFields(updatedType, "properties", "capabilities");
+            .isEqualToIgnoringGivenFields(updatedType, "properties", "capabilities");
 
     }
 
@@ -727,25 +733,26 @@ public class GroupTypeOperationTest extends ModelTestBase {
         PropertyDefinition prop3 = createSimpleProperty("val3", "prop3", "string");
         GroupTypeDefinition updatedGroupType = createGroupTypeDef(updatedProp1, prop3);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> updatedGroupTypeRetrieved = groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
+        Either<GroupTypeDefinition, StorageOperationStatus> updatedGroupTypeRetrieved = groupTypeOperation.updateGroupType(updatedGroupType,
+            currGroupType.left().value());
         assertEquals(StorageOperationStatus.MATCH_NOT_FOUND, updatedGroupTypeRetrieved.right().value());
     }
-    
+
     @Test
     public void validateGroupType_FailedDueAttempToCreateGroupTypeWithPropertyWhichTypeIsDifferentFromTypeOfParentPropertyWithTheSameName() {
         GroupTypeDefinition rootGroupType = createGroupTypeDef();
         Either<GroupTypeDefinition, StorageOperationStatus> rootGroupTypeRes = groupTypeOperation.addGroupType(rootGroupType);
         assertTrue(rootGroupTypeRes.isLeft());
-        
+
         PropertyDefinition prop = createSimpleProperty("val1", "prop", "string");
         GroupTypeDefinition groupType1 = createGroupTypeDef("type1", "descr1", rootGroupType.getType(), prop);
         Either<GroupTypeDefinition, StorageOperationStatus> groupType1Res = groupTypeOperation.addGroupType(groupType1);
         assertTrue(groupType1Res.isLeft());
-        
+
         PropertyDefinition prop1 = createSimpleProperty("33", "prop", "int");
         PropertyDefinition prop2 = createSimpleProperty("val2", "prop2", "string");
         GroupTypeDefinition groupType2 = createGroupTypeDef("type2", "descr", groupType1.getType(), prop1, prop2);
-        
+
         Either<GroupTypeDefinition, StorageOperationStatus> updatedGroupTypeRetrieved = groupTypeOperation.validateUpdateProperties(groupType2);
         assertEquals(StorageOperationStatus.PROPERTY_NAME_ALREADY_EXISTS, updatedGroupTypeRetrieved.right().value());
     }
@@ -759,7 +766,8 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Either<GroupTypeDefinition, StorageOperationStatus> currGroupType = groupTypeOperation.addGroupType(groupType1);
         groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
 
-        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(), groupType1.getModel());
+        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(),
+            groupType1.getModel());
         assertThat(latestGroupType.left().value().getDerivedFrom()).isEqualTo(rootGroupType.getType());
         verifyDerivedFromNodeEqualsToRootGroupType(rootGroupType, latestGroupType.left().value().getUniqueId());
     }
@@ -772,10 +780,12 @@ public class GroupTypeOperationTest extends ModelTestBase {
         groupTypeOperation.addGroupType(rootGroupType);
         Either<GroupTypeDefinition, StorageOperationStatus> currGroupType = groupTypeOperation.addGroupType(groupType1);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeRes = groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
+        Either<GroupTypeDefinition, StorageOperationStatus> updateGroupTypeRes = groupTypeOperation.updateGroupType(updatedGroupType,
+            currGroupType.left().value());
         assertThat(updateGroupTypeRes.right().value()).isEqualTo(StorageOperationStatus.NOT_FOUND);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(), groupType1.getModel());
+        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(),
+            groupType1.getModel());
         assertThat(latestGroupType.left().value().getDerivedFrom()).isEqualTo(rootGroupType.getType());
     }
 
@@ -792,10 +802,11 @@ public class GroupTypeOperationTest extends ModelTestBase {
 
         groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
 
-        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(), groupType1.getModel());
+        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(groupType1.getType(),
+            groupType1.getModel());
         assertThat(latestGroupType.left().value().getDerivedFrom()).isEqualTo(derivedType1.getType());
     }
-    
+
     @Test
     public void updateGroupType_updateDerivedFrom_CauseEndlessRecursion() {
         GroupTypeDefinition rootGroupType = createGroupTypeDef();
@@ -807,10 +818,12 @@ public class GroupTypeOperationTest extends ModelTestBase {
         Either<GroupTypeDefinition, StorageOperationStatus> currGroupType = groupTypeOperation.addGroupType(derivedType1);
         groupTypeOperation.addGroupType(groupType1);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> updateResult = groupTypeOperation.updateGroupType(updatedGroupType, currGroupType.left().value());
+        Either<GroupTypeDefinition, StorageOperationStatus> updateResult = groupTypeOperation.updateGroupType(updatedGroupType,
+            currGroupType.left().value());
         assertThat(updateResult.right().value()).isEqualTo(StorageOperationStatus.GENERAL_ERROR);
 
-        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(updatedGroupType.getType(), updatedGroupType.getModel());
+        Either<GroupTypeDefinition, StorageOperationStatus> latestGroupType = groupTypeOperation.getLatestGroupTypeByType(updatedGroupType.getType(),
+            updatedGroupType.getModel());
         assertThat(latestGroupType.left().value().getDerivedFrom()).isEqualTo(rootGroupType.getType());
     }
 
@@ -827,7 +840,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
             .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), parentGroupId, GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.GroupType, GroupTypeData.class);
         assertThat(derivedFromRelation.left().value().getLeft().getGroupTypeDataDefinition())
-                .isEqualToComparingFieldByField(rootGroupType);
+            .isEqualToComparingFieldByField(rootGroupType);
     }
 
     private void verifyDerivedFromRelationDoesntExist(String parentGroupId) {
@@ -835,19 +848,21 @@ public class GroupTypeOperationTest extends ModelTestBase {
             .getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupType), parentGroupId, GraphEdgeLabels.DERIVED_FROM,
                 NodeTypeEnum.GroupType, GroupTypeData.class);
         assertThat(derivedFromRelation.right().value())
-                .isEqualTo(JanusGraphOperationStatus.NOT_FOUND);
+            .isEqualTo(JanusGraphOperationStatus.NOT_FOUND);
     }
 
     private GroupTypeDefinition createGroupTypeDef() {
-        return createGroupTypeDef("tosca.groups.Root", "description: The TOSCA Group Type all other TOSCA Group Types derive from", null, new PropertyDefinition[]{});
+        return createGroupTypeDef("tosca.groups.Root", "description: The TOSCA Group Type all other TOSCA Group Types derive from", null,
+            new PropertyDefinition[]{});
     }
 
-    private GroupTypeDefinition createGroupTypeDef(PropertyDefinition ... props) {
-        return createGroupTypeDef("tosca.groups.Root",  null, props);
+    private GroupTypeDefinition createGroupTypeDef(PropertyDefinition... props) {
+        return createGroupTypeDef("tosca.groups.Root", null, props);
     }
 
-    private GroupTypeDefinition createGroupTypeDef(String type, String derivedFrom, PropertyDefinition ... props) {
-        GroupTypeDefinition groupType = createGroupTypeDef(type, "description: The TOSCA Group Type all other TOSCA Group Types derive from", derivedFrom);
+    private GroupTypeDefinition createGroupTypeDef(String type, String derivedFrom, PropertyDefinition... props) {
+        GroupTypeDefinition groupType = createGroupTypeDef(type, "description: The TOSCA Group Type all other TOSCA Group Types derive from",
+            derivedFrom);
         groupType.setProperties(asList(props));
         return groupType;
     }
@@ -856,7 +871,7 @@ public class GroupTypeOperationTest extends ModelTestBase {
         return createGroupTypeDef(type, description, derivedFrom, null);
     }
 
-    private GroupTypeDefinition createGroupTypeDef(String type, String description, String derivedFrom,  PropertyDefinition ... props) {
+    private GroupTypeDefinition createGroupTypeDef(String type, String description, String derivedFrom, PropertyDefinition... props) {
         GroupTypeDataDefinition groupTypeDataDefinition = new GroupTypeDataDefinition();
         groupTypeDataDefinition.setDescription(description);
         groupTypeDataDefinition.setType(type);
