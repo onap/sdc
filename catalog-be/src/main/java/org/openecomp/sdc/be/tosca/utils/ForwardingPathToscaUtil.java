@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
@@ -40,10 +42,7 @@ import org.openecomp.sdc.be.tosca.CapabilityRequirementConverter;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeTemplate;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplateRequirement;
 
-/**
- * @author KATYR
- * @since November 19, 2017
- */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ForwardingPathToscaUtil {
 
     public static final String FORWARDS_TO_TOSCA_NAME = "org.openecomp.relationships.ForwardsTo";
@@ -97,8 +96,9 @@ public class ForwardingPathToscaUtil {
     }
 
     private static String fetchNodeName(Service service, String nodeId) {
-        if (service.getComponentInstanceByName(nodeId).isPresent()) {
-            return service.getComponentInstanceByName(nodeId).get().getName();
+        final Optional<ComponentInstance> componentInstanceByName = service.getComponentInstanceByName(nodeId);
+        if (componentInstanceByName.isPresent()) {
+            return componentInstanceByName.get().getName();
         } else {
             return "";
         }
