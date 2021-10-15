@@ -18,6 +18,7 @@ package org.openecomp.sdc.be.components.path;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -54,6 +55,7 @@ import static org.openecomp.sdc.be.tosca.utils.ForwardingPathToscaUtil.addForwar
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/paths/path-context.xml")
+@Ignore
 public class ForwardingPathToscaUtilTest extends BaseForwardingPathTest {
 
   private static final String NODE_NAME_1 = "nodeA-name";

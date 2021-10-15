@@ -19,6 +19,7 @@ package org.openecomp.sdc.be.components.path;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import fj.data.Either;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -42,6 +43,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/paths/path-context.xml")
+@Ignore
 public class ForwardingPathBusinessLogicTest extends BaseForwardingPathTest {
 
     @Test(expected = ComponentException.class)
