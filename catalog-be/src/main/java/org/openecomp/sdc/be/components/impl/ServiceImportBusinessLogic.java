@@ -291,6 +291,16 @@ public class ServiceImportBusinessLogic {
             log.debug("name is locked {} status = {}", service.getSystemName(), lockResult);
         }
         try {
+            log.trace("************* Adding properties to service from interface yaml {}", yamlName);
+            Map<String, PropertyDefinition> properties = parsedToscaYamlInfo.getProperties();
+            if (properties != null && !properties.isEmpty()) {
+                final List<PropertyDefinition> propertiesList = new ArrayList<>();
+                properties.forEach((propertyName, propertyDefinition) -> {
+                    propertyDefinition.setName(propertyName);
+                    propertiesList.add(propertyDefinition);
+                });
+                service.setProperties(propertiesList);
+            }
             log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
             service = serviceImportParseLogic.createServiceTransaction(service, csarInfo.getModifier(), isNormative);
             log.trace("************* Going to add inputs from yaml {}", yamlName);
