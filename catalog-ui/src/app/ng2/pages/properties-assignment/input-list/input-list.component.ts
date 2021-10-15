@@ -18,10 +18,14 @@
  */
 
 import {Component} from '@angular/core';
-import {InputBEModel, ComponentMetadata} from 'app/models';
+import {
+    ComponentMetadata, DataTypeModel, PropertyBEModel
+} from 'app/models';
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {PropertiesService} from "../../../services/properties.service";
+import {PROPERTY_DATA} from "../../../../utils/constants";
+import {DataTypeService} from "../../../services/data-type.service";
 
 @Component({
     selector: 'input-list',
@@ -32,16 +36,18 @@ import {PropertiesService} from "../../../services/properties.service";
 export class InputListComponent {
 
     selectInputValue;
-    inputModel: Array<InputBEModel> = [];
     isLoading: boolean;
     propertyType: string;
+    inputs: Array<PropertyBEModel> = [];
 
+    private dataTypeProperties: Array<PropertyBEModel> = [];
     private componentMetadata: ComponentMetadata;
 
     constructor(private topologyTemplateService: TopologyTemplateService,
                 private workspaceService: WorkspaceService,
-                private propertiesService: PropertiesService
-    ) {}
+                private propertiesService: PropertiesService,
+                private dataTypeService: DataTypeService) {
+    }
 
     ngOnInit() {
         this.componentMetadata = this.workspaceService.metadata;
@@ -53,9 +59,11 @@ export class InputListComponent {
         this.isLoading = true;
         this.topologyTemplateService.getComponentInputsValues(this.componentMetadata.componentType, this.componentMetadata.uniqueId)
         .subscribe((response) => {
-            response.inputs.forEach((input: any) => {
-                if (input.type === propertyType) {
-                    this.inputModel.push(input);
+            response.inputs.forEach((inputProperty: any) => {
+                if (propertyType === inputProperty.type) {
+                    this.inputs.push(inputProperty);
+                } else if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(inputProperty.type) === -1 && inputProperty.type !== propertyType) {
+                    this.buildInputDataForComplexType(inputProperty, propertyType);
                 }
             });
         }, () => {
@@ -63,5 +71,18 @@ export class InputListComponent {
         }, () => {
             this.isLoading = false;
         });
+    }
+
+    private buildInputDataForComplexType(inputProperty: PropertyBEModel, propertyType: string) {
+        let dataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, inputProperty.type);
+        if (dataTypeFound && dataTypeFound.properties) {
+            dataTypeFound.properties.forEach(dataTypeProperty => {
+                let inputData = inputProperty.name + "::" + dataTypeProperty.name;
+                dataTypeProperty.name = inputData;
+                if (this.dataTypeProperties.indexOf(dataTypeProperty) === -1 && dataTypeProperty.type === propertyType) {
+                    this.inputs.push(dataTypeProperty);
+                }
+            });
+        }
     }
 }
