@@ -62,10 +62,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -92,6 +92,7 @@ import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadCapInfo;
@@ -130,7 +131,7 @@ public class YamlTemplateParsingHandler {
 
     public ParsedToscaYamlInfo parseResourceInfoFromYAML(String fileName, String resourceYml, Map<String, String> createdNodesToscaResourceNames,
                                                          Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName,
-                                                         org.openecomp.sdc.be.model.Component component) {
+                                                         org.openecomp.sdc.be.model.Component component, String interfaceTemplateYaml) {
         log.debug("#parseResourceInfoFromYAML - Going to parse yaml {} ", fileName);
         Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
         ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
@@ -142,6 +143,9 @@ public class YamlTemplateParsingHandler {
             parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate, component.getModel()));
         }
         if (getSubstitutionMappings(mappedToscaTemplate) != null) {
+            if (component.isService() && !interfaceTemplateYaml.isEmpty()) {
+                parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));
+            }
             parsedToscaYamlInfo.setSubstitutionMappingNodeType((String) getSubstitutionMappings(mappedToscaTemplate).get(NODE_TYPE.getElementName()));
         }
         log.debug("#parseResourceInfoFromYAML - The yaml {} has been parsed ", fileName);
@@ -179,6 +183,10 @@ public class YamlTemplateParsingHandler {
             .on(err -> new HashMap<>());
         annotationBusinessLogic.validateAndMergeAnnotationsAndAssignToInput(inputs);
         return inputs;
+    }
+
+    private Map<String, PropertyDefinition> getProperties(Map<String, Object> toscaJson) {
+        return ImportUtils.getProperties(toscaJson).left().on(err -> new HashMap<>());
     }
 
     private Map<String, PolicyDefinition> getPolicies(String fileName, Map<String, Object> toscaJson, String model) {

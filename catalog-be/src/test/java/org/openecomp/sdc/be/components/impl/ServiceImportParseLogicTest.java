@@ -17,6 +17,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +25,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -45,7 +50,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -110,14 +114,15 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     private static final String RESOURCE_SUBCATEGORY = "Router";
 
-    private final ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
-    private final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-    private final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
-    private final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
-    private final IElementOperation elementDao = Mockito.mock(IElementOperation.class);
-    private final IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
-    private final InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
-    private final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
+    private final ComponentsUtils componentsUtils = new ComponentsUtils(mock(AuditingManager.class));
+    private final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
+    private final ServiceBusinessLogic serviceBusinessLogic = mock(ServiceBusinessLogic.class);
+    private final ICapabilityTypeOperation capabilityTypeOperation = mock(ICapabilityTypeOperation.class);
+    private final IElementOperation elementDao = mock(IElementOperation.class);
+    private final IInterfaceLifecycleOperation interfaceTypeOperation = mock(IInterfaceLifecycleOperation.class);
+    private final InputsBusinessLogic inputsBusinessLogic = mock(InputsBusinessLogic.class);
+    private final PropertyBusinessLogic propertyBusinessLogic = mock(PropertyBusinessLogic.class);
+    private final LifecycleBusinessLogic lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
 
     private ResponseFormatManager responseManager = null;
     private User user = null;
@@ -150,6 +155,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         testSubject.setCapabilityTypeOperation(capabilityTypeOperation);
         testSubject.setInterfaceTypeOperation(interfaceTypeOperation);
         testSubject.setInputsBusinessLogic(inputsBusinessLogic);
+        testSubject.setPropertyBusinessLogic(propertyBusinessLogic);
         testSubject.setLifecycleBusinessLogic(lifecycleBusinessLogic);
     }
 
@@ -1151,6 +1157,41 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(newService));
         Service inputsOnService = testSubject.createInputsOnService(service, inputs);
         assertNotNull(inputsOnService);
+    }
+
+    @Test
+    void testCreatePropertiesOnService() {
+        Service service = createServiceObject(true);
+        Map<String, PropertyDefinition> propertiesMap = new HashMap<>();
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setType("string");
+        propertyDefinition.setDescription("Identifier of this NS descriptor");
+        propertiesMap.put("descriptor_id", propertyDefinition);
+        Service newService = new Service();
+
+        doNothing().when(propertyBusinessLogic).createPropertiesInGraph(propertiesMap, service);
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(newService));
+
+        Service propertiesOnService = testSubject.createPropertiesOnService(service, propertiesMap);
+
+        verify(propertyBusinessLogic, times(1)).createPropertiesInGraph(propertiesMap, service);
+        verify(toscaOperationFacade, times(1)).getToscaElement(anyString());
+        assertNotNull(propertiesOnService);
+    }
+
+    @Test
+    void testCreatePropertiesFailOnService() {
+        Service service = createServiceObject(true);
+        Map<String, PropertyDefinition> propertiesMap = new HashMap<>();
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setType("string");
+        propertyDefinition.setDescription("Identifier of this NS descriptor");
+        propertiesMap.put("descriptor_id", propertyDefinition);
+
+        doNothing().when(propertyBusinessLogic).createPropertiesInGraph(propertiesMap, service);
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
+
+        Assertions.assertThrows(ComponentException.class, () -> testSubject.createPropertiesOnService(service, propertiesMap));
     }
 
     @Test

@@ -25,6 +25,7 @@ package org.openecomp.sdc.be.components;
 import fj.data.Either;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,6 +33,7 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.BaseBusinessLogicMock;
 import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
@@ -51,6 +53,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ToscaOpera
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -83,6 +86,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
@@ -107,6 +112,8 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     IGraphLockOperation graphLockOperation;
     @Mock
     JanusGraphDao janusGraphDao;
+    @Mock
+    PropertyOperation mockPropertyOperation;
 
     @InjectMocks
     private PropertyBusinessLogic propertyBusinessLogic = new PropertyBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
@@ -215,6 +222,40 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
             propertyBusinessLogic.getComponentProperty(serviceId, "notExistingPropId", user.getUserId());
 
         assertTrue(serviceProperty.isRight());
+    }
+
+    @Test
+    public void testCreatePropertiesInGraph() {
+        Service service = new Service();
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setType("string");
+        propertyDefinition.setDescription("Identifier of this NS descriptor");
+        Map<String, PropertyDefinition> propertiesMap = new HashMap<>();
+        propertiesMap.put("descriptor_id", propertyDefinition);
+
+        when(mockPropertyOperation.isPropertyTypeValid(any(), any())).thenReturn(true);
+        when(mockPropertyOperation.isPropertyDefaultValueValid(any(), any())).thenReturn(true);
+        when(toscaOperationFacade.createAndAssociateProperties(propertiesMap, service.getUniqueId())).thenReturn(StorageOperationStatus.OK);
+
+        propertyBusinessLogic.createPropertiesInGraph(propertiesMap, service);
+
+        verify(toscaOperationFacade, times(1)).createAndAssociateProperties(propertiesMap, service.getUniqueId());
+    }
+
+    @Test
+    public void testCreatePropertiesInGraphFail() {
+        Service service = new Service();
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setType("string");
+        propertyDefinition.setDescription("Identifier of this NS descriptor");
+        Map<String, PropertyDefinition> propertiesMap = new HashMap<>();
+        propertiesMap.put("descriptor_id", propertyDefinition);
+
+        when(mockPropertyOperation.isPropertyTypeValid(any(), any())).thenReturn(true);
+        when(mockPropertyOperation.isPropertyDefaultValueValid(any(), any())).thenReturn(true);
+        when(toscaOperationFacade.createAndAssociateProperties(propertiesMap, service.getUniqueId())).thenReturn(StorageOperationStatus.NOT_FOUND);
+
+        Assertions.assertThrows(ComponentException.class, () -> propertyBusinessLogic.createPropertiesInGraph(propertiesMap, service));
     }
 
     @Test

@@ -80,6 +80,7 @@ import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -1019,6 +1020,35 @@ public class ToscaOperationFacadeTest {
         assertNotNull(result);
         assertEquals(StorageOperationStatus.OK, result);
         verify(nodeTemplateOperationMock, times(1)).updateComponentInstanceAttributes(component, componentId, attributes);
+    }
+
+    @Test
+    public void testCreateAndAssociateProperties() {
+        final GraphVertex graphVertex = getTopologyTemplateVertex();
+        final String componentId = "componentId";
+        Map<String, PropertyDataDefinition> propertyDataDefinitionMap = new HashMap<>();
+        Map<String, PropertyDefinition> propertyDefinitionMap = new HashMap<>();
+
+        doReturn(Either.left(graphVertex)).when(janusGraphDaoMock).getVertexById(eq(componentId), any(JsonParseFlagEnum.class));
+        doReturn(StorageOperationStatus.OK).when(topologyTemplateOperationMock).associatePropertiesToComponent(eq(graphVertex),
+            eq(propertyDataDefinitionMap), eq(componentId));
+
+        testInstance.createAndAssociateProperties(propertyDefinitionMap, componentId);
+        verify(janusGraphDaoMock, times(1)).getVertexById(eq(componentId), any(JsonParseFlagEnum.class));
+        verify(topologyTemplateOperationMock, times(1)).associatePropertiesToComponent(eq(graphVertex),
+            eq(propertyDataDefinitionMap), eq(componentId));
+    }
+
+    @Test
+    public void testCreateAndAssociatePropertiesFail() {
+        final String componentId = "componentId";
+        Map<String, PropertyDefinition> propertyDefinitionMap = new HashMap<>();
+
+        doReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR))
+            .when(janusGraphDaoMock).getVertexById(eq(componentId), any(JsonParseFlagEnum.class));
+
+        StorageOperationStatus status = testInstance.createAndAssociateProperties(propertyDefinitionMap, componentId);
+        assertThat(status).isEqualTo(StorageOperationStatus.GENERAL_ERROR);
     }
 
     @Test

@@ -20,6 +20,7 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import org.assertj.core.api.Assertions;
 import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -28,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -39,6 +39,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
 import org.openecomp.sdc.be.datatypes.elements.MapListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
@@ -54,8 +55,8 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -140,7 +141,7 @@ public class TopologyTemplateOperationTest {
         filter.setIgnoreDataType(false);
         String componentName = "componentName";
         String componentId = UniqueIdBuilder.buildResourceUniqueId();
-        containerVertex.setVertex(Mockito.mock(JanusGraphVertex.class));
+        containerVertex.setVertex(mock(JanusGraphVertex.class));
         containerVertex.setJsonMetadataField(JsonPresentationFields.NAME, componentName);
         containerVertex.setUniqueId(componentId);
         containerVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
@@ -157,7 +158,7 @@ public class TopologyTemplateOperationTest {
         filter.setIgnoreOutputs(false);
         final String componentName = "componentName";
         final String componentId = UniqueIdBuilder.buildResourceUniqueId();
-        containerVertex.setVertex(Mockito.mock(JanusGraphVertex.class));
+        containerVertex.setVertex(mock(JanusGraphVertex.class));
         containerVertex.setJsonMetadataField(JsonPresentationFields.NAME, componentName);
         containerVertex.setUniqueId(componentId);
         containerVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
@@ -168,6 +169,54 @@ public class TopologyTemplateOperationTest {
         assertThat(storageOperationStatus).isEqualTo(Either.right(StorageOperationStatus.GENERAL_ERROR));
         verify(janusGraphDao, times(1)).getChildVertex(any(GraphVertex.class), any(EdgeLabelEnum.class), any(JsonParseFlagEnum.class));
     }
+
+    @Test
+    public void testAssociatePropertiesToComponent() {
+        String componentId = UniqueIdBuilder.buildResourceUniqueId();
+        GraphVertex containerVertex = new GraphVertex();
+        containerVertex.setVertex(mock(JanusGraphVertex.class));
+        containerVertex.setUniqueId(componentId);
+        Map<String, PropertyDataDefinition> propertiesMap = new HashMap<>();
+        PropertyDataDefinition propertyDataDefinition = new PropertyDataDefinition();
+        propertyDataDefinition.setType("string");
+        propertyDataDefinition.setDescription("Identifier of this NS descriptor");
+        propertiesMap.put("descriptor_id", propertyDataDefinition);
+
+        GraphVertex dataV = new GraphVertex();
+        dataV.setVertex(mock(JanusGraphVertex.class));
+
+        when(janusGraphDao.createVertex(any(GraphVertex.class))).thenReturn(Either.left(dataV));
+        when(janusGraphDao.createEdge(containerVertex.getVertex(), dataV.getVertex(), EdgeLabelEnum.PROPERTIES, new HashMap<>()))
+            .thenReturn(JanusGraphOperationStatus.OK);
+
+        StorageOperationStatus status = topologyTemplateOperation.associatePropertiesToComponent(containerVertex, propertiesMap, componentId);
+        assertEquals(StorageOperationStatus.OK, status);
+        verify(janusGraphDao, times(1)).createVertex(any(GraphVertex.class));
+        verify(janusGraphDao, times(1)).createEdge(any(JanusGraphVertex.class), any(JanusGraphVertex.class),
+            any(EdgeLabelEnum.class), any(HashMap.class));
+    }
+
+    @Test
+    public void testAssociatePropertiesToComponentFail() {
+        String componentId = UniqueIdBuilder.buildResourceUniqueId();
+        GraphVertex containerVertex = new GraphVertex();
+        containerVertex.setVertex(mock(JanusGraphVertex.class));
+        containerVertex.setUniqueId(componentId);
+        Map<String, PropertyDataDefinition> propertiesMap = new HashMap<>();
+        PropertyDataDefinition propertyDataDefinition = new PropertyDataDefinition();
+        propertyDataDefinition.setType("string");
+        propertyDataDefinition.setDescription("Identifier of this NS descriptor");
+        propertiesMap.put("descriptor_id", propertyDataDefinition);
+
+        GraphVertex dataV = new GraphVertex();
+        dataV.setVertex(mock(JanusGraphVertex.class));
+
+        when(janusGraphDao.createVertex(any(GraphVertex.class))).thenReturn(Either.right(JanusGraphOperationStatus.GENERAL_ERROR));
+
+        StorageOperationStatus status = topologyTemplateOperation.associatePropertiesToComponent(containerVertex, propertiesMap, componentId);
+        assertThat(status).isEqualTo(StorageOperationStatus.GENERAL_ERROR);
+    }
+
 
     @Test
     public void testUpdateDistributionStatus() {
@@ -187,8 +236,8 @@ public class TopologyTemplateOperationTest {
                 return null;
             }
         };
-        GraphVertex graphVertex = Mockito.mock(GraphVertex.class);
-        JanusGraphVertex janusGraphVertex = Mockito.mock(JanusGraphVertex.class);
+        GraphVertex graphVertex = mock(GraphVertex.class);
+        JanusGraphVertex janusGraphVertex = mock(JanusGraphVertex.class);
         when(graphVertex.getVertex()).thenReturn(janusGraphVertex);
         when(janusGraphVertex.edges(Direction.IN, EdgeLabelEnum.LAST_DISTRIBUTION_STATE_MODIFIER.name())).thenReturn(edgeIterator);
         when(janusGraphDao
@@ -204,9 +253,9 @@ public class TopologyTemplateOperationTest {
     @SuppressWarnings("unchecked")
     private StorageOperationStatus addPolicyToToscaElementWithStatus(JanusGraphOperationStatus status) {
         GraphVertex componentV = new GraphVertex();
-        componentV.setVertex(Mockito.mock(JanusGraphVertex.class));
+        componentV.setVertex(mock(JanusGraphVertex.class));
         GraphVertex dataV = new GraphVertex();
-        dataV.setVertex(Mockito.mock(JanusGraphVertex.class));
+        dataV.setVertex(mock(JanusGraphVertex.class));
         String componentName = "componentName";
         String componentId = UniqueIdBuilder.buildResourceUniqueId();
         String policyTypeName = "org.openecomp.policies.placement.valet.Affinity";
