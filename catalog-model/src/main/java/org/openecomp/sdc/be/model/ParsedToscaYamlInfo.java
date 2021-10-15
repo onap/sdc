@@ -33,5 +33,6 @@ public class ParsedToscaYamlInfo {
     Map<String, UploadComponentInstanceInfo> instances;
     Map<String, GroupDefinition> groups;
     Map<String, PolicyDefinition> policies;
+    Map<String, PropertyDefinition> properties;
     String substitutionMappingNodeType;
 }
