@@ -39,6 +39,15 @@ export class DataTypeService {
         this.dataTypes = dataTypeService.getAllDataTypes(); //This should eventually be replaced by an NG2 call to the backend instead of utilizing Angular1 downgraded component.
     }
 
+    public getDataTypeByModelAndTypeName(modelName: string, typeName: string): DataTypeModel {
+        this.dataTypes = this.dataTypeService.getAllDataTypesFromModel(modelName);
+        let dataTypeFound = this.dataTypes[typeName];
+        if (!dataTypeFound) {
+            console.log("MISSING Datatype for model " + modelName + " and type: " + typeName);
+        }
+        return dataTypeFound;
+    }
+
     public getDataTypeByTypeName(typeName: string): DataTypeModel {
         if(!this.dataTypes){
             this.dataTypes = this.dataTypeService.getAllDataTypes();
