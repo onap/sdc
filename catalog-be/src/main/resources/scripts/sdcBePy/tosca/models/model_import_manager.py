@@ -97,7 +97,7 @@ class ModelImportManager:
     def __read_model_payload_as_string(self, model, action_type) -> str:
         base_path = self.__get_base_action_path(action_type)
         model_payload_path = base_path / model / "payload.json"
-        json_file = open(model_payload_path)
+        json_file = open(model_payload_path, encoding='utf-8')
         json_data = json.load(json_file, strict=False)
         return json.dumps(json_data)
 
@@ -105,13 +105,13 @@ class ModelImportManager:
         path = tosca_path / "types.json"
         if not os.path.isfile(path):
             return []
-        json_file = open(path)
+        json_file = open(path, encoding='utf-8')
         return json.load(json_file)
 
     def __read_model_payload(self, model, action_type) -> dict:
         base_path = self.__get_base_action_path(action_type)
         model_payload_path = base_path / model / "payload.json"
-        json_file = open(model_payload_path)
+        json_file = open(model_payload_path, encoding='utf-8')
         return json.load(json_file, strict=False)
 
     def __get_base_action_path(self, action_type) -> Path:

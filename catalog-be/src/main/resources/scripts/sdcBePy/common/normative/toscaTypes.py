@@ -94,7 +94,7 @@ def _create_send_body(file_dir, element_name):
     debug(path)
     current_json_file = file_dir + element_name + "/" + element_name + ".json"
 
-    json_file = open(current_json_file)
+    json_file = open(current_json_file, encoding='utf-8')
 
     debug("before load json")
     json_data = json.load(json_file, strict=False)

@@ -15,7 +15,7 @@ colors = BColors()
 
 
 def load_users(conf_path):
-    with open(conf_path, 'r') as f:
+    with open(conf_path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
 

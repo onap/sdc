@@ -94,7 +94,7 @@ def _create_zip_file_multi_part(element_form_name, type_file_name, element_name)
 def _create_json_metadata_str(file_name):
     type_metadata_json_file = file_name + ".json"
     debug(type_metadata_json_file)
-    json_file = open(type_metadata_json_file)
+    json_file = open(type_metadata_json_file, encoding='utf-8')
 
     debug("before load json")
     json_data = json.load(json_file, strict=False)

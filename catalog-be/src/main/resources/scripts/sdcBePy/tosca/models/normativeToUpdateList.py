@@ -11,7 +11,7 @@ class TypesToUpdate:
 
     def load_files(self, files):
         for file in files:
-            with open(file, 'r') as stream:
+            with open(file, 'r', encoding='utf-8') as stream:
                 _types = json.load(stream)
                 for type_key, type_value in _types.items():
                     self.types_list[type_key] = type_value
