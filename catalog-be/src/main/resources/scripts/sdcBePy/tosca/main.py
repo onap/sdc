@@ -16,7 +16,7 @@ def usage():
 
 
 def load_be_config(conf_path):
-    with open(conf_path, 'r') as f:
+    with open(conf_path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
 
