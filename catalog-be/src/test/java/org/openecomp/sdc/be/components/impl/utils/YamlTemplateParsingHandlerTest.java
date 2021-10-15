@@ -149,7 +149,7 @@ public class YamlTemplateParsingHandlerTest {
 
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                csarInfo.extractTypesInfo(), NODE_NAME, resource);
+                csarInfo.extractTypesInfo(), NODE_NAME, resource, null);
 
         validateParsedYaml(parsedYaml, NESTED_GROUP_NAME,
                 Lists.newArrayList("heat_file", "description"));
@@ -160,7 +160,7 @@ public class YamlTemplateParsingHandlerTest {
 
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                new HashMap<>(), "", resource);
+                new HashMap<>(), "", resource, null);
         validateParsedYamlWithCapability(parsedYaml);
     }
 
@@ -234,7 +234,7 @@ public class YamlTemplateParsingHandlerTest {
     public void parseResourceWithPoliciesDefined() {
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                new HashMap<>(), "", resource);
+                new HashMap<>(), "", resource, "");
         validateParsedYamlWithPolicies(parsedYaml);
     }
 

@@ -162,9 +162,23 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
 
     public ParsedToscaYamlInfo getParsedToscaYamlInfo(String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
                                                       CsarInfo csarInfo, String nodeName, Component component) {
+        String interfaceTemplateYaml = getInterfaceTemplateYaml(csarInfo);
         return yamlHandler
             .parseResourceInfoFromYAML(yamlName, topologyTemplateYaml, csarInfo.getCreatedNodesToscaResourceNames(), nodeTypesInfo, nodeName,
-                component);
+                component, interfaceTemplateYaml);
+    }
+
+    private String getInterfaceTemplateYaml(CsarInfo csarInfo) {
+        String[] yamlFile = csarInfo.getMainTemplateName().split(".yml");
+        String interfaceYamlName = "";
+        if (yamlFile.length != 0) {
+            interfaceYamlName = yamlFile[0] + "-interface.yml";
+        }
+        String interfaceTemplateYaml = "";
+        if (csarInfo.getCsar().containsKey(interfaceYamlName)) {
+            interfaceTemplateYaml = new String(csarInfo.getCsar().get(interfaceYamlName));
+        }
+        return interfaceTemplateYaml;
     }
 
     private String logAndThrowComponentException(ResponseFormat responseFormat, String logMessage, String... params) {
