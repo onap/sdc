@@ -22,10 +22,10 @@
   <form class="w-sdc-form">
     <div class="i-sdc-form-item">
       <label class="i-sdc-form-label required">Input Value</label>
-      <select [(ngModel)]="selectInputValue" name="selectInputValue">
-        <option *ngFor="let index of inputModel"
-                [ngValue]="index">{{index.name}}</option>
-      </select>
+        <select [(ngModel)]="selectInputValue" name="selectInputValue">
+          <option *ngFor="let input of inputs"
+                  [ngValue]="input">{{input.name}}</option>
+        </select>
     </div>
   </form>
 </div>
