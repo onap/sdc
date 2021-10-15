@@ -142,6 +142,8 @@ public class ServiceImportParseLogic {
     @Autowired
     private InputsBusinessLogic inputsBusinessLogic;
     @Autowired
+    private PropertyBusinessLogic propertyBusinessLogic;
+    @Autowired
     private ResourceImportManager resourceImportManager;
     @Autowired
     private IInterfaceLifecycleOperation interfaceTypeOperation = null;
@@ -1361,6 +1363,21 @@ public class ServiceImportParseLogic {
             }
         } else {
             return service;
+        }
+        Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
+        if (updatedResource.isRight()) {
+            throw new ComponentException(componentsUtils
+                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
+                    ComponentTypeEnum.SERVICE));
+        }
+        return updatedResource.left().value();
+    }
+
+    public Service createPropertiesOnService(Service service, Map<String, PropertyDefinition> properties) {
+        if (MapUtils.isNotEmpty(properties)) {
+            if (propertyBusinessLogic.createPropertiesInGraph(properties, service)) {
+                return service;
+            }
         }
         Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
         if (updatedResource.isRight()) {
