@@ -527,7 +527,9 @@ export class PropertiesAssignmentComponent {
                                         propertyInputDetail.inputName = selectInputValue.name;
                                         propertyInputDetail.inputType = selectInputValue.type;
                                         property.getInputValues.push(propertyInputDetail);
-                                        property.value = '{"get_input":"' + selectInputValue.name + '"}';
+                                        property.value = selectInputValue.name.indexOf("::") !== -1
+                                            ? '{"get_input":[' + selectInputValue.name.replace("::", ", ") + ']}'
+                                            : '{"get_input":"' + selectInputValue.name+ '"}' ;
                                         property.toscaGetFunctionType = ToscaGetFunctionType.GET_INPUT;
                                         this.updateInstancePropertiesWithInput(checkedProperties, selectedInstanceData);
                                         modal.instance.close();
