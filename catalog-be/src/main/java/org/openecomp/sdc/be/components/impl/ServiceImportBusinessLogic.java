@@ -297,6 +297,9 @@ public class ServiceImportBusinessLogic {
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
             log.trace("************* Finish to add inputs from yaml {}", yamlName);
+            Map<String, PropertyDefinition> properties = parsedToscaYamlInfo.getProperties();
+            service = serviceImportParseLogic.createPropertiesOnService(service, properties);
+            log.trace("************* Added properties from interface yaml {}", yamlName);
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo.getInstances();
             log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
             service = createRIAndRelationsFromYaml(yamlName, service, uploadComponentInstanceInfoMap, topologyTemplateYaml,

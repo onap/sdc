@@ -208,7 +208,6 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Service oldService = createServiceObject(true);
         Resource resource = createOldResource();
         String topologyTemplateYaml = getMainTemplateContent("service_import_template.yml");
-        ;
         String yamlName = "group.yml";
         CsarInfo csarInfo = getCsarInfo();
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = new HashMap<>();
