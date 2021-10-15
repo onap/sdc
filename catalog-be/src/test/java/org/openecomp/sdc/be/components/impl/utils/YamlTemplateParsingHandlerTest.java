@@ -47,6 +47,7 @@ import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.User;
@@ -149,10 +150,24 @@ public class YamlTemplateParsingHandlerTest {
 
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                csarInfo.extractTypesInfo(), NODE_NAME, resource);
+                csarInfo.extractTypesInfo(), NODE_NAME, resource, getInterfaceTemplateYaml(csarInfo).get());
 
         validateParsedYaml(parsedYaml, NESTED_GROUP_NAME,
                 Lists.newArrayList("heat_file", "description"));
+    }
+
+    @Test
+    public void parseServicePropertiesInfoFromYamlTest() {
+        String main_template_content = new String(csar.get(MAIN_TEMPLATE_NAME));
+        CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
+            MAIN_TEMPLATE_NAME, main_template_content, true);
+
+        Service service = new Service();
+        String ymalFileContent = getInterfaceTemplateYaml(csarInfo).get();
+        ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
+            csarInfo.extractTypesInfo(), NODE_NAME, service, ymalFileContent);
+
+        assertThat(parsedYaml.getProperties()).isNotNull();
     }
 
     @Test
@@ -160,7 +175,7 @@ public class YamlTemplateParsingHandlerTest {
 
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                new HashMap<>(), "", resource);
+                new HashMap<>(), "", resource, null);
         validateParsedYamlWithCapability(parsedYaml);
     }
 
@@ -234,7 +249,7 @@ public class YamlTemplateParsingHandlerTest {
     public void parseResourceWithPoliciesDefined() {
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                new HashMap<>(), "", resource);
+                new HashMap<>(), "", resource, "");
         validateParsedYamlWithPolicies(parsedYaml);
     }
 
@@ -392,5 +407,17 @@ public class YamlTemplateParsingHandlerTest {
             policyTypeDefinition.setDescription(description);
         }
         return policyTypeDefinition;
+    }
+
+    private Optional<String> getInterfaceTemplateYaml(CsarInfo csarInfo) {
+        String[] yamlFile = csarInfo.getMainTemplateName().split(".yaml");
+        Optional<String> interfaceTemplateYaml = Optional.empty();
+        if (yamlFile.length != 0) {
+            interfaceTemplateYaml = Optional.of(yamlFile[0] + "-interface.yaml");
+        }
+        if (csarInfo.getCsar().containsKey(interfaceTemplateYaml.get())) {
+            return Optional.of(new String(csarInfo.getCsar().get(interfaceTemplateYaml.get())));
+        }
+        return interfaceTemplateYaml;
     }
 }

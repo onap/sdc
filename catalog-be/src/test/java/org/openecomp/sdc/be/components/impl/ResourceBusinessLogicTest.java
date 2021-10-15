@@ -1475,7 +1475,7 @@ public class ResourceBusinessLogicTest {
        String resourceYml =  new String(csar.get("Definitions/my_vnf.yaml"));
 
        YamlTemplateParsingHandler yamlTemplateParser = new YamlTemplateParsingHandler(mockJanusGraphDao, null, Mockito.mock(AnnotationBusinessLogic.class), null);
-       final ParsedToscaYamlInfo parsedToscaYamlInfo =  yamlTemplateParser.parseResourceInfoFromYAML("Definitions/my_vnf.yml", resourceYml, Collections.EMPTY_MAP, Collections.EMPTY_MAP, "myVnf", resourceResponse);
+       final ParsedToscaYamlInfo parsedToscaYamlInfo =  yamlTemplateParser.parseResourceInfoFromYAML("Definitions/my_vnf.yml", resourceYml, Collections.EMPTY_MAP, Collections.EMPTY_MAP, "myVnf", resourceResponse, "");
 
        when(propertyOperation.getDataTypeByName("tosca.datatypes.testDataType.FromMainTemplate", "testModel")).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
        
@@ -1510,7 +1510,7 @@ public class ResourceBusinessLogicTest {
         vduCp.getProperties().add(roleProp);
         when(toscaOperationFacade.getLatestByToscaResourceNameAndModel("tosca.nodes.nfv.VduCp", "testModel_myVnf1.0")).thenReturn(Either.left(vduCp));
 
-        when(yamlTemplateParsingHandler.parseResourceInfoFromYAML(any(), any(), any(), any(), any(), any())).thenReturn(parsedToscaYamlInfo);
+        when(yamlTemplateParsingHandler.parseResourceInfoFromYAML(any(), any(), any(), any(), any(), any(), any())).thenReturn(parsedToscaYamlInfo);
 
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
         uploadComponentInstanceInfo.setType("myType");
