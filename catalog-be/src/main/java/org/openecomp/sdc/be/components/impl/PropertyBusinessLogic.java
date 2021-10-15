@@ -26,9 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -37,6 +39,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -484,6 +487,77 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
         }
         Optional<PropertyDefinition> propertyCandidate = properties.stream().filter(property -> property.getName().equals(propertyName)).findAny();
         return propertyCandidate.isPresent();
+    }
+
+    public boolean createPropertiesInGraph(Map<String, PropertyDefinition> properties,
+                                                            org.openecomp.sdc.be.model.Component component) {
+        Map<String, PropertyDefinition> propertiesAfterValidation = validateAndMergeProperties(properties, component);
+        if (!propertiesAfterValidation.isEmpty()) {
+            Either<List<PropertyDefinition>, StorageOperationStatus> associatePropertiesEither = toscaOperationFacade
+                .createAndAssociateProperties(propertiesAfterValidation, component.getUniqueId());
+            if (associatePropertiesEither.isRight()) {
+                log.error("Failed to create properties under component {}. Status is {}", component.getUniqueId());
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(associatePropertiesEither.right().value()));
+                throw new ComponentException(responseFormat);
+            }
+        }
+        return true;
+    }
+
+    private Map<String, PropertyDefinition> validateAndMergeProperties(Map<String, PropertyDefinition> properties, Component component) {
+        final Map<String, DataTypeDefinition> dataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel());
+        List<PropertyDefinition> resourceProperties = component.getProperties();
+        if (resourceProperties != null) {
+            Map<String, PropertyDefinition> generatedProperties = resourceProperties.stream()
+                .collect(Collectors.toMap(PropertyDataDefinition::getName, i -> i));
+            Either<Map<String, PropertyDefinition>, String> mergeEither = ToscaDataDefinition.mergeDataMaps(generatedProperties, properties);
+            if (mergeEither.isRight()) {
+                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.PROPERTY_ALREADY_EXIST, mergeEither.right().value());
+                throw new ComponentException(responseFormat);
+            }
+            properties = mergeEither.left().value();
+        }
+        for (Map.Entry<String, PropertyDefinition> propertyDefinition : properties.entrySet()) {
+            String propertyName = propertyDefinition.getKey();
+            propertyDefinition.getValue().setName(propertyName);
+            Either<PropertyDefinition, ResponseFormat> preparedPropertyEither = prepareAndValidatePropertyBeforeCreate(propertyDefinition.getValue(),
+                dataTypes);
+            if (preparedPropertyEither.isRight()) {
+                ResponseFormat responseFormat = preparedPropertyEither.right().value();
+                throw new ComponentException(responseFormat);
+            }
+        }
+        return properties;
+    }
+
+    private Either<PropertyDefinition, ResponseFormat> prepareAndValidatePropertyBeforeCreate(PropertyDefinition newPropertyDefinitionDefinition,
+                                                                                        Map<String, DataTypeDefinition> dataTypes) {
+        // validate property default values
+        Either<Boolean, ResponseFormat> defaultValuesValidation = validatePropertyDefaultValue(newPropertyDefinitionDefinition, dataTypes);
+        if (defaultValuesValidation.isRight()) {
+            return Either.right(defaultValuesValidation.right().value());
+        }
+        // convert property
+        ToscaPropertyType type = getType(newPropertyDefinitionDefinition.getType());
+        if (type != null) {
+            PropertyValueConverter converter = type.getConverter();
+            // get inner type
+            SchemaDefinition schema = newPropertyDefinitionDefinition.getSchema();
+            String innerType = null;
+            if (schema != null) {
+                PropertyDataDefinition prop = schema.getProperty();
+                if (prop != null) {
+                    innerType = prop.getType();
+                }
+            }
+            String convertedValue;
+            if (newPropertyDefinitionDefinition.getDefaultValue() != null) {
+                convertedValue = converter.convert(newPropertyDefinitionDefinition.getDefaultValue(), innerType, dataTypes);
+                newPropertyDefinitionDefinition.setDefaultValue(convertedValue);
+            }
+        }
+        return Either.left(newPropertyDefinitionDefinition);
     }
 
     @Override
