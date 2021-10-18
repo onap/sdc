@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dd26be3b_75c1fcef",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-10-18T10:00:59Z",
+      "side": 1,
+      "message": "This is going to go wrong if there is a double colon in the property name (which is now supported) as it will incorrectly identify it as a nested property. \nWe will need to use something that is not permissible in a property name, maybe \u0027-\u003e\u0027",
+      "range": {
+        "startLine": 530,
+        "startChar": 87,
+        "endLine": 530,
+        "endChar": 91
+      },
+      "revId": "ce92637b9fcae12632b07817ebf56aa91bd7d71e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
