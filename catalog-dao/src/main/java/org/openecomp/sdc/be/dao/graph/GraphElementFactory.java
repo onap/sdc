@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.dao.graph;
 
 import java.util.Map;
+
 import org.openecomp.sdc.be.dao.graph.datatype.GraphElementTypeEnum;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphNode;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
@@ -29,6 +30,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.resources.data.AdditionalInfoParameterData;
 import org.openecomp.sdc.be.resources.data.AnnotationTypeData;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
+import org.openecomp.sdc.be.resources.data.ArtifactTypeData;
 import org.openecomp.sdc.be.resources.data.AttributeData;
 import org.openecomp.sdc.be.resources.data.AttributeValueData;
 import org.openecomp.sdc.be.resources.data.CapabilityData;
@@ -259,6 +261,9 @@ public class GraphElementFactory {
                     break;
                 case Model:
                     element = clazz.cast(new ModelData(properties));
+                    break;
+                case ArtifactType:
+                    element = clazz.cast(new ArtifactTypeData(properties));
                     break;
                 default:
                     break;
