@@ -23,6 +23,8 @@ package org.openecomp.sdc.be.servlets;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -56,6 +58,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.impl.ArtifactTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CategoriesImportManager;
 import org.openecomp.sdc.be.components.impl.DataTypeImportManager;
@@ -124,6 +127,8 @@ class TypesUploadServletTest extends JerseyTest {
     private ComponentsUtils componentUtils;
     @Mock
     private ResponseFormat responseFormat;
+    @Mock
+    private ArtifactTypeImportManager artifactTypeImportManager;
 
     @BeforeAll
     public void setup() {
@@ -137,6 +142,7 @@ class TypesUploadServletTest extends JerseyTest {
         when(webApplicationContext.getBean(InterfaceLifecycleTypeImportManager.class)).thenReturn(interfaceLifecycleTypeImportManager);
         when(webApplicationContext.getBean(GroupTypeImportManager.class)).thenReturn(groupTypeImportManager);
         when(webApplicationContext.getBean(CategoriesImportManager.class)).thenReturn(categoriesImportManager);
+        when(webApplicationContext.getBean(ArtifactTypeImportManager.class)).thenReturn(artifactTypeImportManager);
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getComponentsUtils()).thenReturn(componentUtils);
         when(servletUtils.getUserAdmin()).thenReturn(userAdmin);
@@ -164,7 +170,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingCapabilityTypeSuccessTest() {
         final ImmutablePair<CapabilityTypeDefinition, Boolean> immutablePair = new ImmutablePair<>(new CapabilityTypeDefinition(), true);
         final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(Arrays.asList(immutablePair));
-        when(capabilityTypeImportManager.createCapabilityTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
+        when(capabilityTypeImportManager.createCapabilityTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip", new File("src/test/resources/types/capabilityTypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -178,7 +184,7 @@ class TypesUploadServletTest extends JerseyTest {
     @Test
     void creatingCapabilityType_Either_isRight_FailedTest() {
         final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> either = Either.right(new ResponseFormat(500));
-        when(capabilityTypeImportManager.createCapabilityTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
+        when(capabilityTypeImportManager.createCapabilityTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip", new File("src/test/resources/types/capabilityTypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -193,7 +199,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingCapabilityTypeWithModelSuccessTest() {
         final ImmutablePair<CapabilityTypeDefinition, Boolean> immutablePair = new ImmutablePair<>(new CapabilityTypeDefinition(), true);
         final Either<List<ImmutablePair<CapabilityTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(Arrays.asList(immutablePair));
-        when(capabilityTypeImportManager.createCapabilityTypes(Mockito.anyString(), Mockito.eq("testModel"), Mockito.anyBoolean())).thenReturn(
+        when(capabilityTypeImportManager.createCapabilityTypes(anyString(), Mockito.eq("testModel"), Mockito.anyBoolean())).thenReturn(
             either);
         final FileDataBodyPart filePart = new FileDataBodyPart("capabilityTypeZip", new File("src/test/resources/types/capabilityTypes.zip"));
         FormDataMultiPart multipartEntity = new FormDataMultiPart();
@@ -210,7 +216,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingDataTypeSuccessTest() {
         final ImmutablePair<DataTypeDefinition, Boolean> immutablePair = new ImmutablePair<>(new DataTypeDefinition(), true);
         final Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(Arrays.asList(immutablePair));
-        when(dataTypeImportManager.createDataTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
+        when(dataTypeImportManager.createDataTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("dataTypesZip", new File("src/test/resources/types/datatypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -224,7 +230,7 @@ class TypesUploadServletTest extends JerseyTest {
     @Test
     void creatingDataType_Either_isRight_FailedTest() {
         final Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> either = Either.right(new ResponseFormat(500));
-        when(dataTypeImportManager.createDataTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
+        when(dataTypeImportManager.createDataTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("dataTypesZip", new File("src/test/resources/types/datatypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -239,7 +245,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingDataType_AlreadyExists_FailedTest() {
         final ImmutablePair<DataTypeDefinition, Boolean> immutablePair = new ImmutablePair<>(new DataTypeDefinition(), false);
         final Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(Arrays.asList(immutablePair));
-        when(dataTypeImportManager.createDataTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
+        when(dataTypeImportManager.createDataTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("dataTypesZip", new File("src/test/resources/types/datatypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -254,7 +260,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingDataTypeWithModelSuccessTest() {
         final ImmutablePair<DataTypeDefinition, Boolean> immutablePair = new ImmutablePair<>(new DataTypeDefinition(), true);
         final Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(Arrays.asList(immutablePair));
-        when(dataTypeImportManager.createDataTypes(Mockito.anyString(), Mockito.eq("testModel"), Mockito.anyBoolean())).thenReturn(either);
+        when(dataTypeImportManager.createDataTypes(anyString(), Mockito.eq("testModel"), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("dataTypesZip", new File("src/test/resources/types/datatypes.zip"));
         FormDataMultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -270,7 +276,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingRelationshipTypeSuccessTest() {
         final ImmutablePair<RelationshipTypeDefinition, Boolean> immutablePair = new ImmutablePair<>(new RelationshipTypeDefinition(), true);
         final Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(Arrays.asList(immutablePair));
-        when(relationshipTypeImportManager.createRelationshipTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
+        when(relationshipTypeImportManager.createRelationshipTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("relationshipTypeZip", new File("src/test/resources/types/relationship.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -285,7 +291,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingRelationshipType_AlreadyExists_FailedTest() {
         final ImmutablePair<RelationshipTypeDefinition, Boolean> immutablePair = new ImmutablePair<>(new RelationshipTypeDefinition(), false);
         final Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(Arrays.asList(immutablePair));
-        when(relationshipTypeImportManager.createRelationshipTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
+        when(relationshipTypeImportManager.createRelationshipTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("relationshipTypeZip", new File("src/test/resources/types/relationship.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -300,7 +306,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingRelationshipTypeWithModelSuccessTest() {
         final ImmutablePair<RelationshipTypeDefinition, Boolean> immutablePair = new ImmutablePair<>(new RelationshipTypeDefinition(), true);
         final Either<List<ImmutablePair<RelationshipTypeDefinition, Boolean>>, ResponseFormat> either = Either.left(Arrays.asList(immutablePair));
-        when(relationshipTypeImportManager.createRelationshipTypes(Mockito.anyString(), Mockito.eq("testModel"), Mockito.anyBoolean())).thenReturn(
+        when(relationshipTypeImportManager.createRelationshipTypes(anyString(), Mockito.eq("testModel"), Mockito.anyBoolean())).thenReturn(
             either);
         final FileDataBodyPart filePart = new FileDataBodyPart("relationshipTypeZip", new File("src/test/resources/types/relationship.zip"));
         FormDataMultiPart multipartEntity = new FormDataMultiPart();
@@ -366,7 +372,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingInterfaceLifecycleTypeSuccessTest() {
         final ImmutablePair<InterfaceDefinition, Boolean> immutablePair = new ImmutablePair<>(new InterfaceDefinition(), true);
         final Either<List<InterfaceDefinition>, ResponseFormat> either = Either.left(emptyList());
-        when(interfaceLifecycleTypeImportManager.createLifecycleTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean()))
+        when(interfaceLifecycleTypeImportManager.createLifecycleTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean()))
             .thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("interfaceLifecycleTypeZip",
             new File("src/test/resources/types/interfaceLifecycleTypes.zip"));
@@ -382,7 +388,7 @@ class TypesUploadServletTest extends JerseyTest {
     @Test
     void creatingInterfaceLifecycleType_Either_isRight_FailedTest() {
         final Either<List<InterfaceDefinition>, ResponseFormat> either = Either.right(new ResponseFormat(500));
-        when(interfaceLifecycleTypeImportManager.createLifecycleTypes(Mockito.anyString(), Mockito.isNull(), Mockito.anyBoolean()))
+        when(interfaceLifecycleTypeImportManager.createLifecycleTypes(anyString(), Mockito.isNull(), Mockito.anyBoolean()))
             .thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("interfaceLifecycleTypeZip",
             new File("src/test/resources/types/interfaceLifecycleTypes.zip"));
@@ -399,7 +405,7 @@ class TypesUploadServletTest extends JerseyTest {
     void creatingInterfaceLifecycleTypeWithModelSuccessTest() {
         final ImmutablePair<InterfaceDefinition, Boolean> immutablePair = new ImmutablePair<>(new InterfaceDefinition(), true);
         final Either<List<InterfaceDefinition>, ResponseFormat> either = Either.left(emptyList());
-        when(interfaceLifecycleTypeImportManager.createLifecycleTypes(Mockito.anyString(), Mockito.eq("testModel"), Mockito.anyBoolean()))
+        when(interfaceLifecycleTypeImportManager.createLifecycleTypes(anyString(), Mockito.eq("testModel"), Mockito.anyBoolean()))
             .thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("interfaceLifecycleTypeZip",
             new File("src/test/resources/types/interfaceLifecycleTypes.zip"));
@@ -465,7 +471,7 @@ class TypesUploadServletTest extends JerseyTest {
     @Test
     void creatingCategoriesTypeSuccessTest() {
         final Either<Map<String, List<CategoryDefinition>>, ResponseFormat> either = Either.left(emptyMap());
-        when(categoriesImportManager.createCategories(Mockito.anyString())).thenReturn(either);
+        when(categoriesImportManager.createCategories(anyString())).thenReturn(either);
         final FileDataBodyPart filePart = new FileDataBodyPart("categoriesZip", new File("src/test/resources/types/categoryTypes.zip"));
         MultiPart multipartEntity = new FormDataMultiPart();
         multipartEntity.bodyPart(filePart);
@@ -474,6 +480,30 @@ class TypesUploadServletTest extends JerseyTest {
             .post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
 
         assertEquals(HttpStatus.CREATED_201, response.getStatus());
+    }
+
+    @Test
+    void creatingArtifactTypeSuccessTest() {
+        when(artifactTypeImportManager.createArtifactTypes(anyString(), anyString(), anyBoolean()))
+            .thenReturn(Either.left(emptyList()));
+        final FileDataBodyPart filePart = new FileDataBodyPart("artifactsZip", new File("src/test/resources/types/artifactTypes.zip"));
+        final FormDataMultiPart multipartEntity = new FormDataMultiPart();
+        multipartEntity.bodyPart(filePart);
+        multipartEntity.field("model", "testModel");
+        final Response response = target().path("/v1/catalog/uploadType/artifactTypes").request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
+        assertEquals(HttpStatus.CREATED_201, response.getStatus());
+    }
+
+    @Test
+    void creatingArtifactTypeFailTest() {
+        when(artifactTypeImportManager.createArtifactTypes(anyString(), anyString(), anyBoolean()))
+            .thenReturn(Either.right(new ResponseFormat(500)));
+        final FormDataMultiPart multipartEntity = new FormDataMultiPart();
+        multipartEntity.field("model", "testModel");
+        final Response response = target().path("/v1/catalog/uploadType/artifactTypes").request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA), Response.class);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatus());
     }
 
     @Override
@@ -489,7 +519,7 @@ class TypesUploadServletTest extends JerseyTest {
         final TypesUploadServlet typesUploadServlet = new TypesUploadServlet(null, null, componentUtils,
             servletUtils, null, capabilityTypeImportManager, interfaceLifecycleTypeImportManager,
             categoriesImportManager, dataTypeImportManager,
-            groupTypeImportManager, policyTypeImportManager, relationshipTypeImportManager);
+            groupTypeImportManager, policyTypeImportManager, relationshipTypeImportManager, artifactTypeImportManager);
         final ResourceConfig resourceConfig = new ResourceConfig().register(typesUploadServlet);
 
         resourceConfig.register(MultiPartFeature.class);

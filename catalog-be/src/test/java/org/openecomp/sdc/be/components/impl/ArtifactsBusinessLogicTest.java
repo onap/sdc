@@ -128,6 +128,7 @@ import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.ArtifactOperation;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.UserAdminOperation;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -197,6 +198,9 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     private ToscaExportHandler toscaExportHandler;
     @Mock
     private LifecycleBusinessLogic lifecycleBusinessLogic;
+    @Mock
+    private ArtifactTypeOperation artifactTypeOperation;
+
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static List<ArtifactType> getAllTypes() {
@@ -2441,7 +2445,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
             toscaExportHandler, csarUtils, lifecycleBusinessLogic,
             userBusinessLogic, artifactsResolver, elementDao, groupOperation, groupInstanceOperation,
             groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation, artifactTypeOperation);
         artifactsBusinessLogic.setComponentsUtils(componentsUtils);
         return artifactsBusinessLogic;
     }

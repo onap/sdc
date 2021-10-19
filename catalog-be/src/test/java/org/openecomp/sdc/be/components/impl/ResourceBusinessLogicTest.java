@@ -129,6 +129,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
@@ -214,6 +215,7 @@ public class ResourceBusinessLogicTest {
 	private final ToscaExportHandler toscaExportHandler = Mockito.mock(ToscaExportHandler.class);
 	private final PolicyTypeOperation policyTypeOperation = Mockito.mock(PolicyTypeOperation.class);
 	private final PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
+	private final ArtifactTypeOperation artifactTypeOperation = Mockito.mock(ArtifactTypeOperation.class);
 	private final DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
 	private final PolicyTypeBusinessLogic policyTypeBusinessLogic = Mockito.mock(PolicyTypeBusinessLogic.class);
 
@@ -231,7 +233,7 @@ public class ResourceBusinessLogicTest {
 	ComponentsUtils componentsUtils =  new ComponentsUtils(Mockito.mock(AuditingManager.class));
 	ArtifactsBusinessLogic artifactManager = new ArtifactsBusinessLogic(artifactCassandraDao, toscaExportHandler, csarUtils, lifecycleBl,
 			userBusinessLogic, artifactsResolver, elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-			interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
+			interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation, artifactTypeOperation);
 	CsarOperation csarOperation = Mockito.mock(CsarOperation.class);
 	@InjectMocks
 	CsarBusinessLogic csarBusinessLogic ;
