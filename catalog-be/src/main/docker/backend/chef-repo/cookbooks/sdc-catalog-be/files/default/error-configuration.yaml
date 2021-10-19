@@ -2618,3 +2618,11 @@ errors:
         message: "Invalid node_types TOSCA yaml",
         messageId: "SVC4161"
     }
+
+    #---------SVC4162-----------------------------
+    # %1 - The janusgraph status
+    FAILED_CREATE_ARTIFACTS_TYPES: {
+        code: 500,
+        message: "Failed to create artifact types with status '%1'.",
+        messageId: "SVC4162"
+    }

@@ -20,12 +20,14 @@
 package org.openecomp.sdc.be.model;
 
 import java.util.List;
+
+import org.openecomp.sdc.be.dao.utils.CollectionUtils;
+import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.openecomp.sdc.be.dao.utils.CollectionUtils;
-import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 
 @Getter
 @Setter
@@ -36,6 +38,7 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
     private DataTypeDefinition derivedFrom;
     private List<PropertyConstraint> constraints;
     private List<PropertyDefinition> properties;
+    
 
     public DataTypeDefinition(final DataTypeDataDefinition dataTypeDataDefinition) {
         super(dataTypeDataDefinition);

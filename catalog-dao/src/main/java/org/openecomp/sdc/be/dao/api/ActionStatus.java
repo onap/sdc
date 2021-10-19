@@ -126,7 +126,8 @@ public enum ActionStatus {
     ABSTRACT, NORMAL,
     //including default imports in CSAR related
     CSAR_TOSCA_IMPORTS_ERROR,
+    //ArtifactType
+    ARTIFACT_TYPE_ALREADY_EXIST,  FAILED_CREATE_ARTIFACTS_TYPES,
     //TOSCA node types
     INVALID_NODE_TYPES_YAML
-
 }
