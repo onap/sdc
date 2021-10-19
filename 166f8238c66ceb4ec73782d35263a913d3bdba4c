@@ -22,6 +22,30 @@
       "revId": "166f8238c66ceb4ec73782d35263a913d3bdba4c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6e2bd38_fc0fda14",
+        "filename": "catalog-ui/src/app/ng2/services/data-type.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-10-19T09:42:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7ced048_4c960384",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 110
+      },
+      "revId": "166f8238c66ceb4ec73782d35263a913d3bdba4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
