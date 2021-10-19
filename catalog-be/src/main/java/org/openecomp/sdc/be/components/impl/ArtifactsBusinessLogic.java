@@ -88,6 +88,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -97,6 +98,7 @@ import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
@@ -113,6 +115,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IHeatParametersOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -179,6 +182,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private IElementOperation elementOperation;
     @javax.annotation.Resource
     private IHeatParametersOperation heatParametersOperation;
+    @javax.annotation.Resource
+    private ArtifactTypeOperation artifactTypeOperation;
     private ArtifactCassandraDao artifactCassandraDao;
     private ToscaExportHandler toscaExportUtils;
     private CsarUtils csarUtils;
@@ -4262,5 +4267,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         public static boolean isCreateOrLink(ArtifactOperationEnum operation) {
             return operation == CREATE || operation == LINK;
         }
+    }
+
+    public Map<String, ArtifactTypeDefinition> getAllToscaArtifacts(final String modelName) {
+        if (StringUtils.isNotEmpty(modelName)) {
+            artifactTypeOperation.validateModel(modelName);
+        }
+        return artifactTypeOperation.getAllArtifactTypes(modelName);
     }
 }

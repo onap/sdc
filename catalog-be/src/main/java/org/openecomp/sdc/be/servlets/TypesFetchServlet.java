@@ -19,11 +19,22 @@
  */
 package org.openecomp.sdc.be.servlets;
 
+import com.jcabi.aspects.Loggable;
+import fj.data.Either;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.Servers;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -36,8 +47,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.collections4.ListUtils;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -53,6 +64,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -64,24 +76,11 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
-
-import com.jcabi.aspects.Loggable;
-
-import fj.data.Either;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -97,18 +96,21 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     private final CapabilitiesBusinessLogic capabilitiesBusinessLogic;
     private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
     private final ResourceBusinessLogic resourceBusinessLogic;
+    private final ArtifactsBusinessLogic artifactsBusinessLogic;
 
     @Inject
     public TypesFetchServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
                              ServletUtils servletUtils, ResourceImportManager resourceImportManager, PropertyBusinessLogic propertyBusinessLogic,
                              RelationshipTypeBusinessLogic relationshipTypeBusinessLogic, CapabilitiesBusinessLogic capabilitiesBusinessLogic,
-                             InterfaceOperationBusinessLogic interfaceOperationBusinessLogic, ResourceBusinessLogic resourceBusinessLogic) {
+                             InterfaceOperationBusinessLogic interfaceOperationBusinessLogic, ResourceBusinessLogic resourceBusinessLogic,
+                             ArtifactsBusinessLogic artifactsBusinessLogic) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.propertyBusinessLogic = propertyBusinessLogic;
         this.relationshipTypeBusinessLogic = relationshipTypeBusinessLogic;
         this.capabilitiesBusinessLogic = capabilitiesBusinessLogic;
         this.interfaceOperationBusinessLogic = interfaceOperationBusinessLogic;
         this.resourceBusinessLogic = resourceBusinessLogic;
+        this.artifactsBusinessLogic = artifactsBusinessLogic;
     }
 
     @GET
@@ -312,6 +314,31 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
             return buildErrorResponse(responseFormat);
         }
     }
+
+    @GET
+    @Path("/artifactTypes")
+    @Operation(description = "Get Tosca ArtifactTypes", method = "GET", summary = "Returns tosca artifact types", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "200", description = "Listing successful"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Tosca Artifact Types not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getAllToscaArtifactTypes(@Parameter(description = "Model name") @QueryParam("model") String model,
+                                             @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator) {
+        try {
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), artifactsBusinessLogic.getAllToscaArtifacts(model));
+        } catch (final BusinessException e) {
+            throw e;
+        } catch (final Exception e) {
+            final var errorMsg = "Unexpected error while listing the Tosca Artifact types";
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError(errorMsg);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, this.getClass().getName(),  errorMsg, e);
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+        }
+
+    }
+
 
     private Either<Map<String, Component>, Response> getComponent(ComponentBusinessLogic resourceBL, boolean isAbstract, String userId) {
         Either<List<Component>, ResponseFormat> actionResponse;

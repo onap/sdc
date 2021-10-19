@@ -49,6 +49,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.openecomp.sdc.be.components.impl.ArtifactTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CapabilityTypeImportManager;
 import org.openecomp.sdc.be.components.impl.CategoriesImportManager;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -102,6 +103,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
     private final GroupTypeImportManager groupTypeImportManager;
     private final PolicyTypeImportManager policyTypeImportManager;
     private final RelationshipTypeImportManager relationshipTypeImportManager;
+    private final ArtifactTypeImportManager artifactTypeImportManager;
 
     @Inject
     public TypesUploadServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL,
@@ -110,7 +112,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
                               InterfaceLifecycleTypeImportManager interfaceLifecycleTypeImportManager,
                               CategoriesImportManager categoriesImportManager, DataTypeImportManager dataTypeImportManager,
                               GroupTypeImportManager groupTypeImportManager, PolicyTypeImportManager policyTypeImportManager,
-                              RelationshipTypeImportManager relationshipTypeImportManager) {
+                              RelationshipTypeImportManager relationshipTypeImportManager, ArtifactTypeImportManager artifactTypeImportManager) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.capabilityTypeImportManager = capabilityTypeImportManager;
         this.interfaceLifecycleTypeImportManager = interfaceLifecycleTypeImportManager;
@@ -119,6 +121,7 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
         this.groupTypeImportManager = groupTypeImportManager;
         this.policyTypeImportManager = policyTypeImportManager;
         this.relationshipTypeImportManager = relationshipTypeImportManager;
+        this.artifactTypeImportManager = artifactTypeImportManager;
     }
 
     @POST
@@ -175,6 +178,25 @@ public class TypesUploadServlet extends AbstractValidationsServlet {
             createElementsType(responseWrapper, () -> interfaceLifecycleTypeImportManager.createLifecycleTypes(ymlPayload, modelName,
                 includeToModelDefaultImports));
         return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, "Interface Types");
+    }
+
+    @POST
+    @Path("/artifactTypes")
+    @Operation(description = "Create Tosca Artifact types from yaml", method = "POST", summary = "Returns created Tosca artifact types", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
+        @ApiResponse(responseCode = "201", description = "Tosca Artifact types created"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+        @ApiResponse(responseCode = "409", description = "Tosca Artifact Type already exist")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response uploadArtifactTypes(@Parameter(description = "FileInputStream") @FormDataParam("artifactsZip") File file,
+                                        @Parameter(description = "model name") @FormDataParam("model") String modelName,
+                                        @Context final HttpServletRequest request, @HeaderParam("USER_ID") String creator,
+                                        @Parameter(description = "includeToModelImport")
+                                            @FormDataParam("includeToModelImport") boolean includeToModelDefaultImports) {
+        final ConsumerTwoParam<Wrapper<Response>, String> createElementsMethod = (responseWrapper, ymlPayload) ->
+            createElementsType(responseWrapper, () -> artifactTypeImportManager.createArtifactTypes(ymlPayload, modelName, includeToModelDefaultImports));
+        return uploadElementTypeServletLogic(createElementsMethod, file, request, creator, NodeTypeEnum.ArtifactType.getName());
     }
 
     @POST

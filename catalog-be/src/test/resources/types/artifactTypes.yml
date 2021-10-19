@@ -1,0 +1,10 @@
+tosca.artifacts.Implementation.nfv.artifactTest:
+  derived_from: tosca.artifacts.Implementation
+  description: artifacts for Mistral workflows
+  mime_type: application/x-yaml
+  file_ext: [ yaml ]
+  properties:
+    prop_A:
+      type: string
+    prop_B:
+      type: string
