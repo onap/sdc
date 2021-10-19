@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7ced048_4c960384",
+        "filename": "catalog-ui/src/app/ng2/services/data-type.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-10-19T09:20:56Z",
+      "side": 1,
+      "message": "please, add the if with curly brackets",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 110
+      },
+      "revId": "166f8238c66ceb4ec73782d35263a913d3bdba4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
