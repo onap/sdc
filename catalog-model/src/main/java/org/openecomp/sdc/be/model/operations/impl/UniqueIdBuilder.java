@@ -218,4 +218,8 @@ public class UniqueIdBuilder {
     public static String buildModelUid(final String modelName) {
         return NodeTypeEnum.Model.getName() + DOT + modelName;
     }
+
+    public static String  buildArtifactTypeUid(final String modelName, final String name) {
+        return StringUtils.isEmpty(modelName) ? name + DOT + "artifactype" : modelName + DOT + name + DOT + "artifactype";
+    }
 }

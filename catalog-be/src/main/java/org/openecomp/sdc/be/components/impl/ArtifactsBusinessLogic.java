@@ -88,6 +88,7 @@ import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.info.ArtifactTemplateInfo;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -113,6 +114,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IHeatParametersOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -179,6 +181,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private IElementOperation elementOperation;
     @javax.annotation.Resource
     private IHeatParametersOperation heatParametersOperation;
+    private final ArtifactTypeOperation artifactTypeOperation;
     private ArtifactCassandraDao artifactCassandraDao;
     private ToscaExportHandler toscaExportUtils;
     private CsarUtils csarUtils;
@@ -193,7 +196,8 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                                   ArtifactsResolver artifactsResolver, IElementOperation elementDao, IGroupOperation groupOperation,
                                   IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation,
                                   InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-                                  ArtifactsOperations artifactToscaOperation) {
+                                  ArtifactsOperations artifactToscaOperation,
+                                  ArtifactTypeOperation artifactTypeOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.artifactCassandraDao = artifactCassandraDao;
@@ -202,6 +206,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         this.lifecycleBusinessLogic = lifecycleBusinessLogic;
         this.userBusinessLogic = userBusinessLogic;
         this.artifactsResolver = artifactsResolver;
+        this.artifactTypeOperation = artifactTypeOperation;
     }
 
     public static <R> Either<Boolean, R> ifTrue(boolean predicate, Supplier<Either<Boolean, R>> ifTrue) {
@@ -4262,5 +4267,12 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         public static boolean isCreateOrLink(ArtifactOperationEnum operation) {
             return operation == CREATE || operation == LINK;
         }
+    }
+
+    public Map<String, ArtifactTypeDefinition> getAllToscaArtifacts(final String modelName) {
+        if (StringUtils.isNotEmpty(modelName)) {
+            artifactTypeOperation.validateModel(modelName);
+        }
+        return artifactTypeOperation.getAllArtifactTypes(modelName);
     }
 }

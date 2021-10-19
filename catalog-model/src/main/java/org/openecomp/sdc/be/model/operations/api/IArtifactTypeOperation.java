@@ -1,14 +1,12 @@
 /*
- * -
- *  ============LICENSE_START=======================================================
- *  Copyright (C) 2021 Nordix Foundation.
+ * ============LICENSE_START=======================================================
+ *  Copyright (C) 2021 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,22 +16,18 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+package org.openecomp.sdc.be.model.operations.api;
 
-package org.openecomp.sdc.be.model.normatives;
+import java.util.Map;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 
-@AllArgsConstructor
-@Getter
-public enum ElementTypeEnum {
-    POLICY_TYPE("policy_types"),
-    GROUP_TYPE("group_types"),
-    DATA_TYPE("data_types"),
-    CAPABILITY_TYPE("capability_types"),
-    INTERFACE_LIFECYCLE_TYPE("interface_types"),
-    RELATIONSHIP_TYPE("relationship_types"),
-    ARTIFACT_TYPE("artifact_types");
+public interface IArtifactTypeOperation {
 
-    private final String toscaEntryName;
+    ArtifactTypeDefinition createArtifactType(final ArtifactTypeDefinition artifactType);
+
+    ArtifactTypeDefinition createArtifactType(final ArtifactTypeDefinition artifactType, final boolean inTransaction);
+
+    Map<String, ArtifactTypeDefinition> getAllArtifactTypes(final String model);
+
 }

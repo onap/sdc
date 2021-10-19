@@ -20,7 +20,13 @@
 
 package org.openecomp.sdc.be.servlets;
 
+import static org.mockito.Mockito.mock;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import org.junit.Test;
+import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.InterfaceOperationBusinessLogic;
@@ -31,12 +37,6 @@ import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-
-import static org.mockito.Mockito.mock;
 
 public class TypesFetchServletTest {
 
@@ -51,10 +51,11 @@ public class TypesFetchServletTest {
 		CapabilitiesBusinessLogic capabilitiesBusinessLogic = mock(CapabilitiesBusinessLogic.class);
 		InterfaceOperationBusinessLogic interfaceOperationBusinessLogic = mock(InterfaceOperationBusinessLogic.class);
 		ResourceBusinessLogic resourceBusinessLogic = mock(ResourceBusinessLogic.class);
+		ArtifactsBusinessLogic artifactsBusinessLogic = mock(ArtifactsBusinessLogic.class);
 
 		return new TypesFetchServlet(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils,
 				resourceImportManager, propertyBusinessLogic, relationshipTypeBusinessLogic, capabilitiesBusinessLogic,
-				interfaceOperationBusinessLogic, resourceBusinessLogic);
+				interfaceOperationBusinessLogic, resourceBusinessLogic, artifactsBusinessLogic);
 	}
 
 	

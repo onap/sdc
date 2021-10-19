@@ -20,6 +20,17 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
+import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +39,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import fj.data.Either;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,10 +55,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.components.ArtifactsResolver;
-import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.utils.ArtifactBuilder;
 import org.openecomp.sdc.be.components.utils.ObjectGenerator;
+import org.openecomp.sdc.be.config.ArtifactConfigManager;
 import org.openecomp.sdc.be.config.ArtifactConfiguration;
 import org.openecomp.sdc.be.config.ComponentType;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -65,6 +82,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.IInterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
 import org.openecomp.sdc.be.servlets.RepresentationUtils;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -73,24 +91,6 @@ import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_ENV_NAME;
-import static org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.HEAT_VF_ENV_NAME;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
@@ -122,10 +122,6 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
     JanusGraphDao janusGraphDao;
     @Mock
     private IInterfaceLifecycleOperation interfaceLifecycleOperation;
-
-    // public static final InformationDeployedArtifactsBusinessLogic
-    // informationDeployedArtifactsBusinessLogic =
-    // Mockito.mock(InformationDeployedArtifactsBusinessLogic.class);
     @Mock
     private ToscaExportHandler toscaExportHandler;
     @Mock
@@ -134,13 +130,15 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
     private LifecycleBusinessLogic lifecycleBusinessLogic;
     @Mock
     private ArtifactsResolver artifactsResolver;
+    @Mock
+    private ArtifactTypeOperation artifactTypeOperation;
 
     public static final Resource resource = Mockito.mock(Resource.class);
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Before
     public void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(userBusinessLogic.getUser(eq("jh0003"), anyBoolean())).thenReturn(USER);
         when(resource.getResourceType()).thenReturn(ResourceTypeEnum.VFC);
     }
@@ -534,16 +532,6 @@ public class ArtifactBusinessLogicTest extends BaseBusinessLogicMock{
         Either<ArtifactDefinition, ResponseFormat> result = artifactBL.generateAndSaveHeatEnvArtifact(artifactDefinition, String.valueOf(PAYLOAD), ComponentTypeEnum.SERVICE, new Service(), RESOURCE_INSTANCE_NAME,
                 USER, INSTANCE_ID, true, true);
         assertThat(result.isLeft()).isTrue();
-    }
-
-    private ArtifactsBusinessLogic getArtifactsBusinessLogic() {
-        ArtifactsBusinessLogic artifactsBusinessLogic = new ArtifactsBusinessLogic(artifactCassandraDao,
-            toscaExportHandler, csarUtils, lifecycleBusinessLogic,
-            userBusinessLogic, artifactsResolver, elementDao, groupOperation, groupInstanceOperation,
-            groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
-        artifactsBusinessLogic.setGraphLockOperation(graphLockOperation);
-        artifactsBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
-        return artifactsBusinessLogic;
     }
 
     @Test
