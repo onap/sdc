@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a5ca6e17_d5213aa2",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 596,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-10-20T13:59:35Z",
+      "side": 1,
+      "message": "The Base Type field could be displayed when it`s a service and the select option is not only \"None\" or a type can be selected.",
+      "range": {
+        "startLine": 596,
+        "startChar": 21,
+        "endLine": 596,
+        "endChar": 81
+      },
+      "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
