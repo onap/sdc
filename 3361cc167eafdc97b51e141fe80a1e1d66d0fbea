@@ -140,6 +140,30 @@
       "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "553b637b_7b0199a4",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-10-21T15:44:20Z",
+      "side": 1,
+      "message": "Sorry, there is still one to change, \"Base Type Version\" on line 612.",
+      "parentUuid": "a04f2ff0_30b8f202",
+      "range": {
+        "startLine": 597,
+        "startChar": 58,
+        "endLine": 597,
+        "endChar": 67
+      },
+      "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
