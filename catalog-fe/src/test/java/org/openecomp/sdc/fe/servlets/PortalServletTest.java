@@ -55,14 +55,14 @@ import org.openecomp.sdc.fe.config.ConfigurationManager;
 
 class PortalServletTest extends JerseyTest {
 
-    private final static HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-    private final static HttpSession httpSession = Mockito.mock(HttpSession.class);
-    private final static ServletContext servletContext = Mockito.mock(ServletContext.class);
-    private final static ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
-    private final static Configuration configuration = Mockito.mock(Configuration.class);
-    private final static HttpServletResponse response = Mockito.spy(HttpServletResponse.class);
-    private final static RequestDispatcher rd = Mockito.spy(RequestDispatcher.class);
-    final static Configuration.CookieConfig cookieConfiguration = Mockito.mock(Configuration.CookieConfig.class);
+    private static final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+    private static final HttpSession httpSession = Mockito.mock(HttpSession.class);
+    private static final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    private static final ConfigurationManager configurationManager = Mockito.mock(ConfigurationManager.class);
+    private static final Configuration configuration = Mockito.mock(Configuration.class);
+    private static final HttpServletResponse response = Mockito.spy(HttpServletResponse.class);
+    private static final RequestDispatcher rd = Mockito.spy(RequestDispatcher.class);
+    private static final Configuration.CookieConfig cookieConfiguration = Mockito.mock(Configuration.CookieConfig.class);
 
     @SuppressWarnings("serial")
     @BeforeAll
