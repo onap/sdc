@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright © 2016-2018 European Support Limited
+  ~ Copyright (C) 2016-2018 European Support Limited
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,22 +13,25 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
- 
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Login page</title></head>
 <body>
 Login
-
-
 <form action="access" method="post">
-  UserId:<br>
-  <input type="text" name="userId" >
-  <br>
-  PASSWORD:<br>
-  <input type="password" name="password" >
-  <br><br>
-  <input type="submit" value="Submit">
-  
-  <label name="message"/>
+    UserId:<br>
+    <label>
+        <input type="text" name="userId">
+    </label>
+    <br>
+    PASSWORD:<br>
+    <label>
+        <input type="password" name="password">
+    </label>
+    <br><br>
+    <input type="submit" value="Submit">
+
+    <label name="message"></label>
 </form>
 </body>
 </html>

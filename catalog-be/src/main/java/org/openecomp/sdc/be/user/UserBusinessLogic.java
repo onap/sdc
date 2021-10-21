@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.onap.portalsdk.core.onboarding.util.CipherUtil;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.UserStatusEnum;
@@ -68,6 +69,7 @@ public class UserBusinessLogic {
     }
 
     public User getUser(String userId, boolean inTransaction) {
+        userId = decryptUserId(userId);
         Either<User, ActionStatus> result = userAdminOperation.getUserData(userId, inTransaction);
         if (result.isRight()) {
             handleUserAccessAuditing(userId, result.right().value());
@@ -81,7 +83,19 @@ public class UserBusinessLogic {
         return user;
     }
 
+    private String decryptUserId(final String userId) {
+        if (StringUtils.isNotEmpty(userId)) {
+            try {
+                return CipherUtil.decryptPKC(userId);
+            } catch (final Exception e) {
+                return userId;
+            }
+        }
+        return userId;
+    }
+
     public User getUser(String userId) {
+        userId = decryptUserId(userId);
         UserContext userContext = ThreadLocalsHolder.getUserContext();
         if (Objects.isNull(userContext) || Objects.isNull(userContext.getUserId())) {
             log.info("USER_NOT_FOUND, user=" + userId);
@@ -106,6 +120,7 @@ public class UserBusinessLogic {
     }
 
     public boolean hasActiveUser(String userId) {
+        userId = decryptUserId(userId);
         UserContext userContext = ThreadLocalsHolder.getUserContext();
         if (Objects.isNull(userContext) || Objects.isNull(userContext.getUserId())) {
             handleUserAccessAuditing(userId, ActionStatus.USER_NOT_FOUND);

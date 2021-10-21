@@ -52,7 +52,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <netty.version>4.1.66.Final</netty.version>
         <servlet-api.version>3.1.0</servlet-api.version>
         <wire-mock.version>2.26.3</wire-mock.version>
-        <ecomp.version>2.6.0</ecomp.version>
+        <ecomp.version>3.4.0</ecomp.version>
         <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
         <cadi.version>2.1.8</cadi.version>
         <lombok.version>1.18.20</lombok.version>
@@ -72,6 +72,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <commons.collections.version>4.1</commons.collections.version>
         <ws.rs.version>2.1.1</ws.rs.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
+        <javax.servlet.version>4.0.1</javax.servlet.version>
 
         <jetty.version>9.4.41.v20210516</jetty.version>
         <cxf.version>3.4.4</cxf.version>
