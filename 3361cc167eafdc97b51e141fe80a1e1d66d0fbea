@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "e967d1c5_10ef77fd",
+        "filename": "catalog-model/src/test/resources/config/configuration.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-10-21T09:23:31Z",
+      "side": 1,
+      "message": "Add categories and tests for:\n- required is false with base types\n- required is false without base types",
+      "range": {
+        "startLine": 409,
+        "startChar": 0,
+        "endLine": 409,
+        "endChar": 0
+      },
+      "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a5ca6e17_d5213aa2",
         "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
         "patchSetId": 4
@@ -18,6 +41,29 @@
         "startChar": 21,
         "endLine": 596,
         "endChar": 81
+      },
+      "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be95ebce_62fabf1c",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-10-21T09:23:31Z",
+      "side": 1,
+      "message": "Im thinking we should change this label to \"Substitution Node Type\" to make it more explicit, when using the term base type in conversation with people who will use this it was causing confusion.\nNo need to go removing the term base type everywhere, just here in the label where it is exposed to the end user",
+      "range": {
+        "startLine": 597,
+        "startChar": 58,
+        "endLine": 597,
+        "endChar": 67
       },
       "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
