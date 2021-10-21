@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "20cec02a_b5512a14",
+        "filename": "catalog-model/src/test/resources/config/configuration.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-10-21T15:32:21Z",
+      "side": 1,
+      "message": "Done. The involved test wasn\u0027t really using this file, as the class that initializes the configuration (org.openecomp.sdc.be.model.ModelTestBase) was reading from this file and then overwriting the configuration object.\nI\u0027ve changed that to not overwrite the object so I could use this file in the org.openecomp.sdc.be.model.operations.impl.ElementOperationTest.",
+      "parentUuid": "e967d1c5_10ef77fd",
+      "range": {
+        "startLine": 409,
+        "startChar": 0,
+        "endLine": 409,
+        "endChar": 0
+      },
+      "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a5ca6e17_d5213aa2",
         "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2021-10-20T13:59:35Z",
       "side": 1,
       "message": "The Base Type field could be displayed when it`s a service and the select option is not only \"None\" or a type can be selected.",
+      "range": {
+        "startLine": 596,
+        "startChar": 21,
+        "endLine": 596,
+        "endChar": 81
+      },
+      "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26910030_06983809",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 596,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-10-21T15:32:21Z",
+      "side": 1,
+      "message": "Working on that.",
+      "parentUuid": "a5ca6e17_d5213aa2",
       "range": {
         "startLine": 596,
         "startChar": 21,
@@ -68,6 +116,30 @@
       "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a04f2ff0_30b8f202",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view.html",
+        "patchSetId": 4
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-10-21T15:32:21Z",
+      "side": 1,
+      "message": "I agree, change here on the UI side. I could not find other messages with the term.",
+      "parentUuid": "be95ebce_62fabf1c",
+      "range": {
+        "startLine": 597,
+        "startChar": 58,
+        "endLine": 597,
+        "endChar": 67
+      },
+      "revId": "3361cc167eafdc97b51e141fe80a1e1d66d0fbea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
