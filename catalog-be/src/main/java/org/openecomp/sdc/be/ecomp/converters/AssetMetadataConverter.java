@@ -93,7 +93,7 @@ public class AssetMetadataConverter {
                                                                               Component curr) {
         switch (componentType) {
             case RESOURCE:
-                return generateResourceMeatdata(serverBaseURL, detailed, curr);
+                return generateResourceMetadata(serverBaseURL, detailed, curr);
             case SERVICE:
                 return generateServiceMetadata(serverBaseURL, detailed, curr);
             default:
@@ -102,7 +102,7 @@ public class AssetMetadataConverter {
         }
     }
 
-    private Either<? extends AssetMetadata, ResponseFormat> generateResourceMeatdata(String serverBaseURL, boolean detailed, Component curr) {
+    private Either<? extends AssetMetadata, ResponseFormat> generateResourceMetadata(String serverBaseURL, boolean detailed, Component curr) {
         AssetMetadata metaData;
         metaData = createMetadaObject(detailed, curr.getComponentType());
         metaData = convertToResourceMetadata((ResourceAssetMetadata) metaData, (Resource) curr, serverBaseURL, detailed);

@@ -20,15 +20,13 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
+import com.att.nsa.mr.client.MRBatchingPublisher;
 import com.att.nsa.mr.client.MRConsumer;
-import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.config.DmaapConsumerConfiguration;
 import org.openecomp.sdc.be.config.DmaapConsumerConfiguration.Credential;
-
+import org.openecomp.sdc.be.config.DmaapProducerConfiguration;
 import java.io.File;
-import java.security.GeneralSecurityException;
-import java.util.Properties;
 
 public class DmaapClientFactoryTest {
 
@@ -50,7 +48,6 @@ public class DmaapClientFactoryTest {
 		parameters.setLatitude(new Double(32452));
 		parameters.setLongitude(new Double(543534));
 		parameters.setVersion("mock");
-		parameters.setServiceName("mock");
 		parameters.setServiceName("mock");
 		parameters.setEnvironment("mock");
 		parameters.setPartner("mock");
@@ -84,20 +81,19 @@ public class DmaapClientFactoryTest {
 	}
 
 	@Test
-	public void testBuildProperties() throws Exception {
+	public void testCreateProducer() throws Exception {
 		DmaapClientFactory testSubject;
-		DmaapConsumerConfiguration parameters = new DmaapConsumerConfiguration();
-		Properties result;
+		DmaapProducerConfiguration parameters = new DmaapProducerConfiguration();
+		MRBatchingPublisher result;
 		String filePath = "src/test/resources/config/mock.txt";
 
-		Credential credential = new Credential();
+		DmaapProducerConfiguration.Credential credential = new DmaapProducerConfiguration.Credential();
 		credential.setPassword("hmXYcznAljMSisdy8zgcag==");
 		credential.setUsername("mock");
 		parameters.setCredential(credential);
 		parameters.setLatitude(new Double(32452));
 		parameters.setLongitude(new Double(543534));
 		parameters.setVersion("mock");
-		parameters.setServiceName("mock");
 		parameters.setServiceName("mock");
 		parameters.setEnvironment("mock");
 		parameters.setPartner("mock");
@@ -121,40 +117,12 @@ public class DmaapClientFactoryTest {
         parameters.setAftDme2ClientKeystore("mock");
         parameters.setAftDme2ClientKeystorePassword("mock");
         parameters.setAftDme2ClientSslCertAlias("mock");
+		parameters.setActive(true);
+
 
 		// default test
 		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "buildProperties", parameters);
-
-		File file = new File(filePath);
-		file.delete();
-	}
-
-	@Test(expected = GeneralSecurityException.class)
-	public void testBuildProperties_2() throws Exception {
-		DmaapClientFactory testSubject;
-		DmaapConsumerConfiguration parameters = new DmaapConsumerConfiguration();
-		Properties result;
-		String filePath = "src/test/resources/config/mock.txt";
-
-		Credential credential = new Credential();
-		credential.setPassword("mock");
-		parameters.setCredential(credential);
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "buildProperties", parameters);
-	}
-
-	@Test
-	public void testEnsureFileExists() throws Exception {
-		DmaapClientFactory testSubject;
-		String filePath = "src/test/resources/config/mock.txt";
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "ensureFileExists", new Object[] { filePath });
-		Deencapsulation.invoke(testSubject, "ensureFileExists", filePath);
+		result = testSubject.createProducer(parameters);
 		File file = new File(filePath);
 		file.delete();
 	}

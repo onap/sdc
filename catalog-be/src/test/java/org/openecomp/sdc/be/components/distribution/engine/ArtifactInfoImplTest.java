@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.components.distribution.engine;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import mockit.Deencapsulation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
@@ -91,25 +90,6 @@ public class ArtifactInfoImplTest extends BeConfDependentTest {
 
 		result = ArtifactInfoImpl.convertServiceArtifactToArtifactInfoImpl(service, list);
 		Assert.assertFalse(result.isEmpty());
-	}
-
-	@Test
-	public void testGetUpdatedRequiredArtifactsFromNamesToUuids() throws Exception {
-		ArtifactDefinition artifactDefinition = null;
-		Map<String, ArtifactDefinition> artifacts = new HashMap<String, ArtifactDefinition>();
-		List<String> result;
-
-		// test 1
-		artifactDefinition = null;
-		result = Deencapsulation.invoke(ArtifactInfoImpl.class, "getUpdatedRequiredArtifactsFromNamesToUuids",
-				new Object[] { ArtifactDefinition.class, artifacts.getClass() });
-		Assert.assertEquals(null, result);
-
-		// test 2
-		artifactDefinition = new ArtifactDefinition();
-		result = Deencapsulation.invoke(ArtifactInfoImpl.class, "getUpdatedRequiredArtifactsFromNamesToUuids",
-				new Object[] { ArtifactDefinition.class, artifacts.getClass() });
-		Assert.assertEquals(null, result);
 	}
 
 	@Test

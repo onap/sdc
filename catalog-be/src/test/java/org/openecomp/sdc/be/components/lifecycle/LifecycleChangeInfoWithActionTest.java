@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.lifecycle;
 
-import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.LifecycleChanceActionEnum;
 
@@ -41,26 +40,14 @@ public class LifecycleChangeInfoWithActionTest {
 	}
 
 	@Test
-	public void testGetAction() throws Exception {
-		LifecycleChangeInfoWithAction testSubject;
-		LifecycleChanceActionEnum action = LifecycleChanceActionEnum.CREATE_FROM_CSAR;
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.setField(testSubject, "action", action);
-		LifecycleChanceActionEnum result = testSubject.getAction();
-		assertThat(result).isEqualTo(action);
-	}
-
-	@Test
-	public void testSetAction() throws Exception {
+	public void testAction() throws Exception {
 		LifecycleChangeInfoWithAction testSubject;
 		LifecycleChanceActionEnum action = LifecycleChanceActionEnum.CREATE_FROM_CSAR;
 
 		// default test
 		testSubject = createTestSubject();
 		testSubject.setAction(action);
-		LifecycleChanceActionEnum result = Deencapsulation.getField(testSubject, "action");
+		LifecycleChanceActionEnum result = testSubject.getAction();
 		assertThat(result).isEqualTo(action);
 	}
 }

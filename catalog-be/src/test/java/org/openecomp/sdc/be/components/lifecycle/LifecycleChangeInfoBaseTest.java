@@ -22,7 +22,6 @@ package org.openecomp.sdc.be.components.lifecycle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import mockit.Deencapsulation;
 import org.junit.Test;
 
 public class LifecycleChangeInfoBaseTest {
@@ -32,27 +31,16 @@ public class LifecycleChangeInfoBaseTest {
 	}
 
 	@Test
-	public void testGetUserRemarks() throws Exception {
+	public void testUserRemarks() throws Exception {
 		String remarks = "ABC123*";
 		LifecycleChangeInfoBase testSubject;
 		String result;
 
 		// default test
 		testSubject = createTestSubject();
-		Deencapsulation.setField(testSubject, "userRemarks", remarks);
+		testSubject.setUserRemarks(remarks);
 		result = testSubject.getUserRemarks();
 		assertThat(result).isNotEmpty();
 		assertThat(result).isEqualTo(remarks);
-	}
-
-	@Test
-	public void testSetUserRemarks() throws Exception {
-		LifecycleChangeInfoBase testSubject;
-		String userRemarks = "ABC123*";
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setUserRemarks(userRemarks);
-		assertThat((String)Deencapsulation.getField(testSubject, "userRemarks")).isEqualTo(userRemarks);
 	}
 }

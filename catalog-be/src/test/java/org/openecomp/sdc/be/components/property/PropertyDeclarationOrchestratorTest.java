@@ -14,7 +14,6 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
@@ -161,57 +160,7 @@ public class PropertyDeclarationOrchestratorTest {
 		String result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropOwnerId", componentInstInputsMap);
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void testGetPropertyDecelerator() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		PropertyDeclarator result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
-	}
-
-	@Test
-	public void testGetPropertyDeceleratorWithInputsMap() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = getPropertiesMapToDeclare();
-		componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
-		PropertyDeclarator result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
-
-		assertTrue(result instanceof ComponentInstanceInputPropertyDeclarator);
-	}
-
-	@Test
-	public void testGetPropertyDeceleratorWithCIProperties() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
-		List<ComponentInstancePropInput> value = new LinkedList<>();
-		componentInstanceProperties.put("mock", value);
-		componentInstInputsMap.setComponentInstancePropInput(componentInstanceProperties);
-		PropertyDeclarator result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
-
-		assertTrue(result instanceof ComponentInstancePropertyDeclarator);
-	}
-
-	@Test
-	public void testGetPropertyDeceleratorWithCIPolicy() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> policyProperties = getPropertiesMapToDeclare();
-		componentInstInputsMap.setPolicyProperties(policyProperties);
-		PropertyDeclarator result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
-
-		assertTrue(result instanceof PolicyPropertyDeclarator);
+		result = testSubject.getPropOwnerId(componentInstInputsMap);
 	}
 
 	@Test

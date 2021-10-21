@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import mockit.Deencapsulation;
 import org.junit.Test;
 
 import java.lang.Thread.UncaughtExceptionHandler;
@@ -55,18 +54,6 @@ public class ExecutorFactoryTest {
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.createScheduled(name);
-	}
-
-	@Test
-	public void testCreateThreadFactory() throws Exception {
-		ExecutorFactory testSubject;
-		String name = "mock";
-		ThreadFactory result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "createThreadFactory",
-				 name, new UncaughtExceptionHandlerMock());
 	}
 	
 	private class UncaughtExceptionHandlerMock implements UncaughtExceptionHandler {

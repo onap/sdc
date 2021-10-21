@@ -20,11 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngineClusterHealth.HealthCheckScheduledTask;
@@ -34,21 +29,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.openecomp.sdc.be.resources.data.OperationalEnvironmentEntry;
 
 public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 
 	private DistributionEngineClusterHealth createTestSubject() {
 		return new DistributionEngineClusterHealth();
-	}
-
-	@Test
-	public void testDestroy() throws Exception {
-		DistributionEngineClusterHealth testSubject;
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "destroy");
 	}
 
 	@Test
@@ -69,22 +54,6 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 	    distributionEngineClusterHealth.init("myKey");
 	    distributionEngineClusterHealth.startHealthCheckTask(envNamePerStatus);
 	}
-
-	@Test
-	public void testHealthCheckScheduledTask() throws Exception {
-		DistributionEngineClusterHealth testSubject;
-		Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-
-		// default test
-		testSubject = createTestSubject();
-		HealthCheckScheduledTask healthCheckScheduledTask = testSubject. new HealthCheckScheduledTask(new LinkedList<>());
-		LinkedList<UebHealthCheckCall> healthCheckCalls = new LinkedList<>();
-		UebHealthCheckCall hcc = new UebHealthCheckCall("mock", "mock");
-		healthCheckCalls.add(hcc);
-		healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
-		
-		Deencapsulation.invoke(healthCheckScheduledTask, "queryUeb");
-	}
 	
 	@Test
 	public void testHealthCheckScheduledTaskRun() throws Exception {
@@ -100,34 +69,7 @@ public class DistributionEngineClusterHealthTest extends BeConfDependentTest{
 		healthCheckCalls.add(hcc);
 		healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
 		
-		Deencapsulation.invoke(healthCheckScheduledTask, "run");
-	}
-	
-	@Test
-	public void testHealthCheckScheduledTaskRun_2() throws Exception {
-		DistributionEngineClusterHealth testSubject;
-		Map<String, AtomicBoolean> envNamePerStatus = new HashMap<>();
-		envNamePerStatus.put("mock", new AtomicBoolean(false));
-		// default test
-		testSubject = createTestSubject();
-		testSubject.startHealthCheckTask(envNamePerStatus, false);
-		HealthCheckScheduledTask healthCheckScheduledTask = testSubject. new HealthCheckScheduledTask(new LinkedList<>());
-		LinkedList<UebHealthCheckCall> healthCheckCalls = new LinkedList<>();
-		UebHealthCheckCall hcc = new UebHealthCheckCall("mock", "mock");
-		healthCheckCalls.add(hcc);
-		healthCheckScheduledTask.healthCheckCalls = healthCheckCalls;
-		
-		Deencapsulation.invoke(healthCheckScheduledTask, "run");
-	}
-	
-	@Test
-	public void testLogAlarm() throws Exception {
-		DistributionEngineClusterHealth testSubject;
-		boolean lastHealthState = false;
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "logAlarm", new Object[] { lastHealthState });
+		healthCheckScheduledTask.run();
 	}
 	
 	@Test

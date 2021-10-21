@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.be.components.distribution.engine;
 
-import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.common.api.HealthCheckInfo;
@@ -41,15 +40,6 @@ public class DmaapHealthTest extends BeConfDependentTest{
 		// default test
 		testSubject = createTestSubject();
 		result = testSubject.init();
-	}
-
-	@Test
-	public void testDestroy() throws Exception {
-		DmaapHealth testSubject;
-
-		// default test
-		testSubject = createTestSubject();
-		Deencapsulation.invoke(testSubject, "destroy");
 	}
 
 	@Test

@@ -18,7 +18,6 @@
 package org.openecomp.sdc.be.components.validation;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.junit.Test;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.utils.ComponentInstancePropertyBuilder;
@@ -138,68 +137,6 @@ public class PolicyUtilsTest extends BeConfDependentTest{
 
 		Set<String> policyTypes = PolicyUtils.getExcludedPolicyTypesByComponent(resource);
 		validateExtractedPolicies(policyTypes, EXPECTED_RESOURCE_POLICY_TYPE);
-	}
-
-	@Test
-	public void testExtractNextPolicyCounterFromUniqueId() throws Exception {
-		String uniqueId = "";
-		int result;
-
-		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounterFromUniqueId",
-				new Object[] { uniqueId });
-	}
-
-	@Test
-	public void testExtractNextPolicyCounterFromName() throws Exception {
-		String policyName = "";
-		int result;
-
-		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounterFromName",
-				new Object[] { policyName });
-	}
-
-	@Test
-	public void testExtractNextPolicyCounter() throws Exception {
-		String policyName = "";
-		int endIndex = 0;
-		int result;
-
-		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "extractNextPolicyCounter",
-				new Object[] { policyName, endIndex });
-	}
-
-	@Test
-	public void testValidateImmutablePolicyFields() throws Exception {
-		PolicyDefinition receivedPolicy = new PolicyDefinition();
-		PolicyDefinition validPolicy = new PolicyDefinition();
-
-		// default test
-		Deencapsulation.invoke(PolicyUtils.class, "validateImmutablePolicyFields",
-				receivedPolicy, validPolicy);
-	}
-
-	@Test
-	public void testIsUpdatedField() throws Exception {
-		String oldField = "";
-		String newField = "";
-		boolean result;
-
-		// default test
-		result = Deencapsulation.invoke(PolicyUtils.class, "isUpdatedField", new Object[] { oldField, newField });
-	}
-
-	@Test
-	public void testLogImmutableFieldUpdateWarning() throws Exception {
-		String oldValue = "";
-		String newValue = "";
-		JsonPresentationFields field = null;
-
-		// default test
-		Deencapsulation.invoke(PolicyUtils.class, "logImmutableFieldUpdateWarning",
-				new Object[] { oldValue, newValue, JsonPresentationFields.class });
 	}
 
 	@Test

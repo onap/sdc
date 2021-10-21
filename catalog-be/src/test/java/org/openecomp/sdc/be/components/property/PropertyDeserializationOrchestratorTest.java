@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -88,53 +87,5 @@ public class PropertyDeserializationOrchestratorTest {
 		
 		// default test
 		result = testSubject.unDeclarePropertiesAsInputs(component, inputToDelete);
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void testGetPropertyDecelerator() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		PropertyDeclarator result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
-	}
-
-	@Test
-	public void testGetPropertyDeceleratorWithInputsMap() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> componentInstanceInputsMap = new HashMap<>();
-		List<ComponentInstancePropInput> value = new LinkedList<>();
-		componentInstanceInputsMap.put("mock", value);
-		componentInstInputsMap.setComponentInstanceInputsMap(componentInstanceInputsMap);
-		PropertyDeclarator result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
-	}
-
-	@Test
-	public void testGetPropertyDeceleratorWithCIProperties() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> componentInstanceProperties = new HashMap<>();
-		List<ComponentInstancePropInput> value = new LinkedList<>();
-		componentInstanceProperties.put("mock", value);
-		componentInstInputsMap.setComponentInstancePropInput(componentInstanceProperties);
-		PropertyDeclarator result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
-	}
-
-	@Test
-	public void testGetPropertyDeceleratorWithCIPolicy() throws Exception {
-		ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
-		Map<String, List<ComponentInstancePropInput>> policyProperties = new HashMap<>();
-		List<ComponentInstancePropInput> value = new LinkedList<>();
-		policyProperties.put("mock", value);
-		componentInstInputsMap.setPolicyProperties(policyProperties);
-		PropertyDeclarator result;
-
-		// default test
-		result = Deencapsulation.invoke(testSubject, "getPropertyDeclarator", componentInstInputsMap);
 	}
 }

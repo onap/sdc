@@ -21,7 +21,6 @@
 package org.openecomp.sdc.be.components.property;
 
 import fj.data.Either;
-import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -65,7 +64,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		ComponentInstanceInput result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "createDeclaredProperty", prop);
+		result = testSubject.createDeclaredProperty(prop);
 	}
 
 	@Test
@@ -82,7 +81,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 				Mockito.any(Map.class))).thenReturn(Either.left(new Resource()));
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "updatePropertiesValues", component, cmptInstanceId, properties);
+		result = testSubject.updatePropertiesValues(component, cmptInstanceId, properties);
 	}
 
 	@Test
@@ -92,7 +91,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		Optional<ComponentInstance> result;
 
 		// default test
-		result = Deencapsulation.invoke(testSubject, "resolvePropertiesOwner", component, propertiesOwnerId);
+		result = testSubject.resolvePropertiesOwner(component, propertiesOwnerId);
 	}
 
 	@Test
@@ -102,7 +101,7 @@ public class ComponentInstanceInputPropertyDeceleratorTest {
 		InputDefinition input = null;
 
 		// default test
-		Deencapsulation.invoke(testSubject, "addPropertiesListToInput", new ComponentInstanceInput(),
+		testSubject.addPropertiesListToInput(new ComponentInstanceInput(),
 				new InputDefinition());
 	}
 

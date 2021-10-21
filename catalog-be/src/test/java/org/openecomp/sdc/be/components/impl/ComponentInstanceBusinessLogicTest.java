@@ -50,7 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Lists;
@@ -891,72 +890,6 @@ class ComponentInstanceBusinessLogicTest {
     }
 
     @Test
-    void testValidateParent() {
-        ComponentInstanceBusinessLogic testSubject;
-        resource = createResource();
-        String nodeTemplateId = "";
-        boolean result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "validateParent", new Object[]{resource, nodeTemplateId});
-        assertFalse(result);
-    }
-
-    @Test
-    void testGetComponentType() {
-        ComponentInstanceBusinessLogic testSubject;
-        ComponentTypeEnum result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getComponentType", new Object[]{ComponentTypeEnum.class});
-        assertNotNull(result);
-    }
-
-    @Test
-    void testGetNewGroupName() {
-        ComponentInstanceBusinessLogic testSubject;
-        String oldPrefix = "";
-        String newNormailzedPrefix = "";
-        String qualifiedGroupInstanceName = "";
-        String result;
-
-        // test 1
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getNewGroupName",
-            new Object[]{oldPrefix, newNormailzedPrefix, qualifiedGroupInstanceName});
-        assertNotNull(result);
-    }
-
-    @Test
-    void testUpdateComponentInstanceMetadata_3() {
-        ComponentInstanceBusinessLogic testSubject;
-        createInstances();
-        ComponentInstance result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation
-            .invoke(testSubject, "updateComponentInstanceMetadata", new Object[]{toInstance, toInstance});
-        assertNotNull(result);
-    }
-
-    @Test
-    void testFindRelation() {
-        ComponentInstanceBusinessLogic testSubject;
-        String relationId = "";
-        List<RequirementCapabilityRelDef> requirementCapabilityRelations = new ArrayList<>();
-        RequirementCapabilityRelDef result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "findRelation",
-            new Object[]{relationId, requirementCapabilityRelations});
-        assertNull(result);
-    }
-
-    @Test
     void testCreateOrUpdatePropertiesValues() {
         ComponentInstanceBusinessLogic testSubject;
         ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.RESOURCE;
@@ -987,24 +920,6 @@ class ComponentInstanceBusinessLogicTest {
             .createOrUpdatePropertiesValues(componentTypeEnum, componentId, resourceInstanceId, properties,
                 userId);
         assertNotNull(result);
-    }
-
-    @Test
-    void testUpdateCapabilityPropertyOnContainerComponent() {
-        ComponentInstanceBusinessLogic testSubject;
-        ComponentInstanceProperty property = new ComponentInstanceProperty();
-        String newValue = "";
-        resource = createResource();
-        createInstances();
-        String capabilityType = "";
-        String capabilityName = "";
-        ResponseFormat result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "updateCapabilityPropertyOnContainerComponent",
-            new Object[]{property, newValue, resource, toInstance, capabilityType, capabilityName});
-        assertNull(result);
     }
 
     @Test
@@ -1098,30 +1013,6 @@ class ComponentInstanceBusinessLogicTest {
 
         result = testSubject.deletePropertyValue(componentTypeEnum, serviceId, resourceInstanceId, propertyValueId,
             userId);
-        assertNotNull(result);
-    }
-
-    @Test
-    void testGetComponentParametersViewForForwardingPath() {
-        ComponentInstanceBusinessLogic testSubject;
-        ComponentParametersView result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getComponentParametersViewForForwardingPath");
-        assertNotNull(result);
-    }
-
-    @Test
-    void testGetResourceInstanceById() {
-        ComponentInstanceBusinessLogic testSubject;
-        resource = createResource();
-        String instanceId = "";
-        Either<ComponentInstance, StorageOperationStatus> result;
-
-        // default test
-        testSubject = createTestSubject();
-        result = Deencapsulation.invoke(testSubject, "getResourceInstanceById", new Object[]{resource, instanceId});
         assertNotNull(result);
     }
 
@@ -1264,95 +1155,6 @@ class ComponentInstanceBusinessLogicTest {
         resource.setLifecycleState(oldResourceLifeCycle);
 
         assertThat(result.isLeft()).isFalse();
-    }
-
-    @Test
-    void testCreateOrUpdateAttributeValueForCopyPaste() {
-        ComponentInstance serviceComponentInstance = createComponetInstanceFromComponent(service);
-        ComponentInstanceAttribute attribute = new ComponentInstanceAttribute();
-        attribute.setType("string");
-        attribute.setUniqueId("testCreateOrUpdateAttributeValueForCopyPaste");
-        LifecycleStateEnum oldLifeCycleState = service.getLifecycleState();
-        String oldLastUpdatedUserId = service.getLastUpdaterUserId();
-        service.setLastUpdaterUserId(USER_ID);
-        service.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-
-        Map<String, List<ComponentInstanceAttribute>> instAttrsMap = new HashMap<>();
-        List<ComponentInstanceAttribute> instAttrsList = new ArrayList<>();
-        ComponentInstanceAttribute prop = new ComponentInstanceAttribute();
-        prop.setUniqueId(attribute.getUniqueId());
-        instAttrsList.add(prop);
-        instAttrsMap.put(toInstance.getUniqueId(), instAttrsList);
-        service.setComponentInstancesAttributes(instAttrsMap);
-
-        Either<Component, StorageOperationStatus> serviceEitherLeft = Either.left(service);
-        when(toscaOperationFacade.getToscaElement(serviceComponentInstance.getUniqueId(), JsonParseFlagEnum.ParseAll))
-            .thenReturn(serviceEitherLeft);
-        when(toscaOperationFacade.updateComponentInstanceAttribute(service, toInstance.getUniqueId(), attribute))
-            .thenReturn(StorageOperationStatus.OK);
-        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service))
-            .thenReturn(serviceEitherLeft);
-
-        Either<ComponentInstanceAttribute, ResponseFormat> result = Deencapsulation
-            .invoke(componentInstanceBusinessLogic,
-                "createOrUpdateAttributeValueForCopyPaste",
-                ComponentTypeEnum.SERVICE,
-                serviceComponentInstance
-                    .getUniqueId(),
-                toInstance.getUniqueId(), attribute,
-                USER_ID);
-        assertNotNull(result);
-
-        service.setLastUpdaterUserId(oldLastUpdatedUserId);
-        service.setLifecycleState(oldLifeCycleState);
-
-        assertThat(result.isLeft()).isTrue();
-        ComponentInstanceAttribute resultProp = result.left().value();
-        assertEquals(1, resultProp.getPath().size());
-        assertEquals(resultProp.getPath().get(0), toInstance.getUniqueId());
-    }
-
-    @Test
-    void testUpdateComponentInstanceProperty() {
-
-        String containerComponentId = service.getUniqueId();
-        String componentInstanceId = "dummy_id";
-        ComponentInstanceProperty property = Mockito.mock(ComponentInstanceProperty.class);
-
-        Either<Component, StorageOperationStatus> getComponent = Either.left(service);
-        when(toscaOperationFacade.getToscaElement(containerComponentId)).thenReturn(getComponent);
-        StorageOperationStatus status = StorageOperationStatus.OK;
-        when(toscaOperationFacade.updateComponentInstanceProperty(service, componentInstanceId, property))
-            .thenReturn(status);
-        Either<Component, StorageOperationStatus> updateContainerRes = Either.left(service);
-        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(service))
-            .thenReturn(updateContainerRes);
-
-        Either<String, ResponseFormat> result = Deencapsulation.invoke(componentInstanceBusinessLogic,
-            "updateComponentInstanceProperty", containerComponentId, componentInstanceId, property);
-        assertNotNull(result);
-        assertThat(result.isLeft()).isTrue();
-    }
-
-    @Test
-    void testGetInputListDefaultValue() {
-        Component component = service;
-        String inputId = "dummy_id";
-        String defaultValue = "dummy_default_value";
-        List<InputDefinition> newInputs = new ArrayList<>();
-        InputDefinition in = new InputDefinition();
-        in.setUniqueId(inputId);
-        in.setDefaultValue(defaultValue);
-        newInputs.add(in);
-        List<InputDefinition> oldInputs = service.getInputs();
-        service.setInputs(newInputs);
-
-        Either<String, ResponseFormat> result =
-            Deencapsulation.invoke(componentInstanceBusinessLogic, "getInputListDefaultValue", component, inputId);
-
-        service.setInputs(oldInputs);
-
-        assertEquals(result.left().value(), defaultValue);
     }
 
     @Test

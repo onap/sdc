@@ -20,29 +20,18 @@
 
 package org.openecomp.sdc.be.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import mockit.Deencapsulation;
 import org.javatuples.Pair;
 import org.junit.Test;
-import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
-import org.openecomp.sdc.be.datamodel.NameIdPair;
-import org.openecomp.sdc.be.datamodel.NameIdPairWrapper;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ForwardingPathUtilsTest {
 
@@ -72,19 +61,6 @@ public class ForwardingPathUtilsTest {
 	}
 
 	@Test
-	public void testCreateWrapper() {
-		ForwardingPathUtils testSubject;
-		NameIdPair cpOption = new NameIdPair("mock", "mock");
-		NameIdPairWrapper result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "createWrapper", cpOption);
-		assertThat(result).isInstanceOf(NameIdPairWrapper.class);
-		assertThat(result.getId()).isEqualTo(cpOption.getId());
-	}
-
-	@Test
 	public void testFindForwardingPathNamesToDeleteOnComponentInstanceDeletion() throws Exception {
 		ForwardingPathUtils testSubject;
 		Service containerService = new Service();
@@ -97,35 +73,6 @@ public class ForwardingPathUtilsTest {
 		result = testSubject.findForwardingPathNamesToDeleteOnComponentInstanceDeletion(containerService,
 				componentInstanceId);
 		assertThat(result).isInstanceOf(Set.class);
-	}
-
-	@Test
-	public void testFindForwardingPathToDeleteOnCIDeletion() {
-		ForwardingPathUtils testSubject;
-		Service containerService = new Service();
-		containerService.setForwardingPaths(new HashMap<>());
-		String componentInstanceId = "";
-		Map<String, ForwardingPathDataDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "findForwardingPathToDeleteOnCIDeletion", containerService,
-				componentInstanceId);
-		assertThat(result).isInstanceOf(Map.class);
-	}
-
-	@Test
-	public void testElementContainsCI_1() {
-		ForwardingPathUtils testSubject;
-		ForwardingPathElementDataDefinition elementDataDefinitions = new ForwardingPathElementDataDefinition();
-		elementDataDefinitions.setFromNode("mock");
-		String componentInstanceId = "mock";
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "elementContainsCI", elementDataDefinitions, componentInstanceId);
-		assertThat(result).isTrue();
 	}
 
 	@Test
@@ -159,109 +106,5 @@ public class ForwardingPathUtilsTest {
 		result = testSubject.getForwardingPathsToBeDeletedOnVersionChange(containerService, dataHolder,
 				updatedContainerComponent);
 		assertThat(result).isInstanceOf(Set.class);
-	}
-
-	@Test
-	public void testUpdateCI() {
-		ForwardingPathUtils testSubject;
-		ForwardingPathDataDefinition inFP = new ForwardingPathDataDefinition();
-		inFP.setPathElements(new ListDataDefinition<>());
-		String oldCI = "";
-		String newCI = "";
-		ForwardingPathDataDefinition result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "updateCI", inFP, oldCI, newCI);
-		assertThat(result)
-				.isInstanceOf(ForwardingPathDataDefinition.class)
-				.isNotSameAs(inFP);
-	}
-
-	@Test
-	public void testUpdateElement() {
-		ForwardingPathUtils testSubject;
-		ForwardingPathElementDataDefinition element = new ForwardingPathElementDataDefinition();
-		element.setFromNode("mock");
-		element.setToNode("mock");
-		element.setToCP("mock");
-		String oldCI = "";
-		String newCI = "";
-		ForwardingPathElementDataDefinition result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "updateElement", element, oldCI, newCI);
-		assertThat(result)
-				.isInstanceOf(ForwardingPathElementDataDefinition.class)
-				.isNotSameAs(element);
-	}
-
-	@Test
-	public void testElementContainsCIAndForwarder_1() {
-		ForwardingPathUtils testSubject;
-		ForwardingPathElementDataDefinition elementDataDefinitions = new ForwardingPathElementDataDefinition();
-		elementDataDefinitions.setFromNode("mock");
-		elementDataDefinitions.setToNode("mock");
-		elementDataDefinitions.setToCP("mock");
-		String oldCIId = "mock";
-		Component newCI = new Resource();
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndForwarder", elementDataDefinitions, oldCIId,
-				newCI);
-		assertThat(result).isFalse();
-	}
-
-	@Test
-	public void testCiContainsForwarder() {
-		ForwardingPathUtils testSubject;
-		Component newCI = new Resource();
-		String capabilityID = "mock";
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "ciContainsForwarder", newCI, capabilityID);
-		newCI.setCapabilities(new HashMap<>());
-		result = Deencapsulation.invoke(testSubject, "ciContainsForwarder", newCI, capabilityID);
-		assertThat(result).isFalse();
-	}
-
-	@Test
-	public void testElementContainsCIAndDoesNotContainForwarder() throws Exception {
-		ForwardingPathUtils testSubject;
-		ForwardingPathDataDefinition forwardingPathDataDefinition = new ForwardingPathDataDefinition();
-		ListDataDefinition<ForwardingPathElementDataDefinition> pathElements = new ListDataDefinition<>();
-		forwardingPathDataDefinition.setPathElements(pathElements);
-		String oldCIId = "";
-		Component newCI = new Resource();
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndDoesNotContainForwarder",
-				forwardingPathDataDefinition, oldCIId, newCI);
-		assertThat(result).isFalse();
-	}
-
-	@Test
-	public void testElementContainsCIAndDoesNotContainForwarder_1() throws Exception {
-		ForwardingPathUtils testSubject;
-		ForwardingPathElementDataDefinition elementDataDefinitions = new ForwardingPathElementDataDefinition();
-		elementDataDefinitions.setFromNode("mock");
-		elementDataDefinitions.setToNode("mock");
-		elementDataDefinitions.setToCP("mock");
-		String oldCIId = "";
-		Component newCI = new Resource();
-		boolean result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = Deencapsulation.invoke(testSubject, "elementContainsCIAndDoesNotContainForwarder",
-				elementDataDefinitions, oldCIId, newCI);
-		assertThat(result).isFalse();
 	}
 }
