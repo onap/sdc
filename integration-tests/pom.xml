@@ -290,6 +290,12 @@ limitations under the License.
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.onap.portal.sdk</groupId>
+            <artifactId>epsdk-fw</artifactId>
+            <version>${ecomp.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -435,6 +441,7 @@ limitations under the License.
                     <verbose>${verbose}</verbose>
                     <apiVersion>${docker.api.version}</apiVersion>
                     <autoCreateCustomNetworks>true</autoCreateCustomNetworks>
+                    <startParallel>true</startParallel>
                     <images>
                         <image>
                             <name>onap/sdc-cassandra:${it.docker.version}</name>
@@ -524,7 +531,7 @@ limitations under the License.
                             <alias>sdc-cassandra-onboard-init</alias>
                             <run>
                                 <dependsOn>
-                                    <container>sdc-cassandra</container>
+                                    <container>sdc-cassandra-init</container>
                                 </dependsOn>
                                 <env>
                                     <RELEASE>${project.version}</RELEASE>
@@ -557,7 +564,7 @@ limitations under the License.
                             <name>onap/sdc-onboard-backend:${it.docker.version}</name>
                             <alias>sdc-onboard-backend</alias>
                             <run>
-                               <dependsOn>
+                                <dependsOn>
                                     <container>sdc-cassandra-onboard-init</container>
                                 </dependsOn>
                                 <env>
@@ -738,9 +745,6 @@ limitations under the License.
                             <name>onap/sdc-simulator:${it.docker.version}</name>
                             <alias>sdc-simulator</alias>
                             <run>
-                                <dependsOn>
-                                    <container>sdc-frontend</container>
-                                </dependsOn>
                                 <env>
                                     <!--<FE_URL>${it.env.name}</FE_URL>-->
                                     <JAVA_OPTIONS>-Xmx128m -Xms128m -Xss1m</JAVA_OPTIONS>
@@ -761,13 +765,15 @@ limitations under the License.
                                         <ports>
                                             <port>8080</port>
                                             <port>8443</port>
+                                            <port>5000</port>
                                         </ports>
                                     </tcp>
                                 </wait>
                                 <ports>
                                     <!-- http://localhost:8285/login to access SDC -->
-                                   <port>8285:8080</port>
+                                    <port>8285:8080</port>
                                     <port>8286:8443</port>
+                                    <port>5000:5000</port>
                                 </ports>
                                 <network>
                                     <mode>custom</mode>
@@ -821,32 +827,32 @@ limitations under the License.
                                 </volumes>
                             </run>
                         </image>
-                      <image>
-                        <name>onap/org.onap.sdc.sdc-helm-validator:${it.helm-validator.version}</name>
-                        <alias>helm-validator</alias>
-                        <run>
-                          <skip>${it.helm-validator.disabled}</skip>
-                          <hostname>helm-validator</hostname>
-                          <wait>
-                            <time>20000</time>
-                            <tcp>
-                              <host>helm-validator</host>
-                              <mode>direct</mode>
-                              <ports>
-                                <port>8080</port>
-                              </ports>
-                            </tcp>
-                          </wait>
-                          <ports>
-                            <port>8085:8080</port>
-                          </ports>
-                          <network>
-                            <mode>custom</mode>
-                            <name>sdc-network</name>
+                        <image>
+                            <name>onap/org.onap.sdc.sdc-helm-validator:${it.helm-validator.version}</name>
                             <alias>helm-validator</alias>
-                          </network>
-                        </run>
-                      </image>
+                            <run>
+                                <skip>${it.helm-validator.disabled}</skip>
+                                <hostname>helm-validator</hostname>
+                                <wait>
+                                    <time>20000</time>
+                                    <tcp>
+                                        <host>helm-validator</host>
+                                        <mode>direct</mode>
+                                        <ports>
+                                            <port>8080</port>
+                                        </ports>
+                                    </tcp>
+                                </wait>
+                                <ports>
+                                    <port>8085:8080</port>
+                                </ports>
+                                <network>
+                                    <mode>custom</mode>
+                                    <name>sdc-network</name>
+                                    <alias>helm-validator</alias>
+                                </network>
+                            </run>
+                        </image>
                     </images>
                 </configuration>
                 <executions>

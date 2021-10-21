@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,43 @@
 
 package org.openecomp.sdc.webseal.simulator;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import javax.net.ssl.SSLContext;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.http.Header;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
@@ -35,54 +70,31 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.webseal.simulator.conf.Conf;
-
-import javax.net.ssl.SSLContext;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
 
 public class SdcProxy extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static URL url;
+    private static final Set<String> RESERVED_HEADERS =
+        Arrays.stream(ReservedHeaders.values()).map(ReservedHeaders::getValue).collect(Collectors.toSet());
+    private static final String USER_ID = "USER_ID";
+    private static final String HTTP_IV_USER = "HTTP_IV_USER";
+    private static final String SDC1 = "/sdc1";
+    private static final String ONBOARDING = "/onboarding/";
+    private static final String SCRIPTS = "/scripts";
+    private static final String STYLES = "/styles";
+    private static final String LANGUAGES = "/languages";
+    private static final String CONFIGURATIONS = "/configurations";
+    private URL url;
     private CloseableHttpClient httpClient;
     private Conf conf;
-    private final String SDC1 = "/sdc1";
-    private final String ONBOARDING = "/onboarding/";
-    private final String SCRIPTS = "/scripts";
-    private final String STYLES = "/styles";
-    private final String LANGUAGES = "/languages";
-    private final String CONFIGURATIONS = "/configurations";
-    private static final Set<String> RESERVED_HEADERS = Arrays.stream(ReservedHeaders.values()).map(h -> h.getValue()).collect(Collectors.toSet());
 
-    private static final Logger logger = LoggerFactory.getLogger(SdcProxy.class);
-
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         conf = Conf.getInstance();
         try {
-            String feHost = conf.getFeHost();
-            url = new URL(feHost);
+            url = new URL(conf.getFeHost());
         } catch (MalformedURLException me) {
             throw new ServletException("Proxy URL is invalid", me);
         }
@@ -94,10 +106,12 @@ public class SdcProxy extends HttpServlet {
         }
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         proxy(request, response, MethodEnum.GET);
     }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String userId = request.getParameter("userId");
@@ -105,7 +119,7 @@ public class SdcProxy extends HttpServlet {
 
         // Already sign-in
         if (userId == null) {
-            userId = request.getHeader("USER_ID");
+            userId = request.getHeader(USER_ID);
         }
 
         System.out.println("SdcProxy -> doPost userId=" + userId);
@@ -117,25 +131,25 @@ public class SdcProxy extends HttpServlet {
             view.forward(mutableRequest, response);
         } else {
             System.out.println("SdcProxy -> doPost going to doGet");
-            request.setAttribute("HTTP_IV_USER", userId);
+            request.setAttribute(HTTP_IV_USER, userId);
             proxy(request, response, MethodEnum.POST);
         }
     }
 
+    @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         proxy(request, response, MethodEnum.PUT);
     }
 
+    @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         proxy(request, response, MethodEnum.DELETE);
     }
 
-    private synchronized void proxy(HttpServletRequest request, HttpServletResponse response, MethodEnum methodEnum) throws IOException, UnsupportedEncodingException {
+    private synchronized void proxy(HttpServletRequest request, HttpServletResponse response, MethodEnum methodEnum) throws IOException {
 
         Map<String, String[]> requestParameters = request.getParameterMap();
         String userIdHeader = getUseridFromRequest(request);
-        User user = getUser(userIdHeader);
-
         // new request - forward to login page
         if (userIdHeader == null) {
             System.out.print("Going to login");
@@ -143,17 +157,19 @@ public class SdcProxy extends HttpServlet {
             return;
         }
 
+        final User user = getUser(userIdHeader);
+
         String uri = getUri(request, requestParameters);
         HttpRequestBase httpMethod = createHttpMethod(request, methodEnum, uri);
         addHeadersToMethod(httpMethod, user, request);
 
-        try (CloseableHttpResponse closeableHttpResponse =  httpClient.execute(httpMethod)){;
+        try (CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpMethod)) {
             response.setStatus(closeableHttpResponse.getStatusLine().getStatusCode());
             if (request.getRequestURI().indexOf(".svg") > -1) {
                 response.setContentType("image/svg+xml");
             }
 
-            if(closeableHttpResponse.getEntity() != null) {
+            if (closeableHttpResponse.getEntity() != null) {
                 InputStream responseBodyStream = closeableHttpResponse.getEntity().getContent();
                 Header contentEncodingHeader = closeableHttpResponse.getLastHeader("Content-Encoding");
                 if (contentEncodingHeader != null && contentEncodingHeader.getValue().equalsIgnoreCase("gzip")) {
@@ -194,8 +210,7 @@ public class SdcProxy extends HttpServlet {
             suffix = alignUrlProxy(suffix);
         }
         StringBuilder query = alignUrlParameters(requestParameters);
-        String uri = String.format("%s%s", new Object[]{this.url.toString() + suffix, query.toString()});
-        return uri;
+        return String.format("%s%s", url.toString() + suffix, query.toString());
     }
 
     private HttpRequestBase createHttpMethod(HttpServletRequest request, MethodEnum methodEnum, String uri) throws IOException {
@@ -228,20 +243,20 @@ public class SdcProxy extends HttpServlet {
 
     private ContentType getContentType(HttpServletRequest request) {
         String contentTypeStr = request.getContentType();
-            if (contentTypeStr == null ){
-                contentTypeStr = request.getHeader("contentType");
-            }
+        if (contentTypeStr == null) {
+            contentTypeStr = request.getHeader("contentType");
+        }
         ContentType contentType = ContentType.parse(contentTypeStr);
         return ContentType.create(contentType.getMimeType());
     }
 
     private String getUseridFromRequest(HttpServletRequest request) {
 
-        String userIdHeader = request.getHeader("USER_ID");
+        String userIdHeader = request.getHeader(USER_ID);
         if (userIdHeader != null) {
             return userIdHeader;
         }
-        Object o = request.getAttribute("HTTP_IV_USER");
+        Object o = request.getAttribute(HTTP_IV_USER);
         if (o != null) {
             return o.toString();
         }
@@ -249,7 +264,7 @@ public class SdcProxy extends HttpServlet {
 
         if (cookies != null) {
             for (int i = 0; i < cookies.length; ++i) {
-                if (cookies[i].getName().equals("USER_ID")) {
+                if (cookies[i].getName().equals(USER_ID)) {
                     userIdHeader = cookies[i].getValue();
                 }
             }
@@ -257,7 +272,7 @@ public class SdcProxy extends HttpServlet {
         return userIdHeader;
     }
 
-    private static void addHeadersToMethod(HttpUriRequest proxyMethod, User user, HttpServletRequest request) {
+    private void addHeadersToMethod(HttpUriRequest proxyMethod, User user, HttpServletRequest request) {
 
         proxyMethod.setHeader(ReservedHeaders.HTTP_IV_USER.name(), user.getUserId());
         proxyMethod.setHeader(ReservedHeaders.USER_ID.name(), user.getUserId());
@@ -266,19 +281,19 @@ public class SdcProxy extends HttpServlet {
         proxyMethod.setHeader(ReservedHeaders.HTTP_CSP_LASTNAME.name(), user.getLastName());
         proxyMethod.setHeader(ReservedHeaders.HTTP_IV_REMOTE_ADDRESS.name(), "0.0.0.0");
         proxyMethod.setHeader(ReservedHeaders.HTTP_CSP_WSTYPE.name(), "Intranet");
-		proxyMethod.setHeader(ReservedHeaders.HTTP_CSP_EMAIL.name(), "me@mail.com");
+        proxyMethod.setHeader(ReservedHeaders.HTTP_CSP_EMAIL.name(), "me@mail.com");
 
-		Enumeration<String> headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String headerName = headerNames.nextElement();
-			if (!RESERVED_HEADERS.contains(headerName)) {
-				Enumeration<String> headers = request.getHeaders(headerName);
-				while (headers.hasMoreElements()) {
-					String headerValue = headers.nextElement();
-					proxyMethod.setHeader(headerName, headerValue);
-				}
-			}
-		}
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            if (!RESERVED_HEADERS.contains(headerName)) {
+                Enumeration<String> headers = request.getHeaders(headerName);
+                while (headers.hasMoreElements()) {
+                    String headerValue = headers.nextElement();
+                    proxyMethod.setHeader(headerName, headerValue);
+                }
+            }
+        }
     }
 
     private String alignUrlProxy(String requestURI) {
@@ -301,19 +316,16 @@ public class SdcProxy extends HttpServlet {
         return SDC1 + requestURI;
     }
 
-    private static StringBuilder alignUrlParameters(Map<String, String[]> requestParameters) throws UnsupportedEncodingException {
-        StringBuilder query = new StringBuilder();
-        for (String name : requestParameters.keySet()) {
-            for (String value : (String[]) requestParameters.get(name)) {
+    private StringBuilder alignUrlParameters(Map<String, String[]> requestParameters) throws UnsupportedEncodingException {
+        final var query = new StringBuilder();
+        for (final Entry<String, String[]> entry : requestParameters.entrySet()) {
+            for (final String value : entry.getValue()) {
                 if (query.length() == 0) {
                     query.append("?");
                 } else {
                     query.append("&");
                 }
-                name = URLEncoder.encode(name, "UTF-8");
-                value = URLEncoder.encode(value, "UTF-8");
-
-                query.append(String.format("&%s=%s", new Object[]{name, value}));
+                query.append(String.format("&%s=%s", URLEncoder.encode(entry.getKey(), "UTF-8"), URLEncoder.encode(value, "UTF-8")));
             }
         }
         return query;
@@ -327,38 +339,36 @@ public class SdcProxy extends HttpServlet {
         outputStream.flush();
     }
 
+    @Override
     public String getServletInfo() {
         return "Http Proxy Servlet";
     }
 
-    enum ReservedHeaders {
-        HTTP_IV_USER("HTTP_IV_USER"), USER_ID("USER_ID"), HTTP_CSP_FIRSTNAME("HTTP_CSP_FIRSTNAME"), HTTP_CSP_EMAIL("HTTP_CSP_EMAIL"), HTTP_CSP_LASTNAME("HTTP_CSP_LASTNAME"), HTTP_IV_REMOTE_ADDRESS("HTTP_IV_REMOTE_ADDRESS"), HTTP_CSP_WSTYPE("HTTP_CSP_WSTYPE"), HOST("Host"), CONTENTLENGTH("Content-Length");
-
-        private String value;
-
-        ReservedHeaders(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
-
-    private static CloseableHttpClient buildRestClient() throws NoSuchAlgorithmException, KeyStoreException {
-        SSLContextBuilder builder = new SSLContextBuilder();
+    private CloseableHttpClient buildRestClient() throws NoSuchAlgorithmException, KeyStoreException {
+        final var builder = new SSLContextBuilder();
         builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(SSLContext.getDefault(),
-                NoopHostnameVerifier.INSTANCE);
+            NoopHostnameVerifier.INSTANCE);
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", new PlainConnectionSocketFactory())
-                .register("https", sslsf)
-                .build();
+            .register("http", new PlainConnectionSocketFactory())
+            .register("https", sslsf)
+            .build();
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
         return HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .setConnectionManager(cm)
-                .build();
+            .setSSLSocketFactory(sslsf)
+            .setConnectionManager(cm)
+            .build();
     }
+
+    @AllArgsConstructor
+    @Getter
+    enum ReservedHeaders {
+        HTTP_IV_USER(SdcProxy.HTTP_IV_USER), USER_ID(SdcProxy.USER_ID), HTTP_CSP_FIRSTNAME("HTTP_CSP_FIRSTNAME"), HTTP_CSP_EMAIL(
+            "HTTP_CSP_EMAIL"), HTTP_CSP_LASTNAME("HTTP_CSP_LASTNAME"), HTTP_IV_REMOTE_ADDRESS("HTTP_IV_REMOTE_ADDRESS"), HTTP_CSP_WSTYPE(
+            "HTTP_CSP_WSTYPE"), HOST("Host"), CONTENTLENGTH("Content-Length");
+
+        private final String value;
+
+    }
+
 }
