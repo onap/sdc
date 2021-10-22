@@ -748,18 +748,16 @@ export class GeneralViewModel {
                         if (this.$scope.isCreateMode()) {
                             this.loadBaseTypes(data);
                         } else {
-                            let isValidForBaseType:boolean = false;
-                            data.baseTypes.forEach(baseType => {
-                                if (!this.$scope.component.derivedFromGenericType || baseType.toscaResourceName === this.$scope.component.derivedFromGenericType) {
-                                    isValidForBaseType = true;
-                                }
+                            let isValidForBaseType:boolean = data.baseTypes.some(baseType => {
+                                return !this.$scope.component.derivedFromGenericType ||
+                                    baseType.toscaResourceName === this.$scope.component.derivedFromGenericType;
                             });
                             this.$scope.editForm['category'].$setValidity('validForBaseType', isValidForBaseType);
                         }
                     });
                 }
             } else {
-                this.$scope.baseTypes = [];
+                this.clearBaseTypes();
             }
         };
 
@@ -793,6 +791,9 @@ export class GeneralViewModel {
         this.$scope.onModelChange = (): void => {
             if (this.$scope.componentType === ComponentType.SERVICE && this.$scope.component && this.$scope.categories) {
                 let modelName = this.$scope.component.model ? this.$scope.component.model : null;
+                this.$scope.component.categories = undefined;
+                this.$scope.component.selectedCategory = undefined;
+                this.$scope.componentCategories.selectedCategory = undefined;
                 this.filterCategoriesByModel(modelName);
                 this.filterBaseTypesByModelAndCategory(modelName)
             }
@@ -807,12 +808,12 @@ export class GeneralViewModel {
         this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.$scope.reload);
 
         this.$scope.isMetadataKeyMandatory = (key: string): boolean => {
-            let metadataKey = this.getMetadataKey(this.$scope.component.categories, key);
+            let metadataKey = this.getMetadataKey(key);
             return metadataKey && metadataKey.mandatory;
         }
 
         this.$scope.getMetadataKeyValidValues = (key: string): string[] => {
-            let metadataKey = this.getMetadataKey(this.$scope.component.categories, key);
+            let metadataKey = this.getMetadataKey(key);
             if (metadataKey) {
                 return metadataKey.validValues;
             }
@@ -828,7 +829,7 @@ export class GeneralViewModel {
         }
 
         this.$scope.isMetadataKeyForComponentCategory = (key: string): boolean => {
-            return this.getMetadataKey(this.$scope.component.categories, key) != null;
+            return this.getMetadataKey(key) != null;
         }
 
         this.$scope.isCategoryServiceMetadataKey = (key: string): boolean => {
@@ -836,7 +837,7 @@ export class GeneralViewModel {
         }
 
         this.$scope.isMetadataKeyForComponentCategoryService = (key: string, attribute: string): boolean => {
-            let metadatakey = this.getMetadataKey(this.$scope.component.categories, key);
+            let metadatakey = this.getMetadataKey(key);
             if (metadatakey && (!this.$scope.component[attribute] || !metadatakey.validValues.find(v => v === this.$scope.component[attribute]))) {
                 this.$scope.component[attribute] = metadatakey.defaultValue;
             }
@@ -858,7 +859,9 @@ export class GeneralViewModel {
             this.elementService.getCategoryBaseTypes(categories[0].name, modelName).subscribe((data: ListBaseTypesResponse) => {
                 this.loadBaseTypes(data);
             });
+            return;
         }
+        this.clearBaseTypes();
     }
 
     private loadBaseTypes(baseTypeResponseList: ListBaseTypesResponse) {
@@ -879,16 +882,28 @@ export class GeneralViewModel {
         this.$scope.showBaseTypeVersions = false;
     }
 
+    private clearBaseTypes() {
+        this.$scope.isBaseTypeRequired = false;
+        this.$scope.baseTypes = [];
+        this.$scope.baseTypeVersions = [];
+        this.$scope.component.derivedFromGenericType = undefined;
+        this.$scope.component.derivedFromGenericVersion = undefined;
+        this.$scope.showBaseTypeVersions = false;
+    }
+
     private setUnsavedChanges = (hasChanges: boolean): void => {
         this.$state.current.data.unsavedChanges = hasChanges;
     }
 
-    private getMetadataKey(categories: IMainCategory[], key: string) : IMetadataKey {
-        let metadataKey = this.getSubcategoryMetadataKey(this.$scope.component.categories, key);
-        if (!metadataKey){
-            return this.getCategoryMetadataKey(this.$scope.component.categories, key);
+    private getMetadataKey(key: string) : IMetadataKey {
+        if (this.$scope.component.categories) {
+            let metadataKey = this.getSubcategoryMetadataKey(this.$scope.component.categories, key);
+            if (!metadataKey){
+                return this.getCategoryMetadataKey(this.$scope.component.categories, key);
+            }
+            return metadataKey;
         }
-        return metadataKey;
+        return null;
     }
 
     private getSubcategoryMetadataKey(categories: IMainCategory[], key: string) : IMetadataKey {
