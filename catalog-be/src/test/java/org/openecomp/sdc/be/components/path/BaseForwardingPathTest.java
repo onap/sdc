@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.components.path;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,13 +33,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.path.beans.JanusGraphTestSetup;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
@@ -63,6 +65,8 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.tosca.CapabilityRequirementConverter;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.datastructure.UserContext;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -70,42 +74,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class BaseForwardingPathTest extends BeConfDependentTest implements ForwardingPathTestUtils {
 
-
+    static final String FORWARDING_PATH_ID = "forwarding_pathId";
+    static final String HTTP_PROTOCOL = "http";
+    private static final String CATEGORY_NAME = "cat_name";
+    private static final String INSTANTIATION_TYPE = "A-la-carte";
+    private static final String CAPABILITY_NAME_1 = "CP1";
+    private static final String CAPABILITY_NAME_2 = "CP2";
+    private static final String CAPABILITY_NAME_3 = "CP3";
+    private static final String CI_NAME_1 = "CI1";
+    private static final String CI_NAME_2 = "CI2";
+    private static final String CI_NAME_3 = "CI3";
     protected User user;
-    private ForwardingPathDataDefinition forwardingPathDataDefinition;
-
     @Autowired
     protected JanusGraphClient janusGraphClient;
-
     @Autowired
     protected CapabilityRequirementConverter capabiltyRequirementConvertor;
-
     @Autowired
     protected ToscaOperationFacade toscaOperationFacade;
-
     @Autowired
     protected ServiceBusinessLogic bl;
-    
-    private CatalogOperation catalogOperation = mock(CatalogOperation.class);
-
-    private ServiceValidator serviceValidator = mock(ServiceValidator.class);
     @Autowired
     protected IElementOperation elementDao;
-
     @Autowired
     protected ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
-
     @javax.annotation.Resource
     protected JanusGraphDao janusGraphDao;
+    private ForwardingPathDataDefinition forwardingPathDataDefinition;
+    private CatalogOperation catalogOperation = mock(CatalogOperation.class);
+    private ServiceValidator serviceValidator = mock(ServiceValidator.class);
+    private CategoryDefinition categoryDefinition;
 
-    @Before
+    @BeforeEach
     public void initJanusGraph() {
         JanusGraphTestSetup.createGraph(janusGraphClient.getGraph().left().value());
         categoryDefinition = new CategoryDefinition();
         categoryDefinition.setName(CATEGORY_NAME);
     }
 
-    @Before
+    @BeforeEach
     public void initUser() {
         // User data and management
         user = new User();
@@ -115,24 +121,10 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
         user.setRole(Role.ADMIN.name());
         Set<String> userRole = new HashSet<>();
         userRole.add(user.getRole());
-        UserContext userContext = new UserContext(user.getUserId(), userRole, user.getFirstName() ,user.getLastName());
+        UserContext userContext = new UserContext(user.getUserId(), userRole, user.getFirstName(), user.getLastName());
         ThreadLocalsHolder.setUserContext(userContext);
         bl.setServiceValidator(serviceValidator);
     }
-
-
-    private CategoryDefinition categoryDefinition;
-    private static final String CATEGORY_NAME = "cat_name";
-    static final String FORWARDING_PATH_ID = "forwarding_pathId";
-    static final String HTTP_PROTOCOL = "http";
-    private static final String INSTANTIATION_TYPE = "A-la-carte";
-    private static final String CAPABILITY_NAME_1 = "CP1";
-    private static final String CAPABILITY_NAME_2 = "CP2";
-    private static final String CAPABILITY_NAME_3 = "CP3";
-    private static final String CI_NAME_1 = "CI1";
-    private static final String CI_NAME_2 = "CI2";
-    private static final String CI_NAME_3 = "CI3";
-
 
     private void initGraph() {
         Map<GraphPropertyEnum, Object> props = new HashMap<>();
@@ -176,7 +168,7 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
 
     private void createCategory() {
         Either<CategoryDefinition, ActionStatus> category = elementDao.createCategory(categoryDefinition, NodeTypeEnum.ServiceNewCategory);
-        assertTrue("Failed to create category", category.isLeft());
+        assertTrue(category.isLeft(), "Failed to create category");
     }
 
     private void createServiceCategory(String categoryName) {
@@ -196,7 +188,7 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
         assertTrue(catRes.isLeft());
     }
 
-    Service initForwardPath() {
+    public Service initForwardPath() {
         ForwardingPathDataDefinition forwardingPathDataDefinition = createMockPath();
         Service service = new Service();
         service.setUniqueId(FORWARDING_PATH_ID);
@@ -213,8 +205,10 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
         forwardingPathDataDefinition.setDestinationPortNumber("414155");
         forwardingPathDataDefinition.setProtocol(HTTP_PROTOCOL);
         org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition> forwardingPathElementDataDefinitionListDataDefinition = new org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<>();
-        forwardingPathElementDataDefinitionListDataDefinition.add(new ForwardingPathElementDataDefinition(CI_NAME_1, CI_NAME_2, CAPABILITY_NAME_1, CAPABILITY_NAME_2, "2222", "5555"));
-        forwardingPathElementDataDefinitionListDataDefinition.add(new ForwardingPathElementDataDefinition(CI_NAME_2, CI_NAME_3, CAPABILITY_NAME_2, CAPABILITY_NAME_3, "4", "44"));
+        forwardingPathElementDataDefinitionListDataDefinition.add(
+            new ForwardingPathElementDataDefinition(CI_NAME_1, CI_NAME_2, CAPABILITY_NAME_1, CAPABILITY_NAME_2, "2222", "5555"));
+        forwardingPathElementDataDefinitionListDataDefinition.add(
+            new ForwardingPathElementDataDefinition(CI_NAME_2, CI_NAME_3, CAPABILITY_NAME_2, CAPABILITY_NAME_3, "4", "44"));
         forwardingPathDataDefinition.setPathElements(forwardingPathElementDataDefinitionListDataDefinition);
         return forwardingPathDataDefinition;
     }
@@ -222,7 +216,7 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
     Service createService() {
         Either<Service, ResponseFormat> serviceCreateResult;
         serviceCreateResult = bl.createService(createTestService(), user);
-        assertTrue("Failed to create service", serviceCreateResult.isLeft());
+        assertTrue(serviceCreateResult.isLeft(), "Failed to create service");
         return serviceCreateResult.left().value();
     }
 }
