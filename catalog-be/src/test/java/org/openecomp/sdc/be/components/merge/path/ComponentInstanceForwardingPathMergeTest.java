@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +20,16 @@
 
 package org.openecomp.sdc.be.components.merge.path;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -36,15 +43,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.common.api.UserRoleEnum;
 
-import java.util.Set;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.when;
-
 public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPathVersionChangeTest {
 
     @InjectMocks
@@ -57,7 +55,7 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
     private ToscaOperationFacade toscaOperationFacade;
     private User user;
 
-    @Before
+    @BeforeEach
     public void setUpData() {
         MockitoAnnotations.initMocks(this);
         user = new User();
@@ -73,7 +71,6 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
         Component componentResponseFormatEither = testInstance
             .mergeDataAfterCreate(user, dataHolder, newNodeAC, "3344");
         assertNotNull(componentResponseFormatEither);
-        assertTrue(componentResponseFormatEither != null);
         assertEquals(newNodeAC, componentResponseFormatEither);
     }
 
@@ -102,18 +99,18 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
 
     @Test
     public void mergeShouldUpdate() {
-          when(serviceBusinessLogic.updateForwardingPath(any(), any(), any(), anyBoolean()))
-              .then(invocationOnMock -> service);
-           when(toscaOperationFacade.getToscaFullElement(any())).thenReturn(Either.left(newNodeAC));
-          testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
-          assertEquals(nodeACI.getName(), dataHolder.getOrigComponentInstId());
+        when(serviceBusinessLogic.updateForwardingPath(any(), any(), any(), anyBoolean()))
+            .then(invocationOnMock -> service);
+        when(toscaOperationFacade.getToscaFullElement(any())).thenReturn(Either.left(newNodeAC));
+        testInstance.saveDataBeforeMerge(dataHolder, service, nodeACI, newNodeAC);
+        assertEquals(nodeACI.getName(), dataHolder.getOrigComponentInstId());
 
-          // Change internal ci, just like change version do
-          service.getComponentInstances().remove(nodeACI);
-          service.getComponentInstances().add(newNodeACI);
+        // Change internal ci, just like change version do
+        service.getComponentInstances().remove(nodeACI);
+        service.getComponentInstances().add(newNodeACI);
 
-          Component component = testInstance.mergeDataAfterCreate(user, dataHolder, service, newNodeA);
-          assertNotNull(component);
+        Component component = testInstance.mergeDataAfterCreate(user, dataHolder, service, newNodeA);
+        assertNotNull(component);
     }
 
     @Test
