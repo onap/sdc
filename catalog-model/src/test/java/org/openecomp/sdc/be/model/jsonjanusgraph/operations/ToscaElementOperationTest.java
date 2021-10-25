@@ -20,16 +20,24 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import fj.data.Either;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -44,42 +52,31 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.GraphTestUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.EntryData;
 import org.openecomp.sdc.be.utils.TypeUtils;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Created by chaya on 6/12/2017.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@SpringJUnitConfig(locations = "classpath:application-context-test.xml")
 public class ToscaElementOperationTest extends ModelTestBase {
 
+    @Rule
+    public TestName testName = new TestName();
     private List<GraphVertex> allVertices = new ArrayList<>();
     private boolean isInitialized = false;
-
     @javax.annotation.Resource
     private ToscaElementOperationTestImpl toscaElementOperation;
-
     @javax.annotation.Resource
     private JanusGraphDao janusGraphDao;
 
-    @BeforeClass
+    @BeforeAll
     public static void initTest() {
         ModelTestBase.init();
 
     }
 
-    @Rule
-    public TestName testName = new TestName();
-
-    @Before
+    @BeforeEach
     public void beforeTest() {
         if (!isInitialized) {
             GraphTestUtils.clearGraph(janusGraphDao);
