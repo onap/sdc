@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,10 +21,16 @@
 package org.openecomp.sdc.be.components.path;
 
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Sets;
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.Collection;
+import java.util.Set;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -42,30 +48,17 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.util.Collection;
-import java.util.Set;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 public class ForwardingPathValidatorTest implements ForwardingPathTestUtils {
 
+    private static final String SERVICE_ID = "serviceid1";
     ResponseFormatManager mock;
-
-    private Service  service = (Service) getToscaFullElement().left().value();
-
-
     @Mock
     ToscaOperationFacade toscaOperationFacade;
     @InjectMocks
     ForwardingPathValidationUtilTest test = new ForwardingPathValidationUtilTest();
+    private Service service = (Service) getToscaFullElement().left().value();
 
-    private static final String SERVICE_ID = "serviceid1";
-
-
-
-
-    @Before
+    @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
         mock = Mockito.mock(ResponseFormatManager.class);
@@ -78,60 +71,65 @@ public class ForwardingPathValidatorTest implements ForwardingPathTestUtils {
     }
 
     @Test
-    public void testValidForwardingPathName(){
+    public void testValidForwardingPathName() {
         Collection<ForwardingPathDataDefinition> paths = createData("pathName", "http", "8285", "pathName");
         test.validateForwardingPaths(paths, SERVICE_ID, false);
     }
 
-    @Test(expected = ComponentException.class)
-    public void testEmptyForwardingPathName(){
-        Collection<ForwardingPathDataDefinition> paths = createData("", "protocol", "8285", "name1");
-        test.validateForwardingPaths(paths, SERVICE_ID, false);
-    }
-
-    @Test(expected = ComponentException.class)
-    public void testLongForwardingPathName(){
-        String pathName = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
-                "org.openecomp.sdc:catalog-be:war:1.1.0-SNAPSHOT: Failed to collect dependencies at \n" +
-                "org.openecomp.sdc.common:openecomp-sdc-artifact-generator-api:jar:1802.0.1.167: ";
-        Collection<ForwardingPathDataDefinition> paths = createData(pathName,
-                "http", "port", "name1");
-        test.validateForwardingPaths(paths, SERVICE_ID, false);
-
+    @Test
+    public void testEmptyForwardingPathName() {
+        Assertions.assertThrows(ComponentException.class, () -> {
+            Collection<ForwardingPathDataDefinition> paths = createData("", "protocol", "8285", "name1");
+            test.validateForwardingPaths(paths, SERVICE_ID, false);
+        });
     }
 
     @Test
-    public void testUniqueForwardingPathNameUpdateName(){
+    public void testLongForwardingPathName() {
+        Assertions.assertThrows(ComponentException.class, () -> {
+            String pathName = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
+                "org.openecomp.sdc:catalog-be:war:1.1.0-SNAPSHOT: Failed to collect dependencies at \n" +
+                "org.openecomp.sdc.common:openecomp-sdc-artifact-generator-api:jar:1802.0.1.167: ";
+            Collection<ForwardingPathDataDefinition> paths = createData(pathName,
+                "http", "port", "name1");
+            test.validateForwardingPaths(paths, SERVICE_ID, false);
+        });
+    }
+
+    @Test
+    public void testUniqueForwardingPathNameUpdateName() {
         Collection<ForwardingPathDataDefinition> paths = createData("pathName4", "httpfd", "82df85", "name1");
         test.validateForwardingPaths(paths, SERVICE_ID, true);
     }
 
     @Test
-    public void testUniqueForwardingPathNameUpdatePort(){
+    public void testUniqueForwardingPathNameUpdatePort() {
         Collection<ForwardingPathDataDefinition> paths = createData("pathName3", "httpfd", "82df85", "name1");
         test.validateForwardingPaths(paths, SERVICE_ID, true);
     }
 
-    @Test(expected = ComponentException.class)
-    public void testLongForwardingPathPortNumber(){
-        String port = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
+    @Test
+    public void testLongForwardingPathPortNumber() {
+        Assertions.assertThrows(ComponentException.class, () -> {
+            String port = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
                 "org.openecomp.sdc:catalog-be:war:1.1.0-SNAPSHOT: Failed to collect dependencies at \n" +
                 "org.openecomp.sdc.common:openecomp-sdc-artifact-generator-api:jar:1802.0.1.167: ";
-        Collection<ForwardingPathDataDefinition> paths = createData("pathName",
+            Collection<ForwardingPathDataDefinition> paths = createData("pathName",
                 "http", port, "name1");
-        test.validateForwardingPaths(paths, SERVICE_ID, false);
-
+            test.validateForwardingPaths(paths, SERVICE_ID, false);
+        });
     }
 
-    @Test(expected = ComponentException.class)
-    public void testLongForwardingPathProtocol(){
-        String protocol = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
+    @Test
+    public void testLongForwardingPathProtocol() {
+        Assertions.assertThrows(ComponentException.class, () -> {
+            String protocol = "Failed to execute goal on project catalog-be: Could not resolve dependencies for project \n" +
                 "org.openecomp.sdc:catalog-be:war:1.1.0-SNAPSHOT: Failed to collect dependencies at \n" +
                 "org.openecomp.sdc.common:openecomp-sdc-artifact-generator-api:jar:1802.0.1.167: ";
-        Collection<ForwardingPathDataDefinition> paths = createData("pathName",
+            Collection<ForwardingPathDataDefinition> paths = createData("pathName",
                 protocol, "port", "name1");
-        test.validateForwardingPaths(paths, SERVICE_ID, false);
-
+            test.validateForwardingPaths(paths, SERVICE_ID, false);
+        });
     }
 
     private Set<ForwardingPathDataDefinition> createData(String pathName, String protocol, String ports, String uniqueId) {
@@ -140,15 +138,15 @@ public class ForwardingPathValidatorTest implements ForwardingPathTestUtils {
     }
 
 
-    private  <T extends Component> Either<T, StorageOperationStatus> getToscaFullElement() {
+    private <T extends Component> Either<T, StorageOperationStatus> getToscaFullElement() {
 
         return Either.left((T) setUpServiceMcok());
     }
 
-    private Service setUpServiceMcok(){
-    Service service = new Service();
-    service.addForwardingPath(createPath("pathName3", "http", "8285", "name1"));
-    return  service;
+    private Service setUpServiceMcok() {
+        Service service = new Service();
+        service.addForwardingPath(createPath("pathName3", "http", "8285", "name1"));
+        return service;
     }
 
     private class ForwardingPathValidationUtilTest extends ForwardingPathValidator {

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,20 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.MapCapabilityProperty;
@@ -40,19 +46,9 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.config.ModelOperationsSpringConfig;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JanusGraphSpringConfig.class, ModelOperationsSpringConfig.class})
+@SpringJUnitConfig(classes = {JanusGraphSpringConfig.class, ModelOperationsSpringConfig.class})
 public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTestBase {
 
     private static final String CONTAINER_ID = "id";
@@ -68,13 +64,13 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
     private CapabilityPropertyDataObject capabilityProperty2;
     private CapabilityPropertyDataObject capabilityProperty3;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupBeforeClass() {
 
         ModelTestBase.init();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         capabilitiesPropsMap = new HashMap<>();
@@ -83,22 +79,24 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
         capabilityProperty3 = new CapabilityPropertyDataObject("instance2", "capability3", "prop3", "val3");
         capabilitiesProperties = Arrays.asList(capabilityProperty1, capabilityProperty2, capabilityProperty3);
 
-
         //capablities props == Map<instance id, Map<capability id, Map<prop id, property>>>
         capabilitiesProperties.forEach(capabilitiesProperty -> {
             capabilitiesPropsMap.computeIfAbsent(capabilitiesProperty.getInstanceId(), k -> new MapCapabilityProperty(new HashMap<>()))
-                             .getMapToscaDataDefinition().computeIfAbsent(capabilitiesProperty.getCapabilityId(), k -> new MapPropertiesDataDefinition(new HashMap<>()))
-                             .getMapToscaDataDefinition().computeIfAbsent(capabilitiesProperty.getPropName(), k -> new PropertyDefinition(createPropWithValue(capabilitiesProperty.getPropValue())));
+                .getMapToscaDataDefinition()
+                .computeIfAbsent(capabilitiesProperty.getCapabilityId(), k -> new MapPropertiesDataDefinition(new HashMap<>()))
+                .getMapToscaDataDefinition().computeIfAbsent(capabilitiesProperty.getPropName(),
+                    k -> new PropertyDefinition(createPropWithValue(capabilitiesProperty.getPropValue())));
         });
 
         GraphVertex resource = new GraphVertex(VertexTypeEnum.TOPOLOGY_TEMPLATE);
         resource.addMetadataProperty(GraphPropertyEnum.UNIQUE_ID, CONTAINER_ID);
         janusGraphDao.createVertex(resource);
         GraphVertex loadedResource = janusGraphDao.getVertexById(CONTAINER_ID).left().value();
-        topologyTemplateOperation.associateElementToData(loadedResource, VertexTypeEnum.CALCULATED_CAP_PROPERTIES, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, capabilitiesPropsMap).left().value();
+        topologyTemplateOperation.associateElementToData(loadedResource, VertexTypeEnum.CALCULATED_CAP_PROPERTIES,
+            EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, capabilitiesPropsMap).left().value();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         janusGraphDao.rollback();
     }
@@ -111,7 +109,8 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
         capabilityProperty3.setPropValue("newVal3");
         setPropertyValue(capabilitiesPropsMap, capabilityProperty1);
         setPropertyValue(capabilitiesPropsMap, capabilityProperty3);
-        StorageOperationStatus storageOperationStatus = topologyTemplateOperation.overrideToscaDataOfToscaElement(CONTAINER_ID, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, capabilitiesPropsMap);
+        StorageOperationStatus storageOperationStatus = topologyTemplateOperation.overrideToscaDataOfToscaElement(CONTAINER_ID,
+            EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, capabilitiesPropsMap);
         assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.OK);
         Map<String, MapCapabilityProperty> updatedCapPropsMap = fetchCapabilitiesProps(CONTAINER_ID);
         compareCapabilitiesProperties(capabilitiesProperties, updatedCapPropsMap);
@@ -132,7 +131,8 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
 
         Component component = new org.openecomp.sdc.be.model.Resource();
         component.setUniqueId(CONTAINER_ID);
-        StorageOperationStatus updateStatus = topologyTemplateOperation.updateToscaDataDeepElementsBlockToToscaElement(CONTAINER_ID, EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, instance1Props, "instance1");
+        StorageOperationStatus updateStatus = topologyTemplateOperation.updateToscaDataDeepElementsBlockToToscaElement(CONTAINER_ID,
+            EdgeLabelEnum.CALCULATED_CAP_PROPERTIES, instance1Props, "instance1");
 
         assertThat(updateStatus).isEqualTo(StorageOperationStatus.OK);
         assertCapabilityPropValue(capabilityProperty1, "newVal1");
@@ -143,13 +143,15 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
     private Map<String, MapCapabilityProperty> fetchCapabilitiesProps(String containerId) {
         ComponentParametersView capabilityPropsFilter = new ComponentParametersView(true);
         capabilityPropsFilter.setIgnoreCapabiltyProperties(false);
-        return ((TopologyTemplate) topologyTemplateOperation.getToscaElement(containerId, capabilityPropsFilter).left().value()).getCalculatedCapabilitiesProperties();
+        return ((TopologyTemplate) topologyTemplateOperation.getToscaElement(containerId, capabilityPropsFilter).left()
+            .value()).getCalculatedCapabilitiesProperties();
     }
 
     private void compareCapabilitiesProperties(List<CapabilityPropertyDataObject> expected, Map<String, MapCapabilityProperty> actual) {
         expected.forEach(expectedCapabilityProp -> {
-            assertThat(getPropertyValue(actual, expectedCapabilityProp.instanceId, expectedCapabilityProp.capabilityId, expectedCapabilityProp.propName))
-                    .isEqualTo(expectedCapabilityProp.propValue);
+            assertThat(
+                getPropertyValue(actual, expectedCapabilityProp.instanceId, expectedCapabilityProp.capabilityId, expectedCapabilityProp.propName))
+                .isEqualTo(expectedCapabilityProp.propValue);
         });
     }
 
@@ -164,8 +166,8 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
 
     private void setPropertyValue(MapCapabilityProperty capabilitiesInstanceProperties, CapabilityPropertyDataObject capabilityProperty) {
         capabilitiesInstanceProperties.getMapToscaDataDefinition().get(capabilityProperty.getCapabilityId())
-                                      .getMapToscaDataDefinition().get(capabilityProperty.getPropName())
-                                      .setValue(capabilityProperty.getPropValue());
+            .getMapToscaDataDefinition().get(capabilityProperty.getPropName())
+            .setValue(capabilityProperty.getPropValue());
     }
 
     private void assertCapabilityPropValue(CapabilityPropertyDataObject prop, String expectedValue) {
@@ -182,6 +184,7 @@ public class TopologyTemplateOperationCapabilityIntegrationTest extends ModelTes
     }
 
     private static class CapabilityPropertyDataObject {
+
         private String instanceId;
         private String capabilityId;
         private String propName;

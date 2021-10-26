@@ -61,46 +61,30 @@ Modifications copyright (c) 2018 Nokia
 		org.openecomp.sdc.be.dao.jsongraph">
 
     </context:component-scan>
-    <bean id="tosca-operation-facade"
-        class="org.openecomp.sdc.be.components.path.beans.ForwardingPathToscaOperationFacade"/>
-    <bean id="janusgraph-client"
-        class="org.openecomp.sdc.be.components.path.beans.InMemoryJanusGraphClient"/>
-    <bean id="lifecycleBusinessLogic"
-        class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic"/>
+    <bean id="tosca-operation-facade" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathToscaOperationFacade"/>
+    <bean id="janusgraph-client" class="org.openecomp.sdc.be.components.path.beans.InMemoryJanusGraphClient"/>
+    <bean id="lifecycleBusinessLogic" class="org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic"/>
     <bean id="userBusinessLogicExt" class="org.openecomp.sdc.be.user.UserBusinessLogicExt"/>
-    <bean id="asset-metadata-utils"
-        class="org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter"/>
+    <bean id="asset-metadata-utils" class="org.openecomp.sdc.be.ecomp.converters.AssetMetadataConverter"/>
     <bean class="org.openecomp.sdc.be.dao.config.DAOSpringConfig"/>
-    <bean id="cassandra-client"
-        class="org.openecomp.sdc.be.components.path.beans.CassandraClientMock"/>
-    <bean id="audit-cassandra-dao"
-        class="org.openecomp.sdc.be.components.path.beans.AuditCassandraDaoMock"/>
-    <bean id="artifact-cassandra-dao"
-        class="org.openecomp.sdc.be.components.path.beans.ArtifactCassandraDaoMock"/>
-    <bean id="operational-environment-dao"
-        class="org.openecomp.sdc.be.components.path.beans.EnvironmentCassandraDaoMock"/>
-    <bean id="sdc-schema-files-cassandra-dao"
-        class="org.openecomp.sdc.be.components.path.beans.SdcSchemaFilesCassandraDaoMock"/>
-    <bean id="distributionEngine"
-        class="org.openecomp.sdc.be.components.path.beans.DistributionEngineMock"/>
-    <bean id="forwardingPathValidator"
-        class="org.openecomp.sdc.be.components.path.beans.ForwardingPathValidatorMock"/>
-    <bean id="dataTypeValidatorConverter"
-        class="org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter"/>
+    <bean id="cassandra-client" class="org.openecomp.sdc.be.components.path.beans.CassandraClientMock"/>
+    <bean id="audit-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.AuditCassandraDaoMock"/>
+    <bean id="artifact-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.ArtifactCassandraDaoMock"/>
+    <bean id="operational-environment-dao" class="org.openecomp.sdc.be.components.path.beans.EnvironmentCassandraDaoMock"/>
+    <bean id="sdc-schema-files-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.SdcSchemaFilesCassandraDaoMock"/>
+    <bean id="distributionEngine" class="org.openecomp.sdc.be.components.path.beans.DistributionEngineMock"/>
+    <bean id="forwardingPathValidator" class="org.openecomp.sdc.be.components.path.beans.ForwardingPathValidatorMock"/>
+    <bean id="dataTypeValidatorConverter" class="org.openecomp.sdc.be.model.tosca.validators.DataTypeValidatorConverter"/>
     <bean id="sdcSchemaUtils" class="org.openecomp.sdc.be.dao.cassandra.schema.SdcSchemaUtils"/>
     <bean id="dmaapProducer" class="org.openecomp.sdc.be.catalog.impl.DmaapProducer"/>
     <bean id="catalogOperation" class="org.openecomp.sdc.be.facade.operations.CatalogOperation"/>
     <bean id="userOperation" class="org.openecomp.sdc.be.facade.operations.UserOperation"/>
     <bean id="dmaapProducerHealth" class="org.openecomp.sdc.be.catalog.impl.DmaapProducerHealth"/>
-    <bean id="feature_toggle_dao"
-        class="org.openecomp.sdc.be.components.path.beans.FeatureToggleDaoMock"/>
-    <bean id="tosca-model-import-cassandra-dao"
-        class="org.openecomp.sdc.be.components.path.beans.ToscaModelImportCassandraDaoMock"/>
-    <bean name="httpClient" class="org.apache.http.impl.client.HttpClients"
-        factory-method="createDefault"/>
+    <bean id="feature_toggle_dao" class="org.openecomp.sdc.be.components.path.beans.FeatureToggleDaoMock"/>
+    <bean id="tosca-model-import-cassandra-dao" class="org.openecomp.sdc.be.components.path.beans.ToscaModelImportCassandraDaoMock"/>
+    <bean name="httpClient" class="org.apache.http.impl.client.HttpClients" factory-method="createDefault"/>
     <bean class="org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator"/>
-    <bean
-        class="org.openecomp.sdc.be.components.attribute.ComponentInstanceOutputAttributeDeclarator"/>
+    <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceOutputAttributeDeclarator"/>
     <bean class="org.openecomp.sdc.be.components.attribute.ComponentInstanceAttributeDeclarator"/>
 
 </beans>
