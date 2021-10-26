@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c16585d3_00982e2d",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/Login.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-10-26T08:30:06Z",
+      "side": 1,
+      "message": "Could be replaced with log4j. Same for others.",
+      "range": {
+        "startLine": 45,
+        "startChar": 7,
+        "endLine": 45,
+        "endChar": 56
+      },
+      "revId": "0878067530684aedcda541db8fd42eaf73d34d52",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
