@@ -22,6 +22,30 @@
       "revId": "0878067530684aedcda541db8fd42eaf73d34d52",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f987dbd_7b78036f",
+        "filename": "utils/webseal-simulator/src/main/java/org/openecomp/sdc/webseal/simulator/Login.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-10-26T13:50:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c16585d3_00982e2d",
+      "range": {
+        "startLine": 45,
+        "startChar": 7,
+        "endLine": 45,
+        "endChar": 56
+      },
+      "revId": "0878067530684aedcda541db8fd42eaf73d34d52",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
