@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "cb988e48_4e681479",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-10-26T13:05:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04aba200_73787b68",
+      "range": {
+        "startLine": 166,
+        "startChar": 35,
+        "endLine": 166,
+        "endChar": 47
+      },
+      "revId": "7411cfd8128bf5569550f53bd96e4d3900de6f79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21dff6ce_44866790",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "578f8162_eb85a7ef",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-10-26T13:05:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21dff6ce_44866790",
+      "range": {
+        "startLine": 527,
+        "startChar": 31,
+        "endLine": 527,
+        "endChar": 45
+      },
+      "revId": "7411cfd8128bf5569550f53bd96e4d3900de6f79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a9b65db_d39b621c",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "7411cfd8128bf5569550f53bd96e4d3900de6f79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "863cc6e7_c4f17e4f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-10-26T13:05:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a9b65db_d39b621c",
+      "range": {
+        "startLine": 554,
+        "startChar": 12,
+        "endLine": 554,
+        "endChar": 34
+      },
+      "revId": "7411cfd8128bf5569550f53bd96e4d3900de6f79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
