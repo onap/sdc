@@ -31,6 +31,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -248,4 +249,22 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
         requirementSubstitutionFilterPropertyDataDefinition.setConstraints(Arrays.asList(constraint));
         return requirementSubstitutionFilterPropertyDataDefinition;
     }
+
+    public void addSubstitutionFilterInGraph(String componentId,
+                                             ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties)
+        throws BusinessLogicException {
+        Either<SubstitutionFilterDataDefinition, StorageOperationStatus> updateSubstitutionFilter;
+        Optional<SubstitutionFilterDataDefinition> substitutionFilter = createSubstitutionFilterIfNotExist(componentId, true,
+            ComponentTypeEnum.SERVICE);
+        if (substitutionFilter.isPresent()) {
+            for (RequirementSubstitutionFilterPropertyDataDefinition filter : substitutionFilterProperties.getListToscaDataDefinition()) {
+                updateSubstitutionFilter = substitutionFilterOperation.addPropertyFilter(componentId, substitutionFilter.get(), filter);
+                if (updateSubstitutionFilter.isRight()) {
+                    throw new BusinessLogicException(componentsUtils
+                        .getResponseFormat(componentsUtils.convertFromStorageResponse(updateSubstitutionFilter.right().value())));
+                }
+            }
+        }
+    }
+
 }

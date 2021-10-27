@@ -42,6 +42,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -54,9 +55,11 @@ import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -146,6 +149,8 @@ public class ServiceImportParseLogic {
     private InputsBusinessLogic inputsBusinessLogic;
     @Autowired
     private ResourceImportManager resourceImportManager;
+    @Autowired
+    private ComponentSubstitutionFilterBusinessLogic substitutionFilterBusinessLogic;
     @Autowired
     private IInterfaceLifecycleOperation interfaceTypeOperation = null;
     @Autowired
@@ -1375,6 +1380,23 @@ public class ServiceImportParseLogic {
         }
         return updatedResource.left().value();
     }
+
+    public Service createSubstitutionFilterOnService(Service service,
+                                                     ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties)
+        throws BusinessLogicException {
+        if (substitutionFilterProperties.isEmpty()) {
+            return service;
+        }
+        substitutionFilterBusinessLogic.addSubstitutionFilterInGraph(service.getUniqueId(), substitutionFilterProperties);
+        Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
+        if (updatedResource.isRight()) {
+            throw new ComponentException(componentsUtils
+                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
+                    ComponentTypeEnum.SERVICE));
+        }
+        return updatedResource.left().value();
+    }
+
 
     public Service createServiceTransaction(Service service, User user, boolean isNormative) {
         // validate resource name uniqueness
