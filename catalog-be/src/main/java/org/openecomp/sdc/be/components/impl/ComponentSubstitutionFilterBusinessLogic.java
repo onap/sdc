@@ -31,6 +31,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -45,6 +46,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.tosca.utils.SubstitutionFilterConverter;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -248,4 +250,20 @@ public class ComponentSubstitutionFilterBusinessLogic extends BaseBusinessLogic 
         requirementSubstitutionFilterPropertyDataDefinition.setConstraints(Arrays.asList(constraint));
         return requirementSubstitutionFilterPropertyDataDefinition;
     }
+
+    public void addSubstitutionFilterInGraph(String componentId,
+                                             ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties)
+        throws BusinessLogicException {
+        Either<SubstitutionFilterDataDefinition, StorageOperationStatus> updateSubstitutionFilter = null;
+        for (RequirementSubstitutionFilterPropertyDataDefinition filter : substitutionFilterProperties.getListToscaDataDefinition()) {
+            updateSubstitutionFilter = substitutionFilterOperation
+                .addPropertyFilter(componentId, createSubstitutionFilterIfNotExist(componentId, true, ComponentTypeEnum.SERVICE).get(), filter);
+            if (updateSubstitutionFilter.isRight()) {
+                throw new BusinessLogicException(componentsUtils
+                    .getResponseFormat(componentsUtils.convertFromStorageResponse(updateSubstitutionFilter.right().value())));
+            }
+        }
+        new SubstitutionFilterConverter().convertToUi(updateSubstitutionFilter.left().value());
+    }
+
 }

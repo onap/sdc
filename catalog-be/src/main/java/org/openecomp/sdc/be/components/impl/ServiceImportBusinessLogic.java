@@ -46,6 +46,7 @@ import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.CINodeFilterUtils;
@@ -70,7 +71,9 @@ import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -244,7 +247,7 @@ public class ServiceImportBusinessLogic {
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
                                             CsarInfo csarInfo,
                                             Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                            boolean shouldLock, boolean inTransaction, String nodeName) {
+                                            boolean shouldLock, boolean inTransaction, String nodeName) throws BusinessLogicException {
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
         Service createdService;
         CreateServiceFromYamlParameter csfyp = new CreateServiceFromYamlParameter();
@@ -261,7 +264,7 @@ public class ServiceImportBusinessLogic {
             csfyp.setNodeName(nodeName);
             createdService = createServiceAndRIsFromYaml(service, false, nodeTypesArtifactsToCreate, shouldLock, inTransaction, csfyp);
             log.debug("#createResourceFromYaml - The resource {} has been created ", service.getName());
-        } catch (ComponentException e) {
+        } catch (ComponentException | BusinessLogicException e) {
             log.debug("create Service From Yaml failed,get ComponentException:{}", e);
             throw e;
         } catch (StorageException e) {
@@ -273,7 +276,8 @@ public class ServiceImportBusinessLogic {
 
     protected Service createServiceAndRIsFromYaml(Service service, boolean isNormative,
                                                   Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                                  boolean shouldLock, boolean inTransaction, CreateServiceFromYamlParameter csfyp) {
+                                                  boolean shouldLock, boolean inTransaction, CreateServiceFromYamlParameter csfyp)
+        throws BusinessLogicException {
         List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
         String yamlName = csfyp.getYamlName();
         ParsedToscaYamlInfo parsedToscaYamlInfo = csfyp.getParsedToscaYamlInfo();
@@ -300,6 +304,9 @@ public class ServiceImportBusinessLogic {
             Map<String, PropertyDefinition> properties = parsedToscaYamlInfo.getProperties();
             service = serviceImportParseLogic.createPropertiesOnService(service, properties);
             log.trace("************* Added properties from interface yaml {}", yamlName);
+            ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
+            service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
+            log.trace("************* Added SubstitutionFilter from interface yaml {}", yamlName);
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo.getInstances();
             log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
             service = createRIAndRelationsFromYaml(yamlName, service, uploadComponentInstanceInfoMap, topologyTemplateYaml,
@@ -335,7 +342,7 @@ public class ServiceImportBusinessLogic {
             service = serviceImportParseLogic.getServiceWithGroups(createArtifactsEither.left().value().getUniqueId());
             ASDCKpiApi.countCreatedResourcesKPI();
             return service;
-        } catch (ComponentException | StorageException e) {
+        } catch (ComponentException | StorageException | BusinessLogicException e) {
             serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw e;
         } finally {

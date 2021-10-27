@@ -76,7 +76,7 @@ public class TypeUtils {
         DATA_TYPES("data_types"), NODE_TYPES("node_types"), IMPORTS("imports"),
         //Operations
         IMPLEMENTATION("implementation"),
-
+        SUBSTITUTION_FILTERS("substitution_filter"),
         DERIVED_FROM_NAME("derivedFromName");
         // @formatter:om
 
