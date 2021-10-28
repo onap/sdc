@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3b3829d_7b01585f",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-10-28T09:29:58Z",
+      "side": 1,
+      "message": "check for usage",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 33
+      },
+      "revId": "c69cebd1c7e3d91215db9b63d046885236e7b31d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14869468_939e7bea",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-10-28T09:29:58Z",
+      "side": 1,
+      "message": "check for usage",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 95
+      },
+      "revId": "c69cebd1c7e3d91215db9b63d046885236e7b31d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44dd73b9_bbbca417",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/property-param-row/property-param-row.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-10-28T09:29:58Z",
+      "side": 1,
+      "message": "check for usage",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 0
+      },
+      "revId": "c69cebd1c7e3d91215db9b63d046885236e7b31d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a63480d_b9bdebc4",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/property-param-row/property-param-row.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-10-28T09:29:58Z",
+      "side": 1,
+      "message": "empty, can be removed?",
+      "range": {
+        "startLine": 36,
+        "startChar": 1,
+        "endLine": 38,
+        "endChar": 0
+      },
+      "revId": "c69cebd1c7e3d91215db9b63d046885236e7b31d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5de17e84_4822953a",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-operation/operation-creator/operation-creator.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-10-28T09:29:58Z",
+      "side": 1,
+      "message": "Variables should not be self-assigned",
+      "range": {
+        "startLine": 214,
+        "startChar": 0,
+        "endLine": 214,
+        "endChar": 78
+      },
+      "revId": "c69cebd1c7e3d91215db9b63d046885236e7b31d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c2274ae_ead7b19c",
+        "filename": "catalog-ui/src/app/ng2/services/tosca-artifact.service.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-10-28T09:29:58Z",
+      "side": 1,
+      "message": "check for usage",
+      "range": {
+        "startLine": 22,
+        "startChar": 73,
+        "endLine": 24,
+        "endChar": 53
+      },
+      "revId": "c69cebd1c7e3d91215db9b63d046885236e7b31d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
