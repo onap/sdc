@@ -20,7 +20,19 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import fj.data.Either;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -40,16 +52,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import fj.data.Either;
 
 public class DataTypeBusinessLogicTest {
 
@@ -73,6 +76,9 @@ public class DataTypeBusinessLogicTest {
 
     @Mock
     private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+
+    @Mock
+    private DataTypeImportManager dataTypeImportManager;
 
     @InjectMocks
     private DataTypeBusinessLogic testInstance;
@@ -104,6 +110,12 @@ public class DataTypeBusinessLogicTest {
         service.setComponentInstancesInputs(instanceInputMap);
         when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(new User());
         when(userAdminMock.getUser(USER_ID, false)).thenReturn(new User());
+    }
+
+    @Test
+    public void createDataTypeByYaml() {
+        testInstance.createDataTypeFromYaml("test", "test", true);
+        verify(dataTypeImportManager, Mockito.times(1)).createDataTypes("test", "test", true);
     }
 
     @Test

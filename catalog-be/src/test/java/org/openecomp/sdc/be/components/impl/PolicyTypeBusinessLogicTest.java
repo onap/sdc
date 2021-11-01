@@ -23,23 +23,27 @@ package org.openecomp.sdc.be.components.impl;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.google.common.collect.ImmutableMap;
-import fj.data.Either;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openecomp.sdc.be.DummyConfigurationManager;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
+import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
 import org.openecomp.sdc.be.components.utils.PolicyTypeBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -51,6 +55,10 @@ import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
+
+import com.google.common.collect.ImmutableMap;
+
+import fj.data.Either;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyTypeBusinessLogicTest {
@@ -66,6 +74,8 @@ public class PolicyTypeBusinessLogicTest {
     @Mock
     private PolicyTypeOperation policyTypeOperation;
     @Mock
+    private PolicyTypeImportManager policyTypeImportManager;
+    @Mock
     private ComponentsUtils componentsUtils;
     @Mock
     private UserValidations userValidations;
@@ -79,6 +89,12 @@ public class PolicyTypeBusinessLogicTest {
     @BeforeClass
     public static void beforeClass() {
         new DummyConfigurationManager();
+    }
+
+    @Test
+    public void createPolicyByYaml() {
+        testInstance.createPolicyTypeFromYaml("test", "test", true);
+        verify(policyTypeImportManager, Mockito.times(1)).createPolicyTypes(any(ToscaTypeImportData.class), eq("test"), eq(true));
     }
 
     @Test

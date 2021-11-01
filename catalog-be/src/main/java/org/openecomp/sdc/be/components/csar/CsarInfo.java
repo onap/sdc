@@ -88,6 +88,7 @@ public class CsarInfo {
     @Getter
     private Map<String, Resource> createdNodes;
     private Map<String, Object> datatypeDefinitions;
+    private Map<String, Object> policytypeDefinitions;
     private List<Map.Entry<String, byte[]>> globalSubstitutes;
 
 
@@ -195,16 +196,24 @@ public class CsarInfo {
             for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
                 final String yamlFileContents = new String(entry.getValue());
                 final Map<String, Object> mappedToscaTemplate = new Yaml().load(yamlFileContents);
-                datatypeDefinitions.putAll(getDataTypesFromTemplate(mappedToscaTemplate));
+                datatypeDefinitions.putAll(getTypesFromTemplate(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.DATA_TYPES));
             }
-            datatypeDefinitions.putAll(getDataTypesFromTemplate(mappedToscaMainTemplate));
+            datatypeDefinitions.putAll(getTypesFromTemplate(mappedToscaMainTemplate, TypeUtils.ToscaTagNamesEnum.DATA_TYPES));
         }
         return datatypeDefinitions;
     }
+
+    public Map<String, Object> getPolicyTypes() {
+        if (policytypeDefinitions == null) {
+            policytypeDefinitions = new HashMap<>();
+            policytypeDefinitions.putAll(getTypesFromTemplate(mappedToscaMainTemplate, TypeUtils.ToscaTagNamesEnum.POLICY_TYPES));
+        }
+        return policytypeDefinitions;
+    }
     
     @SuppressWarnings("unchecked")    
-    private Map<String, Object> getDataTypesFromTemplate(final Map<String, Object> mappedToscaTemplate) {
-        final Either<Object, ResultStatusEnum> dataTypesEither = findToscaElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.DATA_TYPES,
+    private Map<String, Object> getTypesFromTemplate(final Map<String, Object> mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum type) {
+        final Either<Object, ResultStatusEnum> dataTypesEither = findToscaElement(mappedToscaTemplate, type,
                         ToscaElementTypeEnum.MAP);
         if (dataTypesEither != null && dataTypesEither.isLeft()) {
             return (Map<String, Object>) dataTypesEither.left().value();
