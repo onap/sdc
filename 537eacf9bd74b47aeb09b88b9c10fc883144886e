@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d549f26d_d93e8ef3",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/ModelToscaTypeImportTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T17:35:01Z",
+      "side": 1,
+      "message": "the base URL should be composed from the test configuration: integration-tests/src/test/resources/ci/conf/sdc-conf.yaml, represented by the class org.onap.sdc.backend.ci.tests.config.Config.",
+      "range": {
+        "startLine": 65,
+        "startChar": 44,
+        "endLine": 65,
+        "endChar": 65
+      },
+      "revId": "537eacf9bd74b47aeb09b88b9c10fc883144886e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b01024b2_692f7fcc",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/ModelToscaTypeImportTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T17:35:01Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 66,
+        "startChar": 49,
+        "endLine": 66,
+        "endChar": 70
+      },
+      "revId": "537eacf9bd74b47aeb09b88b9c10fc883144886e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
