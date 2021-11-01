@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7e9be57_9e2c3633",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T16:03:11Z",
+      "side": 1,
+      "message": "fix param name",
+      "range": {
+        "startLine": 159,
+        "startChar": 14,
+        "endLine": 159,
+        "endChar": 27
+      },
+      "revId": "5635f04732030226c773fc0b07f97c354bb6adfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b972ba7_437d431e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T16:03:11Z",
+      "side": 1,
+      "message": "remove unused parameter, either use or remove it.",
+      "range": {
+        "startLine": 163,
+        "startChar": 84,
+        "endLine": 163,
+        "endChar": 127
+      },
+      "revId": "5635f04732030226c773fc0b07f97c354bb6adfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0cf9bb7e_fdea50d2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyTypeBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T16:03:11Z",
+      "side": 1,
+      "message": "unused parameter, either use or remove it",
+      "range": {
+        "startLine": 88,
+        "startChar": 12,
+        "endLine": 88,
+        "endChar": 54
+      },
+      "revId": "5635f04732030226c773fc0b07f97c354bb6adfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b0cbfa9_2d7f465d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T16:03:11Z",
+      "side": 1,
+      "message": "No need to mock this method for any parameter. The default from Mockito is to return null.",
+      "range": {
+        "startLine": 117,
+        "startChar": 8,
+        "endLine": 117,
+        "endChar": 127
+      },
+      "revId": "5635f04732030226c773fc0b07f97c354bb6adfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab466535_70aa324d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypeBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T16:03:11Z",
+      "side": 1,
+      "message": "you should be specific on what to check as you have control of the inputs: \"test\", \"test\", true",
+      "range": {
+        "startLine": 119,
+        "startChar": 72,
+        "endLine": 119,
+        "endChar": 128
+      },
+      "revId": "5635f04732030226c773fc0b07f97c354bb6adfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "762ae6e2_fa57cdc7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyTypeBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T16:03:11Z",
+      "side": 1,
+      "message": "same here, no need to mock.",
+      "range": {
+        "startLine": 96,
+        "startChar": 8,
+        "endLine": 96,
+        "endChar": 144
+      },
+      "revId": "5635f04732030226c773fc0b07f97c354bb6adfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92c331d6_8f8ad697",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyTypeBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T16:03:11Z",
+      "side": 1,
+      "message": "you should be specific on what to check as you have control of the inputs",
+      "range": {
+        "startLine": 98,
+        "startChar": 76,
+        "endLine": 98,
+        "endChar": 145
+      },
+      "revId": "5635f04732030226c773fc0b07f97c354bb6adfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
