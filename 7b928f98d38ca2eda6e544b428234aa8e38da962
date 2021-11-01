@@ -1,0 +1,487 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e437282_1c071892",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactTypeImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "not being used",
+      "range": {
+        "startLine": 41,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 98
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d5a5288_328daadd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactTypeImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "I recommend to inject those classes in the constructor, using the spring @Autowired annotation.",
+      "range": {
+        "startLine": 42,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 53
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06ba6cd7_f69a7fef",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactTypeImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "unnecessary parameter, please remove",
+      "range": {
+        "startLine": 57,
+        "startChar": 95,
+        "endLine": 57,
+        "endChar": 101
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acb6f7c5_52126ee8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "I recommend to inject in the constructor",
+      "range": {
+        "startLine": 185,
+        "startChar": 4,
+        "endLine": 186,
+        "endChar": 56
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "667caa2f_5844c766",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesFetchServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "remove space",
+      "range": {
+        "startLine": 336,
+        "startChar": 85,
+        "endLine": 336,
+        "endChar": 86
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6506a0f_f2889673",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "please, provide a description for the parameter, e.g.: Zip file containing the TOSCA Service Template yaml with artifact_types definition",
+      "range": {
+        "startLine": 192,
+        "startChar": 66,
+        "endLine": 192,
+        "endChar": 81
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b63fded_1f1a87cc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/TypesUploadServlet.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 195,
+        "startChar": 66,
+        "endLine": 195,
+        "endChar": 86
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fab802e2_68622679",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ArtifactTypeImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "better not over complicate things. You don\u0027t need a class lifecycle here, you have one single test. Besides, if you don\u0027t want shared instances between unit tests, better to use the default PER_METHOD Lifecycle.\nJust remove this, and change the setup from @BeforeAll to @BeforeEach.",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 34
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e737e3b_00a991c6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ArtifactTypeImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "@InjectMocks should instantiate for you, so this not necessary. It is either a mock or a real instance.",
+      "range": {
+        "startLine": 47,
+        "startChar": 63,
+        "endLine": 47,
+        "endChar": 97
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96fb97e2_0009e3a4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ArtifactTypeImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "@BeforeEach",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 14
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad795b52_e6ed8faf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ArtifactTypeImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "Exception is not thrown here",
+      "range": {
+        "startLine": 56,
+        "startChar": 23,
+        "endLine": 56,
+        "endChar": 40
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f41a82d5_6e8f851b",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/api/ActionStatus.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "error not configured in the catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+      "range": {
+        "startLine": 130,
+        "startChar": 4,
+        "endLine": 130,
+        "endChar": 31
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64dfcf6a_d5de8d03",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/api/ActionStatus.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "remove space",
+      "range": {
+        "startLine": 130,
+        "startChar": 33,
+        "endLine": 130,
+        "endChar": 34
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07db6252_7958cedd",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/resources/data/ArtifactTypeData.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "it seems that this constructor is not in use",
+      "range": {
+        "startLine": 38,
+        "startChar": 11,
+        "endLine": 38,
+        "endChar": 27
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fec7b29f_14b31640",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ArtifactTypeDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "any specific reason to not copy the properties list?",
+      "range": {
+        "startLine": 42,
+        "startChar": 34,
+        "endLine": 42,
+        "endChar": 89
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b77b3a48_cd4ba519",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "I would be great to document this class and its methods.",
+      "range": {
+        "startLine": 59,
+        "startChar": 13,
+        "endLine": 59,
+        "endChar": 34
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad2cefb1_8f8b790f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "I would recommend to change to LOGGER",
+      "range": {
+        "startLine": 61,
+        "startChar": 32,
+        "endLine": 61,
+        "endChar": 35
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5450520_6f43a7c2",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "I recommend to inject in the constructor, as the other composition relationships of this class",
+      "range": {
+        "startLine": 63,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 54
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d348968c_3102e643",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "I believe this could be replaced by a java.util.Collections.emptyMap().",
+      "range": {
+        "startLine": 127,
+        "startChar": 16,
+        "endLine": 127,
+        "endChar": 49
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a199afe_c876cbd4",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "I recommend to use Optional\u003cString\u003e as one of the paths returns null",
+      "range": {
+        "startLine": 215,
+        "startChar": 12,
+        "endLine": 215,
+        "endChar": 18
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db87bf22_8412b6d9",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ArtifactTypeDataDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-01T18:21:33Z",
+      "side": 1,
+      "message": "is there a reason to not copy the propertiesData list?",
+      "range": {
+        "startLine": 46,
+        "startChar": 38,
+        "endLine": 46,
+        "endChar": 66
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
