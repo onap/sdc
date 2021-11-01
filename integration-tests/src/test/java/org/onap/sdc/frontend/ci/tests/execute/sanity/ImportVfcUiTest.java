@@ -80,13 +80,13 @@ public class ImportVfcUiTest extends SetupCDTest {
     @BeforeClass
     public void beforeClass() {
         filePath = FileHandling.getFilePath("VFCs/");
+        webDriver = DriverFactory.getDriver();
+        homePage = new HomePage(webDriver);
     }
 
     @Test
     public void importVFC_createVF_addVFC2VF_test() throws UnzipException {
         ComponentPage componentPage;
-        webDriver = DriverFactory.getDriver();
-        homePage = new HomePage(webDriver);
         // TC - Import VFC with root namespace
         String fileName = "org.openecomp.resource.VFC-root.yml";
         CreateVfcFlow createVfcFlow = createVFC(fileName, ModelName.DEFAULT_MODEL_NAME.getName(), vfcCategory);
