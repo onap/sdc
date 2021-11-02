@@ -1,0 +1,303 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "29bc10cc_1cf35bd4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "I would say to return optional. Either you have the template or not, I don\u0027t think empty string is a good representation of the template absence.",
+      "range": {
+        "startLine": 171,
+        "startChar": 12,
+        "endLine": 171,
+        "endChar": 18
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b10c57a_6367c2a5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "you only return true or throw an exception. So in this case, better return void.",
+      "range": {
+        "startLine": 492,
+        "startChar": 11,
+        "endLine": 492,
+        "endChar": 18
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4b142c5_97db4b79",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "adjust format",
+      "range": {
+        "startLine": 492,
+        "startChar": 43,
+        "endLine": 493,
+        "endChar": 106
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99e66aa2_e27497a6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "using a deprecated method",
+      "range": {
+        "startLine": 499,
+        "startChar": 20,
+        "endLine": 499,
+        "endChar": 25
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7911ba3b_edfba008",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "two parameters in the format, but only one is given. Missing status.",
+      "range": {
+        "startLine": 499,
+        "startChar": 26,
+        "endLine": 499,
+        "endChar": 88
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c773dfd_8df73b00",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "better check also if not empty: CollectionUtils.isNotEmpty(resourceProperties)",
+      "range": {
+        "startLine": 510,
+        "startChar": 12,
+        "endLine": 510,
+        "endChar": 38
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a03ba7fc_4c66da04",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 534,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "adjust format",
+      "range": {
+        "startLine": 533,
+        "startChar": 94,
+        "endLine": 534,
+        "endChar": 129
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08514384_9cebd920",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "parameter added to the message but no value was given",
+      "range": {
+        "startLine": 302,
+        "startChar": 73,
+        "endLine": 302,
+        "endChar": 76
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09746554_71d3c7d0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1376,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "Didn\u0027t get the idea of the method.\nIf you have properties, you create the properties and return the given service (which I believe it was populated with the properties, not sure).\nIf you don\u0027t have properties, why do you get the service again from the database if, in theory, nothing was changed?",
+      "range": {
+        "startLine": 1376,
+        "startChar": 19,
+        "endLine": 1376,
+        "endChar": 44
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "967b90c9_04716940",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "you should add some test with the interface file",
+      "range": {
+        "startLine": 152,
+        "startChar": 66,
+        "endLine": 152,
+        "endChar": 70
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f79bceee_a7eb72f8",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "adjust format, exceeding line limit",
+      "range": {
+        "startLine": 586,
+        "startChar": 4,
+        "endLine": 586,
+        "endChar": 153
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d449d68_58107325",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "fix typo",
+      "range": {
+        "startLine": 590,
+        "startChar": 56,
+        "endLine": 590,
+        "endChar": 65
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc7de2c7_5b8ed6f0",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:04:43Z",
+      "side": 1,
+      "message": "this return is never used. Better to remove the either and just return the StorageOperationStatus",
+      "range": {
+        "startLine": 1253,
+        "startChar": 18,
+        "endLine": 1253,
+        "endChar": 42
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
