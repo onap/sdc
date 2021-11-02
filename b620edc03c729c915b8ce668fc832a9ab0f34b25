@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "bac6ef1e_28eb0819",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ModelBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T11:18:16Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "abb6be2d_e054bfd7",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 31
+      },
+      "revId": "b620edc03c729c915b8ce668fc832a9ab0f34b25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "093d4a6b_b11f6b0c",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 3
