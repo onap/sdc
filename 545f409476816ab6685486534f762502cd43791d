@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "0c3e06a2_4134dacd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T16:38:46Z",
+      "side": 1,
+      "message": "I would say this is not a fix, as nothing was broken.\nI recommend to change to something like:\n\"Move CSV\u0027s generation folder to target\"",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 36
+      },
+      "revId": "545f409476816ab6685486534f762502cd43791d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "28fc6137_c150294d",
         "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
         "patchSetId": 1
