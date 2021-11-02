@@ -707,6 +707,30 @@
     },
     {
       "key": {
+        "uuid": "7050e2e9_4bc2d04a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/ArtifactTypeDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T18:11:45Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "da95fe82_20613a1d",
+      "range": {
+        "startLine": 42,
+        "startChar": 34,
+        "endLine": 42,
+        "endChar": 89
+      },
+      "revId": "7b928f98d38ca2eda6e544b428234aa8e38da962",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b77b3a48_cd4ba519",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
         "patchSetId": 3
