@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5e92e48f_4b6d2127",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/ModelToscaTypeImportTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-02T10:02:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d549f26d_d93e8ef3",
+      "range": {
+        "startLine": 65,
+        "startChar": 44,
+        "endLine": 65,
+        "endChar": 65
+      },
+      "revId": "537eacf9bd74b47aeb09b88b9c10fc883144886e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b01024b2_692f7fcc",
         "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/ModelToscaTypeImportTest.java",
         "patchSetId": 7
@@ -45,6 +69,30 @@
       "revId": "537eacf9bd74b47aeb09b88b9c10fc883144886e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed84a4f8_58d5b338",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/ModelToscaTypeImportTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-02T10:02:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b01024b2_692f7fcc",
+      "range": {
+        "startLine": 66,
+        "startChar": 49,
+        "endLine": 66,
+        "endChar": 70
+      },
+      "revId": "537eacf9bd74b47aeb09b88b9c10fc883144886e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
