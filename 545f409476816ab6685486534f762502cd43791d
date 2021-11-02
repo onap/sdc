@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28fc6137_c150294d",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T16:08:41Z",
+      "side": 1,
+      "message": "Safer to use File.separator instead of \"/\" or Path.of(\"target\", \"fault_\" + time + \".csv\").toString().\nSame for the other similar changes.",
+      "range": {
+        "startLine": 153,
+        "startChar": 33,
+        "endLine": 153,
+        "endChar": 34
+      },
+      "revId": "545f409476816ab6685486534f762502cd43791d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6147beb7_67bc5063",
+        "filename": "asdctool/src/main/java/org/openecomp/sdc/asdctool/impl/ArtifactUuidFix.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-02T16:08:41Z",
+      "side": 1,
+      "message": "maybe extract \"target\" to a constant as it is used about 4 times in this class",
+      "range": {
+        "startLine": 153,
+        "startChar": 27,
+        "endLine": 153,
+        "endChar": 33
+      },
+      "revId": "545f409476816ab6685486534f762502cd43791d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
