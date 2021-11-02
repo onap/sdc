@@ -22,6 +22,30 @@
       "revId": "a95ae3c1319d834c06fb90a2ebd0fd61cb80f30a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dca571ba_b3788965",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/ModelToscaTypeImportTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-02T16:48:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d23f515_e7b198dd",
+      "range": {
+        "startLine": 131,
+        "startChar": 0,
+        "endLine": 134,
+        "endChar": 98
+      },
+      "revId": "a95ae3c1319d834c06fb90a2ebd0fd61cb80f30a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
