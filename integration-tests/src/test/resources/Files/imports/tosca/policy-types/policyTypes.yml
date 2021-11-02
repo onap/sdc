@@ -1,0 +1,3 @@
+tosca.policies.Scaling:
+  derived_from: tosca.policies.Root
+  description: The TOSCA Policy Type definition that is used to govern scaling of TOSCA nodes or groups of nodes.
