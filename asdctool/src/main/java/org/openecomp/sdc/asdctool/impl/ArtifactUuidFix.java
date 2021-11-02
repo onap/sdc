@@ -19,8 +19,6 @@
  */
 package org.openecomp.sdc.asdctool.impl;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -30,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -44,9 +44,9 @@ import org.openecomp.sdc.asdctool.impl.validator.utils.VfModuleArtifactPayloadEx
 import org.openecomp.sdc.be.components.distribution.engine.VfModuleArtifactPayload;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -85,9 +85,10 @@ import org.openecomp.sdc.be.tosca.ToscaRepresentation;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
-import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component("artifactUuidFix")
@@ -95,7 +96,8 @@ public class ArtifactUuidFix {
 
     private static final String MIGRATION1707_ARTIFACT_UUID_FIX = "Migration1707ArtifactUuidFix  fix group:  group name {} correct artifactId {} artifactUUID {} ";
     private static final String FAILED_TO_FETCH_VF_RESOURCES = "Failed to fetch vf resources ";
-    private static Logger log = Logger.getLogger(ArtifactUuidFix.class.getName());
+    private static final String TARGET = "target";
+    private static final Logger log = LoggerFactory.getLogger(ArtifactUuidFix.class);
     private JanusGraphDao janusGraphDao;
     private ToscaOperationFacade toscaOperationFacade;
     private ToscaExportHandler toscaExportUtils;
@@ -150,8 +152,8 @@ public class ArtifactUuidFix {
 
     private boolean fetchFaultVf(List<Resource> vfLst, long time) {
         log.info("Find fault VF ");
-        String fileName = "fault_" + time + ".csv";
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF_8))) {
+        String fileName = Path.of(TARGET, "fault_" + time + ".csv").toString();
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
             writer.write("vf name, vf id, state, version\n");
             Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
             hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.RESOURCE.name());
@@ -214,7 +216,7 @@ public class ArtifactUuidFix {
             return true;
         }
         String fileName = "problemVf_" + time + ".csv";
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF_8))) {
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
             writer.write("vf name, vf id, state, version, example service name\n");
             Set<String> vfIds = new HashSet<>();
             for (Service service : serviceList) {
@@ -254,8 +256,8 @@ public class ArtifactUuidFix {
 
     private boolean fetchServices(String fixServices, List<Service> serviceList, long time) {
         log.info("Find problem Services {}", fixServices);
-        String fileName = "problemService_" + time + ".csv";
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF_8))) {
+        String fileName = Path.of(TARGET, "problemService_" + time + ".csv").toString();
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
             writer.write("service name, service id, state, version\n");
             Map<GraphPropertyEnum, Object> hasProps = new EnumMap<>(GraphPropertyEnum.class);
             hasProps.put(GraphPropertyEnum.COMPONENT_TYPE, ComponentTypeEnum.SERVICE.name());
@@ -529,6 +531,7 @@ public class ArtifactUuidFix {
         return false;
     }
 
+
     private boolean fix(List<Resource> vfLst, List<Service> serviceList, Map<String, List<Component>> nodesToFixTosca,
                         Map<String, List<Component>> vfToFixTosca, Map<String, List<Component>> servicesToFixTosca) {
         boolean res = true;
@@ -541,8 +544,9 @@ public class ArtifactUuidFix {
         }
         Set<String> fixedIds = new HashSet<>();
         long time = System.currentTimeMillis();
-        String fileName = "FailedGenerateTosca" + "_" + time + ".csv";
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF_8))) {
+        String fileName = Path.of(TARGET, "FailedGenerateTosca" + "_" + time + ".csv").toString();
+
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
             writer.write("componentType, name, version, UID, UUID, invariantUUID, state\n");
             List<Component> failedList = new ArrayList<>();
             if (res && nodesToFixTosca != null && !nodesToFixTosca.isEmpty()) {
@@ -574,6 +578,7 @@ public class ArtifactUuidFix {
             if (servicesToFixTosca != null && !servicesToFixTosca.isEmpty()) {
                 generateAndSaveToscaArtifacts(servicesToFixTosca, fixedIds, serviceList, failedList);
             }
+
             for (Component component : serviceList) {
                 res = generateToscaPerComponent(fixedIds, component);
                 if (res) {
@@ -721,7 +726,7 @@ public class ArtifactUuidFix {
                 }
             }
         }
-        log.debug("Fix data on graph finished: VertexTypeEnum {} EdgeLabelEnum {} res {}", vertexTypeEnum.getName(), res);
+        log.debug("Fix data on graph finished: VertexTypeEnum {} EdgeLabelEnum {} res {}", vertexTypeEnum.getName(), edgeLabelEnum, res);
         return res;
     }
 
@@ -857,10 +862,10 @@ public class ArtifactUuidFix {
                     if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE) && group.getArtifacts() != null) {
                         fixVfGroup(resource, artifactsMap, group);
                     }
-                    if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE) && (group.getArtifacts() == null || group.getArtifacts()
-                        .isEmpty())) {
+                    if (group.getType().equals(Constants.DEFAULT_GROUP_VF_MODULE) &&
+                        (group.getArtifacts() == null || group.getArtifacts().isEmpty())) {
                         log.debug("Migration1707ArtifactUuidFix  add group to delete list fix resource: id {},  name {} ", resource.getUniqueId(),
-                            resource.getName(), group.getName());
+                            resource.getName());
                         groupsToDelete.add(group);
                     }
                 }
@@ -1008,8 +1013,8 @@ public class ArtifactUuidFix {
     public boolean validateTosca(Map<String, List<Component>> vertices, Map<String, List<Component>> compToFix, String name) {
         boolean result = true;
         long time = System.currentTimeMillis();
-        String fileName = name + "_" + time + ".csv";
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF_8))) {
+        String fileName = Path.of(TARGET, name + "_" + time + ".csv").toString();
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), StandardCharsets.UTF_8))) {
             writer.write("name, UUID, invariantUUID, state, version\n");
             for (Map.Entry<String, List<Component>> entry : vertices.entrySet()) {
                 List<Component> compList = entry.getValue();
@@ -1128,7 +1133,7 @@ public class ArtifactUuidFix {
 
     private void fillVfModuleInstHeatEnvPayload(Component parent, ComponentInstance instance, List<GroupInstance> groupsForCurrVF,
                                                 ArtifactDefinition vfModuleArtifact) {
-        log.debug("generate new vf module for component. name  {}, id {}, Version {}", instance.getName(), instance.getUniqueId());
+        log.debug("generate new vf module for component. name {}, id {}", instance.getName(), instance.getUniqueId());
         String uniqueId = UniqueIdBuilder
             .buildInstanceArtifactUniqueId(parent.getUniqueId(), instance.getUniqueId(), vfModuleArtifact.getArtifactLabel());
         vfModuleArtifact.setUniqueId(uniqueId);

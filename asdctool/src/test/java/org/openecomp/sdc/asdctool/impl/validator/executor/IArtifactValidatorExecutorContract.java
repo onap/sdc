@@ -20,12 +20,12 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
-
-import static org.mockito.Mockito.mock;
 
 public abstract class IArtifactValidatorExecutorContract {
 
@@ -47,4 +47,3 @@ public abstract class IArtifactValidatorExecutorContract {
         );
     }
 }
-
