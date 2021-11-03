@@ -20,7 +20,6 @@
 
 package org.openecomp.sdc.asdctool.impl.validator.executor;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
@@ -51,8 +50,7 @@ public interface ArtifactValidatorExecutorContract {
 
         VertexTypeEnum type = null;
         Map<GraphPropertyEnum, Object> hasProps = null;
-        Assertions.assertThrows(NullPointerException.class, () ->
-            testSubject.getVerticesToValidate(type, hasProps)
+        Assertions.assertThrows(NullPointerException.class, () -> testSubject.getVerticesToValidate(type, hasProps)
         );
     }
 
@@ -68,8 +66,6 @@ public interface ArtifactValidatorExecutorContract {
         Map<String, List<Component>> vertices = new HashMap<>();
         vertices.put("stam", linkedList);
 
-        // Initially no outputFilePath was passed to this function (hence it is set to null)
-        // TODO: Fix this null and see if the argument is used by this function
-        assertFalse(testSubject.validate(vertices, null));
+        Assertions.assertFalse(testSubject.validate(vertices, "target/"));
     }
 }
