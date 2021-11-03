@@ -17,7 +17,6 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -59,10 +58,13 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -123,6 +125,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     private final InputsBusinessLogic inputsBusinessLogic = mock(InputsBusinessLogic.class);
     private final PropertyBusinessLogic propertyBusinessLogic = mock(PropertyBusinessLogic.class);
     private final LifecycleBusinessLogic lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
+    private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic = mock(ComponentNodeFilterBusinessLogic.class);
 
     private ResponseFormatManager responseManager = null;
     private User user = null;
@@ -157,6 +160,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         testSubject.setInputsBusinessLogic(inputsBusinessLogic);
         testSubject.setPropertyBusinessLogic(propertyBusinessLogic);
         testSubject.setLifecycleBusinessLogic(lifecycleBusinessLogic);
+        testSubject.setComponentNodeFilterBusinessLogic(componentNodeFilterBusinessLogic);
     }
 
     @Test
@@ -1195,6 +1199,32 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     }
 
     @Test
+    public void testAssociateCINodeFilterToComponent() {
+        String yamlName = "yamlName.yml";
+        Service service = createServiceObject(true);
+        Map<String, CINodeFilterDataDefinition> nodeFilterMap = getNodeFilterMap();
+
+        when(componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(service.getUniqueId(), nodeFilterMap))
+            .thenReturn(StorageOperationStatus.OK);
+
+        testSubject.associateCINodeFilterToComponent(yamlName, service, nodeFilterMap);
+        verify(componentNodeFilterBusinessLogic, times(1)).associateNodeFilterToComponentInstance(service.getUniqueId(),
+            nodeFilterMap);
+    }
+
+    @Test
+    public void testAssociateCINodeFilterToComponentFail() {
+        String yamlName = "yamlName.yml";
+        Service service = createServiceObject(true);
+        Map<String, CINodeFilterDataDefinition> nodeFilterMap = getNodeFilterMap();
+
+        when(componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(service.getUniqueId(), nodeFilterMap))
+            .thenReturn(StorageOperationStatus.NOT_FOUND);
+
+        Assertions.assertThrows(ComponentException.class, () -> testSubject.associateCINodeFilterToComponent(yamlName, service, nodeFilterMap));
+    }
+
+    @Test
     void testCreateServiceTransaction() {
         Service service = createServiceObject(true);
         List<ComponentInstance> list = new ArrayList<>();
@@ -2136,6 +2166,17 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         ResponseFormat expectedResponse = responseManager.getResponseFormat(expectedStatus, variables);
         assertThat(expectedResponse.getStatus()).isEqualTo(actualResponse.getStatus());
         assertThat(expectedResponse.getFormattedMessage()).isEqualTo(actualResponse.getFormattedMessage());
+    }
+
+    private Map<String, CINodeFilterDataDefinition> getNodeFilterMap() {
+        CINodeFilterDataDefinition ciNodeFilterDataDefinition = new CINodeFilterDataDefinition();
+        RequirementNodeFilterPropertyDataDefinition propertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
+        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propertyList = new ListDataDefinition<>();
+        propertyList.add(propertyDataDefinition);
+        ciNodeFilterDataDefinition.setProperties(propertyList);
+        Map<String, CINodeFilterDataDefinition> nodeFilterMap = new HashMap<>();
+        nodeFilterMap.put("componentInstanceID", ciNodeFilterDataDefinition);
+        return nodeFilterMap;
     }
 
 }

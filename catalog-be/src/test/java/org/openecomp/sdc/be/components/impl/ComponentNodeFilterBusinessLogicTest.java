@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,6 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +52,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -537,6 +540,56 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
                 NodeFilterConstraintType.PROPERTIES, 0));
 
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
+    }
+
+    @Test
+    public void testAssociateNodeFilterToComponentInstance() {
+        CINodeFilterDataDefinition ciNodeFilterDataDefinition = new CINodeFilterDataDefinition();
+
+        RequirementNodeFilterPropertyDataDefinition propertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
+        propertyDataDefinition.setName("order");
+        propertyDataDefinition.setConstraints(Collections.singletonList("order: {equal: 2"));
+        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propertyList = new ListDataDefinition<>();
+        propertyList.add(propertyDataDefinition);
+        ciNodeFilterDataDefinition.setProperties(propertyList);
+
+        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilityList = new ListDataDefinition<>();
+        ciNodeFilterDataDefinition.setCapabilities(capabilityList);
+
+        Map<String, CINodeFilterDataDefinition> nodeFilterMap = new HashMap<>();
+        nodeFilterMap.put(componentInstanceId, ciNodeFilterDataDefinition);
+
+        when(nodeFilterOperation.createNodeFilter(componentId, componentInstanceId)).thenReturn(Either.left(ciNodeFilterDataDefinition));
+        when(nodeFilterOperation.addNewProperty(anyString(), anyString(), any(CINodeFilterDataDefinition.class),
+            any(RequirementNodeFilterPropertyDataDefinition.class))).thenReturn(Either.left(ciNodeFilterDataDefinition));
+
+        StorageOperationStatus status = componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(componentId, nodeFilterMap);
+        assertEquals(StorageOperationStatus.OK, status);
+    }
+
+    @Test
+    public void testAssociateNodeFilterToComponentInstanceFail() {
+        CINodeFilterDataDefinition ciNodeFilterDataDefinition = new CINodeFilterDataDefinition();
+
+        RequirementNodeFilterPropertyDataDefinition propertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
+        propertyDataDefinition.setName("order");
+        propertyDataDefinition.setConstraints(Collections.singletonList("order: {equal: 2"));
+        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propertyList = new ListDataDefinition<>();
+        propertyList.add(propertyDataDefinition);
+        ciNodeFilterDataDefinition.setProperties(propertyList);
+
+        ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilityList = new ListDataDefinition<>();
+        ciNodeFilterDataDefinition.setCapabilities(capabilityList);
+
+        Map<String, CINodeFilterDataDefinition> nodeFilterMap = new HashMap<>();
+        nodeFilterMap.put(componentInstanceId, ciNodeFilterDataDefinition);
+
+        when(nodeFilterOperation.createNodeFilter(componentId, componentInstanceId)).thenReturn(Either.left(ciNodeFilterDataDefinition));
+        when(nodeFilterOperation.addNewProperty(anyString(), anyString(), any(CINodeFilterDataDefinition.class),
+            any(RequirementNodeFilterPropertyDataDefinition.class))).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
+
+        Assertions.assertThrows(ComponentException.class, () -> componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(componentId,
+            nodeFilterMap));
     }
 
     @Test

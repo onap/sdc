@@ -21,11 +21,16 @@ package org.openecomp.sdc.be.components.impl;
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
 
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -317,5 +322,83 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD, uiConstraint.getServicePropertyName(),
             new ConstraintConvertor().convert(uiConstraint), true, componentTypeEnum, nodeFilterConstraintType,
             StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? "" : uiConstraint.getCapabilityName());
+    }
+
+    public StorageOperationStatus associateNodeFilterToComponentInstance(final String componentId,
+                                                                         final Map<String, CINodeFilterDataDefinition> instNodeFilter) {
+        for (Entry<String, CINodeFilterDataDefinition> filter : instNodeFilter.entrySet()) {
+            CINodeFilterDataDefinition ciNodeFilterDataDefinition = filter.getValue();
+            String componentInstanceId = filter.getKey();
+            Either<CINodeFilterDataDefinition, StorageOperationStatus> nodeFilter = nodeFilterOperation.createNodeFilter(componentId,
+                componentInstanceId);
+            if (nodeFilter.isRight()) {
+                LOGGER.error(BUSINESS_PROCESS_ERROR, "Failed to Create Node filter on component instance with id {}",
+                    filter.getKey());
+                return nodeFilter.right().value();
+            }
+
+            //associate node filter properties to component instance
+            List<RequirementNodeFilterPropertyDataDefinition> properties = ciNodeFilterDataDefinition.getProperties()
+                .getListToscaDataDefinition();
+            if (!properties.isEmpty()) {
+                properties.forEach(property -> {
+                    RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition =
+                        getRequirementNodeFilterPropertyDataDefinition(property);
+                    Either<CINodeFilterDataDefinition, StorageOperationStatus> nodeFilterProperty = nodeFilterOperation
+                        .addNewProperty(componentId, componentInstanceId, nodeFilter.left().value(), requirementNodeFilterPropertyDataDefinition);
+                    if (nodeFilterProperty.isRight()) {
+                        throw new ComponentException(
+                            componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nodeFilterProperty.right().value()),
+                                componentInstanceId));
+                    }
+                });
+            }
+
+            //associate node filter capabilities to component instance
+            List<RequirementNodeFilterCapabilityDataDefinition> capabilities = ciNodeFilterDataDefinition.getCapabilities()
+                .getListToscaDataDefinition();
+            if (!capabilities.isEmpty()) {
+                capabilities.forEach(capability -> {
+                    RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition =
+                        new RequirementNodeFilterCapabilityDataDefinition();
+                    requirementNodeFilterCapabilityDataDefinition.setName(capability.getName());
+                    requirementNodeFilterCapabilityDataDefinition.setProperties(getProperties(capability.getProperties()));
+                    Either<CINodeFilterDataDefinition, StorageOperationStatus> nodeFilterCapability = nodeFilterOperation
+                        .addNewCapabilities(componentId, componentInstanceId, nodeFilter.left().value(),
+                            requirementNodeFilterCapabilityDataDefinition);
+                    if (nodeFilterCapability.isRight()) {
+                        throw new ComponentException(
+                            componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nodeFilterCapability.right().value()),
+                                componentInstanceId));
+                    }
+                });
+            }
+        }
+        return StorageOperationStatus.OK;
+    }
+
+    private List<String> getNodeFilterConstraints(String name, List<String> value) {
+        List<String> constraints = new ArrayList<>();
+        String values = value.get(0).split("\n")[0];
+        constraints.add(name + ": {" + values + "}");
+        return constraints;
+    }
+
+    private ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties(ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {
+        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> updatedProperties = new ListDataDefinition<>();
+        properties.getListToscaDataDefinition().forEach(property -> {
+            RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition = getRequirementNodeFilterPropertyDataDefinition(
+                property);
+            updatedProperties.add(requirementNodeFilterPropertyDataDefinition);
+        });
+        return updatedProperties;
+    }
+
+    private RequirementNodeFilterPropertyDataDefinition getRequirementNodeFilterPropertyDataDefinition(
+        RequirementNodeFilterPropertyDataDefinition property) {
+        RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
+        requirementNodeFilterPropertyDataDefinition.setName(property.getName());
+        requirementNodeFilterPropertyDataDefinition.setConstraints(getNodeFilterConstraints(property.getName(), property.getConstraints()));
+        return requirementNodeFilterPropertyDataDefinition;
     }
 }

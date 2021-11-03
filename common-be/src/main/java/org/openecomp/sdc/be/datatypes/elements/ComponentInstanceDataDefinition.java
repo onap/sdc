@@ -69,6 +69,7 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         setDirectives(dataDefinition.getDirectives());
         setOriginArchived(dataDefinition.isOriginArchived());
         setToscaArtifacts(dataDefinition.getToscaArtifacts());
+        setNodeFilter(dataDefinition.getNodeFilter());
     }
 
     public String getIcon() {
@@ -311,6 +312,14 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
             directives = new ArrayList<>();
         }
         setToscaPresentationValue(JsonPresentationFields.CI_DIRECTIVES, directives);
+    }
+
+    public CINodeFilterDataDefinition getNodeFilter() {
+        return (CINodeFilterDataDefinition) getToscaPresentationValue(JsonPresentationFields.NODE_FILTER);
+    }
+
+    public void setNodeFilter(CINodeFilterDataDefinition ciNodeFilterDataDefinition) {
+        setToscaPresentationValue(JsonPresentationFields.NODE_FILTER, ciNodeFilterDataDefinition);
     }
 
     public  Map<String, ToscaArtifactDataDefinition> getToscaArtifacts() {
