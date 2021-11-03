@@ -23,6 +23,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,6 +50,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
@@ -147,6 +149,8 @@ public class ServiceImportParseLogic {
     private IInterfaceLifecycleOperation interfaceTypeOperation = null;
     @Autowired
     private ICapabilityTypeOperation capabilityTypeOperation = null;
+    @Autowired
+    private ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
 
     public Either<Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(
         Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, Service oldResource) {
@@ -2123,6 +2127,17 @@ public class ServiceImportParseLogic {
                 log.debug("failed to associate inputs value of resource {} status is {}", service.getUniqueId(), addInputToInst.right().value());
                 throw new ComponentException(
                     componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName));
+            }
+        }
+    }
+
+    public void associateCINodeFilterToComponent(String yamlName, Service service, Map<String, CINodeFilterDataDefinition> nodeFilter) {
+        log.trace("************* Going to associate all resource node filters {}", yamlName);
+        if (MapUtils.isNotEmpty(nodeFilter)) {
+            StorageOperationStatus status = componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(service.getUniqueId(), nodeFilter);
+            if (status != StorageOperationStatus.OK) {
+                throw new ComponentException(
+                    componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), yamlName));
             }
         }
     }
