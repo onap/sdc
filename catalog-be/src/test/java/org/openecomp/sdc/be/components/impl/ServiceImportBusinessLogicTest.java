@@ -61,6 +61,7 @@ import org.openecomp.sdc.be.components.impl.utils.CreateServiceFromYamlParameter
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -93,6 +94,7 @@ import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
@@ -848,6 +850,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
         Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
+        Map<String, UploadNodeFilterInfo> instNodeFilter = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         originCompMap.put("componentUid", originResource);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -857,7 +860,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Assertions.assertNotNull(yamlName);
         sIB1.processComponentInstance(yamlName, resource, componentInstancesList, allDataTypes.left().value(), instProperties,
                 instCapabilties, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes,
-                originCompMap, instInputs, uploadComponentInstanceInfo);
+                originCompMap, instInputs, instNodeFilter, uploadComponentInstanceInfo);
     }
 
     @Test
@@ -874,6 +877,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
         Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
+        Map<String, UploadNodeFilterInfo> instNodeFilter = new HashMap<>();
         originCompMap.put("componentUid", originResource);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
@@ -882,7 +886,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Assertions.assertThrows(ComponentException.class, () -> sIB1.processComponentInstance(yamlName,
                 resource, componentInstancesList, null, instProperties, instCapabilties,
                 instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap,
-                instInputs, uploadComponentInstanceInfo));
+                instInputs, instNodeFilter, uploadComponentInstanceInfo));
     }
 
     @Test
@@ -1194,6 +1198,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
         Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
+        Map<String, UploadNodeFilterInfo> instNodeFilter = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         originCompMap.put("componentUid", originResource);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -1203,7 +1208,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         sIB1.processComponentInstance(yamlName, service, componentInstancesList, allDataTypes.left().value(),
                 instProperties, instCapabilties, instRequirements, instDeploymentArtifacts,
-                instArtifacts, instAttributes, originCompMap, instInputs,
+                instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter,
                 uploadComponentInstanceInfo);
     }
 
@@ -1220,6 +1225,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Map<String, ArtifactDefinition>> instDeploymentArtifacts = new HashMap<>();
         Map<String, Map<String, ArtifactDefinition>> instArtifacts = new HashMap<>();
         Map<String, List<AttributeDefinition>> instAttributes = new HashMap<>();
+        Map<String, UploadNodeFilterInfo> instNodeFilter = new HashMap<>();
         Map<String, Resource> originCompMap = new HashMap<>();
         originCompMap.put("componentUid", originResource);
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
@@ -1229,7 +1235,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Assertions.assertThrows(ComponentException.class, () -> sIB1.processComponentInstance(yamlName,
                 service, componentInstancesList, null, instProperties, instCapabilties,
                 instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap,
-                instInputs, uploadComponentInstanceInfo));
+                instInputs, instNodeFilter, uploadComponentInstanceInfo));
     }
 
     @Test

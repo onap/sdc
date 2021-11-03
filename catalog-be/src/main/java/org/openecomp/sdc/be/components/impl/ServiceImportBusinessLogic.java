@@ -68,6 +68,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
@@ -171,6 +172,8 @@ public class ServiceImportBusinessLogic {
     private ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
     @Autowired
     private ServiceImportParseLogic serviceImportParseLogic;
+    @Autowired
+    private ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
 
     @Autowired
     public ServiceImportBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
@@ -971,6 +974,7 @@ public class ServiceImportBusinessLogic {
         Map<String, Resource> originCompMap = new HashMap<>();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
+        Map<String, UploadNodeFilterInfo> instNodeFilter = new HashMap<>();
 
         log.debug("enter ServiceImportBusinessLogic createResourceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
         final ApplicationDataTypeCache applicationDataTypeCache = serviceBusinessLogic.applicationDataTypeCache;
@@ -979,7 +983,7 @@ public class ServiceImportBusinessLogic {
             uploadResInstancesMap.values().forEach(
                 i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
                     componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties, instCapabilities,
-                    instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, i));
+                    instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
@@ -1334,6 +1338,7 @@ public class ServiceImportBusinessLogic {
         Map<String, Resource> originCompMap = new HashMap<>();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
+        Map<String, UploadNodeFilterInfo> instNodeFilter = new HashMap<>();
         log.debug("enter ServiceImportBusinessLogic  createServiceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
         final ApplicationDataTypeCache applicationDataTypeCache = serviceBusinessLogic.applicationDataTypeCache;
         if (applicationDataTypeCache != null) {
@@ -1341,10 +1346,11 @@ public class ServiceImportBusinessLogic {
             uploadResInstancesMap.values().forEach(
                 i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
                     componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties,
-                    instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, i));
+                    instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
+        serviceImportParseLogic.associateCINodeFilterToComponent(yamlName, service, instNodeFilter);
         serviceImportParseLogic.associateDeploymentArtifactsToInstances(user, yamlName, service, instDeploymentArtifacts);
         serviceImportParseLogic.associateArtifactsToInstances(yamlName, service, instArtifacts);
         serviceImportParseLogic.associateOrAddCalculatedCapReq(yamlName, service, instCapabilities, instRequirements);
@@ -1379,6 +1385,7 @@ public class ServiceImportBusinessLogic {
                                             Map<String, Map<String, ArtifactDefinition>> instArtifacts,
                                             Map<String, List<AttributeDefinition>> instAttributes, Map<String, Resource> originCompMap,
                                             Map<String, List<ComponentInstanceInput>> instInputs,
+                                            Map<String, UploadNodeFilterInfo> instNodeFilter,
                                             UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         log.debug("enter ServiceImportBusinessLogic processComponentInstance");
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
@@ -1409,6 +1416,7 @@ public class ServiceImportBusinessLogic {
         if (originResource.getAttributes() != null && !originResource.getAttributes().isEmpty()) {
             instAttributes.put(resourceInstanceId, originResource.getAttributes());
         }
+        instNodeFilter.put(resourceInstanceId, uploadComponentInstanceInfo.getUploadNodeFilterInfo());
         if (originResource.getResourceType() != ResourceTypeEnum.VF) {
             ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, component, originResource,
                 currentCompInstance, instProperties, allDataTypes);
