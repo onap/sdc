@@ -24,6 +24,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -45,7 +48,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -55,10 +57,13 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -84,6 +89,8 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.User;
@@ -110,14 +117,15 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     private static final String RESOURCE_SUBCATEGORY = "Router";
 
-    private final ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
-    private final ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
-    private final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
-    private final ICapabilityTypeOperation capabilityTypeOperation = Mockito.mock(ICapabilityTypeOperation.class);
-    private final IElementOperation elementDao = Mockito.mock(IElementOperation.class);
-    private final IInterfaceLifecycleOperation interfaceTypeOperation = Mockito.mock(IInterfaceLifecycleOperation.class);
-    private final InputsBusinessLogic inputsBusinessLogic = Mockito.mock(InputsBusinessLogic.class);
-    private final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
+    private final ComponentsUtils componentsUtils = new ComponentsUtils(mock(AuditingManager.class));
+    private final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
+    private final ServiceBusinessLogic serviceBusinessLogic = mock(ServiceBusinessLogic.class);
+    private final ICapabilityTypeOperation capabilityTypeOperation = mock(ICapabilityTypeOperation.class);
+    private final IElementOperation elementDao = mock(IElementOperation.class);
+    private final IInterfaceLifecycleOperation interfaceTypeOperation = mock(IInterfaceLifecycleOperation.class);
+    private final InputsBusinessLogic inputsBusinessLogic = mock(InputsBusinessLogic.class);
+    private final LifecycleBusinessLogic lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
+    private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic = mock(ComponentNodeFilterBusinessLogic.class);
 
     private ResponseFormatManager responseManager = null;
     private User user = null;
@@ -151,6 +159,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         testSubject.setInterfaceTypeOperation(interfaceTypeOperation);
         testSubject.setInputsBusinessLogic(inputsBusinessLogic);
         testSubject.setLifecycleBusinessLogic(lifecycleBusinessLogic);
+        testSubject.setComponentNodeFilterBusinessLogic(componentNodeFilterBusinessLogic);
     }
 
     @Test
@@ -1151,6 +1160,34 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(newService));
         Service inputsOnService = testSubject.createInputsOnService(service, inputs);
         assertNotNull(inputsOnService);
+    }
+
+    @Test
+    public void testAssociateCINodeFilterToComponent() {
+        String yamlName = "yamlName.yml";
+        Service service = createServiceObject(true);
+        Map<String, UploadNodeFilterInfo> nodeFilterMap = new HashMap<>();
+        nodeFilterMap.put("componentInstanceID", new UploadNodeFilterInfo());
+
+        when(componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(service.getUniqueId(), nodeFilterMap))
+            .thenReturn(StorageOperationStatus.OK);
+
+        testSubject.associateCINodeFilterToComponent(yamlName, service, nodeFilterMap);
+        verify(componentNodeFilterBusinessLogic, times(1)).associateNodeFilterToComponentInstance(service.getUniqueId(),
+            nodeFilterMap);
+    }
+
+    @Test
+    public void testAssociateCINodeFilterToComponentFail() {
+        String yamlName = "yamlName.yml";
+        Service service = createServiceObject(true);
+        Map<String, UploadNodeFilterInfo> nodeFilterMap = new HashMap<>();
+        nodeFilterMap.put("componentInstanceID", new UploadNodeFilterInfo());
+
+        when(componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(service.getUniqueId(), nodeFilterMap))
+            .thenReturn(StorageOperationStatus.NOT_FOUND);
+
+        Assertions.assertThrows(ComponentException.class, () -> testSubject.associateCINodeFilterToComponent(yamlName, service, nodeFilterMap));
     }
 
     @Test
