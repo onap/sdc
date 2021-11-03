@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c35c6ec0_f1ca3f22",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/execute/sanity/ModelToscaTypeImportTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-03T09:59:47Z",
+      "side": 1,
+      "message": "if you are just moving the folder of generated csv\u0027s to target, what is the reason for this to change?",
+      "range": {
+        "startLine": 138,
+        "startChar": 21,
+        "endLine": 138,
+        "endChar": 22
+      },
+      "revId": "d9ec4a96893906f7d38b96b914a17deeece74d0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
