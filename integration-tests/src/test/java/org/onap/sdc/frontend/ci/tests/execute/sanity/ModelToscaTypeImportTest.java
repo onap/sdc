@@ -61,13 +61,13 @@ import org.testng.annotations.Test;
 
 public class ModelToscaTypeImportTest extends SetupCDTest {
 
-    private final static String NODE_TYPE_TO_ADD = "Network";
-    private final static String MODEL_VNFD_TYPES = "vnfd_types";
-    private final static String MODEL_NSD_TYPES = "nsd_types";
-    private final static String TYPE_URL = "http://%s:%s/sdc2/rest/v1/catalog/uploadType/%s";
-    private final static String NODE_TYPE_URL = "http://%s:%s/sdc2/rest/v1/catalog/upload/multipart";
-    private final static String IMPORT_PATH = System.getProperty("user.dir").concat("/src/test/resources/Files/imports/tosca");
-    private final static String NODE_TYPE_DIRECTORY = IMPORT_PATH.concat(File.separator).concat("node-types");
+    private static final String NODE_TYPE_TO_ADD = "Network";
+    private static final String MODEL_VNFD_TYPES = "vnfd_types";
+    private static final String MODEL_NSD_TYPES = "nsd_types";
+    private static final String TYPE_URL = "http://%s:%s/sdc2/rest/v1/catalog/uploadType/%s";
+    private static final String NODE_TYPE_URL = "http://%s:%s/sdc2/rest/v1/catalog/upload/multipart";
+    private static final String IMPORT_PATH = System.getProperty("user.dir").concat("/src/test/resources/Files/imports/tosca");
+    private static final String NODE_TYPE_DIRECTORY = IMPORT_PATH.concat(File.separator).concat("node-types");
     private static final String TOSCA_CAPABILITIES_NETWORK_LINK = "tosca.capabilities.network.Linkable";
 
     private WebDriver webDriver;
@@ -80,7 +80,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
     @Test
     public void importTypesForModel() throws Exception {
         for (final var type : ToscaTypeUploadEnum.values()) {
-            assertTrue(postType(type.getUrlSuffix(), type.getModelParam(), type.getDirectory(), type.getZipParam(), type.isMetadata()));
+            assertTrue(postType(type.getUrlSuffix(), type.getDirectory(), type.getZipParam(), type.isMetadata()));
         }
     }
 
@@ -135,7 +135,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
 
         final var downloadFolderPath = getConfig().getDownloadAutomationFolder();
         final Map<String, byte[]> csarFiles = FileHandling.getFilesFromZip(downloadFolderPath, toscaArtifactsPage.getDownloadedArtifactList().get(0));
-        assertEquals(7, csarFiles.size());
+        assertEquals(8, csarFiles.size());
         assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains(NODE_TYPE_TO_ADD.concat("-template.yml"))).findAny().isPresent());
         assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains(MODEL_VNFD_TYPES.concat(".yaml"))).findAny().isPresent());
         assertTrue(csarFiles.keySet().stream().filter(filename -> filename.contains(MODEL_NSD_TYPES.concat(".yaml"))).findAny().isPresent());
@@ -158,7 +158,7 @@ public class ModelToscaTypeImportTest extends SetupCDTest {
         return true;
     }
 
-    private boolean postType(final String urlSuffix, final String modelParam, final String directory, final String zipParam,
+    private boolean postType(final String urlSuffix, final String directory, final String zipParam,
                              final boolean metadata) throws Exception {
         final var yamlDirectory = new File(IMPORT_PATH.concat(File.separator).concat(directory));
         final var builder = MultipartEntityBuilder.create();

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,23 +20,20 @@
 
 package org.openecomp.sdc.asdctool.migration.task;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.asdctool.migration.core.DBVersion;
 import org.openecomp.sdc.asdctool.migration.core.task.Migration;
 import org.openecomp.sdc.asdctool.migration.scanner.ClassScanner;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-
-public class MigrationTasksTest  {
+public class MigrationTasksTest {
 
     public static final String MIGRATIONS_BASE_PACKAGE = "org.openecomp.sdc.asdctool.migration.tasks";
     private List<Migration> migrations;
@@ -52,21 +49,25 @@ public class MigrationTasksTest  {
         Map<DBVersion, List<Migration>> migrationsByVersion = migrations.stream().collect(Collectors.groupingBy(Migration::getVersion));
         migrationsByVersion.forEach((version, migrations) -> {
             if (migrations.size() > 1) {
-                System.out.println(String.format("the following migration tasks have the same version %s. versions must be unique", version.toString()));
-                fail(String.format("migration tasks %s has same version %s. migration tasks versions must be unique.", getMigrationsNameAsString(migrations), version.toString()));
+                System.out.println(
+                    String.format("the following migration tasks have the same version %s. versions must be unique", version.toString()));
+                Assertions.fail(String.format("migration tasks %s has same version %s. migration tasks versions must be unique.",
+                    getMigrationsNameAsString(migrations), version.toString()));
             }
         });
     }
 
     @Test
     public void testNoTaskWithVersionGreaterThanCurrentVersion() throws Exception {
-        Set<Migration> migrationsWithVersionsGreaterThanCurrent = migrations.stream().filter(mig -> mig.getVersion().compareTo(DBVersion.DEFAULT_VERSION) > 0)
-                .collect(Collectors.toSet());
+        Set<Migration> migrationsWithVersionsGreaterThanCurrent = migrations.stream()
+            .filter(mig -> mig.getVersion().compareTo(DBVersion.DEFAULT_VERSION) > 0)
+            .collect(Collectors.toSet());
 
         if (!migrationsWithVersionsGreaterThanCurrent.isEmpty()) {
-            fail(String.format("migrations tasks %s have version which is greater than DBVersion.DEFAULT_VERSION %s. did you forget to update current version?",
-                    getMigrationsNameAsString(migrationsWithVersionsGreaterThanCurrent),
-                    DBVersion.DEFAULT_VERSION.toString()));
+            Assertions.fail(String.format(
+                "migrations tasks %s have version which is greater than DBVersion.DEFAULT_VERSION %s. did you forget to update current version?",
+                getMigrationsNameAsString(migrationsWithVersionsGreaterThanCurrent),
+                DBVersion.DEFAULT_VERSION.toString()));
         }
     }
 
