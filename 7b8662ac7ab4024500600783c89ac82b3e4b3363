@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a951a652_992b0c33",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "29bc10cc_1cf35bd4",
+      "range": {
+        "startLine": 171,
+        "startChar": 12,
+        "endLine": 171,
+        "endChar": 18
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7b10c57a_6367c2a5",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "8cca4405_72d17af3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b10c57a_6367c2a5",
+      "range": {
+        "startLine": 492,
+        "startChar": 11,
+        "endLine": 492,
+        "endChar": 18
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4b142c5_97db4b79",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ddeec6c_8228b051",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 493,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4b142c5_97db4b79",
+      "range": {
+        "startLine": 492,
+        "startChar": 43,
+        "endLine": 493,
+        "endChar": 106
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +189,54 @@
     },
     {
       "key": {
+        "uuid": "6997e53c_7aeb1644",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7911ba3b_edfba008",
+      "range": {
+        "startLine": 499,
+        "startChar": 26,
+        "endLine": 499,
+        "endChar": 88
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "166a6bad_08ad083f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99e66aa2_e27497a6",
+      "range": {
+        "startLine": 499,
+        "startChar": 20,
+        "endLine": 499,
+        "endChar": 25
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1c773dfd_8df73b00",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
         "patchSetId": 3
@@ -137,6 +257,30 @@
       "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfc2a1f1_bed76e62",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c773dfd_8df73b00",
+      "range": {
+        "startLine": 510,
+        "startChar": 12,
+        "endLine": 510,
+        "endChar": 38
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "7a4db08f_1a09a953",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 534,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a03ba7fc_4c66da04",
+      "range": {
+        "startLine": 533,
+        "startChar": 94,
+        "endLine": 534,
+        "endChar": 129
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08514384_9cebd920",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 3
@@ -183,6 +351,30 @@
       "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c3e7612_24e14cd7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08514384_9cebd920",
+      "range": {
+        "startLine": 302,
+        "startChar": 73,
+        "endLine": 302,
+        "endChar": 76
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "26620268_89f4a8a9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1376,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Idea was to create properties and get the updated service along with the properties created from database and return it. If properties are not present, then return the given service. I did it other way, corrected it now. Thanks.",
+      "parentUuid": "09746554_71d3c7d0",
+      "range": {
+        "startLine": 1376,
+        "startChar": 19,
+        "endLine": 1376,
+        "endChar": 44
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "967b90c9_04716940",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
         "patchSetId": 3
@@ -229,6 +445,30 @@
       "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8cf3e197_3e9aebee",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "967b90c9_04716940",
+      "range": {
+        "startLine": 152,
+        "startChar": 66,
+        "endLine": 152,
+        "endChar": 70
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -255,6 +495,30 @@
     },
     {
       "key": {
+        "uuid": "d08e3ad9_d1988fb6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f79bceee_a7eb72f8",
+      "range": {
+        "startLine": 586,
+        "startChar": 4,
+        "endLine": 586,
+        "endChar": 153
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7d449d68_58107325",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
         "patchSetId": 3
@@ -278,6 +542,30 @@
     },
     {
       "key": {
+        "uuid": "247327a8_780400f7",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d449d68_58107325",
+      "range": {
+        "startLine": 590,
+        "startChar": 56,
+        "endLine": 590,
+        "endChar": 65
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dc7de2c7_5b8ed6f0",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 3
@@ -298,6 +586,30 @@
       "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "317041c3_4f228d11",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-04T14:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dc7de2c7_5b8ed6f0",
+      "range": {
+        "startLine": 1253,
+        "startChar": 18,
+        "endLine": 1253,
+        "endChar": 42
+      },
+      "revId": "7b8662ac7ab4024500600783c89ac82b3e4b3363",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
