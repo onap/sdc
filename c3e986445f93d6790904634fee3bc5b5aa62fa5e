@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7909f8b7_55ec3d07",
+        "filename": "utils/webseal-simulator/src/main/webapp/login.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-04T17:56:59Z",
+      "side": 1,
+      "message": "This was a input without a label warning, correct? \nI believe this \u003clabel\u003e should be around UserId, not around the input, i.e.:\n\n\u003clabel for\u003d\"userId\"\u003eUserId\u003c/label\u003e:\u003cbr\u003e",
+      "range": {
+        "startLine": 23,
+        "startChar": 4,
+        "endLine": 23,
+        "endChar": 11
+      },
+      "revId": "c3e986445f93d6790904634fee3bc5b5aa62fa5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac82ee56_e6bb599d",
+        "filename": "utils/webseal-simulator/src/main/webapp/login.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-04T17:56:59Z",
+      "side": 1,
+      "message": "same here \u003clabel for\u003d\"password\"\u003ePASSWORD\u003c/label\u003e:\u003cbr\u003e",
+      "range": {
+        "startLine": 27,
+        "startChar": 4,
+        "endLine": 27,
+        "endChar": 12
+      },
+      "revId": "c3e986445f93d6790904634fee3bc5b5aa62fa5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
