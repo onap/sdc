@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2253732c_fa0fbfd9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-05T14:52:08Z",
+      "side": 1,
+      "message": "you\u0027ve changed the logic here. You need to return the content, not the name of the file (the latter can happen if the file is not present on the csarInfo). You also have a problem with the Optional usage.\nYou can revert the logic, and just return Optional.of on line 179 and Optional.empty on line 181 (based on previous code).",
+      "range": {
+        "startLine": 172,
+        "startChar": 8,
+        "endLine": 178,
+        "endChar": 9
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96e35eb8_7758efcd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-05T14:52:08Z",
+      "side": 1,
+      "message": "CollectionUtils.isNotEmpty already checks if the parameter is empty, please remove this checking",
+      "range": {
+        "startLine": 507,
+        "startChar": 12,
+        "endLine": 507,
+        "endChar": 38
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fbd1c3b4_1edef5a9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1381,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-05T14:52:08Z",
+      "side": 1,
+      "message": "now it is fine.\nFor better clarity, I just suggest to change to:\n\nif (MapUtils.isEmpty(properties)) {\n    return service;\n}\npropertyBusinessLogic.createPropertiesInGraph(properties, service);",
+      "range": {
+        "startLine": 1377,
+        "startChar": 8,
+        "endLine": 1381,
+        "endChar": 9
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a74fe38c_900d6522",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-05T14:52:08Z",
+      "side": 1,
+      "message": "you should at least check if all expected properties are present",
+      "range": {
+        "startLine": 170,
+        "startChar": 8,
+        "endLine": 170,
+        "endChar": 59
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb5caf58_2472fef9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-05T14:52:08Z",
+      "side": 1,
+      "message": "same problem from the CsarBusinessLogic.getInterfaceTemplateYaml method",
+      "range": {
+        "startLine": 414,
+        "startChar": 8,
+        "endLine": 421,
+        "endChar": 37
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
