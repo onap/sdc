@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7d74922b_b2f9eda3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/CsarBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-05T16:19:15Z",
+      "side": 1,
+      "message": "csarInfo.getCsar().get(fileName), gives you the content of the file. I tested here. Logic works fine as expected. if file is present it returns Optional.of (line 177) and if file is not present returns Optional.empty (line 172).",
+      "parentUuid": "2253732c_fa0fbfd9",
+      "range": {
+        "startLine": 172,
+        "startChar": 8,
+        "endLine": 178,
+        "endChar": 9
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "96e35eb8_7758efcd",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "fc7d5852609708312814aef3259acbe298add3aa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4b041c6_3afb43ea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-05T16:19:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96e35eb8_7758efcd",
+      "range": {
+        "startLine": 507,
+        "startChar": 12,
+        "endLine": 507,
+        "endChar": 38
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "ca7f2d6d_528c48f8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1381,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-05T16:19:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fbd1c3b4_1edef5a9",
+      "range": {
+        "startLine": 1377,
+        "startChar": 8,
+        "endLine": 1381,
+        "endChar": 9
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a74fe38c_900d6522",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
         "patchSetId": 4
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "31114b2c_0b93a217",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-05T16:19:15Z",
+      "side": 1,
+      "message": "There is not expected list here, earlier properties from csar was not getting parsed. Now with this implementation, properties are getting parsed (checking its not null asserts that?), which will be added to service while importing.",
+      "parentUuid": "a74fe38c_900d6522",
+      "range": {
+        "startLine": 170,
+        "startChar": 8,
+        "endLine": 170,
+        "endChar": 59
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cb5caf58_2472fef9",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
         "patchSetId": 4
@@ -114,6 +210,30 @@
       "revId": "fc7d5852609708312814aef3259acbe298add3aa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f954a35_cf1e0ec4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/utils/YamlTemplateParsingHandlerTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-05T16:19:15Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cb5caf58_2472fef9",
+      "range": {
+        "startLine": 414,
+        "startChar": 8,
+        "endLine": 421,
+        "endChar": 37
+      },
+      "revId": "fc7d5852609708312814aef3259acbe298add3aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
