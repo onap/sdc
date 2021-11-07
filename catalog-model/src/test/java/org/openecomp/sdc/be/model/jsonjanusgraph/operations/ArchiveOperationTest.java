@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,15 +20,20 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
@@ -40,41 +45,26 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.GraphTestUtils;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Created by yavivi on 21/03/2018.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(value = {"classpath:application-context-test.xml", "classpath:healing-context-test.xml"})
+@SpringJUnitConfig(locations = {"classpath:application-context-test.xml", "classpath:healing-context-test.xml"})
 public class ArchiveOperationTest extends ModelTestBase {
 
     private static final String CI_UID_RES1_CP = "cp_uid";
     private static final String CI_UID_RES2_VL = "vl_uid";
     private static final String CI_UID_SVC_PROXY = "svc_proxy_uid";
-
-    @Resource
-    private ArchiveOperation archiveOperation;
-
-    @Resource
-    private JanusGraphDao janusGraphDao;
-
-    private boolean isInitialized;
-
-    private GraphVertex serviceVertex1;
-    private GraphVertex archivedVertex1;
-
     GraphVertex archiveVertex;
     GraphVertex catalogVertex;
-
+    @Resource
+    private ArchiveOperation archiveOperation;
+    @Resource
+    private JanusGraphDao janusGraphDao;
+    private boolean isInitialized;
+    private GraphVertex serviceVertex1;
+    private GraphVertex archivedVertex1;
     private GraphVertex serviceVertex1_0;
     private GraphVertex serviceVertex1_1;
     private GraphVertex serviceVertex2_0;
@@ -98,14 +88,14 @@ public class ArchiveOperationTest extends ModelTestBase {
     private GraphVertex vfResource0_1;
     private GraphVertex vfResource0_2;
     private GraphVertex vfResource1_0;
-    private String csarUuid = "123456789";;
+    private String csarUuid = "123456789";
 
-    @BeforeClass
-    public static void initTest(){
+    @BeforeAll
+    public static void initTest() {
         ModelTestBase.init();
     }
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         if (!isInitialized) {
             GraphTestUtils.clearGraph(janusGraphDao);
@@ -115,7 +105,7 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testArchiveComponentSingleVersion(){
+    public void testArchiveComponentSingleVersion() {
         String componentId = serviceVertex1.getUniqueId();
         Either<List<String>, ActionStatus> actionStatus = this.archiveOperation.archiveComponent(componentId);
         assertThat(actionStatus.isLeft()).isTrue();
@@ -123,7 +113,7 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testArchiveComponentFailsWhenInCheckoutSingleVersion(){
+    public void testArchiveComponentFailsWhenInCheckoutSingleVersion() {
         checkoutComponent(serviceVertex1);
         String componentId = serviceVertex1.getUniqueId();
         Either<List<String>, ActionStatus> actionStatus = this.archiveOperation.archiveComponent(componentId);
@@ -146,7 +136,7 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testScenario2_archive_1_0(){
+    public void testScenario2_archive_1_0() {
         Either<List<String>, ActionStatus> actionStatus = this.archiveOperation.archiveComponent(serviceVertex1_0.getUniqueId());
         assertThat(actionStatus.isLeft()).isTrue();
         assertThat(actionStatus.left().value()).containsExactlyInAnyOrder(serviceVertex1_0.getUniqueId(), serviceVertex1_1.getUniqueId());
@@ -155,7 +145,7 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testScenario2_archive_1_1(){
+    public void testScenario2_archive_1_1() {
         Either<List<String>, ActionStatus> actionStatus = this.archiveOperation.archiveComponent(serviceVertex1_1.getUniqueId());
         assertThat(actionStatus.left().value()).containsExactlyInAnyOrder(serviceVertex1_0.getUniqueId(), serviceVertex1_1.getUniqueId());
         assertArchived(serviceVertex1_0.getUniqueId());
@@ -163,9 +153,10 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testScenario4_oneLowOneHighestVersion(){
+    public void testScenario4_oneLowOneHighestVersion() {
         Either<List<String>, ActionStatus> actionStatus = this.archiveOperation.archiveComponent(serviceVertex0_2.getUniqueId());
-        assertThat(actionStatus.left().value()).containsExactlyInAnyOrder(serviceVertex0_2.getUniqueId(), serviceVertex0_1.getUniqueId(), serviceVertex0_3.getUniqueId(), serviceVertex0_4.getUniqueId(), serviceVertex0_5.getUniqueId());
+        assertThat(actionStatus.left().value()).containsExactlyInAnyOrder(serviceVertex0_2.getUniqueId(), serviceVertex0_1.getUniqueId(),
+            serviceVertex0_3.getUniqueId(), serviceVertex0_4.getUniqueId(), serviceVertex0_5.getUniqueId());
         assertArchived(serviceVertex0_1.getUniqueId());
         assertArchived(serviceVertex0_2.getUniqueId());
         assertArchived(serviceVertex0_3.getUniqueId());
@@ -174,13 +165,14 @@ public class ArchiveOperationTest extends ModelTestBase {
 
         actionStatus = this.archiveOperation.restoreComponent(serviceVertex0_2.getUniqueId());
         assertThat(actionStatus.isLeft()).isTrue();
-        assertThat(actionStatus.left().value()).containsExactlyInAnyOrder(serviceVertex0_2.getUniqueId(), serviceVertex0_1.getUniqueId(), serviceVertex0_3.getUniqueId(), serviceVertex0_4.getUniqueId(), serviceVertex0_5.getUniqueId());
+        assertThat(actionStatus.left().value()).containsExactlyInAnyOrder(serviceVertex0_2.getUniqueId(), serviceVertex0_1.getUniqueId(),
+            serviceVertex0_3.getUniqueId(), serviceVertex0_4.getUniqueId(), serviceVertex0_5.getUniqueId());
     }
 
 
     /////////////// Continue Here //////////////////
     @Test
-    public void testScenario4_archiveFromNonHighest(){
+    public void testScenario4_archiveFromNonHighest() {
         Either<List<String>, ActionStatus> actionStatus = this.archiveOperation.archiveComponent(serviceVertex0_2.getUniqueId());
         assertArchived(serviceVertex0_1.getUniqueId());
         assertArchived(serviceVertex0_2.getUniqueId());
@@ -197,14 +189,14 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testArchiveFailsWhenHighestVersionIsInCheckoutState(){
+    public void testArchiveFailsWhenHighestVersionIsInCheckoutState() {
         checkoutComponent(serviceVertex0_5);
         Either<List<String>, ActionStatus> actionStatus = this.archiveOperation.archiveComponent(serviceVertex0_2.getUniqueId());
         assertThat(actionStatus.right().value()).isEqualTo(ActionStatus.INVALID_SERVICE_STATE);
     }
 
     @Test
-    public void testScenario3_archive_3_0(){
+    public void testScenario3_archive_3_0() {
         Either<List<String>, ActionStatus> actionStatus = this.archiveOperation.archiveComponent(serviceVertex3_0.getUniqueId());
         assertArchived(serviceVertex3_0.getUniqueId());
         assertArchived(serviceVertex3_1.getUniqueId());
@@ -212,7 +204,7 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testArchivedOriginsCalculation(){
+    public void testArchivedOriginsCalculation() {
 
         //Archive the CP resource
         this.archiveOperation.archiveComponent(this.compositionResource1.getUniqueId());
@@ -242,7 +234,7 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testNoArchivedOriginsCalculation(){
+    public void testNoArchivedOriginsCalculation() {
         List<String> ciWithArchivedOrigins = this.archiveOperation.setArchivedOriginsFlagInComponentInstances(this.compositionService);
 
         //Validate that method returns the CI of CP
@@ -250,7 +242,7 @@ public class ArchiveOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testOnVspArchivedAndRestored(){
+    public void testOnVspArchivedAndRestored() {
         this.archiveOperation.onVspArchived(csarUuid);
         //assertOnCommit();
 
@@ -290,7 +282,7 @@ public class ArchiveOperationTest extends ModelTestBase {
         assertOnCommit();
     }
 
-    private void assertOnCommit(){
+    private void assertOnCommit() {
         final JanusGraphOperationStatus commit = this.janusGraphDao.commit();
         assertThat(commit).isEqualTo(JanusGraphOperationStatus.OK);
     }
@@ -303,7 +295,7 @@ public class ArchiveOperationTest extends ModelTestBase {
         assertArchivedOrRestored(ArchiveOperation.Action.RESTORE, componentUniqueId);
     }
 
-    private void assertArchivedOrRestored(ArchiveOperation.Action action,  String componentUniqueId) {
+    private void assertArchivedOrRestored(ArchiveOperation.Action action, String componentUniqueId) {
         GraphVertex v = janusGraphDao.getVertexById(componentUniqueId).left().value();
 
         EdgeLabelEnum requiredEdge = action == ArchiveOperation.Action.ARCHIVE ? EdgeLabelEnum.ARCHIVE_ELEMENT : EdgeLabelEnum.CATALOG_ELEMENT;
@@ -317,7 +309,8 @@ public class ArchiveOperationTest extends ModelTestBase {
             parent = janusGraphDao.getParentVertex(v, requiredEdge, JsonParseFlagEnum.NoParse).left().value();
             otherLookup = janusGraphDao.getParentVertex(v, otherEdge, JsonParseFlagEnum.NoParse);
             assertThat(otherLookup.isRight()).isTrue();           //Verify that component is not linked to Catalog/Archive Root
-            assertThat(parent.getUniqueId()).isEqualTo(action == ArchiveOperation.Action.ARCHIVE ? this.archiveVertex.getUniqueId() : this.catalogVertex.getUniqueId()); //Verify that parent is indeed Archive Root
+            assertThat(parent.getUniqueId()).isEqualTo(action == ArchiveOperation.Action.ARCHIVE ? this.archiveVertex.getUniqueId()
+                : this.catalogVertex.getUniqueId()); //Verify that parent is indeed Archive Root
         }
 
         assertArchivedOrRestoredProps(action, v);
@@ -325,13 +318,13 @@ public class ArchiveOperationTest extends ModelTestBase {
 
     private void assertArchivedProps(String uniqueId) {
         GraphVertex v =
-                janusGraphDao.getVertexById(uniqueId).left().value();
+            janusGraphDao.getVertexById(uniqueId).left().value();
         assertArchivedOrRestoredProps(ArchiveOperation.Action.ARCHIVE, v);
     }
 
     private void assertRestoredProps(String uniqueId) {
         GraphVertex v =
-                janusGraphDao.getVertexById(uniqueId).left().value();
+            janusGraphDao.getVertexById(uniqueId).left().value();
         assertArchivedOrRestoredProps(ArchiveOperation.Action.RESTORE, v);
     }
 
@@ -418,7 +411,7 @@ public class ArchiveOperationTest extends ModelTestBase {
             .createEdge(catalogVertex, serviceVertex0_5, EdgeLabelEnum.CATALOG_ELEMENT, null);
     }
 
-    private void createResourcesForArchivedVsp(){
+    private void createResourcesForArchivedVsp() {
         Map<GraphPropertyEnum, Object> vfPropsNonHighest = propsForNonHighestVersion();
         Map<GraphPropertyEnum, Object> vfPropsHighest = propsForNonHighestVersion();
 
@@ -443,7 +436,7 @@ public class ArchiveOperationTest extends ModelTestBase {
         janusGraphDao.createEdge(archiveVertex, archivedVertex1, EdgeLabelEnum.ARCHIVE_ELEMENT, null);
     }
 
-    private void createServiceCompositionForCalculatingArchivedOrigins(){
+    private void createServiceCompositionForCalculatingArchivedOrigins() {
         //Service that point to another service in composition
         this.compositionService = GraphTestUtils.createServiceVertex(janusGraphDao, propsForHighestVersion());
         this.compositionAnotherService = GraphTestUtils.createServiceVertex(janusGraphDao, propsForHighestVersion());
@@ -487,7 +480,7 @@ public class ArchiveOperationTest extends ModelTestBase {
         instance.setUniqueId(CI_UID_SVC_PROXY);
         instance.setComponentUid(compositionServiceProxy.getUniqueId());
         instances.put(CI_UID_SVC_PROXY, instance);
-        
+
         //Add Instances to Composition
         composition.setComponentInstances(instances);
         //Add to full composition
@@ -498,14 +491,14 @@ public class ArchiveOperationTest extends ModelTestBase {
         janusGraphDao.updateVertex(compositionService);
     }
 
-    private Map<GraphPropertyEnum, Object> propsForHighestVersion(){
+    private Map<GraphPropertyEnum, Object> propsForHighestVersion() {
         Map<GraphPropertyEnum, Object> props = new HashMap();
         props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, true);
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);
         return props;
     }
 
-    private Map<GraphPropertyEnum, Object> propsForNonHighestVersion(){
+    private Map<GraphPropertyEnum, Object> propsForNonHighestVersion() {
         Map<GraphPropertyEnum, Object> props = new HashMap();
         props.put(GraphPropertyEnum.IS_HIGHEST_VERSION, false);
         props.put(GraphPropertyEnum.STATE, LifecycleStateEnum.NOT_CERTIFIED_CHECKIN);

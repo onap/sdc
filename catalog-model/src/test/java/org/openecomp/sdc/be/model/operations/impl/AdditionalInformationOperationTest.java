@@ -20,16 +20,21 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.janusgraph.core.JanusGraphEdge;
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphVertex;
-import fj.data.Either;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import fj.data.Either;
+import java.util.Iterator;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphEdge;
+import org.janusgraph.core.JanusGraphVertex;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
@@ -40,20 +45,11 @@ import org.openecomp.sdc.be.model.AdditionalInformationDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.operations.impl.util.OperationTestsUtil;
 import org.openecomp.sdc.be.resources.data.UserData;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.util.Iterator;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@SpringJUnitConfig(locations = "classpath:application-context-test.xml")
 public class AdditionalInformationOperationTest extends ModelTestBase {
+
     private static final JanusGraphGenericDao JANUS_GRAPH_GENERIC_DAO = mock(JanusGraphGenericDao.class);
     private static String USER_ID = "muUserId";
     private static String CATEGORY_NAME = "category/mycategory";
@@ -66,17 +62,17 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
     @javax.annotation.Resource(name = "additional-information-operation")
     private AdditionalInformationOperation additionalInformationOperation;
 
-    @Before
-    public void createUserAndCategory() {
-        deleteAndCreateCategory(CATEGORY_NAME);
-        deleteAndCreateUser(USER_ID, "first_" + USER_ID, "last_" + USER_ID);
-
-    }
-
-    @BeforeClass
+    @BeforeAll
     public static void setupBeforeClass() {
 
         ModelTestBase.init();
+
+    }
+
+    @BeforeEach
+    public void createUserAndCategory() {
+        deleteAndCreateCategory(CATEGORY_NAME);
+        deleteAndCreateUser(USER_ID, "first_" + USER_ID, "last_" + USER_ID);
 
     }
 
@@ -88,24 +84,24 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testAddInfoParameter_InvalidId(){
+    public void testAddInfoParameter_InvalidId() {
         Either<AdditionalInformationDefinition, JanusGraphOperationStatus> result;
         String uid = "uid";
         String componentId = "componentId";
-        when(JANUS_GRAPH_GENERIC_DAO.getVertexByProperty(eq(uid),eq(componentId))).thenReturn(Either.left(janusGraphVertex));
+        when(JANUS_GRAPH_GENERIC_DAO.getVertexByProperty(eq(uid), eq(componentId))).thenReturn(Either.left(janusGraphVertex));
         result = additionalInformationOperation.addAdditionalInformationParameter
-                (NodeTypeEnum.Resource,componentId,"key","value");
+            (NodeTypeEnum.Resource, componentId, "key", "value");
         assertThat(result.isRight());
     }
 
     @Test
-    public void testUpdateInfoParameter_InvalidId(){
+    public void testUpdateInfoParameter_InvalidId() {
         Either<AdditionalInformationDefinition, JanusGraphOperationStatus> result;
         String uid = "uid";
         String componentId = "componentId";
-        when(JANUS_GRAPH_GENERIC_DAO.getVertexByProperty(eq(uid),eq(componentId))).thenReturn(Either.left(janusGraphVertex));
+        when(JANUS_GRAPH_GENERIC_DAO.getVertexByProperty(eq(uid), eq(componentId))).thenReturn(Either.left(janusGraphVertex));
         result = additionalInformationOperation.updateAdditionalInformationParameter
-                (NodeTypeEnum.Resource,componentId,"id","key","value");
+            (NodeTypeEnum.Resource, componentId, "id", "key", "value");
         assertTrue(result.isRight());
     }
 
@@ -119,7 +115,7 @@ public class AdditionalInformationOperationTest extends ModelTestBase {
         v1.property("uid", componentId);
         v1.property(GraphPropertiesDictionary.LABEL.getProperty(), "resource");
         JanusGraphVertex v2 = graph.addVertex();
-        v2.property(id,id);
+        v2.property(id, id);
 
         JanusGraphEdge addEdge = v1.addEdge(GraphEdgeLabels.ADDITIONAL_INFORMATION.getProperty(), v2);
         addEdge.property("edgeProp", "resource");
