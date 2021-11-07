@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,15 +31,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.MapDataDefinition;
@@ -64,11 +63,9 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.GraphTestUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.util.ValidationUtils;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@SpringJUnitConfig(locations = "classpath:application-context-test.xml")
 public class InterfaceOperationTest extends ModelTestBase {
 
     private static final String RESOURCE_NAME = "Resource Name";
@@ -91,12 +88,12 @@ public class InterfaceOperationTest extends ModelTestBase {
     private ToscaElementLifecycleOperation lifecycleOperation;
     private GraphVertex ownerVertex;
 
-    @BeforeClass
+    @BeforeAll
     public static void initInterfacesOperation() {
         init();
     }
 
-    @Before
+    @BeforeEach
     public void setupBefore() {
         GraphTestUtils.clearGraph(janusGraphDao);
         createUsers();
@@ -149,7 +146,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.RESOURCE_CATEGORY.getName());
         metadataProperties.put(GraphPropertyEnum.NAME, categoryName);
         metadataProperties
-                .put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
+            .put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
         cat.setMetadataProperties(metadataProperties);
         cat.updateMetadataJsonWithCurrentMetadataProperties();
 
@@ -161,14 +158,14 @@ public class InterfaceOperationTest extends ModelTestBase {
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.RESOURCE_SUBCATEGORY.getName());
         metadataProperties.put(GraphPropertyEnum.NAME, subcategory);
         metadataProperties
-                .put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(subcategory));
+            .put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(subcategory));
         subCat.setMetadataProperties(metadataProperties);
         subCat.updateMetadataJsonWithCurrentMetadataProperties();
 
         Either<GraphVertex, JanusGraphOperationStatus> catRes = janusGraphDao.createVertex(cat);
         Either<GraphVertex, JanusGraphOperationStatus> subCatRes = janusGraphDao.createVertex(subCat);
         janusGraphDao.createEdge(catRes.left().value().getVertex(), subCatRes.left().value().getVertex(),
-                EdgeLabelEnum.SUB_CATEGORY, new HashMap<>());
+            EdgeLabelEnum.SUB_CATEGORY, new HashMap<>());
     }
 
     private void createServiceCategory() {
@@ -180,7 +177,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         metadataProperties.put(GraphPropertyEnum.LABEL, VertexTypeEnum.SERVICE_CATEGORY.getName());
         metadataProperties.put(GraphPropertyEnum.NAME, categoryName);
         metadataProperties
-                .put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
+            .put(GraphPropertyEnum.NORMALIZED_NAME, ValidationUtils.normalizeCategoryName4Uniqueness(categoryName));
         cat.setMetadataProperties(metadataProperties);
         cat.updateMetadataJsonWithCurrentMetadataProperties();
         janusGraphDao.createVertex(cat);
@@ -197,7 +194,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         vf.getMetadata().put(JsonPresentationFields.VERSION.getPresentation(), "1.0");
         vf.getMetadata().put(JsonPresentationFields.TYPE.getPresentation(), ResourceTypeEnum.VFC.name());
         vf.getMetadata()
-                .put(JsonPresentationFields.LIFECYCLE_STATE.getPresentation(), LifecycleStateEnum.CERTIFIED.name());
+            .put(JsonPresentationFields.LIFECYCLE_STATE.getPresentation(), LifecycleStateEnum.CERTIFIED.name());
         vf.getMetadata().put(JsonPresentationFields.TOSCA_RESOURCE_NAME.getPresentation(), "root");
         vf.getMetadata().put(JsonPresentationFields.HIGHEST_VERSION.getPresentation(), true);
 
@@ -236,7 +233,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         Either<NodeType, StorageOperationStatus> createVFRes = nodeTypeOperation.createNodeType(vf);
 
         Either<GraphVertex, JanusGraphOperationStatus> getNodeTyeRes =
-                janusGraphDao.getVertexById(createVFRes.left().value().getUniqueId());
+            janusGraphDao.getVertexById(createVFRes.left().value().getUniqueId());
         getNodeTyeRes.left().value();
     }
 
@@ -280,10 +277,10 @@ public class InterfaceOperationTest extends ModelTestBase {
 
         Either<NodeType, StorageOperationStatus> createVFRes = nodeTypeOperation.createNodeType(vf);
         Either<GraphVertex, JanusGraphOperationStatus> getNodeTyeRes =
-                janusGraphDao.getVertexById(createVFRes.left().value().getUniqueId());
+            janusGraphDao.getVertexById(createVFRes.left().value().getUniqueId());
         GraphVertex vfVertex = getNodeTyeRes.left().value();
         StorageOperationStatus status = nodeTypeOperation.addToscaDataToToscaElement(vfVertex, EdgeLabelEnum.PROPERTIES,
-                VertexTypeEnum.PROPERTIES, addProperties, JsonPresentationFields.NAME);
+            VertexTypeEnum.PROPERTIES, addProperties, JsonPresentationFields.NAME);
         assertSame(StorageOperationStatus.OK, status);
 
         PropertyDataDefinition prop33 = new PropertyDataDefinition();
@@ -291,8 +288,8 @@ public class InterfaceOperationTest extends ModelTestBase {
         prop33.setDefaultValue("def33");
 
         status = nodeTypeOperation
-                         .addToscaDataToToscaElement(vfVertex, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES,
-                                 prop33, JsonPresentationFields.NAME);
+            .addToscaDataToToscaElement(vfVertex, EdgeLabelEnum.PROPERTIES, VertexTypeEnum.PROPERTIES,
+                prop33, JsonPresentationFields.NAME);
         assertSame(StorageOperationStatus.OK, status);
 
         PropertyDataDefinition prop44 = new PropertyDataDefinition();
@@ -300,7 +297,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         prop44.setDefaultValue("def44");
 
         status = nodeTypeOperation.addToscaDataToToscaElement(vfVertex.getUniqueId(), EdgeLabelEnum.PROPERTIES,
-                VertexTypeEnum.PROPERTIES, prop44, JsonPresentationFields.NAME);
+            VertexTypeEnum.PROPERTIES, prop44, JsonPresentationFields.NAME);
         assertSame(StorageOperationStatus.OK, status);
 
         PropertyDataDefinition capProp = new PropertyDataDefinition();
@@ -314,13 +311,13 @@ public class InterfaceOperationTest extends ModelTestBase {
         capProps.put("capName", dataToCreate);
 
         nodeTypeOperation.associateElementToData(vfVertex, VertexTypeEnum.CAPABILITIES_PROPERTIES,
-                EdgeLabelEnum.CAPABILITIES_PROPERTIES, capProps);
+            EdgeLabelEnum.CAPABILITIES_PROPERTIES, capProps);
 
         List<String> pathKeys = new ArrayList<>();
         pathKeys.add("capName");
         capProp.setDefaultValue("BBBB");
         nodeTypeOperation.updateToscaDataDeepElementOfToscaElement(vfVertex, EdgeLabelEnum.CAPABILITIES_PROPERTIES,
-                VertexTypeEnum.CAPABILITIES_PROPERTIES, capProp, pathKeys, JsonPresentationFields.NAME);
+            VertexTypeEnum.CAPABILITIES_PROPERTIES, capProp, pathKeys, JsonPresentationFields.NAME);
     }
 
     private void createTopologyTemplate(String name) {
@@ -341,14 +338,14 @@ public class InterfaceOperationTest extends ModelTestBase {
 
         service.setComponentType(ComponentTypeEnum.SERVICE);
         Either<TopologyTemplate, StorageOperationStatus> createRes =
-                topologyTemplateOperation.createTopologyTemplate(service);
+            topologyTemplateOperation.createTopologyTemplate(service);
         Either<GraphVertex, JanusGraphOperationStatus> getNodeTyeRes =
-                janusGraphDao.getVertexById(createRes.left().value().getUniqueId());
+            janusGraphDao.getVertexById(createRes.left().value().getUniqueId());
 
         getNodeTyeRes.left().value();
     }
 
-    @After
+    @AfterEach
     public void cleanAfter() {
         GraphTestUtils.clearGraph(janusGraphDao);
     }
@@ -361,9 +358,9 @@ public class InterfaceOperationTest extends ModelTestBase {
     private void testAddSingleInterface(Component component) {
         InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
         Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation
-                                                                                .addInterfaces(component.getUniqueId(),
-                                                                                        Collections.singletonList(
-                                                                                                interfaceDefinition));
+            .addInterfaces(component.getUniqueId(),
+                Collections.singletonList(
+                    interfaceDefinition));
         Assert.assertTrue(res.isLeft());
         Assert.assertEquals("1", res.left().value().get(0).getUniqueId());
     }
@@ -402,7 +399,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         interfaceDefinitions.add(interfaceDefinition1);
         interfaceDefinitions.add(interfaceDefinition2);
         Either<List<InterfaceDefinition>, StorageOperationStatus> res =
-                interfaceOperation.addInterfaces(component.getUniqueId(), interfaceDefinitions);
+            interfaceOperation.addInterfaces(component.getUniqueId(), interfaceDefinitions);
         Assert.assertTrue(res.isLeft());
         Assert.assertEquals(2, res.left().value().size());
     }
@@ -415,16 +412,16 @@ public class InterfaceOperationTest extends ModelTestBase {
     private void testUpdateInterface(Component component) {
         InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
         Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation
-                                                                                .addInterfaces(component.getUniqueId(),
-                                                                                        Collections.singletonList(
-                                                                                                interfaceDefinition));
+            .addInterfaces(component.getUniqueId(),
+                Collections.singletonList(
+                    interfaceDefinition));
         Assert.assertTrue(res.isLeft());
         List<InterfaceDefinition> value = res.left().value();
         InterfaceDefinition createdInterfaceDef = value.get(0);
         String newDescription = "New Description";
         createdInterfaceDef.setDescription(newDescription);
         res = interfaceOperation
-                      .updateInterfaces(component.getUniqueId(), Collections.singletonList(createdInterfaceDef));
+            .updateInterfaces(component.getUniqueId(), Collections.singletonList(createdInterfaceDef));
         assertTrue(res.isLeft());
         assertEquals(newDescription, res.left().value().get(0).getDescription());
     }
@@ -442,13 +439,13 @@ public class InterfaceOperationTest extends ModelTestBase {
     private void testDeleteInterface(Component component) {
         InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
         Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation
-                                                                                .addInterfaces(component.getUniqueId(),
-                                                                                        Collections.singletonList(
-                                                                                                interfaceDefinition));
+            .addInterfaces(component.getUniqueId(),
+                Collections.singletonList(
+                    interfaceDefinition));
         Assert.assertTrue(res.isLeft());
         List<InterfaceDefinition> value = res.left().value();
         Either<String, StorageOperationStatus> deleteInterfaceOperationRes =
-                interfaceOperation.deleteInterface(component.getUniqueId(), value.get(0).getUniqueId());
+            interfaceOperation.deleteInterface(component.getUniqueId(), value.get(0).getUniqueId());
         assertTrue(deleteInterfaceOperationRes.isLeft());
     }
 
@@ -463,7 +460,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         InterfaceDefinition interfaceDefinition = buildInterfaceDefinitionWithoutOperation();
         interfaceDefinition.setOperationsMap(createMockOperationMap());
         Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation.updateInterfaces(
-                component.getUniqueId(), Collections.singletonList(interfaceDefinition));
+            component.getUniqueId(), Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isRight());
     }
 
@@ -499,7 +496,7 @@ public class InterfaceOperationTest extends ModelTestBase {
     }
 
     private InterfaceDefinition createInterface(String uniqueId, String description, String type,
-            String toscaResourceName, Map<String, Operation> op) {
+                                                String toscaResourceName, Map<String, Operation> op) {
         InterfaceDefinition id = new InterfaceDefinition();
         id.setType(type);
         id.setDescription(description);
@@ -509,7 +506,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         return id;
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         GraphTestUtils.clearGraph(janusGraphDao);
     }

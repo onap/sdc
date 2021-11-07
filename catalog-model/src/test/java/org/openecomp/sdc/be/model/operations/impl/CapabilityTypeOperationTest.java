@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +25,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.janusgraph.core.JanusGraph;
-import org.janusgraph.core.JanusGraphVertex;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,14 +37,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphVertex;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
-import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityTypeDefinition;
@@ -60,14 +59,9 @@ import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.LessOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.CapabilityTypeData;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@SpringJUnitConfig(locations = "classpath:application-context-test.xml")
 public class CapabilityTypeOperationTest extends ModelTestBase {
 
     @Resource(name = "janusgraph-generic-dao")
@@ -75,16 +69,20 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
     @Resource(name = "capability-type-operation")
     private CapabilityTypeOperation capabilityTypeOperation;
-    
+
     @Resource(name = "model-operation")
     private ModelOperation modelOperation;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupBeforeClass() {
         ModelTestBase.init();
     }
-    
-    @Before
+
+    private static Map<String, PropertyDefinition> asMap(PropertyDefinition... props) {
+        return Stream.of(props).collect(Collectors.toMap(PropertyDefinition::getName, Function.identity()));
+    }
+
+    @BeforeEach
     public void cleanUp() {
         HealingJanusGraphGenericDao janusGraphGenericDao = capabilityTypeOperation.janusGraphGenericDao;
         Either<JanusGraph, JanusGraphOperationStatus> graphResult = janusGraphGenericDao.getGraph();
@@ -114,21 +112,24 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         capabilityTypeDefinition.setDescription("desc1");
         capabilityTypeDefinition.setType("tosca.capabilities.Container1");
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(
+            capabilityTypeDefinition, true);
         assertTrue("check capability type added", addCapabilityType1.isLeft());
 
         CapabilityTypeDefinition capabilityTypeAdded = addCapabilityType1.left().value();
         compareBetweenCreatedToSent(capabilityTypeDefinition, capabilityTypeAdded);
 
-        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypeByUid = capabilityTypeOperation.getCapabilityTypeByUid(capabilityTypeAdded.getUniqueId());
+        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypeByUid = capabilityTypeOperation.getCapabilityTypeByUid(
+            capabilityTypeAdded.getUniqueId());
         compareBetweenCreatedToSent(capabilityTypeByUid.left().value(), capabilityTypeDefinition);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation.addCapabilityType(
+            capabilityTypeDefinition, true);
         assertTrue("check capability type failed", addCapabilityType2.isRight());
         assertEquals("check returned error", StorageOperationStatus.SCHEMA_VIOLATION, addCapabilityType2.right().value());
 
     }
-    
+
     @Test
     public void testAddCapabilityTypeWithModel() {
 
@@ -136,28 +137,31 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         capabilityTypeDefinition.setDescription("desc1");
         capabilityTypeDefinition.setType("tosca.capabilities.Container1");
         capabilityTypeDefinition.setModel("testModel");
-        
-        Model model = new Model("testModel", ModelTypeEnum.NORMATIVE);
-        modelOperation.createModel(model , true);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        Model model = new Model("testModel", ModelTypeEnum.NORMATIVE);
+        modelOperation.createModel(model, true);
+
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(
+            capabilityTypeDefinition, true);
         assertTrue("check capability type added", addCapabilityType1.isLeft());
 
         CapabilityTypeDefinition capabilityTypeAdded = addCapabilityType1.left().value();
         compareBetweenCreatedToSent(capabilityTypeDefinition, capabilityTypeAdded);
 
-        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypeByUid = capabilityTypeOperation.getCapabilityTypeByUid(capabilityTypeAdded.getUniqueId());
+        Either<CapabilityTypeDefinition, JanusGraphOperationStatus> capabilityTypeByUid = capabilityTypeOperation.getCapabilityTypeByUid(
+            capabilityTypeAdded.getUniqueId());
         compareBetweenCreatedToSent(capabilityTypeByUid.left().value(), capabilityTypeDefinition);
-        
+
         CapabilityTypeDefinition capabilityTypeWithDerivedFrom = new CapabilityTypeDefinition();
         capabilityTypeWithDerivedFrom.setDescription("desc2");
         capabilityTypeWithDerivedFrom.setType("tosca.capabilities.Container2");
         capabilityTypeWithDerivedFrom.setDerivedFrom("tosca.capabilities.Container1");
         capabilityTypeWithDerivedFrom.setModel("testModel");
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation.addCapabilityType(capabilityTypeWithDerivedFrom, true);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType2 = capabilityTypeOperation.addCapabilityType(
+            capabilityTypeWithDerivedFrom, true);
         assertTrue("check capability type added", addCapabilityType2.isLeft());
-        
+
         capabilityTypeAdded = addCapabilityType2.left().value();
         compareBetweenCreatedToSent(capabilityTypeWithDerivedFrom, capabilityTypeAdded);
 
@@ -168,7 +172,8 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
         CapabilityTypeDefinition capabilityTypeDefinition = createCapabilityTypeDef("tosca.capabilities.Container2", "desc1", "derivedFrom");
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(
+            capabilityTypeDefinition, true);
         // assertEquals("check capability type parent not exist",
         // StorageOperationStatus.INVALID_ID,
         // addCapabilityType1.right().value());
@@ -197,10 +202,12 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
         capabilityTypeDefinition.setProperties(properties);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(
+            capabilityTypeDefinition, true);
 
         CapabilityTypeDefinition capabilityTypeDefinitionCreated = addCapabilityType1.left().value();
-        Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation.getCapabilityType(capabilityTypeDefinitionCreated.getUniqueId(), true);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation.getCapabilityType(
+            capabilityTypeDefinitionCreated.getUniqueId(), true);
         assertTrue("check capability type fetched", capabilityType.isLeft());
         CapabilityTypeDefinition fetchedCTD = capabilityType.left().value();
 
@@ -234,10 +241,12 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
         capabilityTypeDefinition.setProperties(properties);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(capabilityTypeDefinition, true);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> addCapabilityType1 = capabilityTypeOperation.addCapabilityType(
+            capabilityTypeDefinition, true);
 
         CapabilityTypeDefinition capabilityTypeDefinitionCreated = addCapabilityType1.left().value();
-        Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation.getCapabilityType(capabilityTypeDefinitionCreated.getUniqueId());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> capabilityType = capabilityTypeOperation.getCapabilityType(
+            capabilityTypeDefinitionCreated.getUniqueId());
         assertTrue("check capability type fetched", capabilityType.isLeft());
         CapabilityTypeDefinition fetchedCTD = capabilityType.left().value();
 
@@ -274,14 +283,13 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         assertEquals("check not found is returned", StorageOperationStatus.NOT_FOUND, capabilityType.right().value());
 
     }
-    
-    
-    
+
     @Test
     public void updateCapabilityType_returnNotFoundErrorIfTryingToUpdateANonExistingType() {
         CapabilityTypeDefinition currType = createCapabilityTypeDef();
         CapabilityTypeDefinition updatedType = createCapabilityTypeDef();
-        Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityTypeRes = capabilityTypeOperation.updateCapabilityType(updatedType, currType);
+        Either<CapabilityTypeDefinition, StorageOperationStatus> updateCapabilityTypeRes = capabilityTypeOperation.updateCapabilityType(updatedType,
+            currType);
         assertThat(updateCapabilityTypeRes.right().value()).isEqualTo(StorageOperationStatus.NOT_FOUND);
     }
 
@@ -293,7 +301,8 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         CapabilityTypeDefinition updatedType = createCapabilityTypeDef("type1", "description2");
         capabilityTypeOperation.updateCapabilityType(updatedType, currCapabilityType.left().value());
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> fetchedUpdatedType = capabilityTypeOperation.getCapabilityType(createdType.getType());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> fetchedUpdatedType = capabilityTypeOperation.getCapabilityType(
+            createdType.getType());
         CapabilityTypeDefinition fetchedCapabilityType = fetchedUpdatedType.left().value();
         assertThat(fetchedCapabilityType.getProperties()).isNullOrEmpty();
         assertThat(fetchedCapabilityType.getDerivedFrom()).isNullOrEmpty();
@@ -314,17 +323,18 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         PropertyDefinition prop3 = createSimpleProperty("val3", "prop3", "string");
         CapabilityTypeDefinition updatedCapabilityType = createCapabilityTypeDef(asMap(updatedProp1, prop3));
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> updatedCapabilityTypeRes = 
-                capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
-        
+        Either<CapabilityTypeDefinition, StorageOperationStatus> updatedCapabilityTypeRes =
+            capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
+
         assertTrue(updatedCapabilityTypeRes.isRight());
         assertEquals(StorageOperationStatus.MATCH_NOT_FOUND, updatedCapabilityTypeRes.right().value());
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> fetchedUpdatedType = capabilityTypeOperation.getCapabilityType(capabilityType.getType());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> fetchedUpdatedType = capabilityTypeOperation.getCapabilityType(
+            capabilityType.getType());
         assertEquals(fetchedUpdatedType.left().value().getProperties(), asMap(prop1));
 
     }
-    
+
     @Test
     public void updateCapabilityType_updatePropertiesFailedDueDeletedProp() {
         PropertyDefinition prop1 = createSimpleProperty("val1", "prop1", "string");
@@ -334,17 +344,18 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         PropertyDefinition prop3 = createSimpleProperty("val3", "prop3", "string");
         CapabilityTypeDefinition updatedCapabilityType = createCapabilityTypeDef(asMap(prop3));
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> updatedCapabilityTypeRes = 
-                capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
-        
+        Either<CapabilityTypeDefinition, StorageOperationStatus> updatedCapabilityTypeRes =
+            capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
+
         assertTrue(updatedCapabilityTypeRes.isRight());
         assertEquals(StorageOperationStatus.MATCH_NOT_FOUND, updatedCapabilityTypeRes.right().value());
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> fetchedUpdatedType = capabilityTypeOperation.getCapabilityType(capabilityType.getType());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> fetchedUpdatedType = capabilityTypeOperation.getCapabilityType(
+            capabilityType.getType());
         assertEquals(fetchedUpdatedType.left().value().getProperties(), asMap(prop1));
 
     }
-    
+
     @Test
     public void updateCapabilityType_updateProperties() {
         PropertyDefinition prop1 = createSimpleProperty("val1", "prop1", "string");
@@ -355,11 +366,12 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         PropertyDefinition prop3 = createSimpleProperty("val3", "prop3", "string");
         CapabilityTypeDefinition updatedCapabilityType = createCapabilityTypeDef(asMap(updatedProp1, prop3));
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> updatedCapabilityTypeRes = 
-                capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> updatedCapabilityTypeRes =
+            capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
         assertTrue(updatedCapabilityTypeRes.isLeft());
-       
-        Either<CapabilityTypeDefinition, StorageOperationStatus> fetchedUpdatedType = capabilityTypeOperation.getCapabilityType(capabilityType.getType());
+
+        Either<CapabilityTypeDefinition, StorageOperationStatus> fetchedUpdatedType = capabilityTypeOperation.getCapabilityType(
+            capabilityType.getType());
         assertEquals(fetchedUpdatedType.left().value().getProperties(), asMap(updatedProp1, prop3));
 
     }
@@ -373,7 +385,8 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         Either<CapabilityTypeDefinition, StorageOperationStatus> currCapabilityType = capabilityTypeOperation.addCapabilityType(capabilityType1);
         capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> latestCapabilityType = capabilityTypeOperation.getCapabilityType(capabilityType1.getType());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> latestCapabilityType = capabilityTypeOperation.getCapabilityType(
+            capabilityType1.getType());
         assertThat(latestCapabilityType.left().value().getDerivedFrom()).isEqualTo(rootCapabilityType.getType());
         verifyDerivedFromNodeEqualsToRootCapabilityType(rootCapabilityType, latestCapabilityType.left().value().getUniqueId());
     }
@@ -386,12 +399,13 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         capabilityTypeOperation.addCapabilityType(rootCapabilityType);
         Either<CapabilityTypeDefinition, StorageOperationStatus> currCapabilityType = capabilityTypeOperation.addCapabilityType(capabilityType1);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> updateRes = 
-                capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
-        
+        Either<CapabilityTypeDefinition, StorageOperationStatus> updateRes =
+            capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
+
         assertThat(updateRes.right().value()).isEqualTo(StorageOperationStatus.NOT_FOUND);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> latestCapabilityType = capabilityTypeOperation.getCapabilityType(capabilityType1.getType());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> latestCapabilityType = capabilityTypeOperation.getCapabilityType(
+            capabilityType1.getType());
         assertThat(latestCapabilityType.left().value().getDerivedFrom()).isEqualTo(rootCapabilityType.getType());
     }
 
@@ -408,11 +422,12 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
 
         capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> latestCapabilityType = capabilityTypeOperation.getCapabilityType(capabilityType1.getType());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> latestCapabilityType = capabilityTypeOperation.getCapabilityType(
+            capabilityType1.getType());
         assertThat(latestCapabilityType.left().value().getDerivedFrom()).isEqualTo(derivedType1.getType());
         verifyDerivedFromNodeEqualsToRootCapabilityType(derivedType1, latestCapabilityType.left().value().getUniqueId());
     }
-    
+
     @Test
     public void updateCapabilityType_updateDerivedFrom_Failed_NewParentIsNotChildOfOldOne() {
         CapabilityTypeDefinition rootCapabilityType = createCapabilityTypeDef();
@@ -424,23 +439,26 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         capabilityTypeOperation.addCapabilityType(notDerivedType);
         Either<CapabilityTypeDefinition, StorageOperationStatus> currCapabilityType = capabilityTypeOperation.addCapabilityType(capabilityType1);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> result = capabilityTypeOperation.updateCapabilityType(updatedCapabilityType, currCapabilityType.left().value());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> result = capabilityTypeOperation.updateCapabilityType(updatedCapabilityType,
+            currCapabilityType.left().value());
         assertThat(result.right().value()).isEqualTo(StorageOperationStatus.CANNOT_UPDATE_EXISTING_ENTITY);
 
-        Either<CapabilityTypeDefinition, StorageOperationStatus> latestCapabilityType = capabilityTypeOperation.getCapabilityType(capabilityType1.getType());
+        Either<CapabilityTypeDefinition, StorageOperationStatus> latestCapabilityType = capabilityTypeOperation.getCapabilityType(
+            capabilityType1.getType());
         assertThat(latestCapabilityType.left().value().getDerivedFrom()).isEqualTo(rootCapabilityType.getType());
         verifyDerivedFromNodeEqualsToRootCapabilityType(rootCapabilityType, latestCapabilityType.left().value().getUniqueId());
     }
-    
+
     private CapabilityTypeDefinition createCapabilityTypeDef() {
-        return createCapabilityTypeDef("tosca.capabilities.Root", "The TOSCA root Capability Type all other TOSCA base Capability Types derived from", null, new HashMap<>());
+        return createCapabilityTypeDef("tosca.capabilities.Root", "The TOSCA root Capability Type all other TOSCA base Capability Types derived from",
+            null, new HashMap<>());
     }
 
     private CapabilityTypeDefinition createCapabilityTypeDef(Map<String, PropertyDefinition> properties) {
         return createCapabilityTypeDef("tosca.capabilities.Root",
-                "The TOSCA root Capability Type all other TOSCA base Capability Types derived from", null, properties);
+            "The TOSCA root Capability Type all other TOSCA base Capability Types derived from", null, properties);
     }
-    
+
     private CapabilityTypeDefinition createCapabilityTypeDef(String type, String description) {
         return createCapabilityTypeDef(type, description, null, null);
     }
@@ -449,8 +467,8 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         return createCapabilityTypeDef(type, description, derivedFrom, null);
     }
 
-    
-    private CapabilityTypeDefinition createCapabilityTypeDef(String type, String description, String derivedFrom,  Map<String, PropertyDefinition> properties) {
+    private CapabilityTypeDefinition createCapabilityTypeDef(String type, String description, String derivedFrom,
+                                                             Map<String, PropertyDefinition> properties) {
         CapabilityTypeDefinition capabilityTypeDefinition = new CapabilityTypeDefinition();
         capabilityTypeDefinition.setDescription(description);
         capabilityTypeDefinition.setType(type);
@@ -470,15 +488,12 @@ public class CapabilityTypeOperationTest extends ModelTestBase {
         return updatedProp1;
     }
 
-    private static Map<String, PropertyDefinition> asMap(PropertyDefinition ... props) {
-        return Stream.of(props).collect(Collectors.toMap(PropertyDefinition::getName, Function.identity()));
-    }
-
     private void verifyDerivedFromNodeEqualsToRootCapabilityType(CapabilityTypeDefinition rootCapabilityType, String parentCapabilityId) {
-        Either<ImmutablePair<CapabilityTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), parentCapabilityId, GraphEdgeLabels.DERIVED_FROM,
-                NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
+        Either<ImmutablePair<CapabilityTypeData, GraphEdge>, JanusGraphOperationStatus> derivedFromRelation = janusGraphDao.getChild(
+            UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.CapabilityType), parentCapabilityId, GraphEdgeLabels.DERIVED_FROM,
+            NodeTypeEnum.CapabilityType, CapabilityTypeData.class);
         assertThat(derivedFromRelation.left().value().getLeft().getCapabilityTypeDataDefinition())
-                .isEqualToComparingFieldByField(rootCapabilityType);
+            .isEqualToComparingFieldByField(rootCapabilityType);
     }
 
 

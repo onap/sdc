@@ -17,7 +17,7 @@
 package org.openecomp.sdc.be.components.path;
 
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 
