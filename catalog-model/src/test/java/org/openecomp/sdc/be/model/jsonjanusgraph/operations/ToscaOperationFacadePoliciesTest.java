@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,16 +20,25 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import fj.data.Either;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -38,22 +47,9 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.config.ModelOperationsSpringConfig;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JanusGraphSpringConfig.class, ModelOperationsSpringConfig.class})
+@SpringJUnitConfig(classes = {JanusGraphSpringConfig.class, ModelOperationsSpringConfig.class})
 public class ToscaOperationFacadePoliciesTest extends ModelTestBase {
 
     @Autowired
@@ -63,12 +59,12 @@ public class ToscaOperationFacadePoliciesTest extends ModelTestBase {
 
     private PolicyDefinition policy1, policy2;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupBeforeClass() {
         ModelTestBase.init();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         policy1 = createPolicyDefinition("type1");
         policy2 = createPolicyDefinition("type2");
@@ -76,7 +72,7 @@ public class ToscaOperationFacadePoliciesTest extends ModelTestBase {
         createPoliciesOnGraph(policy1, policy2);
     }
 
-    private void createPoliciesOnGraph(PolicyDefinition ... policies) {
+    private void createPoliciesOnGraph(PolicyDefinition... policies) {
         for (int i = 0; i < policies.length; i++) {
             PolicyDefinition policy = policies[i];
             Either<PolicyDefinition, StorageOperationStatus> createdPolicy = toscaOperationFacade.associatePolicyToComponent(CONTAINER_ID, policy, i);
@@ -84,7 +80,7 @@ public class ToscaOperationFacadePoliciesTest extends ModelTestBase {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         janusGraphDao.rollback();
     }
@@ -117,14 +113,15 @@ public class ToscaOperationFacadePoliciesTest extends ModelTestBase {
 
     private PolicyDefinition clonePolicyWithTargets(PolicyDefinition policy) {
         PolicyDefinition originalPolicy = new PolicyDefinition(policy);
-        Map<PolicyTargetType, List<String>> clonedTargetMap = policy.getTargets().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> new ArrayList<>(entry.getValue())));
+        Map<PolicyTargetType, List<String>> clonedTargetMap = policy.getTargets().entrySet().stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> new ArrayList<>(entry.getValue())));
         originalPolicy.setTargets(clonedTargetMap);
         return originalPolicy;
     }
 
     private void verifyPolicyTargets(PolicyDefinition updatedPolicy, PolicyDefinition expectedPolicy) {
         assertThat(updatedPolicy.getTargets())
-                .isEqualTo(expectedPolicy.getTargets());
+            .isEqualTo(expectedPolicy.getTargets());
     }
 
     private void updatePolicyTypeTargetsIds(PolicyDefinition policy, PolicyTargetType targetType, List<String> updatedTargetIds) {
