@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a0fa753_0a064c73",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-08T14:27:08Z",
+      "side": 1,
+      "message": "you need to check for null before calling any method, otherwise a NullPointerException can be thrown.\nI recommend to use apache Collections.isEmpty().",
+      "range": {
+        "startLine": 204,
+        "startChar": 12,
+        "endLine": 204,
+        "endChar": 90
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2321202_94e9f1cc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-08T14:27:08Z",
+      "side": 1,
+      "message": "is the new line necessary?",
+      "range": {
+        "startLine": 225,
+        "startChar": 94,
+        "endLine": 225,
+        "endChar": 96
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ca98d38_c12d37a7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentSubstitutionFilterBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-08T14:27:08Z",
+      "side": 1,
+      "message": "you should check for the optional presence before getting its value",
+      "range": {
+        "startLine": 260,
+        "startChar": 48,
+        "endLine": 260,
+        "endChar": 128
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e9e7804_5a62b78b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentSubstitutionFilterBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-08T14:27:08Z",
+      "side": 1,
+      "message": "what is the reason to do this? The return is not being used.",
+      "range": {
+        "startLine": 266,
+        "startChar": 8,
+        "endLine": 266,
+        "endChar": 95
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d896fea9_ea76732b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-08T14:27:08Z",
+      "side": 1,
+      "message": "Not only for ComponentException. Simply change to:\nlog.debug(\"Create Service from yaml failed\", e);\nno need for message arguments when printing the exception stack trace.",
+      "range": {
+        "startLine": 268,
+        "startChar": 22,
+        "endLine": 268,
+        "endChar": 81
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
