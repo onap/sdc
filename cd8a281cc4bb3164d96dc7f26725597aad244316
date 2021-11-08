@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d1a5bb19_5a27769f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-08T19:17:24Z",
+      "side": 1,
+      "message": "sorry, CollectionUtils.isEmpty(substitutionFilterProperties)",
+      "parentUuid": "5a0fa753_0a064c73",
+      "range": {
+        "startLine": 204,
+        "startChar": 12,
+        "endLine": 204,
+        "endChar": 90
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a2321202_94e9f1cc",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
         "patchSetId": 1
