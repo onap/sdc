@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
@@ -34,7 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.GenericType;
@@ -42,33 +42,28 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.ComponentLocker;
 import org.openecomp.sdc.be.components.impl.ExternalRefsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
+import org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
 import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.dto.ExternalRefDTO;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -87,6 +82,8 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOper
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.IdMapper;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelElementOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.OperationUtils;
 import org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper;
 import org.openecomp.sdc.be.servlets.exception.DefaultExceptionMapper;
@@ -106,14 +103,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 
-@TestInstance(Lifecycle.PER_CLASS)
-@ExtendWith(MockitoExtension.class)
-@Disabled("Investigate 'org.springframework.beans.factory.UnsatisfiedDependencyException: "
-    + "Error creating bean with name 'externalRefServletTest.TestSpringConfig': "
-    + "Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: "
-    + "No qualifying bean of type 'org.openecomp.sdc.be.externalapi.servlet.ExternalRefServletTest' available: expected at least 1 bean which qualifies as autowire candidate."
-    + "Dependency annotations: {}'")
-class ExternalRefServletTest extends JerseyTest {
+class ExternalRefsServletTest extends JerseyTest {
 
     private static final String COMPONENT_ID = "ci-MyComponentName";
     private static final String FAKE_COMPONENT_ID = "ci-MyFAKEComponentName";
@@ -128,7 +118,6 @@ class ExternalRefServletTest extends JerseyTest {
     private static final String REF_5 = "ref5";
     //workflow
     private static final String REF_6 = "ref6";
-    private static boolean setupDone = false;
     private static String serviceVertexUuid;
     private static String resourceVertexUuid;
     /* Users */
@@ -143,52 +132,33 @@ class ExternalRefServletTest extends JerseyTest {
     private static final User otherUser = new User("other", "other", "other", "other@email.com", Role.DESIGNER.name(),
         System.currentTimeMillis());
 
-    @Mock
-    private IdMapper idMapper;
-    @Mock
-    public WebAppContextWrapper webAppContextWrapper;
-    @Mock
-    private ServletContext servletContext;
-    @Mock
-    private WebApplicationContext webApplicationContext;
-    @Mock
-    private ServletUtils servletUtils;
-    @Mock
-    private UserBusinessLogic userAdmin;
-    @Mock
-    private ComponentsUtils componentUtils;
-    @Mock
-    private ResponseFormat responseFormat;
-    @Mock
-    private ResponseFormat notFoundResponseFormat;
-    @Mock
-    private ResponseFormat badRequestResponseFormat;
-    @Mock
-    private ToscaOperationFacade toscaOperationFacadeMock;
-    @Mock
-    private AccessValidations accessValidationsMock;
-    @Mock
-    private ComponentLocker componentLocker;
-    @Mock
-    private HealingJanusGraphGenericDao janusGraphGenericDao;
-    @Mock
-    private IGraphLockOperation graphLockOperation;
-    @Mock
-    private HttpServletRequest request;
-    @Mock
-    private ByResponseFormatComponentException ce;
-    @Mock
-    private Component resourceComponentMock;
-    @Mock
-    private Component serviceComponentMock;
+    private static final IdMapper idMapper = mock(IdMapper.class);
+    private static final WebAppContextWrapper webAppContextWrapper = mock(WebAppContextWrapper.class);
+    private static final ServletContext servletContext = mock(ServletContext.class);
+    private static final WebApplicationContext webApplicationContext = mock(WebApplicationContext.class);
+    private static final ServletUtils servletUtils = mock(ServletUtils.class);
+    private static final ComponentsUtils componentUtils = mock(ComponentsUtils.class);
+    private static final ResponseFormat responseFormat = mock(ResponseFormat.class);
+    private static final ResponseFormat notFoundResponseFormat = mock(ResponseFormat.class);
+    private static final ResponseFormat badRequestResponseFormat = mock(ResponseFormat.class);
+    private static final UserBusinessLogic userAdmin = mock(UserBusinessLogic.class);
+    private static final ToscaOperationFacade toscaOperationFacadeMock = mock(ToscaOperationFacade.class);
+    private static final AccessValidations accessValidationsMock = mock(AccessValidations.class);
+    private static final ComponentLocker componentLocker = mock(ComponentLocker.class);
+    private static final HealingJanusGraphGenericDao janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
+    private static final IGraphLockOperation graphLockOperation = mock(IGraphLockOperation.class);
+    private static final ByResponseFormatComponentException ce = mock(ByResponseFormatComponentException.class);
+    private static final Component resourceComponentMock = mock(Component.class);
+    private static final Component serviceComponentMock = mock(Component.class);
+    private static final ModelOperation modelOperation = mock(ModelOperation.class);
+    private static final ModelElementOperation modelElementOperation = mock(ModelElementOperation.class);
 
     @BeforeAll
-    public void setup() {
+    public static void setup() {
 
         //Needed for User Authorization
         //========================================================================================================================
-        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
-            .thenReturn(webAppContextWrapper);
+        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getUserAdmin()).thenReturn(userAdmin);
@@ -196,39 +166,30 @@ class ExternalRefServletTest extends JerseyTest {
         when(componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION)).thenReturn(responseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.UNAUTHORIZED.value());
 
-        String[] params = {otherDesignerUser.getUserId()};
         when(ce.getResponseFormat()).thenReturn(responseFormat);
-        doThrow(ce).when(accessValidationsMock)
-            .validateUserCanWorkOnComponent(any(), any(), eq(otherDesignerUser.getUserId()), any());
-        doThrow(ce).when(accessValidationsMock)
-            .validateUserCanWorkOnComponent(any(), any(), eq(otherUser.getUserId()), any());
+        doThrow(ce).when(accessValidationsMock).validateUserCanWorkOnComponent(any(), any(), eq(otherDesignerUser.getUserId()), any());
+        doThrow(ce).when(accessValidationsMock).validateUserCanWorkOnComponent(any(), any(), eq(otherUser.getUserId()), any());
 
         //Needed for error configuration
         when(notFoundResponseFormat.getStatus()).thenReturn(HttpStatus.NOT_FOUND.value());
         when(badRequestResponseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
-        when(componentUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), (String[]) any()))
-            .thenReturn(notFoundResponseFormat);
-        when(componentUtils.getResponseFormat(eq(ActionStatus.COMPONENT_VERSION_NOT_FOUND), (String[]) any()))
-            .thenReturn(notFoundResponseFormat);
-        when(componentUtils.getResponseFormat(eq(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND), (String[]) any()))
-            .thenReturn(notFoundResponseFormat);
-        when(componentUtils.getResponseFormat(eq(ActionStatus.EXT_REF_NOT_FOUND), (String[]) any()))
-            .thenReturn(notFoundResponseFormat);
-        when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), (String[]) any()))
-            .thenReturn(badRequestResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), (String[]) any())).thenReturn(notFoundResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.COMPONENT_VERSION_NOT_FOUND), (String[]) any())).thenReturn(notFoundResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND), (String[]) any())).thenReturn(notFoundResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.EXT_REF_NOT_FOUND), (String[]) any())).thenReturn(notFoundResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), (String[]) any())).thenReturn(badRequestResponseFormat);
         when(userAdmin.getUser(adminUser.getUserId(), false)).thenReturn(adminUser);
         when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerUser);
         when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
         String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-            appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
         org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
         configuration.setJanusGraphInMemoryGraph(true);
-        org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout();
+        HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new HeatDeploymentArtifactTimeout();
         heatDeploymentArtifactTimeout.setDefaultMinutes(30);
         configuration.setAafAuthNeeded(false);
         configuration.setHeatArtifactDeploymentTimeout(heatDeploymentArtifactTimeout);
@@ -239,7 +200,6 @@ class ExternalRefServletTest extends JerseyTest {
     @BeforeEach
     public void before() throws Exception {
         super.setUp();
-        MockitoAnnotations.openMocks(this);
 
         when(resourceComponentMock.getVersion()).thenReturn(VERSION);
         when(resourceComponentMock.getUniqueId()).thenReturn(resourceVertexUuid);
@@ -250,16 +210,11 @@ class ExternalRefServletTest extends JerseyTest {
         List<Component> listComponents = new LinkedList<>();
         listComponents.add(serviceComponentMock);
 
-        when(toscaOperationFacadeMock.getComponentListByUuid(eq(serviceVertexUuid), any()))
-            .thenReturn(Either.left(listComponents));
-        when(toscaOperationFacadeMock.getComponentByUuidAndVersion(serviceVertexUuid, VERSION))
-            .thenReturn(Either.left(serviceComponentMock));
-        when(toscaOperationFacadeMock.getComponentByUuidAndVersion(resourceVertexUuid, VERSION))
-            .thenReturn(Either.left(resourceComponentMock));
-        when(toscaOperationFacadeMock.getLatestComponentByUuid(eq(serviceVertexUuid), any()))
-            .thenReturn(Either.left(listComponents.get(0)));
-        when(toscaOperationFacadeMock.getLatestComponentByUuid(eq(resourceVertexUuid), any()))
-            .thenReturn(Either.left(resourceComponentMock));
+        when(toscaOperationFacadeMock.getComponentListByUuid(eq(serviceVertexUuid), any())).thenReturn(Either.left(listComponents));
+        when(toscaOperationFacadeMock.getComponentByUuidAndVersion(serviceVertexUuid, VERSION)).thenReturn(Either.left(serviceComponentMock));
+        when(toscaOperationFacadeMock.getComponentByUuidAndVersion(resourceVertexUuid, VERSION)).thenReturn(Either.left(resourceComponentMock));
+        when(toscaOperationFacadeMock.getLatestComponentByUuid(eq(serviceVertexUuid), any())).thenReturn(Either.left(listComponents.get(0)));
+        when(toscaOperationFacadeMock.getLatestComponentByUuid(eq(resourceVertexUuid), any())).thenReturn(Either.left(resourceComponentMock));
     }
 
     @AfterEach
@@ -650,6 +605,7 @@ class ExternalRefServletTest extends JerseyTest {
     @Override
     protected Application configure() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TestSpringConfig.class);
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return new ResourceConfig(ExternalRefsServlet.class)
             .register(DefaultExceptionMapper.class)
             .register(ComponentExceptionMapper.class)
@@ -659,7 +615,7 @@ class ExternalRefServletTest extends JerseyTest {
 
     @Configuration
     @PropertySource("classpath:dao.properties")
-    public class TestSpringConfig {
+    static class TestSpringConfig {
 
         private GraphVertex serviceVertex;
         private GraphVertex resourceVertex;
@@ -719,10 +675,8 @@ class ExternalRefServletTest extends JerseyTest {
 
         @Bean
         IdMapper idMapper() {
-            when(idMapper.mapComponentNameToUniqueId(eq(COMPONENT_ID), any(GraphVertex.class)))
-                .thenReturn(COMPONENT_ID);
-            when(idMapper.mapUniqueIdToComponentNameTo(eq(COMPONENT_ID), any(GraphVertex.class)))
-                .thenReturn(COMPONENT_ID);
+            when(idMapper.mapComponentNameToUniqueId(eq(COMPONENT_ID), any(GraphVertex.class))).thenReturn(COMPONENT_ID);
+            when(idMapper.mapUniqueIdToComponentNameTo(eq(COMPONENT_ID), any(GraphVertex.class))).thenReturn(COMPONENT_ID);
             when(idMapper.mapComponentNameToUniqueId(eq(FAKE_COMPONENT_ID), any(GraphVertex.class))).thenReturn(null);
             return idMapper;
         }
@@ -788,6 +742,16 @@ class ExternalRefServletTest extends JerseyTest {
             return janusGraphGenericDao;
         }
 
+        @Bean
+        ModelOperation modelOperation() {
+            return modelOperation;
+        }
+
+        @Bean
+        ModelElementOperation modelElementOperation() {
+            return modelElementOperation;
+        }
+
         @Bean("healingPipelineDao")
         HealingPipelineDao healingPipelineDao() {
             HealingPipelineDao healingPipelineDao = new HealingPipelineDao();
@@ -802,35 +766,25 @@ class ExternalRefServletTest extends JerseyTest {
         }
 
         private void initGraphForTest() {
-            if (!setupDone) {
+            resourceVertex = GraphTestUtils.createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.VF);
+            resourceVertexUuid = resourceVertex.getUniqueId();
 
-                resourceVertex = GraphTestUtils
-                    .createResourceVertex(janusGraphDao, new HashMap<>(), ResourceTypeEnum.VF);
-                resourceVertexUuid = resourceVertex.getUniqueId();
+            //create a service and add ref
+            serviceVertex = GraphTestUtils.createServiceVertex(janusGraphDao, new HashMap<>());
+            serviceVertexUuid = this.serviceVertex.getUniqueId();
 
-                //create a service and add ref
-                serviceVertex = GraphTestUtils.createServiceVertex(janusGraphDao, new HashMap<>());
-                serviceVertexUuid = this.serviceVertex.getUniqueId();
+            //monitoring references
+            externalReferenceOperation.addExternalReference(serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_1);
+            externalReferenceOperation.addExternalReference(serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_2);
+            externalReferenceOperation.addExternalReference(serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_3);
+            externalReferenceOperation.addExternalReference(serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_5);
 
-                //monitoring references
-                externalReferenceOperation
-                    .addExternalReference(serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_1);
-                externalReferenceOperation
-                    .addExternalReference(serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_2);
-                externalReferenceOperation
-                    .addExternalReference(serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_3);
-                externalReferenceOperation
-                    .addExternalReference(serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_5);
+            //workflow references
+            externalReferenceOperation.addExternalReference(serviceVertexUuid, COMPONENT_ID, WORKFLOW_OBJECT_TYPE, REF_6);
 
-                //workflow references
-                externalReferenceOperation
-                    .addExternalReference(serviceVertexUuid, COMPONENT_ID, WORKFLOW_OBJECT_TYPE, REF_6);
-
-                final JanusGraphOperationStatus commit = this.janusGraphDao.commit();
-                assertThat(commit).isEqualTo(JanusGraphOperationStatus.OK);
-            }
+            final JanusGraphOperationStatus commit = this.janusGraphDao.commit();
+            assertThat(commit).isEqualTo(JanusGraphOperationStatus.OK);
         }
-
 
     }
 }

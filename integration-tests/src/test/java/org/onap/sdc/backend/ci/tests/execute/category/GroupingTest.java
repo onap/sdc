@@ -442,7 +442,6 @@ public class GroupingTest extends CategoriesBaseTest {
 				STATUS_CODE_RESTRICTED_OPERATION, AUDIT_PRODUCT_TYPE);
 	}
 
-	// @Ignore("DE176245")
 	@Test
 	public void createProductGroupForNonExistingComponentType() throws Exception {
 		String nonSupportedComponentType = "NonExistingComponentType"; // instead
@@ -467,7 +466,6 @@ public class GroupingTest extends CategoriesBaseTest {
 				STATUS_CODE_INVALID_CONTENT, nonSupportedComponentType);
 	}
 
-	// @Ignore("DE176245")
 	@Test
 	public void createResourceGroup() throws Exception {
 		// Resource doesn't have group
@@ -491,7 +489,6 @@ public class GroupingTest extends CategoriesBaseTest {
 				STATUS_CODE_INVALID_CONTENT, AUDIT_RESOURCE_TYPE);
 	}
 
-	// @Ignore("DE176245")
 	@Test
 	public void createServiceGroup() throws Exception {
 		// Service doesn't have group

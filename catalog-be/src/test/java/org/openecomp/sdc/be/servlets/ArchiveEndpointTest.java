@@ -57,17 +57,18 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
+import org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.DAOJanusGraphStrategy;
 import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
+import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
@@ -118,15 +119,13 @@ class ArchiveEndpointTest extends JerseyTest {
     private static final String CSAR_UUID1 = "123456789abcdefgh";
     private static final String CSAR_UUID2 = "987654321abcdefgh";
 
-    public static final WebAppContextWrapper webAppContextWrapper = mock(WebAppContextWrapper.class);
+    private static final WebAppContextWrapper webAppContextWrapper = mock(WebAppContextWrapper.class);
     private static final WebApplicationContext webApplicationContext = mock(WebApplicationContext.class);
     private static final ServletUtils servletUtils = mock(ServletUtils.class);
     private static final UserBusinessLogic userAdmin = mock(UserBusinessLogic.class);
     private static final ComponentsUtils componentUtils = mock(ComponentsUtils.class);
     private static final CatalogOperation catalogOperations = mock(CatalogOperation.class);
-    //    private static final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
     private static final ToscaOperationFacade toscaOperationFacade = Mockito.spy(new ToscaOperationFacade());
-
 
     private static final ResponseFormat responseFormat = mock(ResponseFormat.class);
     private static final ResponseFormat notFoundResponseFormat = mock(ResponseFormat.class);
@@ -135,8 +134,7 @@ class ArchiveEndpointTest extends JerseyTest {
     private static final AccessValidations accessValidationsMock = mock(AccessValidations.class);
     private static final ComponentValidations componentValidationsMock = mock(ComponentValidations.class);
     private static final IGraphLockOperation graphLockOperation = mock(IGraphLockOperation.class);
-    private static final HealingJanusGraphGenericDao
-        janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
+    private static final HealingJanusGraphGenericDao janusGraphGenericDao = mock(HealingJanusGraphGenericDao.class);
     private static final HealingPipelineDao HEALING_PIPELINE_DAO = mock(HealingPipelineDao.class);
     private static GraphVertex serviceVertex;
     private static GraphVertex resourceVertex;
@@ -153,9 +151,7 @@ class ArchiveEndpointTest extends JerseyTest {
 
         @Bean
         ArchiveEndpoint archiveEndpoint() {
-            UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
-            ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
-            return new ArchiveEndpoint(userBusinessLogic, componentsUtils, archiveBusinessLogic());
+            return new ArchiveEndpoint(userAdmin, componentUtils, archiveBusinessLogic());
         }
 
         @Bean
@@ -322,15 +318,13 @@ class ArchiveEndpointTest extends JerseyTest {
     public static void setup() {
         //Needed for User Authorization
         //========================================================================================================================
-        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
-            .thenReturn(webAppContextWrapper);
+        when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
         when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
         when(servletUtils.getUserAdmin()).thenReturn(userAdmin);
         when(servletUtils.getComponentsUtils()).thenReturn(componentUtils);
         when(componentUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION)).thenReturn(responseFormat);
-        when(componentUtils.getResponseFormat(eq(ActionStatus.INVALID_SERVICE_STATE), any()))
-            .thenReturn(invalidServiceStateResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.INVALID_SERVICE_STATE), any())).thenReturn(invalidServiceStateResponseFormat);
         when(responseFormat.getStatus()).thenReturn(HttpStatus.UNAUTHORIZED.value());
 
         ComponentException ce = new ByResponseFormatComponentException(responseFormat);
@@ -340,33 +334,27 @@ class ArchiveEndpointTest extends JerseyTest {
         when(notFoundResponseFormat.getStatus()).thenReturn(HttpStatus.NOT_FOUND.value());
         when(invalidServiceStateResponseFormat.getStatus()).thenReturn(HttpStatus.CONFLICT.value());
         when(badRequestResponseFormat.getStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
-        when(componentUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), (String[]) any()))
-            .thenReturn(notFoundResponseFormat);
-        when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), (String[]) any()))
-            .thenReturn(badRequestResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.RESOURCE_NOT_FOUND), (String[]) any())).thenReturn(notFoundResponseFormat);
+        when(componentUtils.getResponseFormat(eq(ActionStatus.MISSING_X_ECOMP_INSTANCE_ID), (String[]) any())).thenReturn(badRequestResponseFormat);
 
-        when(graphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class)))
-            .thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperation.lockComponent(anyString(), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
         when(userAdmin.getUser(adminUser.getUserId(), false)).thenReturn(adminUser);
         when(userAdmin.getUser(designerUser.getUserId(), false)).thenReturn(designerUser);
         when(userAdmin.getUser(otherUser.getUserId(), false)).thenReturn(otherUser);
         //========================================================================================================================
 
         String appConfigDir = "src/test/resources/config/catalog-be";
-        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(),
-            appConfigDir);
+        ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
 
         org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
         configuration.setJanusGraphInMemoryGraph(true);
 
-        org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new org.openecomp.sdc.be.config.Configuration.HeatDeploymentArtifactTimeout();
+        HeatDeploymentArtifactTimeout heatDeploymentArtifactTimeout = new HeatDeploymentArtifactTimeout();
         heatDeploymentArtifactTimeout.setDefaultMinutes(30);
-        ;
         configuration.setHeatArtifactDeploymentTimeout(heatDeploymentArtifactTimeout);
         configurationManager.setConfiguration(configuration);
 
-        configurationManager.setConfiguration(configuration);
         ExternalConfiguration.setAppName("catalog-be");
     }
 
