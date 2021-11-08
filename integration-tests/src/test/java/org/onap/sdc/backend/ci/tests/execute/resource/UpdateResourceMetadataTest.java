@@ -613,8 +613,6 @@ public class UpdateResourceMetadataTest extends ComponentBaseTest {
 
     }
 
-    // TODO DE
-    // @Ignore("")
     @Test
     public void UpdateWithInvaldJsonBodyTest() throws Exception {
 

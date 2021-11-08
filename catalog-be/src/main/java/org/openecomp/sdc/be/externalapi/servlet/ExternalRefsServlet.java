@@ -21,9 +21,7 @@ package org.openecomp.sdc.be.externalapi.servlet;
 
 import fj.data.Either;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -53,8 +51,8 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Controller;
 
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDCE-7 APIs")})
-@Servers({@Server(url = "/sdc")})
+@Tag(name = "SDCE-7 APIs")
+@Server(url = "/sdc")
 @Controller
 public class ExternalRefsServlet extends BeGenericServlet {
 

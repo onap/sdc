@@ -460,7 +460,6 @@ public class SubCategoriesTest extends ComponentBaseTest {
 				STATUS_CODE_RESTRICTED_OPERATION, AUDIT_PRODUCT_TYPE);
 	}
 
-	// @Ignore("DE176245")
 	@Test
 	public void createResourceSubCategoryForNonExistingComponentType() throws Exception {
 		String nonSupportedComponentType = "NonExistingComponentType"; // instead
@@ -482,7 +481,6 @@ public class SubCategoriesTest extends ComponentBaseTest {
 				STATUS_CODE_INVALID_CONTENT, nonSupportedComponentType);
 	}
 
-	// @Ignore("DE176245")
 	@Test
 	public void createProductSubCategoryForNonExistingComponentType() throws Exception {
 		String nonSupportedComponentType = "NonExistingComponentType"; // instead
@@ -1122,13 +1120,6 @@ public class SubCategoriesTest extends ComponentBaseTest {
 				resourceSubCategoryDefinition, sdncAdminUserDetails, STATUS_CODE_CREATED, AUDIT_RESOURCE_TYPE);
 	}
 
-	// Bug
-	// Desc=<ACTION = "AddSubCategory" MODIFIER = "Jimmy Hendrix(jh0003)"
-	// CATEGORY_NAME = "Category1" SUB_CATEGORY_NAME = "&AbcD123" GROUPING_NAME
-	// = "" RESOURCE_TYPE = "Resource" STATUS = "400" DESC = "SVC4556: Error:
-	// Invalid Resource sub-category name format.">
-	// DESC=SVC4556: Error: InvalidResourcesub-categorynameformat.,
-	// @Ignore
 	@Test
 	public void subCategoryFirstWordStartWithNonAlphaNumeric() throws Exception {
 		// The first word must start with an alpha-numeric character [a-Z A..Z,
