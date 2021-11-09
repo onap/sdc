@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5469911_4a3db7bf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentNodeFilterBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-09T12:05:52Z",
+      "side": 1,
+      "message": "not covered by any TC",
+      "range": {
+        "startLine": 326,
+        "startChar": 0,
+        "endLine": 326,
+        "endChar": 98
+      },
+      "revId": "388a1ec3f5abb6cf6db2c5a7db6c4cce863272d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51e89092_a267d2b4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2172,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-09T12:05:52Z",
+      "side": 1,
+      "message": "not covered by any TC",
+      "range": {
+        "startLine": 2172,
+        "startChar": 0,
+        "endLine": 2172,
+        "endChar": 136
+      },
+      "revId": "388a1ec3f5abb6cf6db2c5a7db6c4cce863272d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
