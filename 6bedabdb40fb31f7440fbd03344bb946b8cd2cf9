@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7e98b597_04b2b725",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 503,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-09T11:50:00Z",
+      "side": 1,
+      "message": "not covered by any TC",
+      "range": {
+        "startLine": 492,
+        "startChar": 4,
+        "endLine": 503,
+        "endChar": 0
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7c802f8_dc9be0a9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1389,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-09T11:50:00Z",
+      "side": 1,
+      "message": "not covered by any TC",
+      "range": {
+        "startLine": 1376,
+        "startChar": 3,
+        "endLine": 1389,
+        "endChar": 0
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "527dda2a_dd1ab207",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-09T11:50:00Z",
+      "side": 1,
+      "message": "not covered by any TC",
+      "range": {
+        "startLine": 586,
+        "startChar": 4,
+        "endLine": 599,
+        "endChar": 0
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22c77c6b_6b4929bd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-09T11:50:00Z",
+      "side": 1,
+      "message": "not covered by any TC",
+      "range": {
+        "startLine": 1253,
+        "startChar": 0,
+        "endLine": 1253,
+        "endChar": 128
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4906bd17_c924b216",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-11-09T11:50:00Z",
+      "side": 1,
+      "message": "needless to create variable, inline it",
+      "range": {
+        "startLine": 1262,
+        "startChar": 8,
+        "endLine": 1263,
+        "endChar": 22
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
