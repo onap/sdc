@@ -717,7 +717,6 @@
                 <resource>
                   <directory>${project.parent.basedir}/catalog-be/src/main/resources/import/tosca
                   </directory>
-                  <filtering>true</filtering>
                 </resource>
               </resources>
             </configuration>
