@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1c099634_6263efdf",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ArchiveEndpointTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-09T12:14:28Z",
+      "side": 1,
+      "message": "if you can, please remove this commented code",
+      "range": {
+        "startLine": 129,
+        "startChar": 4,
+        "endLine": 129,
+        "endChar": 108
+      },
+      "revId": "f4b6e34139b43f11a1226a8e452f46bd484bd17f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24a628fd_439e0f9b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ArchiveEndpointTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-09T12:14:28Z",
+      "side": 1,
+      "message": "you don\u0027t need this as no mock annotations are being used in this test",
+      "range": {
+        "startLine": 366,
+        "startChar": 8,
+        "endLine": 366,
+        "endChar": 43
+      },
+      "revId": "f4b6e34139b43f11a1226a8e452f46bd484bd17f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
