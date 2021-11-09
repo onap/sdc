@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "49b43b94_836de934",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-09T00:30:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a0fa753_0a064c73",
+      "range": {
+        "startLine": 204,
+        "startChar": 12,
+        "endLine": 204,
+        "endChar": 90
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a2321202_94e9f1cc",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
         "patchSetId": 1
@@ -69,6 +93,30 @@
       "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27359991_1d9fcba1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-09T00:30:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2321202_94e9f1cc",
+      "range": {
+        "startLine": 225,
+        "startChar": 94,
+        "endLine": 225,
+        "endChar": 96
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -95,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "8a4e5f6d_71b1816f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentSubstitutionFilterBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-09T00:30:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ca98d38_c12d37a7",
+      "range": {
+        "startLine": 260,
+        "startChar": 48,
+        "endLine": 260,
+        "endChar": 128
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e9e7804_5a62b78b",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentSubstitutionFilterBusinessLogic.java",
         "patchSetId": 1
@@ -118,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "4d5daa00_d54970ad",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentSubstitutionFilterBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-09T00:30:07Z",
+      "side": 1,
+      "message": "I thought need this conversion for filters to reflect in UI. But it works without it. Removed it.",
+      "parentUuid": "9e9e7804_5a62b78b",
+      "range": {
+        "startLine": 266,
+        "startChar": 8,
+        "endLine": 266,
+        "endChar": 95
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d896fea9_ea76732b",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 1
@@ -138,6 +234,30 @@
       "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b84acc8_866e34b9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-09T00:30:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d896fea9_ea76732b",
+      "range": {
+        "startLine": 268,
+        "startChar": 22,
+        "endLine": 268,
+        "endChar": 81
+      },
+      "revId": "cd8a281cc4bb3164d96dc7f26725597aad244316",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
