@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e137d57f_d35f5ddf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PropertyBusinessLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 503,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-10T15:01:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e98b597_04b2b725",
+      "range": {
+        "startLine": 492,
+        "startChar": 4,
+        "endLine": 503,
+        "endChar": 0
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7c802f8_dc9be0a9",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
         "patchSetId": 8
@@ -45,6 +69,30 @@
       "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac28ce7c_4efe164a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1389,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-10T15:01:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7c802f8_dc9be0a9",
+      "range": {
+        "startLine": 1376,
+        "startChar": 3,
+        "endLine": 1389,
+        "endChar": 0
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "d509ad56_5fefc09f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-10T15:01:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "527dda2a_dd1ab207",
+      "range": {
+        "startLine": 586,
+        "startChar": 4,
+        "endLine": 599,
+        "endChar": 0
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "22c77c6b_6b4929bd",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 8
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "99317ecb_e0726a35",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1253,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-10T15:01:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22c77c6b_6b4929bd",
+      "range": {
+        "startLine": 1253,
+        "startChar": 0,
+        "endLine": 1253,
+        "endChar": 128
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4906bd17_c924b216",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 8
@@ -114,6 +210,30 @@
       "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "924ec56f_fbb8debd",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-10T15:01:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4906bd17_c924b216",
+      "range": {
+        "startLine": 1262,
+        "startChar": 8,
+        "endLine": 1263,
+        "endChar": 22
+      },
+      "revId": "6bedabdb40fb31f7440fbd03344bb946b8cd2cf9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
