@@ -170,7 +170,9 @@ public class YamlToObjectConverter {
                 Map<String, Object> map = (Map<String, Object>) o;
             }
         } catch (Exception e) {
-            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file to object - yaml is invalid", e);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file to object - yaml is invalid. Exception: {}, message: {}", 
+                    e.getClass().getName(), e.getMessage());
+            log.error("Failed to convert yaml file to object - yaml is invalid", e);
             return false;
         }
         return true;
