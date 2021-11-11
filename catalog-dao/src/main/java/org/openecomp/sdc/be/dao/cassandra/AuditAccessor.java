@@ -32,7 +32,7 @@ import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 public interface AuditAccessor {
 
     // ***** distributionstatusevent table
-    @Query("SELECT * FROM sdcaudit.distributionstatusevent WHERE DID = :did AND ACTION = 'DStatus' ALLOW FILTERING")
+    @Query("SELECT * FROM sdcaudit.distributionstatusevent WHERE DID = :did")
     Result<DistributionStatusEvent> getListOfDistributionStatuses(@Param("did") String did);
 
     // ***** resourceadminevent table
