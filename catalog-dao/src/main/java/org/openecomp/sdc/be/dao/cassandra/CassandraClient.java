@@ -154,7 +154,7 @@ public class CassandraClient {
         }
         try {
             Mapper<T> mapper = manager.mapper(clazz);
-            mapper.save(entity);
+            mapper.save(entity, Mapper.Option.saveNullFields(false));
         } catch (Exception e) {
             logger.error(EcompLoggerErrorCode.DATA_ERROR, CassandraClient.class.getName(), "Failed to save entity [{}], error :", entity, e);
             return CassandraOperationStatus.GENERAL_ERROR;
