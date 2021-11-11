@@ -48,17 +48,16 @@ import org.openecomp.sdc.exception.YamlConversionException;
 import org.openecomp.sdc.fe.config.Configuration.FeMonitoringConfig;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 public class YamlToObjectConverter {
 
     private static Logger log = Logger.getLogger(YamlToObjectConverter.class.getName());
-    private static HashMap<String, Yaml> yamls = new HashMap<>();
-    private static Yaml defaultYaml = new Yaml();
+    private static HashMap<String, Constructor> yamlConstructors = new HashMap<>();
 
     static {
-        org.yaml.snakeyaml.constructor.Constructor deConstructor = new org.yaml.snakeyaml.constructor.Constructor(
-            DistributionEngineConfiguration.class);
+        Constructor deConstructor = new Constructor(DistributionEngineConfiguration.class);
         TypeDescription deDescription = new TypeDescription(DistributionEngineConfiguration.class);
         deDescription.putListPropertyType("distributionStatusTopic", DistributionStatusTopicConfig.class);
         deDescription.putListPropertyType("distribNotifServiceArtifactTypes", ComponentArtifactTypesConfig.class);
@@ -66,18 +65,15 @@ public class YamlToObjectConverter {
         deDescription.putListPropertyType("createTopic", CreateTopicConfig.class);
         deDescription.putListPropertyType("distributionNotificationTopic", DistributionNotificationTopicConfig.class);
         deConstructor.addTypeDescription(deDescription);
-        Yaml yaml = new Yaml(deConstructor);
-        yamls.put(DistributionEngineConfiguration.class.getName(), yaml);
+        yamlConstructors.put(DistributionEngineConfiguration.class.getName(), deConstructor);
         // FE conf
-        org.yaml.snakeyaml.constructor.Constructor feConfConstructor = new org.yaml.snakeyaml.constructor.Constructor(
-            org.openecomp.sdc.fe.config.Configuration.class);
+        Constructor feConfConstructor = new Constructor(org.openecomp.sdc.fe.config.Configuration.class);
         TypeDescription feConfDescription = new TypeDescription(org.openecomp.sdc.fe.config.Configuration.class);
         feConfDescription.putListPropertyType("systemMonitoring", FeMonitoringConfig.class);
         feConfConstructor.addTypeDescription(feConfDescription);
-        yamls.put(org.openecomp.sdc.fe.config.Configuration.class.getName(), new Yaml(feConfConstructor));
+        yamlConstructors.put(org.openecomp.sdc.fe.config.Configuration.class.getName(), feConfConstructor);
         // BE conf
-        org.yaml.snakeyaml.constructor.Constructor beConfConstructor = new org.yaml.snakeyaml.constructor.Constructor(
-            org.openecomp.sdc.be.config.Configuration.class);
+        Constructor beConfConstructor = new Constructor(org.openecomp.sdc.be.config.Configuration.class);
         TypeDescription beConfDescription = new TypeDescription(org.openecomp.sdc.be.config.Configuration.class);
         beConfConstructor.addTypeDescription(beConfDescription);
         // systemMonitoring
@@ -97,23 +93,19 @@ public class YamlToObjectConverter {
         beConfDescription.putListPropertyType("applicationL2Cache", ApplicationL2CacheConfig.class);
         // tosca validators config
         beConfDescription.putListPropertyType("toscaValidators", ToscaValidatorsConfig.class);
-        yamls.put(org.openecomp.sdc.be.config.Configuration.class.getName(), new Yaml(beConfConstructor));
+        yamlConstructors.put(org.openecomp.sdc.be.config.Configuration.class.getName(), beConfConstructor);
         // HEAT deployment artifact
-        org.yaml.snakeyaml.constructor.Constructor depArtHeatConstructor = new org.yaml.snakeyaml.constructor.Constructor(
-            DeploymentArtifactHeatConfiguration.class);
+        Constructor depArtHeatConstructor = new Constructor(DeploymentArtifactHeatConfiguration.class);
         PropertyUtils propertyUtils = new PropertyUtils();
         // Skip properties which are found in YAML but not found in POJO
         propertyUtils.setSkipMissingProperties(true);
         depArtHeatConstructor.setPropertyUtils(propertyUtils);
-        yamls.put(org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration.class.getName(), new Yaml(depArtHeatConstructor));
+        yamlConstructors.put(org.openecomp.sdc.be.config.validation.DeploymentArtifactHeatConfiguration.class.getName(), depArtHeatConstructor);
     }
 
     private static <T> Yaml getYamlByClassName(Class<T> className) {
-        Yaml yaml = yamls.get(className.getName());
-        if (yaml == null) {
-            yaml = defaultYaml;
-        }
-        return yaml;
+        Constructor yamlConstructor = yamlConstructors.get(className.getName());
+        return yamlConstructor == null ? new Yaml() : new Yaml(yamlConstructor);
     }
 
     public <T> T convert(final String dirPath, final Class<T> className, final String configFileName) throws YamlConversionException {
@@ -164,13 +156,15 @@ public class YamlToObjectConverter {
     @SuppressWarnings("unchecked")
     public boolean isValidYaml(byte[] fileContents) {
         try {
-            Iterable<Object> mappedToscaTemplateIt = defaultYaml.loadAll(new ByteArrayInputStream(fileContents));
+            Iterable<Object> mappedToscaTemplateIt = new Yaml().loadAll(new ByteArrayInputStream(fileContents));
             for (Object o : mappedToscaTemplateIt) {
-                System.out.println("Loaded object type:" + o.getClass());
+                log.debug("Loaded object type:" + o.getClass());
                 Map<String, Object> map = (Map<String, Object>) o;
             }
         } catch (Exception e) {
-            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file to object - yaml is invalid", e);
+            log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, "", "", "Failed to convert yaml file to object - yaml is invalid. Exception: {}, message: {}", 
+                    e.getClass().getName(), e.getMessage());
+            log.error("Failed to convert yaml file to object - yaml is invalid", e);
             return false;
         }
         return true;
