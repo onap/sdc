@@ -141,7 +141,7 @@ export abstract class Component implements IComponent {
     public subCategory:string;
     public selectedCategory:string;
     public showMenu:boolean;
-    public archived:boolean;
+    public isArchived:boolean;
     public vspArchived: boolean;
     public componentMetadata: ComponentMetadata;
     public categorySpecificMetadata: Metadata = new Metadata();
@@ -202,7 +202,7 @@ export abstract class Component implements IComponent {
             this.modules = component.modules;
             this.groupInstances = component.groupInstances;
             this.policies = component.policies;
-            this.archived = component.archived;
+            this.isArchived = component.isArchived;
             this.vspArchived = component.vspArchived;
 
             if (component.categorySpecificMetadata && component.categories && component.categories[0]){
@@ -574,7 +574,7 @@ export abstract class Component implements IComponent {
         this.normalizedName = componentMetadata.normalizedName;
         this.systemName = componentMetadata.systemName;
         this.categories = componentMetadata.categories;
-        this.archived = componentMetadata.archived || false;
+        this.isArchived = componentMetadata.isArchived;
         this.vspArchived = componentMetadata.vspArchived;
         this.componentMetadata = componentMetadata;
         if (componentMetadata.categorySpecificMetadata){

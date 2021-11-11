@@ -19,7 +19,7 @@ export class FullComponentInstance extends ComponentInstance {
     public systemName:string;
     public uuid:string;
     public lifecycleState: string;
-    public archived: boolean;
+    public isArchived: boolean;
 
     public isServiceInstance: boolean;
     public isResourceInstance: boolean;
@@ -61,7 +61,7 @@ export class FullComponentInstance extends ComponentInstance {
         this.systemName = originComponent.systemName;
         this.uuid = originComponent.uuid;
         this.lifecycleState = originComponent.lifecycleState;
-        this.archived = originComponent.archived;
+        this.isArchived = originComponent.isArchived;
         this.attributes = originComponent.attributes;
         this.directives = componentInstance.directives;
 
