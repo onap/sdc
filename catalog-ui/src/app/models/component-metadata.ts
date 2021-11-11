@@ -50,7 +50,7 @@ export interface IComponentMetadata {
     highestVersion: boolean;
     normalizedName: string;
     systemName: string;
-    archived: boolean;
+    isArchived: boolean;
     vspArchived: boolean;
     selectedCategory: string;
     filterTerm: string;
@@ -116,7 +116,7 @@ export class ComponentMetadata implements IComponentMetadata {
     public highestVersion: boolean;
     public normalizedName: string;
     public systemName: string;
-    public archived: boolean;
+    public isArchived: boolean;
     public vspArchived: boolean;
     public toscaResourceName: string;
     public selectedCategory: string;
@@ -197,7 +197,7 @@ export class ComponentMetadata implements IComponentMetadata {
         this.serviceType = response.serviceType;
         this.serviceRole = response.serviceRole;
         this.environmentContext = response.environmentContext;
-        this.archived = response.archived;
+        this.isArchived = response.isArchived;
         this.instantiationType = response.instantiationType;
         this.vspArchived = response.vspArchived;
         this.toscaResourceName = response.toscaResourceName;

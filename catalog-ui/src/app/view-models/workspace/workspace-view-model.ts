@@ -282,7 +282,7 @@ export class WorkspaceViewModel {
                             break;
                     }
                 }
-                this.$scope.component.archived = true;
+                this.$scope.component.isArchived = true;
                 this.deleteArchiveCache();
 
                 this.Notification.success({
@@ -301,8 +301,9 @@ export class WorkspaceViewModel {
                     message: this.$scope.component.name + ' ' + this.$filter('translate')("RESTORE_SUCCESS_MESSAGE_TEXT"),
                     title: this.$filter('translate')("RESTORE_SUCCESS_MESSAGE_TITLE")
                 });
+                this.$scope.reload(this.$scope.component);
             });
-            this.$scope.component.archived = false;
+            this.$scope.component.isArchived = false;
             this.deleteArchiveCache();
         }
 
@@ -637,7 +638,7 @@ export class WorkspaceViewModel {
 
         this.$scope.checkDisableButton = (button: any):boolean => {
             // Logic moved from html to component
-            if (this.$scope.isCreateMode() || button.disabled || this.$scope.disabledButtons || !this.$scope.isValidForm || this.$scope.unsavedChanges || this.$scope.component.archived){
+            if (this.$scope.isCreateMode() || button.disabled || this.$scope.disabledButtons || !this.$scope.isValidForm || this.$scope.unsavedChanges || this.$scope.component.isArchived){
                 return true;
             }
 

@@ -44,7 +44,7 @@
                     <span class="lifecycle-state-text" data-tests-id="formlifecyclestate">{{getStatus()}}</span>
                 </div>
 
-                <div class="archive-state-label" ng-if="component.archived">
+                <div class="archive-state-label" ng-if="component.isArchived">
                     <div class="sprite-new archive-label" ></div>
                 </div>
 
@@ -61,7 +61,7 @@
                             ng-disabled="hasNoDependencies"
                             ng-click="openAutomatedUpgradeModal()"
                             class="tlv-btn blue"
-                            data-ng-class="{'disabled' : component.archived}"
+                            data-ng-class="{'disabled' : component.isArchived}"
                             data-tests-id="open-upgrade-vsp-popup"
                             sdc-smart-tooltip="" prevent-double-click>{{component.isResource() ? 'Upgrade Services' : 'Update Services'}}</button>
 
@@ -77,7 +77,7 @@
                         </button>
 
 
-                    <button ng-if="!isCreateMode() && component.archived"
+                    <button ng-if="!isCreateMode() && component.isArchived"
                         data-ng-class="{'disabled' :!isDesigner() || !component.isLatestVersion()}"
                         ng-click="restoreComponent()"
                         class="tlv-btn blue"
@@ -86,14 +86,14 @@
 
                     <button ng-if="!isViewMode() && isCreateMode()" data-ng-disabled="!isValidForm || isDisableMode() || isLoading || unsavedChanges" ng-click="create()" class="tlv-btn outline green" data-tests-id="create/save">Create</button>
 
-                    <span data-ng-if="isDesigner() && !isCreateMode() && component.lifecycleState === 'NOT_CERTIFIED_CHECKOUT' && !component.archived" sdc-smart-tooltip=""
+                    <span data-ng-if="isDesigner() && !isCreateMode() && component.lifecycleState === 'NOT_CERTIFIED_CHECKOUT' && !component.isArchived" sdc-smart-tooltip=""
                         data-ng-class="{'disabled' : !isValidForm || isDisableMode() || isViewMode() || unsavedChanges}" ng-click="changeLifecycleState('deleteVersion')"
                         class="sprite-new delete-btn" data-tests-id="delete_version" sdc-smart-tooltip="Delete" prevent-double-click>Delete</span>
 
                     <span data-ng-click = "archiveComponent()"
                         ng-model-options="{ debounce: 300 }"
                         data-ng-class="{'disabled' : !component.isLatestVersion()}"
-                        data-ng-if = "isDesigner() && component.lifecycleState !== 'NOT_CERTIFIED_CHECKOUT' && !isCreateMode() && !component.archived"
+                        data-ng-if = "isDesigner() && component.lifecycleState !== 'NOT_CERTIFIED_CHECKOUT' && !isCreateMode() && !component.isArchived"
                         data-tests-id="archive-component-button"
                         class="sprite-new archive-btn" sdc-smart-tooltip="Archive" prevent-double-click>Archive</span>
 
