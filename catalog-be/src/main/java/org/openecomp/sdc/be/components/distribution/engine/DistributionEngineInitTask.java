@@ -197,6 +197,14 @@ public class DistributionEngineInitTask implements Runnable {
         CambriaErrorResponse registerStatus = cambriaHandler
             .registerToTopic(environmentEntry.getDmaapUebAddress(), environmentEntry.getUebApikey(), environmentEntry.getUebSecretKey(),
                 environmentEntry.getUebApikey(), subscriberType, topicName);
+
+        if (CambriaOperationStatus.AUTHENTICATION_ERROR.equals(registerStatus.getOperationStatus())
+                || CambriaOperationStatus.CONNNECTION_ERROR.equals(registerStatus.getOperationStatus())){
+            registerStatus = cambriaHandler
+                    .registerToTopic(environmentEntry.getDmaapUebAddress(), deConfiguration.getUebPublicKey(), deConfiguration.getUebSecretKey(),
+                            environmentEntry.getUebApikey(), subscriberType, topicName);
+        }
+
         String role = CONSUMER;
         if (subscriberType == SubscriberTypeEnum.PRODUCER) {
             role = PRODUCER;
