@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,11 @@
 package org.openecomp.sdc.be.components.path;
 
 import com.google.common.collect.Lists;
-import org.junit.Before;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.openecomp.sdc.be.components.merge.instance.DataForMergeHolder;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
@@ -33,27 +37,22 @@ import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public abstract class BaseForwardingPathVersionChangeTest {
-    protected Service service;
-    protected ComponentInstance nodeACI;
-    protected ComponentInstance newNodeACI;
-    protected Component newNodeAC;
-    protected Component newNodeWithoutCapability;
-    protected DataForMergeHolder dataHolder;
+
     protected static final String nodeA = "nodeA";
     protected static final String NODE_A_FORWARDER_CAPABILITY = "nodeA_FORWARDER_CAPABILITY";
     protected static final String nodeB = "nodeB";
     protected static final String newNodeA = "newNodeA";
     protected static final String fpName = "fpName";
     protected static final String FPId = "1122";
+    protected Service service;
+    protected ComponentInstance nodeACI;
+    protected ComponentInstance newNodeACI;
+    protected Component newNodeAC;
+    protected Component newNodeWithoutCapability;
+    protected DataForMergeHolder dataHolder;
 
-
-    @Before
+    @BeforeEach
     public void initService() {
         service = new Service();
         ForwardingPathDataDefinition forwardingPath = new ForwardingPathDataDefinition(fpName);
@@ -64,7 +63,7 @@ public abstract class BaseForwardingPathVersionChangeTest {
             = new ListDataDefinition<>();
 
         forwardingPathElementListDataDefinition.add(
-            new ForwardingPathElementDataDefinition(nodeA, nodeB, NODE_A_FORWARDER_CAPABILITY, "nodeBcpType" , "nodeDcpName",
+            new ForwardingPathElementDataDefinition(nodeA, nodeB, NODE_A_FORWARDER_CAPABILITY, "nodeBcpType", "nodeDcpName",
                 "nodeBcpName"));
         forwardingPath.setPathElements(forwardingPathElementListDataDefinition);
         Map<String, ForwardingPathDataDefinition> forwardingPaths = new HashMap<>();
@@ -75,10 +74,10 @@ public abstract class BaseForwardingPathVersionChangeTest {
         newNodeACI = new ComponentInstance();
         initComponentInstance(newNodeACI, newNodeA);
         newNodeAC = new Resource();
-        newNodeWithoutCapability=new Resource();
+        newNodeWithoutCapability = new Resource();
         initComponent(newNodeAC, newNodeA);
         service.setComponentInstances(Lists.newArrayList(newNodeACI));
-        initComponentWithoutForwarder(newNodeWithoutCapability,"newNodeC");
+        initComponentWithoutForwarder(newNodeWithoutCapability, "newNodeC");
         service.setComponentInstances(Lists.newArrayList(nodeACI));
 
         dataHolder = new DataForMergeHolder();

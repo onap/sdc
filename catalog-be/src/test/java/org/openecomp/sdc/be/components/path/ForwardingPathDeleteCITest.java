@@ -20,8 +20,8 @@
 
 package org.openecomp.sdc.be.components.path;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -44,7 +44,7 @@ public class ForwardingPathDeleteCITest {
     private static final String nodeB = "nodeB";
     private static final String fpName = "fpName";
 
-    @Before
+    @BeforeEach
     public void initService() {
         service = new Service();
         ForwardingPathDataDefinition forwardingPath = new ForwardingPathDataDefinition(fpName);
