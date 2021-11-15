@@ -1,119 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>webseal-simulator</artifactId>
-    <packaging>war</packaging>
-
-    <parent>
-        <groupId>org.openecomp.sdc</groupId>
-        <artifactId>sdc-main</artifactId>
-        <version>1.10.0-SNAPSHOT</version>
-        <relativePath>../../</relativePath>
-    </parent>
-
-    <properties>
-        <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
-        <nexus.proxy>https://nexus.onap.org</nexus.proxy>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.skip>true</sonar.skip>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax.servlet.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging-api</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons.io.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-proxy</artifactId>
-            <version>${jetty.version}</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-http</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>${jetty.version}</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-http</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Proxy servlet -->
-        <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-            <version>1.0.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc</groupId>
-            <artifactId>openecomp-sdc-logging-api</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.powermock</groupId>
-                    <artifactId>powermock-module-junit4</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    </dependencies>
-
     <build>
         <finalName>WSSimulator-${project.version}</finalName>
         <plugins>
             <plugin>
-                <groupId>com.github.sylvainlaurent.maven</groupId>
                 <artifactId>yaml-json-validator-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>validate</goal>
-                        </goals>
                         <configuration>
+                            <skip>${skipYamlJsonValidator}</skip>
                             <validationSets>
                                 <validationSet>
                                     <includes>
@@ -128,13 +27,239 @@
                                     </includes>
                                 </validationSet>
                             </validationSets>
-                            <skip>${skipYamlJsonValidator}</skip>
                         </configuration>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                        <id>validate</id>
+                        <phase>validate</phase>
                     </execution>
                 </executions>
+                <groupId>com.github.sylvainlaurent.maven</groupId>
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <artifactId>javax.servlet-api</artifactId>
+            <groupId>javax.servlet</groupId>
+            <scope>compile</scope>
+            <version>${servlet-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>httpclient</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <version>${httpclient.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <artifactId>commons-logging-api</artifactId>
+            <groupId>commons-logging</groupId>
+            <version>1.0.4</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>commons-io</artifactId>
+            <groupId>commons-io</groupId>
+            <version>${commons.io.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>commons-codec</artifactId>
+            <groupId>commons-codec</groupId>
+            <scope>compile</scope>
+            <version>${commons-codec}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>jetty-proxy</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jetty-http</artifactId>
+                    <groupId>org.eclipse.jetty</groupId>
+                </exclusion>
+            </exclusions>
+            <groupId>org.eclipse.jetty</groupId>
+            <scope>compile</scope>
+            <version>${jetty.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>jetty-servlets</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jetty-http</artifactId>
+                    <groupId>org.eclipse.jetty</groupId>
+                </exclusion>
+            </exclusions>
+            <groupId>org.eclipse.jetty</groupId>
+            <scope>compile</scope>
+            <version>${jetty.version}</version>
+        </dependency>
+
+        <!-- Proxy servlet -->
+        <dependency>
+            <artifactId>config</artifactId>
+            <groupId>com.typesafe</groupId>
+            <scope>compile</scope>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <artifactId>openecomp-sdc-logging-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>powermock-module-junit4</artifactId>
+                    <groupId>org.powermock</groupId>
+                </exclusion>
+            </exclusions>
+            <groupId>org.openecomp.sdc</groupId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <packaging>war</packaging>
+
+    <parent>
+        <artifactId>sdc-main</artifactId>
+        <groupId>org.openecomp.sdc</groupId>
+        <relativePath>../../</relativePath>
+        <version>1.10.0-SNAPSHOT</version>
+    </parent>
+
+    <profiles>
+        <profile>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.basedir}/sdc-simulator</directory>
+                                            <followSymlinks>false</followSymlinks>
+                                            <includes>
+                                                <include>*.war</include>
+                                            </includes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <id>clean-static-files</id>
+                                <phase>clean</phase>
+                            </execution>
+                        </executions>
+                        <version>3.0.0</version>
+                    </plugin>
+
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <outputDirectory>${project.basedir}/sdc-simulator
+                                    </outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/target</directory>
+                                            <includes>
+                                                <include>WSSimulator*.war</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <id>copy-resources-simulator</id>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+
+                    <plugin>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <apiVersion>${docker.api.version}</apiVersion>
+                            <authConfig>
+                                <pull>
+                                    <password>docker</password>
+                                    <username>docker</username>
+                                </pull>
+                            </authConfig>
+                            <images>
+                                <!-- Build simulator image -->
+                                <image>
+                                    <alias>sdc-simulator</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFileDir>${basedir}${file.separator}sdc-simulator
+                                        </dockerFileDir>
+                                        <tags>
+                                            <tag>latest</tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                                            </tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}
+                                            </tag>
+                                        </tags>
+                                    </build>
+                                    <name>onap/sdc-simulator</name>
+                                </image>
+                            </images>
+                            <registry>nexus3.onap.org:10001</registry>
+                            <verbose>${verbose}</verbose>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>remove</goal>
+                                </goals>
+                                <id>clean-images</id>
+                                <phase>pre-clean</phase>
+                            </execution>
+                            <execution>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <id>generate-images</id>
+                                <phase>install</phase>
+                            </execution>
+                            <execution>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                                <id>push-images</id>
+                                <phase>deploy</phase>
+                            </execution>
+                        </executions>
+                        <groupId>io.fabric8</groupId>
+                    </plugin>
+                </plugins>
+            </build>
+            <id>docker</id>
+        </profile>
+    </profiles>
+
+    <properties>
+        <maven.build.timestamp.format>yyyyMMdd'T'HHmmss'Z'</maven.build.timestamp.format>
+        <nexus.proxy>https://nexus.onap.org</nexus.proxy>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.skip>true</sonar.skip>
+    </properties>
 
     <repositories>
         <!-- LF repositories -->
@@ -155,128 +280,4 @@
         </repository>
         <!-- LF repositories END-->
     </repositories>
-
-    <profiles>
-        <profile>
-            <id>docker</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <artifactId>maven-clean-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <executions>
-                            <execution>
-                                <id>clean-static-files</id>
-                                <phase>clean</phase>
-                                <goals>
-                                    <goal>clean</goal>
-                                </goals>
-                                <configuration>
-                                    <filesets>
-                                        <fileset>
-                                            <directory>${project.basedir}/sdc-simulator</directory>
-                                            <includes>
-                                                <include>*.war</include>
-                                            </includes>
-                                            <followSymlinks>false</followSymlinks>
-                                        </fileset>
-                                    </filesets>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-resources-simulator</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.basedir}/sdc-simulator
-                                    </outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.basedir}/target</directory>
-                                            <includes>
-                                                <include>WSSimulator*.war</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-
-                    <plugin>
-                        <groupId>io.fabric8</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <configuration>
-                            <verbose>${verbose}</verbose>
-                            <apiVersion>${docker.api.version}</apiVersion>
-                            <registry>nexus3.onap.org:10001</registry>
-                            <authConfig>
-                                <pull>
-                                    <username>docker</username>
-                                    <password>docker</password>
-                                </pull>
-                            </authConfig>
-                            <images>
-                                <!-- Build simulator image -->
-                                <image>
-                                    <name>onap/sdc-simulator</name>
-                                    <alias>sdc-simulator</alias>
-                                    <build>
-                                        <cleanup>try</cleanup>
-                                        <dockerFileDir>${basedir}${file.separator}sdc-simulator
-                                        </dockerFileDir>
-                                        <tags>
-                                            <tag>latest</tag>
-                                            <tag>
-                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
-                                            </tag>
-                                            <tag>
-                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}
-                                            </tag>
-                                        </tags>
-                                    </build>
-                                </image>
-                            </images>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>clean-images</id>
-                                <phase>pre-clean</phase>
-                                <goals>
-                                    <goal>remove</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>generate-images</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>push-images</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>push</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
