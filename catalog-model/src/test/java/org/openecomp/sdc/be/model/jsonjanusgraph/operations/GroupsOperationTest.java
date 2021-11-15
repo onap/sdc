@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,15 +25,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import fj.data.Either;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig;
-import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.GroupDefinition;
@@ -42,30 +41,26 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.config.ModelOperationsSpringConfig;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JanusGraphSpringConfig.class, ModelOperationsSpringConfig.class})
+@SpringJUnitConfig(classes = {JanusGraphSpringConfig.class, ModelOperationsSpringConfig.class})
 public class GroupsOperationTest extends ModelTestBase {
 
     @Autowired
-    private GroupsOperation groupsOperation;
-
+    private HealingJanusGraphDao janusGraphDao;
     @Autowired
-    HealingJanusGraphDao janusGraphDao;
-
+    private GroupsOperation groupsOperation;
     @Autowired
     private ToscaOperationFacade toscaOperationFacade;
     private Component container;
 
-    @BeforeClass
+    @BeforeAll
     public static void initClass() {
         ModelTestBase.init();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         container = new Resource();
         container.setUniqueId(CONTAINER_ID);
@@ -74,7 +69,7 @@ public class GroupsOperationTest extends ModelTestBase {
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         janusGraphDao.rollback();
     }
@@ -90,8 +85,8 @@ public class GroupsOperationTest extends ModelTestBase {
         getGroupsFilter.setIgnoreGroups(false);
         Component cmptWithGroups = toscaOperationFacade.getToscaElement(CONTAINER_ID, getGroupsFilter).left().value();
         assertThat(cmptWithGroups.getGroups())
-                .usingElementComparatorOnFields("name", "uniqueId")
-                .containsExactlyInAnyOrder(g1, g2);
+            .usingElementComparatorOnFields("name", "uniqueId")
+            .containsExactlyInAnyOrder(g1, g2);
     }
 
     @Test
@@ -109,8 +104,8 @@ public class GroupsOperationTest extends ModelTestBase {
         getGroupsFilter.setIgnoreGroups(false);
         Component cmptWithGroups = toscaOperationFacade.getToscaElement(CONTAINER_ID, getGroupsFilter).left().value();
         assertThat(cmptWithGroups.getGroups())
-                .usingElementComparatorOnFields("name", "uniqueId")
-                .containsExactlyInAnyOrder(g1, g2, g3, g4);
+            .usingElementComparatorOnFields("name", "uniqueId")
+            .containsExactlyInAnyOrder(g1, g2, g3, g4);
 
     }
 

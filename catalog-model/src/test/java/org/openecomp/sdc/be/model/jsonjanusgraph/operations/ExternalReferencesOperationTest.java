@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,16 +20,25 @@
 
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.MapComponentInstanceExternalRefs;
@@ -37,20 +46,12 @@ import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.GraphTestUtils;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.IdMapper;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Created by yavivi on 26/01/2018.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@SpringJUnitConfig(locations = "classpath:application-context-test.xml")
 public class ExternalReferencesOperationTest extends ModelTestBase {
 
     private static final String COMPONENT_ID = "ci-MyComponentName";
@@ -83,12 +84,12 @@ public class ExternalReferencesOperationTest extends ModelTestBase {
 
     private IdMapper idMapper;
 
-    @BeforeClass
-    public static void initTest(){
+    @BeforeAll
+    public static void initTest() {
         ModelTestBase.init();
     }
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         idMapper = Mockito.mock(IdMapper.class);
         this.externalReferenceOperation.setIdMapper(idMapper);
@@ -101,8 +102,9 @@ public class ExternalReferencesOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testAddComponentInstanceExternalRef(){
-        Either<String, ActionStatus> addResult = externalReferenceOperation.addExternalReference(this.serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_4);
+    public void testAddComponentInstanceExternalRef() {
+        Either<String, ActionStatus> addResult = externalReferenceOperation.addExternalReference(this.serviceVertexUuid, COMPONENT_ID,
+            MONITORING_OBJECT_TYPE, REF_4);
         assertThat(addResult.isLeft()).isEqualTo(true);
 
         //commit changes to janusgraph
@@ -145,31 +147,38 @@ public class ExternalReferencesOperationTest extends ModelTestBase {
         assertThat(allExternalReferences.size()).isZero();
     }
 
-    @Test(expected=StorageException.class)
+    @Test
     public void testGetAllCIExternalRefs_nonExitingService_throwsException() {
-        externalReferenceOperation.getAllExternalReferences("FAKE", COMPONENT_ID);
+        Assertions.assertThrows(StorageException.class, () -> externalReferenceOperation.getAllExternalReferences("FAKE", COMPONENT_ID));
     }
 
     @Test
-    public void testGetComponentInstanceExternalRef(){
-        assertThat(externalReferenceOperation.getExternalReferences(this.serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE).left().value()).contains(REF_1, REF_2, REF_3, REF_5);
-        assertThat(externalReferenceOperation.getExternalReferences(this.serviceVertexUuid, COMPONENT_ID, WORKFLOW_OBJECT_TYPE).left().value()).containsExactly(REF_6);
+    public void testGetComponentInstanceExternalRef() {
+        assertThat(
+            externalReferenceOperation.getExternalReferences(this.serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE).left().value()).contains(
+            REF_1, REF_2, REF_3, REF_5);
+        assertThat(externalReferenceOperation.getExternalReferences(this.serviceVertexUuid, COMPONENT_ID, WORKFLOW_OBJECT_TYPE).left()
+            .value()).containsExactly(REF_6);
     }
 
     @Test
-    public void testGetComponentInstanceExternalRefForNonExistingObjectId(){
-        assertThat(externalReferenceOperation.getExternalReferences(this.serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE).left().value()).contains(REF_1, REF_2, REF_3, REF_5);
-        Either<List<String>, ActionStatus> getResult = externalReferenceOperation.getExternalReferences(this.serviceVertexUuid, COMPONENT_ID, "FAKE_OBJECT_TYPE");
+    public void testGetComponentInstanceExternalRefForNonExistingObjectId() {
+        assertThat(
+            externalReferenceOperation.getExternalReferences(this.serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE).left().value()).contains(
+            REF_1, REF_2, REF_3, REF_5);
+        Either<List<String>, ActionStatus> getResult = externalReferenceOperation.getExternalReferences(this.serviceVertexUuid, COMPONENT_ID,
+            "FAKE_OBJECT_TYPE");
         assertThat(getResult.left().value()).isEmpty();
     }
 
     @Test
-    public void testDeleteComponentInstanceExternalRef(){
+    public void testDeleteComponentInstanceExternalRef() {
         //Test the precondition
         assertThat(getServiceExternalRefs()).contains(REF_5);
 
         //Remove REF 5
-        Either<String, ActionStatus> deleteStatus = externalReferenceOperation.deleteExternalReference(this.serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_5);
+        Either<String, ActionStatus> deleteStatus = externalReferenceOperation.deleteExternalReference(this.serviceVertexUuid, COMPONENT_ID,
+            MONITORING_OBJECT_TYPE, REF_5);
         assertThat(deleteStatus.isLeft()).isEqualTo(true);
 
         //commit changes to janusgraph
@@ -181,12 +190,13 @@ public class ExternalReferencesOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void testUpdateComponentInstanceExternalRef(){
+    public void testUpdateComponentInstanceExternalRef() {
         //Test the precondition
         assertThat(getServiceExternalRefs()).contains(REF_5).doesNotContain(REF_4);
 
         //Update REF 5 with REF_4
-        Either<String, ActionStatus> updateResult = externalReferenceOperation.updateExternalReference(this.serviceVertexUuid, COMPONENT_ID, MONITORING_OBJECT_TYPE, REF_5, REF_4);
+        Either<String, ActionStatus> updateResult = externalReferenceOperation.updateExternalReference(this.serviceVertexUuid, COMPONENT_ID,
+            MONITORING_OBJECT_TYPE, REF_5, REF_4);
 
         assertThat(updateResult.isLeft()).isEqualTo(true);
 
@@ -198,7 +208,7 @@ public class ExternalReferencesOperationTest extends ModelTestBase {
         assertThat(getServiceExternalRefs()).doesNotContain(REF_5).contains(REF_1, REF_2, REF_3, REF_4);
     }
 
-    private List<String> getServiceExternalRefs(){
+    private List<String> getServiceExternalRefs() {
         //Get service vertex
         final Either<GraphVertex, JanusGraphOperationStatus> externalRefsVertexResult = this.janusGraphDao
             .getChildVertex(this.serviceVertex, EdgeLabelEnum.EXTERNAL_REFS, JsonParseFlagEnum.ParseJson);

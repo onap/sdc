@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,27 +20,24 @@
 
 package org.openecomp.sdc.be.model.operations.impl;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import javax.annotation.Resource;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.model.AnnotationTypeDefinition;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.utils.TypeUtils;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
-
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@SpringJUnitConfig(locations = "classpath:application-context-test.xml")
 public class AnnotationTypeOperationsTest extends ModelTestBase {
 
     static final String TYPE = "org.openecomp.annotations.source";
@@ -60,18 +57,18 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
     private PropertyDefinition prop1, prop2;
     private AnnotationTypeDefinition initialAnnotationDefinition;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupBeforeClass() {
         ModelTestBase.init();
     }
 
-    @Before
+    @BeforeEach
     public void initTestData() {
         removeGraphVertices(janusGraphGenericDao.getGraph());
         prop1 = createSimpleProperty("val1", "prop1", "string");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         janusGraphGenericDao.rollback();
     }
@@ -83,14 +80,14 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
         AnnotationTypeDefinition result = annotationTypeOperations.addType(initialAnnotationDefinition);
         assertThat(result.getUniqueId()).isNotEmpty();
         assertThat(result)
-                .isEqualToComparingOnlyGivenFields(initialAnnotationDefinition, "description", "type");
+            .isEqualToComparingOnlyGivenFields(initialAnnotationDefinition, "description", "type");
         assertThat(result.getProperties())
-                .usingElementComparatorOnFields("defaultValue", "name", "type")
-                .containsExactlyInAnyOrder(prop1);
+            .usingElementComparatorOnFields("defaultValue", "name", "type")
+            .containsExactlyInAnyOrder(prop1);
         assertThat(result.isHighestVersion()).isTrue();
     }
 
-   @Test
+    @Test
     public void testGetLatestType_TypeDoesntExist_shouldReturnNull() {
         AnnotationTypeDefinition latestType = annotationTypeOperations.getLatestType(TYPE);
         assertThat(latestType).isNull();
@@ -155,8 +152,8 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
         AnnotationTypeDefinition updatedType = annotationTypeOperations.updateType(initialAnnotationDefinition, advancedDefinition);
         assertThat(updatedType.getDescription()).isEqualTo(NEW_DESCRIPTION);
         assertThat(updatedType.getProperties())
-                .usingElementComparatorOnFields("defaultValue", "name", "type")
-                .containsExactlyInAnyOrder(prop1, prop2);
+            .usingElementComparatorOnFields("defaultValue", "name", "type")
+            .containsExactlyInAnyOrder(prop1, prop2);
     }
 
     @Test
@@ -166,8 +163,8 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
         AnnotationTypeDefinition advancedDefinition = buildAnnotationDefinition(DESCRIPTION, TYPE, prop2);
         AnnotationTypeDefinition updatedType = annotationTypeOperations.updateType(initialAnnotationDefinition, advancedDefinition);
         assertThat(updatedType.getProperties())
-                .usingElementComparatorOnFields("defaultValue", "name", "type")
-                .containsExactlyInAnyOrder(prop2);
+            .usingElementComparatorOnFields("defaultValue", "name", "type")
+            .containsExactlyInAnyOrder(prop2);
     }
 
     @Test
@@ -178,34 +175,38 @@ public class AnnotationTypeOperationsTest extends ModelTestBase {
         AnnotationTypeDefinition advancedDefinition = buildAnnotationDefinition(DESCRIPTION, TYPE, prop2);
         AnnotationTypeDefinition updatedType = annotationTypeOperations.updateType(initialAnnotationDefinition, advancedDefinition);
         assertThat(updatedType.getProperties())
-                .usingElementComparatorOnFields("defaultValue", "name", "type", "description")
-                .containsExactlyInAnyOrder(prop2);
+            .usingElementComparatorOnFields("defaultValue", "name", "type", "description")
+            .containsExactlyInAnyOrder(prop2);
     }
 
-    @Test(expected = StorageException.class)
+    @Test
     public void testUpdateType_propertyTypeModification_shouldFail() {
+        Assertions.assertThrows(StorageException.class,()->{
         addAnnotationType();
         prop2 = createSimpleProperty("val1", "prop1", "int");
         AnnotationTypeDefinition advancedDefinition = buildAnnotationDefinition(DESCRIPTION, TYPE, prop2);
         annotationTypeOperations.updateType(initialAnnotationDefinition, advancedDefinition);
+        });
     }
 
-    @Test(expected = StorageException.class)
+    @Test
     public void testUpdateType_propertyRemoved_shouldFail() {
-        addAnnotationType();
-        prop2 = createSimpleProperty("val1", "prop2", "int");
-        AnnotationTypeDefinition advancedDefinition = buildAnnotationDefinition(DESCRIPTION, TYPE, prop2);
-        annotationTypeOperations.updateType(initialAnnotationDefinition, advancedDefinition);
+        Assertions.assertThrows(StorageException.class,()->{
+            addAnnotationType();
+            prop2 = createSimpleProperty("val1", "prop2", "int");
+            AnnotationTypeDefinition advancedDefinition = buildAnnotationDefinition(DESCRIPTION, TYPE, prop2);
+            annotationTypeOperations.updateType(initialAnnotationDefinition, advancedDefinition);
+        });
     }
 
     private void prepareInitialType() {
         initialAnnotationDefinition = buildAnnotationDefinition(DESCRIPTION,
-                TYPE,
-                prop1);
+            TYPE,
+            prop1);
         initialAnnotationDefinition.setVersion(TypeUtils.getFirstCertifiedVersionVersion());
     }
 
-    private AnnotationTypeDefinition buildAnnotationDefinition(String description, String type, PropertyDefinition ... properties) {
+    private AnnotationTypeDefinition buildAnnotationDefinition(String description, String type, PropertyDefinition... properties) {
         AnnotationTypeDefinition annotationTypeDefinition = new AnnotationTypeDefinition();
         annotationTypeDefinition.setDescription(description);
         annotationTypeDefinition.setType(type);

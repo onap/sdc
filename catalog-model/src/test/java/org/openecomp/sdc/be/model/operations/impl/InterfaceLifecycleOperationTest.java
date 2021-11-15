@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,18 +26,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -60,14 +59,11 @@ import org.openecomp.sdc.be.resources.data.OperationData;
 import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.be.resources.data.category.CategoryData;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import fj.data.Either;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:application-context-test.xml")
+@SpringJUnitConfig(locations = "classpath:application-context-test.xml")
 public class InterfaceLifecycleOperationTest {
+
     private static String USER_ID = "muUserId";
     private static String CATEGORY_NAME = "category/mycategory";
     private static String MODEL_NAME = "Test";
@@ -77,18 +73,18 @@ public class InterfaceLifecycleOperationTest {
     @InjectMocks
     private InterfaceLifecycleOperation interfaceLifecycleOperation = new InterfaceLifecycleOperation();
 
-    @Before
+    @BeforeAll
+    public static void setupBeforeClass() {
+        ModelTestBase.init();
+    }
+
+    @BeforeEach
     public void createUserAndCategory() {
         MockitoAnnotations.initMocks(this);
         CategoryData categoryData = new CategoryData(NodeTypeEnum.ResourceCategory);
-        when(janusGraphGenericDao.createNode(any(),any())).thenReturn(Either.left(categoryData));
+        when(janusGraphGenericDao.createNode(any(), any())).thenReturn(Either.left(categoryData));
         deleteAndCreateCategory(CATEGORY_NAME);
         deleteAndCreateUser(USER_ID, "first_" + USER_ID, "last_" + USER_ID);
-    }
-
-    @BeforeClass
-    public static void setupBeforeClass() {
-        ModelTestBase.init();
     }
 
     @Test
@@ -125,24 +121,31 @@ public class InterfaceLifecycleOperationTest {
 
     @Test
     public void createInterfaceOnResourceTest() {
-        when(janusGraphGenericDao.getChildrenNodes(any(), any(), any(), any(), eq(InterfaceData.class))).thenReturn(Either.right(JanusGraphOperationStatus.GRAPH_IS_NOT_AVAILABLE));
-        when(janusGraphGenericDao.getChild(any(), any(), any(), eq(NodeTypeEnum.Resource), eq(ResourceMetadataData.class))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(janusGraphGenericDao.getChildrenNodes(any(), any(), any(), any(), eq(InterfaceData.class))).thenReturn(
+            Either.right(JanusGraphOperationStatus.GRAPH_IS_NOT_AVAILABLE));
+        when(janusGraphGenericDao.getChild(any(), any(), any(), eq(NodeTypeEnum.Resource), eq(ResourceMetadataData.class))).thenReturn(
+            Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(janusGraphGenericDao.getNode(any(), any(), eq(InterfaceData.class))).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
         when(janusGraphGenericDao.createNode(any(), eq(InterfaceData.class))).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
-        when(janusGraphGenericDao.createRelation(any(), any(), eq(GraphEdgeLabels.INTERFACE), any())).thenReturn(Either.right(JanusGraphOperationStatus.OK));
+        when(janusGraphGenericDao.createRelation(any(), any(), eq(GraphEdgeLabels.INTERFACE), any())).thenReturn(
+            Either.right(JanusGraphOperationStatus.OK));
         Assert.assertTrue(interfaceLifecycleOperation.createInterfaceOnResource(buildInterfaceDefinition(), "", "", false, false).isRight());
-        when(janusGraphGenericDao.createRelation(any(), any(), eq(GraphEdgeLabels.INTERFACE), any())).thenReturn(Either.left(Mockito.mock(GraphRelation.class)));
+        when(janusGraphGenericDao.createRelation(any(), any(), eq(GraphEdgeLabels.INTERFACE), any())).thenReturn(
+            Either.left(Mockito.mock(GraphRelation.class)));
         Assert.assertTrue(interfaceLifecycleOperation.createInterfaceOnResource(buildInterfaceDefinition(), "", "", false, false).isRight());
     }
 
     @Test
     public void getAllInterfacesOfResourceTest() {
         assertTrue(interfaceLifecycleOperation.getAllInterfacesOfResource(null, true).isRight());
-        when(janusGraphGenericDao.getChildrenNodes(any(), any(), any(), any(), eq(InterfaceData.class))).thenReturn(Either.right(JanusGraphOperationStatus.GRAPH_IS_NOT_AVAILABLE));
-        when(janusGraphGenericDao.getChild(any(), any(), any(), eq(NodeTypeEnum.Resource), eq(ResourceMetadataData.class))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(janusGraphGenericDao.getChildrenNodes(any(), any(), any(), any(), eq(InterfaceData.class))).thenReturn(
+            Either.right(JanusGraphOperationStatus.GRAPH_IS_NOT_AVAILABLE));
+        when(janusGraphGenericDao.getChild(any(), any(), any(), eq(NodeTypeEnum.Resource), eq(ResourceMetadataData.class))).thenReturn(
+            Either.right(JanusGraphOperationStatus.NOT_FOUND));
         assertTrue(interfaceLifecycleOperation.getAllInterfacesOfResource("null", true).isLeft());
 
-        when(janusGraphGenericDao.getChild(any(), any(), any(), eq(NodeTypeEnum.Resource), eq(ResourceMetadataData.class))).thenReturn(Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
+        when(janusGraphGenericDao.getChild(any(), any(), any(), eq(NodeTypeEnum.Resource), eq(ResourceMetadataData.class))).thenReturn(
+            Either.right(JanusGraphOperationStatus.ALREADY_EXIST));
         assertTrue(interfaceLifecycleOperation.getAllInterfacesOfResource("null", true).isRight());
 
         ResourceMetadataData key = Mockito.mock(ResourceMetadataData.class);
@@ -151,8 +154,8 @@ public class InterfaceLifecycleOperationTest {
         when(key.getMetadataDataDefinition()).thenReturn(def);
         ImmutablePair<ResourceMetadataData, GraphEdge> pair = new ImmutablePair<>(key, Mockito.mock(GraphEdge.class));
         when(janusGraphGenericDao.getChild(any(), any(), any(), eq(NodeTypeEnum.Resource), eq(ResourceMetadataData.class)))
-                .thenReturn(Either.left(pair))
-                .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+            .thenReturn(Either.left(pair))
+            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         assertTrue(interfaceLifecycleOperation.getAllInterfacesOfResource("null", true).isLeft());
     }
 
@@ -160,7 +163,8 @@ public class InterfaceLifecycleOperationTest {
     public void testGetAllInterfaceLifecycleTypes_TypesNotFound() {
         when(janusGraphGenericDao.getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), StringUtils.EMPTY,
             InterfaceData.class)).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
-        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(StringUtils.EMPTY);
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(
+            StringUtils.EMPTY);
         Assert.assertEquals(types.isRight(), Boolean.TRUE);
     }
 
@@ -175,15 +179,18 @@ public class InterfaceLifecycleOperationTest {
         interfaceDataList.add(interfaceData);
         Either<List<InterfaceData>, JanusGraphOperationStatus> allInterfaceTypes = Either.left(interfaceDataList);
         when(janusGraphGenericDao
-            .getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), StringUtils.EMPTY, InterfaceData.class)).thenReturn(allInterfaceTypes);
+            .getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), StringUtils.EMPTY, InterfaceData.class)).thenReturn(
+            allInterfaceTypes);
 
         List<ImmutablePair<OperationData, GraphEdge>> list = new ArrayList<>();
         Either<List<ImmutablePair<OperationData, GraphEdge>>, JanusGraphOperationStatus> childrenNodes = Either.left(list);
-        when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(childrenNodes);
+        when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION,
+            NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(childrenNodes);
         when(janusGraphGenericDao.getParentNode(any(), any(), any(), any(), any()))
-        .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
-        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(StringUtils.EMPTY);
-        Assert.assertEquals(types.left().value().size(),1);
+            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        Either<Map<String, InterfaceDefinition>, StorageOperationStatus> types = interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(
+            StringUtils.EMPTY);
+        Assert.assertEquals(types.left().value().size(), 1);
     }
 
     @Test
@@ -200,10 +207,12 @@ public class InterfaceLifecycleOperationTest {
         interfaceTypes.add(interfaceData);
 
         when(janusGraphGenericDao.getParentNode(any(), any(), any(), any(), any()))
-        .thenReturn(Either.left(modelNode));
+            .thenReturn(Either.left(modelNode));
         when(janusGraphGenericDao
-            .getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), MODEL_NAME, InterfaceData.class)).thenReturn(Either.left(interfaceTypes));
-        when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION, NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(Either.left(Collections.emptyList()));
+            .getByCriteriaForModel(NodeTypeEnum.Interface, Collections.emptyMap(), MODEL_NAME, InterfaceData.class)).thenReturn(
+            Either.left(interfaceTypes));
+        when(janusGraphGenericDao.getChildrenNodes(interfaceData.getUniqueIdKey(), interfaceData.getUniqueId(), GraphEdgeLabels.INTERFACE_OPERATION,
+            NodeTypeEnum.InterfaceOperation, OperationData.class)).thenReturn(Either.left(Collections.emptyList()));
 
         Assert.assertEquals(1, interfaceLifecycleOperation.getAllInterfaceLifecycleTypes(MODEL_NAME).left().value().size());
     }
