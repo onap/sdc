@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "379e7a90_c3a64af9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-15T18:58:39Z",
+      "side": 1,
+      "message": "nodeTypesInfo has only filename info. So i have to go back to get the interface file content from CsarInfo and pass it separately.",
+      "parentUuid": "87b044c2_01cd8165",
+      "range": {
+        "startLine": 134,
+        "startChar": 105,
+        "endLine": 134,
+        "endChar": 134
+      },
+      "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4ad6cd5_6919388f",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 9
@@ -45,6 +69,30 @@
       "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e60e36ad_e93b4a33",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-15T18:58:39Z",
+      "side": 1,
+      "message": "No, it throws service not found error if i call it before createServiceTransaction.",
+      "parentUuid": "c4ad6cd5_6919388f",
+      "range": {
+        "startLine": 301,
+        "startChar": 0,
+        "endLine": 301,
+        "endChar": 93
+      },
+      "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
