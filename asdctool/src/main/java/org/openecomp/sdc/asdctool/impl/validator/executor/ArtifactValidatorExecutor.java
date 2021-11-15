@@ -23,6 +23,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import fj.data.Either;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -36,9 +37,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -55,7 +56,7 @@ public abstract class ArtifactValidatorExecutor {
     private final ToscaOperationFacade toscaOperationFacade;
     private final String name;
 
-    public ArtifactValidatorExecutor(JanusGraphDao janusGraphDao, ToscaOperationFacade toscaOperationFacade, String name) {
+    protected ArtifactValidatorExecutor(JanusGraphDao janusGraphDao, ToscaOperationFacade toscaOperationFacade, String name) {
         this.janusGraphDao = janusGraphDao;
         this.toscaOperationFacade = toscaOperationFacade;
         this.name = name;
@@ -72,7 +73,7 @@ public abstract class ArtifactValidatorExecutor {
             log.error("getVerticesToValidate failed " + resultsEither.right().value());
             return result;
         }
-        System.out.println("getVerticesToValidate: " + resultsEither.left().value().size() + " vertices to scan");
+        log.info("getVerticesToValidate: {} vertices to scan", resultsEither.left().value().size());
         List<GraphVertex> componentsList = resultsEither.left().value();
         componentsList.forEach(vertex -> {
             String ivariantUuid = (String) vertex.getMetadataProperty(GraphPropertyEnum.INVARIANT_UUID);
@@ -96,8 +97,8 @@ public abstract class ArtifactValidatorExecutor {
     public boolean validate(Map<String, List<Component>> vertices, String outputFilePath) {
         boolean result = true;
         long time = System.currentTimeMillis();
-        String fileName = outputFilePath + this.getName() + "_" + time + ".csv";
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), UTF_8))) {
+        try (Writer writer = new BufferedWriter(
+            new OutputStreamWriter(new FileOutputStream(File.createTempFile(outputFilePath + this.getName(), "" + time)), UTF_8))) {
             writer.write("name, UUID, invariantUUID, state, version\n");
             Collection<List<Component>> collection = vertices.values();
             for (List<Component> compList : collection) {
