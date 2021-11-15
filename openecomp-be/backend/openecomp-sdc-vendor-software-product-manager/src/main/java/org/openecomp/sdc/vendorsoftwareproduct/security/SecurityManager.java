@@ -89,7 +89,6 @@ public class SecurityManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityManager.class);
     private static final String UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION = "Unexpected error occurred during signature validation!";
     private static final String COULD_NOT_VERIFY_SIGNATURE = "Could not verify signature!";
-    private static final String EXTERNAL_CSAR_STORE = "externalCsarStore";
 
     static {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
