@@ -85,7 +85,7 @@ public class StorageFactory {
                     return curr;
                 }
             }
-            return null;
+            return NONE;
         }
     }
 }
