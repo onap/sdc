@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "8213ab1f_a6ceb460",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-11-15T22:58:53Z",
+      "side": 1,
+      "message": "The nodeTypesInfo contains the mappedToscaTemplate, I think this should contain the contents of the file the type is defined in.",
+      "parentUuid": "379e7a90_c3a64af9",
+      "range": {
+        "startLine": 134,
+        "startChar": 105,
+        "endLine": 134,
+        "endChar": 134
+      },
+      "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4ad6cd5_6919388f",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 9
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "No, it throws service not found error if i call it before createServiceTransaction.",
       "parentUuid": "c4ad6cd5_6919388f",
+      "range": {
+        "startLine": 301,
+        "startChar": 0,
+        "endLine": 301,
+        "endChar": 93
+      },
+      "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f35b2b9b_b70e0314",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-11-15T22:58:53Z",
+      "side": 1,
+      "message": "Try adding the below before line 295, then dont need to the createPropertiesOnService method or any of the new methods that are reached to createPropertiesOnService\n\n            Map\u003cString, PropertyDefinition\u003e properties \u003d parsedToscaYamlInfo.getProperties();\n            final List\u003cPropertyDefinition\u003e propertiesList \u003d new ArrayList\u003c\u003e();\n            properties.forEach((k,v) -\u003e {v.setName(k); propertiesList.add(v);});\n            service.setProperties(propertiesList);",
+      "parentUuid": "e60e36ad_e93b4a33",
       "range": {
         "startLine": 301,
         "startChar": 0,
