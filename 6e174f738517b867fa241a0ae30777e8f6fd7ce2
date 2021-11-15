@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87b044c2_01cd8165",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-11-15T16:06:20Z",
+      "side": 1,
+      "message": "Is the definition of the interface already in nodeTypesInfo? If it is then no need to add separately here",
+      "range": {
+        "startLine": 134,
+        "startChar": 105,
+        "endLine": 134,
+        "endChar": 134
+      },
+      "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4ad6cd5_6919388f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-11-15T16:06:20Z",
+      "side": 1,
+      "message": "If we get the properties and add them to the service object before invoking createServiceTransaction on line 295 above then will the existing code in that call take care of creating the properties?",
+      "range": {
+        "startLine": 301,
+        "startChar": 0,
+        "endLine": 301,
+        "endChar": 93
+      },
+      "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
