@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "ba29ca9a_73271f99",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-17T17:28:55Z",
+      "side": 1,
+      "message": "As i understood, mappedToscaTemplate has only mainTemplate file contents, so interface file contents need to be added separately here, to get propertyDefinitions which is not available in mainTemplate.",
+      "parentUuid": "8213ab1f_a6ceb460",
+      "range": {
+        "startLine": 134,
+        "startChar": 105,
+        "endLine": 134,
+        "endChar": 134
+      },
+      "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4ad6cd5_6919388f",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 9
@@ -132,6 +156,30 @@
       "side": 1,
       "message": "Try adding the below before line 295, then dont need to the createPropertiesOnService method or any of the new methods that are reached to createPropertiesOnService\n\n            Map\u003cString, PropertyDefinition\u003e properties \u003d parsedToscaYamlInfo.getProperties();\n            final List\u003cPropertyDefinition\u003e propertiesList \u003d new ArrayList\u003c\u003e();\n            properties.forEach((k,v) -\u003e {v.setName(k); propertiesList.add(v);});\n            service.setProperties(propertiesList);",
       "parentUuid": "e60e36ad_e93b4a33",
+      "range": {
+        "startLine": 301,
+        "startChar": 0,
+        "endLine": 301,
+        "endChar": 93
+      },
+      "revId": "6e174f738517b867fa241a0ae30777e8f6fd7ce2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fcd4b679_b5f3e806",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-17T17:28:55Z",
+      "side": 1,
+      "message": "Done, Thanks for this.",
+      "parentUuid": "f35b2b9b_b70e0314",
       "range": {
         "startLine": 301,
         "startChar": 0,
