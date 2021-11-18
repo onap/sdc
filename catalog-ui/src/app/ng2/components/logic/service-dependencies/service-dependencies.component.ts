@@ -134,6 +134,7 @@ export class ServiceDependenciesComponent {
     isDependent: boolean;
     isLoading: boolean;
     parentServiceInputs: InputBEModel[] = [];
+    parentServiceProperties: PropertyBEModel[] = [];
     constraintProperties: ConstraintObject[] = [];
     constraintCapabilities: CapabilitiesConstraintObject[] = [];
     operatorTypes: any[];
@@ -167,8 +168,10 @@ export class ServiceDependenciesComponent {
             {label: '<', value: OPERATOR_TYPES.LESS_THAN},
             {label: '=', value: OPERATOR_TYPES.EQUAL}
         ];
-        this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((result: ComponentGenericResponse) => {
+        this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId)
+        .subscribe((result: ComponentGenericResponse) => {
             this.parentServiceInputs = result.inputs;
+            this.parentServiceProperties = result.properties;
         });
         this.loadNodeFilter();
         this.translateService.languageChangedObservable.subscribe((lang) => {
@@ -300,6 +303,7 @@ export class ServiceDependenciesComponent {
                     operatorTypes: this.operatorTypes,
                     compositeServiceName: this.compositeService.name,
                     parentServiceInputs: this.parentServiceInputs,
+                    parentServiceProperties: this.parentServiceProperties,
                     selectedInstanceProperties: this.selectedInstanceProperties,
                     selectedInstanceSiblings: this.selectedInstanceSiblings
                 }
@@ -406,6 +410,7 @@ export class ServiceDependenciesComponent {
                 operatorTypes: this.operatorTypes,
                 compositeServiceName: this.compositeService.name,
                 parentServiceInputs: this.parentServiceInputs,
+                parentServiceProperties: this.parentServiceProperties,
                 selectedInstanceProperties: this.selectedInstanceProperties,
                 selectedInstanceSiblings: this.selectedInstanceSiblings
             }
