@@ -56,6 +56,7 @@ export class ServiceDependenciesEditorComponent {
     compositeServiceName: string,
     currentServiceName: string,
     parentServiceInputs: InputBEModel[],
+    parentServiceProperties: PropertyBEModel[];
     selectedInstanceProperties: PropertyBEModel[],
     operatorTypes: DropdownValue[],
     selectedInstanceSiblings: ServiceInstanceObject[]
@@ -65,6 +66,7 @@ export class ServiceDependenciesEditorComponent {
   selectedPropertyObj: PropertyFEModel;
   ddValueSelectedServicePropertiesNames: DropdownValue[];
   operatorTypes: DropdownValue[];
+  functionTypes: DropdownValue[];
   sourceTypes: UIDropDownSourceTypesElement[] = [];
   currentRule: ConstraintObjectUI;
   currentIndex: number;
@@ -75,7 +77,8 @@ export class ServiceDependenciesEditorComponent {
 
   SOURCE_TYPES = {
     STATIC: {label: 'Static', value: 'static'},
-    SERVICE_PROPERTY: {label: 'Service Property', value: 'property'}
+    SERVICE_PROPERTY: {label: 'Service Property', value: 'property'},
+    SERVICE_INPUT: {label: 'Service Input', value: 'service_input'}
   };
 
   constructor(private propertiesUtils: PropertiesUtils) {}
@@ -83,6 +86,19 @@ export class ServiceDependenciesEditorComponent {
   ngOnInit() {
     this.currentIndex = this.input.serviceRuleIndex;
     this.serviceRulesList = this.input.serviceRules;
+    this.initCurrentRule();
+    this.currentServiceName = this.input.currentServiceName;
+    this.operatorTypes = this.input.operatorTypes;
+    this.selectedServiceProperties = this.input.selectedInstanceProperties;
+    this.ddValueSelectedServicePropertiesNames = _.map(this.input.selectedInstanceProperties, (prop) => new DropdownValue(prop.name, prop.name));
+    this.initFunctionTypes();
+    if (this.SOURCE_TYPES.STATIC.value !== this.currentRule.sourceType) {
+      this.loadSourceTypesData();
+    }
+    this.syncRuleData();
+  }
+
+  private initCurrentRule() {
     this.currentRule = this.serviceRulesList && this.input.serviceRuleIndex >= 0 ?
         this.serviceRulesList[this.input.serviceRuleIndex] :
         new ConstraintObjectUI({
@@ -91,39 +107,73 @@ export class ServiceDependenciesEditorComponent {
           value: '',
           constraintOperator: OPERATOR_TYPES.EQUAL
         });
-    this.currentServiceName = this.input.currentServiceName;
-    this.operatorTypes = this.input.operatorTypes;
-    this.selectedServiceProperties = this.input.selectedInstanceProperties;
-    this.ddValueSelectedServicePropertiesNames = _.map(this.input.selectedInstanceProperties, (prop) => new DropdownValue(prop.name, prop.name));
-    this.initSourceTypes();
-    this.syncRuleData();
+    if (this.currentRule && this.currentRule.sourceType === this.SOURCE_TYPES.SERVICE_INPUT.value) {
+      this.currentRule.sourceName = this.input.compositeServiceName;
+    }
+  }
+
+  private initFunctionTypes() {
+    this.functionTypes = [
+      {label: this.SOURCE_TYPES.STATIC.label, value: this.SOURCE_TYPES.STATIC.value},
+      {label: this.SOURCE_TYPES.SERVICE_PROPERTY.label, value: this.SOURCE_TYPES.SERVICE_PROPERTY.value},
+      {label: this.SOURCE_TYPES.SERVICE_INPUT.label, value: this.SOURCE_TYPES.SERVICE_INPUT.value}];
+  }
+
+  onServicePropertyChanged() {
+    this.updateSelectedPropertyObj();
+    this.updateOperatorTypesList();
+    this.currentRule.sourceName = "";
+    this.currentRule.value = "";
+  }
+
+  onSelectFunctionType() {
+    this.currentRule.value = "";
+    this.currentRule.sourceName = "";
+    this.listOfValuesToAssign = [];
+    this.currentRule.sourceType = this.updateCurrentSourceType(this.currentRule.sourceType);
+    this.loadSourceTypesData();
     this.updateSourceTypesRelatedValues();
   }
 
-  initSourceTypes() {
-    this.sourceTypes.push({
-      label: this.SOURCE_TYPES.STATIC.label,
-      value: this.SOURCE_TYPES.STATIC.value,
-      options: [],
-      assignedLabel: this.SOURCE_TYPES.STATIC.label,
-      type: this.SOURCE_TYPES.STATIC.value
-    });
+  onSelectSourceType() {
+    this.currentRule.value = "";
+    this.updateSourceTypesRelatedValues();
+  }
+
+  loadSourceTypesData() {
+    this.sourceTypes = [];
     this.sourceTypes.push({
       label: this.input.compositeServiceName,
       value: this.input.compositeServiceName,
-      assignedLabel: this.SOURCE_TYPES.SERVICE_PROPERTY.label,
-      type: this.SOURCE_TYPES.SERVICE_PROPERTY.value,
-      options: this.input.parentServiceInputs
+      assignedLabel: this.currentRule.sourceType == this.SOURCE_TYPES.SERVICE_PROPERTY.value
+          ? this.SOURCE_TYPES.SERVICE_PROPERTY.label : this.SOURCE_TYPES.SERVICE_INPUT.label,
+      type: this.currentRule.sourceType == this.SOURCE_TYPES.SERVICE_PROPERTY.value
+          ? this.SOURCE_TYPES.SERVICE_PROPERTY.value : this.SOURCE_TYPES.SERVICE_INPUT.value,
+      options: this.loadSourceTypeBySelectedFunction().get(this.currentRule.sourceType)
     });
-    _.forEach(this.input.selectedInstanceSiblings, (sib) =>
-        this.sourceTypes.push({
-          label: sib.name,
-          value: sib.name,
-          options: sib.properties || [],
-          assignedLabel: this.SOURCE_TYPES.SERVICE_PROPERTY.label,
-          type: this.SOURCE_TYPES.SERVICE_PROPERTY.value
-        })
-    );
+
+    if (this.currentRule.sourceType === this.SOURCE_TYPES.SERVICE_INPUT.value) {
+      this.currentRule.sourceName = this.input.compositeServiceName;
+    } else {
+      if (this.input.selectedInstanceSiblings && this.isPropertyFunctionSelected) {
+        _.forEach(this.input.selectedInstanceSiblings, (sib) =>
+            this.sourceTypes.push({
+              label: sib.name,
+              value: sib.name,
+              options: sib.properties || [],
+              assignedLabel: this.SOURCE_TYPES.SERVICE_PROPERTY.label,
+              type: this.SOURCE_TYPES.SERVICE_PROPERTY.value
+            })
+        );
+      }
+    }
+  }
+
+  loadSourceTypeBySelectedFunction = (): any => {
+    let parentDataMap = new Map();
+    parentDataMap.set(this.SOURCE_TYPES.SERVICE_PROPERTY.value, this.input.parentServiceProperties);
+    parentDataMap.set(this.SOURCE_TYPES.SERVICE_INPUT.value , this.input.parentServiceInputs);
+    return parentDataMap;
   }
 
   syncRuleData() {
@@ -151,6 +201,7 @@ export class ServiceDependenciesEditorComponent {
           (t) => t.value === this.currentRule.sourceName && t.type === this.currentRule.sourceType
       );
       if (selectedSourceType) {
+        this.listOfSourceOptions = [];
         this.listOfSourceOptions = selectedSourceType.options || [];
         this.assignedValueLabel = selectedSourceType.assignedLabel || this.SOURCE_TYPES.STATIC.label;
         this.filterOptionsByType();
@@ -166,19 +217,15 @@ export class ServiceDependenciesEditorComponent {
     }
   }
 
-  onServicePropertyChanged() {
-    this.currentRule.value = '';
-    this.updateSelectedPropertyObj();
-    this.updateOperatorTypesList();
-    this.filterOptionsByType();
-  }
-
-  onSelectSourceType() {
-    this.currentRule.value = '';
-    this.currentRule.sourceType = this.currentRule.sourceName === this.SOURCE_TYPES.STATIC.value ?
-        this.SOURCE_TYPES.STATIC.value :
-        this.SOURCE_TYPES.SERVICE_PROPERTY.value;
-    this.updateSourceTypesRelatedValues();
+  private updateCurrentSourceType = (sourceType: string): string => {
+    switch (sourceType) {
+      case this.SOURCE_TYPES.STATIC.value:
+        return this.SOURCE_TYPES.STATIC.value;
+      case this.SOURCE_TYPES.SERVICE_PROPERTY.value:
+        return this.SOURCE_TYPES.SERVICE_PROPERTY.value;
+      case this.SOURCE_TYPES.SERVICE_INPUT.value:
+        return this.SOURCE_TYPES.SERVICE_INPUT.value;
+    }
   }
 
   filterOptionsByType() {
@@ -214,12 +261,18 @@ export class ServiceDependenciesEditorComponent {
       newProp.value = JSON.stringify(this.currentRule.value);
       this.propertiesUtils.initValueObjectRef(newProp);
       console.log("TEST" + newProp.value);
-      setTimeout(() => {this.selectedPropertyObj = newProp})
+      setTimeout(() => {
+        this.selectedPropertyObj = newProp})
+      this.selectedPropertyObj = newProp;
     }
   }
 
   isStaticSource(): boolean {
     return this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value
+  }
+
+  isPropertyFunctionSelected(): boolean {
+    return this.currentRule.sourceType === this.SOURCE_TYPES.SERVICE_PROPERTY.value;
   }
 
   isComplexListMapType(): boolean {
@@ -231,4 +284,5 @@ export class ServiceDependenciesEditorComponent {
     this.currentRule.value = JSON.stringify(value);
     this.onValueChange(this.selectedPropertyObj.valueObjIsValid);
   }
+
 }

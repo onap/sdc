@@ -21,21 +21,18 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceDependencyProperty;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
-import com.fasterxml.jackson.databind.json.JsonMapper;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Represents the Service Dependencies Editor
@@ -65,8 +62,8 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
         properties.selectByVisibleText(property.getName());
         final Select logicalOperator = new Select(webDriver.findElement(By.xpath(XpathSelector.CONSTRAINT_OPERATOR.xPath)));
         logicalOperator.selectByVisibleText(property.getLogicalOperator().getOperator());
-        final Select sourceType = new Select(webDriver.findElement(By.xpath(XpathSelector.SOURCE_TYPE.xPath)));
-        sourceType.selectByVisibleText(property.getSource());
+        final Select functionType = new Select(webDriver.findElement(By.xpath(XpathSelector.FUNCTION_TYPE.xPath)));
+        functionType.selectByVisibleText(property.getSource());
         try {
             addRuleAssignedValue(property);
         } catch (Exception e) {
@@ -126,6 +123,7 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
         SERVICE_DEPENDENCIES_EDITOR("//service-dependencies-editor"),
         SERVICE_PROPERTY_NAME("//*[@data-tests-id='servicePropertyName']/select"),
         CONSTRAINT_OPERATOR("//*[@data-tests-id='constraintOperator']/select"),
+        FUNCTION_TYPE("//*[@data-tests-id='functionType']/select"),
         SOURCE_TYPE("//*[@data-tests-id='sourceType']/select"),
         RULE_ASSIGNED_VALUE("//*[@data-tests-id='ruleAssignedValue']//*[self::input or self::select]"),
         RULE_ASSIGNED_VALUE_ADD_TO_LIST("//a[@data-tests-id = 'add-to-list-%s']"),

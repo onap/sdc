@@ -30,7 +30,6 @@ import {ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependen
 import {ModalService} from 'app/ng2/services/modal.service';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {ComponentMetadata} from '../../../../models/component-metadata';
-import {ServiceInstanceObject} from '../../../../models/service-instance-properties-and-interfaces';
 import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
 import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
 
@@ -112,7 +111,6 @@ class I18nTexts {
 export class SubstitutionFilterComponent {
   modalInstance: ComponentRef<ModalComponent>;
   isLoading: boolean;
-  parentServiceInputs: InputBEModel[] = [];
   operatorTypes: any[];
   constraintProperties: ConstraintObject[] = [];
   PROPERTIES: string = ToscaFilterConstraintType.PROPERTIES;
@@ -120,9 +118,10 @@ export class SubstitutionFilterComponent {
   @Input() readonly: boolean;
   @Input() compositeService: ComponentMetadata;
   @Input() currentServiceInstance: ComponentInstance;
-  @Input() selectedInstanceSiblings: ServiceInstanceObject[];
   @Input() selectedInstanceConstraints: ConstraintObject[] = [];
   @Input() selectedInstanceProperties: PropertyBEModel[] = [];
+  @Input() parentServiceProperties: PropertyBEModel[] = [];
+  @Input() parentServiceInputs: InputBEModel[] = [];
   @Output() updateSubstitutionFilterProperties: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
   @Output() updateConstraintListEvent: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
   @Output() loadConstraintListEvent: EventEmitter<any> = new EventEmitter();
@@ -176,8 +175,8 @@ export class SubstitutionFilterComponent {
           operatorTypes: this.operatorTypes,
           compositeServiceName: this.compositeService.name,
           parentServiceInputs: this.parentServiceInputs,
-          selectedInstanceProperties: this.selectedInstanceProperties,
-          selectedInstanceSiblings: this.selectedInstanceSiblings
+          parentServiceProperties: this.parentServiceProperties,
+          selectedInstanceProperties: this.parentServiceProperties,
         }
     );
     this.modalInstance.instance.open();
@@ -216,8 +215,8 @@ export class SubstitutionFilterComponent {
           operatorTypes: this.operatorTypes,
           compositeServiceName: this.compositeService.name,
           parentServiceInputs: this.parentServiceInputs,
-          selectedInstanceProperties: this.selectedInstanceProperties,
-          selectedInstanceSiblings: this.selectedInstanceSiblings
+          parentServiceProperties: this.parentServiceProperties,
+          selectedInstanceProperties: this.parentServiceProperties,
         }
     );
     this.modalInstance.instance.open();

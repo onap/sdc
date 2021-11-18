@@ -21,7 +21,7 @@ import { Component, Input } from '@angular/core';
 import { Store } from '@ngxs/store';
 import {
     Component as TopologyTemplate,
-    FullComponentInstance,
+    FullComponentInstance, InputBEModel,
     PropertiesGroup,
     PropertyBEModel,
 } from 'app/models';
@@ -47,7 +47,8 @@ export class SubstitutionFilterTabComponent {
     selectedInstanceSiblings: ServiceInstanceObject[];
     componentInstancesConstraints: any[];
     selectedInstanceConstraints: ConstraintObject[];
-    selectedInstanceProperties: PropertyBEModel[];
+    parentServiceProperties: PropertyBEModel[];
+    parentServiceInputs: InputBEModel[];
     componentInstanceProperties: PropertiesGroup;
     metaData: ComponentMetadata;
 
@@ -85,21 +86,11 @@ export class SubstitutionFilterTabComponent {
     }
 
     private initInstancesWithProperties = (): void => {
-        this.topologyTemplateService.getComponentPropertiesSubstitutionFilter(this.metaData.componentType, this.metaData.uniqueId).subscribe((genericResponse: ComponentGenericResponse) => {
-            this.selectedInstanceProperties = genericResponse.properties;
-            this.updateInstanceAttributes();
+        this.topologyTemplateService.getComponentPropertiesAndInputsForSubstitutionFilter(this.metaData.componentType, this.metaData.uniqueId)
+        .subscribe((genericResponse: ComponentGenericResponse) => {
+            this.parentServiceProperties = genericResponse.properties;
+            this.parentServiceInputs = genericResponse.inputs;
         });
     }
 
-    private updateInstanceAttributes = (): void => {
-        if (this.isComponentInstanceSelected && this.componentInstanceProperties) {
-            const instancesMappedList = this.compositionService.componentInstances.map((coInstance) => new ServiceInstanceObject({
-                id: coInstance.uniqueId,
-                name: coInstance.name,
-                properties: this.componentInstanceProperties[coInstance.uniqueId] || []
-            }));
-            this.selectedInstanceProperties = this.componentInstanceProperties[this.component.uniqueId];
-            this.selectedInstanceSiblings = instancesMappedList.filter((coInstance) => coInstance.id !== this.component.uniqueId);
-        }
-    }
 }
