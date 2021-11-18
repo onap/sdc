@@ -483,8 +483,8 @@ export class TopologyTemplateService {
         return this.http.delete<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter')
     }
 
-    getComponentPropertiesSubstitutionFilter(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
-        return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
+    getComponentPropertiesAndInputsForSubstitutionFilter(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES, COMPONENT_FIELDS.COMPONENT_INPUTS]);
     }
 
     createSubstitutionFilterConstraints(componentMetaDataId: string, constraint: ConstraintObject, componentType: string, constraintType: string): Observable<any> {
@@ -536,7 +536,6 @@ export class TopologyTemplateService {
     }
 
     protected getComponentDataByFieldsName(componentType: string, componentId: string, fields: string[]): Observable<ComponentGenericResponse> {
-        console.info("Topology template -> getComponentDataByFieldsName with id:", componentId)
         let params: HttpParams = new HttpParams();
         _.forEach(fields, (field: string): void => {
             params = params.append(API_QUERY_PARAMS.INCLUDE, field);
@@ -544,7 +543,6 @@ export class TopologyTemplateService {
         // tslint:disable-next-line:object-literal-shorthand
         return this.http.get<ComponentGenericResponse>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/filteredDataByParams', {params: params})
             .map((res) => {
-                console.info("Topology template -> getComponentDataByFieldsName response:", res);
                 return componentType === ComponentType.SERVICE ? new ServiceGenericResponse().deserialize(res) :
                         new ComponentGenericResponse().deserialize(res);
             });
