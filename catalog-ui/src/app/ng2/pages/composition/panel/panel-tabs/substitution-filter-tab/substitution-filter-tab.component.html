@@ -23,8 +23,9 @@
     <substitution-filter
             [compositeService]="metaData"
             [currentServiceInstance]="component"
-            [selectedInstanceProperties]="selectedInstanceProperties"
-            [selectedInstanceSiblings]="selectedInstanceSiblings"
+            [parentServiceProperties]="parentServiceProperties"
+            [parentServiceInputs]="parentServiceInputs"
+            [selectedInstanceProperties]="parentServiceProperties"
             [selectedInstanceConstraints]="selectedInstanceConstraints"
             [readonly]="isViewOnly"
             (hasSubstitutionFilter)="notifyDependencyEventsObserver($event)"

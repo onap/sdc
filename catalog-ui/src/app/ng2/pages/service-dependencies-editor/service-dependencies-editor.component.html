@@ -6,7 +6,7 @@
         <div class="i-sdc-form-content">
             <div class="rule-builder-content">
                 <div class="i-sdc-form-item rule-input-field">
-                    <label class="i-sdc-form-label required">Service {{currentServiceName}} Property</label>
+                    <label class="i-sdc-form-label required">{{currentServiceName}} Property</label>
                     <ui-element-dropdown
                             class="i-sdc-form-select"
                             data-tests-id="servicePropertyName"
@@ -21,9 +21,15 @@
                 </div>
 
                 <div class="i-sdc-form-item rule-input-field">
-                    <label class="i-sdc-form-label required" >Source</label>
-                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="sourceType" [values]="sourceTypes" [(value)]="currentRule.sourceName" (change)="onSelectSourceType($event)"></ui-element-dropdown>
+                    <label class="i-sdc-form-label required" >Function Type</label>
+                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="functionType" [values]="functionTypes" [(value)]="currentRule.sourceType" (change)="onSelectFunctionType()"></ui-element-dropdown>
                 </div>
+
+                <div class="i-sdc-form-item rule-input-field" *ngIf="!isStaticSource()">
+                    <label class="i-sdc-form-label required" >Source</label>
+                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="sourceType" [values]="sourceTypes" [(value)]="currentRule.sourceName" (change)="onSelectSourceType()"></ui-element-dropdown>
+                </div>
+
                 <div  [ngClass]="isComplexListMapType() && isStaticSource() ? 'complex-input-field' : ''"
                     class="rule-input-field assigned-value-field">
                     <label class="i-sdc-form-label required" >{{assignedValueLabel}}</label>
