@@ -84,6 +84,7 @@ export class ComponentFactory {
           oldComponent.csarUUID = csarComponent.csarUUID;
           oldComponent.csarPackageType = csarComponent.csarPackageType;
           oldComponent.csarVersion = csarComponent.csarVersion;
+          oldComponent.csarVersionId = csarComponent.csarVersionId;
           oldComponent.packageId = csarComponent.packageId;
           oldComponent.description = csarComponent.description;
           oldComponent.filterTerm = oldComponent.name +  ' '  + oldComponent.description + ' ' + oldComponent.vendorName + ' ' + oldComponent.csarVersion;

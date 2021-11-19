@@ -3640,9 +3640,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (oldResource.getCsarUUID() != null) {
                 newResource.setCsarUUID(oldResource.getCsarUUID());
             }
-            if (oldResource.getCsarVersionId() != null) {
-                newResource.setCsarVersionId(oldResource.getCsarVersionId());
-            }
             if (oldResource.getImportedToscaChecksum() != null) {
                 newResource.setImportedToscaChecksum(oldResource.getImportedToscaChecksum());
             }
