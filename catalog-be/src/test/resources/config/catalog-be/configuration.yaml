@@ -417,6 +417,15 @@ genericAssetNodeTypes:
   PNF: org.openecomp.resource.abstract.nodes.PNF
   Service: org.openecomp.resource.abstract.nodes.service
 
+# Defines the base types for Services
+# <category name>:
+#   required: <boolean> //if the base type is mandatory or not
+#   baseTypes: <list of TOSCA types> //the base types. Required if the base type is required.
+#                                      If not provided, the category will have no base type.
+serviceBaseNodeTypes:
+  cat_name:
+    required: false
+
 workloadContext: Production
 
 environmentContext:
