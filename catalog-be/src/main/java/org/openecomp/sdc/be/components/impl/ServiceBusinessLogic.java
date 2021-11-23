@@ -701,7 +701,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             createMandatoryArtifactsData(service, user);
             createServiceApiArtifactsData(service, user);
             setToscaArtifactsPlaceHolders(service, user);
-            if (service.isSubstituteCandidate()) {
+
+            if (service.isSubstituteCandidate() || genericTypeBusinessLogic.hasMandatorySubstitutionType(service)) {
                 final Resource genericType = fetchAndSetDerivedFromGenericType(service);
                 generatePropertiesFromGenericType(service, genericType);
                 generateAndAddInputsFromGenericTypeProperties(service, genericType);
