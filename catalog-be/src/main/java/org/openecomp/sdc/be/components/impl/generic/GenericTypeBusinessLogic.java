@@ -22,9 +22,12 @@ package org.openecomp.sdc.be.components.impl.generic;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.config.CategoryBaseTypeConfig;
+import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -33,6 +36,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.common.log.wrappers.Logger;
@@ -65,8 +69,7 @@ public class GenericTypeBusinessLogic {
         }
         Either<Resource, StorageOperationStatus> genericType;
         if (StringUtils.isEmpty(component.getDerivedFromGenericVersion())){
-            genericType = toscaOperationFacade
-            .getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
+            genericType = toscaOperationFacade.getLatestByToscaResourceNameAndModel(genericTypeToscaName, component.getModel());
             if (genericType.isRight()) {
                 log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
@@ -89,6 +92,32 @@ public class GenericTypeBusinessLogic {
             return Either.left(genericType.left().value());
         }
         return fetchDerivedFromGenericType(component);
+    }
+
+    /**
+     * Checks if the component requires a substitution type.
+     *
+     * @param component the component to test
+     * @return {@code true} if the component requires a substitution type, {@code false} otherwise.
+     */
+    public boolean hasMandatorySubstitutionType(final Component component) {
+        if (!component.isService()) {
+            return true;
+        }
+
+        final Map<String, CategoryBaseTypeConfig> serviceBaseNodeTypes =
+            ConfigurationManager.getConfigurationManager().getConfiguration().getServiceBaseNodeTypes();
+        if (serviceBaseNodeTypes == null) {
+            return true;
+        }
+
+        if (CollectionUtils.isEmpty(component.getCategories())) {
+            throw new IllegalArgumentException("The Service must contain at least one category");
+        }
+        final CategoryDefinition categoryDefinition = component.getCategories().get(0);
+        final CategoryBaseTypeConfig categoryBaseTypeConfig = serviceBaseNodeTypes.get(categoryDefinition.getName());
+
+        return categoryBaseTypeConfig != null && categoryBaseTypeConfig.isRequired();
     }
 
     /**
