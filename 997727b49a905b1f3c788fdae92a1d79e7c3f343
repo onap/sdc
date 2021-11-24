@@ -22,6 +22,30 @@
       "revId": "997727b49a905b1f3c788fdae92a1d79e7c3f343",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c2639b3_c4b8f20f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/generic/GenericTypeBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-11-24T14:23:14Z",
+      "side": 1,
+      "message": "Agreed, will work on that.",
+      "parentUuid": "de50dabb_355628ae",
+      "range": {
+        "startLine": 120,
+        "startChar": 15,
+        "endLine": 120,
+        "endChar": 45
+      },
+      "revId": "997727b49a905b1f3c788fdae92a1d79e7c3f343",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
