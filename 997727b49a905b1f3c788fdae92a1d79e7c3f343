@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de50dabb_355628ae",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/generic/GenericTypeBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-11-24T14:14:58Z",
+      "side": 1,
+      "message": "We should be consistent on the default if no value configured, i.e. if there are no category specific service configs (serviceBaseNodeTypes \u003d\u003d null) then we return true defaulting to substit. type is mandatory, but if there are category specific configs but none for this particular category (categoryBaseTypeConfig \u003d\u003d null), then we are returning false defaulting to substit type is optional",
+      "range": {
+        "startLine": 120,
+        "startChar": 15,
+        "endLine": 120,
+        "endChar": 45
+      },
+      "revId": "997727b49a905b1f3c788fdae92a1d79e7c3f343",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
