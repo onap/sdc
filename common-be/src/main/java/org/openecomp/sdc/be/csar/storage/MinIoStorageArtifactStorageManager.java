@@ -108,6 +108,18 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
                 LOGGER.info("Bucket '{}' already exists.", vspId);
             }
 
+            put(vspId, name, fileToUpload);
+
+        } catch (final Exception e) {
+            throw new ArtifactStorageException("Failed to upload artifact", e);
+        }
+
+        return new MinIoArtifactInfo(vspId, name);
+    }
+
+    @Override
+    public void put(final String vspId, final String name, final InputStream fileToUpload) {
+        try {
             minioClient.putObject(
                 PutObjectArgs.builder()
                     .bucket(vspId)
@@ -115,12 +127,9 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
                     .stream(fileToUpload, fileToUpload.available(), -1)
                     .build()
             );
-
         } catch (final Exception e) {
             throw new ArtifactStorageException("Failed to upload artifact", e);
         }
-
-        return new MinIoArtifactInfo(vspId, name);
     }
 
     @Override
@@ -132,9 +141,18 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
     public InputStream get(final ArtifactInfo artifactInfo) {
         final MinIoArtifactInfo minioObject = (MinIoArtifactInfo) artifactInfo;
         try {
+            return get(minioObject.getBucket(), minioObject.getObjectName());
+        } catch (final Exception e) {
+            throw new ArtifactStorageException("Failed to get Object", e);
+        }
+    }
+
+    @Override
+    public InputStream get(final String bucketID, final String objectID) {
+        try {
             return minioClient.getObject(GetObjectArgs.builder()
-                .bucket(minioObject.getBucket())
-                .object(minioObject.getObjectName())
+                .bucket(bucketID)
+                .object(objectID)
                 .build());
         } catch (final Exception e) {
             throw new ArtifactStorageException("Failed to get Object", e);

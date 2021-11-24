@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.common.zip.exception.ZipException;
@@ -47,7 +46,7 @@ import org.openecomp.sdc.common.zip.exception.ZipException;
 public class FileUtilsTest {
 
     private static final String TEST_RESOURCE = FileUtilsTest.class.getPackage().getName()
-            .replace('.', '/') + "/test-resource.txt";
+        .replace('.', '/') + "/test-resource.txt";
 
     private static final Function<InputStream, Integer> TEST_FUNCTION = (s) -> {
 
@@ -82,13 +81,11 @@ public class FileUtilsTest {
     public void testWriteFilesFromFileContentHandler() throws IOException, ZipException {
         final Path tempDirectory = Files.createTempDirectory("CSAR_" + System.currentTimeMillis());
         try {
-            byte[] uploadedFileData =
-                IOUtils.toByteArray(FileUtilsTest.class.getResource("resource-Spgw-csar-ZTE.csar"));
-            final FileContentHandler contentMap = FileUtils.getFileContentMapFromZip(uploadedFileData);
+            final var contentMap = FileUtils.getFileContentMapFromZip(FileUtilsTest.class.getResourceAsStream("resource-Spgw-csar-ZTE.csar"));
             final Map<String, String> filePaths = FileUtils.writeFilesFromFileContentHandler(contentMap, tempDirectory);
 
             assertThat("The file map should not be empty", filePaths, is(not(anEmptyMap())));
-            assertThat("The file map should have size 20", filePaths, is(aMapWithSize(20)));
+            assertThat("The file map should have size 20", filePaths, is(aMapWithSize(18)));
             for (final Map.Entry<String, String> fileEntry : filePaths.entrySet()) {
                 final File f = new File(fileEntry.getValue());
                 assertThat(String.format("The file '%s' is expected to", f.getAbsolutePath()), f.exists(), is(true));
@@ -151,7 +148,7 @@ public class FileUtilsTest {
     @Test
     public void testConvertToBytes() {
         byte[] bytesArray = FileUtils.convertToBytes(Stream.of("Json", "Util", "Test").collect(Collectors.toList()),
-                                FileUtils.FileExtension.YAML);
+            FileUtils.FileExtension.YAML);
 
         Assert.assertNotNull(bytesArray);
     }
@@ -159,7 +156,7 @@ public class FileUtilsTest {
     @Test
     public void testConvertToBytesNotYaml() {
         byte[] bytesArray = FileUtils.convertToBytes(Stream.of("Json", "Util", "Test").collect(Collectors.toList()),
-                FileUtils.FileExtension.JSON);
+            FileUtils.FileExtension.JSON);
 
         Assert.assertNotNull(bytesArray);
     }
@@ -172,7 +169,7 @@ public class FileUtilsTest {
     @Test
     public void testConvertToInputStream() {
         InputStream inputStream = FileUtils.convertToInputStream(Stream.of("Json", "Util", "Test")
-                        .collect(Collectors.toList()), FileUtils.FileExtension.YAML);
+            .collect(Collectors.toList()), FileUtils.FileExtension.YAML);
 
         Assert.assertNotNull(inputStream);
     }
@@ -183,13 +180,13 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void testLoadFileToInputStream() throws IOException{
+    public void testLoadFileToInputStream() throws IOException {
         int i;
         StringBuilder builder = new StringBuilder(20);
         InputStream inputStream = FileUtils.loadFileToInputStream(
-                "org/openecomp/core/utilities/file/testFileUtils.txt");
-        while((i = inputStream.read())!=-1) {
-            builder.append((char)i);
+            "org/openecomp/core/utilities/file/testFileUtils.txt");
+        while ((i = inputStream.read()) != -1) {
+            builder.append((char) i);
         }
 
         Assert.assertNotNull(inputStream);
