@@ -19,6 +19,7 @@ import static org.openecomp.sdc.tosca.services.ToscaConstants.SERVICE_TEMPLATE_F
 import static org.openecomp.sdc.tosca.services.ToscaConstants.SUBSTITUTE_SERVICE_TEMPLATE_PROPERTY_NAME;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,7 +42,6 @@ import org.openecomp.core.model.types.ServiceArtifact;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.Messages;
-import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.enrichment.EnrichmentInfo;
@@ -208,8 +208,8 @@ public class MonitoringMibEnricher implements ExternalArtifactEnricherInterface 
         }
         FileContentHandler mibs;
         try {
-            mibs = FileUtils.getFileContentMapFromZip(FileUtils.toByteArray(monitoringArtifactInfo.getContent()));
-        } catch (ZipException ex) {
+            mibs = FileUtils.getFileContentMapFromZip(monitoringArtifactInfo.getContent());
+        } catch (final IOException ex) {
             log.error("Failed to get file content map from zip ", ex);
             ErrorMessage.ErrorMessageUtil.addMessage(mibServiceArtifact.getName() + "." + type.name(), errors)
                 .add(new ErrorMessage(ErrorLevel.ERROR, Messages.INVALID_ZIP_FILE.getErrorMessage()));
