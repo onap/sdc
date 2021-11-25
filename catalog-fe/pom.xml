@@ -190,6 +190,12 @@
             <artifactId>common-app-api</artifactId>
             <groupId>org.openecomp.sdc</groupId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- File changes listener -->
@@ -307,6 +313,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <scope>compile</scope>
             <version>${httpclient.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -321,6 +333,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <scope>compile</scope>
             <version>${httpclient.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
