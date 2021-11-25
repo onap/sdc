@@ -310,7 +310,7 @@
         <datastax.cassandra.version>3.8.0</datastax.cassandra.version>
         <groovy.minimal.version>1.5.8</groovy.minimal.version>
         <http.client.version>${httpclient.version}</http.client.version>
-        <http.core.version>4.4.1</http.core.version>
+        <http.core.version>${httpcore.version}</http.core.version>
         <httpasyncclient.version>4.1.2</httpasyncclient.version>
         <jackson.annotations.version>${jackson.version}</jackson.annotations.version>
         <jackson.dataformat.version>${jackson.version}</jackson.dataformat.version>

@@ -14,6 +14,12 @@
             <artifactId>commons-crypto</artifactId>
             <groupId>org.apache.commons</groupId>
             <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.java.dev.jna</groupId>
+                    <artifactId>jna</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

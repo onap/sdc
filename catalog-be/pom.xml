@@ -401,6 +401,10 @@
                     <artifactId>jackson-core</artifactId>
                     <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
             </exclusions>
             <groupId>org.openecomp.sdc</groupId>
             <version>${project.version}</version>
@@ -582,6 +586,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <scope>compile</scope>
             <version>${httpclient.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -767,6 +777,10 @@
                 <exclusion>
                     <artifactId>dom4j</artifactId>
                     <groupId>dom4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
                 </exclusion>
             </exclusions>
             <groupId>org.janusgraph</groupId>
@@ -1011,6 +1025,10 @@
                 <exclusion>
                     <artifactId>apache-log4j-extras</artifactId>
                     <groupId>log4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient-cache</artifactId>
                 </exclusion>
             </exclusions>
             <groupId>org.onap.dmaap.messagerouter.dmaapclient</groupId>
