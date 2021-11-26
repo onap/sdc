@@ -144,6 +144,7 @@ public class Configuration extends BasicConfiguration {
     private EcompPortalConfig ecompPortal;
     private List<ArtifactConfiguration> artifacts;
     private Map<String, Map<String, List<String>>> componentAllowedInstanceTypes;
+    private ExternalCsarStore externalCsarStore;
 
     @SuppressWarnings("unchecked")
     private <K, V> Map<K, V> safeGetCapsInsensitiveMap(Map<K, V> map) {
@@ -165,8 +166,8 @@ public class Configuration extends BasicConfiguration {
     public Map<String, Set<String>> getExcludedGroupTypesMapping() {
         return safeGetCapsInsensitiveMap(excludedGroupTypesMapping);
     }
-    
-    public List<Map<String, Map<String, String>>> getDefaultImports(){
+
+    public List<Map<String, Map<String, String>>> getDefaultImports() {
         return Collections.unmodifiableList(defaultImports);
     }
 
@@ -483,4 +484,35 @@ public class Configuration extends BasicConfiguration {
         private String artifactType;
         private List<PathsAndNamesDefinition> pathsAndNamesDefinitions;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class ExternalCsarStore {
+
+        private String storageType;
+        private Endpoint endpoint;
+        private Credentials credentials;
+        private String tempPath;
+
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        public static class Endpoint {
+
+            private String host;
+            private int port;
+            private boolean secure;
+        }
+
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        public static class Credentials {
+
+            private String accessKey;
+            private String secretKey;
+        }
+    }
+
 }

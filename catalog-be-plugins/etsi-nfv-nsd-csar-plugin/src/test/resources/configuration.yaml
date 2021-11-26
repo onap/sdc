@@ -1,0 +1,2 @@
+externalCsarStore:
+    storageType: NONE # NONE, MINIO

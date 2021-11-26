@@ -37,12 +37,22 @@ public class NoneStorageManager implements ArtifactStorageManager {
     }
 
     @Override
+    public void put(final String vspId, final String versionId, final InputStream fileToUpload) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ArtifactStorageConfig getStorageConfiguration() {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public InputStream get(final ArtifactInfo artifactInfo) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream get(final String vspId, final String versionId) {
         throw new UnsupportedOperationException();
     }
 

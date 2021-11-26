@@ -32,6 +32,7 @@ import static org.openecomp.sdc.common.errors.Messages.NO_FILE_WAS_UPLOADED_OR_F
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_PROCESS_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -183,8 +184,12 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
         final Response response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
         final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
-        if (artifactStorageManager.isEnabled() && !entity.getErrors().isEmpty()) {
-            artifactStorageManager.delete(artifactInfo);
+        if (artifactStorageManager.isEnabled()) {
+            if (!entity.getErrors().isEmpty()) {
+                artifactStorageManager.delete(artifactInfo);
+            } else {
+                artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
+            }
         }
         return response;
     }
@@ -255,7 +260,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         FilesDataStructure fileDataStructure = copyFilesDataStructureDtoToFilesDataStructure(fileDataStructureDto);
         ValidationResponse response = candidateManager.updateFilesDataStructure(vspId, new Version(versionId), fileDataStructure);
         if (!response.isValid()) {
-            return Response.status(EXPECTATION_FAILED).entity(new MapValidationResponseToDto().applyMapping(response, ValidationResponseDto.class))
+            return Response.status(EXPECTATION_FAILED)
+                .entity(new MapValidationResponseToDto().applyMapping(response, ValidationResponseDto.class))
                 .build();
         }
         return Response.ok(fileDataStructureDto).build();

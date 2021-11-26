@@ -1,4 +1,3 @@
- 
 /*
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2021 Nordix Foundation
@@ -19,17 +18,16 @@
  */
 package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * Configuration parameters for the Network Service Descriptor generation
  */
 @Getter
+@AllArgsConstructor
 public class NsDescriptorConfig {
 
-    final EtsiVersion nsVersion;
+    private final EtsiVersion nsVersion;
 
-    public NsDescriptorConfig(final EtsiVersion etsiVersion) {
-        this.nsVersion = etsiVersion;
-    }
 }
