@@ -47,6 +47,8 @@ public interface ArtifactStorageManager {
      */
     ArtifactInfo upload(String vspId, String versionId, InputStream fileToUpload);
 
+    void put(String vspId, String name, InputStream fileToUpload);
+
     /**
      * Checks if the Artifact Storage is enabled.
      *
@@ -62,6 +64,8 @@ public interface ArtifactStorageManager {
     ArtifactStorageConfig getStorageConfiguration();
 
     InputStream get(final ArtifactInfo artifactInfo);
+
+    InputStream get(final String vspId, final String versionId);
 
     void delete(ArtifactInfo artifactInfo);
 }

@@ -30,12 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.utilities.json.JsonUtil;
-import org.openecomp.sdc.common.zip.ZipUtils;
-import org.openecomp.sdc.common.zip.exception.ZipException;
 
 /**
  * The type File utils.
@@ -206,20 +206,24 @@ public class FileUtils {
     /**
      * Gets file content map from zip.
      *
-     * @param zipData the zip data
+     * @param inputStream the zip data
      * @return the file content map from zip
-     * @throws ZipException when an error occurs while extracting zip files
+     * @throws IOException when an error occurs while extracting zip files
      */
-    public static FileContentHandler getFileContentMapFromZip(byte[] zipData) throws ZipException {
-        final Map<String, byte[]> zipFileAndByteMap = ZipUtils.readZip(zipData, true);
-        final FileContentHandler fileContentHandler = new FileContentHandler();
-        zipFileAndByteMap.forEach((path, bytes) -> {
-            if (bytes == null) {
-                fileContentHandler.addFolder(path);
+    public static FileContentHandler getFileContentMapFromZip(final InputStream inputStream) throws IOException {
+
+        final var zipInputStream = new ZipInputStream(inputStream);
+        ZipEntry zipEntry;
+        final var fileContentHandler = new FileContentHandler();
+        while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+            final var entryName = zipEntry.getName();
+            if (zipEntry.isDirectory()) {
+                fileContentHandler.addFolder(entryName);
             } else {
-                fileContentHandler.addFile(path, bytes);
+                fileContentHandler.addFile(entryName, zipInputStream.readAllBytes());
             }
-        });
+
+        }
         return fileContentHandler;
     }
 
