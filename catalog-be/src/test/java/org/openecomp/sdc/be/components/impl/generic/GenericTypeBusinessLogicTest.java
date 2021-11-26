@@ -86,8 +86,9 @@ class GenericTypeBusinessLogicTest {
         cvfc.setResourceType(ResourceTypeEnum.CVFC);
         cvfc.setDerivedFrom(Arrays.asList("genericType", "someOtherType"));
         cvfc.setDerivedFromGenericType("genericType");
+        cvfc.setModel("model");
         Resource genericResource = new Resource();
-        when(toscaOperationFacadeMock.getLatestCertifiedNodeTypeByToscaResourceName(cvfc.getDerivedFromGenericType()))
+        when(toscaOperationFacadeMock.getLatestByToscaResourceNameAndModel(cvfc.getDerivedFromGenericType(), cvfc.getModel()))
             .thenReturn(Either.left(genericResource));
         Either<Resource, ResponseFormat> fetchedGenericType = testInstance.fetchDerivedFromGenericType(cvfc);
         assertEquals(genericResource, fetchedGenericType.left().value());
@@ -99,8 +100,10 @@ class GenericTypeBusinessLogicTest {
         when(resource.getResourceType()).thenReturn(ResourceTypeEnum.VF);
         final var genericType = "genericType";
         when(resource.fetchGenericTypeToscaNameFromConfig()).thenReturn(genericType);
+        final var model = "model";
+        when(resource.getModel()).thenReturn(model);
         Resource genericResource = new Resource();
-        when(toscaOperationFacadeMock.getLatestCertifiedNodeTypeByToscaResourceName(genericType)).thenReturn(Either.left(genericResource));
+        when(toscaOperationFacadeMock.getLatestByToscaResourceNameAndModel(genericType, model)).thenReturn(Either.left(genericResource));
         Either<Resource, ResponseFormat> fetchedGenericType = testInstance.fetchDerivedFromGenericType(resource);
         assertEquals(genericResource, fetchedGenericType.left().value());
     }

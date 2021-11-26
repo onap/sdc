@@ -19,6 +19,8 @@
  */
 package org.openecomp.sdc.be.components.impl.generic;
 
+import static org.openecomp.sdc.common.api.Constants.ABSTRACT;
+
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,24 +70,35 @@ public class GenericTypeBusinessLogic {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
         Either<Resource, StorageOperationStatus> genericType;
-        if (StringUtils.isEmpty(component.getDerivedFromGenericVersion())){
-            genericType = toscaOperationFacade
-                .getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
+        if (StringUtils.isEmpty(component.getDerivedFromGenericVersion())) {
+            genericType = toscaOperationFacade.getLatestByToscaResourceNameAndModel(genericTypeToscaName, component.getModel());
             if (genericType.isRight()) {
-                log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
+                if (genericTypeToscaName.contains(ABSTRACT)) {
+                    genericType = toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(genericTypeToscaName);
+                    if (genericType.isRight()) {
+                        log.debug("Failed to fetch certified node type by tosca resource name {}", genericTypeToscaName);
+                        return Either.right(
+                            componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
+                    }
+                } else {
+                    log.debug("Failed to fetch latest node type by tosca resource name {} and model {}", genericTypeToscaName, component.getModel());
+                    return Either.right(
+                        componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), genericTypeToscaName));
+                }
             }
         } else {
-            genericType = toscaOperationFacade.getByToscaResourceNameAndVersion(genericTypeToscaName, component.getDerivedFromGenericVersion(), component.getModel());
+            genericType = toscaOperationFacade.getByToscaResourceNameAndVersion(genericTypeToscaName, component.getDerivedFromGenericVersion(),
+                component.getModel());
         }
 
         Resource genericTypeResource = genericType.left().value();
         return Either.left(genericTypeResource);
     }
-    
+
     public Either<Resource, ResponseFormat> fetchDerivedFromGenericType(final Component component, final String toscaType) {
         if (StringUtils.isNotEmpty(toscaType)) {
-            final Either<Resource, StorageOperationStatus> genericType = toscaOperationFacade.getLatestByToscaResourceNameAndModel(toscaType, component.getModel());
+            final Either<Resource, StorageOperationStatus> genericType = toscaOperationFacade.getLatestByToscaResourceNameAndModel(toscaType,
+                component.getModel());
             if (genericType.isRight()) {
                 log.debug("Failed to fetch certified node type by tosca resource name {}", toscaType);
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERIC_TYPE_NOT_FOUND, component.assetType(), toscaType));
