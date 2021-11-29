@@ -48,6 +48,7 @@ public class CategoryData extends GraphNode {
         this(NodeTypeEnum.getByName((String) properties.get(GraphPropertiesDictionary.LABEL.getProperty())));
         categoryDataDefinition.setUniqueId((String) properties.get(GraphPropertiesDictionary.UNIQUE_ID.getProperty()));
         categoryDataDefinition.setNormalizedName((String) properties.get(GraphPropertiesDictionary.NORMALIZED_NAME.getProperty()));
+        categoryDataDefinition.setDisplayName((String) properties.get(GraphPropertiesDictionary.DISPLAY_NAME.getProperty()));
         categoryDataDefinition.setName((String) properties.get(GraphPropertiesDictionary.NAME.getProperty()));
         final Object useServiceSubstitutionForNestedServicesProperty = properties
             .get(GraphPropertiesDictionary.USE_SERVICE_SUBSTITUTION_FOR_NESTED_SERVICES.getProperty());
@@ -80,6 +81,7 @@ public class CategoryData extends GraphNode {
         Map<String, Object> map = new HashMap<>();
         addIfExists(map, GraphPropertiesDictionary.UNIQUE_ID, categoryDataDefinition.getUniqueId());
         addIfExists(map, GraphPropertiesDictionary.NAME, categoryDataDefinition.getName());
+        addIfExists(map, GraphPropertiesDictionary.DISPLAY_NAME, categoryDataDefinition.getDisplayName());
         addIfExists(map, GraphPropertiesDictionary.NORMALIZED_NAME, categoryDataDefinition.getNormalizedName());
         addIfExists(map, GraphPropertiesDictionary.MODEL, categoryDataDefinition.getModels());
         addIfExists(map, GraphPropertiesDictionary.ICONS, categoryDataDefinition.getIcons());

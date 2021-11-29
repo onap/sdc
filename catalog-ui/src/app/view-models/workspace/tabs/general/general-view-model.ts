@@ -767,6 +767,10 @@ export class GeneralViewModel {
             }
         };
 
+        this.$scope.getCategoryDisplayNameOrName = (mainCategory: any): string => {
+            return mainCategory.displayName ? mainCategory.displayName : mainCategory.name ;
+        }
+
         this.$scope.onBaseTypeChange = (): void => {
             if (!this.$scope.component.derivedFromGenericType) {
                 this.$scope.component.derivedFromGenericVersion = undefined;

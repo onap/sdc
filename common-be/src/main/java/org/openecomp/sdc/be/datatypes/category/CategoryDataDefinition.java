@@ -35,6 +35,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 public class CategoryDataDefinition extends ToscaDataDefinition {
 
     private String name;
+    private String displayName;
     private String normalizedName;
     private List<String> models;
     private String uniqueId;
@@ -44,6 +45,7 @@ public class CategoryDataDefinition extends ToscaDataDefinition {
 
     public CategoryDataDefinition(CategoryDataDefinition c) {
         this.name = c.name;
+        this.displayName = c.displayName;
         this.normalizedName = c.normalizedName;
         this.models = c.models;
         this.uniqueId = c.uniqueId;
