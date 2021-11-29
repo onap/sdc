@@ -18,16 +18,13 @@ RUN apk update && \
         libxml2-dev \
         build-base \
         curl-dev && \
-    # needed libcurl to install correctly
-    pip install 'pycurl==7.43.0.1' &&  \
-        set -ex && \
-    gem install \
-        chef:13.8.5 \
-        berkshelf:6.3.1 \
-        io-console:0.4.6 \
-        etc webrick \
-        --no-document && \
-    apk del .build-dependencies
+    # needed libcurl to install correctly \
+    python -m pip install --upgrade pip \
+    pip install 'pycurl==7.44.1' &&  \
+    set -ex && \
+    gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 etc webrick --no-document && \
+    apk del .build-dependencies && \
+    gem cleanup
 
 ENV ONAP_LOG=/home/onap/logs
 RUN mkdir $ONAP_LOG && chown onap:onap $ONAP_LOG
@@ -47,9 +44,7 @@ RUN chmod 770 -R /home/onap/scripts && \
 ENV PATH=$PATH:/home/onap/.local/bin
 
 COPY --chown=onap:onap chef-solo /home/onap/chef-solo/
-
 COPY --chown=onap:onap chef-repo/cookbooks /home/onap/chef-solo/cookbooks/
-
 COPY --chown=onap:onap startup.sh /home/onap/
 
 RUN chmod 770 /home/onap/startup.sh
