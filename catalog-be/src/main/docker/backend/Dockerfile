@@ -1,4 +1,4 @@
-FROM onap/integration-java11:8.0.0
+FROM onap/integration-java11:9.0.0
 
 USER root
 ARG JETTY_FOLDER=/app/jetty
@@ -12,12 +12,7 @@ RUN set -ex && \
         ruby-dev \
         libffi-dev \
         libxml2-dev && \
-    gem install \
-        chef:13.8.5 \
-        berkshelf:6.3.1 \
-        io-console:0.4.6 \
-        etc webrick \
-        --no-document && \
+    gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 etc webrick --no-document && \
     gem cleanup && \
     apk update
 
@@ -31,7 +26,7 @@ RUN mkdir $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 USER onap
 
 #Download jetty
-RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.31.v20200723/jetty-distribution-9.4.31.v20200723.tar.gz -O $JETTY_FOLDER/jetty.tar.gz && \
+RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.41.v20210516/jetty-distribution-9.4.41.v20210516.tar.gz -O $JETTY_FOLDER/jetty.tar.gz && \
         tar xvz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
         rm -rf $JETTY_FOLDER/jetty.tar.gz
 
