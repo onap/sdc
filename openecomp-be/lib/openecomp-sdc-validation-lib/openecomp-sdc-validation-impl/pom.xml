@@ -99,6 +99,12 @@
       <artifactId>httpmime</artifactId>
       <version>${httpclient.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpcore</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

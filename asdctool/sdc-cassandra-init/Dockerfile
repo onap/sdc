@@ -1,8 +1,6 @@
-FROM onap/policy-jdk-debian:2.0.1
+FROM onap/policy-jdk-debian:2.0.2
 
-#RUN addgroup --gid 1000 sdc
 RUN addgroup sdc
-#RUN adduser --gecos "sdc sdc,1,1,1" -u 1000 --disabled-password --ingroup sdc --shell /bin/sh sdc
 RUN adduser --gecos "sdc sdc,1,1,1" --disabled-password --ingroup sdc --shell /bin/sh sdc
 USER sdc
 RUN mkdir ~/.cassandra/ && \
@@ -11,6 +9,7 @@ RUN mkdir ~/.cassandra/ && \
 USER root
 
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y python-pip && \
+    python -m pip install --upgrade pip \
     pip install cqlsh && \
     mkdir ~/.cassandra/ && \
     echo  '[cql]' > ~/.cassandra/cqlshrc  && \
@@ -35,4 +34,3 @@ COPY --chown=sdc:sdc startup.sh /home/sdc/
 RUN chmod 770 /home/sdc/startup.sh
 
 ENTRYPOINT [ "/home/sdc/startup.sh" ]
-
