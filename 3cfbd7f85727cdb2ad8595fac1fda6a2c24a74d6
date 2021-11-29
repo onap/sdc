@@ -22,6 +22,30 @@
       "revId": "3cfbd7f85727cdb2ad8595fac1fda6a2c24a74d6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "804130e5_4e12e2d3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2137,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2021-11-29T15:20:53Z",
+      "side": 1,
+      "message": "CINodeFilterDataDefinition(which is CINodeFilterUtils().getNodeFilterDataDefinition() format) need to be processed here, it just carries the property and capability values. So i have to create a nodefilterdefinition first and add the properties and capabilities to it, if any. Also, properties/capabilities values are not it in expected format. so need to correct it and pass it. So i added a new method to cover all steps there.",
+      "parentUuid": "2d58ee64_f54c084f",
+      "range": {
+        "startLine": 2137,
+        "startChar": 77,
+        "endLine": 2137,
+        "endChar": 151
+      },
+      "revId": "3cfbd7f85727cdb2ad8595fac1fda6a2c24a74d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
