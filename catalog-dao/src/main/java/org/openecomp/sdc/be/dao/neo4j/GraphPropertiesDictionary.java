@@ -33,6 +33,7 @@ public enum GraphPropertiesDictionary {
     HEALTH_CHECK		("healthcheckis",			String.class, 				true,		true),
     // Resource
     NAME				("name", 					String.class, 				false,		true),
+    DISPLAY_NAME        ("displayName",            String.class,               false,       true),
     TOSCA_RESOURCE_NAME	("toscaResourceName",		String.class, 				false,		true),
     CATEGORY_NAME		("categoryName", 			String.class, 				false,		true),
     VERSION				("version",					String.class, 				false,		true),

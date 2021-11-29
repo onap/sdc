@@ -119,7 +119,7 @@
                                     <option ng-if="component.isService()" data-ng-repeat="mainCategory in categories | orderBy:['name']"
                                             data-ng-selected="component.selectedCategory===mainCategory.name"
                                             value="{{mainCategory.name}}"
-                                            data-tests-id="{{mainCategory.name}}">{{mainCategory.name}}</option>
+                                            data-tests-id="{{mainCategory.name}}">{{getCategoryDisplayNameOrName(mainCategory)}}</option>
                                 </select>
 
                                 <div class="input-error" data-ng-show="validateField(editForm.category)">
