@@ -33,7 +33,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 
 public class ValidationUtils {
 
@@ -117,6 +117,7 @@ public class ValidationUtils {
     public static final Integer POLICY_MAX_LENGTH = 1024;
     public static final Pattern POLICY_NAME_PATTERN = Pattern.compile("^[\\w][\\w \\.\\-\\_\\:\\+]{0," + (POLICY_MAX_LENGTH - 1) + "}$");
     private static final Set<String> CATEGORY_CONJUNCTIONS = new HashSet<>(Arrays.asList("of", "to", "for", "as", "a", "an", "the"));
+
     private ValidationUtils() {
     }
 
@@ -262,7 +263,7 @@ public class ValidationUtils {
     }
 
     public static String removeHtmlTags(String str) {
-        return Jsoup.clean(str, Whitelist.none());
+        return Jsoup.clean(str, Safelist.none());
     }
 
     public static String removeAllTags(String htmlText) {
