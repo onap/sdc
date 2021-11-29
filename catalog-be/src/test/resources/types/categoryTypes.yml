@@ -19,6 +19,16 @@ services:
       name: "Category With Service Substitution False"
       icons: ['network_l_4']
       useServiceSubstitutionForNestedServices: false
+    Category_With_DisplayName_And_metadata:
+      name: "Category With DisplayName And metadata"
+      displayName: "Display Name For Category"
+      icons: [ 'etsi_nfv_network_service' ]
+      metadataKeys:
+        etsiVersion:
+          name: "ETSI Version"
+          validValues: [ '2.5.1' ]
+          default: '2.5.1'
+          mandatory: true
 resources:
   NetworkLayer23:
     name: "Network Layer 2-3"

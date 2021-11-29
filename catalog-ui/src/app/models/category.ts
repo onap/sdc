@@ -25,6 +25,7 @@
 export interface ICategoryBase {
     //server properties
     name:string;
+    displayName:string;
     normalizedName:string;
     uniqueId:string;
     models:Array<string>;

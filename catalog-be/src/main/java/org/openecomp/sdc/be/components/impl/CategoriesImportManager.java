@@ -228,6 +228,7 @@ public class CategoriesImportManager {
             Map<String, Object> category = (Map<String, Object>) entry.getValue();
             catName = (String) category.get("name");
             catDef.setName(catName);
+            catDef.setDisplayName((String) category.get("displayName"));
             icons = (List<String>) category.get("icons");
             catDef.setIcons(icons);
             String normalizedName = ValidationUtils.normalizeCategoryName4Uniqueness(catName);

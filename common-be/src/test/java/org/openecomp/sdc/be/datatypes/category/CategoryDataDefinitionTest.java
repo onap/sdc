@@ -20,23 +20,41 @@
 
 package org.openecomp.sdc.be.datatypes.category;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 
+class CategoryDataDefinitionTest {
 
-public class CategoryDataDefinitionTest {
-
-	private CategoryDataDefinition createTestSubject() {
-		return new CategoryDataDefinition();
-	}
-	
 	@Test
-	public void testCopyConstructor() throws Exception {
-		CategoryDataDefinition testSubject;
+	void testCategoryDataDefinition() {
+		CategoryDataDefinition categoryDataDefinitionForTest = new CategoryDataDefinition();
+		categoryDataDefinitionForTest.setName("Category name");
+		categoryDataDefinitionForTest.setDisplayName("Category displayName");
+		categoryDataDefinitionForTest.setNormalizedName("Category normalizedName");
+		List modelsList = new ArrayList();
+		modelsList.add("Category models list item");
+		categoryDataDefinitionForTest.setModels(modelsList);
+		categoryDataDefinitionForTest.setUniqueId("Category uniqueId");
+		List iconList = new ArrayList();
+		iconList.add("Category icon list item");
+		categoryDataDefinitionForTest.setIcons(iconList);
+		categoryDataDefinitionForTest.setUseServiceSubstitutionForNestedServices(true);
+		List metadataKeysList = new ArrayList();
+		metadataKeysList.add("Category metadataKeys list item");
+		categoryDataDefinitionForTest.setMetadataKeys(metadataKeysList);
 
-		// default test
-		testSubject = createTestSubject();
-		CategoryDataDefinition categoryDataDefinition = new CategoryDataDefinition(testSubject);
+		CategoryDataDefinition categoryDataDefinitionActual = new CategoryDataDefinition(categoryDataDefinitionForTest);
+
+		assertEquals(categoryDataDefinitionForTest.getName(), categoryDataDefinitionActual.getName());
+		assertEquals(categoryDataDefinitionForTest.getDisplayName(), categoryDataDefinitionActual.getDisplayName());
+		assertEquals(categoryDataDefinitionForTest.getNormalizedName(), categoryDataDefinitionActual.getNormalizedName());
+		assertEquals(categoryDataDefinitionForTest.getModels(), categoryDataDefinitionActual.getModels());
+		assertEquals(categoryDataDefinitionForTest.getUniqueId(), categoryDataDefinitionActual.getUniqueId());
+		assertEquals(categoryDataDefinitionForTest.getIcons(), categoryDataDefinitionActual.getIcons());
+		assertEquals(categoryDataDefinitionForTest.isUseServiceSubstitutionForNestedServices(), categoryDataDefinitionActual.isUseServiceSubstitutionForNestedServices());
+		assertEquals(categoryDataDefinitionForTest.getMetadataKeys(), categoryDataDefinitionActual.getMetadataKeys());
 	}
-	
 }
