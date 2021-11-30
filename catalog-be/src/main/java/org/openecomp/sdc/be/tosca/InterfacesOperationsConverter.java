@@ -38,7 +38,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -313,8 +312,9 @@ public class InterfacesOperationsConverter {
                                                                   final ToscaArtifactDefinition toscaArtifactDefinition) {
         final var properties = operationEntry.getValue().getImplementation().getProperties();
         if (CollectionUtils.isNotEmpty(properties)) {
-            final Map<String, PropertyDataDefinition> propertiesMap = new HashMap<>();
-            properties.forEach(propertyDefinition -> propertiesMap.put(propertyDefinition.getName(), propertyDefinition));
+            final Map<String, String> propertiesMap = new HashMap<>();
+            properties.stream().filter(propertyDataDefinition -> StringUtils.isNotEmpty(propertyDataDefinition.getValue()))
+                .forEach(propertyDataDefinition -> propertiesMap.put(propertyDataDefinition.getName(), propertyDataDefinition.getValue()));
             toscaArtifactDefinition.setProperties(propertiesMap);
         }
     }
