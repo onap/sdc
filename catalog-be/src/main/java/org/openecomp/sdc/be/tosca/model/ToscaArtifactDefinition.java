@@ -23,7 +23,6 @@ package org.openecomp.sdc.be.tosca.model;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 @Getter
 @Setter
@@ -37,5 +36,5 @@ public class ToscaArtifactDefinition {
     private String artifact_version;
     private String checksum;
     private String checksum_algorithm;
-    private Map<String, PropertyDataDefinition> properties;
+    private Map<String, String> properties;
 }
