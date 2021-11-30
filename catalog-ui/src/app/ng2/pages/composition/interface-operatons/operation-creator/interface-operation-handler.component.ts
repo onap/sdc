@@ -67,6 +67,7 @@ export class InterfaceOperationHandlerComponent {
     toscaArtifactTypes: Array<DropdownValue> = [];
 
     enableAddArtifactImplementation: boolean;
+    propertyValueValid: boolean = true;
 
     ngOnInit() {
         this.interfaceType = this.input.selectedInterface.displayType();
@@ -166,7 +167,9 @@ export class InterfaceOperationHandlerComponent {
 
     propertyValueValidation = (propertyValue): void => {
         this.onPropertyValueChange(propertyValue);
-        this.readonly = !propertyValue.isValid;
+        this.propertyValueValid = propertyValue.isValid;
+        this.readonly = !this.propertyValueValid;
+        this.validateRequiredField();
     }
 
     onRemoveInput = (inputParam: InputOperationParameter): void => {
@@ -221,15 +224,19 @@ export class InterfaceOperationHandlerComponent {
 
     validateRequiredField = () => {
         this.readonly = true;
-        let requiredFieldSelected = this.toscaArtifactTypeSelected && this.artifactName ? true : false;
-        this.input.validityChangedCallback(requiredFieldSelected);
-        if (requiredFieldSelected) {
+        let requiredFieldValid = this.isRequiredFieldsSelected();
+        this.input.validityChangedCallback(requiredFieldValid);
+        if (requiredFieldValid && this.propertyValueValid) {
             this.readonly = false;
         }
     }
 
+    private isRequiredFieldsSelected() {
+        return this.toscaArtifactTypeSelected && this.artifactName ? true : false;
+    }
+
     private checkFormValidForSubmit = (): boolean => {
-        return this.operationToUpdate.name && this.isParamsValid();
+        return this.operationToUpdate.name && this.artifactName && this.isParamsValid();
     }
 
     private isParamsValid = (): boolean => {
