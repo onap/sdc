@@ -86,12 +86,12 @@ export class ServiceDependenciesEditorComponent {
   ngOnInit() {
     this.currentIndex = this.input.serviceRuleIndex;
     this.serviceRulesList = this.input.serviceRules;
+    this.initFunctionTypes();
     this.initCurrentRule();
     this.currentServiceName = this.input.currentServiceName;
     this.operatorTypes = this.input.operatorTypes;
     this.selectedServiceProperties = this.input.selectedInstanceProperties;
     this.ddValueSelectedServicePropertiesNames = _.map(this.input.selectedInstanceProperties, (prop) => new DropdownValue(prop.name, prop.name));
-    this.initFunctionTypes();
     if (this.SOURCE_TYPES.STATIC.value !== this.currentRule.sourceType) {
       this.loadSourceTypesData();
     }
@@ -107,8 +107,13 @@ export class ServiceDependenciesEditorComponent {
           value: '',
           constraintOperator: OPERATOR_TYPES.EQUAL
         });
-    if (this.currentRule && this.currentRule.sourceType === this.SOURCE_TYPES.SERVICE_INPUT.value) {
-      this.currentRule.sourceName = this.input.compositeServiceName;
+    if (this.currentRule && this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value){
+      this.sourceTypes.push({
+        label: this.SOURCE_TYPES.STATIC.label,
+        value: this.SOURCE_TYPES.STATIC.value,
+        assignedLabel: this.SOURCE_TYPES.STATIC.value,
+        type: this.SOURCE_TYPES.STATIC.value,
+        options: []});
     }
   }
 
@@ -126,25 +131,31 @@ export class ServiceDependenciesEditorComponent {
     this.currentRule.value = "";
   }
 
-  onSelectFunctionType() {
-    this.currentRule.value = "";
+  onSelectFunctionType(value: any) {
     this.currentRule.sourceName = "";
     this.listOfValuesToAssign = [];
-    this.currentRule.sourceType = this.updateCurrentSourceType(this.currentRule.sourceType);
+    this.currentRule.sourceType = value;
     this.loadSourceTypesData();
     this.updateSourceTypesRelatedValues();
   }
 
-  onSelectSourceType() {
-    this.currentRule.value = "";
+  onSelectSourceType(value: any) {
+    this.currentRule.sourceName = value;
     this.updateSourceTypesRelatedValues();
+    if (this.listOfValuesToAssign) {
+      this.currentRule.value = this.listOfValuesToAssign[0].value
+    }
   }
 
-  loadSourceTypesData() {
+  private loadSourceTypesData() {
+    const SELF = "SELF";
+    if (this.SOURCE_TYPES.SERVICE_INPUT.value === this.currentRule.sourceType) {
+      this.currentRule.sourceName = SELF;
+    }
     this.sourceTypes = [];
     this.sourceTypes.push({
-      label: this.input.compositeServiceName,
-      value: this.input.compositeServiceName,
+      label: SELF,
+      value: SELF,
       assignedLabel: this.currentRule.sourceType == this.SOURCE_TYPES.SERVICE_PROPERTY.value
           ? this.SOURCE_TYPES.SERVICE_PROPERTY.label : this.SOURCE_TYPES.SERVICE_INPUT.label,
       type: this.currentRule.sourceType == this.SOURCE_TYPES.SERVICE_PROPERTY.value
@@ -152,9 +163,7 @@ export class ServiceDependenciesEditorComponent {
       options: this.loadSourceTypeBySelectedFunction().get(this.currentRule.sourceType)
     });
 
-    if (this.currentRule.sourceType === this.SOURCE_TYPES.SERVICE_INPUT.value) {
-      this.currentRule.sourceName = this.input.compositeServiceName;
-    } else {
+    if (this.currentRule.sourceType !== this.SOURCE_TYPES.SERVICE_INPUT.value) {
       if (this.input.selectedInstanceSiblings && this.isPropertyFunctionSelected) {
         _.forEach(this.input.selectedInstanceSiblings, (sib) =>
             this.sourceTypes.push({
@@ -217,17 +226,6 @@ export class ServiceDependenciesEditorComponent {
     }
   }
 
-  private updateCurrentSourceType = (sourceType: string): string => {
-    switch (sourceType) {
-      case this.SOURCE_TYPES.STATIC.value:
-        return this.SOURCE_TYPES.STATIC.value;
-      case this.SOURCE_TYPES.SERVICE_PROPERTY.value:
-        return this.SOURCE_TYPES.SERVICE_PROPERTY.value;
-      case this.SOURCE_TYPES.SERVICE_INPUT.value:
-        return this.SOURCE_TYPES.SERVICE_INPUT.value;
-    }
-  }
-
   filterOptionsByType() {
     if (!this.selectedPropertyObj) {
       this.listOfValuesToAssign = [];
@@ -250,6 +248,7 @@ export class ServiceDependenciesEditorComponent {
       const isStatic = this.currentRule.sourceName === this.SOURCE_TYPES.STATIC.value;
       return this.currentRule.isValidRule(isStatic);
     }
+
     // for update all rules
     return this.serviceRulesList.every((rule) => rule.isValidRule(rule.sourceName === this.SOURCE_TYPES.STATIC.value));
   }
