@@ -145,10 +145,11 @@ public class NodeFilterValidator {
         String source = SOURCE;
         final Optional<ComponentInstance> optionalComponentInstance;
         final List<PropertyDefinition> propertyDefinitions = parentComponent.getProperties();
+        final var SELF = "SELF";
         List<? extends PropertyDefinition> sourcePropertyDefinition =
-            parentComponent.getName().equals(uiConstraint.getSourceName()) && propertyDefinitions != null ? propertyDefinitions
+            SELF.equalsIgnoreCase(uiConstraint.getSourceName()) && propertyDefinitions != null ? propertyDefinitions
                 : Collections.emptyList();
-        if (sourcePropertyDefinition.isEmpty() && !parentComponent.getName().equals(uiConstraint.getSourceName())) {
+        if (sourcePropertyDefinition.isEmpty() && !SELF.equalsIgnoreCase(uiConstraint.getSourceName())) {
             optionalComponentInstance = parentComponent.getComponentInstances().stream()
                 .filter(componentInstance -> uiConstraint.getSourceName().equals(componentInstance.getName())).findFirst();
             if (optionalComponentInstance.isPresent()) {

@@ -21,18 +21,18 @@
                 </div>
 
                 <div class="i-sdc-form-item rule-input-field">
-                    <label class="i-sdc-form-label required" >Function Type</label>
-                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="functionType" [values]="functionTypes" [(value)]="currentRule.sourceType" (change)="onSelectFunctionType()"></ui-element-dropdown>
+                    <label class="i-sdc-form-label required">Function Type</label>
+                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="functionType" [values]="functionTypes" [(value)]="currentRule.sourceType" (elementChanged)="onSelectFunctionType($event.value)"></ui-element-dropdown>
                 </div>
 
                 <div class="i-sdc-form-item rule-input-field" *ngIf="isPropertyFunctionSelected()">
-                    <label class="i-sdc-form-label required" >Source</label>
-                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="sourceType" [values]="sourceTypes" [(value)]="currentRule.sourceName" (change)="onSelectSourceType()"></ui-element-dropdown>
+                    <label class="i-sdc-form-label required">Source</label>
+                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="sourceType" [values]="sourceTypes" [(value)]="currentRule.sourceName" (elementChanged)="onSelectSourceType($event.value)"></ui-element-dropdown>
                 </div>
 
                 <div  [ngClass]="isComplexListMapType() && isStaticSource() ? 'complex-input-field' : ''"
-                    class="rule-input-field assigned-value-field">
-                    <label class="i-sdc-form-label required" >{{assignedValueLabel}}</label>
+                      class="i-sdc-form-item rule-input-field">
+                    <label class="i-sdc-form-label required">{{assignedValueLabel}}</label>
                     <dynamic-property
                         *ngIf="isStaticSource() && isComplexListMapType()"
                         [selectedPropertyId]="selectedPropertyObj.uniqueId"
@@ -53,7 +53,7 @@
                             [type]="selectedPropertyObj ? selectedPropertyObj.type : 'string'">
                     </dynamic-element>
                     <ui-element-dropdown *ngIf="!isStaticSource()"
-                                         class="rule-assigned-value"
+                                         class="i-sdc-form-select"
                                          data-tests-id="ruleAssignedValue"
                                          [(value)]="currentRule.value"
                                          [values]="listOfValuesToAssign">

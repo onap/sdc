@@ -20,9 +20,17 @@
 
 package org.openecomp.sdc.be.components.validation;
 
-import fj.data.Either;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import fj.data.Either;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,12 +50,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NodeFilterValidationTest {
 
@@ -264,7 +266,7 @@ public class NodeFilterValidationTest {
         Service service = createService(STRING_TYPE);
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, COMPONENT1_ID, Collections.singletonList("Prop1:\n"
-                        + "  equal:  { get_property : [parentservice, Prop1]}\n"), NodeFilterConstraintAction.ADD,
+                        + "  equal:  { get_property : [SELF, Prop1]}\n"), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES);
 
         Assert.assertTrue(either.isLeft());
