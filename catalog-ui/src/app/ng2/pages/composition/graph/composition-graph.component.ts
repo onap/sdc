@@ -387,6 +387,7 @@ export class CompositionGraphComponent implements AfterViewInit {
     }
 
     private loadCompositionData = () => {
+        console.log("Loading composition data....")
         this.loaderService.activate();
         this.topologyTemplateService.getComponentCompositionData(this.topologyTemplateId, this.topologyTemplateType).subscribe((response: ComponentGenericResponse) => {
             if (this.topologyTemplateType === ComponentType.SERVICE) {
@@ -657,6 +658,12 @@ export class CompositionGraphComponent implements AfterViewInit {
                 graphCapability.external = capability.external;
             }
         );
+
+        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_CREATE_COMPONENT_INSTANCE, () => {
+            this._cy.elements().remove();
+            this.loadCompositionData();
+            this.selectTopologyTemplate();
+        });
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_DELETE_COMPONENT_INSTANCE, (componentInstanceId: string) => {
             const nodeToDelete = this._cy.getElementById(componentInstanceId);
