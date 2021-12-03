@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "df3fdadf_586b3ab1",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-12-03T15:40:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ebb509fd_8d52224c",
+      "range": {
+        "startLine": 227,
+        "startChar": 8,
+        "endLine": 227,
+        "endChar": 30
+      },
+      "revId": "a60239adc3d498f732b4c9f478a3125a3c295406",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a0f5b12b_8974f030",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "a60239adc3d498f732b4c9f478a3125a3c295406",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0da0f7a6_833aaa71",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-12-03T15:40:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0f5b12b_8974f030",
+      "range": {
+        "startLine": 235,
+        "startChar": 15,
+        "endLine": 235,
+        "endChar": 81
+      },
+      "revId": "a60239adc3d498f732b4c9f478a3125a3c295406",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
