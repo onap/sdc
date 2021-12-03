@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -119,7 +120,7 @@ public class InterfaceDefinitionHandler {
         }
         final Map<String, InterfaceDefinition> interfaceDefinitionMap = interfaceDefinitionMapEither.left().value();
         final Optional<InterfaceDefinition> interfaceDefinitionOptional = interfaceDefinitionMap.entrySet().stream()
-            .filter(interfaceDefinitionEntry -> interfaceDefinitionEntry.getKey().equalsIgnoreCase(interfaceType)).map(Entry::getValue).findFirst();
+            .filter(interfaceDefinitionEntry -> interfaceDefinitionEntry.getKey().equalsIgnoreCase(UniqueIdBuilder.buildInterfaceTypeUid(model, interfaceType))).map(Entry::getValue).findFirst();
         if (interfaceDefinitionOptional.isEmpty()) {
             throw new ByActionStatusComponentException(ActionStatus.INTERFACE_UNKNOWN, interfaceType);
         }
