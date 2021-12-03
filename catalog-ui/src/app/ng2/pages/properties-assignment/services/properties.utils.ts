@@ -38,13 +38,13 @@ export class PropertiesUtils {
      * 3. Initialize valueObj (which also creates any new list/map flattened children as needed)
      * Returns InstanceFePropertiesMap
      */
-    public convertPropertiesMapToFEAndCreateChildren = (instancePropertiesMap:InstanceBePropertiesMap, isVF:boolean, inputs?:Array<InputFEModel>): InstanceFePropertiesMap => {
+    public convertPropertiesMapToFEAndCreateChildren = (instancePropertiesMap:InstanceBePropertiesMap, isVF:boolean, inputs?:Array<InputFEModel>, model?:string): InstanceFePropertiesMap => {
         let instanceFePropertiesMap:InstanceFePropertiesMap = new InstanceFePropertiesMap();
         angular.forEach(instancePropertiesMap, (properties:Array<PropertyBEModel>, instanceId:string) => {
             let propertyFeArray: Array<PropertyFEModel> = [];
             _.forEach(properties, (property: PropertyBEModel) => {
-
-                if (this.dataTypeService.getDataTypeByTypeName(property.type)) { // if type not exist in data types remove property from list
+	
+                if (this.dataTypeService.getDataTypeByModelAndTypeName(model, property.type)) { // if type not exist in data types remove property from list
 
                     let newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
 
