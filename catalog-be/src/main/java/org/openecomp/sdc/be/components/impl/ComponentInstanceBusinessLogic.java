@@ -1954,7 +1954,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 ComponentInstanceProperty componentInstanceProperty = validatePropertyExistsOnComponent(property, containerComponent,
                     foundResourceInstance);
                 String propertyParentUniqueId = property.getParentUniqueId();
-                Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, false);
+                Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, false, containerComponent.getModel());
                 if (updatedPropertyValue.isRight()) {
                     log.error("Failed to update property object value of property: {}",
                         property);
@@ -2265,8 +2265,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return false;
     }
 
-    private <T extends PropertyDefinition> Either<String, ResponseFormat> updatePropertyObjectValue(T property, boolean isInput) {
-        final Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel());
+    private <T extends PropertyDefinition> Either<String, ResponseFormat> updatePropertyObjectValue(T property, boolean isInput, final String model) {
+        final Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, model);
         String innerType = null;
         String propertyType = property.getType();
         ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);

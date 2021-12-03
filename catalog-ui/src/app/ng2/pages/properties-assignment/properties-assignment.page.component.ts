@@ -355,7 +355,7 @@ export class PropertiesAssignmentComponent {
      * Entry point handling response from server
      */
     processInstancePropertiesResponse = (instanceBePropertiesMap: InstanceBePropertiesMap, originTypeIsVF: boolean) => {
-        this.instanceFePropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren(instanceBePropertiesMap, originTypeIsVF, this.inputs); //create flattened children, disable declared props, and init values
+        this.instanceFePropertiesMap = this.propertiesUtils.convertPropertiesMapToFEAndCreateChildren(instanceBePropertiesMap, originTypeIsVF, this.inputs, this.component.model); //create flattened children, disable declared props, and init values
         this.checkedPropertiesCount = 0;
         this.checkedChildPropertiesCount = 0;
     };
