@@ -40,7 +40,7 @@ public class UploadServiceInfoTest {
     public void testCtor() {
         new UploadServiceInfo("mock", "mock", "mock", new LinkedList<>(), "mock", "mock", "mock", "mock/mock/mock",
                 "mock", "mock", "mock", "mock", "mock", "mock", "mock", new LinkedList<>(), "mock", "mock", "mock",
-                "mock", "mock", "mock", "mock", "mock", "mock");
+                "mock", "mock", "mock", "mock", "mock", "mock", "mock");
     }
 
     @Test

@@ -73,6 +73,7 @@ public class ServiceImportManager {
             serviceMetadataDataDefinition.getServiceVendorModelNumber();
             service.setServiceType("");
             service.setProjectCode(serviceMetaData.getProjectCode());
+            service.setModel(serviceMetaData.getModel());
             if (serviceMetaData.getVendorName() != null) {
                 service.setVendorName(serviceMetaData.getVendorName());
             }
