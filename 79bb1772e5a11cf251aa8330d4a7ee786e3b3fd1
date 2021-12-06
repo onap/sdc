@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0d84b85_fedd6b43",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1419,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-12-06T10:24:10Z",
+      "side": 1,
+      "message": "Any issues here if there is no node filter in the service \n - will uploadComponentInstanceInfo.getUploadNodeFilterInfo() return null?",
+      "range": {
+        "startLine": 1419,
+        "startChar": 47,
+        "endLine": 1419,
+        "endChar": 100
+      },
+      "revId": "79bb1772e5a11cf251aa8330d4a7ee786e3b3fd1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
