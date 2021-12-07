@@ -182,8 +182,14 @@ Modifications copyright (c) 2018-2019 Nokia
         <surefire.reuseForks>true</surefire.reuseForks>
         <surefire.skip.tests>false</surefire.skip.tests>
 
-        <docker.api.version>1.35</docker.api.version>
         <bouncycastle.version>1.69</bouncycastle.version>
+
+        <!--DOCKER-->
+        <docker.api.version>1.35</docker.api.version>
+        <docker.namespace>onap</docker.namespace>
+        <docker.password>docker</docker.password>
+        <docker.username>docker</docker.username>
+        <docker.registry>nexus3.onap.org:10001</docker.registry>
 
         <verbose>false</verbose>
     </properties>

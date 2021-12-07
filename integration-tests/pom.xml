@@ -476,7 +476,7 @@ limitations under the License.
                     <startParallel>true</startParallel>
                     <images>
                         <image>
-                            <name>onap/sdc-cassandra:${it.docker.version}</name>
+                            <name>${docker.namespace}/sdc-cassandra:${it.docker.version}</name>
                             <alias>sdc-cassandra</alias>
                             <run>
                                 <env>
@@ -526,7 +526,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-cassandra-init:${it.docker.version}</name>
+                            <name>${docker.namespace}/sdc-cassandra-init:${it.docker.version}</name>
                             <alias>sdc-cassandra-init</alias>
                             <run>
                                 <dependsOn>
@@ -559,7 +559,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-onboard-cassandra-init:${it.docker.version}</name>
+                            <name>${docker.namespace}/sdc-onboard-cassandra-init:${it.docker.version}</name>
                             <alias>sdc-cassandra-onboard-init</alias>
                             <run>
                                 <dependsOn>
@@ -593,7 +593,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-onboard-backend:${it.docker.version}</name>
+                            <name>${docker.namespace}/sdc-onboard-backend:${it.docker.version}</name>
                             <alias>sdc-onboard-backend</alias>
                             <run>
                                 <dependsOn>
@@ -646,7 +646,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-backend-all-plugins:${it.docker.version}</name>
+                            <name>${docker.namespace}/sdc-backend-all-plugins:${it.docker.version}</name>
                             <alias>sdc-backend</alias>
                             <run>
                                 <dependsOn>
@@ -698,7 +698,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-backend-init:${it.docker.version}</name>
+                            <name>${docker.namespace}/sdc-backend-init:${it.docker.version}</name>
                             <alias>sdc-backend-init</alias>
                             <run>
                                 <dependsOn>
@@ -728,7 +728,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-frontend:${it.docker.version}</name>
+                            <name>${docker.namespace}/sdc-frontend:${it.docker.version}</name>
                             <alias>sdc-frontend</alias>
                             <run>
                                 <env>
@@ -774,7 +774,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/sdc-simulator:${it.docker.version}</name>
+                            <name>${docker.namespace}/sdc-simulator:${it.docker.version}</name>
                             <alias>sdc-simulator</alias>
                             <run>
                                 <env>
@@ -860,7 +860,7 @@ limitations under the License.
                             </run>
                         </image>
                         <image>
-                            <name>onap/org.onap.sdc.sdc-helm-validator:${it.helm-validator.version}</name>
+                            <name>${docker.namespace}/org.onap.sdc.sdc-helm-validator:${it.helm-validator.version}</name>
                             <alias>helm-validator</alias>
                             <run>
                                 <skip>${it.helm-validator.disabled}</skip>

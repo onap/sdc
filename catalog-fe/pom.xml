@@ -599,10 +599,6 @@
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <properties>
-                <docker.username>docker</docker.username>
-                <docker.password>docker</docker.password>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -641,7 +637,7 @@
                         <configuration>
                             <verbose>${verbose}</verbose>
                             <apiVersion>${docker.api.version}</apiVersion>
-                            <registry>nexus3.onap.org:10001</registry>
+                            <registry>${docker.registry}</registry>
                             <authConfig>
                                 <pull>
                                     <username>${docker.username}</username>
@@ -652,7 +648,7 @@
 
                                 <!-- Build frontend image -->
                                 <image>
-                                    <name>onap/sdc-frontend</name>
+                                    <name>${docker.namespace}/sdc-frontend</name>
                                     <alias>sdc-frontend</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -679,7 +675,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>onap/sdc-frontend</image>
+                                    <image>${docker.namespace}/sdc-frontend</image>
                                 </configuration>
                             </execution>
 
@@ -698,7 +694,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>onap/sdc-frontend</image>
+                                    <image>${docker.namespace}/sdc-frontend</image>
                                 </configuration>
                             </execution>
                         </executions>
