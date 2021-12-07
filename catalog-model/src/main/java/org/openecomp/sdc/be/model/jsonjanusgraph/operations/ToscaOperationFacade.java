@@ -139,6 +139,7 @@ public class ToscaOperationFacade {
     private static final String FAILED_TO_GET_UPDATED_RESOURCE_STATUS_IS = "Failed to get updated resource {}. Status is {}. ";
     private static final String FAILED_TO_ADD_THE_PROPERTY_TO_THE_RESOURCE_STATUS_IS = "Failed to add the property {} to the resource {}. Status is {}. ";
     private static final String SERVICE = "service";
+    private static final String VF = "VF";
     private static final String NOT_SUPPORTED_COMPONENT_TYPE = "Not supported component type {}";
     private static final String COMPONENT_CREATED_SUCCESSFULLY = "Component created successfully!!!";
     private static final String COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR = "Couldn't fetch component with and unique id {}, error: {}";
@@ -2208,7 +2209,7 @@ public class ToscaOperationFacade {
         if (ComponentTypeEnum.RESOURCE == componentTypeEnum) {
             internalVertexTypes.add(VertexTypeEnum.NODE_TYPE);
         }
-        if (ComponentTypeEnum.SERVICE == componentTypeEnum || SERVICE.equalsIgnoreCase(internalComponentType)) {
+        if (ComponentTypeEnum.SERVICE == componentTypeEnum || SERVICE.equalsIgnoreCase(internalComponentType) || VF.equalsIgnoreCase(internalComponentType)) {
             internalVertexTypes.add(VertexTypeEnum.TOPOLOGY_TEMPLATE);
         }
         return internalVertexTypes;
