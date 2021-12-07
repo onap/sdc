@@ -104,7 +104,7 @@ import org.yaml.snakeyaml.Yaml;
 @Component("resourceImportManager")
 public class ResourceImportManager {
 
-    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("[\\w\\-\\_\\d\\:]+");
+    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("['\\w\\s\\-\\_\\d\\:]+");
     private static final Logger log = Logger.getLogger(ResourceImportManager.class);
     private final InterfaceDefinitionHandler interfaceDefinitionHandler;
     private final ComponentsUtils componentsUtils;
