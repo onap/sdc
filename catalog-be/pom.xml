@@ -1369,18 +1369,21 @@
                         <configuration>
                             <verbose>${verbose}</verbose>
                             <apiVersion>${docker.api.version}</apiVersion>
-                            <registry>nexus3.onap.org:10001</registry>
+                            <registry>${docker.registry}</registry>
+                            <buildArgs>
+                                <dockerNamespace>${docker.namespace}</dockerNamespace>
+                            </buildArgs>
                             <authConfig>
                                 <pull>
-                                    <username>docker</username>
-                                    <password>docker</password>
+                                    <username>${docker.username}</username>
+                                    <password>${docker.password}</password>
                                 </pull>
                             </authConfig>
                             <images>
 
                                 <!-- Build backend image -->
                                 <image>
-                                    <name>onap/sdc-backend</name>
+                                    <name>${docker.namespace}/sdc-backend</name>
                                     <alias>sdc-backend</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -1402,7 +1405,7 @@
                                 </image>
                                 <!-- Build backend-init image -->
                                 <image>
-                                    <name>onap/sdc-backend-init</name>
+                                    <name>${docker.namespace}/sdc-backend-init</name>
                                     <alias>sdc-backend-init</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -1430,7 +1433,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>onap/sdc-backend,onap/sdc-backend-init</image>
+                                    <image>${docker.namespace}/sdc-backend,onap/sdc-backend-init</image>
                                 </configuration>
                             </execution>
 
@@ -1449,7 +1452,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>onap/sdc-backend,onap/sdc-backend-init</image>
+                                    <image>${docker.namespace}/sdc-backend,onap/sdc-backend-init</image>
                                 </configuration>
                             </execution>
                         </executions>

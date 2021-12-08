@@ -232,17 +232,17 @@
                         <configuration>
                             <verbose>${verbose}</verbose>
                             <apiVersion>${docker.api.version}</apiVersion>
-                            <registry>nexus3.onap.org:10001</registry>
+                            <registry>${docker.registry}</registry>
                             <authConfig>
                                 <pull>
-                                    <username>docker</username>
-                                    <password>docker</password>
+                                    <username>${docker.username}</username>
+                                    <password>${docker.password}</password>
                                 </pull>
                             </authConfig>
                             <images>
                                 <!-- Build simulator image -->
                                 <image>
-                                    <name>onap/sdc-simulator</name>
+                                    <name>${docker.namespace}/sdc-simulator</name>
                                     <alias>sdc-simulator</alias>
                                     <build>
                                         <cleanup>try</cleanup>

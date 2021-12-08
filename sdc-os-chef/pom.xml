@@ -61,18 +61,18 @@
                         <configuration>
                             <verbose>${verbose}</verbose>
                             <apiVersion>${docker.api.version}</apiVersion>
-                            <registry>nexus3.onap.org:10001</registry>
+                            <registry>${docker.registry}</registry>
                             <authConfig>
                                 <pull>
-                                    <username>docker</username>
-                                    <password>docker</password>
+                                    <username>${docker.username}</username>
+                                    <password>${docker.password}</password>
                                 </pull>
                             </authConfig>
                             <images>
 
                                 <!-- Build cassandra image -->
                                 <image>
-                                    <name>onap/sdc-cassandra</name>
+                                    <name>${docker.namespace}/sdc-cassandra</name>
                                     <alias>sdc-cassandra</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -98,7 +98,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>onap/sdc-cassandra</image>
+                                    <image>${docker.namespace}/sdc-cassandra</image>
                                 </configuration>
                             </execution>
 
@@ -117,7 +117,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>onap/sdc-cassandra</image>
+                                    <image>${docker.namespace}/sdc-cassandra</image>
                                 </configuration>
                             </execution>
                         </executions>
