@@ -22,6 +22,30 @@
       "revId": "fbf442d840b3172a05b38c59d270ca3afc0df21a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca19de73_b12e1d80",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1383,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-08T22:19:49Z",
+      "side": 1,
+      "message": "see my comment\nhttps://gerrit.onap.org/r/c/sdc/+/126140/2/catalog-be-plugins/backend-all-plugins/src/main/docker/backend-all-plugins/Dockerfile",
+      "parentUuid": "26439fc7_8c8f05ec",
+      "range": {
+        "startLine": 1383,
+        "startChar": 42,
+        "endLine": 1383,
+        "endChar": 62
+      },
+      "revId": "fbf442d840b3172a05b38c59d270ca3afc0df21a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
