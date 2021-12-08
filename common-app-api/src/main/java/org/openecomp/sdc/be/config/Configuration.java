@@ -99,6 +99,7 @@ public class Configuration extends BasicConfiguration {
     private List<String> licenseTypes;
     private List<String> definedResourceNamespace;
     private List<String> directives;
+    private List<String> customToscaPropertyTypes;
     private Integer additionalInformationMaxNumberOfKeys;
     private HeatDeploymentArtifactTimeout heatArtifactDeploymentTimeout;
     private BeMonitoringConfig systemMonitoring;

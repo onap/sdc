@@ -416,3 +416,6 @@ dmaapProducerConfiguration:
     credential:
         username: m09875@sdc.att.com
         password: hmXYcznAljMSisdy8zgcag==
+
+# This configuration entry lists all valid strings for a Tosca property type that shall be allowed on SDC.
+customToscaPropertyTypes:
