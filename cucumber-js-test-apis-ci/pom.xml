@@ -230,8 +230,8 @@
                         <artifactId>docker-maven-plugin</artifactId>
                         <configuration>
                             <verbose>true</verbose>
-                            <apiVersion>1.23</apiVersion>
-                            <registry>nexus3.onap.org:10001</registry>
+                            <apiVersion>${docker.api.version}</apiVersion>
+                            <registry>${docker.registry}</registry>
                             <authConfig>
                                 <pull>
                                     <username>docker</username>
@@ -241,7 +241,7 @@
                             <images>
                                 <!-- Build sanity image -->
                                 <image>
-                                    <name>onap/cucumber-sdc-api-tests</name>
+                                    <name>${docker.namespace}/cucumber-sdc-api-tests</name>
                                     <alias>cucumber-sdc-api-tests</alias>
                                     <build>
                                         <cleanup>try</cleanup>
@@ -269,7 +269,7 @@
                                 </goals>
                                 <configuration>
                                     <removeAll>true</removeAll>
-                                    <image>onap/cucumber-sdc-api-tests</image>
+                                    <image>${docker.namespace}/cucumber-sdc-api-tests</image>
                                 </configuration>
                             </execution>
                             <execution>
@@ -286,7 +286,7 @@
                                     <goal>push</goal>
                                 </goals>
                                 <configuration>
-                                    <image>onap/cucumber-sdc-api-tests</image>
+                                    <image>${docker.namespace}/cucumber-sdc-api-tests</image>
                                 </configuration>
                             </execution>
                         </executions>

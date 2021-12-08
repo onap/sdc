@@ -838,17 +838,17 @@
             <configuration>
               <verbose>${verbose}</verbose>
               <apiVersion>${docker.api.version}</apiVersion>
-              <registry>nexus3.onap.org:10001</registry>
+              <registry>${docker.registry}</registry>
               <authConfig>
                 <pull>
-                  <username>docker</username>
-                  <password>docker</password>
+                  <username>${docker.username}</username>
+                  <password>${docker.password}</password>
                 </pull>
               </authConfig>
               <images>
                 <!-- Build cassandra-init image -->
                 <image>
-                  <name>onap/sdc-cassandra-init</name>
+                  <name>${docker.namespace}/sdc-cassandra-init</name>
                   <alias>sdc-cassandra-init</alias>
                   <build>
                     <cleanup>try</cleanup>
@@ -875,7 +875,7 @@
                 </goals>
                 <configuration>
                   <removeAll>true</removeAll>
-                  <image>onap/sdc-cassandra-init</image>
+                  <image>${docker.namespace}/sdc-cassandra-init</image>
                 </configuration>
               </execution>
 
@@ -894,7 +894,7 @@
                   <goal>push</goal>
                 </goals>
                 <configuration>
-                  <image>onap/sdc-cassandra-init</image>
+                  <image>${docker.namespace}/sdc-cassandra-init</image>
                 </configuration>
               </execution>
             </executions>

@@ -26,7 +26,7 @@ RUN mkdir $JETTY_FOLDER && chown onap:onap $JETTY_FOLDER
 USER onap
 
 #Download jetty
-RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.41.v20210516/jetty-distribution-9.4.41.v20210516.tar.gz -O $JETTY_FOLDER/jetty.tar.gz && \
+RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty.version}/jetty-distribution-${jetty.version}.tar.gz -O $JETTY_FOLDER/jetty.tar.gz && \
         tar xvz -C $JETTY_FOLDER -f $JETTY_FOLDER/jetty.tar.gz --strip 1 && \
         rm -rf $JETTY_FOLDER/jetty.tar.gz
 

@@ -20,8 +20,8 @@ limitations under the License.
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>catalog-be-plugins</artifactId>
         <groupId>org.openecomp.sdc</groupId>
@@ -43,6 +43,9 @@ limitations under the License.
     <profiles>
         <profile>
             <id>docker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
             <properties>
                 <skip.staging.artifacts>true</skip.staging.artifacts>
                 <docker.skip.build>false</docker.skip.build>
@@ -50,71 +53,75 @@ limitations under the License.
                 <docker.skip.push>false</docker.skip.push>
                 <docker.skip>false</docker.skip>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <verbose>${verbose}</verbose>
+                            <apiVersion>${docker.api.version}</apiVersion>
+                            <registry>${docker.registry}</registry>
+                            <verbose>${verbose}</verbose>
+                            <authConfig>
+                                <pull>
+                                    <username>${docker.username}</username>
+                                    <password>${docker.password}</password>
+                                </pull>
+                            </authConfig>
+                            <images>
+                                <!-- Build backend image -->
+                                <image>
+                                    <name>${docker.namespace}/sdc-backend-all-plugins</name>
+                                    <alias>sdc-backend-all-plugins</alias>
+                                    <build>
+                                        <cleanup>try</cleanup>
+                                        <dockerFile>backend-all-plugins/Dockerfile</dockerFile>
+                                        <tags>
+                                            <tag>latest</tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
+                                            </tag>
+                                            <tag>
+                                                ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}
+                                            </tag>
+                                        </tags>
+                                        <assembly>
+                                            <descriptor>
+                                                backend-all-plugins/backend-all-plugins-files.xml
+                                            </descriptor>
+                                            <name>onap-sdc-backend-all-plugins</name>
+                                        </assembly>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>clean-images</id>
+                                <phase>pre-clean</phase>
+                                <goals>
+                                    <goal>remove</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>generate-images</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>push-images</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>push</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <configuration>
-                    <verbose>${verbose}</verbose>
-                    <apiVersion>${docker.api.version}</apiVersion>
-                    <registry>nexus3.onap.org:10001</registry>
-                    <verbose>${verbose}</verbose>
-                    <authConfig>
-                        <pull>
-                            <username>docker</username>
-                            <password>docker</password>
-                        </pull>
-                    </authConfig>
-                    <images>
-                        <!-- Build backend image -->
-                        <image>
-                            <name>onap/sdc-backend-all-plugins</name>
-                            <alias>sdc-backend-all-plugins</alias>
-                            <build>
-                                <cleanup>try</cleanup>
-                                <dockerFile>backend-all-plugins/Dockerfile</dockerFile>
-                                <tags>
-                                    <tag>latest</tag>
-                                    <tag>
-                                        ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-STAGING-latest
-                                    </tag>
-                                    <tag>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}-${maven.build.timestamp}</tag>
-                                </tags>
-                                <assembly>
-                                    <descriptor>backend-all-plugins/backend-all-plugins-files.xml</descriptor>
-                                    <name>onap-sdc-backend-all-plugins</name>
-                                </assembly>
-                            </build>
-                        </image>
-                    </images>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>clean-images</id>
-                        <phase>pre-clean</phase>
-                        <goals>
-                            <goal>remove</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>generate-images</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>push-images</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
