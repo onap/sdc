@@ -814,8 +814,8 @@ public class ToscaExportHandler {
                     toscaDataType.setProperties(dataType.getProperties().stream()
                         .collect(Collectors.toMap(
                             PropertyDataDefinition::getName,
-                            s -> propertyConvertor
-                                .convertProperty(dataTypes, s, PropertyType.PROPERTY)
+                            s -> propertyConvertor.convertProperty(dataTypes, s, PropertyType.PROPERTY),
+                            (toscaPropertyTobeValidated, toscaProperty) -> validateToscaProperty(privateDataTypes, toscaPropertyTobeValidated, toscaProperty)
                         )));
                 }
                 toscaDataTypeMap.put(dataType.getName(), toscaDataType);
@@ -825,6 +825,13 @@ public class ToscaExportHandler {
 
         // Extracted to method for code reuse
         return convertReqCapAndTypeName(componentsCache, component, toscaNode, nodeTypes, toscaNodeType, dataTypes);
+    }
+
+    private ToscaProperty validateToscaProperty(final List<DataTypeDefinition> privateDataTypes, final ToscaProperty toscaPropertyTobeValidated,
+                                                final ToscaProperty toscaProperty) {
+        final Optional<DataTypeDefinition> match = privateDataTypes.stream()
+            .filter(dataType -> dataType.getName().equals(toscaPropertyTobeValidated.getType())).findFirst();
+        return match.isPresent() ? toscaPropertyTobeValidated : toscaProperty;
     }
 
     private Map<String, ToscaAttribute> convertToToscaAttributes(final List<AttributeDefinition> attributeList,
