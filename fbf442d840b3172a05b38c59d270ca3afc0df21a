@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26439fc7_8c8f05ec",
+        "filename": "catalog-be/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1383,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-12-08T12:35:23Z",
+      "side": 1,
+      "message": "The backend plugains docker image uses this image as the \"FROM\" image so need to update the following dockerfile to use the property as well for consistency:\ncatalog-be-plugins/backend-all-plugins/src/main/docker/backend-all-plugins/Dockerfile",
+      "range": {
+        "startLine": 1383,
+        "startChar": 42,
+        "endLine": 1383,
+        "endChar": 62
+      },
+      "revId": "fbf442d840b3172a05b38c59d270ca3afc0df21a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
