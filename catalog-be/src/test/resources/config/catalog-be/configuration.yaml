@@ -569,6 +569,9 @@ directives:
   - substitute
   - substitutable
 
+# This configuration entry lists all valid strings for a Tosca property type that shall be allowed on SDC.
+customToscaPropertyTypes:
+
 artifacts:
   - type: CONTROLLER_BLUEPRINT_ARCHIVE
     categories:
