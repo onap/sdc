@@ -22,6 +22,30 @@
       "revId": "6d8bdd0ad3dba96a37f59ef1039976f048d4c6a6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e0e082ac_d4a5dc8b",
+        "filename": "catalog-be-plugins/backend-all-plugins/src/main/docker/backend-all-plugins/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-09T09:58:08Z",
+      "side": 1,
+      "message": "it is easier that I though,\nbecame possible after upgrading docker-plugin version",
+      "parentUuid": "cc5225a1_0262e8eb",
+      "range": {
+        "startLine": 1,
+        "startChar": 21,
+        "endLine": 1,
+        "endChar": 25
+      },
+      "revId": "6d8bdd0ad3dba96a37f59ef1039976f048d4c6a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
