@@ -39,53 +39,44 @@ public class ExtentManager {
     private static ExtentHtmlReporter htmlReporter;
     private static ExtentXReporter extentxReporter;
 
-    public enum suiteNameXml {
-
-        TESTNG_FAILED_XML_NAME("testng-failed.xml");
-
-        suiteNameXml(String value) {
-            this.value = value;
-        }
-
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-    }
-
-    public synchronized static ExtentReports setReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
+    private static synchronized ExtentReports setReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
         String dbIp = Utils.getConfig().getReportDBhost();
-        int dbPort = Utils.getConfig().getReportDBport();
 
         if (extent == null) {
-            extentxReporter = new ExtentXReporter(dbIp, dbPort);
+            if (dbIp != null) {
+                int dbPort = Utils.getConfig().getReportDBport();
+                if (dbPort == 0) {
+                    extentxReporter = new ExtentXReporter(dbIp);
+                } else {
+                    extentxReporter = new ExtentXReporter(dbIp, dbPort);
+                }
+            }
             extent = new ExtentReports();
             initAndSetExtentHtmlReporter(filePath, htmlFile, isAppend);
-
-            if (extentxReporter.config().getReportObjectId() != null) {
-                setExtentXReporter(isAppend);
-            } else {
-                extentxReporter.stop();
+            if (dbIp != null) {
+                if (extentxReporter.config().getReportObjectId() != null) {
+                    setExtentXReporter(isAppend);
+                } else {
+                    extentxReporter.stop();
+                }
             }
         }
         return extent;
     }
 
-    public synchronized static void setExtentXReporter(Boolean isAppend) {
+    private static synchronized void setExtentXReporter(Boolean isAppend) {
         extentxReporter.setAppendExisting(isAppend);
         extent.attachReporter(extentxReporter);
     }
 
-    public synchronized static void initAndSetExtentHtmlReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
+    private static synchronized void initAndSetExtentHtmlReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
         htmlReporter = new ExtentHtmlReporter(filePath + htmlFile);
         setConfiguration(htmlReporter);
         htmlReporter.setAppendExisting(isAppend);
         extent.attachReporter(htmlReporter);
     }
 
-    public synchronized static ExtentReports getReporter() {
+    public static synchronized ExtentReports getReporter() {
         return extent;
     }
 
@@ -98,9 +89,9 @@ public class ExtentManager {
         String suiteName = getSuiteName(context);
 
         if (suiteName.equals(suiteNameXml.TESTNG_FAILED_XML_NAME.getValue())) {
-			if (config.isUseBrowserMobProxy()) {
-				setTrafficCaptue(config);
-			}
+            if (config.isUseBrowserMobProxy()) {
+                setTrafficCaptue(config);
+            }
 
             setReporter(filepath, htmlFile, true);
             String suiteNameFromVersionInfoFile = FileHandling.getKeyByValueFromPropertyFormatFile(filepath + VERSIONS_INFO_FILE_NAME, "suiteName");
@@ -115,16 +106,15 @@ public class ExtentManager {
 
     }
 
-    public static void reporterDataDefinition(String onboardVersion, String osVersion, String envData, String suiteNameFromVersionInfoFile)
+    private static void reporterDataDefinition(String onboardVersion, String osVersion, String envData, String suiteNameFromVersionInfoFile)
         throws Exception {
         extent.setSystemInfo("Onboard Version", onboardVersion);
         extent.setSystemInfo("OS Version", osVersion);
-//		extent.setSystemInfo("Host Name Address", RestCDUtils.getExecutionHostAddress());
         extent.setSystemInfo("ExecutedOn", envData);
         extent.setSystemInfo("SuiteName", suiteNameFromVersionInfoFile);
     }
 
-    public static String getSuiteName(ITestContext context) {
+    private static String getSuiteName(ITestContext context) {
         String suitePath = context.getSuite().getXmlSuite().getFileName();
         if (suitePath != null) {
             File file = new File(suitePath);
@@ -134,29 +124,38 @@ public class ExtentManager {
         return null;
     }
 
-    public synchronized static ExtentHtmlReporter setConfiguration(ExtentHtmlReporter htmlReporter) throws Exception {
+    private static synchronized ExtentHtmlReporter setConfiguration(ExtentHtmlReporter htmlReporter) throws Exception {
 
         htmlReporter.config().setTheme(Theme.STANDARD);
         htmlReporter.config().setEncoding("UTF-8");
         htmlReporter.config().setProtocol(Protocol.HTTPS);
         htmlReporter.config().setDocumentTitle("SDC Automation Report");
         htmlReporter.config().setChartVisibilityOnOpen(true);
-//    	htmlReporter.config().setReportName(AutomationUtils.getATTVersion());
         htmlReporter.config().setReportName("SDC Automation Report");
         htmlReporter.config().setChartVisibilityOnOpen(false);
-//    	htmlReporter.config().setJS(icon);
         return htmlReporter;
     }
 
-    public static void closeReporter() {
-        extent.flush();
-    }
-
-    public static void setTrafficCaptue(Config config) {
+    private static void setTrafficCaptue(Config config) {
         boolean mobProxyStatus = config.isUseBrowserMobProxy();
         if (mobProxyStatus) {
             config.setCaptureTraffic(true);
         }
     }
-}
 
+    enum suiteNameXml {
+
+        TESTNG_FAILED_XML_NAME("testng-failed.xml");
+
+        private String value;
+
+        suiteNameXml(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+    }
+}

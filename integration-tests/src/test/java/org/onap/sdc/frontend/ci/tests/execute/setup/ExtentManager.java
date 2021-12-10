@@ -46,34 +46,26 @@ public class ExtentManager {
     private static ExtentHtmlReporter htmlReporter;
     private static ExtentXReporter extentxReporter;
 
-    public enum suiteNameXml {
-
-        TESTNG_FAILED_XML_NAME("testng-failed.xml");
-
-        suiteNameXml(String value) {
-            this.value = value;
-        }
-
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-    }
-
     private static synchronized ExtentReports setReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
         String dbIp = DriverFactory.getConfig().getReportDBhost();
-        int dbPort = DriverFactory.getConfig().getReportDBport();
 
         if (extent == null) {
-            extentxReporter = new ExtentXReporter(dbIp, dbPort);
+            if (dbIp != null) {
+                int dbPort = DriverFactory.getConfig().getReportDBport();
+                if (dbPort == 0) {
+                    extentxReporter = new ExtentXReporter(dbIp);
+                } else {
+                    extentxReporter = new ExtentXReporter(dbIp, dbPort);
+                }
+            }
             extent = new ExtentReports();
             initAndSetExtentHtmlReporter(filePath, htmlFile, isAppend);
-            if (extentxReporter.config().getReportObjectId() != null) {
-                setExtentXReporter(isAppend);
-            } else {
-                extentxReporter.stop();
+            if (dbIp != null) {
+                if (extentxReporter.config().getReportObjectId() != null) {
+                    setExtentXReporter(isAppend);
+                } else {
+                    extentxReporter.stop();
+                }
             }
         }
         return extent;
@@ -157,14 +149,26 @@ public class ExtentManager {
         return htmlReporter;
     }
 
-    public static void closeReporter() {
-        extent.flush();
-    }
-
     private static void setTrafficCaptue(Config config) {
         boolean mobProxyStatus = config.isUseBrowserMobProxy();
         if (mobProxyStatus) {
             config.setCaptureTraffic(true);
         }
+    }
+
+    public enum suiteNameXml {
+
+        TESTNG_FAILED_XML_NAME("testng-failed.xml");
+
+        private String value;
+
+        suiteNameXml(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
     }
 }
