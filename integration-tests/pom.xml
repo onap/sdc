@@ -127,8 +127,18 @@ limitations under the License.
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpmime</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.mongodb</groupId>
+                    <artifactId>mongodb-driver</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.12.10</version>
+        </dependency>
+
         <dependency>
             <groupId>org.janusgraph</groupId>
             <artifactId>janusgraph-core</artifactId>
