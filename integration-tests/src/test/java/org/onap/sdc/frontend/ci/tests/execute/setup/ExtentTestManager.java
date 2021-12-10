@@ -22,18 +22,17 @@ package org.onap.sdc.frontend.ci.tests.execute.setup;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
-import org.onap.sdc.backend.ci.tests.api.SomeInterface;
-
 import java.util.HashMap;
+import java.util.Map;
+import org.onap.sdc.backend.ci.tests.api.SomeInterface;
 
 public class ExtentTestManager implements SomeInterface {
 
-    private final HashMap<Long, ExtentTest> extentTestByThreadIdMap = new HashMap<>();
-    private final ExtentReports extent = ExtentManager.getReporter();
     private static final ExtentTestManager INSTANCE = new ExtentTestManager();
+    private final Map<Long, ExtentTest> extentTestByThreadIdMap = new HashMap<>();
+    private final ExtentReports extent = ExtentManager.getReporter();
 
     private ExtentTestManager() {
-
     }
 
     public static ExtentTestManager getInstance() {
@@ -49,15 +48,8 @@ public class ExtentTestManager implements SomeInterface {
         extent.flush();
     }
 
-    public synchronized ExtentTest startTest(final String testName) {
-        return startTest(testName, "");
-    }
-
-    public synchronized ExtentTest startTest(final String testName, final String desc) {
-        final ExtentTest test = extent.createTest(testName, desc);
-        extentTestByThreadIdMap.put(Thread.currentThread().getId(), test);
-
-        return test;
+    public synchronized void startTest(final String testName) {
+        extentTestByThreadIdMap.put(Thread.currentThread().getId(), extent.createTest(testName));
     }
 
     public synchronized <T> void assignCategory(Class<T> clazz) {
@@ -67,4 +59,3 @@ public class ExtentTestManager implements SomeInterface {
         extentTestByThreadIdMap.get(Thread.currentThread().getId()).assignCategory(lastOne2 + "-" + lastOne1);
     }
 }
-

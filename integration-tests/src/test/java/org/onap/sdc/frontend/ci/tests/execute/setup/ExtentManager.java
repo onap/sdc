@@ -23,7 +23,6 @@ package org.onap.sdc.frontend.ci.tests.execute.setup;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
-import com.aventstack.extentreports.reporter.ExtentXReporter;
 import com.aventstack.extentreports.reporter.configuration.Protocol;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import java.io.File;
@@ -44,44 +43,13 @@ public class ExtentManager {
     private static final String VERSIONS_INFO_FILE_NAME = "versions.info";
     private static ExtentReports extent;
     private static ExtentHtmlReporter htmlReporter;
-    private static ExtentXReporter extentxReporter;
-
-    public enum suiteNameXml {
-
-        TESTNG_FAILED_XML_NAME("testng-failed.xml");
-
-        suiteNameXml(String value) {
-            this.value = value;
-        }
-
-        private String value;
-
-        public String getValue() {
-            return value;
-        }
-
-    }
 
     private static synchronized ExtentReports setReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
-        String dbIp = DriverFactory.getConfig().getReportDBhost();
-        int dbPort = DriverFactory.getConfig().getReportDBport();
-
         if (extent == null) {
-            extentxReporter = new ExtentXReporter(dbIp, dbPort);
             extent = new ExtentReports();
             initAndSetExtentHtmlReporter(filePath, htmlFile, isAppend);
-            if (extentxReporter.config().getReportObjectId() != null) {
-                setExtentXReporter(isAppend);
-            } else {
-                extentxReporter.stop();
-            }
         }
         return extent;
-    }
-
-    private static synchronized void setExtentXReporter(Boolean isAppend) {
-        extentxReporter.setAppendExisting(isAppend);
-        extent.attachReporter(extentxReporter);
     }
 
     private static synchronized void initAndSetExtentHtmlReporter(String filePath, String htmlFile, Boolean isAppend) throws Exception {
@@ -157,14 +125,26 @@ public class ExtentManager {
         return htmlReporter;
     }
 
-    public static void closeReporter() {
-        extent.flush();
-    }
-
     private static void setTrafficCaptue(Config config) {
         boolean mobProxyStatus = config.isUseBrowserMobProxy();
         if (mobProxyStatus) {
             config.setCaptureTraffic(true);
         }
+    }
+
+    public enum suiteNameXml {
+
+        TESTNG_FAILED_XML_NAME("testng-failed.xml");
+
+        private String value;
+
+        suiteNameXml(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
     }
 }
