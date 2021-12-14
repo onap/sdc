@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.openecomp.core.utilities.file.FileContentHandler;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 
 public interface ETSIService {
@@ -39,6 +40,15 @@ public interface ETSIService {
      * @throws IOException when TOSCA.meta file is invalid
      */
     boolean isSol004WithToscaMetaDirectory(FileContentHandler handler) throws IOException;
+
+    /**
+     * Checks if the package is a ETSI package.
+     *
+     * @param fileContentHandler the CSAR file handler
+     * @return {@code true} if the package is a ETSI package, {@code false} otherwise.
+     * @throws IOException when it was not able to parse the TOSCA.meta file
+     */
+    boolean isEtsiPackage(final FileContentHandler fileContentHandler) throws IOException;
 
     /**
      * Update file structure. Moves non mano files to the correct folder based on the manifest non mano type.
@@ -96,4 +106,12 @@ public interface ETSIService {
      * @return true if manifest files has onap_cnf_helm non mano entry
      */
     boolean hasCnfEnhancements(final FileContentHandler fileContentHandler) throws IOException;
+
+    /**
+     * Verifies if the given yaml section configuration name entry and the metadata file has onap_csar value
+     * @param metadata metadata file from the onboarded package
+     * @return true if the given yaml section configuration name value is empty or the metadata file has the onap_csar entry
+     */
+    boolean isOnapPackage(final ToscaMetadata metadata);
+
 }

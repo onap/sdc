@@ -20,14 +20,18 @@
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
 import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_7_1;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
+import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 
@@ -49,6 +53,12 @@ public class ValidatorFactory {
     public Validator getValidator(final FileContentHandler fileContentHandler) throws IOException {
         final ETSIService etsiService = new ETSIServiceImpl(null);
         if (!etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
+            final Map<String, byte[]> templates = fileContentHandler.getFiles();
+            if (templates.containsKey(TOSCA_META_PATH_FILE_NAME)) {
+                final ToscaMetadata metadata =
+                    OnboardingToscaMetadata.parseToscaMetadataFile(fileContentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
+                return etsiService.isOnapPackage(metadata) ? new ONAPCsarValidator() : new EtsiSol004Version251Validator();
+            }
             return new ONAPCsarValidator();
         }
         if (!etsiService.getHighestCompatibleSpecificationVersion(fileContentHandler).isLowerThan(ETSI_VERSION_2_7_1)) {
