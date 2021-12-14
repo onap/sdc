@@ -41,6 +41,15 @@ public interface ETSIService {
     boolean isSol004WithToscaMetaDirectory(FileContentHandler handler) throws IOException;
 
     /**
+     * Checks if the package is a ETSI package.
+     *
+     * @param fileContentHandler the CSAR file handler
+     * @return {@code true} if the package is a ETSI package, {@code false} otherwise.
+     * @throws IOException when it was not able to parse the TOSCA.meta file
+     */
+    boolean isEtsiPackage(final FileContentHandler fileContentHandler) throws IOException;
+
+    /**
      * Update file structure. Moves non mano files to the correct folder based on the manifest non mano type.
      *
      * @param handler The file handler containing the artifacts to move.
@@ -96,4 +105,5 @@ public interface ETSIService {
      * @return true if manifest files has onap_cnf_helm non mano entry
      */
     boolean hasCnfEnhancements(final FileContentHandler fileContentHandler) throws IOException;
+
 }
