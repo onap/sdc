@@ -25,6 +25,7 @@ import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_M
 import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_PNF_METADATA;
 import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.COMPATIBLE_SPECIFICATION_VERSIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ETSI_ENTRY_CHANGE_LOG;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ETSI_ENTRY_MANIFEST;
@@ -52,6 +53,7 @@ import org.openecomp.sdc.be.config.NonManoConfiguration;
 import org.openecomp.sdc.be.config.NonManoConfigurationManager;
 import org.openecomp.sdc.be.config.NonManoFolderType;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.tosca.csar.Manifest;
@@ -64,6 +66,7 @@ public class ETSIServiceImpl implements ETSIService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ETSIServiceImpl.class);
     private final NonManoConfiguration nonManoConfiguration;
+    private final String ONAP_CSAR = "onap_csar";
 
     public ETSIServiceImpl() {
         nonManoConfiguration = NonManoConfigurationManager.getInstance().getNonManoConfiguration();
@@ -74,9 +77,28 @@ public class ETSIServiceImpl implements ETSIService {
     }
 
     @Override
-    public boolean isSol004WithToscaMetaDirectory(FileContentHandler handler) throws IOException {
+    public boolean hasEtsiSol261Metadata(FileContentHandler handler) throws IOException {
         final Map<String, byte[]> templates = handler.getFiles();
         return isMetaFilePresent(templates) && hasMetaMandatoryEntries(getMetadata(handler));
+    }
+
+    @Override
+    public boolean isEtsiPackage(final FileContentHandler fileContentHandler) throws IOException {
+        return hasEtsiSol261Metadata(fileContentHandler) || !hasOnapCsarMetadata(fileContentHandler)
+            && !ONAP_CSAR.equalsIgnoreCase(getDefaultCsarFormat());
+    }
+
+    private boolean hasOnapCsarMetadata(final FileContentHandler fileContentHandler) throws IOException {
+        if (fileContentHandler.containsFile(TOSCA_META_PATH_FILE_NAME)){
+            final ToscaMetadata metadata =
+                OnboardingToscaMetadata.parseToscaMetadataFile(fileContentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
+            return metadata.hasEntry(ONAP_CSAR);
+        }
+        return false;
+    }
+
+    private String getDefaultCsarFormat() {
+        return CommonConfigurationManager.getInstance().getConfigValue("csarFormat", "default", ONAP_CSAR);
     }
 
     @Override
@@ -226,7 +248,7 @@ public class ETSIServiceImpl implements ETSIService {
 
     public ResourceTypeEnum getResourceType(FileContentHandler handler) throws IOException {
         ToscaMetadata metadata = getMetadata(handler);
-        Manifest manifest = getManifest(handler, metadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName()));
+        Manifest manifest = getManifest(handler, getEntryManifestLocation(metadata));
         return getResourceType(manifest);
     }
 
@@ -244,7 +266,13 @@ public class ETSIServiceImpl implements ETSIService {
 
     public Manifest getManifest(FileContentHandler handler) throws IOException {
         ToscaMetadata metadata = getMetadata(handler);
-        return getManifest(handler, metadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName()));
+        return getManifest(handler, getEntryManifestLocation(metadata));
+    }
+
+    private String getEntryManifestLocation(final ToscaMetadata metadata) {
+        return metadata.getMetaEntries().containsKey(ETSI_ENTRY_MANIFEST.getName()) ?
+            metadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName()):
+            metadata.getMetaEntries().get(ENTRY_MANIFEST.getName());
     }
 
     private Manifest getManifest(FileContentHandler handler, String manifestLocation) throws IOException {
@@ -257,7 +285,7 @@ public class ETSIServiceImpl implements ETSIService {
 
     public Path getOriginalManifestPath(final FileContentHandler handler) throws IOException {
         final ToscaMetadata metadata = getOriginalMetadata(handler);
-        final String originalMetadataPath = metadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName());
+        final String originalMetadataPath = getEntryManifestLocation(metadata);
         final Path path = Paths.get(originalMetadataPath);
         return path.getParent() == null ? Paths.get("") : path.getParent();
     }
@@ -298,4 +326,5 @@ public class ETSIServiceImpl implements ETSIService {
     public NonManoConfiguration getConfiguration() {
         return nonManoConfiguration;
     }
+
 }
