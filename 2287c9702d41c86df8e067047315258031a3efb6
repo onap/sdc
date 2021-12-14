@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0cba818_20082278",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-12-14T16:41:39Z",
+      "side": 1,
+      "message": "Instead of checking the type against a set of configured types, check against the private types, i.e. something like:\n    private ToscaProperty validateToscaProperty(List\u003cDataTypeDefinition\u003e privateDataTypes, final ToscaProperty toscaProperty, final ToscaProperty toscaProperty2) {\n        final Optional\u003cDataTypeDefinition\u003e match \u003d privateDataTypes.stream().filter(dataType -\u003e dataType.getName().equals(toscaProperty.getType())).findFirst();\n\n        if(match.isPresent()){\n            return toscaProperty;\n        }\n\n        return toscaProperty2;\n    }",
+      "range": {
+        "startLine": 830,
+        "startChar": 0,
+        "endLine": 835,
+        "endChar": 0
+      },
+      "revId": "2287c9702d41c86df8e067047315258031a3efb6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
