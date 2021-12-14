@@ -49,6 +49,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.vendorsoftwareproduct.factory.CandidateServiceFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.OrchestrationUtil;
 import org.openecomp.sdc.vendorsoftwareproduct.services.filedatastructuremodule.CandidateService;
+import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
@@ -60,6 +61,11 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
     private static final String EXT_SEPARATOR = ".";
     private final CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
     private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
+    private final ETSIService etsiService;
+
+    public OrchestrationTemplateProcessCsarHandler() {
+        etsiService = new ETSIServiceImpl();
+    }
 
     @Override
     public OrchestrationTemplateActionResponse process(VspDetails vspDetails, OrchestrationTemplateCandidateData candidateData) {
@@ -118,7 +124,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
         if (CollectionUtils.isNotEmpty(modelList)) {
             return handleToscaModelConversion(modelList, fileContentHandler, candidateData);
         }
-        if (new ETSIServiceImpl().isSol004WithToscaMetaDirectory(fileContentHandler)) {
+        if (etsiService.isEtsiPackage(fileContentHandler)) {
             return getToscaServiceModelSol004(fileContentHandler, candidateData);
         }
         return new ToscaConverterImpl().convert(fileContentHandler);
@@ -135,7 +141,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
     private ToscaServiceModel getToscaServiceModelSol004(final FileContentHandler fileContentHandler,
                                                          final OrchestrationTemplateCandidateData candidateData) throws IOException {
         addOriginalOnboardedPackage(fileContentHandler, candidateData);
-        final ResourceTypeEnum resourceType = new ETSIServiceImpl().getResourceType(fileContentHandler);
+        final ResourceTypeEnum resourceType = etsiService.getResourceType(fileContentHandler);
         return instantiateToscaConverterFor(resourceType).convert(fileContentHandler);
     }
 

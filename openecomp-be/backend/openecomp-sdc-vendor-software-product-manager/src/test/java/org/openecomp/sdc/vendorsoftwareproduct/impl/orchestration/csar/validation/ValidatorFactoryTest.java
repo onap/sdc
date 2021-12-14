@@ -76,7 +76,7 @@ class ValidatorFactoryTest {
 
     @Test
     void testGivenEmptyBlock0_thenONAPCsarValidatorIsReturned() throws IOException {
-        handler.addFile(TOSCA_META_PATH_FILE_NAME, " ".getBytes(StandardCharsets.UTF_8));
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, "onap_csar: true".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_DEFINITION_FILEPATH, "".getBytes());
         handler.addFile(TOSCA_CHANGELOG_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
         handler.addFile(TOSCA_MANIFEST_FILEPATH, "".getBytes(StandardCharsets.UTF_8));
@@ -88,7 +88,7 @@ class ValidatorFactoryTest {
     @Test
     void testGivenNonSOL004MetaDirectoryCompliantMetaFile_thenONAPCSARValidatorIsReturned() throws IOException {
         metaFile = metaFile +
-                ENTRY_DEFINITIONS.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_DEFINITION_FILEPATH;
+                ENTRY_DEFINITIONS.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_DEFINITION_FILEPATH + "\nonap_csar: true";
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
 
         assertEquals(ONAPCsarValidator.class, validatorFactory.getValidator(handler).getClass());

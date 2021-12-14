@@ -549,7 +549,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
         final FileContentHandler licenseArtifacts = licenseArtifactsService
             .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion, vspDetails.getFeatureGroups());
         final ETSIService etsiService = new ETSIServiceImpl();
-        if (etsiService.isSol004WithToscaMetaDirectory(toscaServiceModel.getArtifactFiles())) {
+        if (etsiService.hasEtsiSol261Metadata(toscaServiceModel.getArtifactFiles())) {
             final FileContentHandler handler = toscaServiceModel.getArtifactFiles();
             final Manifest manifest = etsiService.getManifest(handler);
             final Optional<Map<String, Path>> fromToMovedPaths = etsiService.moveNonManoFileToArtifactFolder(handler);
