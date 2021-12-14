@@ -460,6 +460,10 @@ Modifications copyright (c) 2018 Nokia
           <groupId>org.slf4j</groupId>
           <artifactId>jcl-over-slf4j</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>log4j-over-slf4j</artifactId>
+        </exclusion>
       </exclusions>
       <scope>test</scope>
     </dependency>
