@@ -49,7 +49,7 @@ public class ValidatorFactory {
     public Validator getValidator(final FileContentHandler fileContentHandler) throws IOException {
         final ETSIService etsiService = new ETSIServiceImpl(null);
         if (!etsiService.isSol004WithToscaMetaDirectory(fileContentHandler)) {
-            return new ONAPCsarValidator();
+            return etsiService.isEtsiPackage(fileContentHandler) ? new EtsiSol004Version251Validator() : new ONAPCsarValidator();
         }
         if (!etsiService.getHighestCompatibleSpecificationVersion(fileContentHandler).isLowerThan(ETSI_VERSION_2_7_1)) {
             if (etsiService.hasCnfEnhancements(fileContentHandler)) {
