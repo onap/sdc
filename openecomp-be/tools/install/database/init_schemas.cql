@@ -44,6 +44,20 @@ CREATE TABLE IF NOT EXISTS NOTIFICATION_SUBSCRIBERS (entity_id text PRIMARY KEY,
 CREATE TABLE IF NOT EXISTS last_notification (owner_id text PRIMARY KEY, event_id timeuuid);
 CREATE TABLE IF NOT EXISTS notifications (owner_id text, event_id timeuuid, read boolean, originator_id text, event_type text, event_attributes text, PRIMARY KEY (owner_id, event_id)) WITH CLUSTERING ORDER BY (event_id DESC);
 CREATE TABLE IF NOT EXISTS vsp_merge_hint (space text, item_id text, version_id text, model_id text, model_resolution text, PRIMARY KEY ((space, item_id, version_id)));
+CREATE TABLE IF NOT EXISTS dox.vsp_upload_status
+(
+    vsp_id         text,
+    vsp_version_id text,
+    created        timestamp,
+    is_complete    boolean,
+    lock_id        uuid,
+    status         text,
+    updated        timestamp,
+    primary key ( (vsp_id, vsp_version_id), lock_id, created)
+) WITH CLUSTERING ORDER BY (lock_id ASC, created DESC);
+CREATE INDEX IF NOT EXISTS vsp_upload_status_is_complete_index on dox.vsp_upload_status (is_complete);
+CREATE INDEX IF NOT EXISTS vsp_upload_status_status_index on dox.vsp_upload_status (status);
+
 INSERT INTO application_config (namespace,key,value) VALUES ('vsp.schemaTemplates', 'composition.component', '{ "$schema": "http://json-schema.org/draft-04/schema#",  "type": "object",  "properties": {    "name": { "type": "string"<#if !manual>, "enum": [   "${component.name}" ], "default": "${component.name}"</#if>    },    "displayName": { "type": "string"<#if !manual && component.displayName??>, "enum": [   "${component.displayName}" ], "default": "${component.displayName}"</#if>},"description": {"type": "string"}},"additionalProperties": false,"required": ["name"<#if !manual && component.displayName??>,"displayName"</#if>]}');
 INSERT INTO application_config (namespace,key,value) VALUES ('vsp.schemaTemplates', 'composition.compute', '{ "$schema": "http://json-schema.org/draft-04/schema#", "type": "object", "properties": { "name": { "type": "string" <#if !manual>, "enum": [ "${compute.name}" ], "default": "${compute.name}"</#if> }, "description": { "type": "string", "maxLength": 300 } } }');
 INSERT INTO application_config (namespace,key,value) VALUES ('vsp.schemaTemplates', 'composition.deployment', '{ "$schema": "http://json-schema.org/draft-04/schema#", "type": "object", "properties": { "model": { "type": "string", "maxLength": 30 }, "description": { "type": "string", "maxLength": 300 }, "featureGroupId":{ "type": "string", "enum": [<#if featureGroupIds??> <#list featureGroupIds as featureGroupId> "${featureGroupId}"<#sep>,</#list> </#if> ] }, "componentComputeAssociations": { "type": "array", "properties": { "vfcid": { "type": "string" }, "computeFlavorid": { "type": "string" } }, "additionalProperties": false } }, "additionalProperties": false, "required": [ "model" ] }');
