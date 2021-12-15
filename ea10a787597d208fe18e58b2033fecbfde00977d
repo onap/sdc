@@ -22,6 +22,30 @@
       "revId": "ea10a787597d208fe18e58b2033fecbfde00977d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "55b97115_8b1e34a7",
+        "filename": "asdctool/src/main/resources/config/configuration.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-12-15T12:15:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5c0f1384_c27b1972",
+      "range": {
+        "startLine": 420,
+        "startChar": 0,
+        "endLine": 421,
+        "endChar": 25
+      },
+      "revId": "ea10a787597d208fe18e58b2033fecbfde00977d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
