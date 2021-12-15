@@ -37,7 +37,7 @@ public abstract class MappingBase<S, T> {
      */
     public final T applyMapping(final S source, Class<T> clazz) {
         T target = (T) instantiateTarget(clazz);
-        if (source != null && target != null) {
+        if (source != null) {
             preMapping(source, target);
             doMapping(source, target);
             postMapping(source, target);

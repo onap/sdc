@@ -20,19 +20,33 @@
 
 package org.openecomp.sdc.be.csar.storage;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
 public class MinIoArtifactInfo implements ArtifactInfo {
 
     private final String bucket;
     private final String objectName;
+    private byte[] artifactBytes;
+
+    public MinIoArtifactInfo(final String bucket, final String objectName) {
+        this.bucket = bucket;
+        this.objectName = objectName;
+    }
 
     @Override
     public String getInfo() {
         return String.format("bucket: %s\n"
             + "object: %s", bucket, objectName);
+    }
+
+    @Override
+    public byte[] getBytes() {
+        return artifactBytes;
+    }
+
+    @Override
+    public void setBytes(final byte[] artifactBytes) {
+        this.artifactBytes = artifactBytes;
     }
 }
