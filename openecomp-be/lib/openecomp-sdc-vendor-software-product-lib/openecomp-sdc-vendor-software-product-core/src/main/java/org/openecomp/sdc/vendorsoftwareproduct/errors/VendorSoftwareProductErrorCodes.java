@@ -77,6 +77,8 @@ public class VendorSoftwareProductErrorCodes {
     public static final String UPDATE_IMAGE_NOT_ALLOWED = "UPDATE_IMAGE_NOT_ALLOWED";
     public static final String INVALID_EXTENSION = "INVALID_EXTENSION";
     public static final String VSP_ONBOARD_METHOD_UPDATE_NOT_ALLOWED = "VSP_ONBOARD_METHOD_UPDATE_NOT_ALLOWED";
+    public static final String VSP_PROCESSING_IN_PROGRESS = "VSP_PROCESSING_IN_PROGRESS";
+    public static final String VSP_CREATE_UPLOAD_LOCK_ERROR = "VSP_CREATE_UPLOAD_LOCK_ERROR";
 
     private VendorSoftwareProductErrorCodes() {
     }
