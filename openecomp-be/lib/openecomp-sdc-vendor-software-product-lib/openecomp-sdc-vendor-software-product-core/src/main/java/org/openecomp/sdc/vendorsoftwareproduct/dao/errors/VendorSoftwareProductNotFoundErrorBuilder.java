@@ -27,6 +27,7 @@ import org.openecomp.sdc.common.errors.ErrorCode;
 public class VendorSoftwareProductNotFoundErrorBuilder {
 
     private static final String VSP_FOUND_MSG = "Vendor software product with Id %s not found.";
+    private static final String VSP_ID_AND_VERSION_ID_NOT_FOUND_MSG = "Vendor Software Product with id '%s' and version id '%s' not found.";
     private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
     /**
@@ -38,6 +39,12 @@ public class VendorSoftwareProductNotFoundErrorBuilder {
         builder.withId(VSP_NOT_FOUND);
         builder.withCategory(ErrorCategory.APPLICATION);
         builder.withMessage(String.format(VSP_FOUND_MSG, vendorSoftwareProductId));
+    }
+
+    public VendorSoftwareProductNotFoundErrorBuilder(final String vendorSoftwareProductId, final String vendorSoftwareProductVersionId) {
+        builder.withId(VSP_NOT_FOUND);
+        builder.withCategory(ErrorCategory.APPLICATION);
+        builder.withMessage(String.format(VSP_ID_AND_VERSION_ID_NOT_FOUND_MSG, vendorSoftwareProductId, vendorSoftwareProductVersionId));
     }
 
     public ErrorCode build() {
