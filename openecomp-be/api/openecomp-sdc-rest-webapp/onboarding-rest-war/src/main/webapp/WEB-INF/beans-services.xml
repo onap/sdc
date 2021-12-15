@@ -14,6 +14,7 @@
 
     <!-- CXF -->
     <context:component-scan base-package="org.openecomp.sdcrests"/>
+    <context:component-scan base-package="org.openecomp.sdc.vendorsoftwareproduct.dao"/>
     <!-- Needed for JSR-303 validations. May be removed when moving to JAX-RS 2.0 -->
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
 
@@ -60,6 +61,7 @@
             <ref bean="licenseKeyGroups"/>
             <ref bean="licenseKeyGroupLimits"/>
             <ref bean="vendorSoftwareProducts"/>
+            <ref bean="packageUploadManagerController"/>
             <ref bean="networks"/>
             <ref bean="components"/>
             <ref bean="nics"/>
@@ -72,9 +74,9 @@
             <ref bean="applicationConfiguration"/>
             <ref bean="componentMonitoringUploads"/>
             <ref bean="deploymentFlavors"/>
-	        <ref bean="images"/>
+            <ref bean="images"/>
             <ref bean="orchestrationTemplateCandidate"/>
-	    <ref bean="vnfPackageRepository"/>
+            <ref bean="vnfPackageRepository"/>
             <ref bean="componentDependencies"/>
             <ref bean="healthCheck"/>
             <ref bean="itemPermissions"/>
