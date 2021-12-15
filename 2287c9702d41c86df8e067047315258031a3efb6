@@ -22,6 +22,30 @@
       "revId": "2287c9702d41c86df8e067047315258031a3efb6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd06840a_57a5c2d6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-12-15T09:01:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0cba818_20082278",
+      "range": {
+        "startLine": 830,
+        "startChar": 0,
+        "endLine": 835,
+        "endChar": 0
+      },
+      "revId": "2287c9702d41c86df8e067047315258031a3efb6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
