@@ -1,12 +1,13 @@
 /*
- * ============LICENSE_START=======================================================
- *  Copyright (C) 2021 Nordix Foundation
+ * -
+ *  ============LICENSE_START=======================================================
+ *  Copyright (C) 2022 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,15 +19,24 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.csar.storage;
+package org.openecomp.sdc.vendorsoftwareproduct.dao.type;
+
+import java.util.List;
 
 /**
- * Represents the stored artifact
+ * Represents the status of a Vendor Software Product package upload.
  */
-public interface ArtifactInfo {
+public enum VspUploadStatusType {
+    UPLOADING,
+    PROCESSING,
+    SUCCESS,
+    ERROR;
 
-    String getInfo();
-    byte[] getBytes();
-    void setBytes(byte[] bytes);
+    public boolean isCompleteStatus() {
+        return getCompleteStatus().contains(this);
+    }
 
+    public static List<VspUploadStatusType> getCompleteStatus() {
+        return List.of(SUCCESS, ERROR);
+    }
 }

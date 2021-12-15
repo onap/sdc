@@ -59,6 +59,7 @@ import org.openecomp.sdc.be.csar.storage.ArtifactStorageConfig;
 import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
 import org.openecomp.sdc.be.csar.storage.PackageSizeReducer;
 import org.openecomp.sdc.be.csar.storage.StorageFactory;
+import org.openecomp.sdc.be.csar.storage.exception.ArtifactStorageException;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
@@ -70,6 +71,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateMan
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusType;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageProcessor;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.validation.CnfPackageValidator;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OnboardPackageInfo;
@@ -82,10 +84,12 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplateActionResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.ValidationResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspUploadStatusDto;
 import org.openecomp.sdcrests.vsp.rest.OrchestrationTemplateCandidate;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapFilesDataStructureToDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapUploadFileResponseToUploadFileResponseDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapValidationResponseToDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -100,8 +104,10 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     private final ActivityLogManager activityLogManager;
     private final ArtifactStorageManager artifactStorageManager;
     private final PackageSizeReducer packageSizeReducer;
+    private final OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager;
 
-    public OrchestrationTemplateCandidateImpl() {
+    @Autowired
+    public OrchestrationTemplateCandidateImpl(final OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager) {
         this.candidateManager = OrchestrationTemplateCandidateManagerFactory.getInstance().createInterface();
         this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
         this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
@@ -110,6 +116,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         this.artifactStorageManager = storageFactory.createArtifactStorageManager();
         LOGGER.info("Instantiating packageSizeReducer");
         this.packageSizeReducer = storageFactory.createPackageSizeReducer().orElse(null);
+        this.orchestrationTemplateCandidateUploadManager = orchestrationTemplateCandidateUploadManager;
     }
 
     // Constructor used in test to avoid mock static
@@ -117,81 +124,102 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
                                               final VendorSoftwareProductManager vendorSoftwareProductManager,
                                               final ActivityLogManager activityLogManager,
                                               final ArtifactStorageManager artifactStorageManager,
-                                              final PackageSizeReducer packageSizeReducer) {
+                                              final PackageSizeReducer packageSizeReducer,
+                                              final OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager) {
         this.candidateManager = candidateManager;
         this.vendorSoftwareProductManager = vendorSoftwareProductManager;
         this.activityLogManager = activityLogManager;
         this.artifactStorageManager = artifactStorageManager;
         this.packageSizeReducer = packageSizeReducer;
+        this.orchestrationTemplateCandidateUploadManager = orchestrationTemplateCandidateUploadManager;
     }
 
     @Override
     public Response upload(String vspId, String versionId, final Attachment fileToUpload, final String user) {
         vspId = ValidationUtils.sanitizeInputString(vspId);
         versionId = ValidationUtils.sanitizeInputString(versionId);
-        final byte[] fileToUploadBytes;
-        final DataHandler dataHandler = fileToUpload.getDataHandler();
-        final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
-        ArtifactInfo artifactInfo = null;
-        if (artifactStorageManager.isEnabled()) {
-            final Path tempArtifactPath;
-            try {
-                final ArtifactStorageConfig storageConfiguration = artifactStorageManager.getStorageConfiguration();
-
-                final Path folder = Path.of(storageConfiguration.getTempPath()).resolve(vspId).resolve(versionId);
-                tempArtifactPath = folder.resolve(UUID.randomUUID().toString());
-                Files.createDirectories(folder);
-                try (final InputStream packageInputStream = dataHandler.getInputStream();
-                    final var fileOutputStream = new FileOutputStream(tempArtifactPath.toFile())) {
-                    packageInputStream.transferTo(fileOutputStream);
-                }
-            } catch (final Exception e) {
-                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
-                    new ErrorMessage(ErrorLevel.ERROR, UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename)))).build();
-            }
-            try (final InputStream inputStream = Files.newInputStream(tempArtifactPath)) {
-                artifactInfo = artifactStorageManager.upload(vspId, versionId, inputStream);
-            } catch (final Exception e) {
-                LOGGER.error("Package Size Reducer not configured", e);
-                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
-                    new ErrorMessage(ErrorLevel.ERROR, ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename)))).build();
-            }
-            try {
-                fileToUploadBytes = packageSizeReducer.reduce(tempArtifactPath);
-                Files.delete(tempArtifactPath);
-            } catch (final Exception e) {
-                LOGGER.error("Package Size Reducer not configured", e);
-                return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(
-                    new ErrorMessage(ErrorLevel.ERROR,
-                        ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(tempArtifactPath.toString())))).build();
-            }
-        } else {
-            fileToUploadBytes = fileToUpload.getObject(byte[].class);
-        }
-
-        final var onboardingPackageProcessor = new OnboardingPackageProcessor(filename, fileToUploadBytes, new CnfPackageValidator(), artifactInfo);
-        final ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
-        if (onboardingPackageProcessor.hasErrors()) {
-            return Response.status(NOT_ACCEPTABLE).entity(buildUploadResponseWithError(errorMessages)).build();
-        }
-        final var onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
-        if (onboardPackageInfo == null) {
-            final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
-                new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)));
-            return Response.ok(uploadFileResponseDto).build();
-        }
-        final var version = new Version(versionId);
-        final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
-        final Response response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
-        final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
-        if (artifactStorageManager.isEnabled()) {
-            if (!entity.getErrors().isEmpty()) {
-                artifactStorageManager.delete(artifactInfo);
+        final Response response;
+        VspUploadStatusDto vspUploadStatus = null;
+        try {
+            vspUploadStatus = orchestrationTemplateCandidateUploadManager.startUpload(vspId, versionId, user);
+            final byte[] fileToUploadBytes;
+            final DataHandler dataHandler = fileToUpload.getDataHandler();
+            final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
+            ArtifactInfo artifactInfo = null;
+            if (artifactStorageManager.isEnabled()) {
+                artifactInfo = handleArtifactStorage(vspId, versionId, filename, dataHandler);
+                fileToUploadBytes = artifactInfo.getBytes();
             } else {
-                artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
+                fileToUploadBytes = fileToUpload.getObject(byte[].class);
             }
+
+            final var onboardingPackageProcessor =
+                new OnboardingPackageProcessor(filename, fileToUploadBytes, new CnfPackageValidator(), artifactInfo);
+            final ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
+            if (onboardingPackageProcessor.hasErrors()) {
+                return Response.status(NOT_ACCEPTABLE).entity(buildUploadResponseWithError(errorMessages)).build();
+            }
+            final var onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
+            if (onboardPackageInfo == null) {
+                final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
+                    new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)));
+                return Response.ok(uploadFileResponseDto).build();
+            }
+            final var version = new Version(versionId);
+            final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
+            response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
+            final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
+            if (artifactStorageManager.isEnabled()) {
+                if (!entity.getErrors().isEmpty()) {
+                    artifactStorageManager.delete(artifactInfo);
+                } else {
+                    artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
+                }
+            }
+            orchestrationTemplateCandidateUploadManager
+                .finishUpload(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatusType.SUCCESS, user);
+        } catch (final Exception ex) {
+            if (vspUploadStatus != null) {
+                orchestrationTemplateCandidateUploadManager
+                    .finishUpload(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatusType.ERROR, user);
+            }
+            final ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR, ex.getMessage());
+            return Response.status(INTERNAL_SERVER_ERROR).entity(buildUploadResponseWithError(errorMessage)).build();
         }
         return response;
+    }
+
+    private ArtifactInfo handleArtifactStorage(final String vspId, final String versionId, final String filename,
+                                               final DataHandler artifactDataHandler) {
+        final Path tempArtifactPath;
+        try {
+            final ArtifactStorageConfig storageConfiguration = artifactStorageManager.getStorageConfiguration();
+
+            final Path folder = Path.of(storageConfiguration.getTempPath()).resolve(vspId).resolve(versionId);
+            tempArtifactPath = folder.resolve(UUID.randomUUID().toString());
+            Files.createDirectories(folder);
+            try (final InputStream packageInputStream = artifactDataHandler.getInputStream();
+                final var fileOutputStream = new FileOutputStream(tempArtifactPath.toFile())) {
+                packageInputStream.transferTo(fileOutputStream);
+            }
+        } catch (final Exception e) {
+            throw new ArtifactStorageException(UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename));
+        }
+        final ArtifactInfo artifactInfo;
+        try (final InputStream inputStream = Files.newInputStream(tempArtifactPath)) {
+            artifactInfo = artifactStorageManager.upload(vspId, versionId, inputStream);
+        } catch (final Exception e) {
+            LOGGER.error("Package Size Reducer not configured", e);
+            throw new ArtifactStorageException(ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename));
+        }
+        try {
+            artifactInfo.setBytes(packageSizeReducer.reduce(tempArtifactPath));
+            Files.delete(tempArtifactPath);
+        } catch (final Exception e) {
+            LOGGER.error("Package Size Reducer not configured", e);
+            throw new ArtifactStorageException(ERROR_HAS_OCCURRED_WHILE_REDUCING_THE_ARTIFACT_SIZE.formatMessage(filename));
+        }
+        return artifactInfo;
     }
 
     private Response processOnboardPackage(final OnboardPackageInfo onboardPackageInfo, final VspDetails vspDetails,
@@ -227,7 +255,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             fileName = "Candidate." + zipFile.get().getLeft();
         } else {
             zipFile = vendorSoftwareProductManager.get(vspId, new Version((versionId)));
-            if (!zipFile.isPresent()) {
+            if (zipFile.isEmpty()) {
                 ErrorMessage errorMessage = new ErrorMessage(ErrorLevel.ERROR,
                     getErrorWithParameters(NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST.getErrorMessage(), ""));
                 LOGGER.error(errorMessage.getMessage());
@@ -270,7 +298,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     @Override
     public Response getFilesDataStructure(String vspId, String versionId, String user) {
         Optional<FilesDataStructure> filesDataStructure = candidateManager.getFilesDataStructure(vspId, new Version(versionId));
-        if (!filesDataStructure.isPresent()) {
+        if (filesDataStructure.isEmpty()) {
             filesDataStructure = vendorSoftwareProductManager.getOrchestrationTemplateStructure(vspId, new Version(versionId));
         }
         FileDataStructureDto fileDataStructureDto = filesDataStructure
