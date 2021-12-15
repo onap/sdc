@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -76,6 +77,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.types.candidateheat.Module;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.FileDataStructureDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.OrchestrationTemplateActionResponseDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.UploadFileResponseDto;
+import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspUploadStatusDto;
 
 class OrchestrationTemplateCandidateImplTest {
 
@@ -94,6 +96,8 @@ class OrchestrationTemplateCandidateImplTest {
     private ArtifactStorageManager artifactStorageManager;
     @Mock
     private PackageSizeReducer packageSizeReducer;
+    @Mock
+    private OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager;
     @InjectMocks
     private OrchestrationTemplateCandidateImpl orchestrationTemplateCandidate;
 
@@ -146,15 +150,21 @@ class OrchestrationTemplateCandidateImplTest {
 
     @Test
     void uploadSignedTest() throws IOException {
+        final String vspId = "vspId";
+        final String versionId = "versionId";
+        when(orchestrationTemplateCandidateUploadManager.startUpload(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         Response response = orchestrationTemplateCandidate
-            .upload("1", "1", mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")), user);
+            .upload(vspId, versionId, mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }
 
     @Test
     void uploadNotSignedTest() throws IOException {
-        Response response = orchestrationTemplateCandidate.upload("1", "1",
+        final String vspId = "vspId";
+        final String versionId = "versionId";
+        when(orchestrationTemplateCandidateUploadManager.startUpload(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        Response response = orchestrationTemplateCandidate.upload(vspId, versionId,
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
@@ -167,11 +177,15 @@ class OrchestrationTemplateCandidateImplTest {
             new MinIoStorageArtifactStorageConfig(true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath"));
 
         final Path path = Path.of("src/test/resources/files/sample-not-signed.csar");
-        when(artifactStorageManager.upload(anyString(), anyString(), any())).thenReturn(new MinIoArtifactInfo("vspId", "name"));
+        final String vspId = "vspId";
+        final String versionId = "versionId";
+        when(artifactStorageManager.upload(eq(vspId), eq(versionId), any())).thenReturn(new MinIoArtifactInfo("vspId", "name"));
         final byte[] bytes = Files.readAllBytes(path);
         when(packageSizeReducer.reduce(any())).thenReturn(bytes);
 
-        Response response = orchestrationTemplateCandidate.upload("1", "1",
+        when(orchestrationTemplateCandidateUploadManager.startUpload(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+
+        Response response = orchestrationTemplateCandidate.upload(vspId, versionId,
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
