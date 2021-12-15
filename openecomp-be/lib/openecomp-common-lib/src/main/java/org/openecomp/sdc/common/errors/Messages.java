@@ -208,7 +208,7 @@ public enum Messages {
     UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING("An unexpected problem happened while getting '%s'");
     // @formatter:on
 
-    private String errorMessage;
+    private final String errorMessage;
 
     /**
      * Formats the message with the given parameters.
