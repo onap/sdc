@@ -15,21 +15,32 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.dao.errors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_NOT_FOUND;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 
-public class VendorSoftwareProductNotFoundErrorBuilderTest {
+class VendorSoftwareProductNotFoundErrorBuilderTest {
 
     @Test
-    public void shouldReturnVspNotFoundErrorCode() {
-        VendorSoftwareProductNotFoundErrorBuilder vendorSoftwareProductNotFoundErrorBuilder =
-                new VendorSoftwareProductNotFoundErrorBuilder("testVsp1");
+    void shouldReturnVspNotFoundErrorCode() {
+        final var vendorSoftwareProductNotFoundErrorBuilder = new VendorSoftwareProductNotFoundErrorBuilder("testVsp1");
         ErrorCode actual = vendorSoftwareProductNotFoundErrorBuilder.build();
-        Assert.assertEquals(ErrorCategory.APPLICATION, actual.category());
-        Assert.assertEquals(VSP_NOT_FOUND, actual.id());
+        assertEquals(ErrorCategory.APPLICATION, actual.category());
+        assertEquals(VSP_NOT_FOUND, actual.id());
+    }
+
+    @Test
+    void vspIdAndVspVersionIdConstructorTest() {
+        var vspId = "vspId";
+        var vspVersionId = "vspVersionId";
+        final var errorBuilder = new VendorSoftwareProductNotFoundErrorBuilder(vspId, vspVersionId);
+        final ErrorCode actualErrorCode = errorBuilder.build();
+        assertEquals(ErrorCategory.APPLICATION, actualErrorCode.category());
+        assertEquals(VSP_NOT_FOUND, actualErrorCode.id());
+        final String expectedMsg = String.format("Vendor Software Product with id '%s' and version id '%s' not found.", vspId, vspVersionId);
+        assertEquals(expectedMsg, actualErrorCode.message());
     }
 }
