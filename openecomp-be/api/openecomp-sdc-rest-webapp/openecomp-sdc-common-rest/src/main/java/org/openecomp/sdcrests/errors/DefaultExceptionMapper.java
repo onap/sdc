@@ -25,6 +25,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.internal.engine.path.PathImpl;
@@ -52,11 +53,11 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
     public Response toResponse(Exception exception) {
         Response response;
         if (exception instanceof CoreException) {
-            response = transform(CoreException.class.cast(exception));
+            response = transform((CoreException) exception);
         } else if (exception instanceof ConstraintViolationException) {
-            response = transform(ConstraintViolationException.class.cast(exception));
+            response = transform((ConstraintViolationException) exception);
         } else if (exception instanceof JsonMappingException) {
-            response = transform(JsonMappingException.class.cast(exception));
+            response = transform((JsonMappingException) exception);
         } else {
             response = transform(exception);
         }
@@ -66,22 +67,21 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
         return response;
     }
 
-    private Response transform(CoreException coreException) {
-        Response response;
-        ErrorCode code = coreException.code();
+    private Response transform(final CoreException coreException) {
+        final ErrorCode code = coreException.code();
         LOGGER.error(code.message(), coreException);
         if (coreException.code().category().equals(ErrorCategory.APPLICATION)) {
-            if (Response.Status.NOT_FOUND.name().equals(ERROR_CODE_TO_RESPONSE_STATUS.get(code.id()))) {
-                response = Response.status(Response.Status.NOT_FOUND).entity(toEntity(Response.Status.NOT_FOUND, code)).build();
-            } else if (Response.Status.BAD_REQUEST.name().equals(ERROR_CODE_TO_RESPONSE_STATUS.get(code.id()))) {
-                response = Response.status(Response.Status.BAD_REQUEST).entity(toEntity(Response.Status.BAD_REQUEST, code)).build();
-            } else {
-                response = Response.status(Response.Status.EXPECTATION_FAILED).entity(toEntity(Response.Status.EXPECTATION_FAILED, code)).build();
+            final Status errorStatus = Status.valueOf(ERROR_CODE_TO_RESPONSE_STATUS.get(code.id()));
+            if (List.of(Status.BAD_REQUEST, Status.FORBIDDEN, Status.NOT_FOUND, Status.INTERNAL_SERVER_ERROR).contains(errorStatus)) {
+                return buildResponse(errorStatus, code);
             }
-        } else {
-            response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(toEntity(Response.Status.INTERNAL_SERVER_ERROR, code)).build();
+            return buildResponse(Status.EXPECTATION_FAILED, code);
         }
-        return response;
+        return buildResponse(Status.INTERNAL_SERVER_ERROR, code);
+    }
+
+    private Response buildResponse(Status notFound, ErrorCode code) {
+        return Response.status(notFound).entity(toEntity(notFound, code)).build();
     }
 
     private Response transform(ConstraintViolationException validationException) {
@@ -98,28 +98,26 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
         }
         ErrorCode validationErrorCode = new ValidationErrorBuilder(message, fieldName).build();
         LOGGER.error(validationErrorCode.message(), validationException);
-        return Response.status(Response.Status.EXPECTATION_FAILED) //error 417
-            .entity(toEntity(Response.Status.EXPECTATION_FAILED, validationErrorCode)).build();
+        return buildResponse(Status.EXPECTATION_FAILED, validationErrorCode);
     }
 
     private Response transform(JsonMappingException jsonMappingException) {
         ErrorCode jsonMappingErrorCode = new JsonMappingErrorBuilder().build();
         LOGGER.error(jsonMappingErrorCode.message(), jsonMappingException);
-        return Response.status(Response.Status.EXPECTATION_FAILED) //error 417
-            .entity(toEntity(Response.Status.EXPECTATION_FAILED, jsonMappingErrorCode)).build();
+        return buildResponse(Status.EXPECTATION_FAILED, jsonMappingErrorCode);
     }
 
     private Response transform(Exception exception) {
         ErrorCode errorCode = new GeneralErrorBuilder().build();
         LOGGER.error(errorCode.message(), exception);
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(toEntity(Response.Status.INTERNAL_SERVER_ERROR, errorCode)).build();
+        return buildResponse(Status.INTERNAL_SERVER_ERROR, errorCode);
     }
 
     private String getFieldName(Path propertyPath) {
         return ((PathImpl) propertyPath).getLeafNode().toString();
     }
 
-    private Object toEntity(Response.Status status, ErrorCode code) {
+    private Object toEntity(final Status status, final ErrorCode code) {
         return new ErrorCodeAndMessage(status, code);
     }
 }
