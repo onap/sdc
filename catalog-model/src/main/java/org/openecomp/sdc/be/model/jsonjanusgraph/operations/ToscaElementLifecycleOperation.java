@@ -899,7 +899,7 @@ public class ToscaElementLifecycleOperation extends BaseOperation {
                 if (status != JanusGraphOperationStatus.OK) {
                     CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG,
                         "Failed to create edge with label {} from vertex {} to tosca element vertex {} on graph. Status is {}. ",
-                        EdgeLabelEnum.VERSION, previousCertifiedToscaElement.property(GraphPropertyEnum.UNIQUE_ID.getProperty()),
+                        EdgeLabelEnum.VERSION, null != previousCertifiedToscaElement?previousCertifiedToscaElement.property(GraphPropertyEnum.UNIQUE_ID.getProperty()):null,
                         clonedToscaElement.getUniqueId(), status);
                     result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
                 }
