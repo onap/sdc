@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d21da5d_6334a77c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaElementLifecycleOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 902,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2021-12-16T10:29:45Z",
+      "side": 1,
+      "message": "please, properly format the introduced code by adding spaces:\nnull !\u003d previousCertifiedToscaElement ? previousCertifiedToscaElement.property(GraphPropertyEnum.UNIQUE_ID.getProperty()) : null",
+      "range": {
+        "startLine": 902,
+        "startChar": 47,
+        "endLine": 902,
+        "endChar": 171
+      },
+      "revId": "7d0b1b920cbc57955163408dc0321ec2e7f52399",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
