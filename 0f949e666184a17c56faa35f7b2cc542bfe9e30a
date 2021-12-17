@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39458c58_8f50b86a",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-12-17T09:14:06Z",
+      "side": 1,
+      "message": "I think this would be clearer and better structured to rewrite as:\n\n    public boolean isEtsiPackage(final FileContentHandler fileContentHandler) throws IOException {\n        return hasEtsiSol261Metadata || !hasOnapCsarMetadata \u0026\u0026 ETSI_CSAR.equalsIgnoreCase(getDefaultCsarFormat())\n    }\n    public boolean hasEtsiSol261Metadata(fileContentHandler){\n// this is isSol004WithToscaMetaDirectory but renamed to make it clearer\n    }\n    public boolean hasOnapCsarMetadata(final FileContentHandler fileContentHandler){\n        if (fileContentHandler.containsFile(TOSCA_META_PATH_FILE_NAME)){\n                final ToscaMetadata metadata \u003d\n                        OnboardingToscaMetadata.parseToscaMetadataFile(fileContentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));\n                return metadata.hasEntry(ONAP_CSAR);\n        }\n\treturn false;\n    public String getDefaultCsarFormat(){\n\treturn CommonConfigurationManager.getInstance()\n            .getConfigValue(\"csarFormat\", \"default\", ONAP_CSAR);\n    }",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 0
+      },
+      "revId": "0f949e666184a17c56faa35f7b2cc542bfe9e30a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
