@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e3a3735_26e87678",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2021-12-21T13:50:04Z",
+      "side": 1,
+      "message": "just rename the existing method rather than creating a new one that only calls the existing one",
+      "range": {
+        "startLine": 91,
+        "startChar": 4,
+        "endLine": 93,
+        "endChar": 5
+      },
+      "revId": "3c9fd259a8d709f103d1a05a4d29381b6d74e5ea",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
