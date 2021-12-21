@@ -22,6 +22,30 @@
       "revId": "0f949e666184a17c56faa35f7b2cc542bfe9e30a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2421ddd9_6a8e87b7",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2021-12-21T13:27:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39458c58_8f50b86a",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 0
+      },
+      "revId": "0f949e666184a17c56faa35f7b2cc542bfe9e30a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
