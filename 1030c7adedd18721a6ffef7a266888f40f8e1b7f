@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f2a699db_c203d84a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-22T15:36:21Z",
+      "side": 1,
+      "message": "avoid introducing new version, reuse\n\u003cmockitoJupiter.version\u003e${mockito.version}\u003c/mockitoJupiter.version\u003e",
+      "range": {
+        "startLine": 83,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 30
+      },
+      "revId": "1030c7adedd18721a6ffef7a266888f40f8e1b7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c532cf6_a44b9c0c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-22T15:36:21Z",
+      "side": 1,
+      "message": "avoid changing method visibility only for testing,\ninstead, try to \u0027mock\u0027 condition in public method to this method be called",
+      "range": {
+        "startLine": 637,
+        "startChar": 4,
+        "endLine": 637,
+        "endChar": 13
+      },
+      "revId": "1030c7adedd18721a6ffef7a266888f40f8e1b7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c005b7ff_0f165f6c",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-22T15:36:21Z",
+      "side": 1,
+      "message": "wrong header,\nplease see https://wiki.nordix.org/display/DEV/Copyright+and+Licences+for+ONAP",
+      "revId": "1030c7adedd18721a6ffef7a266888f40f8e1b7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79b044db_87259393",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-22T15:36:21Z",
+      "side": 1,
+      "message": "all new TCs MUST use Junit5, please migrate",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "1030c7adedd18721a6ffef7a266888f40f8e1b7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94ce563a_e2751bc1",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-22T15:36:21Z",
+      "side": 1,
+      "message": "seems like you need to adjust your IDE setting to allow 150 characters in one line",
+      "range": {
+        "startLine": 105,
+        "startChar": 68,
+        "endLine": 106,
+        "endChar": 37
+      },
+      "revId": "1030c7adedd18721a6ffef7a266888f40f8e1b7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8eb9723d_8c3b497d",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/test/java/org/openecomp/sdc/translator/services/heattotosca/HeatToToscaUtilTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-22T15:36:21Z",
+      "side": 1,
+      "message": "could be simplified like\n    @Test\n    void testisNestedVfcResourceReturnsNestedHeatFileName() {\n        final var resource \u003d new Resource();\n        resource.setType(HeatResourcesTypes.RESOURCE_GROUP_RESOURCE_TYPE.name());\n        assertFalse(HeatToToscaUtil.isNestedVfcResource(resource, translationContext));\n    }",
+      "range": {
+        "startLine": 97,
+        "startChar": 4,
+        "endLine": 107,
+        "endChar": 9
+      },
+      "revId": "1030c7adedd18721a6ffef7a266888f40f8e1b7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
