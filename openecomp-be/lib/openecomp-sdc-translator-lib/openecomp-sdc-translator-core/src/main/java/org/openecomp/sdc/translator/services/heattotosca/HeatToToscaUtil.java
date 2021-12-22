@@ -360,7 +360,10 @@ public class HeatToToscaUtil {
             if (FunctionTranslationFactory.getInstance(entry.getKey()).isPresent()) {
                 FunctionTranslator functionTranslator = new FunctionTranslator(
                     getFunctionTranslateTo(null, null, heatFileName, heatOrchestrationTemplate, context), null, entry.getValue(), null);
-                translatedId = FunctionTranslationFactory.getInstance(entry.getKey()).get().translateFunction(functionTranslator);
+                Optional<FunctionTranslation> optionalFunctionTranslation = FunctionTranslationFactory.getInstance(entry.getKey());
+                if (optionalFunctionTranslation.isPresent()) {
+                    translatedId = optionalFunctionTranslation.get().translateFunction(functionTranslator);
+                }
                 if (translatedId instanceof String && !new FunctionTranslator().isResourceSupported((String) translatedId)) {
                     translatedId = null;
                 }
@@ -615,7 +618,10 @@ public class HeatToToscaUtil {
      * @return true if the resource represents a VFC and false otherwise.
      */
     public static boolean isNestedVfcResource(Resource resource, TranslationContext context) {
-        Optional<String> nestedHeatFileName = HeatToToscaUtil.getNestedHeatFileName(resource);
+        Optional<String> nestedHeatFileName = getNestedHeatFileName(resource);
+        if (nestedHeatFileName.isEmpty()) {
+            return false;
+        }
         HeatOrchestrationTemplate nestedHeatOrchestrationTemplate = new YamlUtil()
             .yamlToObject(context.getFileContentAsStream(nestedHeatFileName.get()), HeatOrchestrationTemplate.class);
         Map<String, Resource> resources = nestedHeatOrchestrationTemplate.getResources();
@@ -628,7 +634,7 @@ public class HeatToToscaUtil {
      * @param resource the resource
      * @return the nested heat file name
      */
-    private static Optional<String> getNestedHeatFileName(Resource resource) {
+    protected static Optional<String> getNestedHeatFileName(Resource resource) {
         if (!isNestedResource(resource)) {
             return Optional.empty();
         }
