@@ -22,6 +22,7 @@
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR;
+import static org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode.DATA_ERROR;
 
 import com.google.gson.JsonElement;
 import fj.data.Either;
@@ -106,6 +107,7 @@ public abstract class BaseBusinessLogic {
     private static final String PROPERTY_IN_SCHEMA_DEFINITION_INSIDE_PROPERTY_OF_TYPE_DOESN_T_EXIST = "Property in Schema Definition inside property of type {} doesn't exist";
     private static final String ADD_PROPERTY_VALUE = "Add property value";
     private static final String THE_VALUE_OF_PROPERTY_FROM_TYPE_IS_INVALID = "The value {} of property from type {} is invalid";
+    private static final String INVALID_PROPERTY_TYPE = "The property type {} is invalid";
     protected IGroupTypeOperation groupTypeOperation;
     protected InterfaceOperation interfaceOperation;
     protected IElementOperation elementDao;
@@ -527,7 +529,8 @@ public abstract class BaseBusinessLogic {
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
             if (Boolean.FALSE.equals(res)) {
-                throw new StorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT));
+                log.error(DATA_ERROR, this.getClass().getName(), "Dropping invalid value for property: {} , value: ", property, value);
+                return "";
             }
         } else {
             Object object = isValid.left().value();
@@ -574,6 +577,10 @@ public abstract class BaseBusinessLogic {
         if (isValidate) {
             if (type == null) {
                 DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
+                if (dataTypeDefinition == null) {
+                    log.debug(INVALID_PROPERTY_TYPE, propertyType);
+                    return Either.right(false); 
+                }
                 ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter
                     .validateAndUpdate(value, dataTypeDefinition, dataTypes);
                 if (Boolean.FALSE.equals(validateResult.right)) {
