@@ -36,6 +36,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.FILE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GET_INPUT;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GROUPS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
@@ -137,8 +138,10 @@ public class YamlTemplateParsingHandler {
         log.debug("#parseResourceInfoFromYAML - Going to parse yaml {} ", fileName);
         Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
         ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
-        findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
-        parsedToscaYamlInfo.setInputs(getInputs(mappedToscaTemplate));
+        @SuppressWarnings("unchecked")
+        Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
+        Map<String, Object> mappedTopologyTemplateInputs  = mappedTopologyTemplate.entrySet().stream().filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
         parsedToscaYamlInfo.setInstances(getInstances(fileName, mappedToscaTemplate, createdNodesToscaResourceNames));
         parsedToscaYamlInfo.setGroups(getGroups(fileName, mappedToscaTemplate, component.getModel()));
         if (component instanceof Resource) {
