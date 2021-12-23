@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "94bac778_03a36225",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-23T13:23:15Z",
+      "side": 1,
+      "message": "unnecessary suppression",
+      "range": {
+        "startLine": 141,
+        "startChar": 0,
+        "endLine": 141,
+        "endChar": 38
+      },
+      "revId": "3745bf871f1fb84fab0c7df94d71024431c92096",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9362a9c_f8423bcf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/BaseBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2021-12-23T13:23:15Z",
+      "side": 1,
+      "message": "do we need similar in L545?",
+      "range": {
+        "startLine": 532,
+        "startChar": 16,
+        "endLine": 533,
+        "endChar": 26
+      },
+      "revId": "3745bf871f1fb84fab0c7df94d71024431c92096",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
