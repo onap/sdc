@@ -25,8 +25,8 @@ import com.datastax.driver.core.Row;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -63,13 +63,12 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class AuditValidationUtils {
-	protected static Logger logger = LogManager.getLogger(AuditValidationUtils.class);
+	protected static Logger logger = LoggerFactory.getLogger(AuditValidationUtils.class);
 	private static final String auditKeySpaceName = "sdcaudit";
 
 	public AuditValidationUtils() {
 		super();
-		logger = LogManager.getLogger(AuditValidationUtils.class);
-
+		logger = LoggerFactory.getLogger(AuditValidationUtils.class);
 	}
 
 	public static String buildAuditDescription(ErrorInfo errorInfo, List<String> errorVariablesList) {

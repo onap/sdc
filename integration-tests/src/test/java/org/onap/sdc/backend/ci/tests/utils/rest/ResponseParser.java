@@ -26,8 +26,8 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.*;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -50,7 +50,6 @@ import java.io.InputStream;
 import java.text.ParseException;
 import java.util.*;
 
-
 public class ResponseParser {
 
     private static final String INVARIANT_UUID = "invariantUUID";
@@ -61,7 +60,7 @@ public class ResponseParser {
     public static final String ORIGIN_TYPE = "originType";
     public static final String TOSCA_RESOURCE_NAME = "toscaResourceName";
 
-    static Logger logger = LogManager.getLogger(ResponseParser.class);
+    static Logger logger = LoggerFactory.getLogger(ResponseParser.class);
 
     public static String getValueFromJsonResponse(String response, String fieldName) {
         try {
@@ -529,7 +528,7 @@ public class ResponseParser {
             interfaceDefinition = mapper.readValue(response, InterfaceDefinition.class);
             logger.debug(interfaceDefinition.toString());
         } catch (IOException e) {
-            logger.debug(e);
+            logger.debug("Failed to convertInterfaceDefinitionResponseToJavaObject", e);
         }
         return interfaceDefinition;
     }
