@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.onap.sdc.backend.ci.tests.config.Config;
 import org.onap.sdc.backend.ci.tests.datatypes.ResourceReqDetails;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.UserRoleEnum;
@@ -56,7 +54,8 @@ import org.openecomp.sdc.be.model.Product;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.slf4j.LoggerFactory;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -66,7 +65,7 @@ import org.testng.annotations.BeforeSuite;
 
 public abstract class ComponentBaseTest {
 
-    protected static Logger logger = LogManager.getLogger(ComponentBaseTest.class);
+    protected static Logger logger = LoggerFactory.getLogger(ComponentBaseTest.class);
 
     protected static final String REPORT_FOLDER = "target" + File.separator + "ExtentReport" + File.separator + "API" + File.separator;
     private static final String REPORT_FILE_NAME = "SDC_CI_Extent_Report.html";
@@ -85,7 +84,7 @@ public abstract class ComponentBaseTest {
     }
 
     public ComponentBaseTest() {
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        LoggerContext lc = (LoggerContext) org.slf4j.LoggerFactory.getILoggerFactory();
         lc.getLogger("com.thinkaurelius").setLevel(Level.INFO);
         lc.getLogger("com.datastax").setLevel(Level.INFO);
         lc.getLogger("io.netty").setLevel(Level.INFO);
