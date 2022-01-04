@@ -75,7 +75,6 @@ import {ZoneInstanceComponent} from "../ng2/pages/composition/graph/canvas-zone/
 import {CompositionPanelComponent} from 'app/ng2/pages/composition/panel/composition-panel.component';
 import {PropertiesAssignmentComponent} from "../ng2/pages/properties-assignment/properties-assignment.page.component";
 import {SearchWithAutoCompleteComponent} from "../ng2/components/ui/search-with-autocomplete/search-with-autocomplete.component";
-import {PalettePopupPanelComponent} from "../ng2/pages/composition/palette/palette-popup-panel/palette-popup-panel.component";
 import {ServicePathSelectorComponent} from '../ng2/pages/composition/graph/service-path-selector/service-path-selector.component';
 import {MultilineEllipsisComponent} from "../ng2/shared/multiline-ellipsis/multiline-ellipsis.component";
 import {InterfaceOperationComponent} from '../ng2/pages/interface-operation/interface-operation.page.component';
@@ -226,12 +225,6 @@ directiveModule.directive('ng2SearchWithAutocomplete', downgradeComponent({
   component: SearchWithAutoCompleteComponent,
   inputs: ['searchPlaceholder', 'searchBarClass', 'autoCompleteValues'],
   outputs: ['searchChanged', 'searchButtonClicked']
-}) as angular.IDirectiveFactory);
-
-directiveModule.directive('ng2PalettePopupPanel', downgradeComponent({
-  component: PalettePopupPanelComponent,
-  inputs: [],
-  outputs: []
 }) as angular.IDirectiveFactory);
 
 directiveModule.directive('ng2ServicePathSelector', downgradeComponent({

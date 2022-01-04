@@ -5,10 +5,8 @@ import {EventListenerService} from "../../../../services/event-listener-service"
 import {PaletteElementComponent} from "./palette-element/palette-element.component";
 import {PaletteComponent} from "./palette.component";
 import {ConfigureFn, configureTests} from "../../../../../jest/test-config.helper";
-import {GRAPH_EVENTS} from "../../../../utils/constants";
 import {KeyValuePipe} from "../../../pipes/key-value.pipe";
 import {ResourceNamePipe} from "../../../pipes/resource-name.pipe";
-import {LeftPaletteComponent} from "../../../../models/components/displayComponent";
 import {Observable} from "rxjs/Observable";
 import {leftPaletteElements} from "../../../../../jest/mocks/left-paeltte-elements.mock";
 import {NgxsModule, Select} from '@ngxs/store';
@@ -51,30 +49,6 @@ describe('palette component', () => {
 
     it('should match current snapshot of palette component', () => {
         expect(fixture).toMatchSnapshot();
-    });
-
-    it('should call on palette component hover in event', () => {
-        let paletteObject =  <LeftPaletteComponent>{categoryType: 'COMPONENT'};
-        fixture.componentInstance.onMouseOver(mockedEvent, paletteObject);
-        expect(eventServiceMock.notifyObservers).toHaveBeenCalledWith(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_IN, paletteObject);
-    });
-
-    it('should call on palette component hover out event', () => {
-        let paletteObject =  <LeftPaletteComponent>{categoryType: 'COMPONENT'};
-        fixture.componentInstance.onMouseOut(paletteObject);
-        expect(eventServiceMock.notifyObservers).toHaveBeenCalledWith(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_OUT);
-    });
-
-    it('should call show popup panel event', () => {
-        let paletteObject =  <LeftPaletteComponent>{categoryType: 'GROUP'};
-        fixture.componentInstance.onMouseOver(mockedEvent, paletteObject);
-        expect(eventServiceMock.notifyObservers).toHaveBeenCalledWith(GRAPH_EVENTS.ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL, paletteObject, mockedEvent.target);
-    });
-
-    it('should call  hide popup panel event', () => {
-        let paletteObject =  <LeftPaletteComponent>{categoryType: 'GROUP'};
-        fixture.componentInstance.onMouseOut(paletteObject);
-        expect(eventServiceMock.notifyObservers).toHaveBeenCalledWith(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL);
     });
 
     it('should build Palette By Categories without searchText', () => {

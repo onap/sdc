@@ -7,14 +7,13 @@ import {CompositionGraphModule} from "./graph/composition-graph.module";
 import {CompositionPageComponent} from "./composition-page.component";
 import {NgxsModule} from "@ngxs/store";
 import {PaletteModule} from "./palette/palette.module";
-import {PalettePopupPanelComponent} from "./palette/palette-popup-panel/palette-popup-panel.component";
 import { CompositionPanelModule } from "app/ng2/pages/composition/panel/composition-panel.module";
 import {CompositionService} from "./composition.service";
 import {DndModule} from "ngx-drag-drop";
 import {GraphState} from "./common/store/graph.state";
 
 @NgModule({
-    declarations: [CompositionPageComponent, PalettePopupPanelComponent],
+    declarations: [CompositionPageComponent],
     imports: [CommonModule,
         CompositionGraphModule,
         CompositionPanelModule,

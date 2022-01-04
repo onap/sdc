@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-import {Injectable} from "@angular/core";
+import {Component, Injectable} from "@angular/core";
 import {CompositionGraphGeneralUtils, RequirementAndCapabilities} from "./composition-graph-general-utils";
 import {CommonGraphUtils} from "../common/common-graph-utils";
 import {EventListenerService} from "../../../../../services/event-listener-service";
@@ -51,38 +51,6 @@ export class CompositionGraphPaletteUtils {
                 private workspaceService: WorkspaceService,
                 private matchCapabilitiesRequirementsUtils: MatchCapabilitiesRequirementsUtils,
                 private nodesGraphUtils: CompositionGraphNodesUtils) {
-    }
-
-    /**
-     *
-     * @param Calculate matching nodes, highlight the matching nodes and fade the non matching nodes
-     * @param leftPaletteComponent
-     * @param _cy
-     * @returns void
-     * @private
-     */
-
-    public onComponentHoverIn = (leftPaletteComponent: LeftPaletteComponent, _cy: Cy.Instance) => {
-        const nodesData = this.nodesGraphUtils.getAllNodesData(_cy.nodes());
-        const nodesLinks = this.generalGraphUtils.getAllCompositionCiLinks(_cy);
-
-        if (this.generalGraphUtils.componentRequirementsAndCapabilitiesCaching.containsKey(leftPaletteComponent.uniqueId)) {
-            const reqAndCap: RequirementAndCapabilities = this.generalGraphUtils.componentRequirementsAndCapabilitiesCaching.getValue(leftPaletteComponent.uniqueId);
-            const filteredNodesData = this.matchCapabilitiesRequirementsUtils.findMatchingNodesToComponentInstance(
-                { uniqueId: leftPaletteComponent.uniqueId, requirements: reqAndCap.requirements, capabilities: reqAndCap.capabilities} as ComponentInstance, nodesData, nodesLinks);
-
-            this.matchCapabilitiesRequirementsUtils.highlightMatchingComponents(filteredNodesData, _cy);
-            this.matchCapabilitiesRequirementsUtils.fadeNonMachingComponents(filteredNodesData, nodesData, _cy);
-        } else {
-
-            this.topologyTemplateService.getCapabilitiesAndRequirements(leftPaletteComponent.componentType, leftPaletteComponent.uniqueId).subscribe((response: ComponentGenericResponse) => {
-                let reqAndCap: RequirementAndCapabilities = {
-                    capabilities: response.capabilities,
-                    requirements: response.requirements
-                }
-                this.generalGraphUtils.componentRequirementsAndCapabilitiesCaching.setValue(leftPaletteComponent.uniqueId, reqAndCap);
-            });
-        }
     }
 
     /**
@@ -227,6 +195,13 @@ export class CompositionGraphPaletteUtils {
                 this._createComponentInstanceOnGraphFromPaletteComponent(cy, draggedComponent, dragEvent.event);
             });
         }
+    }
+
+    addPolicyOrGroupFromPalette(dndEvent: DndDropEvent) {
+        let draggedComponent:LeftPaletteComponent = dndEvent.data;
+        let dropPosition:Point = dndEvent.event;
+        let component :Component = dndEvent.data;
+        this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_ADD_ZONE_INSTANCE_FROM_PALETTE, draggedComponent, component, dropPosition );
     }
 }
 
