@@ -106,14 +106,6 @@ export class PaletteComponent {
         return counter;
     }
 
-    private isGroupOrPolicy(component: LeftPaletteComponent): boolean {
-        if (component &&
-            (component.categoryType === LeftPaletteMetadataTypes.Group ||
-            component.categoryType === LeftPaletteMetadataTypes.Policy)) {
-            return true;
-        }
-        return false;
-    }
     @HostListener('document:dragover', ['$event'])
     public onDrag(event) {
         this.position.x = event.clientX;
@@ -152,23 +144,5 @@ export class PaletteComponent {
         this.paletteDraggedElement = undefined;
         
     }
-
-    public onMouseOver = (sectionElem:MouseEvent, displayComponent:LeftPaletteComponent) => {
-        console.debug("On palette element MOUSE HOVER: ", displayComponent);
-        if (this.isGroupOrPolicy(displayComponent)) {
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL, displayComponent, sectionElem.target);
-        } else {
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_IN, displayComponent);
-        }
-    };
-
-    public onMouseOut = (displayComponent:LeftPaletteComponent) => {
-        console.debug("On palette element MOUSE OUT: ", displayComponent);
-        if (this.isGroupOrPolicy(displayComponent)) {
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL);
-        } else {
-            this.eventListenerService.notifyObservers(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_OUT);
-        }
-    };
 
 }

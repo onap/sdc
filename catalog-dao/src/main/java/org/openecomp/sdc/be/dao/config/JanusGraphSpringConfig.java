@@ -24,13 +24,11 @@ import org.openecomp.sdc.be.dao.JanusGraphClientStrategy;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
-import org.openecomp.sdc.be.dao.janusgraph.transactions.SimpleJanusGraphTransactionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -53,11 +51,6 @@ public class JanusGraphSpringConfig {
     @Bean(name = "dao-client-strategy")
     public JanusGraphClientStrategy janusGraphClientStrategy() {
         return new DAOJanusGraphStrategy();
-    }
-
-    @Bean
-    public PlatformTransactionManager txManager() {
-        return new SimpleJanusGraphTransactionManager(janusGraphClient(janusGraphClientStrategy()));
     }
 
     @Bean(name = "healingPipelineDao")

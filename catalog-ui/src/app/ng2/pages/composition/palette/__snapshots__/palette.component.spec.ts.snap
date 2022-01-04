@@ -9,8 +9,6 @@ exports[`palette component should match current snapshot of palette component 1`
   onDragStart={[Function Function]}
   onDraggableMoved={[Function Function]}
   onDrop={[Function Function]}
-  onMouseOut={[Function Function]}
-  onMouseOver={[Function Function]}
   onSearchChanged={[Function Function]}
   position={[Function Point]}
 >
