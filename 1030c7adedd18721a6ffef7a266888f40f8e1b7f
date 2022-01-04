@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "67258455_5c4baa3d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-04T12:09:35Z",
+      "side": 1,
+      "message": "please, follow commit message guidelines: https://wiki.onap.org/display/DW/Commit+Messages",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 64
+      },
+      "revId": "1030c7adedd18721a6ffef7a266888f40f8e1b7f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f2a699db_c203d84a",
         "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/pom.xml",
         "patchSetId": 1
