@@ -184,6 +184,10 @@ export class CompositionGraphComponent implements AfterViewInit {
     }
 
     public onDrop = (dndEvent: DndDropEvent) => {
+        if (dndEvent.data.categoryType=="POLICY" || dndEvent.data.categoryType=="GROUP"){
+            this.compositionGraphPaletteUtils.addPolicyOrGroupFromPalette(dndEvent);
+            return;
+        }
         this.compositionGraphPaletteUtils.addNodeFromPalette(this._cy, dndEvent);
     }
 
@@ -600,10 +604,6 @@ export class CompositionGraphComponent implements AfterViewInit {
             this.notificationService.push(new NotificationSettings('success', 'Policy Updated', 'Success'));
         });
 
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_IN, (leftPaletteComponent: LeftPaletteComponent) => {
-            this.compositionGraphPaletteUtils.onComponentHoverIn(leftPaletteComponent, this._cy);
-        });
-
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_ADD_ZONE_INSTANCE_FROM_PALETTE,
             (component: TopologyTemplate, paletteComponent: LeftPaletteComponent, startPosition: Point) => {
 
@@ -619,11 +619,6 @@ export class CompositionGraphComponent implements AfterViewInit {
                     this.loaderService.deactivate();
                 });
             });
-
-        this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_PALETTE_COMPONENT_HOVER_OUT, () => {
-            this._cy.emit('hidehandles');
-            this.matchCapabilitiesRequirementsUtils.resetFadedNodes(this._cy);
-        });
 
         this.eventListenerService.registerObserverCallback(GRAPH_EVENTS.ON_PALETTE_COMPONENT_DRAG_START, (dragElement, dragComponent) => {
             this.dragElement = dragElement;

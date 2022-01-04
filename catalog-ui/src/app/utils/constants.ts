@@ -342,13 +342,9 @@ export class GRAPH_EVENTS {
   static ON_NODE_SELECTED = "onNodeSelected";
   static ON_ZONE_INSTANCE_SELECTED = "onZoneInstanceSelected";
   static ON_GRAPH_BACKGROUND_CLICKED = "onGraphBackgroundClicked";
-  static ON_PALETTE_COMPONENT_HOVER_IN = 'onPaletteComponentHoverIn';
-  static ON_PALETTE_COMPONENT_HOVER_OUT = 'onPaletteComponentHoverOut';
   static ON_PALETTE_COMPONENT_DRAG_START = 'onPaletteComponentDragStart';
   static ON_PALETTE_COMPONENT_DRAG_ACTION = 'onPaletteComponentDragAction';
   static ON_PALETTE_COMPONENT_DROP = 'onPaletteComponentDrop';
-  static ON_PALETTE_COMPONENT_SHOW_POPUP_PANEL = 'onPaletteComponentShowPopupPanel';
-  static ON_PALETTE_COMPONENT_HIDE_POPUP_PANEL = 'onPaletteComponentHidePopupPanel';
   static ON_COMPONENT_INSTANCE_NAME_CHANGED = 'onComponentInstanceNameChanged';
   static ON_COMPONENT_INSTANCE_REQUIREMENT_EXTERNAL_CHANGED = 'onComponentInstanceRequirementExternalChanged'
   static ON_COMPONENT_INSTANCE_CAPABILITY_EXTERNAL_CHANGED = 'onComponentInstanceCapabilityExternalChanged'
