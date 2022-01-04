@@ -93,6 +93,30 @@
       "revId": "3745bf871f1fb84fab0c7df94d71024431c92096",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed1186f5_d9436404",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/BaseBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-04T12:00:16Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "187931ef_59476ef2",
+      "range": {
+        "startLine": 532,
+        "startChar": 16,
+        "endLine": 533,
+        "endChar": 26
+      },
+      "revId": "3745bf871f1fb84fab0c7df94d71024431c92096",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
