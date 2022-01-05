@@ -263,7 +263,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>${mvn.war.version}</version>
                 <configuration>
                     <webResources>
                         <resource>
