@@ -18,6 +18,7 @@
         <swagger-ui.version>3.25.0</swagger-ui.version>
         <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
         <replacer.plugin.version>1.5.3</replacer.plugin.version>
+        <ui.version>${project.version}</ui.version>
     </properties>
 
     <dependencies>
@@ -1058,7 +1059,7 @@
                     </packagingExcludes>
                     <archive>
                         <manifestEntries>
-                            <SDC-Version>${project.version}</SDC-Version>
+                            <SDC-Version>${ui.version}</SDC-Version>
                         </manifestEntries>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>

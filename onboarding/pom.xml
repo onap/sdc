@@ -46,8 +46,6 @@
         <mvn.resource.version>3.1.0</mvn.resource.version>
         <mvn.deploy.version>2.4</mvn.deploy.version>
         <mvn.install.version>2.4</mvn.install.version>
-        <mvn.jar.version>2.4</mvn.jar.version>
-        <mvn.war.version>2.1.1</mvn.war.version>
 
         <!-- Onboarding 3rd party versions -->
         <aspectjrt.version>${aspectj.version}</aspectjrt.version>
@@ -298,7 +296,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>${mvn.jar.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -43,7 +43,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>${mvn.jar.version}</version>
             </plugin>
         </plugins>
     </build>
