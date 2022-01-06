@@ -2084,7 +2084,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
 
     private Either<ArtifactDefinition, ResponseFormat> validateOrSetArtifactGroupType(ArtifactDefinition artifactInfo,
                                                                                       ArtifactDefinition currentArtifact) {
-        if (Objects.nonNull(artifactInfo) && Objects.nonNull(currentArtifact)) {
+        if (null != artifactInfo && null != currentArtifact) {
             if (artifactInfo.getArtifactGroupType() == null) {
                 artifactInfo.setArtifactGroupType(currentArtifact.getArtifactGroupType());
             } else if (!currentArtifact.getArtifactGroupType().getType().equalsIgnoreCase(artifactInfo.getArtifactGroupType().getType())) {
