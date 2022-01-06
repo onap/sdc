@@ -98,7 +98,7 @@ public class ETSIServiceImpl implements ETSIService {
     }
 
     private String getDefaultCsarFormat() {
-        return CommonConfigurationManager.getInstance().getConfigValue("csarFormat", "default", ONAP_CSAR);
+        return CommonConfigurationManager.getInstance().getConfigValue("csarFormat", "defaultValue", ONAP_CSAR);
     }
 
     @Override

@@ -145,6 +145,7 @@ public class Configuration extends BasicConfiguration {
     private List<ArtifactConfiguration> artifacts;
     private Map<String, Map<String, List<String>>> componentAllowedInstanceTypes;
     private ExternalCsarStore externalCsarStore;
+    private CsarFormat csarFormat;
 
     @SuppressWarnings("unchecked")
     private <K, V> Map<K, V> safeGetCapsInsensitiveMap(Map<K, V> map) {
@@ -513,6 +514,14 @@ public class Configuration extends BasicConfiguration {
             private String accessKey;
             private String secretKey;
         }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class CsarFormat {
+
+        private String defaultValue;
     }
 
 }
