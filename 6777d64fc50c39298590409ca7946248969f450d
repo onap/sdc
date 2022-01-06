@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e9e98b5_66994f38",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/PackageUploadManagerController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-06T12:16:52Z",
+      "side": 1,
+      "message": "This controller will be used for obtaining a lock and checking upload status and the upload itself will continue to be done using OrchestrationTemplateCandidate?\n\nThe terminology used in the endpoint for uploading the package is \"orchestration template candidate\" rather than \"package\". Perhaps should be OrchestrationTemplateCandidateManagerController for consistent use of terminology?\nThere is a very close relationship between this new controller and the existing OrchestrationTemplateCandidate (e.g. shouldnt use the OrchestrationTemplateCandidate::upload method unless  PackageUploadManagerController::startUpload is invoked first). This will not be clear from OrchestrationTemplateCandidate. \nTherefore I think documentation should be added to OrchestrationTemplateCandidate and its methods (where applicable) that will appear both in the code and in the generated swagger.\nThey are closely related enough to be a single class but I have no objection to keeping them separate if you prefer so long as it is obvious in the doc that they need to be used together\n\nIs there value in a having separate methods for the upload and obtaining the lock? or would it be more convenient for the lock to be obtained as part of the upload method? The upload method will presumably have to check the lock either way",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 69
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
