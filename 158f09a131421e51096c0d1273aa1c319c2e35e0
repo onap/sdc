@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a92d0c2d_7f938004",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1073,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-06T21:17:30Z",
+      "side": 1,
+      "message": "validateOrSetArtifactGroupType never return NULL,\nthis is about L2087 \nif (Objects.nonNull(artifactInfo) \u0026\u0026 Objects.nonNull(currentArtifact)) {\nSONAR ignores \u0027Objects.nonNull\u0027 and reports \u0027false positive\u0027\nto fix it need to replace Objects.nonNull with \u0027!\u003dnull\u0027",
+      "range": {
+        "startLine": 1069,
+        "startChar": 44,
+        "endLine": 1073,
+        "endChar": 13
+      },
+      "revId": "158f09a131421e51096c0d1273aa1c319c2e35e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
