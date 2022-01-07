@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "54bb1769_09228dae",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/PackageUploadManagerController.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-07T13:40:12Z",
+      "side": 1,
+      "message": "Yes, correct, that was the reason of the controller, to control the lock/status of the upload.\nAs you suggested, I\u0027ve aligned the terminology and moved the lock control to the existing upload method. With that, I had to implement a way to set the status as finished and refactor the upload method code to include the start and finish upload calls.\nStill, I\u0027ve left this controller to be responsible for the endpoints that will give status upload information. For now it will have a method to get the latest upload status.",
+      "parentUuid": "9e9e98b5_66994f38",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 69
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8ee1dd53_0526f734",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/mapping/VspUploadStatusMapper.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "6777d64fc50c39298590409ca7946248969f450d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2c40afd_2d716bc1",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/mapping/VspUploadStatusMapper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-07T13:40:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ee1dd53_0526f734",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 2
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "c93c4a13_150cecd5",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-types/src/main/java/org/openecomp/sdcrests/vendorsoftwareproducts/types/VspUploadStatusDto.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-07T13:40:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e32aec78_85ad0b62",
+      "range": {
+        "startLine": 4,
+        "startChar": 18,
+        "endLine": 4,
+        "endChar": 22
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9006f781_77a5c594",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/PackageUploadManagerAccessor.java",
         "patchSetId": 1
@@ -114,6 +186,30 @@
       "revId": "6777d64fc50c39298590409ca7946248969f450d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "300d6153_7567db01",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/PackageUploadManagerAccessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-07T13:40:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9006f781_77a5c594",
+      "range": {
+        "startLine": 4,
+        "startChar": 18,
+        "endLine": 4,
+        "endChar": 22
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -140,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "58a667b2_949e95c6",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/PackageUploadManagerDao.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-07T13:40:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42c1f525_158ee792",
+      "range": {
+        "startLine": 4,
+        "startChar": 18,
+        "endLine": 4,
+        "endChar": 22
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0b0bd3f_274c13af",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspUploadStatus.java",
         "patchSetId": 1
@@ -160,6 +280,30 @@
       "revId": "6777d64fc50c39298590409ca7946248969f450d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ee808bc_5e31400e",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspUploadStatus.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-07T13:40:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0b0bd3f_274c13af",
+      "range": {
+        "startLine": 4,
+        "startChar": 18,
+        "endLine": 4,
+        "endChar": 22
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -186,6 +330,30 @@
     },
     {
       "key": {
+        "uuid": "613e2c48_6ffa2e09",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/type/VspUploadStatusType.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-07T13:40:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "789d884a_d01481d9",
+      "range": {
+        "startLine": 4,
+        "startChar": 18,
+        "endLine": 4,
+        "endChar": 22
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21bc2bdf_1650ed06",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/PackageUploadManagerDaoIml.java",
         "patchSetId": 1
@@ -206,6 +374,30 @@
       "revId": "6777d64fc50c39298590409ca7946248969f450d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5bb2e94_85bf37cc",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/impl/PackageUploadManagerDaoIml.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-07T13:40:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21bc2bdf_1650ed06",
+      "range": {
+        "startLine": 4,
+        "startChar": 18,
+        "endLine": 4,
+        "endChar": 22
+      },
+      "revId": "6777d64fc50c39298590409ca7946248969f450d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
