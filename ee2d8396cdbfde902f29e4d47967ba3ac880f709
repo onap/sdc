@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23669efe_e0e8f578",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-07T18:53:57Z",
+      "side": 1,
+      "message": "do we need this since we already have\n535:                \u003cconfiguration\u003e\n536:                    \u003csource\u003e11\u003c/source\u003e\n537:                    \u003ctarget\u003e11\u003c/target\u003e\n538:                    \u003cforceJavacCompilerUse\u003etrue\u003c/forceJavacCompilerUse\u003e\n539:                \u003c/configuration\u003e\n\nthose properties are for java \u003c 9, starting from Java 9 should be used \n536:                    \u003csource\u003e11\u003c/source\u003e\n537:                    \u003ctarget\u003e11\u003c/target\u003e",
+      "range": {
+        "startLine": 194,
+        "startChar": 8,
+        "endLine": 195,
+        "endChar": 57
+      },
+      "revId": "ee2d8396cdbfde902f29e4d47967ba3ac880f709",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
