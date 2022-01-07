@@ -5,6 +5,128 @@
 Release Notes
 =============
 
+Version: 1.10.0
+==============
+
+:Release Date: 2022-01-07
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.6.6
+
+Release Purpose
+----------------
+SDC Jakarta first release
+
+**Epics**
+    N/A
+
+**Stories**
+
+*  `SDC-3837 <https://jira.onap.org/browse/SDC-3837>`_ - Update property to identify SOL004 packages
+*  `SDC-3819 <https://jira.onap.org/browse/SDC-3819>`_ - Solution for identifying SOL004 packages
+*  `SDC-3805 <https://jira.onap.org/browse/SDC-3805>`_ - Allows custom property type names
+*  `SDC-3803 <https://jira.onap.org/browse/SDC-3803>`_ - Enable VF to be nested in a VF
+*  `SDC-3802 <https://jira.onap.org/browse/SDC-3802>`_ - Allow space and single quote in prop names
+*  `SDC-3774 <https://jira.onap.org/browse/SDC-3774>`_ - Update service import to import substitution filters
+*  `SDC-3775 <https://jira.onap.org/browse/SDC-3775>`_ - Update service import to import node filters
+*  `SDC-3793 <https://jira.onap.org/browse/SDC-3793>`_ - Node filter property value equals input value
+*  `SDC-3764 <https://jira.onap.org/browse/SDC-3764>`_ - Update service import to import service properties
+*  `SDC-3754 <https://jira.onap.org/browse/SDC-3754>`_ - Large csar handling - object store
+*  `SDC-3768 <https://jira.onap.org/browse/SDC-3768>`_ - UI support for adding artifacts to an interface operation implementation
+*  `SDC-3763 <https://jira.onap.org/browse/SDC-3763>`_ - Support for adding artifact types
+*  `SDC-3735 <https://jira.onap.org/browse/SDC-3735>`_ - Integration Tests - Import tosca types for a model
+*  `SDC-3715 <https://jira.onap.org/browse/SDC-3715>`_ - Import VSP with non-standard policy types
+*  `SDC-3759 <https://jira.onap.org/browse/SDC-3759>`_ - Allow Service base type to be optional
+*  `SDC-3760 <https://jira.onap.org/browse/SDC-3760>`_ - Support get_input for complex data types
+*  `SDC-3752 <https://jira.onap.org/browse/SDC-3752>`_ - Import multiple node_types in a single endpoint during the initialization
+*  `SDC-3737 <https://jira.onap.org/browse/SDC-3737>`_ - Add a display name for the category metadataKeys entries
+*  `SDC-3751 <https://jira.onap.org/browse/SDC-3751>`_ - Allow importing service with no instances
+*  `SDC-3725 <https://jira.onap.org/browse/SDC-3725>`_ - Type safety in node filters
+*  `SDC-3706 <https://jira.onap.org/browse/SDC-3706>`_ - Filter categories by model
+*  `SDC-3727 <https://jira.onap.org/browse/SDC-3727>`_ - Allow multiple base types for a service
+*  `SDC-3736 <https://jira.onap.org/browse/SDC-3736>`_ - Display model in UI tiles
+*  `SDC-3729 <https://jira.onap.org/browse/SDC-3729>`_ - Expand allowed chars in property names to include colon
+
+**Bug Fixes**
+
+*  `SDC-2921 <https://jira.onap.org/browse/SDC-2921>`_ - ToscaElementLifecycleOperation - Add null test before using nullable values
+*  `SDC-3018 <https://jira.onap.org/browse/SDC-3801>`_ - Fix import service to persist its model name
+*  `SDC-3822 <https://jira.onap.org/browse/SDC-3822>`_ - Topology template inputs created for interface inputs
+*  `SDC-3800 <https://jira.onap.org/browse/SDC-3800>`_ - Unable to set interface opertion for custom interface type
+*  `SDC-3799 <https://jira.onap.org/browse/SDC-3799>`_ - Not possible to set value of custom data type
+*  `SDC-3796 <https://jira.onap.org/browse/SDC-3796>`_ - Fix Incorrect properties entry on the interface operation definition and Required fields validation
+*  `SDC-3798 <https://jira.onap.org/browse/SDC-3798>`_ - Node Filter UI faults
+*  `SDC-3801 <https://jira.onap.org/browse/SDC-3801>`_ - Fix import service to persist its model name
+*  `SDC-3792 <https://jira.onap.org/browse/SDC-3792>`_ - VNFD not added to NSD when using S3 storage
+*  `SDC-3791 <https://jira.onap.org/browse/SDC-3791>`_ - Base type not set when not provided in the Service creation API
+*  `SDC-3757 <https://jira.onap.org/browse/SDC-3757>`_ - Test cases failing incorrectly on Jenkins
+*  `SDC-3784 <https://jira.onap.org/browse/SDC-3784>`_ - Not possible to restore an archived component
+*  `SDC-3607 <https://jira.onap.org/browse/SDC-3607>`_ - fix CRITICAL xss (cross site scripting) issues identified in sonarcloud
+*  `SDC-3770 <https://jira.onap.org/browse/SDC-3770>`_ - unable to run TCs separately (ImportVfcUiTest)
+*  `SDC-3765 <https://jira.onap.org/browse/SDC-3765>`_ - Changing the model during the service creation can cause invalid category and base type state
+*  `SDC-3734 <https://jira.onap.org/browse/SDC-3734>`_ - Fix child model being shown in UI
+
+**Tasks**
+
+*  `SDC-3824 <https://jira.onap.org/browse/SDC-3824>`_ - Make configurable UI version
+*  `SDC-3823 <https://jira.onap.org/browse/SDC-3823>`_ - Update Catalog-model set skip deploy to false
+*  `SDC-3816 <https://jira.onap.org/browse/SDC-3816>`_ - Fix MongoSocketOpenException-issue
+*  `SDC-3804 <https://jira.onap.org/browse/SDC-3804>`_ - Improve fast-build profile
+*  `SDC-3790 <https://jira.onap.org/browse/SDC-3790>`_ - Upgrade VSP is using the wrong VSP version id
+*  `SDC-3785 <https://jira.onap.org/browse/SDC-3785>`_ - Fix potential NPE
+*  `SDC-3771 <https://jira.onap.org/browse/SDC-3771>`_ - Fix CSV's generation on wrong folder
+*  `SDC-3776 <https://jira.onap.org/browse/SDC-3776>`_ - Fix broken TC (ExternalRefsServletTest)
+*  `SDC-3783 <https://jira.onap.org/browse/SDC-3783>`_ - Use base image user on sdc-backend-all-plugins docker image descriptor
+*  `SDC-3782 <https://jira.onap.org/browse/SDC-3782>`_ - Remove unnecessary maven resource filtering in asdctool
+*  `SDC-3772 <https://jira.onap.org/browse/SDC-3772>`_ - Fix discrepancy in IT between Intellij and maven
+*  `SDC-3753 <https://jira.onap.org/browse/SDC-3753>`_ - Skip UI tests during fast build
+*  `SDC-3761 <https://jira.onap.org/browse/SDC-3761>`_ - Define encoding while reading files in python init scripts
+*  `SDC-3741 <https://jira.onap.org/browse/SDC-3741>`_ - Clean sdctool.tar during build
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+*  `SDC-3820 <https://jira.onap.org/browse/SDC-3820>`_ - Fix potential Log4Shell Security Vulnerability
+*  `SDC-3795 <https://jira.onap.org/browse/SDC-3795>`_ - Analyse vulnerable dependency versions in SDC
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+	
+	
 Version: 1.9.3
 ==============
 
