@@ -101,7 +101,7 @@ public class OrchestrationTemplateCandidateManagerImplTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
   }
 
   @After

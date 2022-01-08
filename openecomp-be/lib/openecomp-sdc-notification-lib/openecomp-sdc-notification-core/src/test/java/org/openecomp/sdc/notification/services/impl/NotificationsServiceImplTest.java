@@ -51,7 +51,7 @@ public class NotificationsServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     public void shouldCallNotificationsDaoIfNotificationEntityExist() throws Exception {

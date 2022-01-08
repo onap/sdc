@@ -69,7 +69,7 @@ public class ComponentInstancePropertiesMergeBLTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         oldResource = new ResourceBuilder()
                 .addComponentInstance(INSTANCE1, OLD_INSTANCE1)
                 .addComponentInstance(INSTANCE2, OLD_INSTANCE2)

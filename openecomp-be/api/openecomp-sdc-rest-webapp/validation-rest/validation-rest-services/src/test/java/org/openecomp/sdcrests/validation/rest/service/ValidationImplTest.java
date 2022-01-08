@@ -35,7 +35,7 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class ValidationImplTest {
 
@@ -46,7 +46,7 @@ public class ValidationImplTest {
 
     @Before
     public void setUp(){
-        initMocks(this);
+        openMocks(this);
     }
 
     @Test

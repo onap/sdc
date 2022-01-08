@@ -67,7 +67,7 @@ public class DistributionMonitoringBusinessLogicTest extends BaseBusinessLogicMo
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         businessLogic = new DistributionMonitoringBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
             groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             cassandraDao, artifactToscaOperation);

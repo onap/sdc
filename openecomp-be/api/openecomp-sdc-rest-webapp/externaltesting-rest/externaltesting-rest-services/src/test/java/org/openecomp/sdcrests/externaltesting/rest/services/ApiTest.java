@@ -17,7 +17,7 @@
 package org.openecomp.sdcrests.externaltesting.rest.services;
 
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +59,7 @@ public class ApiTest {
     @Before
     public void setUp() {
         try {
-            initMocks(this);
+            openMocks(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -167,7 +167,7 @@ public class ApiTest {
      */
     @Test()
     public void testConfigExceptions() {
-        initMocks(this);
+        openMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
@@ -184,7 +184,7 @@ public class ApiTest {
      */
     @Test()
     public void testEndpointExceptions() {
-        initMocks(this);
+        openMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
@@ -201,7 +201,7 @@ public class ApiTest {
      */
     @Test()
     public void testExecutionExceptions() {
-        initMocks(this);
+        openMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
@@ -220,7 +220,7 @@ public class ApiTest {
      */
     @Test()
     public void testScenarioExceptions() {
-        initMocks(this);
+        openMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
@@ -235,7 +235,7 @@ public class ApiTest {
      */
     @Test()
     public void testTestCaseExceptions() {
-        initMocks(this);
+        openMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
@@ -250,7 +250,7 @@ public class ApiTest {
      */
     @Test()
     public void testTestCasesExceptions() {
-        initMocks(this);
+        openMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
@@ -265,7 +265,7 @@ public class ApiTest {
      */
     @Test()
     public void testTestSuitesExceptions() {
-        initMocks(this);
+        openMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);
@@ -280,7 +280,7 @@ public class ApiTest {
      */
     @Test()
     public void testTreeExceptions() {
-        initMocks(this);
+        openMocks(this);
 
         ExternalTestingManager m = new ApiTestExternalTestingManager();
         ExternalTestingImpl testingF = new ExternalTestingImpl(m, vendorSoftwareProductManager);

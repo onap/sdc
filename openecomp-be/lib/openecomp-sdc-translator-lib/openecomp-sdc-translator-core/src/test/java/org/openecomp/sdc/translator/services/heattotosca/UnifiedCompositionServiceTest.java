@@ -135,7 +135,7 @@ public class UnifiedCompositionServiceTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     //todo

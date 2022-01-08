@@ -81,7 +81,7 @@ class EtsiNfvNsdCsarGeneratorImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         final EtsiVersion version2_5_1 = EtsiVersion.VERSION_2_5_1;
         etsiNfvNsdCsarGenerator = new EtsiNfvNsdCsarGeneratorImpl(new NsDescriptorConfig(version2_5_1),
             vnfDescriptorGenerator, nsDescriptorGeneratorFactory, artifactCassandraDao, nsdCsarEtsiOption2Signer);

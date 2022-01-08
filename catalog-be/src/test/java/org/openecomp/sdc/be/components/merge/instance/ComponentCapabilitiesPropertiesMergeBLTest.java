@@ -65,7 +65,7 @@ public class ComponentCapabilitiesPropertiesMergeBLTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test

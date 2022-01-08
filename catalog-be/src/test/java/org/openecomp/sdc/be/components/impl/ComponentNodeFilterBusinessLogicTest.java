@@ -124,7 +124,7 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         componentNodeFilterBusinessLogic =
             new ComponentNodeFilterBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
                 groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation,

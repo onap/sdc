@@ -52,7 +52,7 @@ public class FileComputeConsolidationDataTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         addMocksToMap();
     }
 

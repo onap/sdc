@@ -52,7 +52,7 @@ public class TypeComputeConsolidationDataTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     private Map<String, List<String>> multipleNumberOfPortInEachTypeTypeMap = new HashMap<String, List<String>>() {

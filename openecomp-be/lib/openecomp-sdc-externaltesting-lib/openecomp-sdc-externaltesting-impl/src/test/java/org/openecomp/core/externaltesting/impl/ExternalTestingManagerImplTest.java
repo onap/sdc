@@ -87,7 +87,7 @@ public class ExternalTestingManagerImplTest {
   @SuppressWarnings("unchecked")
   private ExternalTestingManagerImpl configTestManager(boolean loadConfig) throws IOException {
 
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
 
     if (loadConfig) {
       mgr.init();

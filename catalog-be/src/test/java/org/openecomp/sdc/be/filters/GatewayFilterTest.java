@@ -93,7 +93,7 @@ public class GatewayFilterTest {
 
     @Before
     public void initMocks(){
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Before

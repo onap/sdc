@@ -80,7 +80,7 @@ class ConsumerBusinessLogicTest extends BaseBusinessLogicMock {
             interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation);
         consumerDataDefinition = new ConsumerDataDefinition();
         consumer = new ConsumerDefinition();
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         user = new User("Stan", "Lee", "stan.lee",
             "stan.lee@marvel.com", "ADMIN", 1542024000L);
     }

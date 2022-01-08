@@ -72,7 +72,7 @@ public class NodeFilterValidationTest {
     @BeforeEach
     public void setup() {
         componentsUtils = Mockito.mock(ComponentsUtils.class);
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
 

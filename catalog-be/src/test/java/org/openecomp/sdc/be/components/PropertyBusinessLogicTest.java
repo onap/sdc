@@ -120,7 +120,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ExternalConfiguration.setAppName("catalog-be");
 
         // User data and management

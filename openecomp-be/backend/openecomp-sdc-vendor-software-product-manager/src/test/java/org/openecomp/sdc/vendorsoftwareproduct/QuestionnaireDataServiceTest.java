@@ -69,7 +69,7 @@ public class QuestionnaireDataServiceTest {
 
   @Before
   public void setUp() throws Exception {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
   }
 
   // TODO: 3/15/2017 fix and enable   //@Test

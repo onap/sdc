@@ -72,7 +72,7 @@ class CertificateManagerImplTest {
 
     @BeforeEach
     void setUp() throws CertificateNotYetValidException, CertificateExpiredException {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(environment.getProperty(CERT_DIR_ENV_VARIABLE)).thenReturn(certificateFolderPath.toString());
         when(certificateMock.getType()).thenReturn("X.509");
         doNothing().when(certificateMock).checkValidity();

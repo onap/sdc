@@ -87,7 +87,7 @@ class ComponentInstancePropsAndInputsMergeTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         resourceToUpdate = new ResourceBuilder().addInstanceInput(INSTANCE_ID1, "instInput1")
             .addInstanceInput(INSTANCE_ID1, "instInput2")
             .addInstanceProperty(INSTANCE_ID1, "instProp1")

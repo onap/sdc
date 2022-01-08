@@ -56,7 +56,7 @@ class JanusGraphDaoMockTest extends DAOConfDependentTest {
 
     @BeforeEach
     void BeforeEach() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
