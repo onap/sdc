@@ -44,7 +44,7 @@ public class CapabilitiesValidationTest  {
     private final CapabilitiesValidationUtilTest capabilitiesValidationUtilTest = new CapabilitiesValidationUtilTest();
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         responseFormatManagerMock = Mockito.mock(ResponseFormatManager.class);
         when(responseFormatManagerMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
         when(responseFormatManagerMock.getResponseFormat(any(), any())).thenReturn(new ResponseFormat());

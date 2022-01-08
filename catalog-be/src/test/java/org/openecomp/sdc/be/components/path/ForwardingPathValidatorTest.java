@@ -60,7 +60,7 @@ public class ForwardingPathValidatorTest implements ForwardingPathTestUtils {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         mock = Mockito.mock(ResponseFormatManager.class);
         when(toscaOperationFacade.getToscaElement(any(), any(ComponentParametersView.class))).thenReturn(Either.left(service));
         when(mock.getResponseFormat(any())).thenReturn(new ResponseFormat());

@@ -86,7 +86,7 @@ public class PropertyDeclarationOrchestratorTest {
 	@Before
 	public void setUp() throws Exception {
 
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		service = new ServiceBuilder().setUniqueId(SERVICE_UID).build();
 	}

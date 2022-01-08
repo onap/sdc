@@ -48,7 +48,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
 public class ComputeImplTest {
@@ -72,7 +72,7 @@ public class ComputeImplTest {
   @Before
   public void setUp() {
     try {
-      initMocks(this);
+      openMocks(this);
 
       ListComputeResponse lcr = new ListComputeResponse();
       lcr.setAssociatedWithDeploymentFlavor(false);

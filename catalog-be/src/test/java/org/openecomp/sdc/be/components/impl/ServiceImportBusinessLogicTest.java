@@ -136,7 +136,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
     @BeforeEach
     public void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(artifactDefinition.getMandatory()).thenReturn(true);
         when(artifactDefinition.getArtifactName()).thenReturn("creatorFullName");
         when(artifactDefinition.getArtifactType()).thenReturn("TOSCA_CSAR");

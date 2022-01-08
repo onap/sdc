@@ -21,7 +21,7 @@
 package org.openecomp.sdcrests.vsp.rest.services;
 
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class NetworksImplTest {
 
     @Before
     public void setUp() {
-        initMocks(this);
+        openMocks(this);
 
         NetworkEntity e = new NetworkEntity();
         e.setId(networkId);

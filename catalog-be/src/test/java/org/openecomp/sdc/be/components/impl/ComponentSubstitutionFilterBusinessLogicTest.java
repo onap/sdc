@@ -102,7 +102,7 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         componentSubstitutionFilterBusinessLogic =
             new ComponentSubstitutionFilterBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
                 groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation,

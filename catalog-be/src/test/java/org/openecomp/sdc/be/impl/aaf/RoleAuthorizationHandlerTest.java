@@ -65,7 +65,7 @@ class RoleAuthorizationHandlerTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(joinPoint.getSignature()).thenReturn(signature);
         when(signature.toShortString()).thenReturn("methodName");
         when(joinPoint.getThis()).thenReturn(beGenericServlet);

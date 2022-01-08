@@ -87,7 +87,7 @@ class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     public void setup() {
 
         ExternalConfiguration.setAppName("catalog-be");
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         final ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
         bl.setComponentsUtils(componentsUtils);
         serviceToActivate = new Service();

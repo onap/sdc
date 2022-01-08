@@ -51,7 +51,7 @@ public class PortConsolidationDataTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         addMocksToMap();
     }
 

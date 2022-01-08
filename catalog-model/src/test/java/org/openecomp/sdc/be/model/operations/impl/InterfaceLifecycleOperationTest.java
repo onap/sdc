@@ -80,7 +80,7 @@ public class InterfaceLifecycleOperationTest {
 
     @BeforeEach
     public void createUserAndCategory() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         CategoryData categoryData = new CategoryData(NodeTypeEnum.ResourceCategory);
         when(janusGraphGenericDao.createNode(any(), any())).thenReturn(Either.left(categoryData));
         deleteAndCreateCategory(CATEGORY_NAME);

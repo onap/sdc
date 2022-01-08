@@ -66,7 +66,7 @@ class NsdCsarEtsiOption2SignerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(environment.getProperty(SDC_NSD_CERT_NAME)).thenReturn(CERT_NAME);
         when(certificateManager.getCertificate(CERT_NAME)).thenReturn(Optional.of(certificateInfo));
         when(certificateInfo.isValid()).thenReturn(true);

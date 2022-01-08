@@ -149,7 +149,7 @@ public class InputsBusinessLogicTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         service = new Service();
         service.setUniqueId(COMPONENT_ID);
         service.setLastUpdaterUserId(USER_ID);

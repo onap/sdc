@@ -74,7 +74,7 @@ public class ManualVspToscaManagerImplTest {
 
   @Test
   public void testGatherVspInformationInvalidVsp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     VspModelInfo expectedVspData = new VspModelInfo();
     doThrow(new RuntimeException())
         .when(manualVspDataCollectionServiceMock)
@@ -99,7 +99,7 @@ public class ManualVspToscaManagerImplTest {
 
   @Test
   public void testGatherVspInformationValidVsp() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     Map<String, DeploymentFlavorModel> deploymentFlavorData = getDeploymentFlavorData();
     Map<String, List<Nic>> componentNics = getComponentNics();
     Map<String, String> componentData = getComponentData();

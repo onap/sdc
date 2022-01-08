@@ -76,7 +76,7 @@ public class ComponentInstanceInterfacesMergeTest {
 
   @Before
   public void setUpData() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     user = new User();
     user.setUserId("44");
     user.setRole(UserRoleEnum.ADMIN.getName());

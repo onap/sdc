@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class ConfigServletTest {
 
@@ -60,7 +60,7 @@ public class ConfigServletTest {
 
     @Before
     public void setUp() {
-        initMocks(this);
+        openMocks(this);
         String appConfigDir = "src/test/resources/config/catalog-fe";
         ConfigurationSource configurationSource =
                 new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);

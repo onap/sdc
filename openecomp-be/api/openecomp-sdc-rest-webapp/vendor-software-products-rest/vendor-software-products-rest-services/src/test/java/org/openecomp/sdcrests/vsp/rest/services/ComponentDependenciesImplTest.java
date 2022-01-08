@@ -43,7 +43,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
 public class ComponentDependenciesImplTest {
@@ -66,7 +66,7 @@ public class ComponentDependenciesImplTest {
   @Before
   public void setUp() {
     try {
-      initMocks(this);
+      openMocks(this);
 
       ComponentDependencyModelEntity e = new ComponentDependencyModelEntity();
       e.setSourceComponentId("sourceid");

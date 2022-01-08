@@ -137,7 +137,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         // Elements
         mockElementDao = new ElementOperationMock();

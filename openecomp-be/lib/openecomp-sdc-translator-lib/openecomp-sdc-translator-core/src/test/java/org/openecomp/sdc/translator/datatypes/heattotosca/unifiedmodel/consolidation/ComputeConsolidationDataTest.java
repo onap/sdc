@@ -49,7 +49,7 @@ public class ComputeConsolidationDataTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         addMocksToMap();
     }
 

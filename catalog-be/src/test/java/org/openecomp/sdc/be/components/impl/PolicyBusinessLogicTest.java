@@ -143,7 +143,7 @@ public class PolicyBusinessLogicTest {
 
     @Before
     public void initBl() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         businessLogic.setComponentsUtils(componentsUtils);
         businessLogic.setToscaOperationFacade(toscaOperationFacade);
         businessLogic.setJanusGraphDao(janusGraphDao);

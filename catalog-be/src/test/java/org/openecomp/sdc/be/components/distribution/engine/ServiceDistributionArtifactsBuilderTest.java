@@ -62,7 +62,7 @@ public class ServiceDistributionArtifactsBuilderTest extends BeConfDependentTest
 
 	@Before
 	public void setUpMock() throws Exception {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test

@@ -79,7 +79,7 @@ public class UploadCSARFileTest {
 
   @Before
   public void setUp() throws Exception {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     candidateService = new CandidateServiceImpl(manifestCreator, orchestrationTemplateCandidateDao);
     candidateManager = new OrchestrationTemplateCandidateManagerImpl(vspInfoDaoMock,
         candidateService);
