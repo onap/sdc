@@ -220,8 +220,6 @@
       <groupId>org.openecomp.sdc.be</groupId>
       <artifactId>common-be</artifactId>
       <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>org.springframework</groupId>
