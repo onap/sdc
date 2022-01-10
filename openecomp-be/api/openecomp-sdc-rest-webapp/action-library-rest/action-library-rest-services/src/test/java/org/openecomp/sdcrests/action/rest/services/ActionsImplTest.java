@@ -62,7 +62,7 @@ public class ActionsImplTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(request.getRemoteUser()).thenReturn("unit-test-user");
         when(request.getHeader(X_OPEN_ECOMP_INSTANCE_ID_HEADER_PARAM)).thenReturn("X-OPEN-ECOMP-InstanceID");
         when(request.getHeader(X_OPEN_ECOMP_REQUEST_ID_HEADER_PARAM)).thenReturn("X-OPEN-ECOMP-RequestID");

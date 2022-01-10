@@ -51,7 +51,7 @@ public class CapabilitiesOperationTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(mockJanusGraphDao.getVertexById(anyString(), any())).thenReturn(Either.left(new GraphVertex()));

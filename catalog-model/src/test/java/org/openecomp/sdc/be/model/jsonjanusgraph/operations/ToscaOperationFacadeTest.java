@@ -140,7 +140,7 @@ public class ToscaOperationFacadeTest {
     @Before
     public void setUp() throws Exception {
         testInstance = new ToscaOperationFacade();
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @SuppressWarnings("unchecked")

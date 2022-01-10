@@ -47,7 +47,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
 public class NicsImplTest {
@@ -71,7 +71,7 @@ public class NicsImplTest {
   @Before
   public void setUp() {
     try {
-      initMocks(this);
+      openMocks(this);
 
       NicEntity e = new NicEntity();
       e.setComponentId(componentId);

@@ -37,7 +37,7 @@ class SessionContextProviderFactoryImplTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test

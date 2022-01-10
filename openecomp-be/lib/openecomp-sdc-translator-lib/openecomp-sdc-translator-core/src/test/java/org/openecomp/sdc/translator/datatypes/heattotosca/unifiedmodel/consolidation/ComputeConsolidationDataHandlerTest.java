@@ -51,7 +51,7 @@ public class ComputeConsolidationDataHandlerTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         consolidationDataHandler = new ComputeConsolidationDataHandler(computeConsolidationData);
     }
 

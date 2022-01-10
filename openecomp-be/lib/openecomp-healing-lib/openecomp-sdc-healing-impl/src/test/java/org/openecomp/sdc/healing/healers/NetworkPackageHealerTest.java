@@ -88,7 +88,7 @@ public class NetworkPackageHealerTest {
     @Before
     public void init() {
         SessionContextProviderFactory.getInstance().createInterface().create("test", tenant);
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         networkPackageHealer = new NetworkPackageHealer(vspInfoDaoMock, zusammenAdaptorMock, candidateEntityBuilder);
     }
 

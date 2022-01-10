@@ -57,7 +57,7 @@ public class ProcessArtifactEnricherTest {
 
   @Before
   public void injectDoubles() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
   }
 
   @Test

@@ -100,7 +100,7 @@ public class RelationshipTypeOperationTest extends ModelTestBase {
 
     @BeforeEach
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         Mockito.doReturn(JanusGraphOperationStatus.OK).when(janusGraphGenericDao).commit();
         Mockito.doReturn(JanusGraphOperationStatus.OK).when(janusGraphGenericDao).rollback();

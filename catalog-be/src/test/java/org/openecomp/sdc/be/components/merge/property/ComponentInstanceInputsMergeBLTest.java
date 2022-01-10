@@ -66,7 +66,7 @@ public class ComponentInstanceInputsMergeBLTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ComponentInstance instance1 = new ComponentInstanceBuilder().setId(INSTANCE1).setName(INSTANCE1).build();
         ComponentInstance instance2 = new ComponentInstanceBuilder().setId(INSTANCE2).setName(INSTANCE2).build();
 

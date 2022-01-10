@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class ApplicationConfigurationImplTest {
 
@@ -52,7 +52,7 @@ public class ApplicationConfigurationImplTest {
 
     @Before
     public void setUp() {
-        initMocks(this);
+        openMocks(this);
         applicationConfiguration = new ApplicationConfigurationImpl(applicationConfigManager);
     }
 

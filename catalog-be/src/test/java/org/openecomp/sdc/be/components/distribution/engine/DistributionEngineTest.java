@@ -82,7 +82,7 @@ public class DistributionEngineTest{
 
 	@Before
 	public void setUpMock() throws Exception {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		distributionEngineConfigurationMock = new DummyDistributionConfigurationManager();
 		envs = getEnvs(ENV_ID);
         modifier.setUserId(USER_ID);

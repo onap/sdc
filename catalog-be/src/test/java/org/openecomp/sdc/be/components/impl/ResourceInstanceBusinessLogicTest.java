@@ -100,7 +100,7 @@ public class ResourceInstanceBusinessLogicTest extends BaseBusinessLogicMock {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Map<String, Object> deploymentResourceArtifacts = ConfigurationManager.getConfigurationManager().getConfiguration().getDeploymentResourceInstanceArtifacts();
         Map<String, Object> placeHolderData = (Map<String, Object>) deploymentResourceArtifacts.get(ArtifactsBusinessLogic.HEAT_ENV_NAME);
 

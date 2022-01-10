@@ -81,7 +81,7 @@ class PermissionsManagerImplTest {
     public void setUp() throws Exception {
         SessionContextProviderFactory.getInstance().createInterface().create(USER,
             tenant);
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test

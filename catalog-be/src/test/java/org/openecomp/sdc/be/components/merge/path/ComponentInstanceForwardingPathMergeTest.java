@@ -57,7 +57,7 @@ public class ComponentInstanceForwardingPathMergeTest extends BaseForwardingPath
 
     @BeforeEach
     public void setUpData() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         user = new User();
         user.setUserId("44");
         user.setRole(UserRoleEnum.ADMIN.getName());

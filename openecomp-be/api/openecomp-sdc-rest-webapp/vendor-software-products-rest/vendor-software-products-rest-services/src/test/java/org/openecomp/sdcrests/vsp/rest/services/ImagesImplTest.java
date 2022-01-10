@@ -49,7 +49,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
 public class ImagesImplTest {
@@ -79,7 +79,7 @@ public class ImagesImplTest {
   @Before
   public void setUp() {
     try {
-      initMocks(this);
+      openMocks(this);
 
       ImageEntity ie = new ImageEntity();
       ie.setComponentId(componentId);

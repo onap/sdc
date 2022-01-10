@@ -89,7 +89,7 @@ public class RequirementBusinessLogicTest extends BaseBusinessLogicMock {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ExternalConfiguration.setAppName("catalog-be");
 
         ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));

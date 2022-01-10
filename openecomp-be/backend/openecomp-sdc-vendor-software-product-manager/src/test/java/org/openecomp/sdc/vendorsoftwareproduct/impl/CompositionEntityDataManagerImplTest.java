@@ -98,7 +98,7 @@ public class CompositionEntityDataManagerImplTest {
 
   @Before
   public void setUp() throws Exception {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     compositionEntityDataManager.addEntity(new VspQuestionnaireEntity(VSP1, VERSION), null);
 
     doReturn(SIMPLE_SCHEMA).when(compositionEntityDataManager).generateSchema(SchemaTemplateContext.questionnaire, CompositionEntityType.vsp, null);

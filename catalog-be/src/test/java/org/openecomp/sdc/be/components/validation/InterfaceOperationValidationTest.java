@@ -72,7 +72,7 @@ public class InterfaceOperationValidationTest {
     @Before
     public void setup() {
 
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         responseFormatManagerMock = Mockito.mock(ResponseFormatManager.class);
         when(responseFormatManagerMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
         when(responseFormatManagerMock.getResponseFormat(any(), any())).thenReturn(new ResponseFormat());

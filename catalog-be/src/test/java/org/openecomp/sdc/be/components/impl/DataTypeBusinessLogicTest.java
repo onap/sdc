@@ -87,7 +87,7 @@ public class DataTypeBusinessLogicTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         testInstance.setToscaOperationFacade(toscaOperationFacadeMock);
 

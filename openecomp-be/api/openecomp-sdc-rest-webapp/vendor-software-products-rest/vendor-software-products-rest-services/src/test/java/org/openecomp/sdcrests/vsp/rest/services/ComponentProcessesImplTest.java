@@ -47,7 +47,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 
@@ -75,7 +75,7 @@ public class ComponentProcessesImplTest {
   @Before
   public void setUp() {
     try {
-      initMocks(this);
+      openMocks(this);
 
       ProcessEntity pe = new ProcessEntity();
       pe.setId(vspId);

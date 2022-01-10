@@ -73,7 +73,7 @@ public class ComponentInstanceMergeDataBusinessLogicTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         testInstance.setComponentInstancesMergeBLs(Arrays.asList(componentInstanceMergeInterfaceMock1, componentInstanceMergeInterfaceMock2));
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }

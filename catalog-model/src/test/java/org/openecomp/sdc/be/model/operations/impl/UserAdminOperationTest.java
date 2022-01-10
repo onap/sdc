@@ -81,7 +81,7 @@ public class UserAdminOperationTest extends ModelTestBase {
 
     @Before
     public void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Mockito.reset(janusGraphGenericDao);
         mockJanusGraphUpdate();
         mockJanusGraphDelete();

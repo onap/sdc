@@ -67,7 +67,7 @@ public class DistributionBusinessLogicTest extends BeConfDependentTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Mockito.reset(cambriaHandler);
     }
 

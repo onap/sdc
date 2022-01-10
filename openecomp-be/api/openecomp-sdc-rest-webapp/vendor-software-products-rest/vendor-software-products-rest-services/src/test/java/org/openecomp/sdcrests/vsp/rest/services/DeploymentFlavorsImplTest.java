@@ -44,7 +44,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
 public class DeploymentFlavorsImplTest {
@@ -64,7 +64,7 @@ public class DeploymentFlavorsImplTest {
   @Before
   public void setUp() {
     try {
-      initMocks(this);
+      openMocks(this);
 
       DeploymentFlavorEntity e = new DeploymentFlavorEntity();
       e.setId(deploymentFlavorId);

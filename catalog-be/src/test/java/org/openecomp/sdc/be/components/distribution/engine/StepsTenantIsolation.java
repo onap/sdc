@@ -90,7 +90,7 @@ public class StepsTenantIsolation {
 
     @Before
     public void beforeScenario() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(operationalEnvironmentDao.getByEnvironmentsStatus(EnvironmentStatusEnum.COMPLETED))
             .thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
         doNothing().when(envEngine).createUebTopicsForEnvironments();

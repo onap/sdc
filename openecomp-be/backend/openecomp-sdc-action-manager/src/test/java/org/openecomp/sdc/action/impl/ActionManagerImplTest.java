@@ -80,7 +80,7 @@ public class ActionManagerImplTest {
 
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         actionManager = new ActionManagerImpl(actionDao, versioningManager, actionArtifactDao,
             versionInfoDao, uniqueValueDao);
     }

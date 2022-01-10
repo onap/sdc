@@ -147,7 +147,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
 
     @BeforeAll
     public void initClass() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(request.getSession()).thenReturn(session);
         when(session.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);

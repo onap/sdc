@@ -47,7 +47,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
 public class ComponentImplTest {
@@ -67,7 +67,7 @@ public class ComponentImplTest {
   @Before
   public void setUp() {
     try {
-      initMocks(this);
+      openMocks(this);
 
       ComponentEntity ce = new ComponentEntity();
       ce.setId(vspId);
