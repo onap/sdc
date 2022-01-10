@@ -73,7 +73,7 @@ public class ReqValidationFilterTest {
 
     @Before
     public void initMocks(){
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Before

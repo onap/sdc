@@ -86,7 +86,7 @@ public class ArtifactValidationUtilsTest {
 
     @BeforeEach
     public void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID)).thenReturn(Either.left(1L));
         when(artifactCassandraDao.getCountOfArtifactById(ES_ID_NOT_IN_CASS)).thenReturn(Either.right(CassandraOperationStatus.NOT_FOUND));
 

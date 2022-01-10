@@ -107,7 +107,7 @@ class NsDescriptorGeneratorImplTest {
     @BeforeEach
     void setUp() {
         setUpConfigurationMock();
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         nsDescriptorGenerator = new NsDescriptorGeneratorImpl(toscaExportHandler, toscaTemplateYamlGeneratorProvider);
     }
 

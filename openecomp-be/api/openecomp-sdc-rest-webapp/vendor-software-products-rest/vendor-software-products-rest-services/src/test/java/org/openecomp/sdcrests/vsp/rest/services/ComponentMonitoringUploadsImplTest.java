@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.util.UUID;
 
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.mockito.Mockito.when;
 
 public class ComponentMonitoringUploadsImplTest {
@@ -64,7 +64,7 @@ public class ComponentMonitoringUploadsImplTest {
   @Before
   public void setUp() {
     try {
-      initMocks(this);
+      openMocks(this);
 
       MonitoringUploadStatus result = new MonitoringUploadStatus();
       result.setSnmpPoll("p");

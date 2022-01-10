@@ -55,7 +55,7 @@ public class ManufacturerReferenceNumberHealerTest {
 
   @Before
   public void init(){
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     manufacturerReferenceNumberHealer = new ManufacturerReferenceNumberHealer
         (vendorLicenseFacade, featureGroupDao);
   }

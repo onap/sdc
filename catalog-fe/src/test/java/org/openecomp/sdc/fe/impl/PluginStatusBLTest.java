@@ -30,7 +30,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class PluginStatusBLTest {
 
@@ -40,7 +40,7 @@ public class PluginStatusBLTest {
 
     @Before
     public void setUp() {
-        initMocks(this);
+        openMocks(this);
     }
 
     @Test

@@ -54,7 +54,7 @@ public class AbstractSubstituteToscaEnricherTest extends BaseToscaEnrichmentTest
 
   @Before
   public void injectDoubles() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
     vspId = "123";
     version.setMajor(1);
     version.setMinor(0);

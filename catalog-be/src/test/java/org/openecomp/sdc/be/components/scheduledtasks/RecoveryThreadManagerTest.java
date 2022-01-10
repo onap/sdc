@@ -60,7 +60,7 @@ public class RecoveryThreadManagerTest extends BeConfDependentTest {
 
     @Before
     public void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         reset(operationalEnvironmentDao, environmentsEngine, scheduledService);
         recoveryThreadManager.init();
     }

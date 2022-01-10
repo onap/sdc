@@ -106,7 +106,7 @@ public class ProductBusinessLogicTest extends ComponentBusinessLogicMock {
 			artifactsBusinessLogic, componentInstanceBusinessLogic, artifactToscaOperation, componentContactIdValidator,
 			componentNameValidator, componentTagsValidator, componentValidator,
 			componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator );
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		product = new Product();
 		user = new User();
 		contacts = new ArrayList<>();

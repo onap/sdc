@@ -74,7 +74,7 @@ public class ComponentInstancePropertyToPolicyDeclaratorTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         service = new Service();
         componentInstance = new ComponentInstance();

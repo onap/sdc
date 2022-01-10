@@ -215,7 +215,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
 
     @Before
     public void initMocks() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         Either<ArtifactDefinition, StorageOperationStatus> NotFoundResult = Either
                 .right(StorageOperationStatus.NOT_FOUND);
 

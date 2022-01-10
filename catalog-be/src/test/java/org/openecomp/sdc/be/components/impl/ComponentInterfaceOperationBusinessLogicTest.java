@@ -88,7 +88,7 @@ public class ComponentInterfaceOperationBusinessLogicTest extends BaseBusinessLo
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         componentInterfaceOperationBusinessLogic =
             new ComponentInterfaceOperationBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
                 groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation,

@@ -114,7 +114,7 @@ public class UpgradeBusinessLogicTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
         upgradeBusinessLogic = new UpgradeBusinessLogic(lifecycleBusinessLogic, componentInstanceBusinessLogic,
                 userValidations, toscaOperationFacade, componentsUtils, upgradeOperation,

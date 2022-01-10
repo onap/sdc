@@ -62,7 +62,7 @@ class EtsiNfvNsCsarEntryGeneratorTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(etsiNfvNsdCsarGeneratorFactory.create(nsdVersion)).thenReturn(etsiNfvNsdCsarGenerator);
     }
 

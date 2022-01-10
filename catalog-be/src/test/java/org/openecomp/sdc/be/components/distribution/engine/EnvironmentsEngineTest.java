@@ -76,7 +76,7 @@ public class EnvironmentsEngineTest {
 
     @Before
     public void preStart() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
 

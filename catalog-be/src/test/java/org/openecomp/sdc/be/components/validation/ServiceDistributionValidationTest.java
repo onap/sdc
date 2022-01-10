@@ -87,7 +87,7 @@ public class ServiceDistributionValidationTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         user = new User();
         user.setUserId(USER_ID);
         errResponse = new ResponseFormat();
