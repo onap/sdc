@@ -1,0 +1,198 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+description: ETSI NFV SOL 001 Root node type definitions version 2.5.1
+
+node_types:
+  tosca.nodes.Root:
+    description: The TOSCA Node Type all other TOSCA base Node Types derive from
+    attributes:
+      tosca_id:
+        type: string
+      tosca_name:
+        type: string
+      state:
+        type: string
+    capabilities:
+      feature:
+        type: tosca.capabilities.Node
+    requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+          occurrences: [ 0, UNBOUNDED ]
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+  org.onap.policy.clamp.controlloop.Participant:
+    derived_from: tosca.nodes.Root
+    properties:
+      provider:
+        type: string
+        description: Provider of the participant
+        required: false
+      version:
+        type: string
+        description: Identifies the version of the participant.
+        required: true
+  org.onap.policy.clamp.controlloop.ControlLoopElement:
+    derived_from: tosca.nodes.Root
+    properties:
+      provider:
+        type: string
+        required: false
+        metadata:
+          common: true
+        description: Specifies the organization that provides the control loop element
+      version:
+        type: string
+        description: Identifies the version of the ControlLoopElement.
+        required: true
+      participant_id:
+        type: string
+        required: true
+        metadata:
+          common: true
+      participantType:
+        type: string
+        required: true
+        metadata:
+          common: true
+        description: The identity of the participant type that hosts this type of Control Loop Element
+      startPhase:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        metadata:
+          common: true
+        description: A value indicating the start phase in which this control loop element will be started, the
+          first start phase is zero. Control Loop Elements are started in their start_phase order and stopped
+          in reverse start phase order. Control Loop Elements with the same start phase are started and
+          stopped simultaneously
+      uninitializedToPassiveTimeout:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        default: 60
+        metadata:
+          common: true
+        description: The maximum time in seconds to wait for a state chage from uninitialized to passive
+      passiveToRunningTimeout:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        default: 60
+        metadata:
+          common: true
+        description: The maximum time in seconds to wait for a state chage from passive to running
+      runningToPassiveTimeout:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        default: 60
+        metadata:
+          common: true
+        description: The maximum time in seconds to wait for a state chage from running to passive
+      passiveToUninitializedTimeout:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        default: 60
+        metadata:
+          common: true
+        description: The maximum time in seconds to wait for a state chage from passive to uninitialized
+  org.onap.policy.clamp.controlloop.ControlLoop:
+    derived_from: tosca.nodes.Root
+    properties:
+      provider:
+        type: string
+        required: false
+        metadata:
+          common: true
+        description: Specifies the organization that provides the control loop element
+      version:
+        type: string
+        description: Identifies the version of the participant.
+        required: true
+      elements:
+        type: list
+        required: true
+        metadata:
+          common: true
+        entry_schema:
+          type: string
+        description: Specifies a list of control loop element definitions that make up this control loop definition
+  org.onap.policy.clamp.controlloop.PolicyControlLoopElement:
+    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+    properties:
+      policy_type_id:
+        type: string
+        required: true
+      policy_id:
+        type: string
+        required: false
+      version:
+        type: string
+        description: Identifies the version of the participant.
+        required: true
+  org.onap.policy.clamp.controlloop.CDSControlLoopElement:
+    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+    properties:
+      cds_blueprint_id:
+        type: string
+        required: true
+      version:
+        type: string
+        description: Identifies the version of the participant.
+        required: true
+  org.onap.policy.clamp.controlloop.K8SMicroserviceControlLoopElement:
+    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+    properties:
+      chart:
+        type: string
+        required: true
+      configs:
+        type: list
+        required: false
+      requirements:
+        type: string
+        required: false
+      templates:
+        type: list
+        required: false
+        entry_schema:
+      values:
+        type: string
+        required: true
+      version:
+        type: string
+        description: Identifies the version of the participant.
+        required: true
+  org.onap.policy.clamp.controlloop.HttpControlLoopElement:
+    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+    properties:
+      baseUrl:
+        type: string
+        required: true
+        description: The base URL to be prepended to each path, identifies the host for the REST endpoints.
+      httpHeaders:
+        type: map
+        required: false
+        entry_schema:
+          type: string
+        description: HTTP headers to send on REST requests
+      configurationEntities:
+        type: map
+        required: true
+        entry_schema:
+          type: string
+          typeVersion: 1.0.0
+        description: The connfiguration entities the Control Loop Element is managing and their associated REST requests
+      version:
+        type: string
+        description: Identifies the version of the participant.
+        required: true

@@ -3155,3 +3155,13 @@ onap.datatypes.partner.sppartner_details:
       type: string
       description: Authentication  details to access the Service URL
       required: false
+
+onap.datatypes.ToscaConceptIdentifier:
+  derived_from: tosca.datatypes.Root
+  properties:
+    name:
+      type: string
+      required: true
+    version:
+      type: string
+      required: true

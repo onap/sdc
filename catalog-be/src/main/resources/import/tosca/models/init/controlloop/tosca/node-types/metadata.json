@@ -1,0 +1,188 @@
+{
+  "nodeMetadataList": [
+    {
+      "contactId": "jh0003",
+      "toscaName": "tosca.nodes.Root",
+      "name": "Root",
+      "model": "CONTROL LOOP",
+      "description": "The TOSCA Node Type all other TOSCA base Node Types derive from",
+      "resourceIconPath": "defaulticon",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Abstract"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "Root",
+        "tosca.nodes.Root"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "org.onap.policy.clamp.controlloop.Participant",
+      "name": "Participant",
+      "model": "CONTROL LOOP",
+      "description": "The TOSCA service template representing the Participant",
+      "resourceIconPath": "defaulticon",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "Participant",
+        "org.onap.policy.clamp.controlloop.Participant"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "org.onap.policy.clamp.controlloop.ControlLoopElement",
+      "name": "ControlLoopElement",
+      "model": "CONTROL LOOP",
+      "description": "The TOSCA service template representing the ControlLoopElement",
+      "resourceIconPath": "defaulticon",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "ControlLoopElement",
+        "org.onap.policy.clamp.controlloop.ControlLoopElement"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "org.onap.policy.clamp.controlloop.ControlLoop",
+      "name": "ControlLoop",
+      "model": "CONTROL LOOP",
+      "description": "The TOSCA service template representing the ControlLoop",
+      "resourceIconPath": "defaulticon",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "ControlLoop",
+        "org.onap.policy.clamp.controlloop.ControlLoop"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "org.onap.policy.clamp.controlloop.PolicyControlLoopElement",
+      "name": "PolicyControlLoopElement",
+      "model": "CONTROL LOOP",
+      "description": "The TOSCA service template representing the PolicyControlLoopElement",
+      "resourceIconPath": "defaulticon",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "PolicyControlLoopElement",
+        "org.onap.policy.clamp.controlloop.PolicyControlLoopElement"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "org.onap.policy.clamp.controlloop.CDSControlLoopElement",
+      "name": "CDSControlLoopElement",
+      "model": "CONTROL LOOP",
+      "description": "The TOSCA service template representing the CDSControlLoopElement",
+      "resourceIconPath": "defaulticon",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "CDSControlLoopElement",
+        "org.onap.policy.clamp.controlloop.CDSControlLoopElement"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "org.onap.policy.clamp.controlloop.K8SMicroserviceControlLoopElement",
+      "name": "K8SMicroserviceControlLoopElement",
+      "model": "CONTROL LOOP",
+      "description": "The TOSCA service template representing the K8SMicroserviceControlLoopElement",
+      "resourceIconPath": "defaulticon",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "K8SMicroserviceControlLoopElement",
+        "org.onap.policy.clamp.controlloop.K8SMicroserviceControlLoopElement"
+      ]
+    },
+    {
+      "contactId": "jh0003",
+      "toscaName": "org.onap.policy.clamp.controlloop.HttpControlLoopElement",
+      "name": "HttpControlLoopElement",
+      "model": "CONTROL LOOP",
+      "description": "The TOSCA service template representing the HttpControlLoopElement",
+      "resourceIconPath": "defaulticon",
+      "resourceType": "VFC",
+      "categories": [
+        {
+          "name": "Generic",
+          "subcategories": [
+            {
+              "name": "Infrastructure"
+            }
+          ]
+        }
+      ],
+      "tags": [
+        "HttpControlLoopElement",
+        "org.onap.policy.clamp.controlloop.HttpControlLoopElement"
+      ]
+    }
+  ]
+}
+
