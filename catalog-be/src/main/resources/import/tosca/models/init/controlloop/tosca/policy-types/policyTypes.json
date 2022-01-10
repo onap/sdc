@@ -1,0 +1,26 @@
+{
+  "tosca.policies.Root": {
+    "displayName": "Root",
+    "icon": "policy-root"
+  },
+  "tosca.policies.Placement": {
+    "displayName": "Placement",
+    "icon": "policy-placement"
+  },
+  "onap.policies.Monitoring": {
+    "displayName": "Monotiring",
+    "icon": "policy-monotiring"
+  },
+  "onap.policies.monitoring.dcae-pm-subscription-handler": {
+    "displayName": "DCAE-PM-Subscription-Handler",
+    "icon": "policy-placement"
+  },
+  "onap.policies.controlloop.operational.Common": {
+    "displayName": "ControLoopOperationalCommon",
+    "icon": "policy-placement"
+  },
+  "onap.policies.controlloop.operational.common.Apex": {
+    "displayName": "ControlLoopOperationalCommonApex",
+    "icon": "policy-placement"
+  }
+}

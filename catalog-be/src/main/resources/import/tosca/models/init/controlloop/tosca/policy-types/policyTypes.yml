@@ -1,0 +1,82 @@
+tosca.policies.Root:
+  description: The TOSCA Policy Type all other TOSCA Policy Types derive from
+tosca.policies.Placement:
+  derived_from: tosca.policies.Root
+  description: The TOSCA Policy Type definition that is used to govern placement of TOSCA
+    nodes or groups of nodes.
+onap.policies.Monitoring:
+  derived_from: tosca.policies.Root
+  description: a base policy type for all policies that govern monitoring provisioning
+  version: 1.0.0
+  name: onap.policies.Monitoring
+onap.policies.monitoring.dcae-pm-subscription-handler:
+  properties:
+    pmsh_policy:
+      name: pmsh_policy
+      type: onap.datatypes.monitoring.subscription
+      typeVersion: 0.0.0
+      description: PMSH Policy JSON
+      required: false
+      constraints: []
+      metadata: {}
+  name: onap.policies.monitoring.dcae-pm-subscription-handler
+  version: 1.0.0
+  derived_from: onap.policies.Monitoring
+  metadata: {}
+onap.policies.controlloop.operational.Common:
+  derived_from: tosca.policies.Root
+  version: 1.0.0
+  name: onap.policies.controlloop.operational.Common
+  description: Operational Policy for Control Loop execution. Originated in Frankfurt to
+    support TOSCA Compliant Policy Types. This does NOT support the legacy Policy YAML policy type.
+  properties:
+    id:
+      type: string
+      description: The unique control loop id.
+      required: true
+    timeout:
+      type: integer
+      description: Overall timeout for executing all the operations. This timeout should
+        equal or exceed the total timeout for each operation listed.
+      required: true
+    abatement:
+      type: boolean
+      description: Whether an abatement event message will be expected for the control loop
+        from DCAE.
+      required: true
+      default: false
+    trigger:
+      type: string
+      description: Initial operation to execute upon receiving an Onset event message for
+        the Control Loop.
+      required: true
+    operations:
+      type: list
+      description: List of operations to be performed when Control Loop is triggered.
+      required: true
+      entry_schema:
+        type: onap.datatype.controlloop.Operation
+onap.policies.controlloop.operational.common.Apex:
+  derived_from: onap.policies.controlloop.operational.Common
+  type_version: 1.0.0
+  version: 1.0.0
+  name: onap.policies.controlloop.operational.common.Apex
+  description: Operational policies for Apex PDP
+  properties:
+    engineServiceParameters:
+      type: string
+      description: The engine parameters like name, instanceCount, policy implementation,
+        parameters etc.
+      required: true
+    eventInputParameters:
+      type: string
+      description: The event input parameters.
+      required: true
+    eventOutputParameters:
+      type: string
+      description: The event output parameters.
+      required: true
+    javaProperties:
+      type: string
+      description: Name/value pairs of properties to be set for APEX if needed.
+      required: false

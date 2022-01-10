@@ -55,6 +55,12 @@ services:
           "ETSI SOL001 v2.5.1",
           "SDC AID"
       ]
+    ControlLoop:
+      name: "ControlLoop"
+      icons: ['network_l_1-3']
+      models: [
+          "CONTROL LOOP"
+      ]
 resources:
   NetworkLayer23:
     name: "Network L2-3"
@@ -127,6 +133,12 @@ resources:
           icons: ['networkrules','securityrules']
       NetworkService:
           name: "Network Service"
+          icons: ['network']
+      ControlLoopElement:
+          name: "ControlLoop Element"
+          icons: ['network']
+      Participant:
+          name: "Participant"
           icons: ['network']
   NetworkConnectivity:
     name: "Network Connectivity"

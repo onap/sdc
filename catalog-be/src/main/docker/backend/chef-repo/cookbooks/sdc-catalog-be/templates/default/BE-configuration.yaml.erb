@@ -1028,6 +1028,8 @@ serviceBaseNodeTypes:
     required: true
     baseTypes:
       - tosca.nodes.nfv.NS
+  ControlLoop:
+    required: false
 
 workloadContext: Production
 
@@ -1255,6 +1257,7 @@ cadiFilterParams:
 # This configuration entry lists all node type names prefix that shall be allowed on SDC.
 definedResourceNamespace:
   - org.openecomp.resource.
+  - org.onap.policy.clamp.controlloop.
 
 # This configuration entry lists all Directives values that shall be allowed on SDC.
 directives:

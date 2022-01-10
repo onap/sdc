@@ -1,0 +1,432 @@
+tosca.datatypes.Root:
+  description: The TOSCA root Data Type all other TOSCA base Data Types derive from
+integer:
+  derived_from: tosca.datatypes.Root
+string:
+  derived_from: tosca.datatypes.Root
+boolean:
+  derived_from: tosca.datatypes.Root
+float:
+  derived_from: tosca.datatypes.Root
+list:
+  derived_from: tosca.datatypes.Root
+map:
+  derived_from: tosca.datatypes.Root
+json:
+  derived_from: tosca.datatypes.Root
+scalar-unit:
+  derived_from: tosca.datatypes.Root
+scalar-unit.size:
+  derived_from: scalar-unit
+scalar-unit.time:
+  derived_from: scalar-unit
+scalar-unit.frequency:
+  derived_from: scalar-unit
+onap.datatypes.ToscaConceptIdentifier:
+  derived_from: tosca.datatypes.Root
+  properties:
+    name:
+      type: string
+      required: true
+    version:
+      type: string
+      required: true
+onap.datatype.controlloop.Target:
+  derived_from: tosca.datatypes.Root
+  description: Definition for a entity in A&AI to perform a control loop operation on
+  properties:
+    targetType:
+      type: string
+      description: Category for the target type
+      required: true
+      constraints:
+        - valid_values:
+            - VNF
+            - VM
+            - VFMODULE
+            - PNF
+    entityIds:
+      type: map
+      description: Map of values that identify the resource. If none are provided, it is
+        assumed that the entity that generated the ONSET event will be the target.
+      required: false
+      metadata:
+        clamp_possible_values: 'ClampExecution:CSAR_RESOURCES'
+      entry_schema:
+        type: string
+onap.datatype.controlloop.Actor:
+  derived_from: tosca.datatypes.Root
+  description: An actor/operation/target definition
+  properties:
+    actor:
+      type: string
+      description: The actor performing the operation.
+      required: true
+      metadata:
+        clamp_possible_values: 'Dictionary:DefaultActors,ClampExecution:CDS/actor'
+    operation:
+      type: string
+      description: The operation the actor is performing.
+      metadata:
+        clamp_possible_values: 'Dictionary:DefaultOperations,ClampExecution:CDS/operation'
+      required: true
+    target:
+      type: onap.datatype.controlloop.Target
+      description: The resource the operation should be performed on.
+      required: true
+    payload:
+      type: map
+      description: Name/value pairs of payload information passed by Policy to the actor
+      required: false
+      metadata:
+        clamp_possible_values: 'ClampExecution:CDS/payload'
+      entry_schema:
+        type: string
+onap.datatype.controlloop.Operation:
+  derived_from: tosca.datatypes.Root
+  description: An operation supported by an actor
+  properties:
+    id:
+      type: string
+      description: Unique identifier for the operation
+      required: true
+    description:
+      type: string
+      description: A user-friendly description of the intent for the operation
+      required: false
+    operation:
+      type: onap.datatype.controlloop.Actor
+      description: The definition of the operation to be performed.
+      required: true
+    timeout:
+      type: integer
+      description: The amount of time for the actor to perform the operation.
+      required: true
+    retries:
+      type: integer
+      description: The number of retries the actor should attempt to perform the operation.
+      required: true
+      default: 0
+    success:
+      type: string
+      description: Points to the operation to invoke on success. A value of "final_success"
+        indicates and end to the operation.
+      required: false
+      default: final_success
+    failure:
+      type: string
+      description: Points to the operation to invoke on Actor operation failure.
+      required: false
+      default: final_failure
+    failure_timeout:
+      type: string
+      description: Points to the operation to invoke when the time out for the operation
+        occurs.
+      required: false
+      default: final_failure_timeout
+    failure_retries:
+      type: string
+      description: Points to the operation to invoke when the current operation has
+        exceeded its max retries.
+      required: false
+      default: final_failure_retries
+    failure_exception:
+      type: string
+      description: Points to the operation to invoke when the current operation causes an
+        exception.
+      required: false
+      default: final_failure_exception
+    failure_guard:
+      type: string
+      description: Points to the operation to invoke when the current operation is blocked
+        due to guard policy enforcement.
+      required: false
+      default: final_failure_guard
+onap.datatypes.monitoring.managedObjectDNsBasic:
+  constraints: []
+  properties:
+    DN:
+      name: DN
+      type: string
+      typeVersion: 0.0.0
+      description: Managed object distinguished name
+      required: true
+      constraints: []
+      metadata: {}
+  name: onap.datatypes.monitoring.managedObjectDNsBasic
+  version: 0.0.0
+  derived_from: tosca.datatypes.Root
+  metadata: {}
+onap.datatypes.monitoring.managedObjectDNsBasics:
+  constraints: []
+  properties:
+    managedObjectDNsBasic:
+      name: managedObjectDNsBasic
+      type: map
+      typeVersion: 0.0.0
+      description: Managed object distinguished name object
+      required: true
+      constraints: []
+      entry_schema:
+        type: onap.datatypes.monitoring.managedObjectDNsBasic
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+  name: onap.datatypes.monitoring.managedObjectDNsBasics
+  version: 0.0.0
+  derived_from: tosca.datatypes.Root
+  metadata: {}
+onap.datatypes.monitoring.measurementGroup:
+  constraints: []
+  properties:
+    measurementTypes:
+      name: measurementTypes
+      type: list
+      typeVersion: 0.0.0
+      description: List of measurement types
+      required: true
+      constraints: []
+      entry_schema:
+        type: onap.datatypes.monitoring.measurementTypes
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+    managedObjectDNsBasic:
+      name: managedObjectDNsBasic
+      type: list
+      typeVersion: 0.0.0
+      description: List of managed object distinguished names
+      required: true
+      constraints: []
+      entry_schema:
+        type: onap.datatypes.monitoring.managedObjectDNsBasics
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+  name: onap.datatypes.monitoring.measurementGroup
+  version: 0.0.0
+  derived_from: tosca.datatypes.Root
+  metadata: {}
+onap.datatypes.monitoring.measurementGroups:
+  constraints: []
+  properties:
+    measurementGroup:
+      name: measurementGroup
+      type: map
+      typeVersion: 0.0.0
+      description: Measurement Group
+      required: true
+      constraints: []
+      entry_schema:
+        type: onap.datatypes.monitoring.measurementGroup
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+  name: onap.datatypes.monitoring.measurementGroups
+  version: 0.0.0
+  derived_from: tosca.datatypes.Root
+  metadata: {}
+onap.datatypes.monitoring.measurementType:
+  constraints: []
+  properties:
+    measurementType:
+      name: measurementType
+      type: string
+      typeVersion: 0.0.0
+      description: Measurement type
+      required: true
+      constraints: []
+      metadata: {}
+  name: onap.datatypes.monitoring.measurementType
+  version: 0.0.0
+  derived_from: tosca.datatypes.Root
+  metadata: {}
+onap.datatypes.monitoring.measurementTypes:
+  constraints: []
+  properties:
+    measurementType:
+      name: measurementType
+      type: map
+      typeVersion: 0.0.0
+      description: Measurement type object
+      required: true
+      constraints: []
+      entry_schema:
+        type: onap.datatypes.monitoring.measurementType
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+  name: onap.datatypes.monitoring.measurementTypes
+  version: 0.0.0
+  derived_from: tosca.datatypes.Root
+  metadata: {}
+onap.datatypes.monitoring.nfFilter:
+  constraints: []
+  properties:
+    modelNames:
+      name: modelNames
+      type: list
+      typeVersion: 0.0.0
+      description: List of model names
+      required: true
+      constraints: []
+      entry_schema:
+        type: string
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+    modelInvariantIDs:
+      name: modelInvariantIDs
+      type: list
+      typeVersion: 0.0.0
+      description: List of model invariant IDs
+      required: true
+      constraints: []
+      entry_schema:
+        type: string
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+    modelVersionIDs:
+      name: modelVersionIDs
+      type: list
+      typeVersion: 0.0.0
+      description: List of model version IDs
+      required: true
+      constraints: []
+      entry_schema:
+        type: string
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+    nfNames:
+      name: nfNames
+      type: list
+      typeVersion: 0.0.0
+      description: List of network functions
+      required: true
+      constraints: []
+      entry_schema:
+        type: string
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+  name: onap.datatypes.monitoring.nfFilter
+  version: 0.0.0
+  derived_from: tosca.datatypes.Root
+  metadata: {}
+onap.datatypes.monitoring.subscription:
+  constraints: []
+  properties:
+    measurementGroups:
+      name: measurementGroups
+      type: list
+      typeVersion: 0.0.0
+      description: Measurement Groups
+      required: true
+      constraints: []
+      entry_schema:
+        type: onap.datatypes.monitoring.measurementGroups
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+    fileBasedGP:
+      name: fileBasedGP
+      type: integer
+      typeVersion: 0.0.0
+      description: File based granularity period
+      required: true
+      constraints: []
+      metadata: {}
+    fileLocation:
+      name: fileLocation
+      type: string
+      typeVersion: 0.0.0
+      description: ROP file location
+      required: true
+      constraints: []
+      metadata: {}
+    subscriptionName:
+      name: subscriptionName
+      type: string
+      typeVersion: 0.0.0
+      description: Name of the subscription
+      required: true
+      constraints: []
+      metadata: {}
+    administrativeState:
+      name: administrativeState
+      type: string
+      typeVersion: 0.0.0
+      description: State of the subscription
+      required: true
+      constraints:
+        - valid_values:
+            - LOCKED
+            - UNLOCKED
+      metadata: {}
+    nfFilter:
+      name: nfFilter
+      type: map
+      typeVersion: 0.0.0
+      description: Network function filter
+      required: true
+      constraints: []
+      entry_schema:
+        type: onap.datatypes.monitoring.nfFilter
+        typeVersion: 0.0.0
+        constraints: []
+      metadata: {}
+  name: onap.datatypes.monitoring.subscription
+  version: 0.0.0
+  derived_from: tosca.datatypes.Root
+  metadata: {}
+org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.RestRequest:
+  version: 1.0.0
+  derived_from: tosca.datatypes.Root
+  properties:
+    restRequestId:
+      type: onap.datatypes.ToscaConceptIdentifier
+      typeVersion: 1.0.0
+      required: true
+      description: The name and version of a REST request to be sent to a REST endpoint
+    httpMethod:
+      type: string
+      required: true
+      constraints:
+        - valid_values:
+            - POST
+            - PUT
+            - GET
+            - DELETE
+      description: The REST method to use
+    path:
+      type: string
+      required: true
+      description: The path of the REST request relative to the base URL
+    body:
+      type: string
+      required: false
+      description: The body of the REST request for PUT and POST requests
+    expectedResponse:
+      type: integer
+      required: true
+      constraints: []
+      description: THe expected HTTP status code for the REST request
+org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.ConfigurationEntity:
+  version: 1.0.0
+  derived_from: tosca.datatypes.Root
+  properties:
+    configurationEntityId:
+      type: onap.datatypes.ToscaConceptIdentifier
+      typeVersion: 1.0.0
+      required: true
+      description: The name and version of a Configuration Entity to be handled by the HTTP
+        Control Loop Element
+    restSequence:
+      type: list
+      entry_schema:
+        type: org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.RestRequest
+        typeVersion: 1.0.0
+        constraints: []
+      description: A sequence of REST commands to send to the REST endpoint
