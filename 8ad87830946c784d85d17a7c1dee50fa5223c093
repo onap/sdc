@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "29801276_1759af11",
+        "filename": "common-be-tests/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-11T18:01:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7523f93e_07c05c97",
+      "range": {
+        "startLine": 7,
+        "startChar": 16,
+        "endLine": 7,
+        "endChar": 31
+      },
+      "revId": "8ad87830946c784d85d17a7c1dee50fa5223c093",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "506bf69a_323807f5",
         "filename": "common-be-tests/src/main/resources/artifacts/pnfSoftwareInformation/pnf-sw-information.yaml",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "4af2d90d_121d3d66",
+        "filename": "common-be-tests/src/main/resources/artifacts/pnfSoftwareInformation/pnf-sw-information.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-11T18:01:42Z",
+      "side": 1,
+      "message": "most of them used in\nTestResourcesHandler.getResourceAsStream(definitionYamlFilePath)\nso, files must be in this module and not in testing module",
+      "parentUuid": "506bf69a_323807f5",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 39
+      },
+      "revId": "8ad87830946c784d85d17a7c1dee50fa5223c093",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "03ce89b4_329d4bb1",
         "filename": "pom.xml",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "8ad87830946c784d85d17a7c1dee50fa5223c093",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1653b848_ba3f825d",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-11T18:01:42Z",
+      "side": 1,
+      "message": "order here is irrelevant, maven builds real dependencies based on relations",
+      "parentUuid": "03ce89b4_329d4bb1",
+      "range": {
+        "startLine": 611,
+        "startChar": 0,
+        "endLine": 611,
+        "endChar": 48
+      },
+      "revId": "8ad87830946c784d85d17a7c1dee50fa5223c093",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
