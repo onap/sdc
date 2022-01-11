@@ -25,6 +25,7 @@ import fj.data.Either;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.openecomp.sdc.be.components.merge.VspComponentsMergeCommand;
 import org.openecomp.sdc.be.components.merge.property.DataDefinitionsValuesMergingBusinessLogic;
@@ -111,10 +112,13 @@ public class ComponentInstanceInputsMergeBL implements VspComponentsMergeCommand
 
     private void mergeOldInstanceInputsValues(Component oldComponent, Component newComponent, String instanceId,
                                               List<ComponentInstanceInput> instInputs) {
-        ComponentInstance currentCompInstance = newComponent.getComponentInstanceById(instanceId).get();
-        List<ComponentInstanceInput> oldInstInputs =
-            oldComponent == null ? Collections.emptyList() : oldComponent.safeGetComponentInstanceInputsByName(currentCompInstance.getName());
-        List<InputDefinition> oldInputs = oldComponent == null ? Collections.emptyList() : oldComponent.getInputs();
-        propertyValuesMergingBusinessLogic.mergeInstanceDataDefinitions(oldInstInputs, oldInputs, instInputs, newComponent.getInputs());
+        Optional<ComponentInstance> oCurrentCompInstance = newComponent.getComponentInstanceById(instanceId);
+        if (oCurrentCompInstance.isPresent()) {
+            ComponentInstance currentCompInstance = newComponent.getComponentInstanceById(instanceId).get();
+            List<ComponentInstanceInput> oldInstInputs =
+                    oldComponent == null ? Collections.emptyList() : oldComponent.safeGetComponentInstanceInputsByName(currentCompInstance.getName());
+            List<InputDefinition> oldInputs = oldComponent == null ? Collections.emptyList() : oldComponent.getInputs();
+            propertyValuesMergingBusinessLogic.mergeInstanceDataDefinitions(oldInstInputs, oldInputs, instInputs, newComponent.getInputs());
+        }
     }
 }
