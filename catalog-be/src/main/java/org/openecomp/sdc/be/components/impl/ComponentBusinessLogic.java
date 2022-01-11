@@ -543,8 +543,12 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             throw new ByResponseFormatComponentException(
                 componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ArtifactTypeEnum.TOSCA_CSAR.name()));
         }
-        ArtifactDefinition csarArtifact = component.getToscaArtifacts().values().stream()
-            .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())).findAny().get();
+
+        final ArtifactDefinition csarArtifact = component.getToscaArtifacts().values().stream()
+            .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())).findAny().orElseThrow(() -> {
+                throw new ByResponseFormatComponentException(
+                        componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ArtifactTypeEnum.TOSCA_CSAR.name()));
+            });
         return artifactsBusinessLogic.handleDownloadToscaModelRequest(component, csarArtifact);
     }
 
