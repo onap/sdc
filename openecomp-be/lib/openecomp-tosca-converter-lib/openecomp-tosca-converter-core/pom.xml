@@ -16,9 +16,8 @@
     </dependency>
     <dependency>
       <groupId>org.openecomp.sdc.be</groupId>
-      <artifactId>common-be</artifactId>
+      <artifactId>common-be-tests-utils</artifactId>
       <version>${project.version}</version>
-      <type>test-jar</type>
       <scope>test</scope>
       <exclusions>
         <exclusion>

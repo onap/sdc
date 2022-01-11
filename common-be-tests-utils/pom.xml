@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.openecomp.sdc.be</groupId>
-    <artifactId>common-be</artifactId>
+    <artifactId>common-be-tests-utils</artifactId>
 
     <parent>
         <groupId>org.openecomp.sdc</groupId>
@@ -204,12 +204,6 @@
             <groupId>org.openecomp.sdc.core</groupId>
             <artifactId>openecomp-common-lib</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openecomp.sdc.be</groupId>
-            <artifactId>common-be-tests-utils</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
