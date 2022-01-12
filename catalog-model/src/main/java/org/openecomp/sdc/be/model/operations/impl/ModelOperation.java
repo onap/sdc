@@ -246,7 +246,8 @@ public class ModelOperation {
     private Model convertToModel(final GraphVertex modelGraphVertex) {
         final String modelName = (String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.NAME);
         final String modelTypeProperty = (String) modelGraphVertex.getMetadataProperty(GraphPropertyEnum.MODEL_TYPE);
-        final ModelTypeEnum modelType = StringUtils.isEmpty(modelTypeProperty) ? ModelTypeEnum.NORMATIVE : ModelTypeEnum.findByValue(modelTypeProperty).get();
+        final ModelTypeEnum modelType = StringUtils.isEmpty(modelTypeProperty) ? ModelTypeEnum.NORMATIVE :
+                ModelTypeEnum.findByValue(modelTypeProperty).isPresent() ? ModelTypeEnum.findByValue(modelTypeProperty).get() : ModelTypeEnum.NORMATIVE;
         
         final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> parentNode =
             janusGraphGenericDao.getChild(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.Model), UniqueIdBuilder.buildModelUid(modelName),
