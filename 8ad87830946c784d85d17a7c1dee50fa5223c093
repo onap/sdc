@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "f560a3d5_73e68d4c",
+        "filename": "common-be-tests/src/main/resources/artifacts/pnfSoftwareInformation/pnf-sw-information.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-12T09:44:09Z",
+      "side": 1,
+      "message": "ok, what seems to be happening is these particular files are used in multiple modules (e.g. common-be and catalog-be). In that case I guess its ok to have them here",
+      "parentUuid": "4af2d90d_121d3d66",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 39
+      },
+      "revId": "8ad87830946c784d85d17a7c1dee50fa5223c093",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "03ce89b4_329d4bb1",
         "filename": "pom.xml",
         "patchSetId": 2
