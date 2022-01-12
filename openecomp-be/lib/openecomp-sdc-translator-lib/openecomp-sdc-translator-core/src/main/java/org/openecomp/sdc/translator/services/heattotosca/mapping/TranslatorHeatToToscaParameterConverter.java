@@ -233,7 +233,7 @@ public class TranslatorHeatToToscaParameterConverter {
                 FunctionTranslator functionTranslator = new FunctionTranslator(
                     getFunctionTranslateTo(serviceTemplate, null, heatFileName, heatOrchestrationTemplate, context), parameterName,
                     functionMapEntry.getValue(), null);
-                return FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).get().translateFunction(functionTranslator);
+                return FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).isPresent() ? FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).get().translateFunction(functionTranslator) : paramValue;
             }
         }
         return paramValue;
