@@ -28,7 +28,7 @@
                 <sdc-input
                     label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
                     [(value)]="interfaceType"
-                    [disabled]="true">
+                    [disabled]=isViewOnly>
                 </sdc-input>
             </div>
 
@@ -36,7 +36,7 @@
                 <sdc-input
                     label="{{ 'OPERATION_NAME' | translate }}"
                     [(value)]="operationToUpdate.name"
-                    [disabled]="true">
+                    [disabled]=isViewOnly>
                 </sdc-input>
             </div>
         </div>
@@ -46,7 +46,8 @@
                 label="{{'OPERATION_DESCRIPTION' | translate}}"
                 [(value)]="operationToUpdate.description"
                 testId="interface-operation-description"
-                (valueChange)="onDescriptionChange($event)">
+                (valueChange)="onDescriptionChange($event)"
+                [disabled]=isViewOnly>
             </sdc-input>
         </div>
 
@@ -55,7 +56,8 @@
             <div class="form-item">
                 <checkbox [label]="'Add Artifact To Implementation'"
                           [(checked)]="enableAddArtifactImplementation"
-                          (checkedChange)="onMarkToAddArtifactToImplementation($event)">
+                          (checkedChange)="onMarkToAddArtifactToImplementation($event)"
+                          [disabled]=isViewOnly>
                 </checkbox>
             </div>
             <div class="form-item" *ngIf="!enableAddArtifactImplementation">
@@ -63,7 +65,8 @@
                     label="{{'INTERFACE_OPERATION_IMPLEMENTATION_NAME' | translate}}"
                     testId="interface-operation-implementation-name"
                     [(value)]="artifactName"
-                    (valueChange)="onImplementationNameChange($event)">
+                    (valueChange)="onImplementationNameChange($event)"
+                    [disabled]=isViewOnly>
                 </sdc-input>
             </div>
 
@@ -76,7 +79,8 @@
                         [selectedOption]="toscaArtifactTypeSelected"
                         placeHolder="{{toscaArtifactTypeSelected != undefined ? toscaArtifactTypeSelected : 'Select...'}}"
                         (changed)="onSelectToscaArtifactType($event)"
-                        [options]="toscaArtifactTypes">
+                        [options]="toscaArtifactTypes"
+                        [disabled]=isViewOnly>
                     </sdc-dropdown>
                 </div>
                 <div class="form-item" *ngIf="toscaArtifactTypeSelected && enableAddArtifactImplementation">
@@ -85,7 +89,8 @@
                         data-tests-id="artifactFile"
                         [(value)]="artifactName"
                         [required]="true"
-                        (valueChange)="onArtifactFileChange($event)">
+                        (valueChange)="onArtifactFileChange($event)"
+                        [disabled]=isViewOnly>
                     </sdc-input>
                 </div>
                 <div class="form-item">
@@ -93,7 +98,8 @@
                         label="{{ 'ARTIFACT_VERSION' | translate }}"
                         data-tests-id="artifactVersion"
                         [(value)]="artifactVersion"
-                        (valueChange)="onArtifactVersionChange($event)">
+                        (valueChange)="onArtifactVersionChange($event)"
+                        [disabled]=isViewOnly>
                     </sdc-input>
                 </div>
             </div>
@@ -122,7 +128,7 @@
         <div class="separator-buttons">
             <tab tabTitle="Inputs"></tab>
             <a class="add-param-link add-btn"
-               [ngClass]="{'disabled': readonly}"
+               [ngClass]="{'disabled': readonly || isViewOnly}"
                (click)="onAddInput()">{{'OPERATION_ADD_INPUT' | translate}}
             </a>
         </div>
