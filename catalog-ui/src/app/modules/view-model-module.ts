@@ -36,6 +36,7 @@ import {PropertiesViewModel} from "../view-models/workspace/tabs/properties/prop
 import {ManagementWorkflowViewModel} from "../view-models/workspace/tabs/management-workflow/management-workflow-view-model";
 import {InterfaceOperationViewModel} from "../view-models/workspace/tabs/interface-operation/interface-operation-view-model";
 import {NetworkCallFlowViewModel} from "../view-models/workspace/tabs/network-call-flow/network-call-flow-view-model";
+import {InterfaceDefinitionViewModel} from "../view-models/workspace/tabs/interface-definition/interface-definition-view-model";
 let moduleName:string = 'Sdc.ViewModels';
 let viewModelModule:ng.IModule = angular.module(moduleName, []);
 
@@ -59,4 +60,5 @@ viewModelModule
   .controller(moduleName + '.PropertiesViewModel', PropertiesViewModel)
   .controller(moduleName + '.ManagementWorkflowViewModel', ManagementWorkflowViewModel)
   .controller(moduleName + '.InterfaceOperationViewModel', InterfaceOperationViewModel)
+  .controller(moduleName + '.InterfaceDefinitionViewModel', InterfaceDefinitionViewModel)
   .controller(moduleName + '.NetworkCallFlowViewModel', NetworkCallFlowViewModel);

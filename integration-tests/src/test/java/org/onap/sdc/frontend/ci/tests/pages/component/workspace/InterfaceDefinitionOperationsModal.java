@@ -31,9 +31,9 @@ import org.openqa.selenium.WebElement;
 /**
  * Represents the Composition Interface Operations Modal.
  */
-public class CompositionInterfaceOperationsModal extends AbstractPageObject {
+public class InterfaceDefinitionOperationsModal extends AbstractPageObject {
 
-    public CompositionInterfaceOperationsModal(final WebDriver webDriver) {
+    public InterfaceDefinitionOperationsModal(final WebDriver webDriver) {
         super(webDriver);
     }
 
@@ -44,9 +44,8 @@ public class CompositionInterfaceOperationsModal extends AbstractPageObject {
         waitForElementVisibility(By.xpath(XpathSelector.OPERATION_NAME_LABEL.getXPath()));
         waitForElementVisibility(By.xpath(XpathSelector.INPUT_NAME_SPAN.getXPath()));
         waitForElementVisibility(By.xpath(XpathSelector.INPUT_VALUE_SPAN.getXPath()));
-
-        waitToBeClickable(By.xpath(XpathSelector.ADD_INPUT_BTN.getXPath()));
-        waitToBeClickable(By.xpath(XpathSelector.SAVE_BTN.getXPath()));
+        waitForElementVisibility(By.xpath(XpathSelector.ADD_INPUT_BTN.getXPath()));
+        waitForElementVisibility(By.xpath(XpathSelector.SAVE_BTN.getXPath()));
         waitToBeClickable(By.xpath(XpathSelector.CANCEL_BTN.getXPath()));
     }
 
