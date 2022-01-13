@@ -407,25 +407,25 @@ public class ToscaAnalyzerServiceImpl implements ToscaAnalyzerService {
                 if (requirementMapping != null && !requirementMapping.isEmpty()) {
                     String mappedNodeTemplateId = requirementMapping.get(0);
                     Optional<NodeTemplate> mappedNodeTemplate = getNodeTemplateById(substituteServiceTemplate, mappedNodeTemplateId);
-                    mappedNodeTemplate.orElseThrow(
-                        () -> new CoreException(new ToscaInvalidEntryNotFoundErrorBuilder("Node Template", mappedNodeTemplateId).build()));
-                    Map.Entry<String, NodeTemplate> mappedNodeTemplateEntry = new Map.Entry<String, NodeTemplate>() {
-                        @Override
-                        public String getKey() {
-                            return mappedNodeTemplateId;
-                        }
-
-                        @Override
-                        public NodeTemplate getValue() {
-                            return mappedNodeTemplate.get();
-                        }
-
-                        @Override
-                        public NodeTemplate setValue(NodeTemplate value) {
-                            return null;
-                        }
-                    };
-                    return Optional.of(mappedNodeTemplateEntry);
+                    if (mappedNodeTemplate.isPresent()) {
+                        final NodeTemplate nodeTemplate = mappedNodeTemplate.get();
+                        return Optional.of(new HashMap.Entry<>() {
+                            @Override
+                            public String getKey() {
+                                return mappedNodeTemplateId;
+                            }
+                            @Override
+                            public NodeTemplate getValue() {
+                                return nodeTemplate;
+                            }
+                            @Override
+                            public NodeTemplate setValue(final NodeTemplate nodeTemplate) {
+                                return null;
+                            }
+                        });
+                    } else {
+                        throw new CoreException(new ToscaInvalidEntryNotFoundErrorBuilder("Node Template", mappedNodeTemplateId).build());
+                    }
                 }
             }
         }
