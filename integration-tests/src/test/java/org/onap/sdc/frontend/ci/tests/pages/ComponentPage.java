@@ -20,6 +20,7 @@ package org.onap.sdc.frontend.ci.tests.pages;
 
 import org.onap.sdc.frontend.ci.tests.datatypes.LifeCycleStateEnum;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
@@ -57,6 +58,10 @@ public class ComponentPage extends AbstractPageObject {
 
     public ToscaArtifactsPage goToToscaArtifacts() {
         return resourceLeftSideMenu.clickOnToscaArtifactsMenuItem();
+    }
+
+    public InterfaceDefinitionPage goToInterfaceDefinition() {
+        return resourceLeftSideMenu.clickOnInterfaceDefinitionMenuItem();
     }
 
     public CompositionPage goToComposition() {

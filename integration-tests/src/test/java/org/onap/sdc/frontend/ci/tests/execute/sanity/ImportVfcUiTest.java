@@ -47,6 +47,7 @@ import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
+import org.onap.sdc.frontend.ci.tests.flow.InterfaceDefinitionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.AttributeModal;
 import org.onap.sdc.frontend.ci.tests.pages.AttributesPage;
@@ -55,9 +56,10 @@ import org.onap.sdc.frontend.ci.tests.pages.ResourceCreatePage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent.CompositionDetailTabName;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInformationTab;
-import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsModal;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsTab;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionOperationsModal;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
 import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
@@ -115,6 +117,10 @@ public class ImportVfcUiTest extends SetupCDTest {
         yamlObject = downloadToscaArtifact(componentPage);
         checkMetadata(yamlObject, vfcCreateData);
         checkNodeTypes(yamlObject);
+
+        componentPage = viewInterfaceDefinitionFromVFC(componentPage);
+        componentPage.isLoaded();
+
         homePage.getTopNavComponent().clickOnHome();
 
         // TC - Import VFC with interface inputs
@@ -135,6 +141,23 @@ public class ImportVfcUiTest extends SetupCDTest {
 
     }
 
+    private ComponentPage viewInterfaceDefinitionFromVFC(final ComponentPage componentPage) {
+        final InterfaceDefinitionFlow interfaceDefinitionFlow = new InterfaceDefinitionFlow(webDriver);
+        interfaceDefinitionFlow.run(componentPage);
+        final InterfaceDefinitionPage interfaceDefinitionPage = interfaceDefinitionFlow.getLandedPage()
+            .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return InterfaceDefinitionPage"));
+        final var OPERATION_NAME = "create";
+        assertTrue(interfaceDefinitionPage.isInterfaceDefinitionOperationPresent(OPERATION_NAME));
+        final InterfaceDefinitionOperationsModal interfaceDefinitionOperationsModal = interfaceDefinitionPage.clickOnInterfaceDefinitionOperation(
+            OPERATION_NAME);
+        interfaceDefinitionOperationsModal.isLoaded();
+        ExtentTestActions
+            .takeScreenshot(Status.INFO, "clickOnOInterfaceOperation", "Interface Definition Operation Modal opened");
+        checkInterfaceDefinitionData(interfaceDefinitionOperationsModal);
+        interfaceDefinitionOperationsModal.clickOnCancel();
+        return interfaceDefinitionPage;
+    }
+
     @Test
     public void importVfcWithModel() {
         final String fileName = "VFC-For-Model.yaml";
@@ -144,6 +167,13 @@ public class ImportVfcUiTest extends SetupCDTest {
         componentPage.isLoaded();
         componentPage.certifyComponent();
         componentPage.isLoaded();
+    }
+
+    private void checkInterfaceDefinitionData(final InterfaceDefinitionOperationsModal interfaceDefinitionOperationsModal) {
+        assertTrue(interfaceDefinitionOperationsModal.getDescription().isEmpty());
+        assertEquals(interfaceDefinitionOperationsModal.getImplementationName(), "path/to/my/implementation.sh");
+        assertEquals(interfaceDefinitionOperationsModal.getInputName(), "first");
+        assertEquals(interfaceDefinitionOperationsModal.getInputValue(), "1234");
     }
 
     private ComponentPage manageAttributes(final ComponentPage componentPage) {
@@ -189,7 +219,7 @@ public class ImportVfcUiTest extends SetupCDTest {
         compositionInterfaceOperationsTab.isLoaded();
         ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsTab", "Composition Interface Operations Tab opened");
         assertTrue(compositionInterfaceOperationsTab.isOperationPresent("create"));
-        CompositionInterfaceOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab.clickOnOperation("create");
+        InterfaceDefinitionOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab.clickOnOperation("create");
         compositionInterfaceOperationsModal.isLoaded();
         ExtentTestActions
             .takeScreenshot(Status.INFO, "compositionInterfaceOperationsTab.clickOnOperation", "Composition Interface Operations Modal opened");
@@ -198,7 +228,7 @@ public class ImportVfcUiTest extends SetupCDTest {
         compositionInterfaceOperationsModal.addInput();
         ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsModal.addInput", "Adding Input");
 
-        final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData = new CompositionInterfaceOperationsModal.InterfaceOperationsData
+        final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData = new InterfaceDefinitionOperationsModal.InterfaceOperationsData
             ("This is CREATE operation", "fullPath/to/my/newImplementation.sh", "second", "9876");
         compositionInterfaceOperationsModal.updateInterfaceOperation(interfaceOperationsData);
         compositionInterfaceOperationsTab.isLoaded();
@@ -370,8 +400,8 @@ public class ImportVfcUiTest extends SetupCDTest {
 
     }
 
-    private void checkCompositionInterfaceOperations(final CompositionInterfaceOperationsModal compositionInterfaceOperationsModal,
-                                                     final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData) {
+    private void checkCompositionInterfaceOperations(final InterfaceDefinitionOperationsModal compositionInterfaceOperationsModal,
+                                                     final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData) {
         assertEquals(interfaceOperationsData.getDescription(), compositionInterfaceOperationsModal.getDescription());
         assertEquals(interfaceOperationsData.getImplementationName(), compositionInterfaceOperationsModal.getImplementationName());
         assertEquals(interfaceOperationsData.getInputName(), compositionInterfaceOperationsModal.getInputName());

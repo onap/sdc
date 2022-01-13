@@ -78,7 +78,7 @@ import org.onap.sdc.frontend.ci.tests.pages.ResourcePropertiesPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionDetailSideBarComponent.CompositionDetailTabName;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInformationTab;
-import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsModal;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionOperationsModal;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsTab;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.RelationshipWizardInterfaceOperation.InterfaceOperationsData;
@@ -247,8 +247,8 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         compositionPage.isLoaded();
         ExtentTestActions.addScreenshot(Status.INFO, "select-VFC-node", "Selecting Node on composition");
         compositionPage.selectNode(vfcs.get(1).getName());
-        final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData =
-            new CompositionInterfaceOperationsModal.InterfaceOperationsData("IT for updating an Interface Operation",
+        final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData =
+            new InterfaceDefinitionOperationsModal.InterfaceOperationsData("IT for updating an Interface Operation",
                 "MyIntegrationTestImplementationName", "My_IT_InputName", "My_IT_InputValue");
         updateInterfaceOperation(compositionPage, interfaceOperationsData);
         componentPage = compositionPage.goToGeneral();
@@ -374,7 +374,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
      * @throws IOException
      */
     private void updateInterfaceOperation(final CompositionPage compositionPage,
-        final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData) throws IOException {
+        final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData) throws IOException {
         final CompositionDetailSideBarComponent detailSideBar = compositionPage.getDetailSideBar();
         detailSideBar.isLoaded();
         final CompositionInterfaceOperationsTab compositionInterfaceOperationsTab =
@@ -383,7 +383,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsTab",
             "Composition Interface Operations Tab loaded");
         assertTrue(compositionInterfaceOperationsTab.isOperationPresent(interfaceOperationName));
-        final CompositionInterfaceOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab
+        final InterfaceDefinitionOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab
             .clickOnOperation(interfaceOperationName);
         compositionInterfaceOperationsModal.isLoaded();
         ExtentTestActions.takeScreenshot(Status.INFO, "update-interface-operation-modal", "Loading Interface Operations Modal");
@@ -405,13 +405,13 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
      * @param interfaceOperationsData The Updated Interface Definition
      */
     private void validateUpdatedInterfaceOperation(final CompositionDetailSideBarComponent detailSideBar,
-                                                   final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData) {
+                                                   final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData) {
         final CompositionInterfaceOperationsTab compositionInterfaceOperationsTab = (CompositionInterfaceOperationsTab) detailSideBar
             .selectTab(CompositionDetailTabName.INTERFACE_OPERATIONS);
         compositionInterfaceOperationsTab.isLoaded();
         assertTrue(compositionInterfaceOperationsTab.isOperationPresent(interfaceOperationName));
         assertTrue(compositionInterfaceOperationsTab.isDescriptionPresent());
-        final CompositionInterfaceOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab
+        final InterfaceDefinitionOperationsModal compositionInterfaceOperationsModal = compositionInterfaceOperationsTab
             .clickOnOperation(interfaceOperationName);
         compositionInterfaceOperationsModal.isLoaded();
         ExtentTestActions.takeScreenshot(Status.INFO, "validate-updated-interface-operation",
@@ -428,7 +428,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     private void verifyToscaTemplateHasUpdatedInterfaceOperation(final Map<?, ?> toscaTemplateYaml,
-        final CompositionInterfaceOperationsModal.InterfaceOperationsData interfaceOperationsData) {
+        final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData) {
 
         assertNotNull(toscaTemplateYaml, "No contents in TOSCA Template");
         final Map<String, Object> topologyTemplateTosca = getMapEntry((Map<String, Object>) toscaTemplateYaml, "topology_template");

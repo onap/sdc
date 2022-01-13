@@ -227,7 +227,8 @@ export class InterfaceOperationsComponent {
           toscaArtifactTypes: this.toscaArtifactTypes,
           selectedInterface: interfaceModel,
           selectedInterfaceOperation: operation,
-          validityChangedCallback: this.enableOrDisableSaveButton
+          validityChangedCallback: this.enableOrDisableSaveButton,
+          isViewOnly: false
         }
     );
     this.modalInstance.instance.open();

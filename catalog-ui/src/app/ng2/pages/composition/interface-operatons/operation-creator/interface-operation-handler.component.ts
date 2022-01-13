@@ -49,6 +49,7 @@ export class InterfaceOperationHandlerComponent {
         selectedInterface: UIInterfaceModel;
         selectedInterfaceOperation: InterfaceOperationModel;
         validityChangedCallback: Function;
+        isViewOnly: boolean;
     };
 
     interfaceType: string;
@@ -60,6 +61,7 @@ export class InterfaceOperationHandlerComponent {
     properties: Array<PropertyParamRowComponent> = [];
     isLoading: boolean = false;
     readonly: boolean;
+    isViewOnly: boolean;
 
     toscaArtifactTypeSelected: string;
     toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
@@ -70,6 +72,7 @@ export class InterfaceOperationHandlerComponent {
     propertyValueValid: boolean = true;
 
     ngOnInit() {
+        this.isViewOnly = this.input.isViewOnly;
         this.interfaceType = this.input.selectedInterface.displayType();
         this.operationToUpdate = new InterfaceOperationModel(this.input.selectedInterfaceOperation);
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
