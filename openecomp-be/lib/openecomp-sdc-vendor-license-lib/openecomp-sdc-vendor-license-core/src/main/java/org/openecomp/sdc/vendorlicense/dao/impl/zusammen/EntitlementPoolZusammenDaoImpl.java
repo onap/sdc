@@ -170,10 +170,13 @@ public class EntitlementPoolZusammenDaoImpl implements EntitlementPoolDao {
         ElementContext elementContext = new ElementContext(entitlementPoolEntity.getVendorLicenseModelId(),
             entitlementPoolEntity.getVersion().getId());
         Optional<ElementInfo> elementInfo1 = zusammenAdaptor.getElementInfo(context, elementContext, new Id(entitlementPoolEntity.getId()));
-        Map<String, Object> properties = elementInfo1.get().getInfo().getProperties();
         String manufacturerReferenceNumber = null;
-        if (properties != null && properties.containsKey("manufacturerReferenceNumber")) {
-            manufacturerReferenceNumber = (String) properties.get("manufacturerReferenceNumber");
+        if (elementInfo1.isPresent()) {
+            Map<String, Object> properties = elementInfo1.get().getInfo().getProperties();
+
+            if (properties != null && properties.containsKey("manufacturerReferenceNumber")) {
+                manufacturerReferenceNumber = (String) properties.get("manufacturerReferenceNumber");
+            }
         }
         return manufacturerReferenceNumber;
     }
