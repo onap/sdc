@@ -1232,9 +1232,14 @@ public abstract class ToscaElementOperation extends BaseOperation {
     }
 
     private void generateNewToscaFileName(String componentType, String componentName, ArtifactDataDefinition artifactInfo) {
-        Map<String, Object> getConfig = (Map<String, Object>) ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts()
-            .entrySet().stream().filter(p -> p.getKey().equalsIgnoreCase(artifactInfo.getArtifactLabel())).findAny().get().getValue();
-        artifactInfo.setArtifactName(componentType + "-" + componentName + getConfig.get("artifactName"));
+        Optional<Entry<String, Object>> oConfig = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaArtifacts()
+                .entrySet().stream().filter(p -> p.getKey().equalsIgnoreCase(artifactInfo.getArtifactLabel())).findAny();
+        if (oConfig.isPresent()) {
+            artifactInfo.setArtifactName(componentType + "-" + componentName + ((Map<String, Object>)oConfig.get().getValue()).get("artifactName"));
+        }
+        else {
+            artifactInfo.setArtifactName(componentType + "-" + componentName);
+        }
     }
 
     protected <T extends ToscaElement> StorageOperationStatus validateResourceCategory(T toscaElementToUpdate, GraphVertex elementV) {
