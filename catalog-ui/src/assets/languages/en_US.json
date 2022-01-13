@@ -441,6 +441,11 @@
     "SERVICE_PATH_SELECTOR_SHOW_ALL_VALUE" : "⚊ Show all ⚊",
     "SERVICE_OPERATION_PROPERTY_TOOLTIP_TEXT": "Service properties are defined by the input parameter type. In case you can't find a certain parameter, it might be due to a wrong type selection.",
 
+    "=========== INTERFACE DEFINITION ==========": "",
+    "INTERFACE_ADD_INTERFACE": "Add Interface",
+    "NO_INTERFACE_": "Add Interface",
+    "INTERFACE_DATA_EMPTY": "No Interface data to display",
+
     "=========== INTERFACE OPERATION ==========": "",
     "INTERFACE_ADD_OPERATION": "Add Operation",
     "INTERFACE_EXPAND_ALL": "Expand All",

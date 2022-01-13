@@ -292,6 +292,7 @@ export class States {
   public static WORKSPACE_TOSCA_ARTIFACTS = 'workspace.tosca_artifacts';
   public static WORKSPACE_COMPOSITION = 'workspace.composition';
   public static WORKSPACE_INTERFACE_OPERATION = 'workspace.interface_operation';
+  public static WORKSPACE_INTERFACE_DEFINITION = 'workspace.interface-definition';
   public static WORKSPACE_NETWORK_CALL_FLOW = 'workspace.network_call_flow';
   public static WORKSPACE_MANAGEMENT_WORKFLOW = 'workspace.management_workflow';
   public static WORKSPACE_DEPLOYMENT = 'workspace.deployment';
