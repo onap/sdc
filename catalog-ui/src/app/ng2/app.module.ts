@@ -102,6 +102,7 @@ import {AttributesOutputsModule} from "./pages/attributes-outputs/attributes-out
 import { ElementService } from "./services/element.service";
 import { ModelService } from "./services/model.service";
 import {ToscaArtifactService} from "./services/tosca-artifact.service";
+import {InterfaceDefinitionModule} from "./pages/interface-definition/interface-definition.module";
 
 
 declare const __ENV__: string;
@@ -156,8 +157,9 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     PluginFrameModule,
     PluginsModule,
     InterfaceOperationModule,
+    InterfaceDefinitionModule,
     OperationCreatorModule,
-        InterfaceOperationHandlerModule,
+    InterfaceOperationHandlerModule,
     ServicePathCreatorModule,
     ServicePathsListModule,
     ServicePathSelectorModule,

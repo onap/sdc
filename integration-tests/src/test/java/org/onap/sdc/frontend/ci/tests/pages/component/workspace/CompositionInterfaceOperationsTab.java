@@ -19,8 +19,6 @@
 
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
@@ -66,10 +64,10 @@ public class CompositionInterfaceOperationsTab extends AbstractPageObject {
         }
     }
 
-    public CompositionInterfaceOperationsModal clickOnOperation(final String operationName) {
+    public InterfaceDefinitionOperationsModal clickOnOperation(final String operationName) {
         final WebElement webElementInterfaceRow = webElement.findElement(By.xpath(XpathSelector.INTERFACE_ROW.getXPath()));
         webElementInterfaceRow.findElement(By.xpath(XpathSelector.FIELD_NAME_SPAN.getXPath(operationName))).click();
-        return new CompositionInterfaceOperationsModal(webDriver);
+        return new InterfaceDefinitionOperationsModal(webDriver);
     }
 
     @AllArgsConstructor

@@ -22,6 +22,7 @@ package org.onap.sdc.frontend.ci.tests.pages;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -95,6 +96,16 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
     }
 
     /**
+     * Clicks on the Interface Definition menu item.
+     *
+     * @return the next page object
+     */
+    public InterfaceDefinitionPage clickOnInterfaceDefinitionMenuItem() {
+        wrappingElement.findElement(By.xpath(XpathSelector.INTERFACE_DEFINITION_MENU.getXpath())).click();
+        return new InterfaceDefinitionPage(webDriver);
+    }
+
+    /**
      * Clicks on the 'General' menu item.
      *
      * @return the next page object
@@ -127,7 +138,8 @@ public class ResourceLeftSideMenu extends AbstractPageObject {
         GENERAL_MENU("GeneralLeftSideMenu", "//*[@data-tests-id='%s']"),
         COMPOSITION_MENU("CompositionLeftSideMenu", "//*[@data-tests-id='%s']"),
         REQUIREMENT_CAPABILITY_MENU("Req. & CapabilitiesLeftSideMenu", "//*[@data-tests-id='%s']"),
-        TOSCA_ARTIFACTS_MENU("TOSCA ArtifactsLeftSideMenu", "//*[@data-tests-id='%s']");
+        TOSCA_ARTIFACTS_MENU("TOSCA ArtifactsLeftSideMenu", "//*[@data-tests-id='%s']"),
+        INTERFACE_DEFINITION_MENU("InterfacesLeftSideMenu", "//*[@data-tests-id='%s']");
 
         @Getter
         private final String id;
