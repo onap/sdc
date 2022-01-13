@@ -96,6 +96,7 @@ import {DeploymentArtifactsPageComponent} from "../ng2/pages/workspace/deploymen
 import {ReqAndCapabilitiesComponent} from "../ng2/pages/workspace/req-and-capabilities/req-and-capabilities.component";
 import {DistributionComponent} from '../ng2/pages/workspace/disribution/distribution.component';
 import {AttributesOutputsComponent} from "../ng2/pages/attributes-outputs/attributes-outputs.page.component";
+import {InterfaceDefinitionComponent} from "../ng2/pages/interface-definition/interface-definition.page.component";
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -245,6 +246,12 @@ directiveModule.directive('interfaceOperation', downgradeComponent({
   outputs: []
 }) as angular.IDirectiveFactory);
 
+directiveModule.directive('interfaceDefinition', downgradeComponent({
+  component: InterfaceDefinitionComponent,
+  inputs: ['component', 'readonly'],
+  outputs: []
+}) as angular.IDirectiveFactory);
+
 directiveModule.directive('ng2MultilineEllipsis', downgradeComponent({
   component: MultilineEllipsisComponent,
   inputs: ['lines', 'lineHeight', 'className'],
@@ -309,6 +316,7 @@ directiveModule.directive('informationArtifactPage', downgradeComponent({
   inputs: [],
   outputs: []
 }) as angular.IDirectiveFactory);
+
 directiveModule.directive('deploymentArtifactPage', downgradeComponent({
   component: DeploymentArtifactsPageComponent,
   inputs: [],

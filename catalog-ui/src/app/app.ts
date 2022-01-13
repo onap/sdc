@@ -512,6 +512,18 @@ ng1appModule.config([
     );
 
     $stateProvider.state(
+        States.WORKSPACE_INTERFACE_DEFINITION, {
+          url: 'interfaceDefinition',
+          parent: 'workspace',
+          controller: viewModelsModuleName + '.InterfaceDefinitionViewModel',
+          templateUrl: './view-models/workspace/tabs/interface-definition/interface-definition-view.html',
+          data: {
+            bodyClass: 'interfaceDefinition'
+          }
+        }
+    );
+
+    $stateProvider.state(
         'workspace.plugins', {
           url: 'plugins/*path',
           parent: 'workspace',
