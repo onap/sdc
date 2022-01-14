@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d31718e_ba620757",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-14T14:03:43Z",
+      "side": 1,
+      "message": "shouldn\u0027t be \u0027\u003d\u003d\u0027 ?",
+      "range": {
+        "startLine": 207,
+        "startChar": 24,
+        "endLine": 207,
+        "endChar": 27
+      },
+      "revId": "69f66362201c1bc73c5868b1142467ff69e97ff5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
