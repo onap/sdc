@@ -24,7 +24,7 @@ def main(sdc_be_proxy, update_version):
         process_element_list(normativeElementsList.get_normative_element_candidate_list(base_file_location), sdc_be_proxy)
         process_type_list(normativeTypesList.get_normative_type_candidate_list(base_file_location), sdc_be_proxy, update_version)
         process_element_list(normativeElementsList.get_normative_element_with_metadata_list(base_file_location), sdc_be_proxy)
-        #Add model based normatives
+        # Add model based normatives
         model_import_manager = ModelImportManager(Path(base_file_location) / 'models', ModelClient(sdc_be_proxy),
                                                   NodeTypeClient(sdc_be_proxy))
         model_import_manager.deploy_models()
@@ -36,6 +36,7 @@ def main(sdc_be_proxy, update_version):
             raise RuntimeError("Failed to enable locking")
     logger.log("Script end ->", "All normatives imported successfully!")
     logger.print_and_exit(0, None)
+
 
 def run():
     sdc_be_proxy, update_version = parse_and_create_proxy()

@@ -81,6 +81,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration("classpath:application-context-test.xml")
 class ModelOperationTest extends ModelTestBase {
 
+    private static final String modelName = "ETSI-SDC-MODEL-TEST";
     @InjectMocks
     private ModelOperation modelOperation;
     @Mock
@@ -91,8 +92,6 @@ class ModelOperationTest extends ModelTestBase {
     private ToscaModelImportCassandraDao toscaModelImportCassandraDao;
     @Mock
     private DerivedFromOperation derivedFromOperation;
-
-    private final String modelName = "ETSI-SDC-MODEL-TEST";
 
     @BeforeAll
     static void beforeAllInit() {
@@ -106,26 +105,28 @@ class ModelOperationTest extends ModelTestBase {
 
     @Test
     void createModelSuccessTest() {
-        final ModelData modelData = new ModelData(modelName,  UniqueIdBuilder.buildModelUid(modelName), ModelTypeEnum.NORMATIVE);
-        when(janusGraphGenericDao.createNode(any(),any())).thenReturn(Either.left(modelData));
+        final ModelData modelData = new ModelData(modelName, UniqueIdBuilder.buildModelUid(modelName), ModelTypeEnum.NORMATIVE);
+        when(janusGraphGenericDao.createNode(any(), any())).thenReturn(Either.left(modelData));
         final Model createdModel = modelOperation.createModel(new Model(modelName, ModelTypeEnum.NORMATIVE), false);
         assertThat(createdModel).isNotNull();
         assertThat(createdModel.getName()).isEqualTo(modelName);
     }
-    
+
     @Test
     void createDerivedModelSuccessTest() {
         final String derivedModelName = "derivedModel";
-        final ModelData modelData = new ModelData(derivedModelName,  UniqueIdBuilder.buildModelUid(derivedModelName), ModelTypeEnum.NORMATIVE);
-        when(janusGraphGenericDao.createNode(any(),any())).thenReturn(Either.left(modelData));
-        
+        final ModelData modelData = new ModelData(derivedModelName, UniqueIdBuilder.buildModelUid(derivedModelName), ModelTypeEnum.NORMATIVE);
+        when(janusGraphGenericDao.createNode(any(), any())).thenReturn(Either.left(modelData));
+
         final GraphVertex modelVertex = new GraphVertex();
         modelVertex.addMetadataProperty(GraphPropertyEnum.NAME, "baseModel");
         modelVertex.addMetadataProperty(GraphPropertyEnum.MODEL_TYPE, ModelTypeEnum.NORMATIVE.getValue());
         when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.MODEL), anyMap())).thenReturn(Either.left(Collections.singletonList(modelVertex)));
-        when(janusGraphGenericDao.getChild(eq("uid"), anyString(), eq(GraphEdgeLabels.DERIVED_FROM), eq(NodeTypeEnum.Model), eq(ModelData.class))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
-        when(derivedFromOperation.addDerivedFromRelation("model.derivedModel", "model.baseModel", NodeTypeEnum.Model)).thenReturn(Either.left(new GraphRelation()));
-        
+        when(janusGraphGenericDao.getChild(eq("uid"), anyString(), eq(GraphEdgeLabels.DERIVED_FROM), eq(NodeTypeEnum.Model),
+            eq(ModelData.class))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(derivedFromOperation.addDerivedFromRelation("model.derivedModel", "model.baseModel", NodeTypeEnum.Model)).thenReturn(
+            Either.left(new GraphRelation()));
+
         final Model createdModel = modelOperation.createModel(new Model(derivedModelName, modelName, ModelTypeEnum.NORMATIVE), false);
         assertThat(createdModel).isNotNull();
         assertThat(createdModel.getName()).isEqualTo(derivedModelName);
@@ -133,14 +134,14 @@ class ModelOperationTest extends ModelTestBase {
 
     @Test
     void createModelFailWithModelAlreadyExistTest() {
-        when(janusGraphGenericDao.createNode(any(),any())).thenReturn(Either.right(JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION));
+        when(janusGraphGenericDao.createNode(any(), any())).thenReturn(Either.right(JanusGraphOperationStatus.JANUSGRAPH_SCHEMA_VIOLATION));
         final var model = new Model(modelName, ModelTypeEnum.NORMATIVE);
         assertThrows(OperationException.class, () -> modelOperation.createModel(model, false));
     }
 
     @Test
     void createModelFailTest() {
-        when(janusGraphGenericDao.createNode(any(),any())).thenReturn(Either.right(JanusGraphOperationStatus.GRAPH_IS_NOT_AVAILABLE));
+        when(janusGraphGenericDao.createNode(any(), any())).thenReturn(Either.right(JanusGraphOperationStatus.GRAPH_IS_NOT_AVAILABLE));
         final var model = new Model(modelName, ModelTypeEnum.NORMATIVE);
         assertThrows(OperationException.class, () -> modelOperation.createModel(model, false));
     }
@@ -405,6 +406,53 @@ class ModelOperationTest extends ModelTestBase {
     }
 
     @Test
+    void addArtifactsToDefaultImportsTest_nonExistingAdditionalTypesImport() throws IOException {
+        var modelName = "model";
+        final Path testResourcePath = Path.of("src/test/resources/modelOperation");
+
+        final var dataTypesPath = testResourcePath.resolve(Path.of("input-artifact_types.yaml"));
+        final var dataTypes = Files.readString(dataTypesPath);
+
+        final Path import1RelativePath = Path.of("original-import-3.yaml");
+        final Path import1Path = testResourcePath.resolve(import1RelativePath);
+
+        var toscaImportByModel1 = new ToscaImportByModel();
+        toscaImportByModel1.setModelId(modelName);
+        toscaImportByModel1.setFullPath(import1RelativePath.toString());
+        toscaImportByModel1.setContent(Files.readString(import1Path));
+
+        final List<ToscaImportByModel> modelImports = new ArrayList<>();
+        modelImports.add(toscaImportByModel1);
+        when(toscaModelImportCassandraDao.findAllByModel(modelName)).thenReturn(modelImports);
+
+        modelOperation.addTypesToDefaultImports(ElementTypeEnum.ARTIFACT_TYPE, dataTypes, modelName);
+        ArgumentCaptor<List<ToscaImportByModel>> importListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(toscaModelImportCassandraDao).saveAll(eq(modelName), importListArgumentCaptor.capture());
+
+        final List<ToscaImportByModel> actualImportList = importListArgumentCaptor.getValue();
+        assertEquals(2, actualImportList.size());
+        assertTrue(actualImportList.contains(toscaImportByModel1));
+
+        var expectedAdditionalTypesImport = new ToscaImportByModel();
+        expectedAdditionalTypesImport.setModelId(modelName);
+        expectedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        expectedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-3.yaml"))));
+        final ToscaImportByModel actualAdditionalTypesImport =
+            actualImportList.stream().filter(expectedAdditionalTypesImport::equals).findFirst().orElse(null);
+        assertNotNull(actualAdditionalTypesImport);
+        assertEquals(expectedAdditionalTypesImport.getContent(), actualAdditionalTypesImport.getContent());
+
+        var expectedImport1 = new ToscaImportByModel();
+        expectedImport1.setModelId(modelName);
+        expectedImport1.setFullPath(import1RelativePath.toString());
+        expectedImport1.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-import-3.yaml"))));
+        final ToscaImportByModel actualImport1 = actualImportList.stream().filter(expectedImport1::equals).findFirst().orElse(null);
+        assertNotNull(actualImport1);
+        assertEquals(expectedImport1.getContent(), actualImport1.getContent());
+
+    }
+
+    @Test
     void addTypesToDefaultImportsTest_existingAdditionalTypesImport() throws IOException {
         var modelName = "model";
         final Path testResourcePath = Path.of("src/test/resources/modelOperation");
@@ -452,6 +500,60 @@ class ModelOperationTest extends ModelTestBase {
         expectedImport1.setModelId(modelName);
         expectedImport1.setFullPath(import1RelativePath.toString());
         expectedImport1.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-import-1.yaml"))));
+        final ToscaImportByModel actualImport1 = actualImportList.stream().filter(expectedImport1::equals).findFirst().orElse(null);
+        assertNotNull(actualImport1);
+        assertEquals(expectedImport1.getContent(), actualImport1.getContent());
+
+    }
+
+    @Test
+    void addArtifactsToDefaultImportsTest_existingAdditionalTypesImport() throws IOException {
+        var modelName = "model";
+        final Path testResourcePath = Path.of("src/test/resources/modelOperation");
+
+        final var dataTypesPath = testResourcePath.resolve(Path.of("input-artifact_types.yaml"));
+        final var dataTypes = Files.readString(dataTypesPath);
+
+        final Path import1RelativePath = Path.of("original-import-3.yaml");
+        final Path import1Path = testResourcePath.resolve(import1RelativePath);
+
+        var toscaImportByModel1 = new ToscaImportByModel();
+        toscaImportByModel1.setModelId(modelName);
+        toscaImportByModel1.setFullPath(import1RelativePath.toString());
+        toscaImportByModel1.setContent(Files.readString(import1Path));
+
+        var originalAdditionalTypesImport = new ToscaImportByModel();
+        originalAdditionalTypesImport.setModelId(modelName);
+        originalAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        final Path originalAdditionalTypesImportPath = testResourcePath.resolve(Path.of("original-additional_types-2.yaml"));
+        originalAdditionalTypesImport.setContent(Files.readString(originalAdditionalTypesImportPath));
+
+        final List<ToscaImportByModel> modelImports = new ArrayList<>();
+        modelImports.add(toscaImportByModel1);
+        modelImports.add(originalAdditionalTypesImport);
+        when(toscaModelImportCassandraDao.findAllByModel(modelName)).thenReturn(modelImports);
+
+        modelOperation.addTypesToDefaultImports(ElementTypeEnum.ARTIFACT_TYPE, dataTypes, modelName);
+        ArgumentCaptor<List<ToscaImportByModel>> importListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(toscaModelImportCassandraDao).saveAll(eq(modelName), importListArgumentCaptor.capture());
+
+        final List<ToscaImportByModel> actualImportList = importListArgumentCaptor.getValue();
+        assertEquals(2, actualImportList.size());
+        assertTrue(actualImportList.contains(toscaImportByModel1));
+
+        var expectedAdditionalTypesImport = new ToscaImportByModel();
+        expectedAdditionalTypesImport.setModelId(modelName);
+        expectedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        expectedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-3.yaml"))));
+        final ToscaImportByModel actualAdditionalTypesImport =
+            actualImportList.stream().filter(expectedAdditionalTypesImport::equals).findFirst().orElse(null);
+        assertNotNull(actualAdditionalTypesImport);
+        assertEquals(expectedAdditionalTypesImport.getContent(), actualAdditionalTypesImport.getContent());
+
+        var expectedImport1 = new ToscaImportByModel();
+        expectedImport1.setModelId(modelName);
+        expectedImport1.setFullPath(import1RelativePath.toString());
+        expectedImport1.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-import-3.yaml"))));
         final ToscaImportByModel actualImport1 = actualImportList.stream().filter(expectedImport1::equals).findFirst().orElse(null);
         assertNotNull(actualImport1);
         assertEquals(expectedImport1.getContent(), actualImport1.getContent());

@@ -204,7 +204,7 @@ public class ArtifactTypeOperation implements IArtifactTypeOperation {
     private void addDerivedFromRelation(final ArtifactTypeDefinition artifactType) {
         final String derivedFrom = artifactType.getDerivedFrom();
         final String artifactId = artifactType.getUniqueId();
-        if (derivedFrom.isEmpty()) {
+        if (derivedFrom == null || derivedFrom.isEmpty()) {
             return;
         }
         final var getArtifactTypeOptional = getLatestArtifactTypeByType(derivedFrom, artifactType.getModel());

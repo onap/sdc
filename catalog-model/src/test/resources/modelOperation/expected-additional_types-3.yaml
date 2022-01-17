@@ -1,0 +1,11 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: Auto-generated file that contains package custom types or types added
+  after system installation.
+artifact_types:
+  tosca.artifacts.Implementation.Python:
+    derived_from: tosca.artifacts.Implementation
+    description: Python replacement.
+  tosca.artifacts.Implementation.Python.V3:
+    derived_from: tosca.artifacts.Implementation.Python
+    description: This artifact type represents a Python3 file that contains Python
+      language constructs that can be executed within a Python interpreter.

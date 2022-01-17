@@ -60,7 +60,7 @@ public class ArtifactTypeImportManager {
             return Either.right(componentsUtils.getResponseFormat(artifactTypes.right().value()));
         }
         final List<ArtifactTypeDefinition> elementTypes = createArtifactTypesByDao(artifactTypes.left().value());
-        if (includeToModelDefaultImports) {
+        if (includeToModelDefaultImports && StringUtils.isNotEmpty(modelName)) {
             commonImportManager.addTypesToDefaultImports(ElementTypeEnum.ARTIFACT_TYPE, artifactTypesYml, modelName);
         }
         return Either.left(elementTypes);
