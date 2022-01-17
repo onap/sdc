@@ -37,18 +37,18 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactTypeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.resources.data.ArtifactTypeData;
-import org.openecomp.sdc.be.resources.data.ModelData;
-import org.openecomp.sdc.be.resources.data.PropertyData;
-import org.openecomp.sdc.be.resources.data.UniqueIdData;
+import org.openecomp.sdc.be.resources.data.*;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,30 +91,39 @@ public class ArtifactTypeOperation implements IArtifactTypeOperation {
     @Override
     public ArtifactTypeDefinition createArtifactType(final ArtifactTypeDefinition artifactType,
                                                      final boolean inTransaction) {
-        Either<ArtifactTypeData, JanusGraphOperationStatus> createNodeResult = null;
+        Either<ArtifactTypeDefinition, StorageOperationStatus> createNodeResult = null;
         try {
             artifactType.setUniqueId(UniqueIdBuilder.buildArtifactTypeUid(artifactType.getModel(), artifactType.getType()));
             final ArtifactTypeData artifactTypeData = new ArtifactTypeData(artifactType);
             final Either<ArtifactTypeData, JanusGraphOperationStatus> existArtifact = janusGraphGenericDao
                 .getNode(artifactTypeData.getUniqueIdKey(), artifactTypeData.getUniqueId(), ArtifactTypeData.class);
             if (!existArtifact.isLeft()) {
-                createNodeResult = janusGraphGenericDao.createNode(artifactTypeData, ArtifactTypeData.class);
-                if (createNodeResult.isRight()) {
-                    final JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
-                    LOGGER.error(EcompLoggerErrorCode.DATA_ERROR,
-                        "Failed to add artifact type {} to graph. Operation status {}", artifactType.getType(), operationStatus);
-                    throw new OperationException(ActionStatus.GENERAL_ERROR,
-                        String.format("Failed to create artifact type %s with status %s", artifactType.getType(),
-                            DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationStatus)));
-                }
+                LOGGER.debug("Artifact type did not exist, creating new one {}", artifactType);
+                createNodeResult = janusGraphGenericDao.createNode(artifactTypeData, ArtifactTypeData.class).right()
+                        .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left()
+                        .map(createdDerivedFrom -> artifactType);
                 addPropertiesToArtifactType(artifactType);
                 addModelRelation(artifactType);
                 addDerivedFromRelation(artifactType);
-                return convertArtifactDataDefinition(createNodeResult.left().value());
-            } else {
-                LOGGER.debug("Artifact type already exist {}", artifactType);
-                return convertArtifactDataDefinition(existArtifact.left().value());
             }
+            else {
+                LOGGER.debug("Artifact type already exist {}", artifactType);
+                createNodeResult = janusGraphGenericDao.updateNode(artifactTypeData, ArtifactTypeData.class).right()
+                        .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left()
+                        .bind(updatedNode -> updateArtifactProperties(artifactType.getUniqueId(), artifactType.getProperties())).left()
+                        .bind(updatedProperties -> updateArtifactDerivedFrom(artifactType, artifactType.getDerivedFrom())).left()
+                        .map(updatedDerivedFrom -> artifactType);
+            }
+            if (createNodeResult.isRight()) {
+                final StorageOperationStatus operationStatus = createNodeResult.right().value();
+                LOGGER.error(EcompLoggerErrorCode.DATA_ERROR,
+                    "Failed to add artifact type {} to graph. Operation status {}", artifactType.getType(), operationStatus);
+                throw new OperationException(ActionStatus.GENERAL_ERROR,
+                    String.format("Failed to create artifact type %s with status %s", artifactType.getType(),
+                        operationStatus));
+            }
+            return createNodeResult.left().value();
+
         } finally {
             if (!inTransaction) {
                 if (createNodeResult == null || createNodeResult.isRight()) {
@@ -154,6 +163,43 @@ public class ArtifactTypeOperation implements IArtifactTypeOperation {
             artifactTypeDefinitionTypes.put(type.getUniqueId(), type);
         }
         return artifactTypeDefinitionTypes;
+    }
+
+    private Either<Map<String, PropertyData>, StorageOperationStatus> updateArtifactProperties(final String artifactId, final List<PropertyDefinition> properties) {
+        LOGGER.debug("#updateArtifactProperties - updating artifact type properties for artifact type with id {}", artifactId);
+        return propertyOperation.deletePropertiesAssociatedToNode(NodeTypeEnum.ArtifactType, artifactId).left()
+                .bind(deleteProps -> addPropertiesToArtifact(artifactId, properties));
+    }
+
+    private Either<GraphRelation, StorageOperationStatus> updateArtifactDerivedFrom(ArtifactTypeDefinition updatedArtifactType,
+                                                                                  String currDerivedFromArtifactType) {
+        String artifactTypeId = updatedArtifactType.getUniqueId();
+        LOGGER.debug(
+                "#updateArtifactDerivedFrom - updating artifact derived from relation for artifact type with id {}. old derived type {}. new derived type {}",
+                artifactTypeId, currDerivedFromArtifactType, updatedArtifactType.getDerivedFrom());
+        StorageOperationStatus deleteDerivedRelationStatus = deleteDerivedFromArtifactType(artifactTypeId, currDerivedFromArtifactType, updatedArtifactType.getModel());
+        if (deleteDerivedRelationStatus != StorageOperationStatus.OK) {
+            return Either.right(deleteDerivedRelationStatus);
+        }
+        return addDerivedFromRelation(updatedArtifactType, artifactTypeId);
+    }
+
+    private StorageOperationStatus deleteDerivedFromArtifactType(String artifactTypeId, String derivedFromType, String model) {
+        if (derivedFromType == null) {
+            return StorageOperationStatus.OK;
+        }
+        LOGGER.debug("#deleteDerivedFromArtifactType - deleting derivedFrom relation for artifact type with id {} and its derived type {}", artifactTypeId,
+                derivedFromType);
+        return getProjectionLatestArtifactTypeByType(derivedFromType, model).either(
+                derivedFromNode -> derivedFromOperation.removeDerivedFromRelation(artifactTypeId, derivedFromNode.getUniqueId(), NodeTypeEnum.ArtifactType),
+                err -> err);
+    }
+
+    private Either<Map<String, PropertyData>, StorageOperationStatus> addPropertiesToArtifact(String artifactId,
+                                                                                            List<PropertyDefinition> properties) {
+        LOGGER.debug("#addPropertiesToArtifact - adding artifact type properties for artifact type with id {}", artifactId);
+        return propertyOperation.addPropertiesToElementType(artifactId, NodeTypeEnum.ArtifactType, properties).right()
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus);
     }
 
     /**
@@ -197,6 +243,13 @@ public class ArtifactTypeOperation implements IArtifactTypeOperation {
         return Optional.of(result.left().value().get(0));
     }
 
+    private Either<ArtifactTypeDefinition, StorageOperationStatus> getProjectionLatestArtifactTypeByType(String type, String model) {
+        Map<String, Object> mapCriteria = new HashMap<>();
+        mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);
+        mapCriteria.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
+        return getArtifactTypeByCriteria(type, mapCriteria, model);
+    }
+
     /**
      * Creates the derivedFrom relation for the given TOSCA artifact types
      * @param artifactType the TOSCA artifact types definition
@@ -215,6 +268,70 @@ public class ArtifactTypeOperation implements IArtifactTypeOperation {
                     String.format("Failed creating derivedFrom relation for artifact type %s", artifactType.getType()));
             }
         }
+    }
+
+    private Either<GraphRelation, StorageOperationStatus> addDerivedFromRelation(ArtifactTypeDefinition artifactType, String atUniqueId) {
+        String derivedFrom = artifactType.getDerivedFrom();
+        if (derivedFrom == null) {
+            return Either.left(null);
+        }
+        LOGGER.debug("#addDerivedFromRelationBefore - adding derived from relation between artifact type {} to its parent {}", artifactType.getType(),
+                derivedFrom);
+        return this.getProjectionLatestArtifactTypeByType(derivedFrom, artifactType.getModel()).left().bind(
+                derivedFromArtifact -> derivedFromOperation.addDerivedFromRelation(atUniqueId, derivedFromArtifact.getUniqueId(), NodeTypeEnum.ArtifactType));
+    }
+
+    /*private Either<ArtifactTypeDefinition, StorageOperationStatus> getLatestArtifactTypeByType(String type, String model) {
+        Map<String, Object> mapCriteria = new HashMap<>();
+        mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);
+        mapCriteria.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
+        return getArtifactTypeByCriteria(type, mapCriteria, model);
+    }*/
+
+    private Either<ArtifactTypeDefinition, StorageOperationStatus> getArtifactTypeByCriteria(String type, Map<String, Object> properties, String model) {
+        Either<ArtifactTypeDefinition, StorageOperationStatus> result;
+        if (type == null || type.isEmpty()) {
+            LOGGER.error("type is empty");
+            result = Either.right(StorageOperationStatus.INVALID_ID);
+            return result;
+        }
+        Either<List<ArtifactTypeData>, JanusGraphOperationStatus> eitherArtifactData = janusGraphGenericDao
+                .getByCriteriaForModel(NodeTypeEnum.ArtifactType, properties, model, ArtifactTypeData.class);
+        if (eitherArtifactData.isRight()) {
+            result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(eitherArtifactData.right().value()));
+        } else {
+            ArtifactTypeDataDefinition dataDefinition = eitherArtifactData.left().value().stream().map(ArtifactTypeData::getArtifactTypeDataDefinition)
+                    .findFirst().get();
+            result = getArtifactTypeByUid(dataDefinition.getUniqueId());
+        }
+        return result;
+    }
+
+    private Either<ArtifactTypeDefinition, StorageOperationStatus> getArtifactTypeByUid(String uniqueId) {
+        LOGGER.debug("#getArtifactTypeByUid - fetching artifact type with id {}", uniqueId);
+        return janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactType), uniqueId, ArtifactTypeData.class).right()
+                .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left()
+                .bind(artifactType -> createArtifactTypeDefinition(uniqueId, artifactType));
+    }
+
+    private Either<ArtifactTypeDefinition, StorageOperationStatus> createArtifactTypeDefinition(String uniqueId, ArtifactTypeData artifactTypeNode) {
+        ArtifactTypeDefinition artifactType = new ArtifactTypeDefinition(artifactTypeNode.getArtifactTypeDataDefinition());
+        Optional<String> modelName = getAssociatedModelName(uniqueId);
+        if (modelName.isPresent()) {
+            artifactType.setModel(modelName.get());
+        }
+        return fillDerivedFrom(uniqueId, artifactType).left().map(derivedFrom -> fillProperties(uniqueId, artifactType, derivedFrom)).left()
+                .map(props -> artifactType);
+    }
+
+    public Optional<String> getAssociatedModelName(String uniqueId) {
+        final Either<ImmutablePair<ModelData, GraphEdge>, JanusGraphOperationStatus> modelName = janusGraphGenericDao.getParentNode(
+                UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactType), uniqueId, GraphEdgeLabels.MODEL_ELEMENT,
+                NodeTypeEnum.Model, ModelData.class);
+        if (modelName.isRight()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(modelName.left().value().getLeft().getName());
     }
 
     /**
@@ -285,6 +402,12 @@ public class ArtifactTypeOperation implements IArtifactTypeOperation {
         return result.left().value();
     }
 
+    private Either<ArtifactTypeData, StorageOperationStatus> fillDerivedFrom(String uniqueId, ArtifactTypeDefinition artifactType) {
+        LOGGER.debug("#fillDerivedFrom - fetching artifact type {} derived node", artifactType.getType());
+        return derivedFromOperation.getDerivedFromChild(uniqueId, NodeTypeEnum.ArtifactType, ArtifactTypeData.class).right()
+                .bind(this::handleDerivedFromNotExist).left().map(derivedFrom -> setDerivedFrom(artifactType, derivedFrom));
+    }
+
     private Either<ArtifactTypeData, StorageOperationStatus> handleDerivedFromNotExist(final StorageOperationStatus storageOperationStatus) {
         if (storageOperationStatus == StorageOperationStatus.NOT_FOUND) {
             return Either.left(null);
@@ -314,6 +437,20 @@ public class ArtifactTypeOperation implements IArtifactTypeOperation {
                 String.format("Failed fetching properties for artifact type %s with status %s",
                     artifactType.getType(), result.right().value()));
         }
+    }
+
+    private Either<List<PropertyDefinition>, StorageOperationStatus> fillProperties(String uniqueId, ArtifactTypeDefinition artifactType,
+                                                                                    ArtifactTypeData derivedFromNode) {
+        LOGGER.debug("#fillProperties - fetching all properties for artifact type {}", artifactType.getType());
+        return propertyOperation.findPropertiesOfNode(NodeTypeEnum.ArtifactType, uniqueId).right().bind(this::handleArtifactTypeHasNoProperties).left()
+                .bind(propsMap -> fillDerivedFromProperties(artifactType, derivedFromNode, new ArrayList<>(propsMap.values())));
+    }
+
+    Either<Map<String, PropertyDefinition>, StorageOperationStatus> handleArtifactTypeHasNoProperties(JanusGraphOperationStatus err) {
+        if (err == JanusGraphOperationStatus.NOT_FOUND) {
+            return Either.left(new HashMap<>());
+        }
+        return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(err));
     }
 
     private Either<Map<String, PropertyDefinition>, StorageOperationStatus> handleNoProperties(
