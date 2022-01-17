@@ -99,22 +99,24 @@ public class ArtifactTypeOperation implements IArtifactTypeOperation {
                 .getNode(artifactTypeData.getUniqueIdKey(), artifactTypeData.getUniqueId(), ArtifactTypeData.class);
             if (!existArtifact.isLeft()) {
                 createNodeResult = janusGraphGenericDao.createNode(artifactTypeData, ArtifactTypeData.class);
-                if (createNodeResult.isRight()) {
-                    final JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
-                    LOGGER.error(EcompLoggerErrorCode.DATA_ERROR,
-                        "Failed to add artifact type {} to graph. Operation status {}", artifactType.getType(), operationStatus);
-                    throw new OperationException(ActionStatus.GENERAL_ERROR,
-                        String.format("Failed to create artifact type %s with status %s", artifactType.getType(),
-                            DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationStatus)));
-                }
-                addPropertiesToArtifactType(artifactType);
-                addModelRelation(artifactType);
-                addDerivedFromRelation(artifactType);
-                return convertArtifactDataDefinition(createNodeResult.left().value());
-            } else {
-                LOGGER.debug("Artifact type already exist {}", artifactType);
-                return convertArtifactDataDefinition(existArtifact.left().value());
             }
+            else {
+                LOGGER.debug("Artifact type already exist {}", artifactType);
+                createNodeResult = janusGraphGenericDao.updateNode(artifactTypeData, ArtifactTypeData.class);
+            }
+            if (createNodeResult.isRight()) {
+                final JanusGraphOperationStatus operationStatus = createNodeResult.right().value();
+                LOGGER.error(EcompLoggerErrorCode.DATA_ERROR,
+                    "Failed to add artifact type {} to graph. Operation status {}", artifactType.getType(), operationStatus);
+                throw new OperationException(ActionStatus.GENERAL_ERROR,
+                    String.format("Failed to create artifact type %s with status %s", artifactType.getType(),
+                        DaoStatusConverter.convertJanusGraphStatusToStorageStatus(operationStatus)));
+            }
+            addPropertiesToArtifactType(artifactType);
+            addModelRelation(artifactType);
+            addDerivedFromRelation(artifactType);
+            return convertArtifactDataDefinition(createNodeResult.left().value());
+
         } finally {
             if (!inTransaction) {
                 if (createNodeResult == null || createNodeResult.isRight()) {
