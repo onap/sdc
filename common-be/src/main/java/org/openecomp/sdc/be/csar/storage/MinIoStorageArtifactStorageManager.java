@@ -74,6 +74,8 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
                     .build()
             );
         } catch (final Exception e) {
+            LOGGER.error("Failed to retrieve uploaded artifact with bucket '{}' and name '{}' while persisting", minioObjectTemp.getBucket(),
+                minioObjectTemp.getObjectName(), e);
             throw new ArtifactStorageException(
                 String.format("Failed to retrieve uploaded artifact with bucket '%s' and name '%s' while persisting",
                     minioObjectTemp.getBucket(), minioObjectTemp.getObjectName()), e);
@@ -84,6 +86,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
             moveFile(minioObjectTemp, vspId, versionId);
         } catch (final Exception e) {
             rollback(minioObjectTemp, vspId, versionId);
+            LOGGER.error("Could not persist artifact for bucket '{}', object '{}'", vspId, versionId, e);
             final var errorMsg = String.format("Could not persist artifact for VSP '%s', version '%s'", vspId, versionId);
             throw new ArtifactStorageException(errorMsg, e);
         }
@@ -111,6 +114,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
             put(vspId, name, fileToUpload);
 
         } catch (final Exception e) {
+            LOGGER.error("Failed to upload artifact - bucket: '{}', object: '{}'", vspId, name, e);
             throw new ArtifactStorageException("Failed to upload artifact", e);
         }
 
@@ -128,6 +132,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
                     .build()
             );
         } catch (final Exception e) {
+            LOGGER.error("Failed to put - bucket: '{}', object: '{}'", vspId, name, e);
             throw new ArtifactStorageException("Failed to upload artifact", e);
         }
     }
@@ -143,6 +148,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
         try {
             return get(minioObject.getBucket(), minioObject.getObjectName());
         } catch (final Exception e) {
+            LOGGER.error("Failed to get - bucket: '{}', object: '{}'", minioObject.getBucket(), minioObject.getObjectName(), e);
             throw new ArtifactStorageException("Failed to get Object", e);
         }
     }
@@ -155,6 +161,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
                 .object(objectID)
                 .build());
         } catch (final Exception e) {
+            LOGGER.error("Failed to get - bucket: '{}', object: '{}'", bucketID, objectID, e);
             throw new ArtifactStorageException("Failed to get Object", e);
         }
     }
@@ -169,6 +176,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
                 .bypassGovernanceMode(true)
                 .build());
         } catch (final Exception e) {
+            LOGGER.error("Failed to delete - bucket: '{}', object: '{}'", minioObject.getBucket(), minioObject.getObjectName(), e);
             throw new ArtifactStorageException(String.format("Failed to delete '%s'", minioObject.getObjectName()), e);
         }
 
@@ -180,6 +188,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
         try {
             copy(vspId, tempName, versionId);
         } catch (final Exception e) {
+            LOGGER.error("Failed to copy - bucket: '{}', object: '{}'", vspId, versionId, e);
             return Optional.empty();
         }
 
@@ -205,6 +214,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
         try {
             copy(vspId, versionId, minioObject.getObjectName());
         } catch (final Exception e) {
+            LOGGER.error("Failed to copy - bucket: '{}', object: '{}'", vspId, versionId, e);
             throw new ArtifactStorageException("Failed to move", e);
         }
         delete(minioObject);
@@ -228,19 +238,23 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
         final Map<String, Object> endpoint = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "endpoint", null);
         final Map<String, Object> credentials = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "credentials", null);
         final String tempPath = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "tempPath", null);
+
+        if (endpoint == null) {
+            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("endpoint"));
+            throw new RuntimeException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("endpoint"));
+        }
+        if (credentials == null) {
+            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("credentials"));
+            throw new RuntimeException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("credentials"));
+        }
+        if (tempPath == null) {
+            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("tempPath"));
+            throw new RuntimeException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("tempPath"));
+        }
         LOGGER.info("ArtifactConfig.endpoint: '{}'", endpoint);
         LOGGER.info("ArtifactConfig.credentials: '{}'", credentials);
         LOGGER.info("ArtifactConfig.tempPath: '{}'", tempPath);
 
-        if (endpoint == null) {
-            throw new RuntimeException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("endpoint"));
-        }
-        if (credentials == null) {
-            throw new RuntimeException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("credentials"));
-        }
-        if (tempPath == null) {
-            throw new RuntimeException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("tempPath"));
-        }
         final String host = (String) endpoint.getOrDefault("host", null);
         final int port = (int) endpoint.getOrDefault("port", 0);
         final boolean secure = (boolean) endpoint.getOrDefault("secure", false);

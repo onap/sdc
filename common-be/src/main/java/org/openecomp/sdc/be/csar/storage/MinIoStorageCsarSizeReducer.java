@@ -76,6 +76,7 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
             zf.entries().asIterator().forEachRemaining(zipProcessingFunction.getProcessZipConsumer(csarPackagePath, zf, zos));
         } catch (final IOException ex1) {
             rollback(reducedCsarPath);
+            LOGGER.error("Could not read ZIP stream '{}'", csarPackagePath.toString(), ex1);
             final var errorMsg = String.format(UNEXPECTED_PROBLEM_HAPPENED_WHILE_READING_THE_CSAR, csarPackagePath);
             throw new CsarSizeReducerException(errorMsg, ex1);
         }
@@ -87,12 +88,14 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
                 reducedCsarBytes = Files.readAllBytes(csarPackagePath);
             }
         } catch (final IOException e) {
+            LOGGER.error("Could not read bytes of file '{}'", csarPackagePath, e);
             final var errorMsg = String.format("Could not read bytes of file '%s'", csarPackagePath);
             throw new CsarSizeReducerException(errorMsg, e);
         }
         try {
             Files.delete(reducedCsarPath);
         } catch (final IOException e) {
+            LOGGER.error("Could not delete temporary file '{}'", reducedCsarPath, e);
             final var errorMsg = String.format("Could not delete temporary file '%s'", reducedCsarPath);
             throw new CsarSizeReducerException(errorMsg, e);
         }
@@ -107,6 +110,7 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
             final var entryName = zipEntry.getName();
             try {
                 if (totalEntryArchive.getAndIncrement() > thresholdEntries) {
+                    LOGGER.warn("too much entries in this archive, can lead to inodes exhaustion of the system");
                     // too much entries in this archive, can lead to inodes exhaustion of the system
                     final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
                     throw new CsarSizeReducerException(errorMsg);
@@ -124,6 +128,7 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
                 }
                 zos.closeEntry();
             } catch (final IOException ei) {
+                LOGGER.error("Failed to extract '{}' from zip '{}'", entryName, csarPackagePath, ei);
                 final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
                 throw new CsarSizeReducerException(errorMsg, ei);
             }
@@ -136,6 +141,7 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
         return zipEntry -> {
             final var entryName = zipEntry.getName();
             if (totalEntryArchive.getAndIncrement() > thresholdEntries) {
+                LOGGER.warn("too much entries in this archive, can lead to inodes exhaustion of the system");
                 // too much entries in this archive, can lead to inodes exhaustion of the system
                 final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
                 throw new CsarSizeReducerException(errorMsg);
@@ -153,6 +159,7 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
                 }
                 zos.closeEntry();
             } catch (final IOException ei) {
+                LOGGER.error("Failed to extract '{}' from zip '{}'", entryName, csarPackagePath, ei);
                 final var errorMsg = String.format("Failed to extract '%s' from zip '%s'", entryName, csarPackagePath);
                 throw new CsarSizeReducerException(errorMsg, ei);
             }
@@ -163,8 +170,8 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
         if (Files.exists(reducedCsarPath)) {
             try {
                 Files.delete(reducedCsarPath);
-            } catch (final Exception ex2) {
-                LOGGER.warn("Could not delete temporary file '{}'", reducedCsarPath, ex2);
+            } catch (final Exception e) {
+                LOGGER.warn("Could not delete temporary file '{}'", reducedCsarPath, e);
             }
         }
     }
@@ -183,6 +190,7 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
                 .map(ZipEntry::getName).map(Path::of)
                 .collect(Collectors.toList());
         } catch (final IOException e) {
+            LOGGER.error("Failed to read ZipFile '{}'", csarPackagePath.toString(), e);
             final var errorMsg = String.format(UNEXPECTED_PROBLEM_HAPPENED_WHILE_READING_THE_CSAR, csarPackagePath);
             throw new CsarSizeReducerException(errorMsg, e);
         }
