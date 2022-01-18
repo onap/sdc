@@ -22,10 +22,13 @@ package org.openecomp.sdc.be.tosca.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 public class ToscaTemplateArtifact {
 
     private String file;
     private String type;
+    private Map<String, Object> properties;
 }

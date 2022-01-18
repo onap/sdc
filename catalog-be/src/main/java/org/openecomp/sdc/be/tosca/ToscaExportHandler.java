@@ -1548,6 +1548,7 @@ public class ToscaExportHandler {
             ToscaTemplateArtifact artifact = new ToscaTemplateArtifact();
             artifact.setFile(entry.getValue().getFile());
             artifact.setType(entry.getValue().getType());
+            artifact.setProperties(entry.getValue().getProperties());
             arts.put(entry.getKey(), artifact);
         }
         return arts;
