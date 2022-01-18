@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04b26f6d_64740514",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-18T09:30:29Z",
+      "side": 1,
+      "message": "For the update case we will need to remove the existing derivedFrom and any properties not still defined in the new definition. See approach for other types, e.g. in PolicyTypeOperation for policy types",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 117,
+        "endChar": 49
+      },
+      "revId": "9b91c7e6ad83514abc8301d6f5c8b196fe4a6899",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
