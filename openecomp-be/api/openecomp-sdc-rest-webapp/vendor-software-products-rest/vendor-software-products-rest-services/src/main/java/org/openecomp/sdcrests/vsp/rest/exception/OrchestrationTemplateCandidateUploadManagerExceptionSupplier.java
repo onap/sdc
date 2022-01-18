@@ -25,7 +25,9 @@ import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProdu
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_PROCESSING_IN_PROGRESS;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_UPDATE_UPLOAD_LOCK_ERROR;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_UPLOAD_ALREADY_FINISHED_ERROR;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_UPLOAD_ALREADY_IN_STATUS_ERROR;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_UPLOAD_LOCK_NOT_FOUND_ERROR;
+import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_UPLOAD_STATUS_NOT_FOUND_ERROR;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -42,12 +44,19 @@ public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
     }
 
     public static Supplier<CoreException> vspUploadAlreadyInProgress(final String vspId, final String vspVersionId) {
-        final String errorMsg = String.format("There is a processing in progress for the VSP %s, version %s", vspId, vspVersionId);
+        final String errorMsg = String.format("There is a processing in progress for the VSP '%s', version '%s'", vspId, vspVersionId);
         return () -> new CoreException(new ErrorCodeBuilder().withId(VSP_PROCESSING_IN_PROGRESS).withMessage(errorMsg).build());
     }
 
     public static Supplier<CoreException> couldNotCreateLock(final String vspId, final String vspVersionId, final Exception exception) {
-        final String errorMsg = String.format("Could not create a lock for the VSP %s, version %s", vspId, vspVersionId);
+        final String errorMsg = String.format("Could not create a lock for the VSP '%s', version '%s'", vspId, vspVersionId);
+        final ErrorCode errorCode = new ErrorCodeBuilder().withId(VSP_CREATE_UPLOAD_LOCK_ERROR).withMessage(errorMsg).build();
+        return () -> new CoreException(errorCode, exception);
+    }
+
+    public static Supplier<CoreException> couldNotUpdateStatus(final String vspId, final String vspVersionId, final VspUploadStatus status,
+                                                               final Exception exception) {
+        final String errorMsg = String.format("Could not update upload status for the VSP '%s', version '%s', to '%s'", vspId, vspVersionId, status);
         final ErrorCode errorCode = new ErrorCodeBuilder().withId(VSP_CREATE_UPLOAD_LOCK_ERROR).withMessage(errorMsg).build();
         return () -> new CoreException(errorCode, exception);
     }
@@ -59,8 +68,20 @@ public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
     }
 
     public static Supplier<CoreException> couldNotFindLock(final UUID lockId, final String vspId, final String vspVersionId) {
-        final String errorMsg = String.format("Could not find lock '%s' for the VSP %s, version %s", lockId, vspId, vspVersionId);
+        final String errorMsg = String.format("Could not find lock '%s' for the VSP '%s', version '%s'", lockId, vspId, vspVersionId);
         final ErrorCode errorCode = new ErrorCodeBuilder().withId(VSP_UPLOAD_LOCK_NOT_FOUND_ERROR).withMessage(errorMsg).build();
+        return () -> new CoreException(errorCode);
+    }
+
+    public static Supplier<CoreException> couldNotFindStatus(final String vspId, final String vspVersionId) {
+        final String errorMsg = String.format("Could not find upload status for the VSP '%s', version '%s'", vspId, vspVersionId);
+        final ErrorCode errorCode = new ErrorCodeBuilder().withId(VSP_UPLOAD_STATUS_NOT_FOUND_ERROR).withMessage(errorMsg).build();
+        return () -> new CoreException(errorCode);
+    }
+
+    public static Supplier<CoreException> alreadyInStatusBeingUpdated(final String vspId, final String vspVersionId, final VspUploadStatus status) {
+        final String errorMsg = String.format("The upload for the VSP '%s', version '%s' is already in the status '%s'", status, vspId, vspVersionId);
+        final ErrorCode errorCode = new ErrorCodeBuilder().withId(VSP_UPLOAD_ALREADY_IN_STATUS_ERROR).withMessage(errorMsg).build();
         return () -> new CoreException(errorCode);
     }
 
@@ -75,10 +96,17 @@ public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
     }
 
     public static Supplier<IllegalArgumentException> invalidCompleteStatus(final VspUploadStatus status) {
-        String errorMsg = String.format("Invalid complete status '%s'. Expecting one of: %s",
+        final String errorMsg = String.format("Invalid complete status '%s'. Expecting one of: %s",
             status,
             VspUploadStatus.getCompleteStatus().stream().map(Enum::name).collect(Collectors.joining(", "))
         );
         return () -> new IllegalArgumentException(errorMsg);
     }
+
+    public static Supplier<IllegalArgumentException> invalidCompletionStatus(final VspUploadStatus status) {
+        final String errorMsg = String.format("Can't update to a status that represents a upload completion as '%s'", status);
+        return () -> new IllegalArgumentException(errorMsg);
+    }
+
+
 }

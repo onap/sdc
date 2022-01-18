@@ -24,13 +24,18 @@ package org.openecomp.sdcrests.vsp.rest.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.alreadyInStatusBeingUpdated;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.couldNotFindStatus;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.couldNotUpdateStatus;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -307,6 +312,125 @@ class OrchestrationTemplateCandidateUploadManagerImplTest {
             .get();
         assertEquals(expectedCoreException.code().id(), actualCoreException.code().id());
         assertEquals(expectedCoreException.code().message(), actualCoreException.code().message());
+    }
+
+    @Test
+    void startValidationSuccessTest() {
+        //given
+        final String vspId = "vspId";
+        final String vspVersionId = "vspVersionId";
+        final UUID lockId = UUID.randomUUID();
+        final String username = "username";
+        final Calendar createdCalendar = Calendar.getInstance();
+        createdCalendar.set(1900, Calendar.JANUARY, 1);
+        final Date created = createdCalendar.getTime();
+        final Calendar updatedCalendar = Calendar.getInstance();
+        updatedCalendar.set(1900, Calendar.JANUARY, 2);
+        final Date updated = updatedCalendar.getTime();
+        final VspUploadStatusRecord vspUploadStatusRecord = new VspUploadStatusRecord();
+        vspUploadStatusRecord.setVspId(vspId);
+        vspUploadStatusRecord.setVspVersionId(vspVersionId);
+        vspUploadStatusRecord.setLockId(lockId);
+        vspUploadStatusRecord.setCreated(created);
+        vspUploadStatusRecord.setUpdated(updated);
+        vspUploadStatusRecord.setStatus(VspUploadStatus.UPLOADING);
+        when(vspUploadStatusRecordDao.findLatest(vspId, vspVersionId)).thenReturn(Optional.of(vspUploadStatusRecord));
+        //when
+        final VspUploadStatusDto vspUploadStatusDto = packageUploadManagerImpl.startValidation(vspId, vspVersionId, username);
+        //then
+        assertEquals(VspUploadStatus.VALIDATING, vspUploadStatusDto.getStatus());
+        assertNotEquals(updated, vspUploadStatusDto.getUpdated());
+        assertEquals(vspId, vspUploadStatusDto.getVspId());
+        assertEquals(vspVersionId, vspUploadStatusDto.getVspVersionId());
+        assertEquals(lockId, vspUploadStatusDto.getLockId());
+        assertEquals(created, vspUploadStatusDto.getCreated());
+        assertFalse(vspUploadStatusDto.isComplete());
+    }
+
+    @Test
+    void startProcessingSuccessTest() {
+        //given
+        final String vspId = "vspId";
+        final String vspVersionId = "vspVersionId";
+        final UUID lockId = UUID.randomUUID();
+        final String username = "username";
+        final Date created = new Date();
+        final Date updated = new Date();
+        final VspUploadStatusRecord vspUploadStatusRecord = new VspUploadStatusRecord();
+        vspUploadStatusRecord.setVspId(vspId);
+        vspUploadStatusRecord.setVspVersionId(vspVersionId);
+        vspUploadStatusRecord.setLockId(lockId);
+        vspUploadStatusRecord.setCreated(created);
+        vspUploadStatusRecord.setUpdated(updated);
+        vspUploadStatusRecord.setStatus(VspUploadStatus.UPLOADING);
+        when(vspUploadStatusRecordDao.findLatest(vspId, vspVersionId)).thenReturn(Optional.of(vspUploadStatusRecord));
+        //when
+        final VspUploadStatusDto vspUploadStatusDto = packageUploadManagerImpl.startProcessing(vspId, vspVersionId, username);
+        //then
+        assertEquals(VspUploadStatus.PROCESSING, vspUploadStatusDto.getStatus());
+        assertNotEquals(updated, vspUploadStatusDto.getUpdated());
+        assertEquals(vspId, vspUploadStatusDto.getVspId());
+        assertEquals(vspVersionId, vspUploadStatusDto.getVspVersionId());
+        assertEquals(lockId, vspUploadStatusDto.getLockId());
+        assertEquals(created, vspUploadStatusDto.getCreated());
+        assertFalse(vspUploadStatusDto.isComplete());
+    }
+
+
+    @Test
+    void startProcessing_statusNotFoundTest() {
+        //given
+        final String vspId = "vspId";
+        final String vspVersionId = "vspVersionId";
+        when(vspUploadStatusRecordDao.findLatest(vspId, vspVersionId)).thenReturn(Optional.empty());
+        //when/then
+        final CoreException actualCoreException = assertThrows(CoreException.class,
+            () -> packageUploadManagerImpl.startProcessing(vspId, vspVersionId, "username"));
+
+        final CoreException expectedCoreException = couldNotFindStatus(vspId, vspVersionId).get();
+        assertEquals(expectedCoreException.code().id(), actualCoreException.code().id());
+        assertEquals(expectedCoreException.getMessage(), actualCoreException.getMessage());
+    }
+
+    @Test
+    void startProcessing_alreadyInGivenStatusTest() {
+        //given
+        final String vspId = "vspId";
+        final String vspVersionId = "vspVersionId";
+        final VspUploadStatus processingStatus = VspUploadStatus.PROCESSING;
+        final VspUploadStatusRecord vspUploadStatusRecord = new VspUploadStatusRecord();
+        vspUploadStatusRecord.setStatus(processingStatus);
+        when(vspUploadStatusRecordDao.findLatest(vspId, vspVersionId)).thenReturn(Optional.of(vspUploadStatusRecord));
+
+        //when/then
+        final CoreException actualCoreException = assertThrows(CoreException.class,
+            () -> packageUploadManagerImpl.startProcessing(vspId, vspVersionId, "username"));
+
+        final CoreException expectedCoreException = alreadyInStatusBeingUpdated(vspId, vspVersionId, processingStatus).get();
+        assertEquals(expectedCoreException.code().id(), actualCoreException.code().id());
+        assertEquals(expectedCoreException.getMessage(), actualCoreException.getMessage());
+    }
+
+    @Test
+    void updateStatus_couldNotUpdateTest() {
+        //given
+        final String vspId = "vspId";
+        final String vspVersionId = "vspVersionId";
+        final VspUploadStatusRecord vspUploadStatusRecord = new VspUploadStatusRecord();
+        vspUploadStatusRecord.setVspId(vspId);
+        vspUploadStatusRecord.setVspVersionId(vspVersionId);
+        vspUploadStatusRecord.setStatus(VspUploadStatus.UPLOADING);
+        when(vspUploadStatusRecordDao.findLatest(vspId, vspVersionId)).thenReturn(Optional.of(vspUploadStatusRecord));
+        final RuntimeException exception = new RuntimeException("test");
+        doThrow(exception).when(vspUploadStatusRecordDao).update(vspUploadStatusRecord);
+
+        //when/then
+        final CoreException actualCoreException = assertThrows(CoreException.class,
+            () -> packageUploadManagerImpl.startProcessing(vspId, vspVersionId, "username"));
+
+        final CoreException expectedCoreException = couldNotUpdateStatus(vspId, vspVersionId, VspUploadStatus.PROCESSING, exception).get();
+        assertEquals(expectedCoreException.code().id(), actualCoreException.code().id());
+        assertEquals(expectedCoreException.getMessage(), actualCoreException.getMessage());
     }
 
 }
