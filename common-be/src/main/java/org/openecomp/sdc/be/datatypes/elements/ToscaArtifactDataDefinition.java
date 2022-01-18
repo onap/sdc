@@ -22,10 +22,13 @@ package org.openecomp.sdc.be.datatypes.elements;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 public class ToscaArtifactDataDefinition {
 
     private String file;
     private String type;
+    private Map<String, Object> properties;
 }
