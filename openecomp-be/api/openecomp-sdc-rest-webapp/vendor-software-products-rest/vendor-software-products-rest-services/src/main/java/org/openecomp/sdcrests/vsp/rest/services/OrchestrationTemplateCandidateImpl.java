@@ -153,6 +153,8 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
                 fileToUploadBytes = fileToUpload.getObject(byte[].class);
             }
 
+
+            vspUploadStatus = orchestrationTemplateCandidateUploadManager.startValidation(vspId, versionId, user);
             final var onboardingPackageProcessor =
                 new OnboardingPackageProcessor(filename, fileToUploadBytes, new CnfPackageValidator(), artifactInfo);
             final ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
@@ -167,13 +169,14 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             }
             final var version = new Version(versionId);
             final var vspDetails = vendorSoftwareProductManager.getVsp(vspId, version);
+            vspUploadStatus = orchestrationTemplateCandidateUploadManager.startProcessing(vspId, versionId, user);
             response = processOnboardPackage(onboardPackageInfo, vspDetails, errorMessages);
             final UploadFileResponseDto entity = (UploadFileResponseDto) response.getEntity();
             if (artifactStorageManager.isEnabled()) {
-                if (!entity.getErrors().isEmpty()) {
-                    artifactStorageManager.delete(artifactInfo);
-                } else {
+                if (entity.getErrors().isEmpty()) {
                     artifactStorageManager.put(vspId, versionId + ".reduced", new ByteArrayInputStream(fileToUploadBytes));
+                } else {
+                    artifactStorageManager.delete(artifactInfo);
                 }
             }
             orchestrationTemplateCandidateUploadManager

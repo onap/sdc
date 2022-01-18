@@ -21,9 +21,13 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.alreadyInStatusBeingUpdated;
 import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.couldNotCreateLock;
 import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.couldNotFindLock;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.couldNotFindStatus;
 import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.couldNotUpdateLock;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.couldNotUpdateStatus;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.invalidCompletionStatus;
 import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.uploadAlreadyFinished;
 import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.vspUploadAlreadyInProgress;
 
@@ -38,8 +42,8 @@ import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VspManagerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VspUploadStatusRecordDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
-import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusRecord;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatus;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatusRecord;
 import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspUploadStatusDto;
 import org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier;
@@ -58,28 +62,31 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateCandidateUploadManagerImpl.class);
 
-    private final VspUploadStatusRecordDao uploadManagerDao;
+    private final VspUploadStatusRecordDao vspUploadStatusRecordDao;
     private final VspUploadStatusRecordMapper vspUploadStatusRecordMapper;
     private final VendorSoftwareProductManager vendorSoftwareProductManager;
     private final Lock startUploadLock;
+    private final Lock updateStatusLock;
 
     @Autowired
     public OrchestrationTemplateCandidateUploadManagerImpl(
-        @Qualifier("vsp-upload-status-record-dao-impl") final VspUploadStatusRecordDao uploadManagerDao) {
+        @Qualifier("vsp-upload-status-record-dao-impl") final VspUploadStatusRecordDao vspUploadStatusRecordDao) {
 
-        this.uploadManagerDao = uploadManagerDao;
+        this.vspUploadStatusRecordDao = vspUploadStatusRecordDao;
         this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
         this.vspUploadStatusRecordMapper = new VspUploadStatusRecordMapper();
         startUploadLock = new ReentrantLock();
+        updateStatusLock = new ReentrantLock();
     }
 
     //for tests purpose
-    OrchestrationTemplateCandidateUploadManagerImpl(final VspUploadStatusRecordDao uploadManagerDao,
+    OrchestrationTemplateCandidateUploadManagerImpl(final VspUploadStatusRecordDao vspUploadStatusRecordDao,
                                                     final VendorSoftwareProductManager vendorSoftwareProductManager) {
-        this.uploadManagerDao = uploadManagerDao;
+        this.vspUploadStatusRecordDao = vspUploadStatusRecordDao;
         this.vendorSoftwareProductManager = vendorSoftwareProductManager;
         this.vspUploadStatusRecordMapper = new VspUploadStatusRecordMapper();
         startUploadLock = new ReentrantLock();
+        updateStatusLock = new ReentrantLock();
     }
 
     @Override
@@ -90,7 +97,7 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
         final VspUploadStatusRecord vspUploadStatusRecord;
         try {
             startUploadLock.lock();
-            final List<VspUploadStatusRecord> uploadInProgressList = uploadManagerDao.findAllInProgress(vspId, vspVersionId);
+            final List<VspUploadStatusRecord> uploadInProgressList = vspUploadStatusRecordDao.findAllInProgress(vspId, vspVersionId);
             if (!uploadInProgressList.isEmpty()) {
                 final CoreException coreException = vspUploadAlreadyInProgress(vspId, vspVersionId).get();
                 LOGGER.error(coreException.getMessage());
@@ -104,13 +111,72 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
             vspUploadStatusRecord.setLockId(UUID.randomUUID());
             vspUploadStatusRecord.setCreated(new Date());
 
-            uploadManagerDao.create(vspUploadStatusRecord);
+            vspUploadStatusRecordDao.create(vspUploadStatusRecord);
             startUploadLock.unlock();
             LOGGER.debug("Upload lock '{}' created for VSP id '{}', version '{}'", vspUploadStatusRecord.getLockId(), vspId, vspVersionId);
         } catch (final CoreException e) {
             throw e;
         }  catch (final Exception e) {
             final CoreException coreException = couldNotCreateLock(vspId, vspVersionId, e).get();
+            LOGGER.error(coreException.getMessage());
+            throw coreException;
+        }
+
+        return vspUploadStatusRecordMapper.applyMapping(vspUploadStatusRecord, VspUploadStatusDto.class);
+    }
+
+    @Override
+    public VspUploadStatusDto startValidation(final String vspId, final String vspVersionId, final String user) {
+        return updateToNotFinalStatus(vspId, vspVersionId, VspUploadStatus.VALIDATING, user);
+    }
+
+    @Override
+    public VspUploadStatusDto startProcessing(final String vspId, final String vspVersionId, final String user) {
+        return updateToNotFinalStatus(vspId, vspVersionId, VspUploadStatus.PROCESSING, user);
+    }
+
+    private VspUploadStatusDto updateToNotFinalStatus(final String vspId, final String vspVersionId, final VspUploadStatus status, final String user) {
+        LOGGER.debug("Updating upload status to '{}' for VSP id '{}', version '{}', triggered by user '{}'", status, vspId, vspVersionId, user);
+        if (status.isCompleteStatus()) {
+            final IllegalArgumentException exception = invalidCompletionStatus(status).get();
+            LOGGER.error(exception.getMessage());
+            throw exception;
+        }
+        try {
+            updateStatusLock.lock();
+            final Optional<VspUploadStatusRecord> vspUploadStatusRecordOptional = vspUploadStatusRecordDao.findLatest(vspId, vspVersionId);
+            if (vspUploadStatusRecordOptional.isEmpty()) {
+                final CoreException coreException = couldNotFindStatus(vspId, vspVersionId).get();
+                LOGGER.error(coreException.getMessage());
+                throw coreException;
+            }
+
+            final VspUploadStatusRecord vspUploadStatusRecord = vspUploadStatusRecordOptional.get();
+            final VspUploadStatus currentStatus = vspUploadStatusRecord.getStatus();
+            if (currentStatus == status) {
+                final CoreException coreException = alreadyInStatusBeingUpdated(vspId, vspVersionId, status).get();
+                LOGGER.error(coreException.getMessage());
+                throw coreException;
+            }
+            return updateStatus(vspUploadStatusRecord, status);
+        } finally {
+            updateStatusLock.unlock();
+        }
+    }
+
+    private VspUploadStatusDto updateStatus(final VspUploadStatusRecord vspUploadStatusRecord, final VspUploadStatus status) {
+        final VspUploadStatus currentStatus = vspUploadStatusRecord.getStatus();
+        vspUploadStatusRecord.setStatus(status);
+        vspUploadStatusRecord.setUpdated(new Date());
+
+        final String vspId = vspUploadStatusRecord.getVspId();
+        final String vspVersionId = vspUploadStatusRecord.getVspVersionId();
+        try {
+            vspUploadStatusRecordDao.update(vspUploadStatusRecord);
+            LOGGER.debug("Upload lock '{}' status updated from '{}' to '{}' for VSP id '{}', version '{}'",
+                vspUploadStatusRecord.getLockId(), currentStatus, status, vspId, vspVersionId);
+        } catch (final Exception e) {
+            final CoreException coreException = couldNotUpdateStatus(vspId, vspVersionId, status, e).get();
             LOGGER.error(coreException.getMessage());
             throw coreException;
         }
@@ -126,7 +192,7 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
             throw OrchestrationTemplateCandidateUploadManagerExceptionSupplier.invalidCompleteStatus(completeStatus).get();
         }
         final Optional<VspUploadStatusRecord> vspUploadStatusOptional =
-            uploadManagerDao.findByVspIdAndVersionIdAndLockId(vspId, vspVersionId, lockId);
+            vspUploadStatusRecordDao.findByVspIdAndVersionIdAndLockId(vspId, vspVersionId, lockId);
         if (vspUploadStatusOptional.isEmpty()) {
             final CoreException coreException = couldNotFindLock(lockId, vspId, vspVersionId).get();
             LOGGER.error(coreException.getMessage());
@@ -145,7 +211,7 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
         vspUploadStatusRecord.setIsComplete(true);
 
         try {
-            uploadManagerDao.update(vspUploadStatusRecord);
+            vspUploadStatusRecordDao.update(vspUploadStatusRecord);
             LOGGER.debug("Upload complete for VSP '{}', version '{}', lock '{}'",
                 vspUploadStatusRecord.getLockId(), vspUploadStatusRecord.getVspId(), vspUploadStatusRecord.getVspVersionId());
         } catch (final Exception e) {
@@ -170,7 +236,7 @@ public class OrchestrationTemplateCandidateUploadManagerImpl implements Orchestr
     public Optional<VspUploadStatusDto> findLatestStatus(final String vspId, final String vspVersionId, final String user) {
         checkVspExists(vspId, vspVersionId);
 
-        final Optional<VspUploadStatusRecord> vspUploadStatus = uploadManagerDao.findLatest(vspId, vspVersionId);
+        final Optional<VspUploadStatusRecord> vspUploadStatus = vspUploadStatusRecordDao.findLatest(vspId, vspVersionId);
         if (vspUploadStatus.isEmpty()) {
             return Optional.empty();
         }
