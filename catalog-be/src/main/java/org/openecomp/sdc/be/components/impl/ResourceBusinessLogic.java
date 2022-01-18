@@ -3409,6 +3409,14 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 ToscaArtifactDataDefinition to = new ToscaArtifactDataDefinition();
                 to.setFile(entry.getValue().getFile());
                 to.setType(entry.getValue().getType());
+                if(isNotEmpty(entry.getValue().getProperties())) {
+                    Map<String, Object> newPropertiesMap = new HashMap<>();
+                    List<UploadPropInfo> artifactPropsInfo = entry.getValue().getProperties();
+                    for(UploadPropInfo propInfo: artifactPropsInfo) {
+                        newPropertiesMap.put(propInfo.getName(), propInfo.getValue());
+                    }
+                    to.setProperties(newPropertiesMap);
+                }
                 toscaArtifacts.put(entry.getKey(), to);
             }
             componentInstance.setToscaArtifacts(toscaArtifacts);

@@ -33,4 +33,5 @@ public class UploadArtifactInfo extends UploadInfo {
     private List<String> validSourceTypes;
     private String file;
     private String type;
+    private List<UploadPropInfo> properties;
 }

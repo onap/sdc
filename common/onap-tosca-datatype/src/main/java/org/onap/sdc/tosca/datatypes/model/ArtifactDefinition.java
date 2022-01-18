@@ -22,6 +22,8 @@ package org.onap.sdc.tosca.datatypes.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 public class ArtifactDefinition {
@@ -31,4 +33,5 @@ public class ArtifactDefinition {
     private String repository;
     private String description;
     private String deploy_path;
+    private Map<String, Object> properties;
 }

@@ -832,6 +832,13 @@ public class YamlTemplateParsingHandler {
         if (nodeTemplateJsonMap.containsKey(FILE.getElementName())) {
             artifactTemplateInfo.setFile((String) nodeTemplateJsonMap.get(FILE.getElementName()));
         }
+        if (nodeTemplateJsonMap.containsKey(PROPERTIES.getElementName())) {
+            Map<String, List<UploadPropInfo>> props = buildPropModuleFromYaml(nodeTemplateJsonMap);
+            if (!props.isEmpty()) {
+                List<UploadPropInfo> properties = props.values().stream().flatMap(Collection::stream).collect(toList());
+                artifactTemplateInfo.setProperties(properties);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
