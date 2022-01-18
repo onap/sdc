@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc4207c3_10f37a46",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-18T10:03:10Z",
+      "side": 1,
+      "message": "I believe this check is not necessary as the ModelTypeEnum.findByValue will cover not existent types",
+      "range": {
+        "startLine": 252,
+        "startChar": 12,
+        "endLine": 252,
+        "endChar": 55
+      },
+      "revId": "901b016f05dabeda5b9b149485377e3c09294d2d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
