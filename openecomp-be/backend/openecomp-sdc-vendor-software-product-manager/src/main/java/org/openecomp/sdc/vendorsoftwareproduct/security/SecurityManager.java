@@ -188,6 +188,7 @@ public class SecurityManager {
             Files.createDirectories(folder);
         } catch (final IOException e) {
             fail = true;
+            LOGGER.error("Failed to create directory '{}'", folder, e);
             throw new SecurityManagerException(String.format("Failed to create directory '%s'", folder), e);
         }
 
@@ -198,6 +199,7 @@ public class SecurityManager {
             final var parsedObject = pemParser.readObject();
             if (!(parsedObject instanceof ContentInfo)) {
                 fail = true;
+                LOGGER.error("Signature is not recognized");
                 throw new SecurityManagerException("Signature is not recognized");
             }
 
@@ -216,9 +218,11 @@ public class SecurityManager {
             throw new SecurityManagerException(UNEXPECTED_ERROR_OCCURRED_DURING_SIGNATURE_VALIDATION, e);
         } catch (final CMSException e) {
             fail = true;
+            LOGGER.error(e.getMessage(), e);
             throw new SecurityManagerException(COULD_NOT_VERIFY_SIGNATURE, e);
         } catch (final SecurityManagerException e) {
             fail = true;
+            LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
             deleteFile(target);
@@ -248,6 +252,7 @@ public class SecurityManager {
             try {
                 certs = parseCertsFromPem(packageCert);
             } catch (final IOException e) {
+                LOGGER.error("Failed to parse certificate from PEM", e);
                 throw new SecurityManagerException("Failed to parse certificate from PEM", e);
             }
             cert = readSignCert(certs, firstSigner)
@@ -260,6 +265,7 @@ public class SecurityManager {
         try {
             return firstSigner.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
         } catch (CMSException | OperatorCreationException e) {
+            LOGGER.error("Failed to verify package signed data", e);
             throw new SecurityManagerException("Failed to verify package signed data", e);
         }
     }
@@ -337,6 +343,7 @@ public class SecurityManager {
         try (FileInputStream fi = new FileInputStream(certFile)) {
             return loadCertificateFactory(fi);
         } catch (IOException e) {
+            LOGGER.error("Error during loading Certificate from file!", e);
             throw new SecurityManagerException("Error during loading Certificate from file!", e);
         }
     }
@@ -345,6 +352,7 @@ public class SecurityManager {
         try {
             return loadCertificateFactory(new ByteArrayInputStream(cert.getEncoded()));
         } catch (IOException | SecurityManagerException e) {
+            LOGGER.error("Error during loading Certificate from bytes!", e);
             throw new RuntimeException("Error during loading Certificate from bytes!", e);
         }
     }
@@ -354,6 +362,7 @@ public class SecurityManager {
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
             return (X509Certificate) factory.generateCertificate(in);
         } catch (CertificateException e) {
+            LOGGER.error("Error during loading Certificate from bytes!", e);
             throw new SecurityManagerException("Error during loading Certificate from bytes!", e);
         }
     }
@@ -361,12 +370,15 @@ public class SecurityManager {
     private PKIXCertPathBuilderResult verifyCertificate(final X509Certificate cert,
                                                         final Set<X509Certificate> additionalCerts) throws SecurityManagerException {
         if (null == cert) {
+            LOGGER.error("The certificate is empty!");
             throw new SecurityManagerException("The certificate is empty!");
         }
         if (isExpired(cert)) {
+            LOGGER.error("The certificate expired on: {}", cert.getNotAfter());
             throw new SecurityManagerException("The certificate expired on: " + cert.getNotAfter());
         }
         if (isSelfSigned(cert)) {
+            LOGGER.error("The certificate is self-signed.");
             throw new SecurityManagerException("The certificate is self-signed.");
         }
         Set<X509Certificate> trustedRootCerts = new HashSet<>();
@@ -381,6 +393,7 @@ public class SecurityManager {
         try {
             return verifyCertificate(cert, trustedRootCerts, intermediateCerts);
         } catch (final GeneralSecurityException e) {
+            LOGGER.error("Failed to verify certificate", e);
             throw new SecurityManagerException("Failed to verify certificate", e);
         }
     }
@@ -400,6 +413,7 @@ public class SecurityManager {
         try {
             pkixParams = new PKIXBuilderParameters(trustAnchors, selector);
         } catch (InvalidAlgorithmParameterException ex) {
+            LOGGER.error("No root CA has been found for this certificate", ex);
             throw new InvalidAlgorithmParameterException("No root CA has been found for this certificate", ex);
         }
         // Not supporting CRL checks for now
