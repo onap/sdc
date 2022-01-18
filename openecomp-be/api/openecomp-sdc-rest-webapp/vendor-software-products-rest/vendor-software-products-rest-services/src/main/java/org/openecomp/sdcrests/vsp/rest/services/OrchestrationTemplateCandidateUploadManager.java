@@ -52,6 +52,16 @@ public interface OrchestrationTemplateCandidateUploadManager {
                                     final String user);
 
     /**
+     * Updates the upload status to a validation state.
+     *
+     * @param vspId        the Vendor Software Product id
+     * @param vspVersionId the Vendor Software Product version id
+     * @param user         the current user
+     * @return the updated upload status
+     */
+    VspUploadStatusDto startValidation(final String vspId, final String vspVersionId, final String user);
+
+    /**
      * Finds the latest upload status for a given Vendor Software Product version.
      *
      * @param vspId        the Vendor Software Product id
@@ -60,4 +70,14 @@ public interface OrchestrationTemplateCandidateUploadManager {
      * @return the latest upload status for the requested Vendor Software Product version
      */
     Optional<VspUploadStatusDto> findLatestStatus(String vspId, String vspVersionId, String user);
+
+    /**
+     * Updates the upload status to a processing state.
+     *
+     * @param vspId        the Vendor Software Product id
+     * @param vspVersionId the Vendor Software Product version id
+     * @param user         the current user
+     * @return the updated upload status
+     */
+    VspUploadStatusDto startProcessing(String vspId, String vspVersionId, String user);
 }

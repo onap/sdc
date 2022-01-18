@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -67,6 +68,7 @@ import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspUploadStatus;
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileStatus;
@@ -152,6 +154,8 @@ class OrchestrationTemplateCandidateImplTest {
         final String vspId = "vspId";
         final String versionId = "versionId";
         when(orchestrationTemplateCandidateUploadManager.startUpload(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        when(orchestrationTemplateCandidateUploadManager.startValidation(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        when(orchestrationTemplateCandidateUploadManager.startProcessing(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         Response response = orchestrationTemplateCandidate
             .upload(vspId, versionId, mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -163,6 +167,8 @@ class OrchestrationTemplateCandidateImplTest {
         final String vspId = "vspId";
         final String versionId = "versionId";
         when(orchestrationTemplateCandidateUploadManager.startUpload(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        when(orchestrationTemplateCandidateUploadManager.startValidation(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        when(orchestrationTemplateCandidateUploadManager.startProcessing(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         Response response = orchestrationTemplateCandidate.upload(vspId, versionId,
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -183,6 +189,8 @@ class OrchestrationTemplateCandidateImplTest {
         when(packageSizeReducer.reduce(any())).thenReturn(bytes);
 
         when(orchestrationTemplateCandidateUploadManager.startUpload(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        when(orchestrationTemplateCandidateUploadManager.startValidation(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        when(orchestrationTemplateCandidateUploadManager.startProcessing(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
 
         Response response = orchestrationTemplateCandidate.upload(vspId, versionId,
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
@@ -296,4 +304,17 @@ class OrchestrationTemplateCandidateImplTest {
         }
     }
 
+    @Test
+    void finishUploadMustBeCalledWhenExceptionHappensTest() {
+        //given
+        final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
+        vspUploadStatusDto.setLockId(UUID.randomUUID());
+        when(orchestrationTemplateCandidateUploadManager.startUpload(candidateId, versionId, user)).thenReturn(vspUploadStatusDto);
+        when(artifactStorageManager.isEnabled()).thenThrow(new RuntimeException());
+        //when
+        orchestrationTemplateCandidate.upload(candidateId, versionId, Mockito.mock(Attachment.class), user);
+        //then
+        verify(orchestrationTemplateCandidateUploadManager)
+            .finishUpload(candidateId, versionId, vspUploadStatusDto.getLockId(), VspUploadStatus.ERROR, user);
+    }
 }
