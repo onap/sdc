@@ -79,9 +79,12 @@ public class VendorSoftwareProductErrorCodes {
     public static final String VSP_ONBOARD_METHOD_UPDATE_NOT_ALLOWED = "VSP_ONBOARD_METHOD_UPDATE_NOT_ALLOWED";
     public static final String VSP_PROCESSING_IN_PROGRESS = "VSP_PROCESSING_IN_PROGRESS";
     public static final String VSP_CREATE_UPLOAD_LOCK_ERROR = "VSP_CREATE_UPLOAD_LOCK_ERROR";
+    public static final String VSP_UNABLE_UPDATE_UPLOAD_STATUS_ERROR = "VSP_UNABLE_UPDATE_UPLOAD_STATUS_ERROR";
     public static final String VSP_UPDATE_UPLOAD_LOCK_ERROR = "VSP_UPDATE_UPLOAD_LOCK_ERROR";
     public static final String VSP_UPLOAD_LOCK_NOT_FOUND_ERROR = "VSP_UPLOAD_LOCK_NOT_FOUND_ERROR";
+    public static final String VSP_UPLOAD_STATUS_NOT_FOUND_ERROR = "VSP_UPLOAD_STATUS_NOT_FOUND_ERROR";
     public static final String VSP_UPLOAD_ALREADY_FINISHED_ERROR = "VSP_UPLOAD_ALREADY_FINISHED_ERROR";
+    public static final String VSP_UPLOAD_ALREADY_IN_STATUS_ERROR = "VSP_UPLOAD_ALREADY_IN_STATUS_ERROR";
 
     private VendorSoftwareProductErrorCodes() {
     }
