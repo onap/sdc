@@ -29,6 +29,7 @@ import java.util.List;
 public enum VspUploadStatus {
     UPLOADING,
     PROCESSING,
+    VALIDATING,
     SUCCESS,
     ERROR;
 
