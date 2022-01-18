@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2661bd79_d0a3d0d9",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-18T17:22:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "943e158b_2e941f53",
+      "range": {
+        "startLine": 244,
+        "startChar": 22,
+        "endLine": 244,
+        "endChar": 38
+      },
+      "revId": "ea7e7ac409b722e4694df62c2e5c5f247168d3a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6ff34a51_552fae5d",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageCsarSizeReducer.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "e94315bd_ddb5af50",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageCsarSizeReducer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-18T17:22:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ff34a51_552fae5d",
+      "range": {
+        "startLine": 113,
+        "startChar": 33,
+        "endLine": 113,
+        "endChar": 41
+      },
+      "revId": "ea7e7ac409b722e4694df62c2e5c5f247168d3a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "47594786_2a7af97f",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageCsarSizeReducer.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "ea7e7ac409b722e4694df62c2e5c5f247168d3a3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b677e4f_8259cd69",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageCsarSizeReducer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-18T17:22:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47594786_2a7af97f",
+      "range": {
+        "startLine": 144,
+        "startChar": 29,
+        "endLine": 144,
+        "endChar": 37
+      },
+      "revId": "ea7e7ac409b722e4694df62c2e5c5f247168d3a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
