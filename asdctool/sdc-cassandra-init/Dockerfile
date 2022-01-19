@@ -10,7 +10,7 @@ USER root
 
 RUN apt-get update --allow-releaseinfo-change && apt-get install -y python-pip && \
     python -m pip install --upgrade pip \
-    pip install cqlsh && \
+    pip install cqlsh==6.0.0 && \
     mkdir ~/.cassandra/ && \
     echo  '[cql]' > ~/.cassandra/cqlshrc  && \
     echo  'version=3.4.4' >> ~/.cassandra/cqlshrc  && \
