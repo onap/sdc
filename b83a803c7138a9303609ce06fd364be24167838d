@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d308b8f4_5b638fc8",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-19T14:48:57Z",
+      "side": 1,
+      "message": "please, be specific about the imports for code clarity, in other words, don\u0027t use the wildcard import",
+      "range": {
+        "startLine": 51,
+        "startChar": 7,
+        "endLine": 51,
+        "endChar": 19
+      },
+      "revId": "b83a803c7138a9303609ce06fd364be24167838d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2d09dec_fd107b51",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-19T14:48:57Z",
+      "side": 1,
+      "message": "please adjust format, remove the new line:\n} else {",
+      "range": {
+        "startLine": 105,
+        "startChar": 12,
+        "endLine": 107,
+        "endChar": 18
+      },
+      "revId": "b83a803c7138a9303609ce06fd364be24167838d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb979d62_3cb7a2ce",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-19T14:48:57Z",
+      "side": 1,
+      "message": "fix typo: exists\nSuggest to change to:\nArtifact type \u0027{}\u0027 already exists.",
+      "range": {
+        "startLine": 108,
+        "startChar": 52,
+        "endLine": 108,
+        "endChar": 57
+      },
+      "revId": "b83a803c7138a9303609ce06fd364be24167838d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86b5c558_68c6dece",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 287,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-19T14:48:57Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 282,
+        "startChar": 4,
+        "endLine": 287,
+        "endChar": 7
+      },
+      "revId": "b83a803c7138a9303609ce06fd364be24167838d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
