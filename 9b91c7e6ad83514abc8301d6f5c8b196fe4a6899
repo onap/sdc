@@ -22,6 +22,30 @@
       "revId": "9b91c7e6ad83514abc8301d6f5c8b196fe4a6899",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3054a2e_3dafc1dc",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ArtifactTypeOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-01-19T14:16:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04b26f6d_64740514",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 117,
+        "endChar": 49
+      },
+      "revId": "9b91c7e6ad83514abc8301d6f5c8b196fe4a6899",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
