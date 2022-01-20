@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e281826_ea61d964",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-20T15:10:35Z",
+      "side": 1,
+      "message": "it\u0027s not clear reason of changing , but OK",
+      "range": {
+        "startLine": 176,
+        "startChar": 16,
+        "endLine": 180,
+        "endChar": 17
+      },
+      "revId": "9c89ecdb8476cde5e2691e3eaaaf4b60a0ee2c57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1686773a_c223fa9b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-20T15:10:35Z",
+      "side": 1,
+      "message": "log exception",
+      "range": {
+        "startLine": 142,
+        "startChar": 45,
+        "endLine": 142,
+        "endChar": 49
+      },
+      "revId": "9c89ecdb8476cde5e2691e3eaaaf4b60a0ee2c57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ece4682_cd11a56f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-20T15:10:35Z",
+      "side": 1,
+      "message": "log exception",
+      "range": {
+        "startLine": 150,
+        "startChar": 52,
+        "endLine": 150,
+        "endChar": 57
+      },
+      "revId": "9c89ecdb8476cde5e2691e3eaaaf4b60a0ee2c57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7b76f13_114e09d8",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-20T15:10:35Z",
+      "side": 1,
+      "message": "log exception",
+      "range": {
+        "startLine": 158,
+        "startChar": 52,
+        "endLine": 158,
+        "endChar": 57
+      },
+      "revId": "9c89ecdb8476cde5e2691e3eaaaf4b60a0ee2c57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52474a63_b009f68e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-20T15:10:35Z",
+      "side": 1,
+      "message": "log exception",
+      "range": {
+        "startLine": 180,
+        "startChar": 47,
+        "endLine": 180,
+        "endChar": 53
+      },
+      "revId": "9c89ecdb8476cde5e2691e3eaaaf4b60a0ee2c57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea726736_2820d56e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-20T15:10:35Z",
+      "side": 1,
+      "message": "ok, i see, you copied from here\nin my opinion we should log exception",
+      "range": {
+        "startLine": 198,
+        "startChar": 0,
+        "endLine": 198,
+        "endChar": 53
+      },
+      "revId": "9c89ecdb8476cde5e2691e3eaaaf4b60a0ee2c57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
