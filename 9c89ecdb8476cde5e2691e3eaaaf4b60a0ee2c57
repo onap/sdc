@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "54700d0b_686a8a80",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-20T16:16:01Z",
+      "side": 1,
+      "message": "I checked and saw that all endpoints thrown exceptions will be handled and logged by org.openecomp.sdcrests.errors.DefaultExceptionMapper, and currently that is what is going to happen with all the exceptions thrown here.",
+      "parentUuid": "0127eafa_7f653e4d",
+      "range": {
+        "startLine": 142,
+        "startChar": 45,
+        "endLine": 142,
+        "endChar": 49
+      },
+      "revId": "9c89ecdb8476cde5e2691e3eaaaf4b60a0ee2c57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ece4682_cd11a56f",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
         "patchSetId": 2
