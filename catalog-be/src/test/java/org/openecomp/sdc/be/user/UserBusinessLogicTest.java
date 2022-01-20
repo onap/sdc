@@ -750,4 +750,27 @@ public class UserBusinessLogicTest {
             ThreadLocalsHolder.setUserContext(originalUserContext);
         }
     }
+
+    @Test
+    public void testIsUserBase64EncodedTrueUserIdBase64Encoded() {
+        String userId = "bW9jaw==";
+        assertThat(testSubject.isUserBase64Encoded(userId)).isTrue();
+    }
+
+    @Test
+    public void testIsUserBase64EncodedFalseUserIdNotBase64Encoded() {
+        String userId = "mockId";
+        assertThat(testSubject.isUserBase64Encoded(userId)).isFalse();
+    }
+
+    @Test
+    public void testIsUserBase64EncodedFalseUserIdIsNull() {
+        assertThat(testSubject.isUserBase64Encoded(null)).isFalse();
+    }
+
+    @Test
+    public void testIsUserBase64EncodedFalseInvalidBase64Characters() {
+        String userId = "%not£valid*";
+        assertThat(testSubject.isUserBase64Encoded(userId)).isFalse();
+    }
 }
