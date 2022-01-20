@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -85,11 +86,16 @@ public class UserBusinessLogic {
 
     private String decryptUserId(final String userId) {
         if (StringUtils.isNotEmpty(userId)) {
-            try {
-                return CipherUtil.decryptPKC(userId);
-            } catch (final Exception e) {
-                return userId;
+            byte[] decodedUserId = Base64.decodeBase64(userId.getBytes());
+            byte[] reEncodedUserId = Base64.encodeBase64(decodedUserId);
+            if(userId.equals(new String(reEncodedUserId))) {
+                try {
+                    return CipherUtil.decryptPKC(userId);
+                } catch (final Exception e) {
+                    return userId;
+                }
             }
+            return userId;
         }
         return userId;
     }
