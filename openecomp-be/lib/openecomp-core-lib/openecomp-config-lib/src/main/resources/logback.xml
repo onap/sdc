@@ -16,6 +16,25 @@
 
 	<property name="asdc-debug-log-pattern" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{RequestId}|%msg %n"/>
 
+	<!-- STDOUT -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${default-log-pattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- STDERR -->
+	<appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+			<pattern>"%d [%thread] %-5level %logger{1024} - %msg%n"</pattern>
+		</encoder>
+	</appender>
+
 	<!-- All log -->
 	<if condition='property("enable-all-log").equalsIgnoreCase("true")'>
 		<then>
@@ -270,6 +289,8 @@
 				<appender-ref ref="ALL_ROLLING" />
 			</then>
 		</if>
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="STDERR"/>
 	</root>
 
 	<logger name="org.openecomp.sdc" level="INFO" />
