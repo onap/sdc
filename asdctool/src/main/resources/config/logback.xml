@@ -5,11 +5,23 @@
 	<property name="default-log-pattern"
 		value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}|%X{uuid}|%X{serviceInstanceID}|%thread||${ECOMP-subcomponent-name}|%X{userId}|%level|%X{alarmSeverity}|%X{localAddr}|${beFqdn}|%X{remoteAddr}|%logger{35}|%X{timer}|ActivityType=&lt;%M&gt;, Desc=&lt;%msg&gt;%n" />
 
-
+	<!-- STDOUT -->
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-			<encoder>
-				<pattern>${default-log-pattern}</pattern>
-			</encoder>
+		<encoder>
+			<pattern>${default-log-pattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- STDERR -->
+	<appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+			<pattern>"%d [%thread] %-5level %logger{1024} - %msg%n"</pattern>
+		</encoder>
 	</appender>
 
 	<appender name="DEBUG_ROLLING"
@@ -36,6 +48,7 @@
 	<root level="INFO">
 		<appender-ref ref="DEBUG_ROLLING" />
 		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="STDERR"/>
 	</root>
 
 	<logger name="org.openecomp.sdc" level="INFO" />
