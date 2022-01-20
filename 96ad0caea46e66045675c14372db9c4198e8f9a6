@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "32603f33_c2e7440d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-20T16:10:48Z",
+      "side": 1,
+      "message": "Fixing a concern about the exceptions, all endpoints thrown exceptions will be handled and logged by org.openecomp.sdcrests.errors.DefaultExceptionMapper, so no need to create a response here, and also to log lower level exceptions I was throwing.",
+      "range": {
+        "startLine": 185,
+        "startChar": 12,
+        "endLine": 185,
+        "endChar": 21
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
