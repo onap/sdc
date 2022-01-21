@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "024edd49_cb9d79a7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManager.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-21T10:25:06Z",
+      "side": 1,
+      "message": "Done. Just used put instead of get to not confuse with getters and setters.",
+      "parentUuid": "f82e086e_29d2278c",
+      "range": {
+        "startLine": 39,
+        "startChar": 23,
+        "endLine": 39,
+        "endChar": 34
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2caed6c6_a2d32559",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
         "patchSetId": 10
@@ -68,6 +92,30 @@
       "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "682d776b_9b466775",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-21T10:25:06Z",
+      "side": 1,
+      "message": "thanks for catching, really forgot to put the finally block",
+      "parentUuid": "2caed6c6_a2d32559",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 37
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "4101c016_c526e308",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-21T10:25:06Z",
+      "side": 1,
+      "message": "I thought about it, but to do a consistent abortion of the upload process would be more complicated.\nI will create a story to keep track of it.",
+      "parentUuid": "e26dcf9f_06c3e77a",
+      "range": {
+        "startLine": 140,
+        "startChar": 2,
+        "endLine": 142,
+        "endChar": 126
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2c4d2663_7f0fe3a8",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/VspUploadStatusAccessor.java",
         "patchSetId": 10
@@ -117,6 +189,30 @@
     },
     {
       "key": {
+        "uuid": "deda6268_67bc5c0d",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/VspUploadStatusAccessor.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-21T10:25:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c4d2663_7f0fe3a8",
+      "range": {
+        "startLine": 34,
+        "startChar": 17,
+        "endLine": 34,
+        "endChar": 40
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "39d31610_f6689f07",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/VspUploadStatusRecordDao.java",
         "patchSetId": 10
@@ -137,6 +233,30 @@
       "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a4c02c7_9d66ec1a",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/VspUploadStatusRecordDao.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-21T10:25:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39d31610_f6689f07",
+      "range": {
+        "startLine": 30,
+        "startChar": 53,
+        "endLine": 30,
+        "endChar": 59
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
