@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15d9086b_76f8d068",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManager.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-21T22:17:59Z",
+      "side": 1,
+      "message": "change to \u0027InProcessing\u0027 rather than \u0027InProcess\u0027, the similarity with \u0027InProgress\u0027 is a potential source of confusion",
+      "range": {
+        "startLine": 72,
+        "startChar": 32,
+        "endLine": 72,
+        "endChar": 41
+      },
+      "revId": "18331c28367e2ba646e4ab19066c9fa853ae2aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
