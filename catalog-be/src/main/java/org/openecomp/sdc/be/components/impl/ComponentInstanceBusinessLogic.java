@@ -637,7 +637,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private void validateOriginComponentIsValidForContainer(Component containerComponent, ResourceTypeEnum resourceType) {
         switch (containerComponent.getComponentType()) {
             case SERVICE:
-                if (!containerInstanceTypesData.isAllowedForServiceComponent(resourceType)) {
+                if (!containerInstanceTypesData.isAllowedForServiceComponent(resourceType, containerComponent.getModel())) {
                     throw new ByActionStatusComponentException(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE,
                         containerComponent.getComponentType().toString(), resourceType.name());
                 }
