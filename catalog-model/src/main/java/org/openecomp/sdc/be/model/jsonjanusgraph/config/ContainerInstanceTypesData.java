@@ -47,10 +47,13 @@ public class ContainerInstanceTypesData {
      * @param resourceTypeToCheck the resource instance type that will be added to the container component
      * @return {@code true} if the resource instance is allowed, {@code false} otherwise
      */
-    public boolean isAllowedForServiceComponent(final ResourceTypeEnum resourceTypeToCheck) {
-        final List<String> allowedResourceInstanceTypeList = getComponentAllowedList(ComponentTypeEnum.SERVICE, null);
+    public boolean isAllowedForServiceComponent(final ResourceTypeEnum resourceTypeToCheck, final String modelName) {
+        final List<String> allowedResourceInstanceTypeList = getServiceAllowedList(modelName);
         if (CollectionUtils.isEmpty(allowedResourceInstanceTypeList)) {
             return false;
+        }
+        if (modelName == null || modelName.isEmpty() || modelName.equals("SDC AID")){
+            allowedResourceInstanceTypeList.remove("VFC");
         }
         return allowedResourceInstanceTypeList.contains(resourceTypeToCheck.getValue());
     }
@@ -68,6 +71,20 @@ public class ContainerInstanceTypesData {
             return false;
         }
         return allowedResourceInstanceTypeList.contains(resourceToCheck.getValue());
+    }
+    
+    /**
+     * Gets the list of allowed component instances for a service of the given model.
+     *
+     * @param model the model 
+     * @return the list of allowed component instances
+     */
+    public List<String> getServiceAllowedList(final String modelName) {
+        List<String> allowedInstanceResourceType = getComponentAllowedList(ComponentTypeEnum.SERVICE, null);
+        if (modelName == null || modelName.isEmpty() || modelName.equals("SDC AID")){
+            allowedInstanceResourceType.remove("VFC");
+        }
+        return allowedInstanceResourceType;
     }
 
     /**

@@ -2150,11 +2150,11 @@ public class ToscaOperationFacade {
     }
 
     private void fillNodeTypePropsMap(final Map<GraphPropertyEnum, Object> hasProps, final Map<GraphPropertyEnum, Object> hasNotProps,
-                                      final String internalComponentType) {
+                                      final String internalComponentType, String modelName) {
         final Configuration configuration = ConfigurationManager.getConfigurationManager().getConfiguration();
         final List<String> allowedTypes;
         if (ComponentTypeEnum.SERVICE.getValue().equalsIgnoreCase(internalComponentType)) {
-            allowedTypes = containerInstanceTypesData.getComponentAllowedList(ComponentTypeEnum.SERVICE, null);
+            allowedTypes = containerInstanceTypesData.getServiceAllowedList(modelName);
         } else {
             final ResourceTypeEnum resourceType = ResourceTypeEnum.getTypeIgnoreCase(internalComponentType);
             allowedTypes = containerInstanceTypesData.getComponentAllowedList(ComponentTypeEnum.RESOURCE, resourceType);
@@ -2197,7 +2197,7 @@ public class ToscaOperationFacade {
         if (VertexTypeEnum.NODE_TYPE == internalVertexType) {
             hasProps.put(GraphPropertyEnum.IS_ABSTRACT, isAbstract);
             if (internalComponentType != null) {
-                fillNodeTypePropsMap(hasProps, hasNotProps, internalComponentType);
+                fillNodeTypePropsMap(hasProps, hasNotProps, internalComponentType, modelName);
             }
         } else {
             fillTopologyTemplatePropsMap(hasProps, hasNotProps, componentTypeEnum);

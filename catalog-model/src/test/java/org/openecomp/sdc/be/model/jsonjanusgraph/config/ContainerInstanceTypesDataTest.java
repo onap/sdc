@@ -124,7 +124,7 @@ public class ContainerInstanceTypesDataTest {
     public void isAllowedForServiceComponent() {
         for (final ResourceTypeEnum allowedType : serviceAllowedTypes) {
             assertThat(String.format("%s should be allowed", allowedType.getValue()),
-                containerInstanceTypesData.isAllowedForServiceComponent(allowedType), is(true));
+                containerInstanceTypesData.isAllowedForServiceComponent(allowedType, ""), is(true));
         }
     }
 

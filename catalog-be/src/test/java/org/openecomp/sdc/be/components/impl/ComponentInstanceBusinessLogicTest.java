@@ -1726,14 +1726,14 @@ class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
             .thenReturn(Either.left(originComponent));
         // Assume services cannot contain VF resource
-        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF)))
+        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null)))
             .thenReturn(false);
 
         ByActionStatusComponentException actualException = assertThrows(ByActionStatusComponentException.class, () -> {
             componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
         });
         assertThat(actualException.getActionStatus()).isEqualTo(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE);
-        verify(containerInstanceTypeData, times(1)).isAllowedForServiceComponent(eq(ResourceTypeEnum.VF));
+        verify(containerInstanceTypeData, times(1)).isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null));
 
         //given
         final Resource resource = createResource();
@@ -1765,7 +1765,7 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.left(service));
         when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
             .thenReturn(Either.left(originComponent));
-        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF)))
+        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null)))
             .thenReturn(true);
         Mockito.doNothing().when(compositionBusinessLogic).validateAndSetDefaultCoordinates(ci);
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
@@ -1784,7 +1784,7 @@ class ComponentInstanceBusinessLogicTest {
             componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
         });
         verify(containerInstanceTypeData, times(1))
-            .isAllowedForServiceComponent(eq(ResourceTypeEnum.VF));
+            .isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null));
         verify(compositionBusinessLogic, times(1)).validateAndSetDefaultCoordinates(ci);
         verify(toscaOperationFacade, times(1))
             .addComponentInstanceToTopologyTemplate(service, originComponent, ci, false, user);
@@ -1807,7 +1807,7 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(Either.left(service));
         when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
             .thenReturn(Either.left(originComponent));
-        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF)))
+        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null)))
             .thenReturn(true);
         Mockito.doNothing().when(compositionBusinessLogic).validateAndSetDefaultCoordinates(instanceToBeCreated);
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
@@ -1830,7 +1830,7 @@ class ComponentInstanceBusinessLogicTest {
         assertThat(instanceToBeCreated.getComponentVersion()).isEqualTo(originComponent.getVersion());
         assertThat(instanceToBeCreated.getIcon()).isEqualTo(originComponent.getIcon());
         verify(containerInstanceTypeData, times(1))
-            .isAllowedForServiceComponent(eq(ResourceTypeEnum.VF));
+            .isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null));
         verify(compositionBusinessLogic, times(1)).validateAndSetDefaultCoordinates(instanceToBeCreated);
         verify(toscaOperationFacade, times(1))
             .addComponentInstanceToTopologyTemplate(service, originComponent, instanceToBeCreated, false, user);
