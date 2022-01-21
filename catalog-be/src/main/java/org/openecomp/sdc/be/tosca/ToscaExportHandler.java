@@ -765,13 +765,15 @@ public class ToscaExportHandler {
         ToscaNodeType toscaNodeType = createNodeType(component);
         Either<Map<String, InterfaceDefinition>, StorageOperationStatus> lifecycleTypeEither = interfaceLifecycleOperation
             .getAllInterfaceLifecycleTypes(component.getModel());
-        if (lifecycleTypeEither.isRight()) {
+        if (lifecycleTypeEither.isRight() && !StorageOperationStatus.NOT_FOUND.equals(lifecycleTypeEither.right().value())) {
             log.debug("Failed to fetch all interface types :", lifecycleTypeEither.right().value());
             return Either.right(ToscaError.GENERAL_ERROR);
         }
-        List<String> allGlobalInterfaceTypes = lifecycleTypeEither.left().value().values().stream().map(InterfaceDataDefinition::getType)
-            .collect(Collectors.toList());
-        toscaNode.setInterface_types(addInterfaceTypeElement(component, allGlobalInterfaceTypes));
+        if (lifecycleTypeEither.isLeft()) {
+            List<String> allGlobalInterfaceTypes = lifecycleTypeEither.left().value().values().stream().map(InterfaceDataDefinition::getType)
+                .collect(Collectors.toList());
+            toscaNode.setInterface_types(addInterfaceTypeElement(component, allGlobalInterfaceTypes));
+        }
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypesEither = applicationDataTypeCache.getAll(component.getModel());
         if (dataTypesEither.isRight()) {
             log.debug("Failed to fetch all data types :", dataTypesEither.right().value());
