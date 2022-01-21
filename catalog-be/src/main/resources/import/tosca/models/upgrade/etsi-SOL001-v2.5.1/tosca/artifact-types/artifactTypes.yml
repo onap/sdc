@@ -15,7 +15,7 @@ tosca.artifacts.Deployment.Image.VM:
 
 tosca.artifacts.nfv.SwImage:
   derived_from: tosca.artifacts.Deployment.Image
-  description: describes the software image which is directly loaded on the virtualisation container realizing of the VDU or is to be loaded on a virtual storage resource.
+  description: describes the software image which is directly loaded on the virtualisation container realizing of the VDU or is to be loaded on a virtual
 
 tosca.artifacts.Implementation:
   derived_from: tosca.artifacts.Root
