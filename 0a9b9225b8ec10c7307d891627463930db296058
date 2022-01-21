@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d17531d1_677424da",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/user/UserBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-21T09:14:03Z",
+      "side": 1,
+      "message": "Hi Jeff, can you explain how this addresses the problem",
+      "range": {
+        "startLine": 89,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 60
+      },
+      "revId": "0a9b9225b8ec10c7307d891627463930db296058",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
