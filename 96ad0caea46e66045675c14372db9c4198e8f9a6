@@ -22,6 +22,121 @@
       "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f82e086e_29d2278c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManager.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-21T09:38:47Z",
+      "side": 1,
+      "message": "Maybe change to \"setUploadInProgress\", this method doesnt actually do the uploading so slightly misleading as is\nand rename following method for consistency, something like setUploadFinished",
+      "range": {
+        "startLine": 39,
+        "startChar": 23,
+        "endLine": 39,
+        "endChar": 34
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2caed6c6_a2d32559",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-21T09:38:47Z",
+      "side": 1,
+      "message": "If exception thrown above lock will not be released",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 37
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e26dcf9f_06c3e77a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateUploadManagerImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-21T09:38:47Z",
+      "side": 1,
+      "message": "If something goes wrong here then the VSP could end up permanently locked. Perhaps we need tn abort option to handle such cases. \nNo need to include in scope of this story but perhaps we should create another story for such scenarios",
+      "range": {
+        "startLine": 140,
+        "startChar": 2,
+        "endLine": 142,
+        "endChar": 126
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c4d2663_7f0fe3a8",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/VspUploadStatusAccessor.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-21T09:38:47Z",
+      "side": 1,
+      "message": "rename VspUploadStatusRecordAccessor",
+      "range": {
+        "startLine": 34,
+        "startChar": 17,
+        "endLine": 34,
+        "endChar": 40
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39d31610_f6689f07",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/dao/VspUploadStatusRecordDao.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-21T09:38:47Z",
+      "side": 1,
+      "message": "cahnge to \"status record\" same comment for other javadocs",
+      "range": {
+        "startLine": 30,
+        "startChar": 53,
+        "endLine": 30,
+        "endChar": 59
+      },
+      "revId": "96ad0caea46e66045675c14372db9c4198e8f9a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
