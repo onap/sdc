@@ -13,7 +13,7 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import { Component, ComponentRef, EventEmitter, Input, Output } from '@angular/core';
+import {Component, ComponentRef, EventEmitter, Input, Output} from '@angular/core';
 import {
     ButtonModel,
     ComponentInstance,
@@ -141,7 +141,6 @@ export class ServiceDependenciesComponent {
     capabilities: string = ToscaFilterConstraintType.CAPABILITIES;
     properties: string = ToscaFilterConstraintType.PROPERTIES;
     private componentInstancesConstraints: ConstraintObject[] = [];
-    directiveOptions: string[];
 
     @Input() readonly: boolean;
     @Input() compositeService: ComponentMetadata;
@@ -161,7 +160,6 @@ export class ServiceDependenciesComponent {
     }
 
     ngOnInit() {
-        this.loadDirectives();
         this.isLoading = false;
         this.operatorTypes = [
             {label: '>', value: OPERATOR_TYPES.GREATER_THAN},
@@ -179,12 +177,6 @@ export class ServiceDependenciesComponent {
         });
     }
 
-    loadDirectives() {
-        this.topologyTemplateService.getDirectiveList().subscribe((data: string[]) => {
-            this.directiveOptions = data;
-        })
-    }
-
     ngOnChanges(changes) {
         if (changes.currentServiceInstance) {
             this.currentServiceInstance = changes.currentServiceInstance.currentValue;
@@ -196,9 +188,10 @@ export class ServiceDependenciesComponent {
         }
     }
 
-    private getActualDirectiveValue = (): string => {
-        return this.currentServiceInstance.directives.length > 0 ? this.currentServiceInstance.directives[0] : "";
+    private getActualDirectiveValue = (): string[] => {
+        return this.currentServiceInstance.directives.length > 0 ? this.currentServiceInstance.directives : [];
     }
+
     public openRemoveDependencyModal = (): ComponentRef<ModalComponent> => {
         const actionButton: ButtonModel = new ButtonModel(I18nTexts.modalApprove, 'blue', this.onUncheckDependency);
         const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'grey', this.onCloseRemoveDependencyModal);
@@ -242,15 +235,12 @@ export class ServiceDependenciesComponent {
         this.modalServiceNg2.closeCurrentModal();
     }
 
-    onOptionsSelected(event: any) {
-        const newDirectiveValue = event.target.value;
-        if (newDirectiveValue.toLowerCase() !== this.getActualDirectiveValue()) {
-            const rulesListOrig = this.componentInstancesConstraints;
-            this.setDirectiveValue(newDirectiveValue);
-            this.constraintProperties = [];
-            this.constraintCapabilities = [];
-            this.updateComponentInstance(this.isDependent, rulesListOrig);
-        }
+    onAddDirectives(directives: string[]) {
+        this.setDirectiveValue(directives);
+        const rulesListOrig = this.componentInstancesConstraints;
+        this.constraintProperties = [];
+        this.constraintCapabilities = [];
+        this.updateComponentInstance(this.isDependent, rulesListOrig);
     }
 
     private onRemoveDirective() {
@@ -259,11 +249,11 @@ export class ServiceDependenciesComponent {
         this.constraintCapabilities = [];
     }
 
-    private setDirectiveValue(newDirectiveValue: string) {
+    private setDirectiveValue(newDirectiveValues: string[]) {
         if (this.isDependent) {
             this.openUpdateDependencyModal().instance.open();
         }
-        this.currentServiceInstance.setDirectiveValue(newDirectiveValue);
+        this.currentServiceInstance.setDirectiveValue(newDirectiveValues);
     }
 
     updateComponentInstance(isDependentOrigVal: boolean, rulesListOrig: ConstraintObject[]) {
