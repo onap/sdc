@@ -97,6 +97,7 @@
     "@ngxs/devtools-plugin": "3.3.4",
     "@ngxs/logger-plugin": "3.3.4",
     "@ngxs/store": "^2.1.0-dev.d538580",
+    "@ng-select/ng-select": "^1.0.2",
     "@swimlane/ngx-datatable": "^14.0.0",
     "@types/core-js": "^0.9.35",
     "@types/jquery": "^2.0.52",

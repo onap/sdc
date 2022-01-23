@@ -1,0 +1,15 @@
+<div class="select-directives">
+  <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
+  <div *ngIf="!isDependent" class="multi-select-dropdown-box">
+    <ng-select
+        name="multiSelect"
+        id="multiSelect"
+        [multiple]="true"
+        [items]="directiveOptions"
+        [(ngModel)]="selectedDirectiveOptions"
+        placeholder="Select Directives...">
+    </ng-select>
+    <button id="multi-select-apply" class="apply-btn" (click)="onAddDirectives()">{{'Apply'}}</button>
+    <button id="multi-select-cancel" class="clr-btn" (click)="onClearDirectives()">{{'Clear'}}</button>
+  </div>
+</div>
