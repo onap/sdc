@@ -238,16 +238,18 @@ export class ComponentInstance implements IComponentInstance{
        return Array.isArray(this.directives) && this.directives.length > 0;
     }
 
-    public setDirectiveValue = (selectedDirective: string) : void => {
-        this.directives.push(selectedDirective);
+    public setDirectiveValue = (selectedDirectives: string[]) : void => {
+        this.directives = selectedDirectives;
     }
 
-    public unmarkAsDependent = (actualDirectiveValue: string) : void => {
+    public unmarkAsDependent = (directiveValues: string[]) : void => {
         console.info("[START] this.directives: ", this.directives)
-        let index = this.directives.indexOf(actualDirectiveValue);
-        if(index >= 0) {
-            this.directives.splice(index, 1);
-        }
+        directiveValues.forEach(directive => {
+            let index = this.directives.indexOf(directive);
+            if(index >= 0) {
+                this.directives.splice(index, directiveValues.length);
+            }
+        });
         console.info("[STOP] this.directives: ", this.directives)
     }
 }

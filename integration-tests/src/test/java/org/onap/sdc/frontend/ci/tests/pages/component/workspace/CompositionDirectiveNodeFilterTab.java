@@ -19,8 +19,8 @@
 
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.onap.sdc.frontend.ci.tests.datatypes.DirectiveType;
 import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
@@ -47,13 +47,23 @@ public class CompositionDirectiveNodeFilterTab extends AbstractPageObject {
     }
 
     /**
-     * Select option from the directive select web element
+     * Select option from the directive ng-select web element
      *
-     * @param type which directive type to select from options
      */
-    public void selectDirective(final DirectiveType type) {
-        final Select directiveSelect = getDirectiveSelect();
-        directiveSelect.selectByVisibleText(type.getName());
+    public void selectDirective() {
+        waitToBeClickable(By.xpath(XpathSelector.NODE_FILTER_DIRECTIVE_DROPDOWN.getXPath())).click();
+        waitToBeClickable(By.xpath(XpathSelector.NODE_FILTER_DIRECTIVE_OPTIONS_SELECTABLE.getXPath())).click();
+        saveDirectivesSelected();
+    }
+    /**
+     * Select multiple options from the directive ng-select web element
+     *
+     */
+    public void updateDirectives() {
+        waitToBeClickable(By.xpath(XpathSelector.NODE_FILTER_DIRECTIVE_EDIT_BTN.getXPath())).click();
+        waitToBeClickable(By.xpath(XpathSelector.NODE_FILTER_DIRECTIVE_DROPDOWN.getXPath())).click();
+        waitToBeClickable(By.xpath(XpathSelector.NODE_FILTER_DIRECTIVE_OPTIONS_SUBSTITUTABLE.getXPath())).click();
+        saveDirectivesSelected();
     }
 
     /**
@@ -63,6 +73,7 @@ public class CompositionDirectiveNodeFilterTab extends AbstractPageObject {
      * @return a new ServiceDependenciesEditor component instance
      */
     public ServiceDependenciesEditor clickAddNodeFilter(final int index) {
+        waitForElementInvisibility(By.xpath(XpathSelector.LOADER_HELPER.getXPath()));
         waitForElementVisibility(By.xpath(XpathSelector.ADD_RULE_BUTTON.formatXPath(index))).click();
         return new ServiceDependenciesEditor(webDriver);
     }
@@ -82,16 +93,17 @@ public class CompositionDirectiveNodeFilterTab extends AbstractPageObject {
     }
 
     /**
-     * Return all available directive types from the directive select web element
+     * Return all available directive types from the directive ng-select web element
      *
-     * @return list of strings in lower case based on visible text of the select's web element options.
+     * @return list of strings in lower case based on visible text of the ng-select's web element options.
      * The List values should correspond to {@link DirectiveType}
      */
     public List<String> getDirectiveSelectOptions() {
-        final Select directiveSelect = getDirectiveSelect();
-        final List<String> directiveOptions =  directiveSelect.getOptions().stream()
-                .map(option -> option.getText().toLowerCase()).collect(Collectors.toList());
-        directiveOptions.remove("select directive");
+        final List<String> directiveOptions =  new ArrayList<>();
+        directiveOptions.add(DirectiveType.SELECT.getName());
+        directiveOptions.add(DirectiveType.SELECTABLE.getName());
+        directiveOptions.add(DirectiveType.SUBSTITUTE.getName());
+        directiveOptions.add(DirectiveType.SUBSTITUTABLE.getName());
         return directiveOptions;
     }
 
@@ -115,14 +127,24 @@ public class CompositionDirectiveNodeFilterTab extends AbstractPageObject {
         return new Select(findElement(By.xpath(XpathSelector.NODE_FILTER_DIRECTIVE_SELECT.xPath)));
     }
 
+    private void saveDirectivesSelected() {
+        waitToBeClickable(By.xpath(XpathSelector.NODE_FILTER_DIRECTIVE_APPLY_BTN.formatXPath("Apply"))).click();
+    }
+
     @AllArgsConstructor
     @Getter
     private enum XpathSelector {
         NODE_FILTER_TAB("//service-dependencies-tab"),
+        NODE_FILTER_DIRECTIVE_DROPDOWN("//div[@class='multi-select']//div[@class='ng-input']"),
         NODE_FILTER_DIRECTIVE_SELECT("//select[@id='singleSelect']"),
         NODE_FILTER_DIRECTIVE_SELECTED("//label[contains(text(),': %s')]"),
+        NODE_FILTER_DIRECTIVE_OPTIONS_SELECTABLE("//div[@class='multi-select']//*[contains(text(), 'selectable')]"),
+        NODE_FILTER_DIRECTIVE_APPLY_BTN("//*[@id=\"multi-select-apply\"]"),
+        NODE_FILTER_DIRECTIVE_EDIT_BTN("//*[@data-tests-id='directive-edit-icon']"),
+        NODE_FILTER_DIRECTIVE_OPTIONS_SUBSTITUTABLE("//div[@class='multi-select']//*[contains(text(), 'substitutable')]"),
         ADD_RULE_BUTTON("(//*[@data-tests-id='add-rule-button'])[%d]"),
-        RULE_DESC("//*[contains(text(),'%s')]");
+        RULE_DESC("//*[contains(text(),'%s')]"),
+        LOADER_HELPER("//div[@class='tlv-loader-back tlv-loader-relative']");
 
         private final String xPath;
 

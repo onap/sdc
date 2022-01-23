@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Optional;
 
-import org.onap.sdc.frontend.ci.tests.datatypes.DirectiveType;
 import org.onap.sdc.frontend.ci.tests.datatypes.ServiceDependencyProperty;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
 import org.onap.sdc.frontend.ci.tests.pages.PageObject;
@@ -47,15 +46,12 @@ public class CreateDirectiveNodeFilterFlow extends AbstractUiTestFlow {
     private List<String> propertyOptions;
 
     private final int buttonIndex;
-    private final DirectiveType directiveType;
     private final ServiceDependencyProperty serviceDependencyProperty;
     private CompositionPage compositionPage;
 
-    public CreateDirectiveNodeFilterFlow(final WebDriver webDriver, final int buttonIndex, final DirectiveType directiveType
-            , final ServiceDependencyProperty serviceDependencyProperty) {
+    public CreateDirectiveNodeFilterFlow(final WebDriver webDriver, final int buttonIndex, final ServiceDependencyProperty serviceDependencyProperty) {
         super(webDriver);
         this.buttonIndex = buttonIndex;
-        this.directiveType = directiveType;
         this.serviceDependencyProperty = serviceDependencyProperty;
     }
 
@@ -72,9 +68,9 @@ public class CreateDirectiveNodeFilterFlow extends AbstractUiTestFlow {
                 sideBar.selectTab(CompositionDetailTabName.DIRECTIVE_NODE_FILTER);
         compositionDirectiveNodeFilterTab.isLoaded();
         directiveOptions = compositionDirectiveNodeFilterTab.getDirectiveSelectOptions();
-        if (!compositionDirectiveNodeFilterTab.isDirectiveSelected(directiveType)) {
-            compositionDirectiveNodeFilterTab.selectDirective(directiveType);
-        }
+        compositionDirectiveNodeFilterTab.selectDirective();
+        compositionDirectiveNodeFilterTab.updateDirectives();
+        ExtentTestActions.takeScreenshot(Status.INFO, "multiple directives", String.format("multiple directives created"));
 
         final ServiceDependenciesEditor compositionDependenciesEditor = compositionDirectiveNodeFilterTab.clickAddNodeFilter(buttonIndex);
         compositionDependenciesEditor.isLoaded();

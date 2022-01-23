@@ -103,7 +103,8 @@ import { ElementService } from "./services/element.service";
 import { ModelService } from "./services/model.service";
 import {ToscaArtifactService} from "./services/tosca-artifact.service";
 import {InterfaceDefinitionModule} from "./pages/interface-definition/interface-definition.module";
-
+import {NgSelectModule} from "@ng-select/ng-select";
+import {MultiSelectModule} from "./components/logic/multi-select/multi-select.module";
 
 declare const __ENV__: string;
 
@@ -157,9 +158,8 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     PluginFrameModule,
     PluginsModule,
     InterfaceOperationModule,
-    InterfaceDefinitionModule,
     OperationCreatorModule,
-    InterfaceOperationHandlerModule,
+        InterfaceOperationHandlerModule,
     ServicePathCreatorModule,
     ServicePathsListModule,
     ServicePathSelectorModule,
