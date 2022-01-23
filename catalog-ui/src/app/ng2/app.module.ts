@@ -102,7 +102,8 @@ import {AttributesOutputsModule} from "./pages/attributes-outputs/attributes-out
 import { ElementService } from "./services/element.service";
 import { ModelService } from "./services/model.service";
 import {ToscaArtifactService} from "./services/tosca-artifact.service";
-
+import {NgSelectModule} from "@ng-select/ng-select";
+import {MultiSelectModule} from "./components/logic/multi-select/multi-select.module";
 
 declare const __ENV__: string;
 
@@ -167,8 +168,10 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     CapabilitiesFilterPropertiesEditorComponentModule,
     WorkspaceModule,
     ModalsModule,
+    MultiSelectModule,
     CatalogModule,
     HomeModule,
+    NgSelectModule,
     NgxsModule.forRoot([]),
     NgxsLoggerPluginModule.forRoot({logger: console, collapsed: false}),
     NgxsReduxDevtoolsPluginModule.forRoot({

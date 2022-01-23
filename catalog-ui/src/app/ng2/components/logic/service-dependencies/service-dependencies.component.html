@@ -1,15 +1,8 @@
 <div class="service-dependencies">
   <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
-  <div *ngIf="!isDependent" class="checkbox-label-mark-as-dependent">
-    <select name="singleSelect" id="singleSelect" ng-model="data.singleSelect"
-            (change)='onOptionsSelected($event)'>
-      <option>Select Directive</option>
-      <option class="directives-options" *ngFor="let item of directiveOptions">{{item}}</option>
-    </select>
-  </div>
-
+  <multi-select *ngIf="!isDependent" (onAddClick)="onAddDirectives($event)"></multi-select>
   <div *ngIf="isDependent" class="checkbox-label-mark-as-dependent">
-    <label class="i-sdc-form-label">Directive: {{getActualDirectiveValue().toUpperCase()}}</label>
+    <label class="i-sdc-form-label">Directive: {{getActualDirectiveValue()}}</label>
     <span class="sprite-new delete-btn delete-icon"
           (click)="onRemoveDirective()" data-tests-id="delete-input-button">
     </span>

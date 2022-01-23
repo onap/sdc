@@ -1,0 +1,15 @@
+<div class="multi-select">
+  <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
+  <div *ngIf="!isDependent" class="checkbox-label-mark-as-dependent">
+    <ng-select
+        name="multiSelect"
+        id="multiSelect"
+        [multiple]="true"
+        [items]="directiveOptions"
+        [(ngModel)]="selectedDirectiveOptions"
+        placeholder="Select Directives...">
+    </ng-select>
+    <button class="apply-btn" (click)="onAddDirectives()">{{'Apply'}}</button>
+    <button class="clr-btn" (click)="onClearDirectives()">{{'Clear'}}</button>
+  </div>
+</div>
