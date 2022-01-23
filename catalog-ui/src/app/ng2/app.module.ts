@@ -104,7 +104,6 @@ import { ModelService } from "./services/model.service";
 import {ToscaArtifactService} from "./services/tosca-artifact.service";
 import {InterfaceDefinitionModule} from "./pages/interface-definition/interface-definition.module";
 
-
 declare const __ENV__: string;
 
 export const upgradeAdapter = new UpgradeAdapter(forwardRef(() => AppModule));

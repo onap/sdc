@@ -1,18 +1,14 @@
 <div class="service-dependencies">
   <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
-  <div *ngIf="!isDependent" class="checkbox-label-mark-as-dependent">
-    <select name="singleSelect" id="singleSelect" ng-model="data.singleSelect"
-            (change)='onOptionsSelected($event)'>
-      <option>Select Directive</option>
-      <option class="directives-options" *ngFor="let item of directiveOptions">{{item}}</option>
-    </select>
-  </div>
-
-  <div *ngIf="isDependent" class="checkbox-label-mark-as-dependent">
-    <label class="i-sdc-form-label">Directive: {{getActualDirectiveValue().toUpperCase()}}</label>
+  <select-directives *ngIf="!isDependent || isEditable" (onAddClick)="onAddDirectives($event)" [updateDirectives]="getActualDirectiveValue()">
+  </select-directives>
+  <div *ngIf="isDependent && !isEditable" class="checkbox-label-mark-as-dependent">
+    <label class="i-sdc-form-label">Directive: {{getActualDirectiveValue()}}</label>
     <span class="sprite-new delete-btn delete-icon"
           (click)="onRemoveDirective()" data-tests-id="delete-input-button">
     </span>
+    <svg-icon-label name="edit-file-o" size="small" class="directive-edit-icon" data-tests-id="directive-edit-icon" (click)="onEditDirectives()">
+    </svg-icon-label>
   </div>
 
   <div *ngIf="isDependent">

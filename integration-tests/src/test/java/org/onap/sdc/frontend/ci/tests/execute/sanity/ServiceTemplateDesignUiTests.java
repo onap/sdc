@@ -299,7 +299,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
         compositionPage.selectNode(vfcNameInComposition);
 
         final CreateDirectiveNodeFilterFlow createDirectiveNodeFilterFlow =
-                new CreateDirectiveNodeFilterFlow(webDriver, 2, DirectiveType.SELECT, serviceDependencyProperty);
+                new CreateDirectiveNodeFilterFlow(webDriver, 2, serviceDependencyProperty);
         createDirectiveNodeFilterFlow.run(componentPage);
 
         verifyAvailableDirectiveTypes(createDirectiveNodeFilterFlow.getDirectiveOptions());
