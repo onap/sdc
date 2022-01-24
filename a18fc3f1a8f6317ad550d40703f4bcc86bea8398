@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "213d8677_2d478d26",
+        "filename": "catalog-be/src/test/resources/types/categoryTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-24T19:05:21Z",
+      "side": 1,
+      "message": "this seems to be a code used for tests, if so, it should be removed.",
+      "range": {
+        "startLine": 22,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 25
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fe0c9d53_fd33d112",
         "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
         "patchSetId": 1
@@ -13,6 +36,30 @@
       "writtenOn": "2022-01-24T17:25:21Z",
       "side": 1,
       "message": "one of the advantages of Lombok annotations is that do NOT need to test @Getter, @Setter or any other,\nas you can see https://sonarcloud.io/code?id\u003donap_sdc\u0026selected\u003donap_sdc%3Acommon-be%2Fsrc%2Fmain%2Fjava%2Forg%2Fopenecomp%2Fsdc%2Fbe%2Fdatatypes%2Fcategory%2FCategoryDataDefinition.java coverage for CategoryDataDefinition.java is 100% already (thanks to Lombok)",
+      "range": {
+        "startLine": 44,
+        "startChar": 1,
+        "endLine": 72,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c3cb2eb_00485df9",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-24T19:05:21Z",
+      "side": 1,
+      "message": "But I believe this code is testing the copy constructor.",
+      "parentUuid": "fe0c9d53_fd33d112",
       "range": {
         "startLine": 44,
         "startChar": 1,
