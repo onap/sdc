@@ -22,6 +22,30 @@
       "revId": "0a9b9225b8ec10c7307d891627463930db296058",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "577350e5_fe8d9f24",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/user/UserBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-01-24T09:06:04Z",
+      "side": 1,
+      "message": "Hey Michael, encoding to base64 is the last step of encrypting and the first step of decrypting, so this is done to check if the string being decrypted is actually in base64. It won\u0027t work 100% all the time since some strings might just happen to be base64, so it would fail the decrypt and the decrypt error would still appear in the logs.",
+      "parentUuid": "d17531d1_677424da",
+      "range": {
+        "startLine": 89,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 60
+      },
+      "revId": "0a9b9225b8ec10c7307d891627463930db296058",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
