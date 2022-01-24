@@ -46,6 +46,30 @@
       "revId": "0a9b9225b8ec10c7307d891627463930db296058",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebe2e369_8209e825",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/user/UserBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-24T11:32:57Z",
+      "side": 1,
+      "message": "The issue you are having in fact it is because the org.onap.portalsdk.core.onboarding.util.CipherUtil class is logging a decryption failure as an error and then throwing the exception. Therefore, you want to avoid calling the method if the string is not a base64, correct?\n\nI would recommend to use the Apache commons library (I think we use in the project) to check that: https://commons.apache.org/proper/commons-codec/apidocs/org/apache/commons/codec/binary/Base64.html#isBase64-byte-.\n\nWe could disable logging for that specific class if wanted.",
+      "parentUuid": "577350e5_fe8d9f24",
+      "range": {
+        "startLine": 89,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 60
+      },
+      "revId": "0a9b9225b8ec10c7307d891627463930db296058",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
