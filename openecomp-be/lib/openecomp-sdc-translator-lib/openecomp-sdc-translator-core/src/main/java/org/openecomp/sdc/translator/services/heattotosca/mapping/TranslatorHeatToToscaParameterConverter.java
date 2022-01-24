@@ -45,6 +45,7 @@ import org.openecomp.sdc.heat.datatypes.model.Parameter;
 import org.openecomp.sdc.tosca.datatypes.extend.ToscaAnnotationType;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
+import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.HeatToToscaUtil;
 import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
@@ -229,11 +230,12 @@ public class TranslatorHeatToToscaParameterConverter {
                 return new HashMap<>();
             }
             Map.Entry<String, Object> functionMapEntry = (Map.Entry<String, Object>) ((Map) paramValue).entrySet().iterator().next();
-            if (FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).isPresent()) {
+            Optional<FunctionTranslation> optFunctionTranslation = FunctionTranslationFactory.getInstance(functionMapEntry.getKey());
+            if (optFunctionTranslation.isPresent()) {
                 FunctionTranslator functionTranslator = new FunctionTranslator(
                     getFunctionTranslateTo(serviceTemplate, null, heatFileName, heatOrchestrationTemplate, context), parameterName,
                     functionMapEntry.getValue(), null);
-                return FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).isPresent() ? FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).get().translateFunction(functionTranslator) : paramValue;
+                return optFunctionTranslation.get().translateFunction(functionTranslator);
             }
         }
         return paramValue;
