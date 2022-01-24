@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fe0c9d53_fd33d112",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-24T17:25:21Z",
+      "side": 1,
+      "message": "one of the advantages of Lombok annotations is that do NOT need to test @Getter, @Setter or any other,\nas you can see https://sonarcloud.io/code?id\u003donap_sdc\u0026selected\u003donap_sdc%3Acommon-be%2Fsrc%2Fmain%2Fjava%2Forg%2Fopenecomp%2Fsdc%2Fbe%2Fdatatypes%2Fcategory%2FCategoryDataDefinition.java coverage for CategoryDataDefinition.java is 100% already (thanks to Lombok)",
+      "range": {
+        "startLine": 44,
+        "startChar": 1,
+        "endLine": 72,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
