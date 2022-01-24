@@ -94,6 +94,30 @@
       "revId": "0a9b9225b8ec10c7307d891627463930db296058",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "542d117d_c789e8c1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/user/UserBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-24T15:03:09Z",
+      "side": 1,
+      "message": "I see... Not sure if there is a better way to check it.\nSo, for now, I would say that you should separate what you are doing here in a new method, maybe \"boolean isUserBase64Encoded(String userId)\" which should never break (make sure no exceptions will happen no matter the input, safer to put in a try catch). Also, add unit tests to check it.",
+      "parentUuid": "e4127be2_76c4a4eb",
+      "range": {
+        "startLine": 89,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 60
+      },
+      "revId": "0a9b9225b8ec10c7307d891627463930db296058",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
