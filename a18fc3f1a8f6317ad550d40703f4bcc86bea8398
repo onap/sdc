@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1beb3992_2b0e77ba",
+        "filename": "catalog-be/src/test/resources/types/categoryTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-24T19:17:17Z",
+      "side": 1,
+      "message": "Apologies, this is a test file, I mixed up with the real configuration file.",
+      "parentUuid": "213d8677_2d478d26",
+      "range": {
+        "startLine": 22,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 25
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fe0c9d53_fd33d112",
         "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
         "patchSetId": 1
