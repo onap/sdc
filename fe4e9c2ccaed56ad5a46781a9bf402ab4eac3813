@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec063741_2f9bb2e4",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/config/ContainerInstanceTypesData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-24T13:03:43Z",
+      "side": 1,
+      "message": "this code seems to repeating what the new method getServiceAllowedList is doing. I believe it is unnecessary.",
+      "range": {
+        "startLine": 55,
+        "startChar": 8,
+        "endLine": 57,
+        "endChar": 9
+      },
+      "revId": "fe4e9c2ccaed56ad5a46781a9bf402ab4eac3813",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
