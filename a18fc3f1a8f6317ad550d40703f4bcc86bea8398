@@ -93,6 +93,30 @@
       "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a7625f1_e5c8d546",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-24T23:44:39Z",
+      "side": 1,
+      "message": "dont think so, copy constructor tested in L36-L42",
+      "parentUuid": "1c3cb2eb_00485df9",
+      "range": {
+        "startLine": 44,
+        "startChar": 1,
+        "endLine": 72,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
