@@ -21,16 +21,20 @@ package org.openecomp.sdc.translator.services.heattotosca.mapping;
 
 import static org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator.getFunctionTranslateTo;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.datatypes.model.Template;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
 import org.openecomp.sdc.translator.services.heattotosca.ConfigConstants;
 import org.openecomp.sdc.translator.services.heattotosca.Constants;
+import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslation;
 import org.openecomp.sdc.translator.services.heattotosca.FunctionTranslationFactory;
 import org.openecomp.sdc.translator.services.heattotosca.impl.functiontranslation.FunctionTranslator;
 
@@ -113,11 +117,12 @@ public class TranslatorHeatToToscaPropertyConverter {
                                                Template template, TranslationContext context) {
         if (propertyValue instanceof Map && !((Map) propertyValue).isEmpty()) {
             Map.Entry<String, Object> functionMapEntry = (Map.Entry<String, Object>) ((Map) propertyValue).entrySet().iterator().next();
-            if (FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).isPresent()) {
+            Optional<FunctionTranslation> optFunctionTranslation = FunctionTranslationFactory.getInstance(functionMapEntry.getKey());
+            if (optFunctionTranslation.isPresent()) {
                 FunctionTranslator functionTranslator = new FunctionTranslator(
                     getFunctionTranslateTo(serviceTemplate, resourceId, heatFileName, heatOrchestrationTemplate, context), propertyName,
                     functionMapEntry.getValue(), template);
-                return FunctionTranslationFactory.getInstance(functionMapEntry.getKey()).get().translateFunction(functionTranslator);
+                return optFunctionTranslation.get().translateFunction(functionTranslator);
             }
             Map<String, Object> propertyValueMap = new HashMap<>();
             for (Map.Entry<String, Object> entry : ((Map<String, Object>) propertyValue).entrySet()) {
