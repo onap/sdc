@@ -22,6 +22,30 @@
       "revId": "202c01f652c86bc73d23f86b95ff41bc7c38e375",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2819a925_fc90ae3a",
+        "filename": "openecomp-be/lib/openecomp-sdc-translator-lib/openecomp-sdc-translator-core/src/main/java/org/openecomp/sdc/translator/services/heattotosca/mapping/TranslatorHeatToToscaPropertyConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-01-25T08:58:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6845ba0a_e7743248",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 19
+      },
+      "revId": "202c01f652c86bc73d23f86b95ff41bc7c38e375",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
