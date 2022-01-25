@@ -188,6 +188,30 @@
       "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "248df1a3_3707b765",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-25T12:08:54Z",
+      "side": 1,
+      "message": "Lombok is not testing the copy constructor and the existing method is just giving code coverage, not testing anything.\nThe existing method is something that we really should avoid, having something that only give code coverage and tests nothing.",
+      "parentUuid": "04904ae7_09099c22",
+      "range": {
+        "startLine": 44,
+        "startChar": 1,
+        "endLine": 72,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
