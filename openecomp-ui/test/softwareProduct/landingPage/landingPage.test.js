@@ -39,6 +39,7 @@ describe('Software Product Landing Page: ', function () {
 	let currentSoftwareProduct = {}, softwareProductCategories = [], currentScreen = {},
 		finalizedLicenseModelList, licenseAgreementList, featureGroupsList, qschema, qdata = {};
 	const dummyFunc = () => {};
+	const fetchUploadStatusMock = () => { return Promise.resolve({ data: {} }) };
 
 	beforeAll(function() {
 		finalizedLicenseModelList = FinalizedLicenseModelFactory.buildList(2);
@@ -96,7 +97,8 @@ describe('Software Product Landing Page: ', function () {
 			...currentScreen.props,
 			currentSoftwareProduct,
 			componentsList: VSPComponentsFactory.buildList(2),
-			features: [{name:'EXTERNAL_LICENSE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}],
+			fetchUploadStatus: fetchUploadStatusMock
 		};
 
 		const store = storeCreator();
@@ -113,7 +115,8 @@ describe('Software Product Landing Page: ', function () {
 			...currentScreen.props,
 			currentSoftwareProduct,
 			componentsList: VSPComponentsFactory.buildList(2),
-			features: [{name:'EXTERNAL_LICENSE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}],
+			fetchUploadStatus: fetchUploadStatusMock
 		};
 		const e = { target: {
 			value: 'INTERNAL'
@@ -143,7 +146,8 @@ describe('Software Product Landing Page: ', function () {
 			currentSoftwareProduct,
 			...currentScreen.props,
 			componentsList: VSPComponentsFactory.buildList(2),
-			features: [{name:'EXTERNAL_LICENSE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}],
+			fetchUploadStatus: fetchUploadStatusMock
 		};
 
 		const store = storeCreator();
@@ -171,7 +175,8 @@ describe('Software Product Landing Page: ', function () {
 			onUploadConfirmation:  dummyFunc,
 			onUpload: dummyFunc,
 			onInvalidFileSizeUpload: dummyFunc,
-			features: [{name:'EXTERNAL_LICENSE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}],
+			fetchUploadStatus: fetchUploadStatusMock
 		};
 
 		const files = [
@@ -215,7 +220,8 @@ describe('Software Product Landing Page: ', function () {
 			onUploadConfirmation:  dummyFunc,
 			onUpload: dummyFunc,
 			onInvalidFileSizeUpload: dummyFunc,
-			features: [{name:'EXTERNAL_LICENSE', active: true}]
+			features: [{name:'EXTERNAL_LICENSE', active: true}],
+			fetchUploadStatus: fetchUploadStatusMock
 		};
 
 		const store = storeCreator();

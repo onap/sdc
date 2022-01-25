@@ -223,8 +223,12 @@ class OrchestrationTemplateCandidateImplTest {
 
     @Test
     void uploadSignNotValidTest() throws IOException {
+        //given
+        when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(candidateId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        //when
         Response response = orchestrationTemplateCandidate
-            .upload("1", "1", mockAttachment("filename.zip", null), user);
+            .upload(candidateId, versionId, mockAttachment("filename.zip", null), user);
+        //then
         assertEquals(Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatus());
         assertFalse(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }

@@ -91,7 +91,7 @@ public class VspUploadStatusRecordDaoIml implements VspUploadStatusRecordDao {
     public Optional<VspUploadStatusRecord> findLatest(final String vspId, final String vspVersionId) {
         final List<VspUploadStatusRecord> vspUploadStatusRecordList = accessor.findAllByVspIdAndVspVersionId(vspId, vspVersionId).all();
         vspUploadStatusRecordList.sort(Comparator.comparing(VspUploadStatusRecord::getCreated).reversed());
-        return Optional.ofNullable(vspUploadStatusRecordList.get(0));
+        return vspUploadStatusRecordList.isEmpty() ? Optional.empty() : Optional.ofNullable(vspUploadStatusRecordList.get(0));
     }
 
 }

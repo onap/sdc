@@ -50,22 +50,27 @@ class VnfRepositorySearchBox extends Component {
             dataTestId,
             isReadOnlyMode
         } = this.props;
-        let showVNF = Configuration.get('showBrowseVNF');
+        const showVNF = Configuration.get('showBrowseVNF');
         return (
-            <div className={`${className}${isReadOnlyMode ? ' disabled' : ''}`}>
+            <div
+                className={`${className}${isReadOnlyMode ? ' disabled' : ''}${
+                    showVNF ? ' showVnf' : ''
+                }`}>
                 <DraggableUploadFileBox
                     dataTestId={dataTestId}
                     isReadOnlyMode={isReadOnlyMode}
                     className={'upload'}
                     onClick={onClick}
                 />
-
-                <div className={`${'verticalLine'}${showVNF ? '' : ' hide'}`} />
-
-                <VNFBrowse
-                    onBrowseVNF={onBrowseVNF}
-                    isReadOnlyMode={isReadOnlyMode}
-                />
+                {showVNF && (
+                    <div className={`verticalLine${showVNF ? '' : ' hide'}`} />
+                )}
+                {showVNF && (
+                    <VNFBrowse
+                        onBrowseVNF={onBrowseVNF}
+                        isReadOnlyMode={isReadOnlyMode}
+                    />
+                )}
             </div>
         );
     }

@@ -20,12 +20,12 @@ import classnames from 'classnames';
 import Dropzone from 'react-dropzone';
 
 import i18n from 'nfvo-utils/i18n/i18n.js';
-import Configuration from 'sdc-app/config/Configuration.js';
-import DraggableUploadFileBox from 'nfvo-components/fileupload/DraggableUploadFileBox.jsx';
 import VnfRepositorySearchBox from 'nfvo-components/vnfMarketPlace/VnfRepositorySearchBox.jsx';
 
 import { SVGIcon } from 'onap-ui-react';
 import SoftwareProductComponentsList from 'sdc-app/onboarding/softwareProduct/components/SoftwareProductComponents.js';
+import VspUploadStatus from 'sdc-app/onboarding/softwareProduct/landingPage/VspUploadStatus';
+import ProgressBar from 'react-bootstrap/lib/ProgressBar';
 
 const SoftwareProductPropType = PropTypes.shape({
     name: PropTypes.string,
@@ -52,7 +52,10 @@ class SoftwareProductLandingPageView extends React.Component {
     state = {
         fileName: '',
         dragging: false,
-        files: []
+        uploadStatus: {},
+        files: [],
+        uploadProgress: 0,
+        showProgressBar: false
     };
 
     constructor(props) {
@@ -69,11 +72,13 @@ class SoftwareProductLandingPageView extends React.Component {
         version: PropTypes.object,
         onLicenseChange: PropTypes.func,
         onUpload: PropTypes.func,
+        fetchUploadStatus: PropTypes.func,
         onUploadConfirmation: PropTypes.func,
         onInvalidFileSizeUpload: PropTypes.func,
         onComponentSelect: PropTypes.func,
         onAddComponent: PropTypes.func
     };
+
     componentDidMount() {
         const {
             onCandidateInProcess,
@@ -83,6 +88,41 @@ class SoftwareProductLandingPageView extends React.Component {
         if (currentSoftwareProduct.candidateOnboardingOrigin && !isCertified) {
             onCandidateInProcess(currentSoftwareProduct.id);
         }
+        this.keepCheckingUploadStatus();
+    }
+
+    componentWillUnmount() {
+        this.stopUploadStatusChecking();
+    }
+
+    keepCheckingUploadStatus(initialDelayInMs = 0, updatePeriodInMs = 10000) {
+        this.stopUploadStatusChecking();
+        setTimeout(() => this.updateUploadStatus(), initialDelayInMs);
+        this.uploadStatusInterval = setInterval(
+            () => this.updateUploadStatus(),
+            updatePeriodInMs
+        );
+    }
+
+    stopUploadStatusChecking() {
+        clearInterval(this.uploadStatusInterval);
+    }
+
+    updateUploadStatus() {
+        const currentVspId = this.props.currentSoftwareProduct.id;
+        this.props
+            .fetchUploadStatus(currentVspId)
+            .then(uploadStatusResponse => {
+                const vspUploadStatus = new VspUploadStatus(
+                    uploadStatusResponse
+                );
+                this.setState({
+                    uploadStatus: vspUploadStatus
+                });
+            })
+            .catch(error =>
+                console.error('Could not retrieve upload status', error)
+            );
     }
 
     licenceChange = (e, currentSoftwareProduct, onLicenseChange) => {
@@ -93,7 +133,7 @@ class SoftwareProductLandingPageView extends React.Component {
     };
 
     getExternalLicenceFeatureState() {
-        var licenseFeature = this.props.features.find(
+        const licenseFeature = this.props.features.find(
             feature => feature.name === 'EXTERNAL_LICENSE'
         );
         return licenseFeature ? licenseFeature.active : true;
@@ -136,10 +176,11 @@ class SoftwareProductLandingPageView extends React.Component {
                                     onLicenseChange={onLicenseChange}
                                     externalLicenceEnabled={this.getExternalLicenceFeatureState()}
                                 />
-                                {this.renderProductDetails(
-                                    isManual,
-                                    isReadOnlyMode
-                                )}
+                                <div className="details-panel">
+                                    {this.renderProductAttachments(
+                                        isReadOnlyMode
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -155,56 +196,50 @@ class SoftwareProductLandingPageView extends React.Component {
         }
     }
 
-    renderProductDetails(isManual, isReadOnlyMode) {
+    isUploadInProgress() {
+        return (
+            this.state.uploadStatus.complete !== undefined &&
+            !this.state.uploadStatus.complete
+        );
+    }
+
+    renderProductAttachments(isReadOnlyMode) {
         let { onBrowseVNF, currentSoftwareProduct } = this.props;
 
-        if (Configuration.get('showBrowseVNF')) {
+        if (this.isUploadInProgress()) {
             return (
-                <div className="details-panel">
-                    {!isManual && (
-                        <div>
-                            <div className="software-product-landing-view-heading-title">
-                                {i18n('Software Product Attachments')}
-                            </div>
-                            <VnfRepositorySearchBox
-                                dataTestId="upload-btn"
-                                isReadOnlyMode={isReadOnlyMode}
-                                className={classnames(
-                                    'software-product-landing-view-top-block-col-upl showVnf',
-                                    { disabled: isReadOnlyMode }
-                                )}
-                                onClick={() => this.refs.fileInput.open()}
-                                onBrowseVNF={() =>
-                                    onBrowseVNF(currentSoftwareProduct)
-                                }
-                            />
+                <div>
+                    <div className="software-product-landing-view-heading-title">
+                        {i18n('Software Product Attachments')}
+                    </div>
+                    <div className="software-product-landing-view-top-block-col-upl ">
+                        <div className="upload-status-text">
+                            {this.state.uploadStatus.statusToString()}
+                            {this.state.showProgressBar && (
+                                <ProgressBar now={this.state.uploadProgress} />
+                            )}
                         </div>
-                    )}
-                </div>
-            );
-        } else {
-            return (
-                <div className="details-panel">
-                    {!isManual && (
-                        <div>
-                            <div className="software-product-landing-view-heading-title">
-                                {i18n('Software Product Attachments')}
-                            </div>
-                            <DraggableUploadFileBox
-                                dataTestId="upload-btn"
-                                isReadOnlyMode={isReadOnlyMode}
-                                className={classnames(
-                                    'software-product-landing-view-top-block-col-upl',
-                                    { disabled: isReadOnlyMode }
-                                )}
-                                onClick={() => this.refs.fileInput.open()}
-                                onBrowseVNF={() => onBrowseVNF()}
-                            />
-                        </div>
-                    )}
+                    </div>
                 </div>
             );
         }
+        return (
+            <div>
+                <div className="software-product-landing-view-heading-title">
+                    {i18n('Software Product Attachments')}
+                </div>
+                <VnfRepositorySearchBox
+                    dataTestId="upload-btn"
+                    isReadOnlyMode={isReadOnlyMode}
+                    className={classnames(
+                        'software-product-landing-view-top-block-col-upl',
+                        { disabled: isReadOnlyMode }
+                    )}
+                    onClick={() => this.refs.fileInput.open()}
+                    onBrowseVNF={() => onBrowseVNF(currentSoftwareProduct)}
+                />
+            </div>
+        );
     }
 
     handleImportSubmit(files, isReadOnlyMode, isManual) {
@@ -226,6 +261,48 @@ class SoftwareProductLandingPageView extends React.Component {
         }
     }
 
+    onUploadStart = () => {
+        this.stopUploadStatusChecking();
+        this.showProgressBar();
+    };
+
+    onUploadProgress = progressEvent => {
+        const vspUploadStatus = new VspUploadStatus({
+            status: VspUploadStatus.UPLOADING,
+            complete: false
+        });
+        this.setState({
+            uploadStatus: vspUploadStatus
+        });
+        const percentCompleted = Math.round(
+            progressEvent.loaded * 100 / progressEvent.total
+        );
+        if (percentCompleted === 100) {
+            this.keepCheckingUploadStatus(5000);
+            this.resetUploadProgress(2000);
+        }
+        this.setState({ uploadProgress: percentCompleted });
+    };
+
+    onUploadFinished = () => {
+        this.updateUploadStatus();
+    };
+
+    showProgressBar() {
+        this.setState({ showProgressBar: true });
+    }
+
+    hideProgressBar() {
+        this.setState({ showProgressBar: false });
+    }
+
+    resetUploadProgress(milliseconds) {
+        setTimeout(() => {
+            this.setState({ uploadProgress: 0 });
+            this.hideProgressBar();
+        }, milliseconds);
+    }
+
     startUploading(files) {
         let {
             onUpload,
@@ -244,9 +321,21 @@ class SoftwareProductLandingPageView extends React.Component {
         this.refs.fileInput.value = '';
 
         if (validationData) {
-            onUploadConfirmation(currentSoftwareProduct.id, formData);
+            onUploadConfirmation(
+                currentSoftwareProduct.id,
+                formData,
+                () => this.onUploadStart(),
+                this.onUploadProgress,
+                this.onUploadFinished
+            );
         } else {
-            onUpload(currentSoftwareProduct.id, formData);
+            onUpload(
+                currentSoftwareProduct.id,
+                formData,
+                () => this.onUploadStart(),
+                this.onUploadProgress,
+                this.onUploadFinished
+            );
         }
     }
 }

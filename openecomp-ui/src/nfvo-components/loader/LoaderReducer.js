@@ -32,7 +32,9 @@ export default (
                 isLoading: true
             };
         case actionTypes.RECEIVE_RESPONSE:
-            fetchingRequests--;
+            if (fetchingRequests > 0) {
+                fetchingRequests--;
+            }
 
             newArray = state.currentlyFetching.filter(item => {
                 return item !== action.url;

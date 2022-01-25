@@ -158,12 +158,16 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
                 new OnboardingPackageProcessor(filename, fileToUploadBytes, new CnfPackageValidator(), artifactInfo);
             final ErrorMessage[] errorMessages = onboardingPackageProcessor.getErrorMessages().toArray(new ErrorMessage[0]);
             if (onboardingPackageProcessor.hasErrors()) {
+                orchestrationTemplateCandidateUploadManager
+                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
                 return Response.status(NOT_ACCEPTABLE).entity(buildUploadResponseWithError(errorMessages)).build();
             }
             final var onboardPackageInfo = onboardingPackageProcessor.getOnboardPackageInfo().orElse(null);
             if (onboardPackageInfo == null) {
                 final UploadFileResponseDto uploadFileResponseDto = buildUploadResponseWithError(
                     new ErrorMessage(ErrorLevel.ERROR, PACKAGE_PROCESS_ERROR.formatMessage(filename)));
+                orchestrationTemplateCandidateUploadManager
+                    .putUploadAsFinished(vspId, versionId, vspUploadStatus.getLockId(), VspUploadStatus.ERROR, user);
                 return Response.ok(uploadFileResponseDto).build();
             }
             final var version = new Version(versionId);
