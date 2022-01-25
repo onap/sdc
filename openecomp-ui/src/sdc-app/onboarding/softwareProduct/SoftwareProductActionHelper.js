@@ -112,12 +112,19 @@ function getModelUrl() {
     return `${restCatalogPrefix}/v1/catalog/model?modelType=normative`;
 }
 
-function uploadFile(vspId, formData, version) {
+function uploadFile(vspId, formData, version, onUploadProgress = undefined) {
+    const options = {
+        noLoading: true
+    };
+    if (onUploadProgress) {
+        options.onUploadProgress = onUploadProgress;
+    }
     return RestAPIUtil.post(
         `${baseUrl()}${vspId}/versions/${
             version.id
         }/orchestration-template-candidate`,
-        formData
+        formData,
+        options
     );
 }
 
@@ -346,6 +353,19 @@ const SoftwareProductActionHelper = {
         );
     },
 
+    fetchUploadStatus(vspId, versionId) {
+        const options = {
+            validateStatus: function(status) {
+                return status < 400 || status === 404;
+            },
+            noLoading: true
+        };
+        return RestAPIUtil.get(
+            `${baseUrl()}${vspId}/versions/${versionId}/orchestration-template-candidate/upload`,
+            options
+        );
+    },
+
     loadSoftwareProductAssociatedData(dispatch) {
         fetchSoftwareProductCategories(dispatch);
         fetchModelList(dispatch);
@@ -435,15 +455,27 @@ const SoftwareProductActionHelper = {
 
     uploadFile(
         dispatch,
-        { softwareProductId, formData, failedNotificationTitle, version }
+        {
+            softwareProductId,
+            formData,
+            failedNotificationTitle,
+            version,
+            onUploadProgress = undefined
+        }
     ) {
         dispatch({
             type: HeatSetupActions.FILL_HEAT_SETUP_CACHE,
             payload: {}
         });
-        displayTimingValidationInfo(dispatch);
-        Promise.resolve()
-            .then(() => uploadFile(softwareProductId, formData, version))
+        return Promise.resolve()
+            .then(() =>
+                uploadFile(
+                    softwareProductId,
+                    formData,
+                    version,
+                    onUploadProgress
+                )
+            )
             .then(response => {
                 if (response.status === 'Success') {
                     dispatch({

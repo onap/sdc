@@ -199,6 +199,10 @@
                         color: $blue;
                         @extend .body-1-semibold;
                     }
+                    .upload-status-text {
+                        color: $blue;
+                        @extend .body-1-semibold;
+                    }
                     .or-text {
                         margin-top: 10px;
                         margin-bottom: 10px;

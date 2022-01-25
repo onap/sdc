@@ -109,15 +109,40 @@ const mapActionsToProps = (dispatch, { version }) => {
                 screenType: screenTypes.SOFTWARE_PRODUCT,
                 props: { softwareProductId, version }
             }),
-        onUpload: (softwareProductId, formData) =>
+        onUpload: (
+            softwareProductId,
+            formData,
+            onUploadStart = () => {
+                // do nothing by default
+            },
+            onUploadProgress = undefined,
+            onUploadFinished = () => {
+                // do nothing by default
+            }
+        ) => {
             SoftwareProductActionHelper.uploadFile(dispatch, {
                 softwareProductId,
                 formData,
                 failedNotificationTitle: i18n('Upload validation failed'),
-                version
-            }),
+                version,
+                onUploadProgress
+            }).finally(() => {
+                onUploadFinished();
+            });
+            onUploadStart();
+        },
 
-        onUploadConfirmation: (softwareProductId, formData) =>
+        onUploadConfirmation: (
+            softwareProductId,
+            formData,
+            onUploadStart = () => {
+                // do nothing by default
+            },
+            onUploadProgress = undefined,
+            onUploadFinished = () => {
+                // do nothing by default
+            }
+        ) =>
             dispatch({
                 type: modalActionTypes.GLOBAL_MODAL_WARNING,
                 data: {
@@ -126,15 +151,21 @@ const mapActionsToProps = (dispatch, { version }) => {
                     ),
                     confirmationButtonText: i18n('Continue'),
                     title: i18n('Warning'),
-                    onConfirmed: () =>
+                    onConfirmed: () => {
                         SoftwareProductActionHelper.uploadFile(dispatch, {
                             softwareProductId,
                             formData,
                             failedNotificationTitle: i18n(
                                 'Upload validation failed'
                             ),
-                            version
-                        }),
+                            version,
+                            onUploadProgress
+                        }).finally(value => {
+                            console.log('upload finished', value);
+                            onUploadFinished();
+                        });
+                        onUploadStart();
+                    },
                     onDeclined: () =>
                         dispatch({
                             type: modalActionTypes.GLOBAL_MODAL_CLOSE
@@ -153,6 +184,14 @@ const mapActionsToProps = (dispatch, { version }) => {
                     )
                 }
             }),
+
+        fetchUploadStatus: softwareProductId => {
+            return SoftwareProductActionHelper.fetchUploadStatus(
+                softwareProductId,
+                version.id
+            );
+        },
+
         onComponentSelect: ({ id: softwareProductId, componentId }) =>
             ScreensHelper.loadScreen(dispatch, {
                 screen: screenTypes.SOFTWARE_PRODUCT_COMPONENT_DEFAULT_GENERAL,

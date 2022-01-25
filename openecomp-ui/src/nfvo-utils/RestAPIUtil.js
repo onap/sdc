@@ -77,55 +77,69 @@ class RestAPIUtil {
     handleRequest(url, type, options = {}, data = {}) {
         applySecurity(options, data);
 
-        let config = {
+        const config = {
             method: type,
             url: url,
             headers: options.headers,
             data: data
         };
 
-        store.dispatch({ type: LoaderConstants.SEND_REQUEST, url: url });
+        if (options.validateStatus) {
+            config.validateStatus = options.validateStatus;
+        }
+
+        if (options.onUploadProgress) {
+            config.onUploadProgress = options.onUploadProgress;
+        }
+
+        if (!options.noLoading) {
+            store.dispatch({ type: LoaderConstants.SEND_REQUEST, url: url });
+        }
         if (options.dataType === BINARY) {
             config.responseType = 'arraybuffer';
             return axios(config)
                 .then(result => {
-                    store.dispatch({
-                        type: LoaderConstants.RECEIVE_RESPONSE,
-                        url: result.config.url
-                    });
+                    if (!options.noLoading) {
+                        store.dispatch({
+                            type: LoaderConstants.RECEIVE_RESPONSE,
+                            url: result.config.url
+                        });
+                    }
+
                     return {
                         blob: new Blob([result.data]),
                         headers: result.headers
                     };
                 })
                 .catch(error => {
-                    store.dispatch({
-                        type: LoaderConstants.RECEIVE_RESPONSE,
-                        url: error.config.url
-                    });
+                    if (!options.noLoading) {
+                        store.dispatch({
+                            type: LoaderConstants.RECEIVE_RESPONSE,
+                            url: error.config.url
+                        });
+                    }
                     errorResponseHandler(error.response);
-                });
-        } else {
-            return axios(config)
-                .then(result => {
-                    store.dispatch({
-                        type: LoaderConstants.RECEIVE_RESPONSE,
-                        url: result.config.url
-                    });
-                    handleSuccess(result.headers, result.config.headers);
-                    return result.data;
-                })
-                .catch(error => {
-                    store.dispatch({
-                        type: LoaderConstants.RECEIVE_RESPONSE,
-                        url: error.config.url
-                    });
-                    errorResponseHandler(error.response);
-                    return Promise.reject({
-                        responseJSON: error.response.data
-                    });
                 });
         }
+        return axios(config)
+            .then(result => {
+                store.dispatch({
+                    type: LoaderConstants.RECEIVE_RESPONSE,
+                    url: result.config.url
+                });
+                handleSuccess(result.headers, result.config.headers);
+                return result.data;
+            })
+            .catch(error => {
+                store.dispatch({
+                    type: LoaderConstants.RECEIVE_RESPONSE,
+                    url: error.config.url
+                });
+                errorResponseHandler(error.response);
+                return Promise.reject({
+                    responseJSON: error.response.data
+                });
+            });
     }
 
     fetch(url, options) {
