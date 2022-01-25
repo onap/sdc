@@ -49,6 +49,29 @@
     },
     {
       "key": {
+        "uuid": "50b94560_6743f2b2",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-25T11:23:20Z",
+      "side": 1,
+      "message": "This test should be removed as it is not asserting anything important",
+      "range": {
+        "startLine": 35,
+        "startChar": 1,
+        "endLine": 42,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fe0c9d53_fd33d112",
         "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
         "patchSetId": 1
@@ -108,6 +131,30 @@
       "side": 1,
       "message": "dont think so, copy constructor tested in L36-L42",
       "parentUuid": "1c3cb2eb_00485df9",
+      "range": {
+        "startLine": 44,
+        "startChar": 1,
+        "endLine": 72,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a16895d_d72a84fd",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-25T11:23:20Z",
+      "side": 1,
+      "message": "That testCopyConstructor test, on line 36, is doing basically nothing. It is just calling the constructor but asserting anything. If the copy constructor is changed, it will still work, so the behavior is being ignored.\n\nThis test here is asserting if the copy worked correctly, checking if everything was copied as expected. For example, if one line is removed from the copy constructor, it will break because the behavior is being tested here.",
+      "parentUuid": "1a7625f1_e5c8d546",
       "range": {
         "startLine": 44,
         "startChar": 1,
