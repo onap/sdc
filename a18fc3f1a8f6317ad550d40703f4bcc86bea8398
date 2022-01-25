@@ -164,6 +164,30 @@
       "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04904ae7_09099c22",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-01-25T11:46:19Z",
+      "side": 1,
+      "message": "following your logic we need to add new test-line every time we add new field to class,\nIMPO it is adding \u0027boilerplate code\u0027 and does not bring any additional value,\nI\u0027d rather trust on Lombok, and add Assertion to existing method",
+      "parentUuid": "8a16895d_d72a84fd",
+      "range": {
+        "startLine": 44,
+        "startChar": 1,
+        "endLine": 72,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
