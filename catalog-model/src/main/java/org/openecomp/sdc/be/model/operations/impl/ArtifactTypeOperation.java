@@ -105,7 +105,7 @@ public class ArtifactTypeOperation extends AbstractOperation implements IArtifac
                 createNodeResult = janusGraphGenericDao.updateNode(artifactTypeData, ArtifactTypeData.class).right()
                         .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left()
                         .bind(updatedNode -> updateArtifactProperties(artifactType.getUniqueId(), artifactType.getProperties())).left()
-                        .bind(updatedProperties -> updateArtifactDerivedFrom(artifactType, artifactType.getDerivedFrom())).left()
+                        .bind(updatedProperties -> updateArtifactDerivedFrom(artifactType)).left()
                         .map(updatedDerivedFrom -> artifactType);
             }
             if (createNodeResult.isRight()) {
@@ -165,15 +165,18 @@ public class ArtifactTypeOperation extends AbstractOperation implements IArtifac
                 .bind(deleteProps -> addPropertiesToArtifact(artifactId, properties));
     }
 
-    private Either<GraphRelation, StorageOperationStatus> updateArtifactDerivedFrom(ArtifactTypeDefinition updatedArtifactType,
-                                                                                  String currDerivedFromArtifactType) {
+    private Either<GraphRelation, StorageOperationStatus> updateArtifactDerivedFrom(ArtifactTypeDefinition updatedArtifactType) {
         String artifactTypeId = updatedArtifactType.getUniqueId();
+        
+        Either<ArtifactTypeData, StorageOperationStatus> currentDerivedFrom = derivedFromOperation.getDerivedFromChild(updatedArtifactType.getUniqueId(), NodeTypeEnum.ArtifactType, ArtifactTypeData.class);
         LOGGER.debug(
                 "#updateArtifactDerivedFrom - updating artifact derived from relation for artifact type with id {}. old derived type {}. new derived type {}",
-                artifactTypeId, currDerivedFromArtifactType, updatedArtifactType.getDerivedFrom());
-        StorageOperationStatus deleteDerivedRelationStatus = deleteDerivedFromArtifactType(artifactTypeId, currDerivedFromArtifactType, updatedArtifactType.getModel());
-        if (deleteDerivedRelationStatus != StorageOperationStatus.OK) {
-            return Either.right(deleteDerivedRelationStatus);
+                artifactTypeId, currentDerivedFrom.isLeft() ? currentDerivedFrom: "", updatedArtifactType.getDerivedFrom());
+        if (currentDerivedFrom.isLeft()) {
+            StorageOperationStatus deleteDerivedRelationStatus = deleteDerivedFromArtifactType(artifactTypeId, currentDerivedFrom.left().value().getArtifactTypeDataDefinition().getType(), updatedArtifactType.getModel());
+            if (deleteDerivedRelationStatus != StorageOperationStatus.OK) {
+                return Either.right(deleteDerivedRelationStatus);
+            }
         }
         return addDerivedFromRelation(updatedArtifactType, artifactTypeId);
     }
@@ -240,7 +243,6 @@ public class ArtifactTypeOperation extends AbstractOperation implements IArtifac
     private Either<ArtifactTypeDefinition, StorageOperationStatus> getProjectionLatestArtifactTypeByType(String type, String model) {
         Map<String, Object> mapCriteria = new HashMap<>();
         mapCriteria.put(GraphPropertiesDictionary.TYPE.getProperty(), type);
-        mapCriteria.put(GraphPropertiesDictionary.IS_HIGHEST_VERSION.getProperty(), true);
         return getArtifactTypeByCriteria(type, mapCriteria, model);
     }
 
