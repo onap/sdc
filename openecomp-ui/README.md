@@ -35,8 +35,8 @@ install gulp by running the following command `npm install --global gulp-cli`
 * your favorite UI will wait for you at: `http://localhost:9000/sdc1/#!/onboardVendor`
 
 ## Troubleshooting
-Problem | Why is this happening | Solution
-------- | --------------------- | --------
-Build (npm install) error | npm/node_modules cache | If having problems with the compilation of  dox-sequence-diagram-ui and openecomp-ui, delete the node_modules and package-lock.json in each respective projects folder.
-npm cannot reach destination | proxy | When within managed network, you should set your proxy to NPM as the following: <br> `npm config set proxy http://<host>:<port>` <br> `npm config set https-proxy http://<host>:<port>`
-git protocol is blocked and cannot connect | managed network rules for protocols	| When within managed network, you should set globally that when git protocol is used, then it will be replaced with "https" <br> `git config --global url."https://".insteadOf git://`
+| Problem                                    | Why is this happening                | Solution                                                                                                                                                                                |
+|--------------------------------------------|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Build (npm install) error                  | npm/node_modules cache               | If having problems with the compilation of  dox-sequence-diagram-ui and openecomp-ui, delete the node_modules and package-lock.json in each respective projects folder.                 |
+| npm cannot reach destination               | proxy                                | When within managed network, you should set your proxy to NPM as the following: <br> `npm config set proxy http://<host>:<port>` <br> `npm config set https-proxy http://<host>:<port>` |
+| git protocol is blocked and cannot connect | managed network rules for protocols	 | When within managed network, you should set globally that when git protocol is used, then it will be replaced with "https" <br> `git config --global url."https://".insteadOf git://`   |

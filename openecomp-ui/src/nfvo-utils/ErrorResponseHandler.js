@@ -64,7 +64,7 @@ function parseCatalogExceptionObject(responseJSON) {
     return { title, msg };
 }
 
-var errorResponseHandler = error => {
+const errorResponseHandler = error => {
     let errorData;
     if (error.data) {
         errorData = parseCatalogExceptionObject(error.data);

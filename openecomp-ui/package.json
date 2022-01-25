@@ -18,7 +18,7 @@
     },
     "dependencies": {
         "attr-accept": "^1.1.0",
-        "axios": "^0.16.2",
+        "axios": "^0.25.0",
         "classnames": "^2.2.5",
         "core-js": "^2.4.0",
         "d3": "^4.10.0",

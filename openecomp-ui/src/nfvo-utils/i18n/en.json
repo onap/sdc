@@ -662,6 +662,10 @@
   "Unknown": "Unknown",
   "No Test Result Available": "No Test Result Available",
   "Test is In-progress": "Test is In-progress",
-  "has passed all checks": "has passed all checks"
-
+  "has passed all checks": "has passed all checks",
+  "upload.status.uploading": "Package upload is in progress",
+  "upload.status.validating": "Package is in validation",
+  "upload.status.processing": "Package is being processed",
+  "upload.status.success": "Package was successfully uploaded",
+  "upload.status.error": "Package upload resulted in error"
 }

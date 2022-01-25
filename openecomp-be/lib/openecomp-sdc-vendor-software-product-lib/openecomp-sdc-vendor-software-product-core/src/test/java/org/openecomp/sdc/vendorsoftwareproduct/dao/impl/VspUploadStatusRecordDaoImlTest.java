@@ -130,4 +130,19 @@ class VspUploadStatusRecordDaoImlTest {
         assertEquals(mostRecentVspUploadStatus, vspUploadStatusOptional.get());
     }
 
+    @Test
+    void findLatest_noEntryFoundTest() {
+        //given
+        final String vspId = "vspId";
+        final String vspVersionId = "vspVersionId";
+        final Result<VspUploadStatusRecord> resultMock = mock(Result.class);
+        when(resultMock.all()).thenReturn(new ArrayList<>());
+
+        when(accessor.findAllByVspIdAndVspVersionId(vspId, vspVersionId)).thenReturn(resultMock);
+        //when
+        final Optional<VspUploadStatusRecord> vspUploadStatusOptional = packageUploadManagerDaoIml.findLatest(vspId, vspVersionId);
+        //then
+        assertTrue(vspUploadStatusOptional.isEmpty());
+    }
+
 }
