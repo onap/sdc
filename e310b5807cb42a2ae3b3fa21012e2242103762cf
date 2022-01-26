@@ -22,6 +22,30 @@
       "revId": "e310b5807cb42a2ae3b3fa21012e2242103762cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e704f386_6900a14c",
+        "filename": "catalog-ui/configurations/menu.js",
+        "patchSetId": 5
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 5629
+      },
+      "writtenOn": "2022-01-26T00:23:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "97c9be6e_1a582d74",
+      "range": {
+        "startLine": 231,
+        "startChar": 22,
+        "endLine": 231,
+        "endChar": 42
+      },
+      "revId": "e310b5807cb42a2ae3b3fa21012e2242103762cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
