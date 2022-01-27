@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "ea72a53f_d16e0712",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-01-27T12:04:25Z",
+      "side": 1,
+      "message": "removed",
+      "parentUuid": "50b94560_6743f2b2",
+      "range": {
+        "startLine": 35,
+        "startChar": 1,
+        "endLine": 42,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fe0c9d53_fd33d112",
         "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
         "patchSetId": 1
@@ -212,6 +236,30 @@
       "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e16b325_904a1633",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/datatypes/category/CategoryDataDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-01-27T12:04:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "248df1a3_3707b765",
+      "range": {
+        "startLine": 44,
+        "startChar": 1,
+        "endLine": 72,
+        "endChar": 2
+      },
+      "revId": "a18fc3f1a8f6317ad550d40703f4bcc86bea8398",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
