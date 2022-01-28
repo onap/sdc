@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fff7a7d3_66ad331c",
+        "filename": "catalog-ui/src/app/ng2/app.module.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-28T14:48:36Z",
+      "side": 1,
+      "message": "they seem to not be used in this file, please remove.",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 107,
+        "endChar": 86
+      },
+      "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b34682e_9830cdda",
+        "filename": "catalog-ui/src/app/ng2/components/logic/multi-select/multi-select.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-28T14:48:36Z",
+      "side": 1,
+      "message": "do you really need those providers?",
+      "range": {
+        "startLine": 30,
+        "startChar": 14,
+        "endLine": 30,
+        "endChar": 44
+      },
+      "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7570947_0c535d79",
+        "filename": "catalog-ui/src/app/ng2/components/logic/multi-select/multi-select.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-28T14:48:36Z",
+      "side": 1,
+      "message": "you could set the isLoading \u003d true before loading the directives, and put it as false on the complete function parameter of the subscribe method.",
+      "range": {
+        "startLine": 53,
+        "startChar": 2,
+        "endLine": 53,
+        "endChar": 16
+      },
+      "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c607e612_c8f6fc81",
+        "filename": "catalog-ui/src/app/ng2/components/logic/service-dependencies/service-dependencies.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-28T14:48:36Z",
+      "side": 1,
+      "message": "I would suggest to call this component as \"select-directives\", as it is not generic enough to be used as a multiselect.",
+      "range": {
+        "startLine": 3,
+        "startChar": 3,
+        "endLine": 3,
+        "endChar": 15
+      },
+      "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
