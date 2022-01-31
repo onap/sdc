@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1097c4b6_f3950c50",
+        "filename": "catalog-be/src/main/resources/config/configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 923,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-01-31T15:23:55Z",
+      "side": 1,
+      "message": "Should be added to the BE-configuration.yaml.erb file instead.\nThe config file used at runtime is generated from BE-configuration.yaml.erb",
+      "range": {
+        "startLine": 923,
+        "startChar": 0,
+        "endLine": 923,
+        "endChar": 38
+      },
+      "revId": "369cb432ae09b5aa5dd8304614ac466b3afdce58",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
