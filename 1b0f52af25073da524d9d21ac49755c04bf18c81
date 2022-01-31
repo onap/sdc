@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af55932b_545cf60b",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/graph/utils/composition-graph-palette-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-31T16:59:18Z",
+      "side": 1,
+      "message": "remove space",
+      "range": {
+        "startLine": 203,
+        "startChar": 21,
+        "endLine": 203,
+        "endChar": 22
+      },
+      "revId": "1b0f52af25073da524d9d21ac49755c04bf18c81",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5b4db8b_851d6091",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/graph/utils/composition-graph-palette-utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-01-31T16:59:18Z",
+      "side": 1,
+      "message": "remove space",
+      "range": {
+        "startLine": 204,
+        "startChar": 139,
+        "endLine": 204,
+        "endChar": 140
+      },
+      "revId": "1b0f52af25073da524d9d21ac49755c04bf18c81",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
