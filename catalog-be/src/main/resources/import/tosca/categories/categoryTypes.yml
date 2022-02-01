@@ -52,8 +52,14 @@ services:
           default: '2.5.1'
           mandatory: true
       models: [
-          "ETSI SOL001 v2.5.1",
-          "SDC AID"
+        "SDC AID"
+      ]
+    ETSI_NFV_Network_Service_For_ETSI_Model:
+      name: "ETSI NFV Network Service For ETSI Model"
+      displayName: "ETSI NFV Network Service"
+      icons: [ 'etsi_nfv_network_service' ]
+      models: [
+        "ETSI SOL001 v2.5.1"
       ]
     AutomationComposition:
       name: "AutomationComposition"
