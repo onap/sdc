@@ -18,9 +18,11 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.config;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -73,7 +75,7 @@ public class ContainerInstanceTypesData {
     /**
      * Gets the list of allowed component instances for a service of the given model.
      *
-     * @param model the model 
+     * @param model the model
      * @return the list of allowed component instances
      */
     public List<String> getServiceAllowedList(final String modelName) {
@@ -113,7 +115,7 @@ public class ContainerInstanceTypesData {
         List<String> allowedInstanceResourceType = null;
         if (resourceInstanceType == null) {
             if (instanceAllowedResourceTypeMap.containsKey(WILDCARD)) {
-                allowedInstanceResourceType = instanceAllowedResourceTypeMap.get(WILDCARD);
+                allowedInstanceResourceType =instanceAllowedResourceTypeMap.get(WILDCARD);
             }
         } else {
             allowedInstanceResourceType = instanceAllowedResourceTypeMap.get(resourceInstanceType.getValue());
@@ -121,6 +123,6 @@ public class ContainerInstanceTypesData {
         if (CollectionUtils.isEmpty(allowedInstanceResourceType)) {
             return Collections.emptyList();
         }
-        return allowedInstanceResourceType;
+        return allowedInstanceResourceType.stream().collect(Collectors.toList());
     }
 }
