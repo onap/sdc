@@ -25,7 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
-
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class UploadServiceInfoTest {
     public void testCtor() {
         new UploadServiceInfo("mock", "mock", "mock", new LinkedList<>(), "mock", "mock", "mock", "mock/mock/mock",
                 "mock", "mock", "mock", "mock", "mock", "mock", "mock", new LinkedList<>(), "mock", "mock", "mock",
-                "mock", "mock", "mock", "mock", "mock", "mock", "mock");
+                "mock", "mock", "mock", "mock", "mock", "mock", "mock", new HashMap<>(), "mock", "mock");
     }
 
     @Test

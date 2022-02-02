@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
@@ -52,12 +53,16 @@ public class UploadServiceInfo {
     private String contactId, name, serviceIconPath, icon, vendorName, vendorRelease, serviceVendorModelNumber;
     private String serviceType = "";
     private String model;
+    private Map<String, String> categorySpecificMetadata;
+    private String derivedFromGenericType;
+    private String derivedFromGenericVersion;
 
     public UploadServiceInfo(String payloadData, String payloadName, String description, List<String> tags, String invariantUUID, String UUID,
                              String type, String category, String subcategory, String resourceVendor, String resourceVendorRelease,
                              String serviceRole, String serviceEcompNaming, String ecompGeneratedNaming, String namingPolicy,
                              List<UploadArtifactInfo> artifactList, String contactId, String name, String resourceIconPath, String icon,
-                             String vendorName, String vendorRelease, String serviceVendorModelNumber, String serviceType, String projectCode, String model) {
+                             String vendorName, String vendorRelease, String serviceVendorModelNumber, String serviceType, String projectCode, String model, Map<String, String> categorySpecificMetadata,
+                             String derivedFromGenericType, String derivedFromGenericVersion) {
         this.payloadData = payloadData;
         this.payloadName = payloadName;
         this.description = description;
@@ -96,6 +101,9 @@ public class UploadServiceInfo {
                 categories.add(catDef);
             }
         }
+        this.categorySpecificMetadata = categorySpecificMetadata;
+        this.derivedFromGenericType = derivedFromGenericType;
+        this.derivedFromGenericVersion = derivedFromGenericVersion;
     }
 
     public UploadServiceInfo() {

@@ -80,6 +80,9 @@ public class ServiceImportManager {
             if (serviceMetaData.getVendorRelease() != null) {
                 service.setVendorRelease(serviceMetaData.getVendorRelease());
             }
+            service.setCategorySpecificMetadata(serviceMetaData.getCategorySpecificMetadata());
+            service.setDerivedFromGenericType(serviceMetaData.getDerivedFromGenericType());
+            service.setDerivedFromGenericVersion(serviceMetaData.getDerivedFromGenericVersion());
         }
     }
 
