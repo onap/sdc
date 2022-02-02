@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "86b4bca8_65c86015",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/config/ContainerInstanceTypesData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-02-02T10:51:23Z",
+      "side": 1,
+      "message": "I believe you don\u0027t need this import",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 27
+      },
+      "revId": "acdc30e487d9ea6adbf2df9b2633fa13de29eeb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97cd9b38_ce56fdc1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/config/ContainerInstanceTypesData.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-02-02T10:51:23Z",
+      "side": 1,
+      "message": "please, put back the space \u003d)",
+      "range": {
+        "startLine": 118,
+        "startChar": 44,
+        "endLine": 118,
+        "endChar": 45
+      },
+      "revId": "acdc30e487d9ea6adbf2df9b2633fa13de29eeb9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
