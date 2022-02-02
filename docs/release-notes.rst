@@ -5,6 +5,96 @@
 Release Notes
 =============
 
+Version: 1.10.1
+==============
+
+:Release Date: 2022-02-02
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.6.6
+
+Release Purpose
+----------------
+SDC Jakarta 
+
+**Epics**
+    N/A
+
+**Stories**
+
+*  `SDC-3867 <https://jira.onap.org/browse/SDC-3867>`_ - Improve service import support
+*  `SDC-3842 <https://jira.onap.org/browse/SDC-3842>`_ - Add Controlloop design-time components to SDC
+*  `SDC-3862 <https://jira.onap.org/browse/SDC-3862>`_ - Obtain and control VSP package upload status
+*  `SDC-3855 <https://jira.onap.org/browse/SDC-3855>`_ - Add artifact types to ETSI SOL001 v2.5.1 model
+*  `SDC-3858 <https://jira.onap.org/browse/SDC-3858>`_ - Add a display name for the category
+*  `SDC-3850 <https://jira.onap.org/browse/SDC-3850>`_ - Add Interface support to VFC for viewing an interface definition
+*  `SDC-3848 <https://jira.onap.org/browse/SDC-3848>`_ - Update VSP upload status during backend processing
+*  `SDC-3856 <https://jira.onap.org/browse/SDC-3856>`_ - Issues creating control loop model
+*  `SDC-3847 <https://jira.onap.org/browse/SDC-3847>`_ - Support node template artifact properties
+*  `SDC-3846 <https://jira.onap.org/browse/SDC-3846>`_ - Add support for update to artifact types endpoint
+*  `SDC-3827 <https://jira.onap.org/browse/SDC-3827>`_ - Create endpoint to check status of the VSP package upload
+*  `SDC-3826 <https://jira.onap.org/browse/SDC-3826>`_ - Create endpoint to acquire a VSP package upload lock
+*  `SDC-3845 <https://jira.onap.org/browse/SDC-3845>`_ - Add sdc-be-init support for artifact types
+
+**Bug Fixes**
+
+*  `SDC-3866 <https://jira.onap.org/browse/SDC-3866>`_ - Fix VFC being removed from the list of allowable types 
+*  `SDC-3864 <https://jira.onap.org/browse/SDC-3864>`_ - UI hangs if drag/and drop policy in composition view 
+*  `SDC-3860 <https://jira.onap.org/browse/SDC-3860>`_ - Error in artifact update
+*  `SDC-3851 <https://jira.onap.org/browse/SDC-3851>`_ - Decrypt errors in sdc-be logs
+*  `SDC-3852 <https://jira.onap.org/browse/SDC-3852>`_ - Cassandra init dockers not working with latest version of cqlsh
+*  `SDC-2902 <https://jira.onap.org/browse/SDC-2902>`_ - Make sure Optionals values are defined before calling their `get` method
+*  `SDC-3837 <https://jira.onap.org/browse/SDC-3840>`_ - Remove test-jar generation
+
+
+**Tasks**
+
+*  `SDC-3849 <https://jira.onap.org/browse/SDC-3849>`_ - Improve error logging in MinIo client
+*  `SDC-3839 <https://jira.onap.org/browse/SDC-3839>`_ - Improve testing stability
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+
 Version: 1.10.0
 ==============
 
