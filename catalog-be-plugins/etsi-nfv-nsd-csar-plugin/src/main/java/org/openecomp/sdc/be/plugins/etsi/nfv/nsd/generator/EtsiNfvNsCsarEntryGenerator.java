@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.CategoriesToGenerateNsd;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.plugins.CsarEntryGenerator;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
@@ -39,7 +40,6 @@ import org.slf4j.LoggerFactory;
 @org.springframework.stereotype.Component("etsiNfvNsCsarEntryGenerator")
 public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
 
-    static final String ETSI_NS_COMPONENT_CATEGORY = "ETSI NFV Network Service";
     static final String NSD_FILE_PATH_FORMAT = "Artifacts/%s/%s.%s";
     static final String SIGNED_CSAR_EXTENSION = "zip";
     static final String UNSIGNED_CSAR_EXTENSION = "csar";
@@ -52,8 +52,8 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
     }
 
     /**
-     * Generates a Network Service CSAR based on a SERVICE component of category {@link EtsiNfvNsCsarEntryGenerator#ETSI_NS_COMPONENT_CATEGORY} and
-     * wraps it in a SDC CSAR entry.
+     * Generates a Network Service CSAR based on a SERVICE component that has category configured in
+     * {@link CategoriesToGenerateNsd } enum and wraps it in a SDC CSAR entry.
      *
      * @param component the component to create the NS CSAR from
      * @return an entry to be added in the Component CSAR by SDC
@@ -65,10 +65,11 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
             LOGGER.debug("Ignoring NSD CSAR generation for component '{}' as it is not a SERVICE", componentName);
             return Collections.emptyMap();
         }
-        final boolean isEOTemplate = component.getCategories().stream().anyMatch(category -> ETSI_NS_COMPONENT_CATEGORY.equals(category.getName()));
+        final boolean isEOTemplate = component.getCategories().stream().anyMatch(category ->
+                CategoriesToGenerateNsd.hasCategoryName(category.getName()));
         if (!isEOTemplate) {
-            LOGGER.debug("Ignoring NSD CSAR generation for component '{}' as it does not belong to the category '{}'", componentName,
-                ETSI_NS_COMPONENT_CATEGORY);
+            LOGGER.debug("Ignoring NSD CSAR generation for component '{}' as it does not belong to any of the categories '{}'",
+                    componentName, CategoriesToGenerateNsd.getCategories());
             return Collections.emptyMap();
         }
 
