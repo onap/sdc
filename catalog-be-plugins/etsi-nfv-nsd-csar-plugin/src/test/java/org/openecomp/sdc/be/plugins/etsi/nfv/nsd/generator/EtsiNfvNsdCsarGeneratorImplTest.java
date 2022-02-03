@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.ETSI_NS_COMPONENT_CATEGORY;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.CategoriesToGenerateNsd;
 import static org.openecomp.sdc.common.api.ArtifactTypeEnum.ONBOARDED_PACKAGE;
 
 import fj.data.Either;
@@ -136,7 +136,7 @@ class EtsiNfvNsdCsarGeneratorImplTest {
 
         final List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
         final CategoryDefinition nsComponentCategoryDefinition = new CategoryDefinition();
-        nsComponentCategoryDefinition.setName(ETSI_NS_COMPONENT_CATEGORY);
+        nsComponentCategoryDefinition.setName(CategoriesToGenerateNsd.ETSI_NS_COMPONENT_CATEGORY.getCategoryName());
         categoryDefinitionList.add(nsComponentCategoryDefinition);
         when(service.getCategories()).thenReturn(categoryDefinitionList);
     }

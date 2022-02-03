@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.ETSI_NS_COMPONENT_CATEGORY;
+import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.config.CategoriesToGenerateNsd;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.ETSI_VERSION_METADATA;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.NSD_FILE_PATH_FORMAT;
 import static org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator.EtsiNfvNsCsarEntryGenerator.UNSIGNED_CSAR_EXTENSION;
@@ -124,7 +124,7 @@ class EtsiNfvNsCsarEntryGeneratorTest {
         when(service.getCategorySpecificMetadata()).thenReturn(categorySpecificMetadataMap);
         final List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
         final CategoryDefinition nsComponentCategoryDefinition = new CategoryDefinition();
-        nsComponentCategoryDefinition.setName(ETSI_NS_COMPONENT_CATEGORY);
+        nsComponentCategoryDefinition.setName(CategoriesToGenerateNsd.ETSI_NS_COMPONENT_CATEGORY.getCategoryName());
         categoryDefinitionList.add(nsComponentCategoryDefinition);
         when(service.getCategories()).thenReturn(categoryDefinitionList);
     }
