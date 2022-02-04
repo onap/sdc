@@ -94,7 +94,7 @@ public class SOL004MetaDirectoryValidator implements Validator {
     private static final String MANIFEST_SOURCE = "Source";
     private static final String MANIFEST_NON_MANO_SOURCE = "Non-MANO Source";
     protected final ValidatorUtils validatorUtils = new ValidatorUtils();
-    private final List<ErrorMessage> errorsByFile = new CopyOnWriteArrayList<>();
+    protected final List<ErrorMessage> errorsByFile = new CopyOnWriteArrayList<>();
     private final SecurityManager securityManager;
     private final InternalFilesFilter internalFilesFilter = new InternalFilesFilter();
     private OnboardingPackageContentHandler contentHandler;

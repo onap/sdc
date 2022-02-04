@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openecomp.sdc.be.test.util.TestResourcesHandler.getResourceBytesOrFail;
 import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEPARATOR;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryASD.ORAN_ENTRY_DEFINITION_TYPE;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CREATED_BY_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CSAR_VERSION_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ENTRY_DEFINITIONS;
@@ -103,6 +104,18 @@ class ValidatorFactoryTest {
         handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
 
        assertEquals(SOL004MetaDirectoryValidator.class, validatorFactory.getValidator(handler).getClass());
+    }
+
+    @Test
+    void testGivenSOL004MetaDirectoryCompliantMetafile_thenASDCsarValidatorIsReturned() throws IOException {
+        metaFile = metaFile +
+                ORAN_ENTRY_DEFINITION_TYPE.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + " asd"+ "\n"
+                + ENTRY_DEFINITIONS.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_DEFINITION_FILEPATH + "\n"
+                + ETSI_ENTRY_MANIFEST.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_MANIFEST_FILEPATH + "\n"
+                + ETSI_ENTRY_CHANGE_LOG.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_CHANGELOG_FILEPATH + "\n";
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(ASDValidator.class, validatorFactory.getValidator(handler).getClass());
     }
 
     @Test

@@ -60,6 +60,7 @@ public class CSARConstants {
     public static final String TOSCA_TYPE_PNF = "pnf";
     public static final String TOSCA_TYPE_VNF = "vnf";
     public static final String TOSCA_MANIFEST_FILE_EXT = "mf";
+    public static final String TOSCA_ORAN_TYPE = "asd";
 
     private CSARConstants() {
     }
