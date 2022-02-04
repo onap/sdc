@@ -147,7 +147,7 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
      *
      * @return A list of sources paths
      */
-    private List<String> readNonManoSourceList() {
+    protected List<String> readNonManoSourceList() {
         final List<String> nonManoSourceList = new ArrayList<>();
         while (getCurrentLine().isPresent()) {
             final ManifestTokenType manifestTokenType = detectLineEntry().orElse(null);
@@ -204,7 +204,7 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
      *
      * @return the current line manifest token.
      */
-    private Optional<ManifestTokenType> detectLineEntry() {
+    protected Optional<ManifestTokenType> detectLineEntry() {
         final Optional<String> currentLine = getCurrentLine();
         if (currentLine.isPresent()) {
             final String line = currentLine.get();
@@ -223,7 +223,7 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
      *
      * @return {@code true} if the metadata content is valid, {@code false} otherwise.
      */
-    private boolean validateMetadata() {
+    protected boolean validateMetadata() {
         if (metadata.isEmpty()) {
             reportError(Messages.MANIFEST_NO_METADATA);
             return false;
@@ -362,7 +362,7 @@ public class SOL004ManifestOnboarding extends AbstractOnboardingManifest {
         readNextNonEmptyLine();
     }
 
-    private int getMaxAllowedManifestMetaEntries() {
+    protected int getMaxAllowedManifestMetaEntries() {
         if (maxAllowedMetaEntries == 0) {
             boolean isVersion3 =
                 metadata.containsKey(COMPATIBLE_SPECIFICATION_VERSIONS.getToken()) && !getHighestCompatibleVersion().isLowerThan(ETSI_VERSION_2_7_1);
