@@ -20,17 +20,20 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_6_1;
+import com.vdurmont.semver4j.Semver;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.be.config.NonManoConfiguration;
+import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
+import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,23 +50,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.be.config.NonManoConfiguration;
-import org.openecomp.sdc.tosca.csar.Manifest;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.yaml.snakeyaml.Yaml;
-
-import com.vdurmont.semver4j.Semver;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_6_1;
 
 public class ETSIServiceImplTest {
 
     private ETSIService etsiService;
+    private ManifestUtils manifestUtils;
     private String sol004MetaFile = "TOSCA-Meta-Version: 1.0\n" +
         "CSAR-Version: 1.0\n" +
         "Created-By: Kuku\n" +
@@ -77,14 +80,15 @@ public class ETSIServiceImplTest {
 
     private String finalNonManoLocation = "Deployment/VES_EVENTS/test.xml";
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         final String fullFileName = Paths.get("src", "test", "resources", "nonManoConfig.yaml").toString();
         final NonManoConfiguration configuration = convert(fullFileName, NonManoConfiguration.class);
-        etsiService = Mockito.spy(new ETSIServiceImpl(configuration));
+        manifestUtils = Mockito.spy(new ManifestUtils());
+        etsiService = Mockito.spy(new ETSIServiceImpl(configuration, manifestUtils));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         etsiService = null;
     }
@@ -127,8 +131,10 @@ public class ETSIServiceImplTest {
         fileContentHandler.addFile("Some/test.xml", new byte[1]);
         fileContentHandler.addFile("TOSCA-Metadata/TOSCA.meta.original", new byte[1]);
         fileContentHandler.addFile("MainServiceTemplate.mf", new byte[1]);
+        doReturn(manifest).when(manifestUtils).loadManifest(fileContentHandler, new SOL004ManifestOnboarding());
         doReturn(manifest).when(etsiService).getManifest(fileContentHandler);
         doReturn(Paths.get("")).when(etsiService).getOriginalManifestPath(fileContentHandler);
+        doReturn(manifest).when(manifestUtils).loadManifest(any(FileContentHandler.class), any(SOL004ManifestOnboarding.class));
         etsiService.moveNonManoFileToArtifactFolder(fileContentHandler);
         assertThat("Should contain moved file", fileContentHandler.getFileList(), hasItem(finalNonManoLocation));
     }
@@ -144,6 +150,7 @@ public class ETSIServiceImplTest {
         doReturn(manifest).when(etsiService).getManifest(fileContentHandler);
         doReturn(Paths.get("")).when(etsiService).getOriginalManifestPath(fileContentHandler);
         when(manifest.getNonManoSources()).thenReturn(nonManoTypeAndSourceMapInManifest);
+        doReturn(manifest).when(manifestUtils).loadManifest(any(FileContentHandler.class), any(SOL004ManifestOnboarding.class));
         etsiService.moveNonManoFileToArtifactFolder(fileContentHandler);
         assertThat("Should contain moved file", fileContentHandler.getFileList(), hasItem(finalNonManoLocation));
     }
@@ -157,7 +164,9 @@ public class ETSIServiceImplTest {
         FileContentHandler fileContentHandler = new FileContentHandler();
         fileContentHandler.addFile("test.xml", new byte[1]);
         Manifest manifest = mock(Manifest.class);
+        //Manifest manifest = etsiService.getManifest(fileContentHandler);
         doReturn(manifest).when(etsiService).getManifest(fileContentHandler);
+        doReturn(manifest).when(manifestUtils).loadManifest(any(FileContentHandler.class), any(SOL004ManifestOnboarding.class));
         doReturn(Paths.get("")).when(etsiService).getOriginalManifestPath(fileContentHandler);
         when(manifest.getNonManoSources()).thenReturn(nonManoSources);
         etsiService.moveNonManoFileToArtifactFolder(fileContentHandler);
@@ -177,6 +186,7 @@ public class ETSIServiceImplTest {
         doReturn(manifest).when(etsiService).getManifest(fileContentHandler);
         doReturn(Paths.get("")).when(etsiService).getOriginalManifestPath(fileContentHandler);
         when(manifest.getNonManoSources()).thenReturn(nonManoSources);
+        doReturn(manifest).when(manifestUtils).loadManifest(any(FileContentHandler.class), any(SOL004ManifestOnboarding.class));
         etsiService.moveNonManoFileToArtifactFolder(fileContentHandler);
         assertTrue(fileContentHandler.containsFile(finalNonManoLocation));
     }
@@ -193,6 +203,7 @@ public class ETSIServiceImplTest {
         doReturn(manifest).when(etsiService).getManifest(fileContentHandler);
         doReturn(Paths.get("")).when(etsiService).getOriginalManifestPath(fileContentHandler);
         when(manifest.getNonManoSources()).thenReturn(nonManoSources);
+        doReturn(manifest).when(manifestUtils).loadManifest(any(FileContentHandler.class), any(SOL004ManifestOnboarding.class));
         etsiService.moveNonManoFileToArtifactFolder(fileContentHandler);
         assertTrue(fileContentHandler.containsFile(finalNonManoLocation));
     }
@@ -216,6 +227,7 @@ public class ETSIServiceImplTest {
         doReturn(manifest).when(etsiService).getManifest(fileContentHandler);
         doReturn(Paths.get("two/lvlFolder")).when(etsiService).getOriginalManifestPath(fileContentHandler);
         when(manifest.getNonManoSources()).thenReturn(nonManoTypeAndSourceMapInManifest);
+        doReturn(manifest).when(manifestUtils).loadManifest(any(FileContentHandler.class), any(SOL004ManifestOnboarding.class));
         //when files are non mano moved
         etsiService.moveNonManoFileToArtifactFolder(fileContentHandler);
         assertThat("Should contain moved file", fileContentHandler.getFileList(),
@@ -249,6 +261,7 @@ public class ETSIServiceImplTest {
         when(manifest.getNonManoSources()).thenReturn(nonManoSourceMap);
         doReturn(manifest).when(etsiService).getManifest(fileContentHandler);
         doReturn(Paths.get("")).when(etsiService).getOriginalManifestPath(fileContentHandler);
+        doReturn(manifest).when(manifestUtils).loadManifest(any(FileContentHandler.class), any(SOL004ManifestOnboarding.class));
         final Optional<Map<String, Path>> fromToPathMap = etsiService
             .moveNonManoFileToArtifactFolder(fileContentHandler);
         assertThat("Files should be moved", fromToPathMap.isPresent(), is(true));

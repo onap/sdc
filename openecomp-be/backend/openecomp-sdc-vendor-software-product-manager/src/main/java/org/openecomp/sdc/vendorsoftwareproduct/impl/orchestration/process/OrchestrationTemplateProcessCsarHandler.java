@@ -15,13 +15,6 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.process;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.impl.AbstractToscaSolConverter;
@@ -43,6 +36,8 @@ import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.ToscaTreeManager;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
@@ -54,6 +49,14 @@ import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImp
 import org.openecomp.sdc.vendorsoftwareproduct.types.OrchestrationTemplateActionResponse;
 import org.openecomp.sdc.vendorsoftwareproduct.types.UploadFileResponse;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
@@ -62,9 +65,11 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
     private final CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
     private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
     private final ETSIService etsiService;
+    private final AsdPackageHelper asdPackageHelper;
 
     public OrchestrationTemplateProcessCsarHandler() {
         etsiService = new ETSIServiceImpl();
+        this.asdPackageHelper = new AsdPackageHelper(new ManifestUtils());
     }
 
     @Override
@@ -124,7 +129,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
         if (CollectionUtils.isNotEmpty(modelList)) {
             return handleToscaModelConversion(modelList, fileContentHandler, candidateData);
         }
-        if (etsiService.isEtsiPackage(fileContentHandler)) {
+        if (etsiService.isEtsiPackage(fileContentHandler) || asdPackageHelper.isAsdPackage(fileContentHandler)) {
             return getToscaServiceModelSol004(fileContentHandler, candidateData);
         }
         return new ToscaConverterImpl().convert(fileContentHandler);

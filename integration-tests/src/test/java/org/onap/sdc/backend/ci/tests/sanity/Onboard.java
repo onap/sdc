@@ -81,6 +81,12 @@ public class Onboard extends ComponentBaseTest {
 		runOnboardToDistributionFlow(filePath, pnfFile, ResourceTypeEnum.PNF);
 	}
 
+	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "ASD_List")
+	public void onboardASDFlow(String filePath, String asdFile) throws Exception {
+		setLog(asdFile);
+		runOnboardToDistributionFlow(filePath, asdFile, ResourceTypeEnum.VF);
+	}
+
 	@Test(dataProviderClass = OnboardingDataProviders.class, dataProvider = "CNF_List")
 	public void onboardCNFFlow(String filePath, String cnfFile) throws Exception {
 		setLog(cnfFile);
