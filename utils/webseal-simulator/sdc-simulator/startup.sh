@@ -13,5 +13,6 @@ cd $JETTY_BASE/chef-solo
 chef-solo -c solo.rb -E ${ENVNAME}
 
 cd $JETTY_HOME
+echo "etc/rewrite-root-to-sdc1.xml" >> $JETTY_HOME/start.d/rewrite.ini
 
 java $JAVA_OPTIONS -jar "${JETTY_HOME}/start.jar"
