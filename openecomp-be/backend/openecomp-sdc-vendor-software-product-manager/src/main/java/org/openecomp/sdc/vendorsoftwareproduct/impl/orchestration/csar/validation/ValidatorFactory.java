@@ -19,7 +19,10 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_7_1;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
+import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -27,9 +30,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
-import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
+
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ETSI_VERSION_2_7_1;
 
 public class ValidatorFactory {
 
@@ -49,7 +51,21 @@ public class ValidatorFactory {
     public Validator getValidator(final FileContentHandler fileContentHandler) throws IOException {
         final ETSIService etsiService = new ETSIServiceImpl(null);
         if (!etsiService.hasEtsiSol261Metadata(fileContentHandler)) {
-            return etsiService.isEtsiPackage(fileContentHandler) ? new EtsiSol004Version251Validator() : new ONAPCsarValidator();
+            if (etsiService.isEtsiPackage(fileContentHandler)) {
+                if (AsdPackageHelper.isAsdPackage(fileContentHandler)) {
+                    return new AsdValidator();
+                }
+                return new EtsiSol004Version251Validator();
+            }
+            else {
+                if (AsdPackageHelper.isAsdPackage(fileContentHandler)) {
+                    return new AsdValidator();
+                }
+            }
+            return new ONAPCsarValidator();
+        }
+        if (AsdPackageHelper.isAsdPackage(fileContentHandler)) {
+            return new AsdValidator();
         }
         if (!etsiService.getHighestCompatibleSpecificationVersion(fileContentHandler).isLowerThan(ETSI_VERSION_2_7_1)) {
             if (etsiService.hasCnfEnhancements(fileContentHandler)) {
