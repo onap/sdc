@@ -50,6 +50,15 @@ public interface ETSIService {
     boolean isEtsiPackage(final FileContentHandler fileContentHandler) throws IOException;
 
     /**
+     * Checks if the package is ASD package.
+     *
+     * @param fileContentHandler the CSAR file handler
+     * @return {@code true} if the package is an ASD package, {@code false} otherwise.
+     * @throws IOException when it was not able to parse the TOSCA.meta file
+     */
+    boolean isAsdPackage(final FileContentHandler fileContentHandler) throws IOException;
+
+    /**
      * Update file structure. Moves non mano files to the correct folder based on the manifest non mano type.
      *
      * @param handler The file handler containing the artifacts to move.

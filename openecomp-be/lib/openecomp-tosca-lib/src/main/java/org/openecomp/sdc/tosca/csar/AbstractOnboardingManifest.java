@@ -38,7 +38,7 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 
-abstract class AbstractOnboardingManifest implements Manifest {
+public abstract class AbstractOnboardingManifest implements Manifest {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractOnboardingManifest.class);
     protected static final int MAX_ALLOWED_MANIFEST_META_ENTRIES = 4;

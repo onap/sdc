@@ -138,7 +138,8 @@ public class FileHandling {
 		PackageTypeEnum.CNF_HELM, getCnfRepositoryForHelmValidatorPath(),
 		PackageTypeEnum.VNF, getVnfRepositoryPath(),
 		PackageTypeEnum.ETSI, getEtsiRepositoryPath(),
-		PackageTypeEnum.VFC, getVfcRepositoryPath()
+		PackageTypeEnum.VFC, getVfcRepositoryPath(),
+		PackageTypeEnum.ASD, getAsdRepositoryPath()
 	));
 
 	public static String getVnfRepositoryPath() {
@@ -158,6 +159,8 @@ public class FileHandling {
 	}
 
 	private static String getEtsiRepositoryPath() { return getFilePath("ETSI"); }
+
+	private static String getAsdRepositoryPath() { return getFilePath("ASDs"); }
 
 	private static String getVfcRepositoryPath() { return getFilePath("VFCs"); }
 
