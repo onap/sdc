@@ -66,7 +66,8 @@ public class ETSIServiceImpl implements ETSIService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ETSIServiceImpl.class);
     private final NonManoConfiguration nonManoConfiguration;
-    private final String ONAP_CSAR = "onap_csar";
+    private static final String ONAP_CSAR = "onap_csar";
+    private static final String ORAN_ENTRY_DEFINITION_TYPE = "oran_entry_definition_type";
 
     public ETSIServiceImpl() {
         nonManoConfiguration = NonManoConfigurationManager.getInstance().getNonManoConfiguration();
@@ -86,6 +87,16 @@ public class ETSIServiceImpl implements ETSIService {
     public boolean isEtsiPackage(final FileContentHandler fileContentHandler) throws IOException {
         return hasEtsiSol261Metadata(fileContentHandler) || !hasOnapCsarMetadata(fileContentHandler)
             && !ONAP_CSAR.equalsIgnoreCase(getDefaultCsarFormat());
+    }
+
+    @Override
+    public boolean hasASDMetadata(final FileContentHandler fileContentHandler) throws IOException {
+        if (fileContentHandler.containsFile(TOSCA_META_PATH_FILE_NAME)){
+            final ToscaMetadata metadata =
+                    OnboardingToscaMetadata.parseToscaMetadataFile(fileContentHandler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
+            return metadata.hasEntry(ORAN_ENTRY_DEFINITION_TYPE);
+        }
+        return false;
     }
 
     private boolean hasOnapCsarMetadata(final FileContentHandler fileContentHandler) throws IOException {
