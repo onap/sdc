@@ -45,7 +45,13 @@ public enum ManifestTokenType {
     PNFD_RELEASE_DATE_TIME("pnfd_release_date_time"),
     SIGNATURE("Signature"),
     CERTIFICATE("Certificate"),
-    COMPATIBLE_SPECIFICATION_VERSIONS("compatible_specification_versions");
+    COMPATIBLE_SPECIFICATION_VERSIONS("compatible_specification_versions"),
+    APPLICATION_NAME("application_name"),
+    APPLICATION_PROVIDER("application_provider"),
+    RELEASE_DATE_TIME("release_date_time"),
+    ENTRY_DEFINITION_TYPE("entry_definition_type"),
+    VENDOR_NAME("vendor_name"),
+    ARTIFACT_TYPE("artifact_type");
     // @formatter:on
 
     private final String token;
@@ -55,7 +61,7 @@ public enum ManifestTokenType {
     }
 
     public static Optional<ManifestTokenType> parse(final String token) {
-        return Arrays.stream(values()).filter(it -> it.getToken() != null && it.getToken().equals(token)).findFirst();
+        return Arrays.stream(values()).filter(it -> it.getToken() != null && it.getToken().equalsIgnoreCase(token)).findFirst();
     }
 
     public String getToken() {
@@ -89,6 +95,18 @@ public enum ManifestTokenType {
             case PNFD_ARCHIVE_VERSION:
             case PNFD_RELEASE_DATE_TIME:
             case COMPATIBLE_SPECIFICATION_VERSIONS:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public boolean isMetadataAsdEntry() {
+        switch (this) {
+            case APPLICATION_NAME:
+            case APPLICATION_PROVIDER:
+            case RELEASE_DATE_TIME:
+            case ENTRY_DEFINITION_TYPE:
                 return true;
             default:
                 return false;

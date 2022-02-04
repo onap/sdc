@@ -1,14 +1,12 @@
 /*
- * -
- *  ============LICENSE_START=======================================================
- *  Copyright (C) 2021 Nordix Foundation.
+ * ============LICENSE_START=======================================================
+ *  Copyright (C) 2022 Nordix Foundation
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,33 +15,37 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
+ *
+ *
  */
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
-import org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AbstractOnboardingManifest;
+import org.openecomp.sdc.tosca.csar.AsdManifestOnboarding;
+import org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd;
 
 import java.util.Map;
 import java.util.Optional;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_MANIFEST_FILE_EXT;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_CERTIFICATE;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.ASD_DEFINITION_TYPE;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MANIFEST_ASD_METADATA;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.ETSI_ENTRY_CERTIFICATE;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_MANIFEST;
 
 /**
- * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure as defined in ETSI GS NFV-SOL
- * 004 v2.5.1.
+ * Validates the contents of the package to ensure it complies with the ASD specifications
  */
 @NoArgsConstructor
-public class EtsiSol004Version251Validator extends SOL004MetaDirectoryValidator {
+public class AsdValidator extends SOL004MetaDirectoryValidator {
 
-    @Override
-    public boolean appliesTo(final String model) {
-        return "ETSI SOL001 v2.5.1".equals(model);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(AsdValidator.class);
 
     @Override
     public int getOrder() {
@@ -52,13 +54,17 @@ public class EtsiSol004Version251Validator extends SOL004MetaDirectoryValidator 
 
     @Override
     protected Optional<String> getCertificatePath() {
-        return getToscaMetadata().getEntry(ENTRY_CERTIFICATE);
+        return getToscaMetadata().getEntry(ETSI_ENTRY_CERTIFICATE);
+    }
+
+    protected <T extends AbstractOnboardingManifest> T getOnboardingManifest() {
+        return (T) new AsdManifestOnboarding();
     }
 
     @Override
     protected void handleEntry(final Map.Entry<String, String> entry) {
         final String key = entry.getKey();
-        final var toscaMetaEntry = ToscaMetaEntryVersion251.parse(entry.getKey()).orElse(null);
+        final var toscaMetaEntry = ToscaMetaEntryAsd.parse(entry.getKey()).orElse(null);
         // allows any other unknown entry
         if (toscaMetaEntry == null) {
             return;
@@ -73,17 +79,17 @@ public class EtsiSol004Version251Validator extends SOL004MetaDirectoryValidator 
             case ENTRY_DEFINITIONS:
                 validateDefinitionFile(value);
                 break;
-            case ENTRY_MANIFEST:
+            case ETSI_ENTRY_MANIFEST:
                 validateManifestFile(value);
                 break;
-            case ENTRY_CHANGE_LOG:
+            case ETSI_ENTRY_CHANGE_LOG:
                 validateChangeLog(value);
                 break;
-            case ENTRY_TESTS:
-            case ENTRY_LICENSES:
+            case ETSI_ENTRY_TESTS:
+            case ETSI_ENTRY_LICENSES:
                 validateOtherEntries(entry);
                 break;
-            case ENTRY_CERTIFICATE:
+            case ETSI_ENTRY_CERTIFICATE:
                 validateCertificate(value);
                 break;
             default:
@@ -97,18 +103,25 @@ public class EtsiSol004Version251Validator extends SOL004MetaDirectoryValidator 
         return getToscaMetadata().getMetaEntries().get(ENTRY_MANIFEST.getName());
     }
 
-    @Override
-    protected void verifyManifestNameAndExtension() {
-        final Map<String, String> entries = getToscaMetadata().getMetaEntries();
-        final String manifestFileName = getFileName(entries.get(ENTRY_MANIFEST.getName()));
-        final String manifestExtension = getFileExtension(entries.get(ENTRY_MANIFEST.getName()));
-        final String mainDefinitionFileName = getFileName(entries.get(ENTRY_DEFINITIONS.getName()));
-        if (!(TOSCA_MANIFEST_FILE_EXT).equals(manifestExtension)) {
-            reportError(ErrorLevel.ERROR, Messages.MANIFEST_INVALID_EXT.getErrorMessage());
+    protected void verifyEntryDefinitionType(final String value) {
+        if (!ASD_DEFINITION_TYPE.equals(value)) {
+            reportMetadataInvalidValue(value);
         }
-        if (!mainDefinitionFileName.equals(manifestFileName)) {
-            reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_INVALID_NAME.getErrorMessage(), manifestFileName, mainDefinitionFileName));
+    }
+
+    protected void verifyReleaseDateTime(final String value) {
+        if (StringUtils.isEmpty(value)) {
+            reportMetadataInvalidValue(value);
         }
+    }
+
+    private void reportMetadataInvalidValue(final String value) {
+        reportError(ErrorLevel.ERROR, String.format(Messages.METADATA_INVALID_VALUE.getErrorMessage(), value));
+        LOGGER.error("{}: key {} - value {} ", Messages.METADATA_INVALID_VALUE.getErrorMessage(), value);
+    }
+
+    protected ImmutableSet<String> getManifestMetadata(final Map<String, String> metadata) {
+        return MANIFEST_ASD_METADATA;
     }
 
 }
