@@ -30,6 +30,7 @@ import java.util.Optional;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
 import org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251;
 
 /**
@@ -73,7 +74,7 @@ public class EtsiSol004Version251Validator extends SOL004MetaDirectoryValidator 
                 validateDefinitionFile(value);
                 break;
             case ENTRY_MANIFEST:
-                validateManifestFile(value);
+                validateManifestFile(value, new SOL004ManifestOnboarding());
                 break;
             case ENTRY_CHANGE_LOG:
                 validateChangeLog(value);
