@@ -20,17 +20,18 @@
  */
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
-import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_MANIFEST_FILE_EXT;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_CERTIFICATE;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_MANIFEST;
-
-import java.util.Map;
-import java.util.Optional;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251;
+
+import java.util.Map;
+import java.util.Optional;
+
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_MANIFEST_FILE_EXT;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_CERTIFICATE;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_MANIFEST;
 
 /**
  * Validates the contents of the package to ensure it complies with the "CSAR with TOSCA-Metadata directory" structure as defined in ETSI GS NFV-SOL

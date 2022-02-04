@@ -32,7 +32,8 @@ public enum PackageTypeEnum {
     ETSI("ETSI"),
     PNF("PNF"),
     VFC("VFC"),
-    VNF("VNF");
+    VNF("VNF"),
+    ASD("ASD");
 
     private String value;
 }

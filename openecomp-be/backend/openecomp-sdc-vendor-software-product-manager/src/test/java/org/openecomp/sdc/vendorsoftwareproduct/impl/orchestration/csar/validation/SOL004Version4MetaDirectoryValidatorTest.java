@@ -36,6 +36,7 @@ import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.va
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.tosca.csar.ManifestBuilder;
 import org.openecomp.sdc.tosca.csar.ManifestTokenType;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 
