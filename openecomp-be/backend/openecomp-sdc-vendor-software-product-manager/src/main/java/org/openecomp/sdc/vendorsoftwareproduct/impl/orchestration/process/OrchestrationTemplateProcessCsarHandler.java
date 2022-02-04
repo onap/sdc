@@ -124,7 +124,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
         if (CollectionUtils.isNotEmpty(modelList)) {
             return handleToscaModelConversion(modelList, fileContentHandler, candidateData);
         }
-        if (etsiService.isEtsiPackage(fileContentHandler)) {
+        if (etsiService.isEtsiPackage(fileContentHandler) || etsiService.hasAsdMetadata(fileContentHandler)) {
             return getToscaServiceModelSol004(fileContentHandler, candidateData);
         }
         return new ToscaConverterImpl().convert(fileContentHandler);
