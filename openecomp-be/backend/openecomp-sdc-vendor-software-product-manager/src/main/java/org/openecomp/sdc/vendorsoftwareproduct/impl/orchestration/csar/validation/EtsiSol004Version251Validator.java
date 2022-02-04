@@ -30,6 +30,8 @@ import java.util.Optional;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
+import org.openecomp.sdc.tosca.csar.AbstractOnboardingManifest;
+import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
 import org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251;
 
 /**
@@ -54,6 +56,10 @@ public class EtsiSol004Version251Validator extends SOL004MetaDirectoryValidator 
         return getToscaMetadata().getEntry(ENTRY_CERTIFICATE);
     }
 
+    protected <T extends AbstractOnboardingManifest> T getOnboardingManifest() {
+        return (T) new SOL004ManifestOnboarding();
+    }
+
     @Override
     protected void handleEntry(final Map.Entry<String, String> entry) {
         final String key = entry.getKey();
@@ -73,7 +79,7 @@ public class EtsiSol004Version251Validator extends SOL004MetaDirectoryValidator 
                 validateDefinitionFile(value);
                 break;
             case ENTRY_MANIFEST:
-                validateManifestFile(value);
+                validateManifestFile(value, getOnboardingManifest());
                 break;
             case ENTRY_CHANGE_LOG:
                 validateChangeLog(value);
