@@ -77,6 +77,7 @@ import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.common.utils.SdcCommon;
 import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
+import org.openecomp.sdc.tosca.csar.ManifestBuilder;
 import org.openecomp.sdc.tosca.csar.ManifestTokenType;
 import org.openecomp.sdc.vendorsoftwareproduct.impl.onboarding.OnboardingPackageContentHandler;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;

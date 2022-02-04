@@ -22,6 +22,7 @@ import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ATTRIBUTE_VALUE_SEP
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.OTHER_DEFINITIONS;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_DEFINITION_FILEPATH;
 
+import org.openecomp.sdc.tosca.csar.ManifestBuilder;
 import org.openecomp.sdc.tosca.csar.ManifestTokenType;
 import org.openecomp.sdc.vendorsoftwareproduct.security.SecurityManager;
 

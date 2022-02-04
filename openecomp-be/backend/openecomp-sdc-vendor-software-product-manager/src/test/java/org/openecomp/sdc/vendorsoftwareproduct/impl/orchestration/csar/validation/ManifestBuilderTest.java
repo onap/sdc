@@ -39,6 +39,7 @@ import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.ManifestBuilder;
 import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
 
 public class ManifestBuilderTest {
