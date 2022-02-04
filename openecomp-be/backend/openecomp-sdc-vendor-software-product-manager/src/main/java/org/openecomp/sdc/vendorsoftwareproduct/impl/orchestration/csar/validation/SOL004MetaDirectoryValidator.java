@@ -69,6 +69,7 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AbstractOnboardingManifest;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
@@ -230,6 +231,10 @@ public class SOL004MetaDirectoryValidator implements Validator {
         toscaMetadata.getMetaEntries().entrySet().parallelStream().forEach(this::handleEntry);
     }
 
+    protected <T extends AbstractOnboardingManifest> T getOnboardingManifest() {
+        return (T) new SOL004ManifestOnboarding();
+    }
+
     protected void handleEntry(final Map.Entry<String, String> entry) {
         final String key = entry.getKey();
         final var toscaMetaEntry = ToscaMetaEntryVersion261.parse(entry.getKey()).orElse(null);
@@ -248,7 +253,7 @@ public class SOL004MetaDirectoryValidator implements Validator {
                 validateDefinitionFile(value);
                 break;
             case ETSI_ENTRY_MANIFEST:
-                validateManifestFile(value);
+                validateManifestFile(value, getOnboardingManifest());
                 break;
             case ETSI_ENTRY_CHANGE_LOG:
                 validateChangeLog(value);
@@ -318,10 +323,10 @@ public class SOL004MetaDirectoryValidator implements Validator {
         return existingFiles.contains(filePath);
     }
 
-    protected void validateManifestFile(final String filePath) {
+    protected <T extends AbstractOnboardingManifest> void validateManifestFile(final String filePath, T manifestType) {
         final Set<String> existingFiles = contentHandler.getFileList();
         if (verifyFileExists(existingFiles, filePath)) {
-            final Manifest onboardingManifest = new SOL004ManifestOnboarding();
+            final Manifest onboardingManifest = manifestType;
             onboardingManifest.parse(contentHandler.getFileContentAsStream(filePath));
             if (onboardingManifest.isValid()) {
                 try {

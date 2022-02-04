@@ -20,6 +20,15 @@
 
 package org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.tosca.csar.ManifestTokenType;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,16 +42,11 @@ import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ETSI_ENTRY_C
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ETSI_ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.TOSCA_META_FILE_VERSION_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.SAMPLE_DEFINITION_IMPORT_FILE_PATH;
+import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.SAMPLE_SOURCE;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_CHANGELOG_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_DEFINITION_FILEPATH;
 import static org.openecomp.sdc.vendorsoftwareproduct.impl.orchestration.csar.validation.TestConstants.TOSCA_MANIFEST_FILEPATH;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.openecomp.core.utilities.file.FileContentHandler;
 
 class ValidatorFactoryTest {
 
@@ -106,6 +110,26 @@ class ValidatorFactoryTest {
     }
 
     @Test
+    void testGivenAsdCompliantMetafile_thenAsdCsarValidatorIsReturned() throws IOException {
+        metaFile = metaFile
+                + ENTRY_DEFINITIONS.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_DEFINITION_FILEPATH + "\n"
+                + ETSI_ENTRY_MANIFEST.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_MANIFEST_FILEPATH + "\n"
+                + ETSI_ENTRY_CHANGE_LOG.getName() + ATTRIBUTE_VALUE_SEPARATOR.getToken() + TOSCA_CHANGELOG_FILEPATH + "\n";
+        handler.addFile(TOSCA_META_PATH_FILE_NAME, metaFile.getBytes(StandardCharsets.UTF_8));
+
+        final ManifestBuilder manifestBuilder = getAsdManifestSampleBuilder()
+                .withSource(TOSCA_META_PATH_FILE_NAME)
+                .withSource(TOSCA_DEFINITION_FILEPATH)
+                .withSource(TOSCA_CHANGELOG_FILEPATH)
+                .withSource(TOSCA_MANIFEST_FILEPATH).withSource(SAMPLE_SOURCE)
+                .withSource(SAMPLE_DEFINITION_IMPORT_FILE_PATH);
+
+        handler.addFile(TOSCA_MANIFEST_FILEPATH, manifestBuilder.build().getBytes(StandardCharsets.UTF_8));
+
+        assertEquals(AsdValidator.class, validatorFactory.getValidator(handler).getClass());
+    }
+
+    @Test
     void testGivenMultiBlockMetadataWithSOL00CompliantMetaFile_thenSOL004MetaDirectoryValidatorReturned()
             throws IOException {
         handler.addFile(TOSCA_META_PATH_FILE_NAME,
@@ -128,6 +152,14 @@ class ValidatorFactoryTest {
 
         final List<Validator> validatorList1 = validatorFactory.getValidators("test1");
         assertTrue(validatorList1.isEmpty());
+    }
+
+    protected ManifestBuilder getAsdManifestSampleBuilder() {
+        return new ManifestBuilder()
+                .withMetaData(ManifestTokenType.APPLICATION_NAME.getToken(), "RadioNode")
+                .withMetaData(ManifestTokenType.APPLICATION_PROVIDER.getToken(), "Ericsson")
+                .withMetaData(ManifestTokenType.ENTRY_DEFINITION_TYPE.getToken(), "asd")
+                .withMetaData(ManifestTokenType.RELEASE_DATE_TIME.getToken(), "2022-02-01T11:25:00+00:00");
     }
 
 }
