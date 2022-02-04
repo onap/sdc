@@ -28,6 +28,7 @@ import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.stream.Collectors;
 import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.sdc.tosca.csar.AsdManifestOnboarding;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIService;
 import org.openecomp.sdc.vendorsoftwareproduct.services.impl.etsi.ETSIServiceImpl;
 
@@ -49,7 +50,21 @@ public class ValidatorFactory {
     public Validator getValidator(final FileContentHandler fileContentHandler) throws IOException {
         final ETSIService etsiService = new ETSIServiceImpl(null);
         if (!etsiService.hasEtsiSol261Metadata(fileContentHandler)) {
-            return etsiService.isEtsiPackage(fileContentHandler) ? new EtsiSol004Version251Validator() : new ONAPCsarValidator();
+            if (etsiService.isEtsiPackage(fileContentHandler)) {
+                if (AsdManifestOnboarding.isAsdPackage(fileContentHandler)) {
+                    return new AsdValidator();
+                }
+                return new EtsiSol004Version251Validator();
+            }
+            else {
+                if (AsdManifestOnboarding.isAsdPackage(fileContentHandler)) {
+                    return new AsdValidator();
+                }
+            }
+            return new ONAPCsarValidator();
+        }
+        if (AsdManifestOnboarding.isAsdPackage(fileContentHandler)) {
+            return new AsdValidator();
         }
         if (!etsiService.getHighestCompatibleSpecificationVersion(fileContentHandler).isLowerThan(ETSI_VERSION_2_7_1)) {
             if (etsiService.hasCnfEnhancements(fileContentHandler)) {

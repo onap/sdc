@@ -69,6 +69,7 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.datatypes.error.ErrorMessage;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AbstractOnboardingManifest;
 import org.openecomp.sdc.tosca.csar.Manifest;
 import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
 import org.openecomp.sdc.tosca.csar.SOL004ManifestOnboarding;
@@ -230,6 +231,10 @@ public class SOL004MetaDirectoryValidator implements Validator {
         toscaMetadata.getMetaEntries().entrySet().parallelStream().forEach(this::handleEntry);
     }
 
+    protected <T extends AbstractOnboardingManifest> T getOnboardingManifest() {
+        return (T) new SOL004ManifestOnboarding();
+    }
+
     protected void handleEntry(final Map.Entry<String, String> entry) {
         final String key = entry.getKey();
         final var toscaMetaEntry = ToscaMetaEntryVersion261.parse(entry.getKey()).orElse(null);
@@ -321,7 +326,7 @@ public class SOL004MetaDirectoryValidator implements Validator {
     protected void validateManifestFile(final String filePath) {
         final Set<String> existingFiles = contentHandler.getFileList();
         if (verifyFileExists(existingFiles, filePath)) {
-            final Manifest onboardingManifest = new SOL004ManifestOnboarding();
+            final Manifest onboardingManifest = getOnboardingManifest();
             onboardingManifest.parse(contentHandler.getFileContentAsStream(filePath));
             if (onboardingManifest.isValid()) {
                 try {
@@ -356,7 +361,7 @@ public class SOL004MetaDirectoryValidator implements Validator {
         return TOSCA_TYPE_PNF.equals(expectedMetadataType);
     }
 
-    private void handleMetadataEntries(final Map<String, String> metadata) {
+    protected void handleMetadataEntries(final Map<String, String> metadata) {
         getManifestMetadata(metadata).stream().filter(requiredEntry -> !metadata.containsKey(requiredEntry)).forEach(
             requiredEntry -> reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_METADATA_MISSING_ENTRY.getErrorMessage(), requiredEntry)));
     }

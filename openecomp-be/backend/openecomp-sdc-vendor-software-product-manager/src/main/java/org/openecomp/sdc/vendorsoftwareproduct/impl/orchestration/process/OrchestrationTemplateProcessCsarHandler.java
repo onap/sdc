@@ -43,6 +43,7 @@ import org.openecomp.sdc.heat.datatypes.structure.ValidationStructureList;
 import org.openecomp.sdc.heat.services.tree.ToscaTreeManager;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AsdManifestOnboarding;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateCandidateData;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
@@ -124,7 +125,7 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
         if (CollectionUtils.isNotEmpty(modelList)) {
             return handleToscaModelConversion(modelList, fileContentHandler, candidateData);
         }
-        if (etsiService.isEtsiPackage(fileContentHandler)) {
+        if (etsiService.isEtsiPackage(fileContentHandler) || AsdManifestOnboarding.isAsdPackage(fileContentHandler)) {
             return getToscaServiceModelSol004(fileContentHandler, candidateData);
         }
         return new ToscaConverterImpl().convert(fileContentHandler);

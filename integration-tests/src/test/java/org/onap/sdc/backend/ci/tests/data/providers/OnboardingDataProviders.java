@@ -72,6 +72,12 @@ public final class OnboardingDataProviders {
             FileHandling.getPackageRepositoryPath(PackageTypeEnum.PNF));
     }
 
+    @DataProvider(name = "ASD_List", parallel = true)
+    private static Object[][] asdList() {
+        return provideData(OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.ASD),
+                FileHandling.getPackageRepositoryPath(PackageTypeEnum.ASD));
+    }
+
     @DataProvider(name = "CNF_List", parallel = true)
     private static Object[][] cnfList() {
         final List<String> fileNamesFromFolder = OnboardingUtils.getXnfNamesFileList(PackageTypeEnum.CNF);
