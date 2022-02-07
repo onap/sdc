@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "95421af9_53d633f8",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ASDValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-07T15:05:50Z",
+      "side": 1,
+      "message": "General comment - use camel case as per Google java style guide see (https://google.github.io/styleguide/javaguide.html#s5.3-camel-case)\ni.e. AsdValidator.",
+      "range": {
+        "startLine": 42,
+        "startChar": 13,
+        "endLine": 42,
+        "endChar": 25
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b3c6ef3_01e5a187",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ASDValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-07T15:05:50Z",
+      "side": 1,
+      "message": "probably also need to override the validateManifestFile method - I would expect SOL004ManifestOnboarding:: processBody to fail on the new manifest entries\n\nAdding a package to the integration tests in ASD format will verify if any other impacts missing",
+      "range": {
+        "startLine": 113,
+        "startChar": 0,
+        "endLine": 113,
+        "endChar": 1
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7b4c0b2_a2883891",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/test/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ASDCsarValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-07T15:05:50Z",
+      "side": 1,
+      "message": "also add the other new manifest metadata entries",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 79
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aaed2cf7_016902ab",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-07T15:05:50Z",
+      "side": 1,
+      "message": "update the comment",
+      "range": {
+        "startLine": 56,
+        "startChar": 29,
+        "endLine": 56,
+        "endChar": 59
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9d72bd1_6cfc7af6",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-07T15:05:50Z",
+      "side": 1,
+      "message": "Latest input is that a decision has been taken to drop the \"oran\" prefix from all new manifest entries (i.e. entry_definition_type instead of oran_entry_definition_type), same for oran_application_name which now becomes application_name etc. See: https://wiki.onap.org/display/DW/Application+Service+Descriptor+%28ASD%29+Onboarding+Packaging+Format\nRename fields, method names etc in other classes as well to remove \"oran\"",
+      "range": {
+        "startLine": 70,
+        "startChar": 32,
+        "endLine": 70,
+        "endChar": 88
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
