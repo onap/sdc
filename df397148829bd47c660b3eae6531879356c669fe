@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "215ab959_676b4ba2",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ASDValidator.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-02-08T10:17:32Z",
+      "side": 1,
+      "message": "Maybe I\u0027m missing something, but I couldn\u0027t find the specific validation of the other entries application_name, application_provider and release_date_time, as specified here https://wiki.onap.org/display/DW/Application+Service+Descriptor+%28ASD%29+Onboarding+Packaging+Format",
+      "range": {
+        "startLine": 71,
+        "startChar": 12,
+        "endLine": 71,
+        "endChar": 44
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3b3c6ef3_01e5a187",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ASDValidator.java",
         "patchSetId": 2
@@ -41,6 +64,29 @@
         "startChar": 0,
         "endLine": 113,
         "endChar": 1
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f88e4cf7_01759806",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-02-08T10:17:32Z",
+      "side": 1,
+      "message": "For better clarity, I would recommend to go with the common if instead of nested ternary operators",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 52,
+        "endChar": 199
       },
       "revId": "df397148829bd47c660b3eae6531879356c669fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -94,6 +140,29 @@
     },
     {
       "key": {
+        "uuid": "fce878bc_a9e187d1",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-02-08T10:17:32Z",
+      "side": 1,
+      "message": "same comment here for the lower camel case hasAsdMetadata",
+      "range": {
+        "startLine": 59,
+        "startChar": 12,
+        "endLine": 59,
+        "endChar": 26
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a9d72bd1_6cfc7af6",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
         "patchSetId": 2
@@ -110,6 +179,29 @@
         "startChar": 32,
         "endLine": 70,
         "endChar": 88
+      },
+      "revId": "df397148829bd47c660b3eae6531879356c669fe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb3c2d48_e2232a60",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ToscaMetaEntryASD.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-02-08T10:17:32Z",
+      "side": 1,
+      "message": "please, change to Asd",
+      "range": {
+        "startLine": 34,
+        "startChar": 26,
+        "endLine": 34,
+        "endChar": 29
       },
       "revId": "df397148829bd47c660b3eae6531879356c669fe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
