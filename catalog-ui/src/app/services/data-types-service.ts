@@ -41,6 +41,7 @@ export interface IDataTypesService {
     selectedComponentInputs:Array<InputModel>;
     //declare methods
     fetchDataTypesByModel(modelName:string):void;
+    findAllDataTypesByModel(modelName: string): void;
     getAllDataTypes():DataTypesMap;
     getFirsLevelOfDataTypeProperties(dataTypeName:string):Array<DataTypePropertyModel>;
     isDataTypeForSchemaType(property:SchemaProperty):boolean;
@@ -82,9 +83,29 @@ export class DataTypesService implements IDataTypesService {
         });
     };
 
+    public fetchDataTypesByModel1 = (modelName: string):angular.IHttpPromise<any> => {
+        let model;
+        if (modelName) {
+            model = {'model': modelName}
+        }
+        return this.$http.get(this.baseUrl + "dataTypes", {params: model});
+    };
+
     public getAllDataTypesFromModel = (modelName: string): DataTypesMap => {
         this.fetchDataTypesByModel(modelName);
         return this.dataTypes;
+    }
+
+    public findAllDataTypesByModel = (modelName: string): Promise<DataTypesMap> => {
+        return new Promise<DataTypesMap>((resolve, reject) => {
+            this.fetchDataTypesByModel1(modelName).then(response => {
+                const dataTypes = response.data;
+                delete dataTypes[PROPERTY_DATA.ROOT_DATA_TYPE];
+                resolve(dataTypes);
+            }).catch(reason => {
+                reject(reason);
+            });
+        });
     }
 
     public getAllDataTypes = ():DataTypesMap => {
