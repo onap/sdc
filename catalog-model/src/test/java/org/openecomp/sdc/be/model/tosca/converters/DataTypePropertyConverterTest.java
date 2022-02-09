@@ -20,31 +20,36 @@
 
 package org.openecomp.sdc.be.model.tosca.converters;
 
-import com.google.gson.JsonObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.openecomp.sdc.be.model.DataTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.google.gson.JsonObject;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
-public class DataTypePropertyConverterTest {
+class DataTypePropertyConverterTest {
 
-    private static final String EMPTY_JSON_STR = "{}";
-    public static final String PROPERTY2_DEFAULT = "{\"prop1\":\"def1\",\"prop3\":\"def3\"}";
-    private DataTypePropertyConverter testInstance = DataTypePropertyConverter.getInstance();
+    private static final DataTypePropertyConverter dataTypePropertyConverter = DataTypePropertyConverter.getInstance();
+    private static final String PROPERTY2_DEFAULT = "{\"prop1\":\"def1\",\"prop3\":\"def3\"}";
+
     private Map<String, DataTypeDefinition> dataTypes;
-    private DataTypeDefinition noDefaultValue, dataType1, dataType2, dataType3;
-    private PropertyDefinition prop1, prop2, prop3, noDefaultProp;
+    private DataTypeDefinition noDefaultValue;
+    private DataTypeDefinition dataType2;
+    private DataTypeDefinition dataType3;
+    private PropertyDefinition prop1;
+    private PropertyDefinition prop2;
+    private PropertyDefinition prop3;
+    private PropertyDefinition noDefaultProp;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         dataTypes = new HashMap<>();
 
         prop1 = new PropertyDefinition();
@@ -65,7 +70,7 @@ public class DataTypePropertyConverterTest {
         noDefaultValue = new DataTypeDefinition();
         noDefaultValue.setProperties(Collections.singletonList(noDefaultProp));
 
-        dataType1 = new DataTypeDefinition();
+        DataTypeDefinition dataType1 = new DataTypeDefinition();
         dataType1.setProperties(Arrays.asList(prop1, prop3));
 
         dataType2 = new DataTypeDefinition();
@@ -82,51 +87,51 @@ public class DataTypePropertyConverterTest {
     }
 
     @Test
-    public void testGetPropertyDefaultValuesRec_dataTypeNotExist() throws Exception {
-        String defaultValue = testInstance.getDataTypePropertiesDefaultValuesRec("someType", dataTypes);
+    void testGetPropertyDefaultValuesRec_dataTypeNotExist() {
+        String defaultValue = dataTypePropertyConverter.getDataTypePropertiesDefaultValuesRec("someType", dataTypes);
         assertNull(defaultValue);
     }
 
     @Test
-    public void testGetPropertyDefaultValuesRec_NoDefaultValue() throws Exception {
-        String defaultValue = testInstance.getDataTypePropertiesDefaultValuesRec("noDefault", dataTypes);
+    void testGetPropertyDefaultValuesRec_NoDefaultValue() {
+        String defaultValue = dataTypePropertyConverter.getDataTypePropertiesDefaultValuesRec("noDefault", dataTypes);
         assertNull(defaultValue);
     }
 
     @Test
-    public void testGetPropertyDefaultValuesRec() throws Exception {
-        String defaultValue = testInstance.getDataTypePropertiesDefaultValuesRec("dataType1", dataTypes);
+    void testGetPropertyDefaultValuesRec() {
+        String defaultValue = dataTypePropertyConverter.getDataTypePropertiesDefaultValuesRec("dataType1", dataTypes);
         assertEquals(PROPERTY2_DEFAULT, defaultValue);
     }
 
     @Test
-    public void testGetPropertyDefaultValuesRec_defaultFromDerivedDataType_derivedDataTypeHasNoDefaults() throws Exception {
+    void testGetPropertyDefaultValuesRec_defaultFromDerivedDataType_derivedDataTypeHasNoDefaults() {
         dataType2.setDerivedFrom(noDefaultValue);
-        String defaultValue = testInstance.getDataTypePropertiesDefaultValuesRec("dataType2", dataTypes);
+        String defaultValue = dataTypePropertyConverter.getDataTypePropertiesDefaultValuesRec("dataType2", dataTypes);
         assertNull(defaultValue);
     }
 
     @Test
-    public void testGetPropertyDefaultValuesRec_defaultFromDerivedDataType() throws Exception {
-        String defaultValue = testInstance.getDataTypePropertiesDefaultValuesRec("dataType2", dataTypes);
+    void testGetPropertyDefaultValuesRec_defaultFromDerivedDataType() {
+        String defaultValue = dataTypePropertyConverter.getDataTypePropertiesDefaultValuesRec("dataType2", dataTypes);
         assertEquals(PROPERTY2_DEFAULT, defaultValue);
     }
 
     @Test
-    public void testGetPropertyDefaultValuesRec_defaultFromDataTypesOfProperties_dataTypeOfPropertyHasNoDefault() throws Exception {
+    void testGetPropertyDefaultValuesRec_defaultFromDataTypesOfProperties_dataTypeOfPropertyHasNoDefault() {
         dataType3.getProperties().get(0).setType(noDefaultValue.getName());
-        String defaultValue = testInstance.getDataTypePropertiesDefaultValuesRec("dataType3", dataTypes);
+        String defaultValue = dataTypePropertyConverter.getDataTypePropertiesDefaultValuesRec("dataType3", dataTypes);
         assertNull(defaultValue);
     }
 
     @Test
-    public void testGetPropertyDefaultValuesRec_defaultFromDataTypesOfProperties() throws Exception {
-        String defaultValue = testInstance.getDataTypePropertiesDefaultValuesRec("dataType3", dataTypes);
+    void testGetPropertyDefaultValuesRec_defaultFromDataTypesOfProperties() {
+        String defaultValue = dataTypePropertyConverter.getDataTypePropertiesDefaultValuesRec("dataType3", dataTypes);
         assertEquals("{\"prop2\":" + PROPERTY2_DEFAULT + "}", defaultValue);//data type 3 has property prop2 which has a data type with property prop1 which has a default value
     }
 
     @Test
-    public void testMergeDefaultValues_allDefaultValuesAreOverridden() throws Exception {
+    void testMergeDefaultValues_allDefaultValuesAreOverridden() {
         JsonObject value = new JsonObject();
         value.addProperty(noDefaultProp.getName(), "override1");
 
@@ -144,12 +149,12 @@ public class DataTypePropertyConverterTest {
 
         String valBeforeMerge = value.toString();
 
-        testInstance.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
+        dataTypePropertyConverter.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
         assertEquals(valBeforeMerge, value.toString());
     }
 
     @Test
-    public void testMergeDefaultValues() throws Exception {
+    void testMergeDefaultValues() {
         JsonObject value = new JsonObject();
         value.addProperty(noDefaultProp.getName(), "override1");
 
@@ -158,23 +163,23 @@ public class DataTypePropertyConverterTest {
 
         value.add(prop2.getName(), prop1Val);
 
-        testInstance.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
+        dataTypePropertyConverter.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
 
         assertEquals("{\"noDefaultProp\":\"override1\",\"prop2\":{\"prop1\":\"prop1Override\",\"prop3\":\"def3\"}}",
                       value.toString());//expect to merge prop 3 default as it was not overridden
     }
 
     @Test
-    public void testMergeDefaultValues_mergeAll() throws Exception {
+    void testMergeDefaultValues_mergeAll() {
         JsonObject value = new JsonObject();
-        testInstance.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
+        dataTypePropertyConverter.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
 
         assertEquals("{\"prop2\":" + PROPERTY2_DEFAULT + "}",
                      value.toString());//expect to merge prop 3 default as it was not overridden
     }
 
     @Test
-    public void testMergeDefaultValues_doNotAddDefaultsForGetInputValues() throws Exception {
+    void testMergeDefaultValues_doNotAddDefaultsForGetInputValues() {
 
         JsonObject getInputValue = new JsonObject();
         getInputValue.addProperty("get_input", "in1");
@@ -182,13 +187,13 @@ public class DataTypePropertyConverterTest {
         JsonObject value = new JsonObject();
         value.add(prop2.getName(), getInputValue);
 
-        testInstance.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
+        dataTypePropertyConverter.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
 
         assertEquals("{\"prop2\":{\"get_input\":\"in1\"}}", value.toString());
     }
 
     @Test
-    public void testMergeDefaultValues_doNotAddDefaultsForGetInputInnerValues() throws Exception {
+    void testMergeDefaultValues_doNotAddDefaultsForGetInputInnerValues() {
         JsonObject getInputValue = new JsonObject();
         getInputValue.addProperty("get_input", "in1");
 
@@ -198,7 +203,7 @@ public class DataTypePropertyConverterTest {
         JsonObject value = new JsonObject();
         value.add(prop2.getName(), prop1Val);
 
-        testInstance.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
+        dataTypePropertyConverter.mergeDataTypeDefaultValuesWithPropertyValue(value, "dataType3", dataTypes);
 
         assertEquals("{\"prop2\":{\"prop1\":{\"get_input\":\"in1\"},\"prop3\":\"def3\"}}", value.toString());
 

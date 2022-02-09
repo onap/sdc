@@ -19,13 +19,9 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {UIInterfaceModel} from "../interface-operations.component";
-import {
-    InputOperationParameter,
-    InterfaceOperationModel,
-    IOperationParamsList
-} from "../../../../../models/interfaceOperation";
+import {InputOperationParameter, InterfaceOperationModel, IOperationParamsList} from "../../../../../models/interfaceOperation";
 import {TranslateService} from "../../../../shared/translator/translate.service";
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 import {DropdownValue} from "../../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
@@ -33,6 +29,9 @@ import {ArtifactModel} from "../../../../../models/artifacts";
 import {PropertyBEModel} from "../../../../../models/properties-inputs/property-be-model";
 import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
 import {PropertyFEModel} from "../../../../../models/properties-inputs/property-fe-model";
+import {DataTypeService} from "../../../../services/data-type.service";
+import {Observable} from "rxjs/Observable";
+import {DataTypeModel} from "../../../../../models/data-types";
 
 @Component({
     selector: 'operation-handler',
@@ -40,10 +39,10 @@ import {PropertyFEModel} from "../../../../../models/properties-inputs/property-
     styleUrls: ['./interface-operation-handler.component.less'],
     providers: [TranslateService]
 })
-
 export class InterfaceOperationHandlerComponent {
-    @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
 
+    @Input() private modelName: string;
+    @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     input: {
         toscaArtifactTypes: Array<DropdownValue>;
         selectedInterface: UIInterfaceModel;
@@ -52,6 +51,8 @@ export class InterfaceOperationHandlerComponent {
         isViewOnly: boolean;
     };
 
+    dataTypeMap$: Observable<Map<string, DataTypeModel>>;
+    dataTypeMap: Map<string, DataTypeModel>;
     interfaceType: string;
     artifactVersion: string;
     artifactName: string;
@@ -70,23 +71,40 @@ export class InterfaceOperationHandlerComponent {
 
     enableAddArtifactImplementation: boolean;
     propertyValueValid: boolean = true;
+    inputTypeOptions: any[];
+
+    constructor(private dataTypeService: DataTypeService) {
+        this.dataTypeMap$ = new Observable<Map<string, DataTypeModel>>(subscriber => {
+            this.dataTypeService.findAllDataTypesByModel(this.modelName)
+            .then((dataTypesMap: Map<string, DataTypeModel>) => {
+                subscriber.next(dataTypesMap);
+            });
+        });
+        this.dataTypeMap$.subscribe(value => {
+            this.dataTypeMap = value;
+        });
+
+    }
 
     ngOnInit() {
         this.isViewOnly = this.input.isViewOnly;
         this.interfaceType = this.input.selectedInterface.displayType();
-        this.operationToUpdate = new InterfaceOperationModel(this.input.selectedInterfaceOperation);
+        this.operationToUpdate = this.input.selectedInterfaceOperation;
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
         this.operationToUpdate.interfaceType = this.input.selectedInterface.type;
+        this.initInputs();
+        this.removeImplementationQuote();
+        this.validityChanged();
+        this.loadInterfaceOperationImplementation();
+    }
+
+    private initInputs() {
         if (!this.operationToUpdate.inputs) {
             this.operationToUpdate.inputs = new class implements IOperationParamsList {
                 listToscaDataDefinition: Array<InputOperationParameter> = [];
             }
         }
-
-        this.inputs = this.operationToUpdate.inputs.listToscaDataDefinition;
-        this.removeImplementationQuote();
-        this.validityChanged();
-        this.loadInterfaceOperationImplementation();
+        this.inputs = Array.from(this.operationToUpdate.inputs.listToscaDataDefinition);
     }
 
     private loadInterfaceOperationImplementation() {
@@ -160,11 +178,8 @@ export class InterfaceOperationHandlerComponent {
         }
     }
 
-    onAddInput(inputOperationParameter?: InputOperationParameter): void {
-        let newInput = new InputOperationParameter(inputOperationParameter)
-        newInput.type = "string";
-        newInput.inputId = this.generateUniqueId();
-        this.inputs.push(newInput);
+    onAddInput(inputOperationParameter: InputOperationParameter) {
+        this.addInput(inputOperationParameter);
         this.validityChanged();
     }
 
@@ -194,16 +209,6 @@ export class InterfaceOperationHandlerComponent {
                 this.operationToUpdate.implementation.artifactName = implementation.slice(1, -1);
             }
         }
-    }
-
-    private generateUniqueId = (): string => {
-        let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const charactersLength = characters.length;
-        for (let i = 0; i < 36; i++ ) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        return result;
     }
 
     validityChanged = () => {
@@ -243,7 +248,7 @@ export class InterfaceOperationHandlerComponent {
     }
 
     private isParamsValid = (): boolean => {
-        const isInputValid = (input) => input.name && input.inputId;
+        const isInputValid = (input) => input.name && input.inputId && input.type;
         const isValid = this.inputs.every(isInputValid);
         if (!isValid) {
             this.readonly = true;
@@ -255,4 +260,48 @@ export class InterfaceOperationHandlerComponent {
         return { value : val, label: val };
     }
 
+    /**
+     * Handles the input value change event.
+     * @param changedInput the changed input
+     */
+    onInputValueChange(changedInput: InputOperationParameter) {
+        if (changedInput.value instanceof Object) {
+            changedInput.value = JSON.stringify(changedInput.value);
+        }
+        const inputOperationParameter = this.inputs.find(value => value.name == changedInput.name);
+        inputOperationParameter.value = changedInput.value;
+    }
+
+    /**
+     * Handles the add input event.
+     * @param input the input to add
+     * @private
+     */
+    private addInput(input: InputOperationParameter) {
+        this.operationToUpdate.inputs.listToscaDataDefinition.push(input);
+        this.inputs = Array.from(this.operationToUpdate.inputs.listToscaDataDefinition);
+    }
+
+    /**
+     * Return a list with current input names.
+     */
+    collectInputNames() {
+        return this.inputs.map((input) => input.name);
+    }
+
+    /**
+     * Handles the delete input event.
+     * @param inputName the name of the input to be deleted
+     */
+    onInputDelete(inputName: string) {
+        const currentInputs = this.operationToUpdate.inputs.listToscaDataDefinition;
+        const input1 = currentInputs.find(value => value.name === inputName);
+        const indexOfInput = currentInputs.indexOf(input1);
+        if (indexOfInput === -1) {
+            console.error(`Could delete input '${inputName}'. Input not found.`);
+            return;
+        }
+        currentInputs.splice(currentInputs.indexOf(input1), 1);
+        this.inputs = Array.from(currentInputs);
+    }
 }

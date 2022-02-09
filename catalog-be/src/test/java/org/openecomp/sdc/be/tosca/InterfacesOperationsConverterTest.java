@@ -206,8 +206,7 @@ class InterfacesOperationsConverterTest {
         ToscaNodeType nodeType = new ToscaNodeType();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
 
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
-            interfacesOperationsConverter, null);
+        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null, null, null);
         ToscaTemplate template = new ToscaTemplate("testService");
         Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
         nodeTypes.put(NODE_TYPE_NAME, nodeType);
@@ -493,7 +492,7 @@ class InterfacesOperationsConverterTest {
     private ListDataDefinition<OperationInputDefinition> createInputs(Component component, int numOfInputs) {
         ListDataDefinition<OperationInputDefinition> operationInputDefinitionList = new ListDataDefinition<>();
         for (int i = 0; i < numOfInputs; i++) {
-            String mappedPropertyName = java.util.UUID.randomUUID().toString() + "." + MAPPED_PROPERTY_NAME + i;
+            String mappedPropertyName = java.util.UUID.randomUUID() + "." + MAPPED_PROPERTY_NAME + i;
             operationInputDefinitionList.add(createMockOperationInputDefinition(
                 INPUT_NAME_PREFIX + inputTypes[i] + "_" + i, mappedPropertyName, i));
             addMappedPropertyAsComponentInput(component, mappedPropertyName);

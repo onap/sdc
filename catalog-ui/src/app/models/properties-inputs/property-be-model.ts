@@ -109,15 +109,61 @@ export class PropertyBEModel {
         return temp;
     }
 
-    public getDerivedPropertyType = () => {
+    public getDerivedPropertyType = (): DerivedPropertyType => {
         if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1) {
             return DerivedPropertyType.SIMPLE;
-        } else if (this.type === PROPERTY_TYPES.LIST) {
+        }
+        if (this.type === PROPERTY_TYPES.LIST) {
             return DerivedPropertyType.LIST;
-        } else if (this.type === PROPERTY_TYPES.MAP) {
+        }
+        if (this.type === PROPERTY_TYPES.MAP) {
             return DerivedPropertyType.MAP;
-        } else {
-            return DerivedPropertyType.COMPLEX;
+        }
+        return DerivedPropertyType.COMPLEX;
+    }
+
+    /**
+     * Parses default value to JSON.
+     */
+    public parseDefaultValueToJson(): any {
+        if (this.defaultValue == undefined) {
+            return undefined;
+        }
+
+        const propertyType: DerivedPropertyType = this.getDerivedPropertyType();
+        if (propertyType == DerivedPropertyType.SIMPLE) {
+            return this.parseDefaultSimpleValue();
+        }
+
+        try {
+            return JSON.parse(this.defaultValue);
+        } catch (e) {
+            console.error(`Could not parse the property of type '${this.type}' default value to JSON '${this.defaultValue}'`, e);
+        }
+
+        return undefined;
+    }
+
+    private parseDefaultSimpleValue() {
+        switch (this.type) {
+            case PROPERTY_TYPES.INTEGER:
+                try {
+                    return parseInt(this.defaultValue);
+                } catch (e) {
+                    console.error(`Could not parse the property of type '${this.type}' default value to int '${this.defaultValue}'`, e);
+                }
+                return undefined;
+            case PROPERTY_TYPES.FLOAT:
+                try {
+                    return parseFloat(this.defaultValue);
+                } catch (e) {
+                    console.error(`Could not parse the property of type '${this.type}' default value to float '${this.defaultValue}'`, e);
+                }
+                return undefined;
+            case PROPERTY_TYPES.BOOLEAN:
+                return this.defaultValue === 'true';
+            default:
+                return this.defaultValue;
         }
     }
 

@@ -20,21 +20,47 @@
 'use strict';
 
 import {ArtifactModel} from "./artifacts";
+import {SchemaPropertyGroupModel} from "./schema-property";
+import {PROPERTY_DATA, PROPERTY_TYPES} from "../utils/constants";
 
 export class InputOperationParameter {
     name: string;
     type: string;
+    schema: SchemaPropertyGroupModel;
     inputId: string;
     toscaDefaultValue?: string;
+    value?: any;
 
     constructor(param?: any) {
         if (param) {
             this.name = param.name;
             this.type = param.type;
+            this.schema = param.schema;
             this.inputId = param.inputId;
             this.toscaDefaultValue = param.toscaDefaultValue;
+            this.value = param.value;
         }
-        console.info("InputOperationParameter Constructor: ", param)
+    }
+
+    public getDefaultValue(): any {
+        if (this.isTypeNotSimple()) {
+            if (this.toscaDefaultValue) {
+                this.toscaDefaultValue = JSON.parse(this.toscaDefaultValue);
+                return JSON.parse(this.toscaDefaultValue);
+            }
+            switch (this.type) {
+                case PROPERTY_TYPES.LIST:
+                    return [];
+                default:
+                    return {};
+            }
+        }
+
+        return this.toscaDefaultValue;
+    }
+
+    private isTypeNotSimple() {
+        return PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) == -1;
     }
 }
 
