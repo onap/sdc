@@ -1,0 +1,69 @@
+<!--
+  ~ -
+  ~  ============LICENSE_START=======================================================
+  ~  Copyright (C) 2022 Nordix Foundation.
+  ~  ================================================================================
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~
+  ~  SPDX-License-Identifier: Apache-2.0
+  ~  ============LICENSE_END=========================================================
+  -->
+
+<div>
+  <div *ngIf="!isView && showAddLink" class="add-button-container">
+    <a class="add-btn" data-tests-id="add-input.add-input-link"
+       (click)="showAddInput()">{{'OPERATION_ADD_INPUT' | translate}}
+    </a>
+  </div>
+  <form *ngIf="showForm" [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+    <label class="occurrences-label">{{'ADD_INPUT_TITLE' | translate}}</label>
+    <div>
+      <label class="sdc-input-label" for="input-name">{{'OPERATION_INPUT_NAME' | translate}}</label>
+      <input id="input-name" class="sdc-input" type="text" formControlName="name" data-tests-id="add-input.input-name"/>
+    </div>
+    <div>
+      <label class="sdc-input-label" for="input-type">{{'OPERATION_INPUT_TYPE' | translate}}</label>
+      <sdc-combo-box
+          id="input-type"
+          [placeHolder]="inputToAdd.type != undefined ? inputToAdd.type : 'Select...'"
+          [data]="inputTypeOptions"
+          [selectedValue]="inputToAdd.type"
+          (itemSelected)="onChangeInputType($event)"
+          [testId]="'add-input.input-type'"
+          [disabled]="isView"
+      >
+      </sdc-combo-box>
+    </div>
+    <div *ngIf="showInputSchema">
+      <label class="sdc-input-label" for="input-schema">{{'OPERATION_INPUT_SCHEMA' | translate}}</label>
+      <sdc-combo-box
+          id="input-schema"
+          [placeHolder]="getSchemaPlaceholder()"
+          [data]="inputSchemaOptions"
+          [selectedValue]="getSchemaType()"
+          (itemSelected)="onChangeInputSchema($event)"
+          [testId]="'add-input.input-schema'"
+          [disabled]="isView"
+      >
+      </sdc-combo-box>
+    </div>
+    <div class="confirmation-button-container" *ngIf="!isView">
+      <button type="submit" class="tlv-btn blue" [disabled]="!inputForm.valid" data-tests-id="add-input.add-input-btn">
+        {{'OPERATION_ADD_INPUT' | translate}}
+      </button>
+      <button type="button" class="tlv-btn outline white" (click)="onCancel()" data-tests-id="add-input.cancel-btn">
+        {{'OPERATION_CANCEL' | translate}}
+      </button>
+    </div>
+  </form>
+</div>

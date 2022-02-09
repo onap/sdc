@@ -155,9 +155,9 @@ public class InterfacesOperationsConverter {
         return false;
     }
 
-    private static String getInputValue(String inputValue) {
-        String toscaInputValue = inputValue;
-        if (Objects.nonNull(inputValue) && inputValue.contains(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
+    private static String getInputValue(final OperationInputDefinition input) {
+        String inputValue = input.getValue() == null ? input.getToscaDefaultValue(): input.getValue();
+        if (inputValue != null && inputValue.contains(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName())) {
             Gson gson = new Gson();
             Map<String, List<String>> consumptionValue = gson.fromJson(inputValue, Map.class);
             List<String> mappedOutputValue = consumptionValue.get(ToscaFunctions.GET_OPERATION_OUTPUT.getFunctionName());
@@ -166,9 +166,9 @@ public class InterfacesOperationsConverter {
             String interfaceName = interfaceType.substring(interfaceType.lastIndexOf('.') + 1);
             mappedOutputValue.remove(1);
             mappedOutputValue.add(1, interfaceName);
-            toscaInputValue = gson.toJson(consumptionValue);
+            inputValue = gson.toJson(consumptionValue);
         }
-        return toscaInputValue;
+        return inputValue;
     }
 
     private static String getInterfaceType(Component component, String interfaceType) {
@@ -384,12 +384,7 @@ public class InterfacesOperationsConverter {
             toscaInput.setDescription(input.getDescription());
             toscaInput.setType(input.getType());
             toscaInput.setRequired(input.isRequired());
-            if (isServiceProxyInterface) {
-                String inputValue = Objects.nonNull(input.getValue()) ? getInputValue(input.getValue()) : getInputValue(input.getToscaDefaultValue());
-                toscaInput.setDefaultp(propertyConvertor.convertToToscaObject(input, inputValue, dataTypes, false));
-            } else {
-                toscaInput.setDefaultp(propertyConvertor.convertToToscaObject(input, getInputValue(input.getToscaDefaultValue()), dataTypes, false));
-            }
+            toscaInput.setDefaultp(propertyConvertor.convertToToscaObject(input, getInputValue(input), dataTypes, false));
             toscaInputs.put(input.getName(), toscaInput);
         }
         toscaOperation.setInputs(toscaInputs);

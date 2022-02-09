@@ -25,6 +25,7 @@
 import {PropertyBEModel} from "./properties-inputs/property-be-model";
 import {AttributeBEModel} from "./attributes-outputs/attribute-be-model";
 import {Model} from "./model";
+import {PROPERTY_DATA} from "../utils/constants";
 
 export class DataTypeModel {
 
@@ -39,16 +40,24 @@ export class DataTypeModel {
     attributes: Array<AttributeBEModel>;
     model: Model;
 
-    constructor(dataType:DataTypeModel) {
+    constructor(dataType: DataTypeModel) {
         if (dataType) {
             this.uniqueId = dataType.uniqueId;
             this.name = dataType.name;
             this.derivedFromName = dataType.derivedFromName;
+            if (dataType.derivedFrom) {
+                this.derivedFrom = new DataTypeModel(dataType.derivedFrom);
+            }
             this.creationTime = dataType.creationTime;
             this.modificationTime = dataType.modificationTime;
-            this.properties = dataType.properties;
+            if (dataType.properties) {
+                this.properties = [];
+                dataType.properties.forEach(property => {
+                    this.properties.push(new PropertyBEModel(property));
+                });
+            }
             this.attributes = dataType.attributes;
-            this.model = this.model;
+            this.model = dataType.model;
         }
     }
 
@@ -56,5 +65,25 @@ export class DataTypeModel {
 
         return this;
     };
+
+    /**
+     * Parses the default value to JSON.
+     */
+    public parseDefaultValueToJson(): any {
+        if (PROPERTY_DATA.TYPES.indexOf(this.name) > -1) {
+            return undefined;
+        }
+        const defaultValue = {};
+        if (this.properties) {
+            this.properties.forEach(property => {
+                const propertyDefaultValue = property.parseDefaultValueToJson();
+                if (propertyDefaultValue != undefined) {
+                    defaultValue[property.name] = propertyDefaultValue;
+                }
+            });
+        }
+
+        return defaultValue === {} ? undefined : defaultValue;
+    }
 }
 
