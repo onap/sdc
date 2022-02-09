@@ -22,22 +22,27 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FormElementsModule} from "app/ng2/components/ui/form-components/form-elements.module";
 import {TranslateModule} from "app/ng2/shared/translator/translate.module";
 
-import {SdcUiComponentsModule} from 'onap-ui-angular';
-import {UiElementsModule} from '../../../../components/ui/ui-elements.module';
-import {InputParamRowComponent} from './input-param-row/input-param-row.component';
-import {InterfaceOperationHandlerComponent} from "./interface-operation-handler.component";
-import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
-import {PropertyTableModule} from "../../../../components/logic/properties-table/property-table.module";
+
+import {SdcUiComponentsModule} from "onap-ui-angular/dist";
+import { InterfaceOperationHandlerComponent } from "app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component";
+import { PropertyParamRowComponent } from "app/ng2/pages/composition/interface-operatons/operation-creator/property-param-row/property-param-row.component";
+import { UiElementsModule } from "app/ng2/components/ui/ui-elements.module";
+import { PropertyTableModule } from "app/ng2/components/logic/properties-table/property-table.module";
+import { AddInputComponent } from './add-input/add-input.component';
+import { InputListComponent } from './input-list/input-list.component';
+import { InputListItemComponent } from './input-list/input-list-item/input-list-item.component';
 
 @NgModule({
   declarations: [
     InterfaceOperationHandlerComponent,
-    InputParamRowComponent,
-    PropertyParamRowComponent
+    PropertyParamRowComponent,
+    AddInputComponent,
+    InputListComponent,
+    InputListItemComponent
   ],
   imports: [
     CommonModule,
@@ -46,7 +51,8 @@ import {PropertyTableModule} from "../../../../components/logic/properties-table
     FormElementsModule,
     TranslateModule,
     UiElementsModule,
-    PropertyTableModule
+    PropertyTableModule,
+    ReactiveFormsModule
   ],
   exports: [
     PropertyParamRowComponent

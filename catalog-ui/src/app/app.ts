@@ -675,7 +675,7 @@ ng1appModule.run([
     // $http.defaults.headers.common.Authorization = 'Basic YmVlcDpib29w';
     $http.defaults.headers.common[cookieService.getUserIdSuffix()] = cookieService.getUserId();
 
-    DataTypesService.fetchDataTypesByModel(null);
+    DataTypesService.loadDataTypesCache(null);
 
     //handle stateChangeStart
     let internalDeregisterStateChangeStartWatcher: Function = (): void => {

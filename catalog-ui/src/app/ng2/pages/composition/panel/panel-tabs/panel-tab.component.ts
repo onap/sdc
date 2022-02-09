@@ -1,13 +1,21 @@
-import { NgModule, Component, Compiler, ViewContainerRef, ViewChild, Input, ComponentRef, ComponentFactoryResolver, ChangeDetectorRef } from '@angular/core';
-import {Component as TopologyTemplate} from "app/models";
-import { SdcUiServices } from "onap-ui-angular";
+import {
+  Component,
+  ViewContainerRef,
+  ViewChild,
+  Input,
+  ComponentRef,
+  ComponentFactoryResolver,
+  ChangeDetectorRef,
+  OnChanges, OnDestroy, AfterViewInit
+} from '@angular/core';
+import {Component as TopologyTemplate} from 'app/models';
 
 // Helper component to add dynamic tabs
 @Component({
   selector: 'panel-tab',
   template: `<div #content></div>`
 })
-export class PanelTabComponent {
+export class PanelTabComponent implements OnChanges, OnDestroy, AfterViewInit {
   @ViewChild('content', { read: ViewContainerRef }) content;
   @Input() isActive:boolean;
   @Input() panelTabType;

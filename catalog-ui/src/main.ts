@@ -18,7 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 
-//import './app/app.ts';
 import {ng1appModule} from './app/app';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {enableProdMode} from '@angular/core';
@@ -29,21 +28,21 @@ import {IAppConfigurtaion} from "./app/models/app-config";
 declare const __ENV__: string;
 export declare let sdc2Config: IAppConfigurtaion;
 
-if (__ENV__==='prod') {
-    sdc2Config = require('./../configurations/prod.js');
-    enableProdMode();
+if (__ENV__ === 'prod') {
+  sdc2Config = require('./../configurations/prod.js');
+  enableProdMode();
 } else {
-    sdc2Config = require('./../configurations/dev.js');
+  sdc2Config = require('./../configurations/dev.js');
 }
 
-// Ugliy fix because the cookie recieved from webseal change his value after some seconds.
-let timeout:number = 0;
-if (__ENV__==='dev'){
-    timeout=0;
+// Uglify fix because the cookie received from webseal change his value after some seconds.
+let timeout: number = 0;
+if (__ENV__ === 'dev') {
+  timeout = 0;
 }
-window.setTimeout(()=>{
-    platformBrowserDynamic().bootstrapModule(AppModule).then(platformRef => {
-        const upgrade = platformRef.injector.get(UpgradeModule) as UpgradeModule;
-        upgrade.bootstrap(document.body, [ng1appModule.name], {strictDi: true});
-    });
-},timeout);
+window.setTimeout(() => {
+  platformBrowserDynamic().bootstrapModule(AppModule).then(platformRef => {
+    const upgrade = platformRef.injector.get(UpgradeModule) as UpgradeModule;
+    upgrade.bootstrap(document.body, [ng1appModule.name], {strictDi: true});
+  });
+}, timeout);

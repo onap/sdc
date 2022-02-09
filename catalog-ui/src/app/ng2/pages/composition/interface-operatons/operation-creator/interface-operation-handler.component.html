@@ -124,32 +124,23 @@
                 </div>
             </div>
         </div>
-
-        <div class="separator-buttons">
-            <tab tabTitle="Inputs"></tab>
-            <a class="add-param-link add-btn"
-               [ngClass]="{'disabled': readonly || isViewOnly}"
-               (click)="onAddInput()">{{'OPERATION_ADD_INPUT' | translate}}
-            </a>
+        <div class="group-with-border content-row" *ngIf="dataTypeMap">
+            <input-list
+                [inputs]="inputs" [dataTypeMap]="dataTypeMap"
+                [isViewOnly]="isViewOnly"
+                (onValueChange)="onInputValueChange($event)"
+                (onDelete)="onInputDelete($event)"
+            >
+            </input-list>
         </div>
-
-        <div class="generic-table">
-            <div class="header-row table-row">
-                <span class="cell header-cell field-input-name">{{ 'OPERATION_PARAM_NAME' | translate }}</span>
-                <span class="cell header-cell field-input-value">{{ 'OPERATION_INPUT_VALUE' | translate }}</span>
-                <span class="cell header-cell remove">●●●</span>
-            </div>
-            <div class="empty-msg data-row" *ngIf="!inputs.length">
-                <div>{{ 'OPERATION_INPUT_EMPTY' | translate }}</div>
-            </div>
-            <input-param-row
-                *ngFor="let inputParameter of inputs"
-                class="data-row"
-                [input]="inputParameter"
-                [onRemoveInput]="onRemoveInput"
-                [validityChanged]="validityChanged">
-            </input-param-row>
+        <div class="group-with-border content-row">
+            <app-add-input
+                [dataTypeMap]="dataTypeMap$"
+                [isView]="isViewOnly"
+                [existingInputNames]="collectInputNames()"
+                (onAddInput)="onAddInput($event)"
+            >
+            </app-add-input>
         </div>
-
     </form>
 </div>

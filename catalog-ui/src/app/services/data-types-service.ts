@@ -27,7 +27,7 @@ import {
     PropertyModel,
     InputPropertyBase,
     IAppConfigurtaion,
-    SchemaProperty
+    SchemaProperty, DataTypeModel
 } from "../models";
 import {PROPERTY_DATA} from "../utils/constants";
 
@@ -40,7 +40,8 @@ export interface IDataTypesService {
     selectedInstance:ComponentInstance;
     selectedComponentInputs:Array<InputModel>;
     //declare methods
-    fetchDataTypesByModel(modelName:string):void;
+    loadDataTypesCache(modelName:string):void;
+    findAllDataTypesByModel(modelName: string): void;
     getAllDataTypes():DataTypesMap;
     getFirsLevelOfDataTypeProperties(dataTypeName:string):Array<DataTypePropertyModel>;
     isDataTypeForSchemaType(property:SchemaProperty):boolean;
@@ -70,7 +71,7 @@ export class DataTypesService implements IDataTypesService {
     selectedInstance:ComponentInstance;
     selectedComponentInputs:Array<InputModel>;
 
-    public fetchDataTypesByModel = (modelName: string):void => {
+    public loadDataTypesCache = (modelName: string): void => {
         let model;
         if (modelName) {
             model = {'model': modelName}
@@ -82,9 +83,33 @@ export class DataTypesService implements IDataTypesService {
         });
     };
 
+    public fetchDataTypesByModel = (modelName: string): angular.IHttpPromise<any> => {
+        let model;
+        if (modelName) {
+            model = {'model': modelName}
+        }
+        return this.$http.get(this.baseUrl + "dataTypes", {params: model});
+    };
+
     public getAllDataTypesFromModel = (modelName: string): DataTypesMap => {
-        this.fetchDataTypesByModel(modelName);
+        this.loadDataTypesCache(modelName);
         return this.dataTypes;
+    }
+
+    public findAllDataTypesByModel = (modelName: string): Promise<Map<string, DataTypeModel>> => {
+        return new Promise<Map<string, DataTypeModel>>((resolve, reject) => {
+            this.fetchDataTypesByModel(modelName).then(response => {
+                const dataTypes = response.data;
+                delete dataTypes[PROPERTY_DATA.ROOT_DATA_TYPE];
+                const dataTypeMap = new Map<string, DataTypeModel>();
+                for(const dataTypeKey of Object.keys(dataTypes)) {
+                    dataTypeMap.set(dataTypeKey, new DataTypeModel(dataTypes[dataTypeKey]))
+                }
+                resolve(dataTypeMap);
+            }).catch(reason => {
+                reject(reason);
+            });
+        });
     }
 
     public getAllDataTypes = ():DataTypesMap => {
