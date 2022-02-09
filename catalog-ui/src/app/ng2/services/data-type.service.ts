@@ -60,6 +60,10 @@ export class DataTypeService {
         return this.dataTypeService.getAllDataTypesFromModel(modelName);
     }
 
+    public findAllDataTypesByModel(modelName: string): Promise<DataTypesMap> {
+        return this.dataTypeService.findAllDataTypesByModel(modelName);
+    }
+
     public getConstraintsByParentTypeAndUniqueID(rootPropertyType, propertyName){
         // const property = this.dataTypes[rootPropertyType].properties.filter(property =>
         //     property.name == propertyName);

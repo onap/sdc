@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import com.aventstack.extentreports.Status;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections.MapUtils;
@@ -59,6 +60,7 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInfor
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionInterfaceOperationsTab;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.CompositionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionOperationsModal;
+import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionOperationsModal.InterfaceOperationsData.InputData;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinitionPage;
 import org.onap.sdc.frontend.ci.tests.pages.component.workspace.ToscaArtifactsPage;
 import org.onap.sdc.frontend.ci.tests.pages.home.HomePage;
@@ -171,9 +173,9 @@ public class ImportVfcUiTest extends SetupCDTest {
 
     private void checkInterfaceDefinitionData(final InterfaceDefinitionOperationsModal interfaceDefinitionOperationsModal) {
         assertTrue(interfaceDefinitionOperationsModal.getDescription().isEmpty());
-        assertEquals(interfaceDefinitionOperationsModal.getImplementationName(), "path/to/my/implementation.sh");
-        assertEquals(interfaceDefinitionOperationsModal.getInputName(), "first");
-        assertEquals(interfaceDefinitionOperationsModal.getInputValue(), "1234");
+        assertEquals("path/to/my/implementation.sh", interfaceDefinitionOperationsModal.getImplementationName());
+        final List<InputData> inputList = interfaceDefinitionOperationsModal.getInputs();
+        assertTrue(inputList.stream().anyMatch(inputData -> "first".equals(inputData.getName())), "Input of name 'first' expected");
     }
 
     private ComponentPage manageAttributes(final ComponentPage componentPage) {
@@ -223,13 +225,18 @@ public class ImportVfcUiTest extends SetupCDTest {
         compositionInterfaceOperationsModal.isLoaded();
         ExtentTestActions
             .takeScreenshot(Status.INFO, "compositionInterfaceOperationsTab.clickOnOperation", "Composition Interface Operations Modal opened");
-        compositionInterfaceOperationsModal.clickOnDelete();
+        compositionInterfaceOperationsModal.deleteInput("first");
         ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsModal.clickOnDelete", "Input deleted");
-        compositionInterfaceOperationsModal.addInput();
-        ExtentTestActions.takeScreenshot(Status.INFO, "compositionInterfaceOperationsModal.addInput", "Adding Input");
 
-        final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData = new InterfaceDefinitionOperationsModal.InterfaceOperationsData
-            ("This is CREATE operation", "fullPath/to/my/newImplementation.sh", "second", "9876");
+        List<InputData> inputDataList = List.of(
+            new InputData("stringInput", "string", "1"),
+            new InputData("booleanInput", "boolean", true),
+            new InputData("integerInput", "integer", 1)
+        );
+        final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData =
+            new InterfaceDefinitionOperationsModal.InterfaceOperationsData(
+                "This is CREATE operation", "fullPath/to/my/newImplementation.sh", inputDataList
+            );
         compositionInterfaceOperationsModal.updateInterfaceOperation(interfaceOperationsData);
         compositionInterfaceOperationsTab.isLoaded();
 
@@ -404,7 +411,10 @@ public class ImportVfcUiTest extends SetupCDTest {
                                                      final InterfaceDefinitionOperationsModal.InterfaceOperationsData interfaceOperationsData) {
         assertEquals(interfaceOperationsData.getDescription(), compositionInterfaceOperationsModal.getDescription());
         assertEquals(interfaceOperationsData.getImplementationName(), compositionInterfaceOperationsModal.getImplementationName());
-        assertEquals(interfaceOperationsData.getInputName(), compositionInterfaceOperationsModal.getInputName());
-        assertEquals(interfaceOperationsData.getInputValue(), compositionInterfaceOperationsModal.getInputValue());
+        interfaceOperationsData.getInputList().forEach(inputData -> {
+            final boolean hasInput = compositionInterfaceOperationsModal.getInputs().stream()
+                .anyMatch(inputData1 -> inputData1.getName().equals(inputData.getName()));
+            assertTrue(hasInput, String.format("Expecting input '%s'", inputData.getName()));
+        });
     }
 }
