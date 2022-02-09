@@ -53,7 +53,6 @@ import org.springframework.stereotype.Service;
 public class PropertyConvertor {
 
     private static final Logger log = Logger.getLogger(PropertyConvertor.class);
-    private JsonParser jsonParser = new JsonParser();
 
     public Either<ToscaNodeType, ToscaError> convertProperties(Component component, ToscaNodeType toscaNodeType,
                                                                Map<String, DataTypeDefinition> dataTypes) {
@@ -145,7 +144,7 @@ public class PropertyConvertor {
             StringReader reader = new StringReader(value);
             JsonReader jsonReader = new JsonReader(reader);
             jsonReader.setLenient(true);
-            jsonElement = jsonParser.parse(jsonReader);
+            jsonElement = JsonParser.parseReader(jsonReader);
             if (value.equals("")) {
                 return value;
             }

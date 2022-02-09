@@ -60,6 +60,7 @@ import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.datastructure.Wrapper;
+import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Path("/v1/catalog/{componentType}/{componentId}/componentInstance/{componentInstanceId}/interfaceOperation")
-@Tags({@Tag(name = "SDCE-2 APIs")})
+@Tag(name = "SDCE-2 APIs")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Controller
@@ -104,11 +105,14 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response updateComponentInstanceInterfaceOperation(
         @Parameter(description = "valid values: resources / services", schema = @Schema(allowableValues = {ComponentTypeEnum.RESOURCE_PARAM_NAME,
-            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") final String componentType,
+            ComponentTypeEnum.SERVICE_PARAM_NAME})) @PathParam("componentType") String componentType,
         @Parameter(description = "Component Id") @PathParam("componentId") String componentId,
         @Parameter(description = "Component Instance Id") @PathParam("componentInstanceId") String componentInstanceId,
         @Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) throws IOException {
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
+        userId = ValidationUtils.sanitizeInputString(userId);
+        componentType = ValidationUtils.sanitizeInputString(componentType);
+        componentInstanceId = ValidationUtils.sanitizeInputString(componentInstanceId);
         LOGGER.debug(MODIFIER_ID_IS, userId);
         final User userModifier = componentInterfaceOperationBusinessLogic.validateUser(userId);
         final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
@@ -118,7 +122,7 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
         }
         final byte[] bytes = IOUtils.toByteArray(request.getInputStream());
         if (bytes == null || bytes.length == 0) {
-            LOGGER.error(INTERFACE_OPERATION_CONTENT_INVALID);
+            LOGGER.error(INTERFACE_OPERATION_CONTENT_INVALID, "content is empty");
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
         final String data = new String(bytes);

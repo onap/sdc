@@ -117,7 +117,7 @@
                 <!-- Value -->
                 <div class="table-cell valueCol" [class.inner-table-container]="input.childrenProperties || !input.isSimpleType">
                     <dynamic-element class="value-input"
-                                     *ngIf="checkInstanceFePropertiesMapIsFilled() && input.isSimpleType"
+                                     
                                      pattern="validationUtils.getValidationPattern(input.type)"
                                      [value]="input.defaultValueObj"
                                      [type]="input.type"

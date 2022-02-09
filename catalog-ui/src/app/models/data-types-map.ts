@@ -25,13 +25,13 @@
 import {DataTypeModel} from "./data-types";
 
 export class DataTypesMapData {
-    [dataTypeId:string]:Array<DataTypeModel>;
+  [dataTypeId: string]: Array<DataTypeModel>;
 }
 
 export class DataTypesMap {
-    dataTypesMap:DataTypesMapData;
+  dataTypesMap: DataTypesMapData;
 
-    constructor(dataTypesMap:DataTypesMapData) {
-        this.dataTypesMap = dataTypesMap;
-    }
+  constructor(dataTypesMap: DataTypesMapData) {
+    this.dataTypesMap = dataTypesMap;
+  }
 }

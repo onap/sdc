@@ -26,11 +26,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -82,74 +80,54 @@ public class ToscaValueBaseConverter {
         return result;
     }
 
-    public Object handleComplexJsonValue(JsonElement elementValue) {
-        Object jsonValue = null;
-        Map<String, Object> value = new HashMap<>();
-        if (elementValue.isJsonObject()) {
-            JsonObject jsonOb = elementValue.getAsJsonObject();
-            Set<Entry<String, JsonElement>> entrySet = jsonOb.entrySet();
-            Iterator<Entry<String, JsonElement>> iteratorEntry = entrySet.iterator();
-            while (iteratorEntry.hasNext()) {
-                Entry<String, JsonElement> entry = iteratorEntry.next();
-                if (entry.getValue().isJsonArray()) {
-                    List<Object> array = handleJsonArray(entry.getValue());
-                    value.put(entry.getKey(), array);
-                } else {
-                    Object object;
-                    if (entry.getValue().isJsonPrimitive()) {
-                        object = json2JavaPrimitive(entry.getValue().getAsJsonPrimitive());
-                    } else {
-                        object = handleComplexJsonValue(entry.getValue());
-                    }
-                    value.put(entry.getKey(), object);
-                }
-            }
-            jsonValue = value;
-        } else {
-            if (elementValue.isJsonArray()) {
-                jsonValue = handleJsonArray(elementValue);
-            } else {
-                if (elementValue.isJsonPrimitive()) {
-                    jsonValue = json2JavaPrimitive(elementValue.getAsJsonPrimitive());
-                } else {
-                    log.debug("not supported json type ");
-                }
-            }
+    public Object handleComplexJsonValue(final JsonElement jsonElement) {
+        if (jsonElement.isJsonNull()) {
+            return null;
         }
-        return jsonValue;
+        if (jsonElement.isJsonObject()) {
+            return handleJsonObject(jsonElement);
+        }
+        if (jsonElement.isJsonArray()) {
+            return handleJsonArray(jsonElement);
+        }
+        if (jsonElement.isJsonPrimitive()) {
+            return json2JavaPrimitive(jsonElement.getAsJsonPrimitive());
+        }
+        log.debug("JSON type '{}' not supported", jsonElement);
+        return null;
     }
 
-    private List<Object> handleJsonArray(JsonElement entry) {
-        List<Object> array = new ArrayList<>();
-        JsonArray jsonArray = entry.getAsJsonArray();
-        Iterator<JsonElement> iterator = jsonArray.iterator();
-        while (iterator.hasNext()) {
-            Object object;
-            JsonElement element = iterator.next();
-            if (element.isJsonPrimitive()) {
-                object = json2JavaPrimitive(element.getAsJsonPrimitive());
-            } else {
-                object = handleComplexJsonValue(element);
-            }
-            array.add(object);
+    private Map<String, Object> handleJsonObject(final JsonElement jsonElement) {
+        final Map<String, Object> jsonObjectAsMap = new HashMap<>();
+        final JsonObject jsonObject = jsonElement.getAsJsonObject();
+        for (final Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+            jsonObjectAsMap.put(entry.getKey(), handleComplexJsonValue(entry.getValue()));
         }
-        return array;
+        return jsonObjectAsMap;
     }
 
-    public Object json2JavaPrimitive(JsonPrimitive prim) {
-        if (prim.isBoolean()) {
-            return prim.getAsBoolean();
-        } else if (prim.isString()) {
-            return prim.getAsString();
-        } else if (prim.isNumber()) {
-            String strRepesentation = prim.getAsString();
-            if (strRepesentation.contains(".")) {
-                return prim.getAsDouble();
-            } else {
-                return prim.getAsInt();
-            }
-        } else {
-            throw new IllegalStateException();
+    private List<Object> handleJsonArray(final JsonElement entry) {
+        final List<Object> jsonAsArray = new ArrayList<>();
+        final JsonArray jsonArray = entry.getAsJsonArray();
+        for (final JsonElement jsonElement : jsonArray) {
+            jsonAsArray.add(handleComplexJsonValue(jsonElement));
         }
+        return jsonAsArray;
+    }
+
+    public Object json2JavaPrimitive(final JsonPrimitive jsonPrimitive) {
+        if (jsonPrimitive.isBoolean()) {
+            return jsonPrimitive.getAsBoolean();
+        }
+        if (jsonPrimitive.isString()) {
+            return jsonPrimitive.getAsString();
+        }
+        if (jsonPrimitive.isNumber()) {
+            if (jsonPrimitive.getAsString().contains(".")) {
+                return jsonPrimitive.getAsDouble();
+            }
+            return jsonPrimitive.getAsInt();
+        }
+        throw new IllegalStateException(String.format("JSON primitive not supported: %s", jsonPrimitive));
     }
 }

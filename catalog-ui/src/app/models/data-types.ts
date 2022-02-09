@@ -48,7 +48,7 @@ export class DataTypeModel {
             this.modificationTime = dataType.modificationTime;
             this.properties = dataType.properties;
             this.attributes = dataType.attributes;
-            this.model = this.model;
+            this.model = dataType.model;
         }
     }
 

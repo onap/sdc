@@ -117,6 +117,17 @@ public abstract class AbstractPageObject implements PageObject {
     }
 
     /**
+     * Find elements inside the provided element using the provided xpath.
+     *
+     * @param element the parent element
+     * @param xpath   the xpath expression to search for the internal element
+     * @return the list of WebElement if any found, otherwise throws an exception
+     */
+    protected List<WebElement> findSubElements(final WebElement element, final String xpath) {
+        return element.findElements(By.xpath(xpath));
+    }
+
+    /**
      * Find elements inside the provided element using the provided By locator.
      *
      * @param element the parent element
