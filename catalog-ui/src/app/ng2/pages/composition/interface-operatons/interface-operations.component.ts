@@ -22,31 +22,17 @@
 import {Component, ComponentRef, Inject, Input} from '@angular/core';
 import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
 import {TranslateService} from "../../../shared/translator/translate.service";
-import {ModalService } from 'app/ng2/services/modal.service';
-import { ModalComponent } from 'app/ng2/components/ui/modal/modal.component';
-import {
-  Component as TopologyTemplate
-} from "../../../../models/components/component";
+import {ModalService} from 'app/ng2/services/modal.service';
+import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
+import {Component as TopologyTemplate} from "../../../../models/components/component";
 import {PluginsService} from "app/ng2/services/plugins.service";
 import {SelectedComponentType} from "../common/store/graph.actions";
 
 import {WorkspaceService} from "../../workspace/workspace.service";
-import {
-  ComponentInstanceInterfaceModel,
-  InterfaceOperationModel
-} from "../../../../models/interfaceOperation";
-import {
-  InterfaceOperationHandlerComponent
-} from "./operation-creator/interface-operation-handler.component";
+import {ComponentInstanceInterfaceModel, InterfaceOperationModel} from "../../../../models/interfaceOperation";
+import {InterfaceOperationHandlerComponent} from "./operation-creator/interface-operation-handler.component";
 
-import {
-  ButtonModel,
-  ComponentMetadata,
-  InterfaceModel,
-  InputBEModel,
-  ModalModel,
-  ComponentInstance, ArtifactModel
-} from 'app/models';
+import {ArtifactModel, ButtonModel, ComponentInstance, ComponentMetadata, InputBEModel, InterfaceModel, ModalModel} from 'app/models';
 import {ArtifactGroupType} from "../../../../utils/constants";
 import {DropdownValue} from "../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {ToscaArtifactService} from "../../../services/tosca-artifact.service";
@@ -86,12 +72,14 @@ export class UIInterfaceOperationModel extends InterfaceOperationModel {
 class ModalTranslation {
   EDIT_TITLE: string;
   CANCEL_BUTTON: string;
+  CLOSE_BUTTON: string;
   SAVE_BUTTON: string;
 
   constructor(private TranslateService: TranslateService) {
     this.TranslateService.languageChangedObservable.subscribe(lang => {
       this.EDIT_TITLE = this.TranslateService.translate('INTERFACE_EDIT_TITLE');
       this.CANCEL_BUTTON = this.TranslateService.translate("INTERFACE_CANCEL_BUTTON");
+      this.CLOSE_BUTTON = this.TranslateService.translate("INTERFACE_CLOSE_BUTTON");
       this.SAVE_BUTTON = this.TranslateService.translate("INTERFACE_SAVE_BUTTON");
     });
   }
@@ -135,7 +123,7 @@ export class InterfaceOperationsComponent {
   toscaArtifactTypes: Array<DropdownValue> = [];
 
   @Input() component: ComponentInstance;
-  @Input() readonly: boolean;
+  @Input() isViewOnly: boolean;
   @Input() enableMenuItems: Function;
   @Input() disableMenuItems: Function;
   @Input() componentType: SelectedComponentType;
@@ -209,14 +197,23 @@ export class InterfaceOperationsComponent {
   }
 
   private enableOrDisableSaveButton = (): boolean => {
-    return this.modalInstance.instance.dynamicContent.instance.readonly;
+    return this.isViewOnly;
   }
 
   onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
-    const cancelButton: ButtonModel = new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal);
-    const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue', () =>
-        this.updateInterfaceOperation(), this.enableOrDisableSaveButton);
-    const modalModel: ModalModel = new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', [saveButton, cancelButton], 'custom');
+
+    const buttonList = [];
+    if (this.isViewOnly) {
+      const closeButton: ButtonModel = new ButtonModel(this.modalTranslation.CLOSE_BUTTON, 'outline white', this.cancelAndCloseModal);
+      buttonList.push(closeButton);
+    } else {
+      const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue', () =>
+          this.updateInterfaceOperation(), this.enableOrDisableSaveButton);
+      const cancelButton: ButtonModel = new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal);
+      buttonList.push(saveButton);
+      buttonList.push(cancelButton);
+    }
+    const modalModel: ModalModel = new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', buttonList, 'custom');
     this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
 
     this.modalServiceNg2.addDynamicContentToModal(
@@ -228,7 +225,7 @@ export class InterfaceOperationsComponent {
           selectedInterface: interfaceModel,
           selectedInterfaceOperation: operation,
           validityChangedCallback: this.enableOrDisableSaveButton,
-          isViewOnly: false
+          isViewOnly: this.isViewOnly
         }
     );
     this.modalInstance.instance.open();
@@ -241,7 +238,7 @@ export class InterfaceOperationsComponent {
 
   private updateInterfaceOperation() {
     this.isLoading = true;
-    let operationUpdated = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
+    const operationUpdated: InterfaceOperationModel = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
     this.topologyTemplateService.updateComponentInstanceInterfaceOperation(
         this.componentMetaData.uniqueId,
         this.componentMetaData.componentType,

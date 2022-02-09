@@ -43,8 +43,7 @@ import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 public class ToscaMapValueConverter extends ToscaValueBaseConverter implements ToscaValueConverter {
 
     private static final Logger log = Logger.getLogger(ToscaMapValueConverter.class.getName());
-    private static ToscaMapValueConverter mapConverter = new ToscaMapValueConverter();
-    private JsonParser jsonParser = new JsonParser();
+    private static final ToscaMapValueConverter mapConverter = new ToscaMapValueConverter();
 
     private ToscaMapValueConverter() {
     }
@@ -56,7 +55,7 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
     @Override
     public Object convertToToscaValue(String value, String innerType, Map<String, DataTypeDefinition> dataTypes) {
         if (value == null) {
-            return value;
+            return null;
         }
         try {
             ToscaPropertyType innerToscaType = ToscaPropertyType.isValidType(innerType);
@@ -85,12 +84,12 @@ public class ToscaMapValueConverter extends ToscaValueBaseConverter implements T
                     return value;
                 }
             }
-            JsonElement jsonElement = null;
+            JsonElement jsonElement;
             try {
                 StringReader reader = new StringReader(value);
                 JsonReader jsonReader = new JsonReader(reader);
                 jsonReader.setLenient(true);
-                jsonElement = jsonParser.parse(jsonReader);
+                jsonElement = JsonParser.parseReader(jsonReader);
             } catch (JsonSyntaxException e) {
                 log.debug("convertToToscaValue failed to parse json value :", e);
                 return null;
