@@ -80,6 +80,19 @@ class EtsiNfvNsCsarEntryGeneratorTest {
     }
 
     @Test
+    void successfullyEntryGenerationWithVersionFromModelNameTest() throws NsdException {
+        mockServiceComponentWithoutMetadata();
+        final NsdCsar nsdCsar = new NsdCsar(SERVICE_NORMALIZED_NAME);
+        nsdCsar.setCsarPackage(new byte[5]);
+        when(etsiNfvNsdCsarGenerator.generateNsdCsar(service)).thenReturn(nsdCsar);
+        final Map<String, byte[]> entryMap = etsiNfvNsCsarEntryGenerator.generateCsarEntries(service);
+        assertThat("Csar Entries should contain only one entry", entryMap.size(), is(1));
+        assertThat("Csar Entries should contain the expected entry", entryMap,
+                hasEntry(String.format(NSD_FILE_PATH_FORMAT, ETSI_PACKAGE, SERVICE_NORMALIZED_NAME, UNSIGNED_CSAR_EXTENSION),
+                        nsdCsar.getCsarPackage()));
+    }
+
+    @Test
     void knownNsdGenerationErrorTest() throws NsdException {
         mockServiceComponent();
         when(etsiNfvNsdCsarGenerator.generateNsdCsar(service)).thenThrow(new NsdException(""));
@@ -122,6 +135,18 @@ class EtsiNfvNsCsarEntryGeneratorTest {
         final Map<String, String> categorySpecificMetadataMap = new HashMap<>();
         categorySpecificMetadataMap.put(ETSI_VERSION_METADATA, nsdVersion.getVersion());
         when(service.getCategorySpecificMetadata()).thenReturn(categorySpecificMetadataMap);
+        final List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
+        final CategoryDefinition nsComponentCategoryDefinition = new CategoryDefinition();
+        nsComponentCategoryDefinition.setName(CategoriesToGenerateNsd.ETSI_NS_COMPONENT_CATEGORY.getCategoryName());
+        categoryDefinitionList.add(nsComponentCategoryDefinition);
+        when(service.getCategories()).thenReturn(categoryDefinitionList);
+    }
+
+    private void mockServiceComponentWithoutMetadata() {
+        when(service.getName()).thenReturn("anyName");
+        when(service.getComponentType()).thenReturn(ComponentTypeEnum.SERVICE);
+        when(service.getNormalizedName()).thenReturn(SERVICE_NORMALIZED_NAME);
+        when(service.getModel()).thenReturn("Any Name with Version v2.5.1");
         final List<CategoryDefinition> categoryDefinitionList = new ArrayList<>();
         final CategoryDefinition nsComponentCategoryDefinition = new CategoryDefinition();
         nsComponentCategoryDefinition.setName(CategoriesToGenerateNsd.ETSI_NS_COMPONENT_CATEGORY.getCategoryName());

@@ -90,7 +90,11 @@ public class EtsiNfvNsCsarEntryGenerator implements CsarEntryGenerator {
     }
 
     private EtsiVersion getComponentEtsiVersion(Component component) {
-        final String etsiVersion = component.getCategorySpecificMetadata().get(ETSI_VERSION_METADATA);
+        String etsiVersion = component.getCategorySpecificMetadata().get(ETSI_VERSION_METADATA);
+        final String modelName = component.getModel();
+        if (etsiVersion == null && modelName.matches(".*\\d+\\.\\d+\\.\\d+.*" )){
+            etsiVersion = modelName.replaceAll(".*?(\\d+\\.\\d+\\.\\d+).*", "$1");
+        }
         return EtsiVersion.convertOrNull(etsiVersion);
     }
 
