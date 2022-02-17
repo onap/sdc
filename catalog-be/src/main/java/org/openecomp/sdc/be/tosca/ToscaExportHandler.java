@@ -27,7 +27,13 @@ import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_ATTRIBUTE;
 import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_INPUT;
 import static org.openecomp.sdc.tosca.datatypes.ToscaFunctions.GET_PROPERTY;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 import fj.data.Either;
+import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +110,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
+import org.openecomp.sdc.be.model.tosca.converters.ToscaMapValueConverter;
 import org.openecomp.sdc.be.tosca.PropertyConvertor.PropertyType;
 import org.openecomp.sdc.be.tosca.builder.ToscaRelationshipBuilder;
 import org.openecomp.sdc.be.tosca.exception.ToscaConversionException;
@@ -130,6 +137,7 @@ import org.openecomp.sdc.be.tosca.utils.InputConverter;
 import org.openecomp.sdc.be.tosca.utils.OutputConverter;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
@@ -914,10 +922,18 @@ public class ToscaExportHandler {
                 nodeTemplate.setArtifacts(convertToNodeTemplateArtifacts(componentInstance.getToscaArtifacts()));
             }
             if (componentInstance.getMinOccurrences() != null && componentInstance.getMaxOccurrences()!= null){
-                List<Object> occur = new ArrayList<Object>();
+                List<Object> occur = new ArrayList<>();
                 occur.add(parseToIntIfPossible(componentInstance.getMinOccurrences()));
                 occur.add(parseToIntIfPossible(componentInstance.getMaxOccurrences()));
                 nodeTemplate.setOccurrences(occur);
+            }
+            if (componentInstance.getInstanceCount() != null){
+                ObjectMapper objectMapper = new ObjectMapper();
+                Object obj = convertToToscaObject(componentInstance.getInstanceCount());
+                if(obj != null) {
+                    Map<String, String> map = objectMapper.convertValue(obj, Map.class);
+                    nodeTemplate.setInstance_count(map);
+                }
             }
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
@@ -1022,12 +1038,33 @@ public class ToscaExportHandler {
         log.debug("finish convert topology template for {} for type {}", component.getUniqueId(), component.getComponentType());
         return convertNodeTemplatesRes;
     }
-  
+
+    public Object convertToToscaObject(String value) {
+        try {
+            ToscaMapValueConverter mapConverterInst = ToscaMapValueConverter.getInstance();
+            JsonParser jsonParser = new JsonParser();
+            StringReader reader = new StringReader(value);
+            JsonReader jsonReader = new JsonReader(reader);
+            jsonReader.setLenient(true);
+            JsonElement jsonElement = jsonParser.parse(jsonReader);
+            if (jsonElement.isJsonObject()) {
+                JsonObject jsonObj = jsonElement.getAsJsonObject();
+                if (jsonObj.entrySet().size() == 1 && jsonObj.has(ToscaFunctions.GET_INPUT.getFunctionName())) {
+                    return mapConverterInst.handleComplexJsonValue(jsonElement);
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            log.debug("convertToToscaValue failed to parse json value :", e);
+            return null;
+        }
+    }
+
     private Object parseToIntIfPossible(final String value) {
         final Integer intValue = Ints.tryParse(value);
         return intValue == null ? value : intValue;
     }
-  
+
     private void handleInstanceInterfaces(
         Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces,
         ComponentInstance componentInstance, Map<String, DataTypeDefinition> dataTypes, ToscaNodeTemplate nodeTemplate,
