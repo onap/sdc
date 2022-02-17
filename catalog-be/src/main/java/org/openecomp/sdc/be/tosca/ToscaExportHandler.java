@@ -912,6 +912,9 @@ public class ToscaExportHandler {
             if (MapUtils.isNotEmpty(componentInstance.getToscaArtifacts())) {
                 nodeTemplate.setArtifacts(convertToNodeTemplateArtifacts(componentInstance.getToscaArtifacts()));
             }
+            if (componentInstance.getMinOccurrences() != null && componentInstance.getMaxOccurrences()!= null){
+                nodeTemplate.setOccurrences(new String[]{componentInstance.getMinOccurrences(), componentInstance.getMaxOccurrences()});
+            }
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
             nodeTemplate.setNode_filter(convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter()));
