@@ -914,10 +914,15 @@ public class ToscaExportHandler {
                 nodeTemplate.setArtifacts(convertToNodeTemplateArtifacts(componentInstance.getToscaArtifacts()));
             }
             if (componentInstance.getMinOccurrences() != null && componentInstance.getMaxOccurrences()!= null){
-                List<Object> occur = new ArrayList<Object>();
+                List<Object> occur = new ArrayList<>();
                 occur.add(parseToIntIfPossible(componentInstance.getMinOccurrences()));
                 occur.add(parseToIntIfPossible(componentInstance.getMaxOccurrences()));
                 nodeTemplate.setOccurrences(occur);
+            }
+            if (componentInstance.getInstanceCountInput() != null && componentInstance.getInstanceCountGetFunctionType() != null){
+                Map<String, String> instanceCountMap = new HashMap<>();
+                instanceCountMap.put(componentInstance.getInstanceCountGetFunctionType(), componentInstance.getInstanceCountInput());
+                nodeTemplate.setInstance_count(instanceCountMap);
             }
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
@@ -1022,12 +1027,12 @@ public class ToscaExportHandler {
         log.debug("finish convert topology template for {} for type {}", component.getUniqueId(), component.getComponentType());
         return convertNodeTemplatesRes;
     }
-  
+
     private Object parseToIntIfPossible(final String value) {
         final Integer intValue = Ints.tryParse(value);
         return intValue == null ? value : intValue;
     }
-  
+
     private void handleInstanceInterfaces(
         Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces,
         ComponentInstance componentInstance, Map<String, DataTypeDefinition> dataTypes, ToscaNodeTemplate nodeTemplate,

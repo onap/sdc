@@ -202,6 +202,8 @@ public enum JsonPresentationFields {
     CI_ARTIFACTS("artifacts", null),
     CI_MAX_OCCURRENCES("maxOccurrences", null),
     CI_MIN_OCCURRENCES("minOccurrences", null),
+    CI_INSTANCE_COUNT_INPUT("instanceCountInput", null),
+    CI_INSTANCE_COUNT_GET_FUNCTION_TYPE("instanceCountGetFunctionType", null),
 
     //path
     FORWARDING_PATH("forwardingPath", null),

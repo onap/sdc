@@ -55,6 +55,8 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         setPosY(dataDefinition.getPosY());
         setMinOccurrences(dataDefinition.getMinOccurrences());
         setMaxOccurrences(dataDefinition.getMaxOccurrences());
+        setInstanceCountInput(dataDefinition.getInstanceCountInput());
+        setInstanceCountGetFunctionType(dataDefinition.getInstanceCountGetFunctionType());
         setPropertyValueCounter(dataDefinition.getPropertyValueCounter());
         setNormalizedName(dataDefinition.getNormalizedName());
         setOriginType(dataDefinition.getOriginType());
@@ -154,6 +156,22 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
     public void setMaxOccurrences(String maxOccurrences) {
         setToscaPresentationValue(JsonPresentationFields.CI_MAX_OCCURRENCES, maxOccurrences);
+    }
+
+    public String getInstanceCountInput() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.CI_INSTANCE_COUNT_INPUT);
+    }
+
+    public void setInstanceCountInput(String instanceCountInput) {
+        setToscaPresentationValue(JsonPresentationFields.CI_INSTANCE_COUNT_INPUT, instanceCountInput);
+    }
+
+    public String getInstanceCountGetFunctionType() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.CI_INSTANCE_COUNT_GET_FUNCTION_TYPE);
+    }
+
+    public void setInstanceCountGetFunctionType(String instanceCountGetFunction) {
+        setToscaPresentationValue(JsonPresentationFields.CI_INSTANCE_COUNT_GET_FUNCTION_TYPE, instanceCountGetFunction);
     }
 
     public String getComponentUid() {
