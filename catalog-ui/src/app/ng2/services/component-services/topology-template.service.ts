@@ -97,6 +97,10 @@ export class TopologyTemplateService {
         return this.getComponentDataByFieldsName(type, uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES, COMPONENT_FIELDS.COMPONENT_INSTANCES_ATTRIBUTES]);
     }
 
+    getComponentInstanceAttributesAndPropertiesAndInputs(uniqueId: string, type: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(type, uniqueId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES, COMPONENT_FIELDS.COMPONENT_INSTANCES_ATTRIBUTES, COMPONENT_FIELDS.COMPONENT_INPUTS]);
+    }
+
     async getComponentAttributes(componentType: string, componentId: string): Promise<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_ATTRIBUTES]).toPromise();
     }
