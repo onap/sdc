@@ -4,6 +4,7 @@ import {
     AttributeModel,
     AttributesGroup,
     Component as TopologyTemplate,
+    ComponentInstance,
     ComponentMetadata,
     FullComponentInstance,
     PropertiesGroup,
@@ -14,6 +15,7 @@ import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
 import { GroupByPipe } from 'app/ng2/pipes/groupBy.pipe';
 import { ResourceNamePipe } from 'app/ng2/pipes/resource-name.pipe';
 import { TopologyTemplateService } from 'app/ng2/services/component-services/topology-template.service';
+import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
 import { ComponentGenericResponse } from 'app/ng2/services/responses/component-generic-response';
 import { TranslateService } from 'app/ng2/shared/translator/translate.service';
 import { ModalsHandler } from 'app/utils';
@@ -33,6 +35,9 @@ export class PropertiesTabComponent implements OnInit {
     propertiesMessage: string;
     metadata: ComponentMetadata;
     objectKeys = Object.keys;
+    isUnboundedChecked: boolean;
+    isOccurrencesEnabled: boolean = false;
+    isLoading: boolean;
 
     @Input() isViewOnly: boolean;
     @Input() componentType: SelectedComponentType;
@@ -44,6 +49,7 @@ export class PropertiesTabComponent implements OnInit {
                 private compositionService: CompositionService,
                 private modalsHandler: ModalsHandler,
                 private topologyTemplateService: TopologyTemplateService,
+                private componentInstanceService: ComponentInstanceServiceNg2,
                 private modalService: SdcUiServices.ModalService,
                 private translateService: TranslateService,
                 private groupByPipe: GroupByPipe) {
@@ -176,6 +182,15 @@ export class PropertiesTabComponent implements OnInit {
         }
     }
 
+    private initComponentOccurrences = (): void => {
+        if (this.component instanceof FullComponentInstance) {
+            if(this.component.minOccurrences != null && this.component.maxOccurrences != null){
+                this.isOccurrencesEnabled = true;
+            }
+            this.isUnboundedChecked = this.component.maxOccurrences == "UNBOUNDED" ? true: false;
+        }
+    }
+
     /**
      * This function is checking if the component is the value owner of the current property
      * in order to notify the edit property modal which fields to disable
@@ -208,5 +223,58 @@ export class PropertiesTabComponent implements OnInit {
     private initPropertiesAndAttributes = (): void => {
         this.initComponentProperties();
         this.initComponentAttributes();
+        this.initComponentOccurrences();
+    }
+
+    onUnboundedChanged(component: ComponentInstance) {
+        this.isUnboundedChecked = !this.isUnboundedChecked;
+        component.maxOccurrences = this.isUnboundedChecked ? "UNBOUNDED" : "1";
+    }
+
+    private updateComponentInstance(component: ComponentInstance) {
+        this.store.dispatch(new TogglePanelLoadingAction({isLoading: true}));
+
+        this.componentInstanceService.updateComponentInstance(this.workspaceService.metadata.componentType,
+                                                              this.workspaceService.metadata.uniqueId, component)
+                                                              .subscribe((updatedComponentInstance: ComponentInstance) => {
+            component = new ComponentInstance(updatedComponentInstance);
+            this.compositionService.getComponentInstances().find((item) => item.uniqueId === component.uniqueId).maxOccurrences = component.maxOccurrences;
+            this.compositionService.getComponentInstances().find((item) => item.uniqueId === component.uniqueId).minOccurrences = component.minOccurrences;
+            this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+        }, (error:any) => {
+            this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
+            if (error) {
+                console.log(error);
+            }});
+    }
+
+    private enableOccurrences = () => {
+        if(this.component instanceof FullComponentInstance){
+            if(!this.isOccurrencesEnabled){
+                this.component.minOccurrences = null;
+                this.component.maxOccurrences = null;
+            } else {
+                this.component.minOccurrences = "1";
+                this.component.maxOccurrences = "1";
+            }
+            this.updateComponentInstance(this.component);
+        }
+    }
+
+    private isOccurrencesFormValid(component: FullComponentInstance) {
+        if(
+            component.minOccurrences && parseInt(component.minOccurrences) >= 0 &&
+            component.maxOccurrences && (parseInt(component.maxOccurrences) >= parseInt(component.minOccurrences) || component.maxOccurrences === "UNBOUNDED")
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private saveOccurrences = () => {
+        if(this.component instanceof FullComponentInstance && this.isOccurrencesFormValid(this.component)) {
+            this.updateComponentInstance(this.component);
+        }
     }
 }
