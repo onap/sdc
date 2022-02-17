@@ -35,6 +35,7 @@ public class ToscaNodeTemplate {
 
     private String type;
     private List<Object> occurrences;
+    private String instance_count;
     private List<String> directives;
     private Map<String, String> metadata;
     private String description;
