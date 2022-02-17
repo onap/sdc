@@ -92,6 +92,61 @@
             </sdc-accordion>
         </ng-container>
         </div>
-    </div>            
+
+        <div *ngIf="isUnboundedChecked != null">
+        <ng-container>
+            <sdc-accordion [title]="component.name + ' Occurrences'" [arrow-direction]="'right'" [testId]="'Occurrences'" [css-class]="'occurrences-accordion'">
+                <div class="i-sdc-designer-sidebar-section-content-item">
+                    <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute">
+                        <checkbox [(checked)]="isOccurrencesEnabled" (change)="enableOccurrences()" [disabled]="isViewOnly"></checkbox>
+                        <div>
+                        <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label"
+                              [ngClass]="{'hand enabled': !isViewOnly}">Enable Occurrences</span>
+                        </div>
+                    </div>
+                    <div *ngIf="isOccurrencesEnabled" class="i-sdc-designer-sidebar-section-content-item-property-and-attribute">
+                        <div class="sdc-input">
+                            <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label">Min Occurrences</span>
+                            <div class="min-occurrences-value">
+                                <sdc-input
+                                    label=""
+                                    testId="reqOccurrencesMin"
+                                    [disabled]="isViewOnly"
+                                    [(value)]="component.minOccurrences"
+                                    type="number">
+                                </sdc-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="isOccurrencesEnabled" class="i-sdc-designer-sidebar-section-content-item-property-and-attribute">
+                        <div class="sdc-input">
+                            <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label">Max Occurrences</span>
+                            <div class="max-occurrences-value">
+                                <sdc-checkbox
+                                        class="checkbox-label unbounded-value"
+                                        testId="reqOccurrencesMaxUnbounded"
+                                        label="Unbounded"
+                                        (checkedChange)="onUnboundedChanged(component)"
+                                        [checked]="isUnboundedChecked"
+                                        [disabled]="isViewOnly">
+                                </sdc-checkbox>
+                                <sdc-input
+                                        *ngIf="!isUnboundedChecked"
+                                        testId="reqOccurrencesMax"
+                                        [disabled]="isViewOnly"
+                                        [(value)]="component.maxOccurrences"
+                                        type="number">
+                                </sdc-input>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="!isViewOnly && isOccurrencesEnabled" class="i-sdc-designer-sidebar-section-content-item-property-and-attribute">
+                        <button class="tlv-btn blue" (click)="saveOccurrences()">Save</button>
+                    </div>
+                </div>
+                </sdc-accordion>
+        </ng-container>
+        </div>
+    </div>
     </content>
 </ng2-expand-collapse>

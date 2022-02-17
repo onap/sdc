@@ -34,6 +34,7 @@ import org.apache.commons.collections.MapUtils;
 public class ToscaNodeTemplate {
 
     private String type;
+    private String[] occurrences;
     private List<String> directives;
     private Map<String, String> metadata;
     private String description;

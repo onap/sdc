@@ -21,6 +21,10 @@
         flex: 0 0 auto;
         align-self: center;
     }
+
+    /deep/ .checkbox-container {
+        margin-right: 10px;
+    }
 }
 
 .i-sdc-designer-sidebar-section-content-item-property-and-attribute-label {
@@ -39,14 +43,12 @@
     display: block;
 }
 
-
-
 /deep/ .expand-collapse-content {
     max-height: max-content;
     padding: 10px 0;
 
     .sdc-accordion .sdc-accordion-header {
-        
+
             background-color: #e6f6fb;
             border-left: solid #009fdb 4px;
             box-shadow: 0 0px 3px -1px rgba(0, 0, 0, 0.3);

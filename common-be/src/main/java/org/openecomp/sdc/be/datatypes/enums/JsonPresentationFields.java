@@ -200,6 +200,8 @@ public enum JsonPresentationFields {
     CI_IS_PROXY("isProxy", null),
     CI_DIRECTIVES("directives", null),
     CI_ARTIFACTS("artifacts", null),
+    CI_MAX_OCCURRENCES("maxOccurrences", null),
+    CI_MIN_OCCURRENCES("minOccurrences", null),
 
     //path
     FORWARDING_PATH("forwardingPath", null),
