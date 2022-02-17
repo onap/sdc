@@ -53,6 +53,8 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
         setDescription(dataDefinition.getDescription());
         setPosX(dataDefinition.getPosX());
         setPosY(dataDefinition.getPosY());
+        setMinOccurrences(dataDefinition.getMinOccurrences());
+        setMaxOccurrences(dataDefinition.getMaxOccurrences());
         setPropertyValueCounter(dataDefinition.getPropertyValueCounter());
         setNormalizedName(dataDefinition.getNormalizedName());
         setOriginType(dataDefinition.getOriginType());
@@ -136,6 +138,22 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
 
     public void setPosY(String posY) {
         setToscaPresentationValue(JsonPresentationFields.CI_POS_Y, posY);
+    }
+
+    public String getMinOccurrences() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.CI_MIN_OCCURRENCES);
+    }
+
+    public void setMinOccurrences(String minOccurrences) {
+        setToscaPresentationValue(JsonPresentationFields.CI_MIN_OCCURRENCES, minOccurrences);
+    }
+
+    public String getMaxOccurrences() {
+        return (String) getToscaPresentationValue(JsonPresentationFields.CI_MAX_OCCURRENCES);
+    }
+
+    public void setMaxOccurrences(String maxOccurrences) {
+        setToscaPresentationValue(JsonPresentationFields.CI_MAX_OCCURRENCES, maxOccurrences);
     }
 
     public String getComponentUid() {
@@ -346,7 +364,8 @@ public class ComponentInstanceDataDefinition extends ToscaDataDefinition {
                 + getAttributeValueCounter() + ", inputValueCounter=" + getInputValueCounter() + ", originType="
                 + getOriginType() + ", customizationUUID=" + getCustomizationUUID() + ", componentName="
                 + getComponentName() + ", componentVersion=" + getComponentVersion() + ", toscaComponentName="
-                + getToscaComponentName() + ", directives =" + getDirectivesString() + "]";
+                + getToscaComponentName() + ", directives =" + getDirectivesString() + ", minOccurrences ="
+                + getMinOccurrences() + ", maxOccurrences =" + getMaxOccurrences() +"]";
     }
 
 }
