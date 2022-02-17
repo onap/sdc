@@ -46,6 +46,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import com.google.common.primitives.Ints;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -912,6 +913,12 @@ public class ToscaExportHandler {
             if (MapUtils.isNotEmpty(componentInstance.getToscaArtifacts())) {
                 nodeTemplate.setArtifacts(convertToNodeTemplateArtifacts(componentInstance.getToscaArtifacts()));
             }
+            if (componentInstance.getMinOccurrences() != null && componentInstance.getMaxOccurrences()!= null){
+                List<Object> occur = new ArrayList<Object>();
+                occur.add(parseToIntIfPossible(componentInstance.getMinOccurrences()));
+                occur.add(parseToIntIfPossible(componentInstance.getMaxOccurrences()));
+                nodeTemplate.setOccurrences(occur);
+            }
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
             nodeTemplate.setNode_filter(convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter()));
@@ -1015,7 +1022,12 @@ public class ToscaExportHandler {
         log.debug("finish convert topology template for {} for type {}", component.getUniqueId(), component.getComponentType());
         return convertNodeTemplatesRes;
     }
-
+  
+    private Object parseToIntIfPossible(final String value) {
+        final Integer intValue = Ints.tryParse(value);
+        return intValue == null ? value : intValue;
+    }
+  
     private void handleInstanceInterfaces(
         Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces,
         ComponentInstance componentInstance, Map<String, DataTypeDefinition> dataTypes, ToscaNodeTemplate nodeTemplate,

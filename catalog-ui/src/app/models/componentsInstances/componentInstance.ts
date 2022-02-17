@@ -94,6 +94,8 @@ export class ComponentInstance implements IComponentInstance{
     public sourceModelName:string;
     public sourceModelUid:string;
     public sourceModelUuid:string;
+    public minOccurrences: string;
+    public maxOccurrences: string;
     //custom properties
     public certified:boolean;
     public iconSprite:string;
@@ -137,6 +139,8 @@ export class ComponentInstance implements IComponentInstance{
             this.originArchived = componentInstance.originArchived;
             this.directives = componentInstance.directives;
             this.interfaces = componentInstance.interfaces;
+            this.minOccurrences = componentInstance.minOccurrences;
+            this.maxOccurrences = componentInstance.maxOccurrences;
         }
     }
 

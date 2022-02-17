@@ -1263,6 +1263,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         oldComponentInstance.setModificationTime(System.currentTimeMillis());
         oldComponentInstance.setCustomizationUUID(UUID.randomUUID().toString());
         oldComponentInstance.setDirectives(newComponentInstance.getDirectives());
+        oldComponentInstance.setMaxOccurrences(newComponentInstance.getMaxOccurrences());
+        oldComponentInstance.setMinOccurrences(newComponentInstance.getMinOccurrences());
         if (oldComponentInstance.getGroupInstances() != null) {
             oldComponentInstance.getGroupInstances().forEach(group -> group.setName(getNewGroupName(oldComponentInstance.getNormalizedName(),
                 ValidationUtils.normalizeComponentInstanceName(newComponentInstance.getName()), group.getName())));
