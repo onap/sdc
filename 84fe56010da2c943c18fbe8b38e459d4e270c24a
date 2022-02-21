@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5aa1bd80_ed7cc062",
+        "filename": "catalog-ui/src/app/ng2/app.module.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-02-21T12:19:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fff7a7d3_66ad331c",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 107,
+        "endChar": 86
+      },
+      "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8b34682e_9830cdda",
         "filename": "catalog-ui/src/app/ng2/components/logic/multi-select/multi-select.component.ts",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f5cb79d_c57e90c6",
+        "filename": "catalog-ui/src/app/ng2/components/logic/multi-select/multi-select.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-02-21T12:19:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b34682e_9830cdda",
+      "range": {
+        "startLine": 30,
+        "startChar": 14,
+        "endLine": 30,
+        "endChar": 44
+      },
+      "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "f77501d2_e7ac7929",
+        "filename": "catalog-ui/src/app/ng2/components/logic/multi-select/multi-select.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-02-21T12:19:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7570947_0c535d79",
+      "range": {
+        "startLine": 53,
+        "startChar": 2,
+        "endLine": 53,
+        "endChar": 16
+      },
+      "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c607e612_c8f6fc81",
         "filename": "catalog-ui/src/app/ng2/components/logic/service-dependencies/service-dependencies.component.html",
         "patchSetId": 2
@@ -91,6 +163,30 @@
       "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9836504f_cfbeef3c",
+        "filename": "catalog-ui/src/app/ng2/components/logic/service-dependencies/service-dependencies.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-02-21T12:19:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c607e612_c8f6fc81",
+      "range": {
+        "startLine": 3,
+        "startChar": 3,
+        "endLine": 3,
+        "endChar": 15
+      },
+      "revId": "84fe56010da2c943c18fbe8b38e459d4e270c24a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
