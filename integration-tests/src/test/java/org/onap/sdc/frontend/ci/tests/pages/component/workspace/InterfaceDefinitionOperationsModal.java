@@ -20,6 +20,7 @@
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
 import com.aventstack.extentreports.Status;
+import java.time.Duration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
@@ -27,6 +28,7 @@ import org.onap.sdc.frontend.ci.tests.pages.AbstractPageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * Represents the Composition Interface Operations Modal.
@@ -67,6 +69,9 @@ public class InterfaceDefinitionOperationsModal extends AbstractPageObject {
         fillInputName(interfaceOperationsData.getInputName());
         fillInputValue(interfaceOperationsData.getInputValue());
         clickOnSave();
+        //there is no feedback from the UI to check if the update was successful. Forcing a wait time trying to guarantee that,
+        // although time is never a guarantee in this case.
+        new Actions(webDriver).pause(Duration.ofSeconds(5)).perform();
     }
 
     private void fillDescription(final String description) {
