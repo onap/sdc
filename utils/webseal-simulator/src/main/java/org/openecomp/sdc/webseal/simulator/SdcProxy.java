@@ -146,7 +146,7 @@ public class SdcProxy extends HttpServlet {
         proxy(request, response, MethodEnum.DELETE);
     }
 
-    private synchronized void proxy(HttpServletRequest request, HttpServletResponse response, MethodEnum methodEnum) throws IOException {
+    private void proxy(HttpServletRequest request, HttpServletResponse response, MethodEnum methodEnum) throws IOException {
 
         Map<String, String[]> requestParameters = request.getParameterMap();
         String userIdHeader = getUseridFromRequest(request);
