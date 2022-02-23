@@ -32,6 +32,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.couldNotAcceptPackageNoUploadInProgress;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.vspUploadAlreadyInProgress;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +67,7 @@ import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig;
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.Credentials;
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.EndPoint;
 import org.openecomp.sdc.be.csar.storage.PackageSizeReducer;
+import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -157,6 +160,9 @@ class OrchestrationTemplateCandidateImplTest {
         when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
+        vspUploadStatusDto.setStatus(VspUploadStatus.UPLOADING);
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user)).thenReturn(Optional.of(vspUploadStatusDto));
         Response response = orchestrationTemplateCandidate
             .upload(vspId, versionId, mockAttachment("filename.zip", this.getClass().getResource("/files/sample-signed.zip")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -170,6 +176,9 @@ class OrchestrationTemplateCandidateImplTest {
         when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
+        vspUploadStatusDto.setStatus(VspUploadStatus.UPLOADING);
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user)).thenReturn(Optional.of(vspUploadStatusDto));
         Response response = orchestrationTemplateCandidate.upload(vspId, versionId,
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -192,6 +201,9 @@ class OrchestrationTemplateCandidateImplTest {
         when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
         when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user)).thenReturn(new VspUploadStatusDto());
+        final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
+        vspUploadStatusDto.setStatus(VspUploadStatus.UPLOADING);
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user)).thenReturn(Optional.of(vspUploadStatusDto));
 
         Response response = orchestrationTemplateCandidate.upload(vspId, versionId,
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
@@ -224,6 +236,10 @@ class OrchestrationTemplateCandidateImplTest {
     @Test
     void uploadSignNotValidTest() throws IOException {
         //given
+        final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
+        vspUploadStatusDto.setStatus(VspUploadStatus.UPLOADING);
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user))
+            .thenReturn(Optional.of(vspUploadStatusDto));
         when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(candidateId, versionId, user)).thenReturn(new VspUploadStatusDto());
         //when
         Response response = orchestrationTemplateCandidate
@@ -314,6 +330,8 @@ class OrchestrationTemplateCandidateImplTest {
         //given
         final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
         vspUploadStatusDto.setLockId(UUID.randomUUID());
+        vspUploadStatusDto.setStatus(VspUploadStatus.UPLOADING);
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user)).thenReturn(Optional.of(vspUploadStatusDto));
         when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(candidateId, versionId, user)).thenReturn(vspUploadStatusDto);
         final RuntimeException forcedException = new RuntimeException();
         when(artifactStorageManager.isEnabled()).thenThrow(forcedException);
@@ -327,4 +345,58 @@ class OrchestrationTemplateCandidateImplTest {
         verify(orchestrationTemplateCandidateUploadManager)
             .putUploadAsFinished(candidateId, versionId, vspUploadStatusDto.getLockId(), VspUploadStatus.ERROR, user);
     }
+
+    @Test
+    void uploadTestWithNoUploadInProgress() {
+        //given
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user)).thenReturn(Optional.empty());
+        final Attachment mock = Mockito.mock(Attachment.class);
+        when(mock.getDataHandler()).thenReturn(Mockito.mock(DataHandler.class));
+        //when
+        final CoreException actualException = assertThrows(CoreException.class,
+            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, mock, user));
+        final CoreException expectedException = couldNotAcceptPackageNoUploadInProgress(candidateId, versionId).get();
+        //then
+        assertEquals(expectedException.code().id(), actualException.code().id());
+        assertEquals(expectedException.code().message(), actualException.code().message());
+        verify(orchestrationTemplateCandidateUploadManager).findLatestStatus(candidateId, versionId, user);
+    }
+
+    @Test
+    void uploadTestWithLatestStatusComplete() {
+        final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
+        vspUploadStatusDto.setComplete(true);
+        //given
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user)).thenReturn(Optional.of(vspUploadStatusDto));
+        final Attachment mock = Mockito.mock(Attachment.class);
+        when(mock.getDataHandler()).thenReturn(Mockito.mock(DataHandler.class));
+        //when
+        final CoreException actualException = assertThrows(CoreException.class,
+            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, mock, user));
+        final CoreException expectedException = couldNotAcceptPackageNoUploadInProgress(candidateId, versionId).get();
+        //then
+        assertEquals(expectedException.code().id(), actualException.code().id());
+        assertEquals(expectedException.code().message(), actualException.code().message());
+        verify(orchestrationTemplateCandidateUploadManager).findLatestStatus(candidateId, versionId, user);
+    }
+
+    @Test
+    void uploadTestWithUploadInProgress() {
+        final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
+        vspUploadStatusDto.setComplete(false);
+        vspUploadStatusDto.setStatus(VspUploadStatus.PROCESSING);
+        //given
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user)).thenReturn(Optional.of(vspUploadStatusDto));
+        final Attachment mock = Mockito.mock(Attachment.class);
+        when(mock.getDataHandler()).thenReturn(Mockito.mock(DataHandler.class));
+        //when
+        final CoreException actualException = assertThrows(CoreException.class,
+            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, mock, user));
+        final CoreException expectedException = vspUploadAlreadyInProgress(candidateId, versionId).get();
+        //then
+        assertEquals(expectedException.code().id(), actualException.code().id());
+        assertEquals(expectedException.code().message(), actualException.code().message());
+        verify(orchestrationTemplateCandidateUploadManager).findLatestStatus(candidateId, versionId, user);
+    }
+
 }

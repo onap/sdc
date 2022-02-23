@@ -366,6 +366,16 @@ const SoftwareProductActionHelper = {
         );
     },
 
+    createUploadStatus(vspId, versionId) {
+        const options = {
+            noLoading: true
+        };
+        return RestAPIUtil.post(
+            `${baseUrl()}${vspId}/versions/${versionId}/orchestration-template-candidate/upload`,
+            options
+        );
+    },
+
     loadSoftwareProductAssociatedData(dispatch) {
         fetchSoftwareProductCategories(dispatch);
         fetchModelList(dispatch);

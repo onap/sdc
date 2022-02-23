@@ -44,7 +44,7 @@ public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
     }
 
     public static Supplier<CoreException> vspUploadAlreadyInProgress(final String vspId, final String vspVersionId) {
-        final String errorMsg = String.format("There is a processing in progress for the VSP '%s', version '%s'", vspId, vspVersionId);
+        final String errorMsg = String.format("Upload already in progress for the VSP '%s', version '%s'", vspId, vspVersionId);
         return () -> new CoreException(new ErrorCodeBuilder().withId(VSP_PROCESSING_IN_PROGRESS).withMessage(errorMsg).build());
     }
 
@@ -70,6 +70,12 @@ public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
     public static Supplier<CoreException> couldNotFindLock(final UUID lockId, final String vspId, final String vspVersionId) {
         final String errorMsg = String.format("Could not find lock '%s' for the VSP '%s', version '%s'", lockId, vspId, vspVersionId);
         final ErrorCode errorCode = new ErrorCodeBuilder().withId(VSP_UPLOAD_LOCK_NOT_FOUND_ERROR).withMessage(errorMsg).build();
+        return () -> new CoreException(errorCode);
+    }
+
+    public static Supplier<CoreException> couldNotAcceptPackageNoUploadInProgress(final String vspId, final String vspVersionId) {
+        final String errorMsg = String.format("Could accept package as no upload is in progress for the VSP '%s', version '%s'", vspId, vspVersionId);
+        final ErrorCode errorCode = new ErrorCodeBuilder().withId(VSP_UPLOAD_STATUS_NOT_FOUND_ERROR).withMessage(errorMsg).build();
         return () -> new CoreException(errorCode);
     }
 

@@ -22,6 +22,7 @@ import { onboardingMethod } from '../SoftwareProductConstants.js';
 import ScreensHelper from 'sdc-app/common/helpers/ScreensHelper.js';
 import { enums, screenTypes } from 'sdc-app/onboarding/OnboardingConstants.js';
 import VNFImportActionHelper from '../vnfMarketPlace/VNFImportActionHelper.js';
+import VspUploadStatus from 'sdc-app/onboarding/softwareProduct/landingPage/VspUploadStatus';
 
 export const mapStateToProps = ({
     features,
@@ -120,16 +121,34 @@ const mapActionsToProps = (dispatch, { version }) => {
                 // do nothing by default
             }
         ) => {
-            SoftwareProductActionHelper.uploadFile(dispatch, {
+            SoftwareProductActionHelper.createUploadStatus(
                 softwareProductId,
-                formData,
-                failedNotificationTitle: i18n('Upload validation failed'),
-                version,
-                onUploadProgress
-            }).finally(() => {
-                onUploadFinished();
-            });
-            onUploadStart();
+                version.id
+            )
+                .then(response => {
+                    const vspUploadStatus = new VspUploadStatus(response);
+                    onUploadStart(vspUploadStatus);
+                    SoftwareProductActionHelper.uploadFile(dispatch, {
+                        softwareProductId,
+                        formData,
+                        failedNotificationTitle: i18n(
+                            'Upload validation failed'
+                        ),
+                        version,
+                        onUploadProgress
+                    }).finally(() => {
+                        onUploadFinished();
+                    });
+                })
+                .catch(error => {
+                    dispatch({
+                        type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                        data: {
+                            title: i18n('upload.failed'),
+                            msg: error.message
+                        }
+                    });
+                });
         },
 
         onUploadConfirmation: (
@@ -152,19 +171,39 @@ const mapActionsToProps = (dispatch, { version }) => {
                     confirmationButtonText: i18n('Continue'),
                     title: i18n('Warning'),
                     onConfirmed: () => {
-                        SoftwareProductActionHelper.uploadFile(dispatch, {
+                        SoftwareProductActionHelper.createUploadStatus(
                             softwareProductId,
-                            formData,
-                            failedNotificationTitle: i18n(
-                                'Upload validation failed'
-                            ),
-                            version,
-                            onUploadProgress
-                        }).finally(value => {
-                            console.log('upload finished', value);
-                            onUploadFinished();
-                        });
-                        onUploadStart();
+                            version.id
+                        )
+                            .then(response => {
+                                const vspUploadStatus = new VspUploadStatus(
+                                    response
+                                );
+                                onUploadStart(vspUploadStatus);
+                                SoftwareProductActionHelper.uploadFile(
+                                    dispatch,
+                                    {
+                                        softwareProductId,
+                                        formData,
+                                        failedNotificationTitle: i18n(
+                                            'Upload validation failed'
+                                        ),
+                                        version,
+                                        onUploadProgress
+                                    }
+                                ).finally(() => {
+                                    onUploadFinished();
+                                });
+                            })
+                            .catch(error => {
+                                dispatch({
+                                    type: modalActionTypes.GLOBAL_MODAL_ERROR,
+                                    data: {
+                                        title: i18n('upload.failed'),
+                                        msg: error.message
+                                    }
+                                });
+                            });
                     },
                     onDeclined: () =>
                         dispatch({

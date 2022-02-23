@@ -148,6 +148,7 @@
   "Upload will erase existing data. Do you want to continue?": "Upload will erase existing data. Do you want to continue?",
   "Continue": "Continue",
   "Upload validation failed": "Upload validation failed",
+  "upload.failed": "Upload failed",
   "Download HEAT": "Download HEAT",
   "Go to Overview": "Go to Overview",
   "Upload New HEAT": "Upload New HEAT",

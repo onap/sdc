@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -61,5 +62,19 @@ public interface OrchestrationTemplateCandidateUploadManagerController extends V
     Response getLatestStatus(@Parameter(description = "Vendor Software Product id") @PathParam("vspId") String vspId,
                              @Parameter(description = "Vendor Software Product version id") @PathParam("versionId") String versionId,
                              @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
+
+    /**
+     * Creates the upload lock, setting the status to upload in progress.
+     *
+     * @param vspId     the vsp id
+     * @param versionId the vsp version id
+     * @param user      the username accessing the API
+     * @return if successful, an OK response with the created VspUploadStatus information
+     */
+    @POST
+    @Path("/")
+    Response createUploadLock(@Parameter(description = "Vendor Software Product id") @PathParam("vspId") String vspId,
+                              @Parameter(description = "Vendor Software Product version id") @PathParam("versionId") String versionId,
+                              @NotNull(message = USER_MISSING_ERROR_MSG) @HeaderParam(USER_ID_HEADER_PARAM) String user);
 
 }
