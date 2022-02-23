@@ -32,6 +32,7 @@ import static org.openecomp.sdc.common.errors.Messages.PACKAGE_PROCESS_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -210,7 +211,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             throw new ArtifactStorageException(UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename));
         }
         final ArtifactInfo artifactInfo;
-        try (final InputStream inputStream = Files.newInputStream(tempArtifactPath)) {
+        try (final InputStream inputStream = new FileInputStream(tempArtifactPath.toFile())) {
             artifactInfo = artifactStorageManager.upload(vspId, versionId, inputStream);
         } catch (final Exception e) {
             LOGGER.error("Package Size Reducer not configured", e);

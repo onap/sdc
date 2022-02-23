@@ -179,8 +179,8 @@ class OrchestrationTemplateCandidateImplTest {
     @Test
     void uploadNotSignedArtifactStorageManagerIsEnabledTest() throws IOException {
         when(artifactStorageManager.isEnabled()).thenReturn(true);
-        when(artifactStorageManager.getStorageConfiguration()).thenReturn(
-            new MinIoStorageArtifactStorageConfig(true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath"));
+        when(artifactStorageManager.getStorageConfiguration()).thenReturn(new MinIoStorageArtifactStorageConfig
+            (true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath", 10_000_000));
 
         final Path path = Path.of("src/test/resources/files/sample-not-signed.csar");
         final String vspId = "vspId";

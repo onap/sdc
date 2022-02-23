@@ -495,6 +495,7 @@ public class Configuration extends BasicConfiguration {
         private Endpoint endpoint;
         private Credentials credentials;
         private String tempPath;
+        private int uploadPartSize;
 
         @Getter
         @Setter
