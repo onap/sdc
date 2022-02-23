@@ -30,6 +30,7 @@ import static org.openecomp.sdc.common.errors.Messages.ERROR_HAS_OCCURRED_WHILE_
 import static org.openecomp.sdc.common.errors.Messages.NO_FILE_WAS_UPLOADED_OR_FILE_NOT_EXIST;
 import static org.openecomp.sdc.common.errors.Messages.PACKAGE_PROCESS_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING;
+import static org.openecomp.sdcrests.vsp.rest.exception.OrchestrationTemplateCandidateUploadManagerExceptionSupplier.vspUploadAlreadyInProgress;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -140,7 +141,11 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         final Response response;
         VspUploadStatusDto vspUploadStatus = null;
         try {
-            vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user);
+            vspUploadStatus = getVspUploadStatus(vspId, versionId, user);
+
+            if (vspUploadStatus.getStatus() != VspUploadStatus.UPLOADING) {
+                throw vspUploadAlreadyInProgress(vspId, versionId).get();
+            }
             final byte[] fileToUploadBytes;
             final DataHandler dataHandler = fileToUpload.getDataHandler();
             final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
@@ -191,6 +196,16 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             throw ex;
         }
         return response;
+    }
+
+    private VspUploadStatusDto getVspUploadStatus(final String vspId, final String versionId, final String user) {
+        final Optional<VspUploadStatusDto> vspUploadStatusOpt =
+            orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user);
+        if (vspUploadStatusOpt.isEmpty() || vspUploadStatusOpt.get().isComplete()) {
+            return orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user);
+        }
+
+        return vspUploadStatusOpt.get();
     }
 
     private ArtifactInfo handleArtifactStorage(final String vspId, final String versionId, final String filename,
