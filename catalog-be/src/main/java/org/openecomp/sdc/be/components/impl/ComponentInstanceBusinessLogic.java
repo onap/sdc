@@ -1265,6 +1265,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         oldComponentInstance.setDirectives(newComponentInstance.getDirectives());
         oldComponentInstance.setMaxOccurrences(newComponentInstance.getMaxOccurrences());
         oldComponentInstance.setMinOccurrences(newComponentInstance.getMinOccurrences());
+        oldComponentInstance.setInstanceCount(newComponentInstance.getInstanceCount());
         if (oldComponentInstance.getGroupInstances() != null) {
             oldComponentInstance.getGroupInstances().forEach(group -> group.setName(getNewGroupName(oldComponentInstance.getNormalizedName(),
                 ValidationUtils.normalizeComponentInstanceName(newComponentInstance.getName()), group.getName())));

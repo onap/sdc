@@ -915,6 +915,11 @@ public class ToscaExportHandler {
             if (componentInstance.getMinOccurrences() != null && componentInstance.getMaxOccurrences()!= null){
                 nodeTemplate.setOccurrences(new String[]{componentInstance.getMinOccurrences(), componentInstance.getMaxOccurrences()});
             }
+            Map<String, String> instanceCountMap = new HashMap<>();
+            instanceCountMap.put(GET_INPUT.getFunctionName(), componentInstance.getInstanceCount());
+            if (componentInstance.getInstanceCount() != null){
+                nodeTemplate.setInstance_count(instanceCountMap);
+            }
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
             nodeTemplate.setNode_filter(convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter()));
