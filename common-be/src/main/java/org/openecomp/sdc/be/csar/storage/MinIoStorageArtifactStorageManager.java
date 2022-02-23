@@ -23,18 +23,13 @@ package org.openecomp.sdc.be.csar.storage;
 import static org.openecomp.sdc.common.errors.Messages.EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING;
 
 import io.minio.BucketExistsArgs;
-import io.minio.CopyObjectArgs;
-import io.minio.CopySource;
 import io.minio.GetObjectArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
-import io.minio.MinioClient.Builder;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.Getter;
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.Credentials;
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.EndPoint;
@@ -46,14 +41,16 @@ import org.slf4j.LoggerFactory;
 public class MinIoStorageArtifactStorageManager implements ArtifactStorageManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MinIoStorageArtifactStorageManager.class);
+    private static final String ENDPOINT = "endpoint";
+    private static final String CREDENTIALS = "credentials";
+    private static final String TEMP_PATH = "tempPath";
     private static final String EXTERNAL_CSAR_STORE = "externalCsarStore";
-
     @Getter
     private final MinIoStorageArtifactStorageConfig storageConfiguration;
     private final MinioClient minioClient;
 
     public MinIoStorageArtifactStorageManager() {
-        this.storageConfiguration = readMinIoStorageArtifactStorageConfig();
+        storageConfiguration = readMinIoStorageArtifactStorageConfig();
         minioClient = initMinioClient();
     }
 
@@ -66,32 +63,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
     @Override
     public ArtifactInfo persist(final String vspId, final String versionId, final ArtifactInfo uploadedArtifactInfo) {
         final MinIoArtifactInfo minioObjectTemp = (MinIoArtifactInfo) uploadedArtifactInfo;
-        try {
-            minioClient.getObject(
-                GetObjectArgs.builder()
-                    .bucket(minioObjectTemp.getBucket())
-                    .object(minioObjectTemp.getObjectName())
-                    .build()
-            );
-        } catch (final Exception e) {
-            LOGGER.error("Failed to retrieve uploaded artifact with bucket '{}' and name '{}' while persisting", minioObjectTemp.getBucket(),
-                minioObjectTemp.getObjectName(), e);
-            throw new ArtifactStorageException(
-                String.format("Failed to retrieve uploaded artifact with bucket '%s' and name '%s' while persisting",
-                    minioObjectTemp.getBucket(), minioObjectTemp.getObjectName()), e);
-        }
-
-        final var backupPath = backupPreviousVersion(vspId, versionId).orElse(null);
-        try {
-            moveFile(minioObjectTemp, vspId, versionId);
-        } catch (final Exception e) {
-            rollback(minioObjectTemp, vspId, versionId);
-            LOGGER.error("Could not persist artifact for bucket '{}', object '{}'", vspId, versionId, e);
-            final var errorMsg = String.format("Could not persist artifact for VSP '%s', version '%s'", vspId, versionId);
-            throw new ArtifactStorageException(errorMsg, e);
-        }
-
-        removePreviousVersion(backupPath);
+        LOGGER.debug("PERSIST - bucket: '{}', object: '{}'", minioObjectTemp.getBucket(), minioObjectTemp.getObjectName());
 
         return new MinIoArtifactInfo(vspId, versionId);
     }
@@ -99,7 +71,6 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
     @Override
     public ArtifactInfo upload(final String vspId, final String versionId, final InputStream fileToUpload) {
 
-        final String name = versionId + "--" + UUID.randomUUID();
         try {
             // Make bucket if not exist.
             final boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(vspId).build());
@@ -111,24 +82,25 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
                 LOGGER.info("Bucket '{}' already exists.", vspId);
             }
 
-            put(vspId, name, fileToUpload);
+            put(vspId, versionId, fileToUpload);
 
         } catch (final Exception e) {
-            LOGGER.error("Failed to upload artifact - bucket: '{}', object: '{}'", vspId, name, e);
+            LOGGER.error("Failed to upload artifact - bucket: '{}', object: '{}'", vspId, versionId, e);
             throw new ArtifactStorageException("Failed to upload artifact", e);
         }
 
-        return new MinIoArtifactInfo(vspId, name);
+        return new MinIoArtifactInfo(vspId, versionId);
     }
 
     @Override
     public void put(final String vspId, final String name, final InputStream fileToUpload) {
+        LOGGER.debug("PUT - bucket: '{}', object: '{}'", vspId, name);
         try {
             minioClient.putObject(
                 PutObjectArgs.builder()
                     .bucket(vspId)
                     .object(name)
-                    .stream(fileToUpload, fileToUpload.available(), -1)
+                    .stream(fileToUpload, -1, storageConfiguration.getUploadPartSize())
                     .build()
             );
         } catch (final Exception e) {
@@ -155,6 +127,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
 
     @Override
     public InputStream get(final String bucketID, final String objectID) {
+        LOGGER.debug("GET - bucket: '{}', object: '{}'", bucketID, objectID);
         try {
             return minioClient.getObject(GetObjectArgs.builder()
                 .bucket(bucketID)
@@ -169,6 +142,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
     @Override
     public void delete(final ArtifactInfo artifactInfo) {
         final MinIoArtifactInfo minioObject = (MinIoArtifactInfo) artifactInfo;
+        LOGGER.debug("DELETE - bucket: '{}', object: '{}'", minioObject.getBucket(), minioObject.getObjectName());
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
                 .bucket(minioObject.getBucket())
@@ -182,97 +156,48 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
 
     }
 
-    private Optional<MinIoArtifactInfo> backupPreviousVersion(final String vspId, final String versionId) {
-
-        final String tempName = versionId + "--" + UUID.randomUUID().toString();
-        try {
-            copy(vspId, tempName, versionId);
-        } catch (final Exception e) {
-            LOGGER.error("Failed to copy - bucket: '{}', object: '{}'", vspId, versionId, e);
-            return Optional.empty();
-        }
-
-        return Optional.of(new MinIoArtifactInfo(vspId, tempName));
-    }
-
-    private void rollback(final MinIoArtifactInfo minioObject, final String vspId, final String versionId) {
-        try {
-            moveFile(minioObject, vspId, versionId);
-        } catch (final Exception ex) {
-            LOGGER.warn("Could not rollback the backup '{}' to the original '{}'", versionId, minioObject.getObjectName(), ex);
-        }
-    }
-
-    private void removePreviousVersion(final MinIoArtifactInfo minioObject) {
-        if (minioObject == null) {
-            return;
-        }
-        delete(minioObject);
-    }
-
-    private void moveFile(final MinIoArtifactInfo minioObject, final String vspId, final String versionId) {
-        try {
-            copy(vspId, versionId, minioObject.getObjectName());
-        } catch (final Exception e) {
-            LOGGER.error("Failed to copy - bucket: '{}', object: '{}'", vspId, versionId, e);
-            throw new ArtifactStorageException("Failed to move", e);
-        }
-        delete(minioObject);
-    }
-
-    private void copy(final String vspId, final String versionId, final String objectName) throws Exception {
-        minioClient.copyObject(
-            CopyObjectArgs.builder()
-                .bucket(vspId)
-                .object(versionId)
-                .source(CopySource.builder()
-                    .bucket(vspId)
-                    .object(objectName)
-                    .build())
-                .build());
-    }
-
     private MinIoStorageArtifactStorageConfig readMinIoStorageArtifactStorageConfig() {
         final var commonConfigurationManager = CommonConfigurationManager.getInstance();
 
-        final Map<String, Object> endpoint = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "endpoint", null);
-        final Map<String, Object> credentials = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "credentials", null);
-        final String tempPath = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "tempPath", null);
+        final Map<String, Object> endpoint = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, ENDPOINT, null);
+        final Map<String, Object> creds = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, CREDENTIALS, null);
+        final String tempPath = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, TEMP_PATH, null);
+        final int uploadPartSize = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "uploadPartSize", 50_000_000);
 
         if (endpoint == null) {
-            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("endpoint"));
-            throw new ArtifactStorageException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("endpoint"));
+            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage(ENDPOINT));
+            throw new ArtifactStorageException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage(ENDPOINT));
         }
-        if (credentials == null) {
-            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("credentials"));
-            throw new ArtifactStorageException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("credentials"));
+        if (creds == null) {
+            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage(CREDENTIALS));
+            throw new ArtifactStorageException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage(CREDENTIALS));
         }
         if (tempPath == null) {
-            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("tempPath"));
-            throw new ArtifactStorageException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage("tempPath"));
+            LOGGER.error(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage(TEMP_PATH));
+            throw new ArtifactStorageException(EXTERNAL_CSAR_STORE_CONFIGURATION_FAILURE_MISSING.formatMessage(TEMP_PATH));
         }
         LOGGER.info("ArtifactConfig.endpoint: '{}'", endpoint);
-        LOGGER.info("ArtifactConfig.credentials: '{}'", credentials);
+        LOGGER.info("ArtifactConfig.credentials: '{}'", creds);
         LOGGER.info("ArtifactConfig.tempPath: '{}'", tempPath);
 
         final String host = (String) endpoint.getOrDefault("host", null);
         final int port = (int) endpoint.getOrDefault("port", 0);
         final boolean secure = (boolean) endpoint.getOrDefault("secure", false);
 
-        final String accessKey = (String) credentials.getOrDefault("accessKey", null);
-        final String secretKey = (String) credentials.getOrDefault("secretKey", null);
+        final String accessKey = (String) creds.getOrDefault("accessKey", null);
+        final String secretKey = (String) creds.getOrDefault("secretKey", null);
 
-        return new MinIoStorageArtifactStorageConfig(true, new EndPoint(host, port, secure), new Credentials(accessKey, secretKey), tempPath);
+        return new MinIoStorageArtifactStorageConfig
+            (true, new EndPoint(host, port, secure), new Credentials(accessKey, secretKey), tempPath, uploadPartSize);
     }
 
     private MinioClient initMinioClient() {
-        final EndPoint endPoint = storageConfiguration.getEndPoint();
-        final Credentials credentials = storageConfiguration.getCredentials();
+        final EndPoint storageConfigurationEndPoint = storageConfiguration.getEndPoint();
+        final Credentials storageConfigurationCredentials = storageConfiguration.getCredentials();
 
-        final Builder builder = MinioClient.builder();
-        return builder
-            .endpoint(endPoint.getHost(), endPoint.getPort(), endPoint.isSecure())
-            .credentials(credentials.getAccessKey(), credentials.getSecretKey())
+        return MinioClient.builder()
+            .endpoint(storageConfigurationEndPoint.getHost(), storageConfigurationEndPoint.getPort(), storageConfigurationEndPoint.isSecure())
+            .credentials(storageConfigurationCredentials.getAccessKey(), storageConfigurationCredentials.getSecretKey())
             .build();
     }
 
