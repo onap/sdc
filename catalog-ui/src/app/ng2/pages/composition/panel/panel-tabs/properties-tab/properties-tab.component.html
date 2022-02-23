@@ -93,6 +93,7 @@
         </ng-container>
         </div>
 
+        <!--occurrences-->
         <div *ngIf="isUnboundedChecked != null">
         <ng-container>
             <sdc-accordion [title]="component.name + ' Occurrences'" [arrow-direction]="'right'" [testId]="'Occurrences'" [css-class]="'occurrences-accordion'">
@@ -140,7 +141,20 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="!isViewOnly && isOccurrencesEnabled" class="i-sdc-designer-sidebar-section-content-item-property-and-attribute">
+                    <div *ngIf="isOccurrencesEnabled" class="i-sdc-designer-sidebar-section-content-item-property-and-attribute">
+                        <div class="sdc-input">
+                            <span class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label">Instance Count</span>
+                            <div class="instance-count-value">
+                                <ui-element-dropdown
+                                    [testId]="'instanceCount'"
+                                    class="cell link-selector"
+                                    [values]="selectInputs"
+                                    [(value)]="component.instanceCount">
+                                </ui-element-dropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="!isViewOnly" class="i-sdc-designer-sidebar-section-content-item-property-and-attribute">
                         <button class="tlv-btn blue" (click)="saveOccurrences()" [disabled]="!isOccurrencesFormValid(component)">Save</button>
                     </div>
                 </div>

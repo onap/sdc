@@ -8,7 +8,9 @@ import {
     ComponentMetadata,
     FullComponentInstance,
     PropertiesGroup,
-    PropertyModel
+    PropertyModel,
+    InputsGroup,
+    InputModel
 } from 'app/models';
 import { CompositionService } from 'app/ng2/pages/composition/composition.service';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
@@ -16,6 +18,7 @@ import { GroupByPipe } from 'app/ng2/pipes/groupBy.pipe';
 import { ResourceNamePipe } from 'app/ng2/pipes/resource-name.pipe';
 import { TopologyTemplateService } from 'app/ng2/services/component-services/topology-template.service';
 import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
+import { DropdownValue } from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import { ComponentGenericResponse } from 'app/ng2/services/responses/component-generic-response';
 import { TranslateService } from 'app/ng2/shared/translator/translate.service';
 import { ModalsHandler } from 'app/utils';
@@ -37,6 +40,8 @@ export class PropertiesTabComponent implements OnInit {
     objectKeys = Object.keys;
     isUnboundedChecked: boolean;
     isOccurrencesEnabled: boolean = false;
+    inputs: InputsGroup;
+    selectInputs: DropdownValue[] = [];
     isLoading: boolean;
 
     @Input() isViewOnly: boolean;
@@ -118,12 +123,13 @@ export class PropertiesTabComponent implements OnInit {
     }
 
     private getComponentInstancesPropertiesAndAttributes = () => {
-        this.topologyTemplateService.getComponentInstanceAttributesAndProperties(
+        this.topologyTemplateService.getComponentInstanceAttributesAndPropertiesAndInputs(
             this.workspaceService.metadata.uniqueId,
             this.workspaceService.metadata.componentType)
             .subscribe((genericResponse: ComponentGenericResponse) => {
                 this.compositionService.componentInstancesAttributes = genericResponse.componentInstancesAttributes || new AttributesGroup();
                 this.compositionService.componentInstancesProperties = genericResponse.componentInstancesProperties;
+                this.inputs = genericResponse.inputs;
                 this.initPropertiesAndAttributes();
             });
     }
@@ -188,6 +194,18 @@ export class PropertiesTabComponent implements OnInit {
                 this.isOccurrencesEnabled = true;
             }
             this.isUnboundedChecked = this.component.maxOccurrences == "UNBOUNDED" ? true: false;
+
+            if(!this.component.instanceCount){
+                this.component.instanceCount = "";
+            }
+
+            _.forEach(this.inputs, (input: InputModel) => {
+                if(input.type === "integer"){
+                    this.selectInputs.push(new DropdownValue(input.name, input.name));
+                }
+            });
+
+            this.selectInputs.unshift(new DropdownValue('', 'Select Input...'));
         }
     }
 
@@ -240,6 +258,7 @@ export class PropertiesTabComponent implements OnInit {
             component = new ComponentInstance(updatedComponentInstance);
             this.compositionService.getComponentInstances().find((item) => item.uniqueId === component.uniqueId).maxOccurrences = component.maxOccurrences;
             this.compositionService.getComponentInstances().find((item) => item.uniqueId === component.uniqueId).minOccurrences = component.minOccurrences;
+            this.compositionService.getComponentInstances().find((item) => item.uniqueId === component.uniqueId).instanceCount = component.instanceCount;
             this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
         }, (error:any) => {
             this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
@@ -253,18 +272,20 @@ export class PropertiesTabComponent implements OnInit {
             if(!this.isOccurrencesEnabled){
                 this.component.minOccurrences = null;
                 this.component.maxOccurrences = null;
+                this.component.instanceCount = null;
             } else {
                 this.component.minOccurrences = "1";
                 this.component.maxOccurrences = "1";
             }
-            this.updateComponentInstance(this.component);
         }
     }
 
     private isOccurrencesFormValid(component: FullComponentInstance) {
         if(
-            component.minOccurrences && parseInt(component.minOccurrences) >= 0 &&
-            component.maxOccurrences && (parseInt(component.maxOccurrences) >= parseInt(component.minOccurrences) || component.maxOccurrences === "UNBOUNDED")
+            (component.minOccurrences === null && component.maxOccurrences === null && !component.instanceCount) ||
+            (component.minOccurrences && parseInt(component.minOccurrences) >= 0 && component.maxOccurrences &&
+            (parseInt(component.maxOccurrences) >= parseInt(component.minOccurrences) || component.maxOccurrences === "UNBOUNDED") &&
+            component.instanceCount)
         ) {
             return true;
         } else {
