@@ -55,6 +55,15 @@ public class OrchestrationTemplateCandidateUploadManagerControllerImpl implement
         return Response.ok(vspUploadStatus.get()).build();
     }
 
+    public Response createUploadLock(String vspId, String versionId, String user) {
+        vspId = ValidationUtils.sanitizeInputString(vspId);
+        versionId = ValidationUtils.sanitizeInputString(versionId);
+        user = ValidationUtils.sanitizeInputString(user);
+
+        final VspUploadStatusDto vspUploadStatus = orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user);
+        return Response.status(Status.CREATED).entity(vspUploadStatus).build();
+    }
+
     /**
      * Builds the string representing the get API url.
      *

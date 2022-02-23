@@ -44,7 +44,7 @@ public class OrchestrationTemplateCandidateUploadManagerExceptionSupplier {
     }
 
     public static Supplier<CoreException> vspUploadAlreadyInProgress(final String vspId, final String vspVersionId) {
-        final String errorMsg = String.format("There is a processing in progress for the VSP '%s', version '%s'", vspId, vspVersionId);
+        final String errorMsg = String.format("Upload already in progress for the VSP '%s', version '%s'", vspId, vspVersionId);
         return () -> new CoreException(new ErrorCodeBuilder().withId(VSP_PROCESSING_IN_PROGRESS).withMessage(errorMsg).build());
     }
 

@@ -261,7 +261,10 @@ class SoftwareProductLandingPageView extends React.Component {
         }
     }
 
-    onUploadStart = () => {
+    onUploadStart = vspUploadStatus => {
+        this.setState({
+            uploadStatus: vspUploadStatus
+        });
         this.stopUploadStatusChecking();
         this.showProgressBar();
     };
@@ -324,7 +327,7 @@ class SoftwareProductLandingPageView extends React.Component {
             onUploadConfirmation(
                 currentSoftwareProduct.id,
                 formData,
-                () => this.onUploadStart(),
+                vspUploadStatus => this.onUploadStart(vspUploadStatus),
                 this.onUploadProgress,
                 this.onUploadFinished
             );
@@ -332,7 +335,7 @@ class SoftwareProductLandingPageView extends React.Component {
             onUpload(
                 currentSoftwareProduct.id,
                 formData,
-                () => this.onUploadStart(),
+                vspUploadStatus => this.onUploadStart(vspUploadStatus),
                 this.onUploadProgress,
                 this.onUploadFinished
             );
