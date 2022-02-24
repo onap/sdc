@@ -3,7 +3,9 @@
     "allottedResource",
     "NS",
     "NsVirtualLink",
-    "Sap"
+    "Sap",
+    "asd",
+    "asdInNsd"
   ],
   "nfv_2_7_1": [
     "NfpPositionElement",
