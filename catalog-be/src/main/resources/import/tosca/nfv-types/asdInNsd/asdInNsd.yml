@@ -1,0 +1,54 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+node_types:
+  tosca.nodes.asdInNsd:
+    derived_from: tosca.nodes.nfv.VNF
+    description: "The generic ASD node types for NS requirements. Optional properties are not list here."
+    version: 0.1
+    properties:
+      descriptor_id:
+        type: string # UUID
+        description: Identifier of an ASD. It is in UUID format as specified in RFC 4122
+        required: true
+      descriptor_version:
+        type: string
+        description: Identifies the version of the ASD.
+        required: true
+        default: ""
+      provider:
+        type: string
+        description: Identifies the provider of the ASD
+        required: true
+        default: ""
+      product_name:
+        type: string
+        description: Please use the application_name property
+        required: true
+        default: ""
+      software_version:
+        type: string
+        description: Please use the application_version property
+        required: true
+        default: ""
+      flavour_id:
+        type: string
+        required: true
+        constraints: [ equal: "simple" ]
+        default: "simple"
+      flavour_description:
+        type: string
+        required: true
+        default: ""
+      vnfm_info:
+        type: list
+        required: true
+        entry_schema:
+          type: string
+    requirements:
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinkableTo
+          occurrences: [ 0,0 ]
+      - virtual_links:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinkableTo
+          occurrences: [ 0,UNBOUNDED ]
