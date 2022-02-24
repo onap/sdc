@@ -113,7 +113,9 @@ def get_nfv(base_file_location="/"):
                                    "PonUni",
                                    "OltNni",
                                    "OntNni",
-                                   "Sap"])
+                                   "Sap",
+                                   "ASD",
+                                   "asdInNsd"])
                                    
 def get_nfv_2_7_1(base_file_location="/"):
     return NormativeTypeCandidate(base_file_location + "nfv-types/2.7.1/",

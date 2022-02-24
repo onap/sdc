@@ -1,0 +1,55 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+node_types:
+  tosca.nodes.ASD:
+    derived_from: tosca.nodes.Root
+    description: "The ASD node type"
+    version: 0.1
+    properties:
+      descriptor_id:
+        type: string # UUID
+        required: true
+        description: Identifier of this ASD. It is in UUID format as specified in RFC 4122
+      descriptor_invariant_id:
+        type: string # UUID
+        required: true
+        description: >
+          Identifier of this descriptor in a version independent manner. This attribute
+          is invariant across versions of ASD. It is in UUID format as specified in RFC 4122
+      descriptor_version:
+        type: string
+        required: true
+        description: Identifies the version of the ASD.
+      schema_version:
+        type: string
+        required: true
+        description: Identifies the Identifies the version of this ASD’s schema.
+      function_description:
+        type: string
+        required: false
+        description: Description of the application service described by this ASD.
+      provider:
+        type: string
+        required: true
+        description: Identifies the provider of the ASD.
+      application_name:
+        type: string
+        required: true
+        description: Name to identify the application service described by this ASD
+      application_version:
+        type: string
+        required: true
+        description: Identifies the version of the application service described by this ASD.
+      ext_cpds:
+        type: list
+        required: false
+        entry_schema:
+          type: tosca.datatypes.ASD.extCpdData
+        description: >
+          Describes the externally exposed connection points of the application
+          service described by this ASD
+      enhanced_cluster_capabilities:
+        type: tosca.datatypes.ASD.enhancedClusterCapabilities
+        required: false
+        description: >
+          A list of  expected capabilities of the target Kubernetes cluster to aid
+          placement of the application service on a suitable cluster.
