@@ -33,8 +33,7 @@ import org.slf4j.LoggerFactory;
 public abstract class SSLProxyServlet extends ProxyServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final int TIMEOUT = 600000;
-    private static Logger log = LoggerFactory.getLogger(SSLProxyServlet.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(SSLProxyServlet.class);
 
     @Override
     protected HttpClient createHttpClient() throws ServletException {
@@ -42,17 +41,19 @@ public abstract class SSLProxyServlet extends ProxyServlet {
             .getConfiguration();
         boolean isSecureClient = !config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName());
         HttpClient client = (isSecureClient) ? getSecureHttpClient() : super.createHttpClient();
-        setTimeout(TIMEOUT);
-        client.setIdleTimeout(TIMEOUT);
-        client.setStopTimeout(TIMEOUT);
+        int requestTimeout = config.getRequestTimeout() * 1000;
+        if (requestTimeout == 0) {
+            requestTimeout = 1200_000;
+        }
+        setTimeout(requestTimeout);
+        client.setIdleTimeout(requestTimeout);
+        client.setStopTimeout(requestTimeout);
         return client;
     }
 
     private HttpClient getSecureHttpClient() throws ServletException {
-        // Instantiate and configure the SslContextFactory
-        SslContextFactory sslContextFactory = new SslContextFactory(true);
         // Instantiate HttpClient with the SslContextFactory
-        HttpClient httpClient = new HttpClient(sslContextFactory);
+        final var httpClient = new HttpClient(new SslContextFactory.Client(true));
         // Configure HttpClient, for example:
         httpClient.setFollowRedirects(false);
         // Start HttpClient
