@@ -19,21 +19,21 @@
  */
 package org.openecomp.sdc.common;
 
-import org.onap.sdc.tosca.services.YamlUtil;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import org.onap.sdc.tosca.services.YamlUtil;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
 
 /**
- * This is a common class that can access the config file given in input to the JVM with the parameter
- * -Dconfiguration.yaml=file.yaml.
+ * This is a common class that can access the config file given in input to the JVM with the parameter -Dconfiguration.yaml=file.yaml.
  */
 public class CommonConfigurationManager {
+
     public static final String JVM_PARAM_CONFIGURATION_FILE = "configuration.yaml";
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonConfigurationManager.class);
     private static CommonConfigurationManager singletonInstance;
@@ -55,6 +55,10 @@ public class CommonConfigurationManager {
             singletonInstance = new CommonConfigurationManager();
         }
         return singletonInstance;
+    }
+
+    public void reload() {
+        initConfiguration();
     }
 
     private void initConfiguration() {
@@ -106,7 +110,7 @@ public class CommonConfigurationManager {
         Map<String, Object> section = this.configuration.get(yamlSection);
         if (section == null) {
             LOGGER.error("Section " + yamlSection + " is missing in configuration file '" + configFilename +
-                    "'. Using defaults");
+                "'. Using defaults");
             return defaultValue;
         }
         Object value = section.get(name);
@@ -114,15 +118,14 @@ public class CommonConfigurationManager {
             return value == null ? defaultValue : (T) value;
         } catch (ClassCastException e) {
             LOGGER.warn(
-                    String.format("Failed to read configuration property '%s' as requested type. Using default '%s'",
-                            name, defaultValue), e);
+                String.format("Failed to read configuration property '%s' as requested type. Using default '%s'",
+                    name, defaultValue), e);
             return defaultValue;
         }
     }
 
     /**
-     * This method can be used to access a specific configuration parameter in the configuration in the
-     * yamlSection predefined in the constructor.
+     * This method can be used to access a specific configuration parameter in the configuration in the yamlSection predefined in the constructor.
      *
      * @param name         The name of the config
      * @param defaultValue A default value
