@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2999c4d1_efd9519f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/ToscaNodeTemplate.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-24T13:10:54Z",
+      "side": 1,
+      "message": "use a List\u003cObject\u003e instead, where  a value is numeric it should be added as an integer rather  than a string",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 33
+      },
+      "revId": "85ba75a7de25a1b939baef38a084fc2e78dc6b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0caadc74_598df19d",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/panel/panel-tabs/properties-tab/properties-tab.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-24T13:10:54Z",
+      "side": 1,
+      "message": "The ui does not wait for the result when the call is in operation - take a look at setting directives as example.\nAlso",
+      "range": {
+        "startLine": 236,
+        "startChar": 0,
+        "endLine": 236,
+        "endChar": 123
+      },
+      "revId": "85ba75a7de25a1b939baef38a084fc2e78dc6b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3be7b324_621e573d",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/panel/panel-tabs/properties-tab/properties-tab.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-24T13:10:54Z",
+      "side": 1,
+      "message": "maybe set the default to 1 for both min and max, so by default the behaviour doesnt change",
+      "range": {
+        "startLine": 251,
+        "startChar": 0,
+        "endLine": 251,
+        "endChar": 52
+      },
+      "revId": "85ba75a7de25a1b939baef38a084fc2e78dc6b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "844f76d3_3e96752c",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/panel/panel-tabs/properties-tab/properties-tab.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-02-24T13:10:54Z",
+      "side": 1,
+      "message": "If these checks fail then no indication is given to the user",
+      "range": {
+        "startLine": 260,
+        "startChar": 61,
+        "endLine": 261,
+        "endChar": 178
+      },
+      "revId": "85ba75a7de25a1b939baef38a084fc2e78dc6b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
