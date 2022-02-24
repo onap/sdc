@@ -31,6 +31,7 @@ public class MinIoStorageArtifactStorageConfig implements ArtifactStorageConfig 
     private final EndPoint endPoint;
     private final Credentials credentials;
     private final String tempPath;
+    private final int uploadPartSize;
 
     @AllArgsConstructor
     @Getter
