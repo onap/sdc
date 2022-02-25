@@ -15,10 +15,16 @@
  */
 package org.openecomp.sdc.tosca.services.impl;
 
+import static org.openecomp.sdc.tosca.csar.CSARConstants.MAIN_SERVICE_TEMPLATE_MF_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.CSARConstants.TOSCA_META_ORIG_PATH_FILE_NAME;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.ENTRY_DEFINITION_TYPE;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryAsd.ETSI_ENTRY_MANIFEST;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion251.ENTRY_MANIFEST;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CREATED_BY_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CSAR_VERSION_ENTRY;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ENTRY_DEFINITIONS;
 import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.TOSCA_META_FILE_VERSION_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetadataFileInfo.TOSCA_META_PATH_FILE_NAME;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -36,6 +42,10 @@ import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AsdManifestOnboarding;
+import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.OnboardingToscaMetadata;
+import org.openecomp.sdc.tosca.csar.ToscaMetadata;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.exceptions.CsarCreationErrorBuilder;
 import org.openecomp.sdc.tosca.exceptions.CsarMissingEntryPointErrorBuilder;
@@ -69,7 +79,7 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
             if (toscaServiceModel.getEntryDefinitionServiceTemplate() == null) {
                 throw new CoreException(new CsarMissingEntryPointErrorBuilder().build());
             }
-            createAndPackToscaMetaFile(zos, toscaServiceModel.getEntryDefinitionServiceTemplate());
+            createAndPackToscaMetaFile(zos, toscaServiceModel.getEntryDefinitionServiceTemplate(), hasAsdMetadata(artifactFiles));
             if (externalArtifacts != null) {
                 packExternalArtifacts(zos, externalArtifacts);
             }
@@ -92,8 +102,9 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         return ARTIFACTS_FOLDER_NAME;
     }
 
-    private void createAndPackToscaMetaFile(ZipOutputStream zos, String entryDefinitionsFileName) throws IOException {
+    private void createAndPackToscaMetaFile(ZipOutputStream zos, String entryDefinitionsFileName, boolean isAsdPackage) throws IOException {
         String metaFile = createMetaFile(entryDefinitionsFileName);
+        metaFile += isAsdPackage ? System.lineSeparator() + ENTRY_DEFINITION_TYPE.getName() + META_FILE_DELIMITER + SPACE + "asd" : "";
         zos.putNextEntry(new ZipEntry(TOSCA_META_FOLDER_NAME + FILE_SEPARATOR + TOSCA_META_FILE_NAME));
         writeBytesToZip(zos, new ByteArrayInputStream(metaFile.getBytes()));
     }
@@ -144,5 +155,67 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         if (is != null) {
             IOUtils.copy(is, zos);
         }
+    }
+
+    private boolean hasAsdMetadata(final FileContentHandler fileContentHandler) throws IOException {
+        if (null == fileContentHandler) {
+            return false;
+        }
+        final Manifest manifest = loadAsdManifest(fileContentHandler);
+        return null != manifest ? manifest.getMetadata().entrySet().stream()
+                .filter(manifestEntry -> ENTRY_DEFINITION_TYPE.getName().equalsIgnoreCase(manifestEntry.getKey()))
+                .findFirst().isPresent():false;
+    }
+
+    private Manifest loadAsdManifest(final FileContentHandler handler) throws IOException {
+        final Manifest manifest;
+        try {
+            manifest = getAsdManifest(handler);
+        } catch (final IOException ex) {
+            if (logger.isErrorEnabled()) {
+                logger.error("An error occurred while getting the manifest file", ex);
+            }
+            throw ex;
+        }
+        return manifest;
+    }
+
+    private Manifest getAsdManifest(FileContentHandler handler) throws IOException {
+        ToscaMetadata metadata = getAsdMetadata(handler);
+        return null != metadata ? getAsdManifest(handler, getEntryManifestLocation(metadata)) : null;
+    }
+
+    private ToscaMetadata getAsdMetadata(FileContentHandler handler) throws IOException {
+        ToscaMetadata metadata = null;
+        if (handler.containsFile(TOSCA_META_PATH_FILE_NAME)) {
+            metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_PATH_FILE_NAME));
+        } else if (handler.containsFile(TOSCA_META_ORIG_PATH_FILE_NAME)) {
+            metadata = OnboardingToscaMetadata.parseToscaMetadataFile(handler.getFileContentAsStream(TOSCA_META_ORIG_PATH_FILE_NAME));
+        }
+        return metadata;
+    }
+
+    private String getEntryManifestLocation(final ToscaMetadata metadata) {
+        return metadata.getMetaEntries().containsKey(ETSI_ENTRY_MANIFEST.getName()) ?
+                metadata.getMetaEntries().get(ETSI_ENTRY_MANIFEST.getName()):
+                metadata.getMetaEntries().get(ENTRY_MANIFEST.getName());
+    }
+
+    private Manifest getAsdManifest(FileContentHandler handler, String manifestLocation) throws IOException {
+        try (InputStream manifestInputStream = getAsdManifestInputStream(handler, manifestLocation)) {
+            Manifest onboardingManifest = new AsdManifestOnboarding();
+            onboardingManifest.parse(manifestInputStream);
+            return onboardingManifest;
+        }
+    }
+
+    private InputStream getAsdManifestInputStream(FileContentHandler handler, String manifestLocation) throws IOException {
+        InputStream io;
+        if (manifestLocation == null || !handler.containsFile(manifestLocation)) {
+            io = handler.getFileContentAsStream(MAIN_SERVICE_TEMPLATE_MF_FILE_NAME);
+        } else {
+            io = handler.getFileContentAsStream(manifestLocation);
+        }
+        return io;
     }
 }
