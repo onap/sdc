@@ -72,8 +72,8 @@ class MinIoStorageArtifactStorageManagerTest {
                 .build()
             ).thenReturn(minioClient);
 
-            testSubject = new MinIoStorageArtifactStorageManager(
-                new MinIoStorageArtifactStorageConfig(true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), ""));
+            testSubject = new MinIoStorageArtifactStorageManager(new MinIoStorageArtifactStorageConfig
+                (true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "", 10_000_000));
         }
     }
 
@@ -91,7 +91,7 @@ class MinIoStorageArtifactStorageManagerTest {
         Assertions.assertNotNull(result);
         Assertions.assertTrue(result instanceof MinIoArtifactInfo);
         Assertions.assertEquals(VSP_ID, ((MinIoArtifactInfo) result).getBucket());
-        Assertions.assertTrue(((MinIoArtifactInfo) result).getObjectName().startsWith(VERSION_ID + "--"));
+        Assertions.assertTrue(((MinIoArtifactInfo) result).getObjectName().startsWith(VERSION_ID));
     }
 
     @Test

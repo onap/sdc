@@ -32,6 +32,7 @@ import static org.openecomp.sdc.common.errors.Messages.PACKAGE_PROCESS_ERROR;
 import static org.openecomp.sdc.common.errors.Messages.UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -102,6 +103,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     private final VendorSoftwareProductManager vendorSoftwareProductManager;
     private final ActivityLogManager activityLogManager;
     private final ArtifactStorageManager artifactStorageManager;
+    private final StorageFactory storageFactory;
     private final PackageSizeReducer packageSizeReducer;
     private final OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager;
 
@@ -111,7 +113,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
         this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
         LOGGER.info("Instantiating artifactStorageManager");
-        final StorageFactory storageFactory = new StorageFactory();
+        this.storageFactory = new StorageFactory();
         this.artifactStorageManager = storageFactory.createArtifactStorageManager();
         LOGGER.info("Instantiating packageSizeReducer");
         this.packageSizeReducer = storageFactory.createPackageSizeReducer().orElse(null);
@@ -129,12 +131,14 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         this.vendorSoftwareProductManager = vendorSoftwareProductManager;
         this.activityLogManager = activityLogManager;
         this.artifactStorageManager = artifactStorageManager;
+        this.storageFactory = new StorageFactory();
         this.packageSizeReducer = packageSizeReducer;
         this.orchestrationTemplateCandidateUploadManager = orchestrationTemplateCandidateUploadManager;
     }
 
     @Override
     public Response upload(String vspId, String versionId, final Attachment fileToUpload, final String user) {
+        LOGGER.debug("STARTED -> OrchestrationTemplateCandidateImpl.upload");
         vspId = ValidationUtils.sanitizeInputString(vspId);
         versionId = ValidationUtils.sanitizeInputString(versionId);
         final Response response;
@@ -145,6 +149,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             final DataHandler dataHandler = fileToUpload.getDataHandler();
             final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
             ArtifactInfo artifactInfo = null;
+            final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
             if (artifactStorageManager.isEnabled()) {
                 artifactInfo = handleArtifactStorage(vspId, versionId, filename, dataHandler);
                 fileToUploadBytes = artifactInfo.getBytes();
@@ -190,6 +195,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             }
             throw ex;
         }
+        LOGGER.debug("FINISHED -> OrchestrationTemplateCandidateImpl.upload");
         return response;
     }
 
@@ -202,22 +208,26 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             final Path folder = Path.of(storageConfiguration.getTempPath()).resolve(vspId).resolve(versionId);
             tempArtifactPath = folder.resolve(UUID.randomUUID().toString());
             Files.createDirectories(folder);
+            LOGGER.debug("STARTED -> Transfer to '{}'", tempArtifactPath.toString());
             try (final InputStream packageInputStream = artifactDataHandler.getInputStream();
                 final var fileOutputStream = new FileOutputStream(tempArtifactPath.toFile())) {
                 packageInputStream.transferTo(fileOutputStream);
             }
+            LOGGER.debug("FINISHED -> Transfer to '{}'", tempArtifactPath.toString());
         } catch (final Exception e) {
             throw new ArtifactStorageException(UNEXPECTED_PROBLEM_HAPPENED_WHILE_GETTING.formatMessage(filename));
         }
         final ArtifactInfo artifactInfo;
-        try (final InputStream inputStream = Files.newInputStream(tempArtifactPath)) {
+        try (final InputStream inputStream = new FileInputStream(tempArtifactPath.toFile())) {
             artifactInfo = artifactStorageManager.upload(vspId, versionId, inputStream);
         } catch (final Exception e) {
             LOGGER.error("Package Size Reducer not configured", e);
             throw new ArtifactStorageException(ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename));
         }
         try {
+            LOGGER.debug("STARTED -> reducing '{}'", tempArtifactPath.toString());
             artifactInfo.setBytes(packageSizeReducer.reduce(tempArtifactPath));
+            LOGGER.debug("FINISHED -> reducing '{}'", tempArtifactPath.toString());
             Files.delete(tempArtifactPath);
         } catch (final Exception e) {
             LOGGER.error("Package Size Reducer not configured", e);

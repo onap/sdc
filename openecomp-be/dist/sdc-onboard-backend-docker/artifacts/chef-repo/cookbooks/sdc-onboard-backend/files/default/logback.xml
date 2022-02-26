@@ -211,4 +211,5 @@
     </root>
 
     <logger name="org.openecomp.sdc" level="INFO"/>
+    <logger name="org.openecomp.sdcrests" level="INFO"/>
 </configuration>

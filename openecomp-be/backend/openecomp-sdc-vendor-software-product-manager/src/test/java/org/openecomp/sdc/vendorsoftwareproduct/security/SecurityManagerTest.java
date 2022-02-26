@@ -180,6 +180,7 @@ class SecurityManagerTest {
                 when(commonConfigurationManager.getConfigValue("externalCsarStore", "credentials", null)).thenReturn(credentials);
                 when(commonConfigurationManager.getConfigValue("externalCsarStore", "tempPath", null)).thenReturn("cert/2-file-signed-package");
                 when(commonConfigurationManager.getConfigValue(eq("externalCsarStore"), eq("storageType"), any())).thenReturn(MINIO.name());
+                when(commonConfigurationManager.getConfigValue(eq("externalCsarStore"), eq("uploadPartSize"), any())).thenReturn(50_000_000);
 
                 prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
                 byte[] fileToUploadBytes = readAllBytes("/cert/2-file-signed-package/2-file-signed-package.zip");
@@ -248,6 +249,7 @@ class SecurityManagerTest {
                 when(commonConfigurationManager.getConfigValue("externalCsarStore", "credentials", null)).thenReturn(credentials);
                 when(commonConfigurationManager.getConfigValue("externalCsarStore", "tempPath", null)).thenReturn("tempPath");
                 when(commonConfigurationManager.getConfigValue(eq("externalCsarStore"), eq("storageType"), any())).thenReturn(MINIO.name());
+                when(commonConfigurationManager.getConfigValue(eq("externalCsarStore"), eq("uploadPartSize"), any())).thenReturn(50_000_000);
 
                 prepareCertFiles("/cert/rootCA.cert", cerDirPath + "root.cert");
                 byte[] fileToUploadBytes = readAllBytes("/cert/3-file-signed-package/3-file-signed-package.zip");
