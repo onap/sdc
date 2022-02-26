@@ -65,6 +65,7 @@ import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig;
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.Credentials;
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.EndPoint;
 import org.openecomp.sdc.be.csar.storage.PackageSizeReducer;
+import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
 import org.openecomp.sdc.vendorsoftwareproduct.OrchestrationTemplateCandidateManager;
@@ -100,6 +101,10 @@ class OrchestrationTemplateCandidateImplTest {
     private PackageSizeReducer packageSizeReducer;
     @Mock
     private OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager;
+    @Mock
+    private StorageFactory storageFactory;
+    @Mock
+    private Attachment fileToUpload;
     @InjectMocks
     private OrchestrationTemplateCandidateImpl orchestrationTemplateCandidate;
 
@@ -178,9 +183,10 @@ class OrchestrationTemplateCandidateImplTest {
 
     @Test
     void uploadNotSignedArtifactStorageManagerIsEnabledTest() throws IOException {
+        when(storageFactory.createArtifactStorageManager()).thenReturn(artifactStorageManager);
         when(artifactStorageManager.isEnabled()).thenReturn(true);
-        when(artifactStorageManager.getStorageConfiguration()).thenReturn(
-            new MinIoStorageArtifactStorageConfig(true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath"));
+        when(artifactStorageManager.getStorageConfiguration()).thenReturn(new MinIoStorageArtifactStorageConfig
+            (true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath", 10_000_000));
 
         final Path path = Path.of("src/test/resources/files/sample-not-signed.csar");
         final String vspId = "vspId";
@@ -316,12 +322,10 @@ class OrchestrationTemplateCandidateImplTest {
         vspUploadStatusDto.setLockId(UUID.randomUUID());
         when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(candidateId, versionId, user)).thenReturn(vspUploadStatusDto);
         final RuntimeException forcedException = new RuntimeException();
-        when(artifactStorageManager.isEnabled()).thenThrow(forcedException);
-        final Attachment mock = Mockito.mock(Attachment.class);
-        when(mock.getDataHandler()).thenReturn(Mockito.mock(DataHandler.class));
+        when(fileToUpload.getDataHandler()).thenThrow(forcedException);
         //when
         final RuntimeException actualException = assertThrows(RuntimeException.class,
-            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, mock, user));
+            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, fileToUpload, user));
         //then
         assertEquals(forcedException, actualException);
         verify(orchestrationTemplateCandidateUploadManager)

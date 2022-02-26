@@ -224,4 +224,3 @@
 
         <logger name="org.openecomp.sdc" level="INFO" />
 </configuration>
-
