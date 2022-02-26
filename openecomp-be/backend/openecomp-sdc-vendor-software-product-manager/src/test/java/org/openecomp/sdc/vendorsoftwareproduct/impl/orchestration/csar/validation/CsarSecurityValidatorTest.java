@@ -150,6 +150,7 @@ class CsarSecurityValidatorTest {
                 when(commonConfigurationManager.getConfigValue("externalCsarStore", "credentials", null)).thenReturn(credentials);
                 when(commonConfigurationManager.getConfigValue("externalCsarStore", "tempPath", null)).thenReturn("cert/2-file-signed-package");
                 when(commonConfigurationManager.getConfigValue(eq("externalCsarStore"), eq("storageType"), any())).thenReturn(MINIO.name());
+                when(commonConfigurationManager.getConfigValue(eq("externalCsarStore"), eq("uploadPartSize"), any())).thenReturn(50_000_000);
 
                 final byte[] packageBytes = getFileBytesOrFail("signed-package-tampered-data.zip");
 

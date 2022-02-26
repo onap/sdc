@@ -60,6 +60,7 @@ public class StorageFactory {
 
     private StorageType getConfiguredArtifactStorageType() {
         final var commonConfigurationManager = CommonConfigurationManager.getInstance();
+        commonConfigurationManager.reload();
         final String storageType = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "storageType", NONE.name());
         LOGGER.info("ArtifactConfig.storageType: '{}'", storageType);
         return findByName(storageType);

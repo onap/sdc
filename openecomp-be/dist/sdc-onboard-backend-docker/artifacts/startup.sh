@@ -7,6 +7,7 @@ JAVA_OPTIONS="$JAVA_OPTIONS \
             -Dlogback.configurationFile=$JETTY_BASE/config/onboarding-be/logback.xml \
             -Dconfiguration.yaml=$JETTY_BASE/config/onboarding-be/onboarding_configuration.yaml \
             -Dfeatures.properties=$JETTY_BASE/config/onboarding-be/features.properties \
+            -XX:+HeapDumpOnOutOfMemoryError \
             -Dconfig.location=$JETTY_BASE/config/onboarding-be/."
 
 cd $JETTY_BASE

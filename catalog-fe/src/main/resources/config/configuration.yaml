@@ -20,7 +20,7 @@ beSslPort: 8443
 threadpoolSize: 50
 
 # request processing timeout (seconds)
-requestTimeout: 10
+requestTimeout: 1200
 
 # catalog ms (the host-port values need to be changed once it is deployed)
 catalogFacadeMs:
