@@ -3748,9 +3748,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (newResource.getResourceType().isAtomicType() && !newResource.getName().equals("Root")
             && newResource.getResourceType() != ResourceTypeEnum.CVFC) {
             ResourceTypeEnum updatedResourceType = newResource.getResourceType();
-            Component derivedFromResource = getParentComponent(newResource);
-            if (derivedFromResource.getComponentType() == ComponentTypeEnum.RESOURCE) {
-                Resource parentResource = (Resource) derivedFromResource;
+            Optional<Component> derivedFromResourceOptional = getParentComponent(newResource);
+            if (derivedFromResourceOptional.isPresent() && derivedFromResourceOptional.get().getComponentType() == ComponentTypeEnum.RESOURCE) {
+                Resource parentResource = (Resource) derivedFromResourceOptional.get();
                 if (!(parentResource.isAbstract() && (ResourceTypeEnum.VFC == parentResource.getResourceType()
                     || ResourceTypeEnum.ABSTRACT == parentResource.getResourceType())) && parentResource.getResourceType() != updatedResourceType
                     && oldResource.getResourceType() != updatedResourceType) {
@@ -3765,7 +3765,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Component getParentComponent(Resource newResource) {
+    private Optional<Component> getParentComponent(Resource newResource) {
+        if (newResource.getDerivedFrom() == null) {
+            return Optional.empty();
+        }
         String toscaResourceNameDerivedFrom = newResource.getDerivedFrom().get(0);
         Either<Component, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade
             .getLatestByToscaResourceName(toscaResourceNameDerivedFrom, newResource.getModel());
@@ -3775,7 +3778,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.debug("#mergeOldResourceMetadataWithNew - derived from resource {} not found", toscaResourceNameDerivedFrom);
             throw new ByActionStatusComponentException(ActionStatus.RESOURCE_NOT_FOUND, toscaResourceNameDerivedFrom);
         }
-        return latestByToscaResourceName.left().value();
+        return Optional.of(latestByToscaResourceName.left().value());
     }
 
     private Resource prepareResourceForUpdate(Resource oldResource, Resource newResource, User user, boolean inTransaction, boolean needLock) {
