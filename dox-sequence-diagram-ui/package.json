@@ -53,6 +53,9 @@
         "webpack-cli": "^3.3.12",
         "webpack-dev-server": "^3.1.2"
     },
+    "resolutions": {
+        "sockjs-client": "1.5.2"
+    },
     "engines": {
         "node": ">=8.0.0",
         "npm": ">=5.0.0",
