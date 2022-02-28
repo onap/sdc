@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43afbde5_513a4682",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-02-28T20:37:00Z",
+      "side": 1,
+      "message": "remove it",
+      "range": {
+        "startLine": 135,
+        "startChar": 82,
+        "endLine": 135,
+        "endChar": 83
+      },
+      "revId": "bcc015a214fe2190efc62749880723985475cd1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31e9c9dd_ffef73eb",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-02-28T20:37:00Z",
+      "side": 1,
+      "message": "simplify\n\n         final var match \u003d getVspList(null, ItemStatus.ARCHIVED.name(), user).stream().anyMatch(item -\u003e item.getId().equals(vspId));\n            if (match) {",
+      "range": {
+        "startLine": 282,
+        "startChar": 12,
+        "endLine": 284,
+        "endChar": 42
+      },
+      "revId": "bcc015a214fe2190efc62749880723985475cd1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
