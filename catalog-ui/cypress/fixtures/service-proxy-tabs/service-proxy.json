@@ -42,7 +42,7 @@
       "artifactVersion": "0",
       "empty": false
     },
-    "controlloopfunctions": {
+    "automationcompositionfunctions": {
       "duplicated": false,
       "creationDate": 1564291546187,
       "timeout": 0,
@@ -52,11 +52,11 @@
       "updaterFullName": "Carlos Santana",
       "lastUpdateDate": 1564291546187,
       "generated": false,
-      "uniqueId": "241a0305-4f6b-4796-ba27-bbb12558753f.controlloopfunctions",
+      "uniqueId": "241a0305-4f6b-4796-ba27-bbb12558753f.automationcompositionfunctions",
       "artifactType": "OTHER",
       "creatorFullName": "Carlos Santana",
-      "artifactDisplayName": "Control Loop Functions",
-      "artifactLabel": "controlloopfunctions",
+      "artifactDisplayName": "Automation Composition Functions",
+      "artifactLabel": "automationcompositionfunctions",
       "artifactGroupType": "INFORMATIONAL",
       "mandatory": true,
       "isFromCsar": false,
@@ -2944,7 +2944,7 @@
   "conformanceLevel": "9.0",
   "lastUpdateDate": 1564567405383,
   "allArtifacts": {
-    "controlloopfunctions": {
+    "automationcompositionfunctions": {
       "duplicated": false,
       "creationDate": 1564291546187,
       "timeout": 0,
@@ -2954,11 +2954,11 @@
       "updaterFullName": "Carlos Santana",
       "lastUpdateDate": 1564291546187,
       "generated": false,
-      "uniqueId": "241a0305-4f6b-4796-ba27-bbb12558753f.controlloopfunctions",
+      "uniqueId": "241a0305-4f6b-4796-ba27-bbb12558753f.automationcompositionfunctions",
       "artifactType": "OTHER",
       "creatorFullName": "Carlos Santana",
-      "artifactDisplayName": "Control Loop Functions",
-      "artifactLabel": "controlloopfunctions",
+      "artifactDisplayName": "Automation Composition Functions",
+      "artifactLabel": "automationcompositionfunctions",
       "artifactGroupType": "INFORMATIONAL",
       "mandatory": true,
       "isFromCsar": false,

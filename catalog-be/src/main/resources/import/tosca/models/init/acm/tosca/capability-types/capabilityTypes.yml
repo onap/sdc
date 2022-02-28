@@ -1,0 +1,5 @@
+tosca.capabilities.Root:
+  description: The TOSCA root Capability Type all other TOSCA base Capability Types derive from
+  
+tosca.capabilities.Node:
+  derived_from: tosca.capabilities.Root
