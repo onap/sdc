@@ -31,9 +31,9 @@ onap.datatypes.ToscaConceptIdentifier:
     version:
       type: string
       required: true
-onap.datatype.controlloop.Target:
+onap.datatype.acm.Target:
   derived_from: tosca.datatypes.Root
-  description: Definition for a entity in A&AI to perform a control loop operation on
+  description: Definition for a entity in A&AI to perform a automation composition operation on
   properties:
     targetType:
       type: string
@@ -54,7 +54,7 @@ onap.datatype.controlloop.Target:
         clamp_possible_values: 'ClampExecution:CSAR_RESOURCES'
       entry_schema:
         type: string
-onap.datatype.controlloop.Actor:
+onap.datatype.acm.Actor:
   derived_from: tosca.datatypes.Root
   description: An actor/operation/target definition
   properties:
@@ -71,7 +71,7 @@ onap.datatype.controlloop.Actor:
         clamp_possible_values: 'Dictionary:DefaultOperations,ClampExecution:CDS/operation'
       required: true
     target:
-      type: onap.datatype.controlloop.Target
+      type: onap.datatype.acm.Target
       description: The resource the operation should be performed on.
       required: true
     payload:
@@ -82,7 +82,7 @@ onap.datatype.controlloop.Actor:
         clamp_possible_values: 'ClampExecution:CDS/payload'
       entry_schema:
         type: string
-onap.datatype.controlloop.Operation:
+onap.datatype.acm.Operation:
   derived_from: tosca.datatypes.Root
   description: An operation supported by an actor
   properties:
@@ -95,7 +95,7 @@ onap.datatype.controlloop.Operation:
       description: A user-friendly description of the intent for the operation
       required: false
     operation:
-      type: onap.datatype.controlloop.Actor
+      type: onap.datatype.acm.Actor
       description: The definition of the operation to be performed.
       required: true
     timeout:
@@ -381,7 +381,7 @@ onap.datatypes.monitoring.subscription:
   version: 0.0.0
   derived_from: tosca.datatypes.Root
   metadata: {}
-org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.RestRequest:
+org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.RestRequest:
   version: 1.0.0
   derived_from: tosca.datatypes.Root
   properties:
@@ -413,7 +413,7 @@ org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.RestRequest:
       required: true
       constraints: []
       description: THe expected HTTP status code for the REST request
-org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.ConfigurationEntity:
+org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.ConfigurationEntity:
   version: 1.0.0
   derived_from: tosca.datatypes.Root
   properties:
@@ -422,11 +422,11 @@ org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.Configuration
       typeVersion: 1.0.0
       required: true
       description: The name and version of a Configuration Entity to be handled by the HTTP
-        Control Loop Element
+        Automation Composition Element
     restSequence:
       type: list
       entry_schema:
-        type: org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.RestRequest
+        type: org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.RestRequest
         typeVersion: 1.0.0
         constraints: []
       description: A sequence of REST commands to send to the REST endpoint

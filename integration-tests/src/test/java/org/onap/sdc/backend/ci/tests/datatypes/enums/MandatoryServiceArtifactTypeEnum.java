@@ -26,7 +26,7 @@ public enum MandatoryServiceArtifactTypeEnum {
 	INSTANT_FLOWS(null, "instantiationflows".toLowerCase(), "Management Flows"), 
 	SERVICE_ART_PLAN(null, "serviceartifactplan".toLowerCase(), "Service Artifact Plan"), 
 	SUM_OF_ELEMENTS(null, "summaryofimpactstoecompelements".toLowerCase(), "Summary of impacts to ECOMP elements,OSSs, BSSs"), 
-	CONTROL_LOOP_FUN(null, "controlloopfunctions".toLowerCase(), "Control Loop Functions"), 
+	AUTOMATION_COMPOSITION_FUN(null, "automationcompositionfunctions".toLowerCase(), "Automation Composition Functions"),
 	DIMENSIONNING_INFO(null, "dimensioninginfo".toLowerCase(), "Dimensioning Info"), 
 	AFFINITY_RULES(null, "affinityrules".toLowerCase(), "Affinity Rules"), 
 	OPERATIONAL_POLICIES(null, "operationalpolicies".toLowerCase(), "Operational Policies"), 

@@ -55,11 +55,11 @@ services:
           "ETSI SOL001 v2.5.1",
           "SDC AID"
       ]
-    ControlLoop:
-      name: "ControlLoop"
+    AutomationComposition:
+      name: "AutomationComposition"
       icons: ['network_l_1-3']
       models: [
-          "CONTROL LOOP"
+          "AUTOMATION COMPOSITION"
       ]
 resources:
   NetworkLayer23:
@@ -134,8 +134,8 @@ resources:
       NetworkService:
           name: "Network Service"
           icons: ['network']
-      ControlLoopElement:
-          name: "ControlLoop Element"
+      AutomationCompositionElement:
+          name: "AutomationComposition Element"
           icons: ['network']
       Participant:
           name: "Participant"
