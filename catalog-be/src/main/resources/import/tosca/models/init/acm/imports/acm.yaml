@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_simple_yaml_1_3
-description: ControlLoop types definitions version 1.0.0
+description: AutomationComposition types definitions version 1.0.0
 
 data_types:
   onap.datatypes.ToscaConceptIdentifier:
@@ -11,9 +11,9 @@ data_types:
       version:
         type: string
         required: true
-  onap.datatype.controlloop.Target:
+  onap.datatype.acm.Target:
     derived_from: tosca.datatypes.Root
-    description: Definition for a entity in A&AI to perform a control loop operation on
+    description: Definition for a entity in A&AI to perform a acm operation on
     properties:
       targetType:
         type: string
@@ -34,7 +34,7 @@ data_types:
           clamp_possible_values: 'ClampExecution:CSAR_RESOURCES'
         entry_schema:
           type: string
-  onap.datatype.controlloop.Actor:
+  onap.datatype.acm.Actor:
     derived_from: tosca.datatypes.Root
     description: An actor/operation/target definition
     properties:
@@ -51,7 +51,7 @@ data_types:
           clamp_possible_values: 'Dictionary:DefaultOperations,ClampExecution:CDS/operation'
         required: true
       target:
-        type: onap.datatype.controlloop.Target
+        type: onap.datatype.acm.Target
         description: The resource the operation should be performed on.
         required: true
       payload:
@@ -62,7 +62,7 @@ data_types:
           clamp_possible_values: 'ClampExecution:CDS/payload'
         entry_schema:
           type: string
-  onap.datatype.controlloop.Operation:
+  onap.datatype.acm.Operation:
     derived_from: tosca.datatypes.Root
     description: An operation supported by an actor
     properties:
@@ -75,7 +75,7 @@ data_types:
         description: A user-friendly description of the intent for the operation
         required: false
       operation:
-        type: onap.datatype.controlloop.Actor
+        type: onap.datatype.acm.Actor
         description: The definition of the operation to be performed.
         required: true
       timeout:
@@ -362,7 +362,7 @@ data_types:
     version: 0.0.0
     derived_from: tosca.datatypes.Root
     metadata: {}
-  org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.RestRequest:
+  org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.RestRequest:
     version: 1.0.0
     derived_from: tosca.datatypes.Root
     properties:
@@ -394,7 +394,7 @@ data_types:
         required: true
         constraints: []
         description: THe expected HTTP status code for the REST request
-    org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.ConfigurationEntity:
+    org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.ConfigurationEntity:
       version: 1.0.0
       derived_from: tosca.datatypes.Root
       properties:
@@ -403,11 +403,11 @@ data_types:
           typeVersion: 1.0.0
           required: true
           description: The name and version of a Configuration Entity to be handled by the
-            HTTP Control Loop Element
+            HTTP Automation Composition Element
         restSequence:
           type: list
           entry_schema:
-            type: org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.RestRequest
+            type: org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.RestRequest
             typeVersion: 1.0.0
           description: A sequence of REST commands to send to the REST endpoint
 policy_types:
@@ -430,16 +430,16 @@ policy_types:
     version: 1.0.0
     derived_from: onap.policies.Monitoring
     metadata: {}
-  onap.policies.controlloop.operational.Common:
+  onap.policies.acm.operational.Common:
     derived_from: tosca.policies.Root
     version: 1.0.0
-    name: onap.policies.controlloop.operational.Common
-    description: Operational Policy for Control Loop execution. Originated in Frankfurt to
+    name: onap.policies.acm.operational.Common
+    description: Operational Policy for Automation Composition execution. Originated in Frankfurt to
       support TOSCA Compliant Policy Types. This does NOT support the legacy Policy YAML policy type.
     properties:
       id:
         type: string
-        description: The unique control loop id.
+        description: The unique acm id.
         required: true
       timeout:
         type: integer
@@ -448,26 +448,26 @@ policy_types:
         required: true
       abatement:
         type: boolean
-        description: Whether an abatement event message will be expected for the control
-          loop from DCAE.
+        description: Whether an abatement event message will be expected for the automation
+          composition from DCAE.
         required: true
         default: false
       trigger:
         type: string
         description: Initial operation to execute upon receiving an Onset event message for
-          the Control Loop.
+          the Automation Composition.
         required: true
       operations:
         type: list
-        description: List of operations to be performed when Control Loop is triggered.
+        description: List of operations to be performed when Automation Composition is triggered.
         required: true
         entry_schema:
-          type: onap.datatype.controlloop.Operation
-  onap.policies.controlloop.operational.common.Apex:
-    derived_from: onap.policies.controlloop.operational.Common
+          type: onap.datatype.acm.Operation
+  onap.policies.acm.operational.common.Apex:
+    derived_from: onap.policies.acm.operational.Common
     type_version: 1.0.0
     version: 1.0.0
-    name: onap.policies.controlloop.operational.common.Apex
+    name: onap.policies.acm.operational.common.Apex
     description: Operational policies for Apex PDP
     properties:
       engineServiceParameters:
@@ -488,14 +488,14 @@ policy_types:
         description: Name/value pairs of properties to be set for APEX if needed.
         required: false
 node_types:
-  org.onap.policy.clamp.controlloop.Participant:
+  org.onap.policy.clamp.acm.Participant:
     version: 1.0.1
     derived_from: tosca.nodetypes.Root
     properties:
       provider:
         type: string
         required: false
-  org.onap.policy.clamp.controlloop.ControlLoopElement:
+  org.onap.policy.clamp.acm.AutomationCompositionElement:
     version: 1.0.1
     derived_from: tosca.nodetypes.Root
     properties:
@@ -504,7 +504,7 @@ node_types:
         required: false
         metadata:
           common: true
-        description: Specifies the organization that provides the control loop element
+        description: Specifies the organization that provides the acm element
       participant_id:
         type: onap.datatypes.ToscaConceptIdentifier
         required: true
@@ -515,8 +515,8 @@ node_types:
         required: true
         metadata:
           common: true
-        description: The identity of the participant type that hosts this type of Control
-          Loop Element
+        description: The identity of the participant type that hosts this type of Automation
+          Composition Element
       startPhase:
         type: integer
         required: false
@@ -524,10 +524,10 @@ node_types:
           - greater_or_equal: 0
         metadata:
           common: true
-        description: A value indicating the start phase in which this control loop element
-          will be started, the first start phase is zero. Control Loop Elements
+        description: A value indicating the start phase in which this acm element
+          will be started, the first start phase is zero. Automation Composition Elements
           are started in their start_phase order and stopped in reverse start
-          phase order. Control Loop Elements with the same start phase are
+          phase order. Automation Composition Elements with the same start phase are
           started and stopped simultaneously
       uninitializedToPassiveTimeout:
         type: integer
@@ -569,7 +569,7 @@ node_types:
           common: true
         description: The maximum time in seconds to wait for a state chage from passive to
           uninitialized
-  org.onap.policy.clamp.controlloop.ControlLoop:
+  org.onap.policy.clamp.acm.AutomationComposition:
     version: 1.0.1
     derived_from: tosca.nodetypes.Root
     properties:
@@ -578,7 +578,7 @@ node_types:
         required: false
         metadata:
           common: true
-        description: Specifies the organization that provides the control loop element
+        description: Specifies the organization that provides the acm element
       elements:
         type: list
         required: true
@@ -586,11 +586,11 @@ node_types:
           common: true
         entry_schema:
           type: onap.datatypes.ToscaConceptIdentifier
-        description: Specifies a list of control loop element definitions that make up this
-          control loop definition
-  org.onap.policy.clamp.controlloop.PolicyControlLoopElement:
+        description: Specifies a list of acm element definitions that make up this
+          acm definition
+  org.onap.policy.clamp.acm.PolicyAutomationCompositionElement:
     version: 1.0.1
-    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
     properties:
       policy_type_id:
         type: onap.datatypes.ToscaConceptIdentifier
@@ -598,16 +598,16 @@ node_types:
       policy_id:
         type: onap.datatypes.ToscaConceptIdentifier
         required: false
-  org.onap.policy.clamp.controlloop.CDSControlLoopElement:
+  org.onap.policy.clamp.acm.CDSAutomationCompositionElement:
     version: 1.0.1
-    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
     properties:
       cds_blueprint_id:
         type: onap.datatypes.ToscaConceptIdentifier
         required: true
-  org.onap.policy.clamp.controlloop.K8SMicroserviceControlLoopElement:
+  org.onap.policy.clamp.acm.K8SMicroserviceAutomationCompositionElement:
     version: 1.0.1
-    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
     properties:
       chart:
         type: string
@@ -625,9 +625,9 @@ node_types:
       values:
         type: string
         required: true
-  org.onap.policy.clamp.controlloop.HttpControlLoopElement:
+  org.onap.policy.clamp.acm.HttpAutomationCompositionElement:
     version: 1.0.1
-    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
     properties:
       baseUrl:
         type: string
@@ -644,7 +644,7 @@ node_types:
         type: map
         required: true
         entry_schema:
-          type: org.onap.datatypes.policy.clamp.controlloop.httpControlLoopElement.ConfigurationEntity
+          type: org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.ConfigurationEntity
           typeVersion: 1.0.0
-        description: The connfiguration entities the Control Loop Element is managing and
+        description: The connfiguration entities the Automation Composition Element is managing and
           their associated REST requests

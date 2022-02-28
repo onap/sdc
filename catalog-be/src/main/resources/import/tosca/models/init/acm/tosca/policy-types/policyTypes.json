@@ -15,12 +15,12 @@
     "displayName": "DCAE-PM-Subscription-Handler",
     "icon": "policy-placement"
   },
-  "onap.policies.controlloop.operational.Common": {
-    "displayName": "ControLoopOperationalCommon",
+  "onap.policies.acm.operational.Common": {
+    "displayName": "AutomationCompositionperationalCommon",
     "icon": "policy-placement"
   },
-  "onap.policies.controlloop.operational.common.Apex": {
-    "displayName": "ControlLoopOperationalCommonApex",
+  "onap.policies.acm.operational.common.Apex": {
+    "displayName": "AutomationCompositionOperationalCommonApex",
     "icon": "policy-placement"
   }
 }

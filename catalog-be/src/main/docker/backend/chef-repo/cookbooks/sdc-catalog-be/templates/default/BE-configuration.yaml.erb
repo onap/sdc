@@ -856,8 +856,8 @@ informationalServiceArtifacts:
   summaryOfImpactsToECOMPElements:
       displayName: Summary of impacts to ECOMP elements,OSSs, BSSs
       type: OTHER
-  controlLoopFunctions:
-      displayName: Control Loop Functions
+  automationCompositionFunctions:
+      displayName: Automation Composition Functions
       type: OTHER
   dimensioningInfo:
       displayName: Dimensioning Info
@@ -1028,7 +1028,7 @@ serviceBaseNodeTypes:
     required: true
     baseTypes:
       - tosca.nodes.nfv.NS
-  ControlLoop:
+  AutomationComposition:
     required: false
 
 workloadContext: Production
@@ -1257,7 +1257,7 @@ cadiFilterParams:
 # This configuration entry lists all node type names prefix that shall be allowed on SDC.
 definedResourceNamespace:
   - org.openecomp.resource.
-  - org.onap.policy.clamp.controlloop.
+  - org.onap.policy.clamp.acm.
 
 # This configuration entry lists all Directives values that shall be allowed on SDC.
 directives:

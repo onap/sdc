@@ -23,16 +23,16 @@ onap.policies.monitoring.dcae-pm-subscription-handler:
   version: 1.0.0
   derived_from: onap.policies.Monitoring
   metadata: {}
-onap.policies.controlloop.operational.Common:
+onap.policies.acm.operational.Common:
   derived_from: tosca.policies.Root
   version: 1.0.0
-  name: onap.policies.controlloop.operational.Common
-  description: Operational Policy for Control Loop execution. Originated in Frankfurt to
+  name: onap.policies.acm.operational.Common
+  description: Operational Policy for Automation Composition execution. Originated in Frankfurt to
     support TOSCA Compliant Policy Types. This does NOT support the legacy Policy YAML policy type.
   properties:
     id:
       type: string
-      description: The unique control loop id.
+      description: The unique automation composition id.
       required: true
     timeout:
       type: integer
@@ -41,26 +41,26 @@ onap.policies.controlloop.operational.Common:
       required: true
     abatement:
       type: boolean
-      description: Whether an abatement event message will be expected for the control loop
+      description: Whether an abatement event message will be expected for the automation composition
         from DCAE.
       required: true
       default: false
     trigger:
       type: string
       description: Initial operation to execute upon receiving an Onset event message for
-        the Control Loop.
+        the Automation Composition.
       required: true
     operations:
       type: list
-      description: List of operations to be performed when Control Loop is triggered.
+      description: List of operations to be performed when Automation Composition is triggered.
       required: true
       entry_schema:
-        type: onap.datatype.controlloop.Operation
-onap.policies.controlloop.operational.common.Apex:
-  derived_from: onap.policies.controlloop.operational.Common
+        type: onap.datatype.acm.Operation
+onap.policies.acm.operational.common.Apex:
+  derived_from: onap.policies.acm.operational.Common
   type_version: 1.0.0
   version: 1.0.0
-  name: onap.policies.controlloop.operational.common.Apex
+  name: onap.policies.acm.operational.common.Apex
   description: Operational policies for Apex PDP
   properties:
     engineServiceParameters:

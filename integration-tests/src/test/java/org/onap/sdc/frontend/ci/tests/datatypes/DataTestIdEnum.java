@@ -572,7 +572,7 @@ public final class DataTestIdEnum {
     @Getter
     public enum InformationalArtifactsService {
         AFFINITY_RULES("artifact_Display_Name-Affinity Rules"),
-        CONTROL_LOOP_FUNCTIONS("artifact_Display_Name-Control Loop Functions"),
+        AUTOMATION_COMPOSITION_FUNCTIONS("artifact_Display_Name-Automation Composition Functions"),
         DEPLOYMENT_VOTING_RECORD("artifact_Display_Name-Deployment Voting Record"),
         DIMENSIONING_INFO("artifact_Display_Name-Dimensioning Info"),
         DISTRIBUTION_INSTRUCTION("artifact_Display_Name-Distribution Instructions"),

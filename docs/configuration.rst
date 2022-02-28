@@ -406,8 +406,8 @@ BE-configuration.yaml
         summaryOfImpactsToECOMPElements:
             displayName: Summary of impacts to ECOMP elements,OSSs, BSSs
             type: OTHER
-        controlLoopFunctions:
-            displayName: Control Loop Functions
+        automationCompositionFunctions:
+            displayName: Automation Composition Functions
             type: OTHER
         dimensioningInfo:
             displayName: Dimensioning Info
