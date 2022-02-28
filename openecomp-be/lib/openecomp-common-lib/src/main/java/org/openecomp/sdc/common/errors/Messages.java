@@ -96,8 +96,9 @@ public enum Messages {
     SUB_ENTITY_NOT_FOUND("Incorrect sub entity details provided."),
     FAILED_TO_SYNC("Non existing version cannot be synced."),
     FAILED_TO_PUBLISH_OUT_OF_SYNC("Publish is not allowed since the version status is Out of sync"),
-    DELETE_VSP_ERROR("VSP has been certified and cannot be deleted."),
+    DELETE_VSP_ERROR("Certified VSP must be archived before it can be deleted."),
     DELETE_VLM_ERROR("VLM has been certified and cannot be deleted."),
+    DELETE_VSP_ARCHIVED_ERROR("VSP has not been archived and cannot be deleted."),
     ZIP_SHOULD_NOT_CONTAIN_FOLDERS("Zip file should not contain folders"),
     VES_ZIP_SHOULD_CONTAIN_YML_ONLY("Wrong VES EVENT Artifact was uploaded - all files contained in Artifact must be YAML files"
         + " (using .yaml/.yml extensions)"),
