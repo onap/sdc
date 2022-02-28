@@ -4,7 +4,7 @@
       "contactId": "jh0003",
       "toscaName": "tosca.nodes.Root",
       "name": "Root",
-      "model": "CONTROL LOOP",
+      "model": "AUTOMATION COMPOSITION",
       "description": "The TOSCA Node Type all other TOSCA base Node Types derive from",
       "resourceIconPath": "defaulticon",
       "categories": [
@@ -24,9 +24,9 @@
     },
     {
       "contactId": "jh0003",
-      "toscaName": "org.onap.policy.clamp.controlloop.Participant",
+      "toscaName": "org.onap.policy.clamp.acm.Participant",
       "name": "Participant",
-      "model": "CONTROL LOOP",
+      "model": "AUTOMATION COMPOSITION",
       "description": "The TOSCA service template representing the Participant",
       "resourceIconPath": "defaulticon",
       "resourceType": "VFC",
@@ -42,15 +42,15 @@
       ],
       "tags": [
         "Participant",
-        "org.onap.policy.clamp.controlloop.Participant"
+        "org.onap.policy.clamp.acm.Participant"
       ]
     },
     {
       "contactId": "jh0003",
-      "toscaName": "org.onap.policy.clamp.controlloop.ControlLoopElement",
-      "name": "ControlLoopElement",
-      "model": "CONTROL LOOP",
-      "description": "The TOSCA service template representing the ControlLoopElement",
+      "toscaName": "org.onap.policy.clamp.acm.AutomationCompositionElement",
+      "name": "AutomationCompositionElement",
+      "model": "AUTOMATION COMPOSITION",
+      "description": "The TOSCA service template representing the AutomationCompositionElement",
       "resourceIconPath": "defaulticon",
       "resourceType": "VFC",
       "categories": [
@@ -64,16 +64,16 @@
         }
       ],
       "tags": [
-        "ControlLoopElement",
-        "org.onap.policy.clamp.controlloop.ControlLoopElement"
+        "AutomationCompositionElement",
+        "org.onap.policy.clamp.acm.AutomationCompositionElement"
       ]
     },
     {
       "contactId": "jh0003",
-      "toscaName": "org.onap.policy.clamp.controlloop.ControlLoop",
-      "name": "ControlLoop",
-      "model": "CONTROL LOOP",
-      "description": "The TOSCA service template representing the ControlLoop",
+      "toscaName": "org.onap.policy.clamp.acm.AutomationComposition",
+      "name": "AutomationComposition",
+      "model": "AUTOMATION COMPOSITION",
+      "description": "The TOSCA service template representing the AutomationComposition",
       "resourceIconPath": "defaulticon",
       "resourceType": "VFC",
       "categories": [
@@ -87,16 +87,16 @@
         }
       ],
       "tags": [
-        "ControlLoop",
-        "org.onap.policy.clamp.controlloop.ControlLoop"
+        "AutomationComposition",
+        "org.onap.policy.clamp.acm.AutomationComposition"
       ]
     },
     {
       "contactId": "jh0003",
-      "toscaName": "org.onap.policy.clamp.controlloop.PolicyControlLoopElement",
-      "name": "PolicyControlLoopElement",
-      "model": "CONTROL LOOP",
-      "description": "The TOSCA service template representing the PolicyControlLoopElement",
+      "toscaName": "org.onap.policy.clamp.acm.PolicyAutomationCompositionElement",
+      "name": "PolicyAutomationCompositionElement",
+      "model": "AUTOMATION COMPOSITION",
+      "description": "The TOSCA service template representing the PolicyAutomationCompositionElement",
       "resourceIconPath": "defaulticon",
       "resourceType": "VFC",
       "categories": [
@@ -110,16 +110,16 @@
         }
       ],
       "tags": [
-        "PolicyControlLoopElement",
-        "org.onap.policy.clamp.controlloop.PolicyControlLoopElement"
+        "PolicyAutomationCompositionElement",
+        "org.onap.policy.clamp.acm.PolicyAutomationCompositionElement"
       ]
     },
     {
       "contactId": "jh0003",
-      "toscaName": "org.onap.policy.clamp.controlloop.CDSControlLoopElement",
-      "name": "CDSControlLoopElement",
-      "model": "CONTROL LOOP",
-      "description": "The TOSCA service template representing the CDSControlLoopElement",
+      "toscaName": "org.onap.policy.clamp.acm.CDSAutomationCompositionElement",
+      "name": "CDSAutomationCompositionElement",
+      "model": "AUTOMATION COMPOSITION",
+      "description": "The TOSCA service template representing the CDSAutomationCompositionElement",
       "resourceIconPath": "defaulticon",
       "resourceType": "VFC",
       "categories": [
@@ -133,16 +133,16 @@
         }
       ],
       "tags": [
-        "CDSControlLoopElement",
-        "org.onap.policy.clamp.controlloop.CDSControlLoopElement"
+        "CDSAutomationCompositionElement",
+        "org.onap.policy.clamp.acm.CDSAutomationCompositionElement"
       ]
     },
     {
       "contactId": "jh0003",
-      "toscaName": "org.onap.policy.clamp.controlloop.K8SMicroserviceControlLoopElement",
-      "name": "K8SMicroserviceControlLoopElement",
-      "model": "CONTROL LOOP",
-      "description": "The TOSCA service template representing the K8SMicroserviceControlLoopElement",
+      "toscaName": "org.onap.policy.clamp.acm.K8SMicroserviceAutomationCompositionElement",
+      "name": "K8SMicroserviceAutomationCompositionElement",
+      "model": "AUTOMATION COMPOSITION",
+      "description": "The TOSCA service template representing the K8SMicroserviceAutomationCompositionElement",
       "resourceIconPath": "defaulticon",
       "resourceType": "VFC",
       "categories": [
@@ -156,16 +156,16 @@
         }
       ],
       "tags": [
-        "K8SMicroserviceControlLoopElement",
-        "org.onap.policy.clamp.controlloop.K8SMicroserviceControlLoopElement"
+        "K8SMicroserviceAutomationCompositionElement",
+        "org.onap.policy.clamp.acm.K8SMicroserviceAutomationCompositionElement"
       ]
     },
     {
       "contactId": "jh0003",
-      "toscaName": "org.onap.policy.clamp.controlloop.HttpControlLoopElement",
-      "name": "HttpControlLoopElement",
-      "model": "CONTROL LOOP",
-      "description": "The TOSCA service template representing the HttpControlLoopElement",
+      "toscaName": "org.onap.policy.clamp.acm.HttpAutomationCompositionElement",
+      "name": "HttpAutomationCompositionElement",
+      "model": "AUTOMATION COMPOSITION",
+      "description": "The TOSCA service template representing the HttpAutomationCompositionElement",
       "resourceIconPath": "defaulticon",
       "resourceType": "VFC",
       "categories": [
@@ -179,8 +179,8 @@
         }
       ],
       "tags": [
-        "HttpControlLoopElement",
-        "org.onap.policy.clamp.controlloop.HttpControlLoopElement"
+        "HttpAutomationCompositionElement",
+        "org.onap.policy.clamp.acm.HttpAutomationCompositionElement"
       ]
     }
   ]
