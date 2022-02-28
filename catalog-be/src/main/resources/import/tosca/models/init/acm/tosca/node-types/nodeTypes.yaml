@@ -23,7 +23,7 @@ node_types:
     interfaces:
       Standard:
         type: tosca.interfaces.node.lifecycle.Standard
-  org.onap.policy.clamp.controlloop.Participant:
+  org.onap.policy.clamp.acm.Participant:
     derived_from: tosca.nodes.Root
     properties:
       provider:
@@ -34,7 +34,7 @@ node_types:
         type: string
         description: Identifies the version of the participant.
         required: true
-  org.onap.policy.clamp.controlloop.ControlLoopElement:
+  org.onap.policy.clamp.acm.AutomationCompositionElement:
     derived_from: tosca.nodes.Root
     properties:
       provider:
@@ -42,10 +42,10 @@ node_types:
         required: false
         metadata:
           common: true
-        description: Specifies the organization that provides the control loop element
+        description: Specifies the organization that provides the automation composition element
       version:
         type: string
-        description: Identifies the version of the ControlLoopElement.
+        description: Identifies the version of the AutomationCompositionElement.
         required: true
       participant_id:
         type: string
@@ -57,7 +57,7 @@ node_types:
         required: true
         metadata:
           common: true
-        description: The identity of the participant type that hosts this type of Control Loop Element
+        description: The identity of the participant type that hosts this type of Automation Composition Element
       startPhase:
         type: integer
         required: false
@@ -65,9 +65,9 @@ node_types:
           - greater_or_equal: 0
         metadata:
           common: true
-        description: A value indicating the start phase in which this control loop element will be started, the
-          first start phase is zero. Control Loop Elements are started in their start_phase order and stopped
-          in reverse start phase order. Control Loop Elements with the same start phase are started and
+        description: A value indicating the start phase in which this automation composition element will be started, the
+          first start phase is zero. Automation Composition Elements are started in their start_phase order and stopped
+          in reverse start phase order. Automation Composition Elements with the same start phase are started and
           stopped simultaneously
       uninitializedToPassiveTimeout:
         type: integer
@@ -105,7 +105,7 @@ node_types:
         metadata:
           common: true
         description: The maximum time in seconds to wait for a state chage from passive to uninitialized
-  org.onap.policy.clamp.controlloop.ControlLoop:
+  org.onap.policy.clamp.acm.AutomationComposition:
     derived_from: tosca.nodes.Root
     properties:
       provider:
@@ -113,7 +113,7 @@ node_types:
         required: false
         metadata:
           common: true
-        description: Specifies the organization that provides the control loop element
+        description: Specifies the organization that provides the automation composition element
       version:
         type: string
         description: Identifies the version of the participant.
@@ -125,9 +125,9 @@ node_types:
           common: true
         entry_schema:
           type: string
-        description: Specifies a list of control loop element definitions that make up this control loop definition
-  org.onap.policy.clamp.controlloop.PolicyControlLoopElement:
-    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+        description: Specifies a list of automation composition element definitions that make up this automation composition definition
+  org.onap.policy.clamp.acm.PolicyAutomationCompositionElement:
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
     properties:
       policy_type_id:
         type: string
@@ -139,8 +139,8 @@ node_types:
         type: string
         description: Identifies the version of the participant.
         required: true
-  org.onap.policy.clamp.controlloop.CDSControlLoopElement:
-    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+  org.onap.policy.clamp.acm.CDSAutomationCompositionElement:
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
     properties:
       cds_blueprint_id:
         type: string
@@ -149,8 +149,8 @@ node_types:
         type: string
         description: Identifies the version of the participant.
         required: true
-  org.onap.policy.clamp.controlloop.K8SMicroserviceControlLoopElement:
-    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+  org.onap.policy.clamp.acm.K8SMicroserviceAutomationCompositionElement:
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
     properties:
       chart:
         type: string
@@ -172,8 +172,8 @@ node_types:
         type: string
         description: Identifies the version of the participant.
         required: true
-  org.onap.policy.clamp.controlloop.HttpControlLoopElement:
-    derived_from: org.onap.policy.clamp.controlloop.ControlLoopElement
+  org.onap.policy.clamp.acm.HttpAutomationCompositionElement:
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
     properties:
       baseUrl:
         type: string
@@ -191,7 +191,7 @@ node_types:
         entry_schema:
           type: string
           typeVersion: 1.0.0
-        description: The connfiguration entities the Control Loop Element is managing and their associated REST requests
+        description: The connfiguration entities the Automation Composition Element is managing and their associated REST requests
       version:
         type: string
         description: Identifies the version of the participant.
