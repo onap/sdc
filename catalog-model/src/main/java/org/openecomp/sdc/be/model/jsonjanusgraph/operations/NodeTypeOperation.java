@@ -157,6 +157,7 @@ public class NodeTypeOperation extends ToscaElementOperation {
         if (interfacArts != null) {
             interfacArtsAll.putAll(interfacArts);
         }
+
         if (!interfacArtsAll.isEmpty()) {
             Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex,
                 VertexTypeEnum.INTERFACE_ARTIFACTS, EdgeLabelEnum.INTERFACE_ARTIFACTS, interfacArtsAll);
