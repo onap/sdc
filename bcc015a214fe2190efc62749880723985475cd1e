@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "84d27295_2c57ac2f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-01T13:25:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43afbde5_513a4682",
+      "range": {
+        "startLine": 135,
+        "startChar": 82,
+        "endLine": 135,
+        "endChar": 83
+      },
+      "revId": "bcc015a214fe2190efc62749880723985475cd1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "31e9c9dd_ffef73eb",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "bcc015a214fe2190efc62749880723985475cd1e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe4df82e_fe59bece",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-01T13:25:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "31e9c9dd_ffef73eb",
+      "range": {
+        "startLine": 282,
+        "startChar": 12,
+        "endLine": 284,
+        "endChar": 42
+      },
+      "revId": "bcc015a214fe2190efc62749880723985475cd1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
