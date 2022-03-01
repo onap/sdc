@@ -28,7 +28,9 @@ import {
 } from "../../../../../models/interfaceOperation";
 import {TranslateService} from "../../../../shared/translator/translate.service";
 import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
-import {DropdownValue} from "../../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {
+    DropdownValue
+} from "../../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {ArtifactModel} from "../../../../../models/artifacts";
 import {PropertyBEModel} from "../../../../../models/properties-inputs/property-be-model";
 import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
@@ -50,6 +52,7 @@ export class InterfaceOperationHandlerComponent {
         selectedInterfaceOperation: InterfaceOperationModel;
         validityChangedCallback: Function;
         isViewOnly: boolean;
+        interfaceTypesMap: Map<string, string[]>;
     };
 
     interfaceType: string;
@@ -62,6 +65,10 @@ export class InterfaceOperationHandlerComponent {
     isLoading: boolean = false;
     readonly: boolean;
     isViewOnly: boolean;
+    interfaceTypes: Array<DropdownValue> = [];
+    interfaceOperations: Array<DropdownValue> = [];
+
+    interfaceTypesMap: Map<string, string[]>;
 
     toscaArtifactTypeSelected: string;
     toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
@@ -69,11 +76,12 @@ export class InterfaceOperationHandlerComponent {
     toscaArtifactTypes: Array<DropdownValue> = [];
 
     enableAddArtifactImplementation: boolean;
+
     propertyValueValid: boolean = true;
 
     ngOnInit() {
         this.isViewOnly = this.input.isViewOnly;
-        this.interfaceType = this.input.selectedInterface.displayType();
+        this.interfaceType = this.input.selectedInterface.type;
         this.operationToUpdate = new InterfaceOperationModel(this.input.selectedInterfaceOperation);
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
         this.operationToUpdate.interfaceType = this.input.selectedInterface.type;
@@ -84,6 +92,8 @@ export class InterfaceOperationHandlerComponent {
         }
 
         this.inputs = this.operationToUpdate.inputs.listToscaDataDefinition;
+        this.interfaceTypesMap = this.input.interfaceTypesMap;
+        this.loadInterfaceTypesAndOperations();
         this.removeImplementationQuote();
         this.validityChanged();
         this.loadInterfaceOperationImplementation();
@@ -97,13 +107,13 @@ export class InterfaceOperationHandlerComponent {
         this.getArtifactTypesSelected();
     }
 
-    onDescriptionChange= (value: any): void => {
+    onDescriptionChange = (value: any): void => {
         this.operationToUpdate.description = value;
     }
 
     onImplementationNameChange(value: any) {
         this.readonly = true
-        if (value) {
+        if (value || value === '') {
             let artifact = new ArtifactModel();
             artifact.artifactName = value;
             this.operationToUpdate.implementation = artifact;
@@ -121,7 +131,8 @@ export class InterfaceOperationHandlerComponent {
             this.toscaArtifactTypeSelected = undefined;
             this.artifactVersion = undefined;
             if (this.operationToUpdate.implementation.artifactType) {
-                this.artifactName = undefined;
+                this.operationToUpdate.implementation.artifactName = '';
+                this.artifactName = '';
             }
             this.toscaArtifactTypeProperties = undefined;
         } else {
@@ -200,7 +211,7 @@ export class InterfaceOperationHandlerComponent {
         let result = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         const charactersLength = characters.length;
-        for (let i = 0; i < 36; i++ ) {
+        for (let i = 0; i < 36; i++) {
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
@@ -252,7 +263,25 @@ export class InterfaceOperationHandlerComponent {
     }
 
     toDropDownOption(val: string) {
-        return { value : val, label: val };
+        return {value: val, label: val};
     }
 
+    private loadInterfaceTypesAndOperations() {
+        console.log("loadInterfaceTypesAndOperations ", this.interfaceTypesMap.keys());
+
+        Array.from(this.interfaceTypesMap.keys()).forEach(value => this.interfaceTypes.push(new DropdownValue(value, value)));
+        console.log("loadInterfaceTypesAndOperations interfaceType ", this.interfaceTypes);
+    }
+
+    onSelectInterfaceType(selectedInterfaceType: DropdownValue) {
+        if (selectedInterfaceType) {
+            console.log("selectedInterfaceType interfaceOperations", this.interfaceOperations);
+            this.interfaceTypesMap.get(selectedInterfaceType.value).forEach(value => this.interfaceOperations.push(new DropdownValue(value, value)));
+        }
+
+    }
+
+    onSelectInterfaceOperationName(operationNameSelected: string) {
+        this.operationToUpdate.name = operationNameSelected;
+    }
 }
