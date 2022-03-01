@@ -101,6 +101,7 @@ import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
@@ -3126,6 +3127,12 @@ public class ToscaOperationFacade {
         return topologyTemplateOperation.updateComponentInstanceInterfaces(containerComponent, componentInstanceUniqueId, mapInterfaceDataDefinition);
     }
 
+    public StorageOperationStatus updateComponentInterfaces(final String componentId, final Map<String, InterfaceDefinition> interfaces,
+                                                            final String componentInterfaceUpdatedKey) {
+        MapInterfaceDataDefinition mapInterfaceDataDefinition = convertComponentInterfaces(interfaces);
+        return topologyTemplateOperation.updateComponentInterfaces(componentId, mapInterfaceDataDefinition, componentInterfaceUpdatedKey);
+    }
+
     public StorageOperationStatus updateComponentCalculatedCapabilitiesProperties(Component containerComponent) {
         Map<String, MapCapabilityProperty> mapCapabiltyPropertyMap = convertComponentCapabilitiesProperties(containerComponent);
         return nodeTemplateOperation.overrideComponentCapabilitiesProperties(containerComponent, mapCapabiltyPropertyMap);
@@ -3183,6 +3190,14 @@ public class ToscaOperationFacade {
         List<ComponentInstanceInterface> componentInterface = currComponent.getComponentInstancesInterfaces().get(componentInstanceId);
         if (CollectionUtils.isNotEmpty(componentInterface)) {
             componentInterface.stream().forEach(interfaceDef -> mapInterfaceDataDefinition.put(interfaceDef.getUniqueId(), interfaceDef));
+        }
+        return mapInterfaceDataDefinition;
+    }
+
+    private MapInterfaceDataDefinition convertComponentInterfaces(final Map<String, InterfaceDefinition> interfaces) {
+        final MapInterfaceDataDefinition mapInterfaceDataDefinition = new MapInterfaceDataDefinition();
+        if (MapUtils.isNotEmpty(interfaces)) {
+            interfaces.values().stream().forEach(interfaceDef -> mapInterfaceDataDefinition.put(interfaceDef.getType(), interfaceDef));
         }
         return mapInterfaceDataDefinition;
     }
