@@ -774,12 +774,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
                 return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(storageStatus));
             }
         }
-        if (!componentParametersView.isIgnoreInterfaces()) {
-            JanusGraphOperationStatus storageStatus = setInterfcesFromGraph(componentV, toscaElement);
-            if (storageStatus != JanusGraphOperationStatus.OK) {
-                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(storageStatus));
-            }
-        }
         if (!componentParametersView.isIgnoreComponentInstancesInterfaces()) {
             JanusGraphOperationStatus storageStatus = setComponentInstancesInterfacesFromGraph(componentV, toscaElement);
             if (storageStatus != JanusGraphOperationStatus.OK) {
@@ -799,18 +793,6 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         Either<Map<String, DataTypeDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.DATA_TYPES);
         if (result.isLeft()) {
             toscaElement.setDataTypes(result.left().value());
-        } else {
-            if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
-                return result.right().value();
-            }
-        }
-        return JanusGraphOperationStatus.OK;
-    }
-
-    private JanusGraphOperationStatus setInterfcesFromGraph(GraphVertex componentV, TopologyTemplate topologyTemplate) {
-        Either<Map<String, InterfaceDataDefinition>, JanusGraphOperationStatus> result = getDataFromGraph(componentV, EdgeLabelEnum.INTERFACE);
-        if (result.isLeft()) {
-            topologyTemplate.setInterfaces(result.left().value());
         } else {
             if (result.right().value() != JanusGraphOperationStatus.NOT_FOUND) {
                 return result.right().value();
@@ -985,7 +967,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             if (MapUtils.isEmpty(filters)) {
                 return JanusGraphOperationStatus.OK;
             }
-            if(filters.values().size() > 1) {
+            if (filters.values().size() > 1) {
                 log.error(EcompLoggerErrorCode.DATA_ERROR, TopologyTemplateOperation.class.getName(),
                     (ErrorLogOptionalData) null, "Only a single substitution filter is expected, but got '{}'", filters.values().size());
                 return JanusGraphOperationStatus.GENERAL_ERROR;
@@ -1489,6 +1471,16 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         if (MapUtils.isNotEmpty(instanceInterfaces.getMapToscaDataDefinition())) {
             return updateToscaDataDeepElementsBlockToToscaElement(containerComponent.getUniqueId(), EdgeLabelEnum.INST_INTERFACES, instanceInterfaces,
                 componentInstanceId);
+        }
+        return StorageOperationStatus.OK;
+    }
+
+
+    public StorageOperationStatus updateComponentInterfaces(final String componentId, final MapInterfaceDataDefinition instanceInterfaces,
+                                                            final String componentInterfaceUpdatedKey) {
+        if (MapUtils.isNotEmpty(instanceInterfaces.getMapToscaDataDefinition())) {
+            return updateToscaDataDeepElementsBlockToToscaElement(componentId, EdgeLabelEnum.INTERFACE_ARTIFACTS, instanceInterfaces,
+                componentInterfaceUpdatedKey);
         }
         return StorageOperationStatus.OK;
     }

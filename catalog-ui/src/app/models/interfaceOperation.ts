@@ -77,6 +77,10 @@ export class BEInterfaceOperationModel {
 }
 
 export class InterfaceOperationModel extends BEInterfaceOperationModel {
+    isCollapsed: boolean = true;
+    isEllipsis: boolean;
+    MAX_LENGTH = 75;
+
     interfaceType: string;
     interfaceId: string;
     operationType: string;
@@ -101,9 +105,22 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
     public displayType(): string {
         return displayType(this.interfaceType);
     }
+
+    getDescriptionEllipsis(): string {
+        if (this.isCollapsed && this.description.length > this.MAX_LENGTH) {
+            return this.description.substr(0, this.MAX_LENGTH - 3) + '...';
+        }
+        return this.description;
+    }
+
+    toggleCollapsed(e) {
+        e.stopPropagation();
+        this.isCollapsed = !this.isCollapsed;
+    }
+
 }
 
-export class ComponentInstanceInterfaceModel {
+export class ComponentInterfaceDefinitionModel {
     type: string;
     uniqueId: string;
     operations: Array<InterfaceOperationModel>;

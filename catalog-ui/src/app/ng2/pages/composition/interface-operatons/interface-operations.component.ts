@@ -32,7 +32,7 @@ import {SelectedComponentType} from "../common/store/graph.actions";
 
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {
-  ComponentInstanceInterfaceModel,
+  ComponentInterfaceDefinitionModel,
   InterfaceOperationModel
 } from "../../../../models/interfaceOperation";
 import {
@@ -97,7 +97,7 @@ class ModalTranslation {
   }
 }
 
-export class UIInterfaceModel extends ComponentInstanceInterfaceModel {
+export class UIInterfaceModel extends ComponentInterfaceDefinitionModel {
   isCollapsed: boolean = false;
 
   constructor(interf?: any) {
@@ -175,7 +175,7 @@ export class InterfaceOperationsComponent {
     this.sortInterfaces();
   }
 
-  private initInterfaces(interfaces: ComponentInstanceInterfaceModel[]): void {
+  private initInterfaces(interfaces: ComponentInterfaceDefinitionModel[]): void {
     this.interfaces = _.map(interfaces, (interfaceModel) => new UIInterfaceModel(interfaceModel));
   }
 
