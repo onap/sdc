@@ -22,6 +22,7 @@ package org.openecomp.sdc.asdctool;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 /**
  * Hello world!
@@ -34,7 +35,7 @@ public class App {
         context.setContextPath("/asdctool");
         Server jettyServer = new Server(Integer.valueOf(asdcToolPort));
         jettyServer.setHandler(context);
-        ServletHolder jerseyServlet = context.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+        ServletHolder jerseyServlet = context.addServlet(ServletContainer.class.getName(), "/*");
         jerseyServlet.setInitOrder(0);
 
         // Tells the Jersey Servlet which REST service/class to load.
@@ -59,4 +60,3 @@ public class App {
         }
     }
 }
-

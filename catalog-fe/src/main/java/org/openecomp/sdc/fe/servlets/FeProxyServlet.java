@@ -91,7 +91,7 @@ public class FeProxyServlet extends SSLProxyServlet {
         return redirectedUrl;
     }
 
-    @Override
+//    @Override
     protected void addProxyHeaders(HttpServletRequest clientRequest, Request proxyRequest) {
         Configuration config = getConfiguration(clientRequest);
         if (config == null) {
@@ -103,7 +103,7 @@ public class FeProxyServlet extends SSLProxyServlet {
             proxyRequest.header(HttpHeader.AUTHORIZATION,
                 "Basic " + Base64.getEncoder().encodeToString((basicAuth.getUserName() + ":" + basicAuth.getUserPass()).getBytes()));
         }
-        super.addProxyHeaders(clientRequest, proxyRequest);
+//        super.addProxyHeaders(clientRequest, proxyRequest);
     }
 
     private void logFeRequest(HttpServletRequest httpRequest) {
