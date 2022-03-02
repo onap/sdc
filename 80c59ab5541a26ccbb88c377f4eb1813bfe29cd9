@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06d5f9ee_b3d673f7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 925,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-02T20:15:27Z",
+      "side": 1,
+      "message": "this should be handled in the front end with the properly formatted string sent to the backed",
+      "range": {
+        "startLine": 921,
+        "startChar": 0,
+        "endLine": 925,
+        "endChar": 13
+      },
+      "revId": "80c59ab5541a26ccbb88c377f4eb1813bfe29cd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
