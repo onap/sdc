@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e8243b7_0d844c07",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/panel/panel-tabs/properties-tab/properties-tab.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-02T12:09:04Z",
+      "side": 1,
+      "message": "Instead of adding it under the PROPERTIES AND ATTRIBUTES\" can we create a new section, i.e. have a second \u0027ng2-expand-collapse\u0027",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 0
+      },
+      "revId": "7f3a65b82905ac95d4854aa374db4fa8f1bcf27f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
