@@ -39,3 +39,34 @@ tosca.artifacts.File:
     derived_from: tosca.artifacts.Root
     description: This artifact type is used when an artifact definition needs to have its associated file simply treated as a file and no special handling/handlers are invoked (i.e., it is not treated as either an implementation or deployment artifact type).
 
+tosca.artifacts.asd.deploymentItem:
+    version: 0.1
+    derived_from: tosca.artifacts.Root
+    description: "Describes the artifact type of asd deployment item"
+    file: "URI or path of the artifact"
+    properties:
+        item_id:
+            description: "The identifier of this asd deployment item"
+            required: true
+            type: string
+        artifact_type:
+            description: >
+                Specify artifact type.
+            required: true
+            type: string
+            constraints:
+                - valid_values: ["helm_chart", "helmfile", "crd", "terraform" ]
+        deployment_order:
+            description: >
+                Specifies the deployment stage that the DeploymentArtifact belongs to.
+                A lower value specifies that the DeploymentArtifact belongs to an earlier
+                deployment stage. When this value is omitted, the deployment order
+                will be decided by the orchestrator.
+            required: false
+            type: integer
+        lifecycle_parameters:
+            description: "list of parameters that can be overridden at deployment time "
+            required: false
+            type: list
+            entry_schema:
+                type: string
