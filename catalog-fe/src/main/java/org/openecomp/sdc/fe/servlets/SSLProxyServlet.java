@@ -19,10 +19,9 @@
  */
 package org.openecomp.sdc.fe.servlets;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.proxy.ProxyServlet;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.fe.config.Configuration;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
@@ -37,8 +36,7 @@ public abstract class SSLProxyServlet extends ProxyServlet {
 
     @Override
     protected HttpClient createHttpClient() throws ServletException {
-        Configuration config = ((ConfigurationManager) getServletConfig().getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR))
-            .getConfiguration();
+        Configuration config = ((ConfigurationManager) getServletContext().getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).getConfiguration();
         boolean isSecureClient = !config.getBeProtocol().equals(BeProtocol.HTTP.getProtocolName());
         HttpClient client = (isSecureClient) ? getSecureHttpClient() : super.createHttpClient();
         int requestTimeout = config.getRequestTimeout() * 1000;
@@ -47,13 +45,13 @@ public abstract class SSLProxyServlet extends ProxyServlet {
         }
         setTimeout(requestTimeout);
         client.setIdleTimeout(requestTimeout);
-        client.setStopTimeout(requestTimeout);
+//        client.setStopTimeout(requestTimeout);
         return client;
     }
 
     private HttpClient getSecureHttpClient() throws ServletException {
         // Instantiate HttpClient with the SslContextFactory
-        final var httpClient = new HttpClient(new SslContextFactory.Client(true));
+        final var httpClient = new HttpClient();
         // Configure HttpClient, for example:
         httpClient.setFollowRedirects(false);
         // Start HttpClient
@@ -65,4 +63,5 @@ public abstract class SSLProxyServlet extends ProxyServlet {
         }
         return httpClient;
     }
+
 }

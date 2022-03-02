@@ -333,8 +333,12 @@ limitations under the License.
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>log4j</artifactId>
                     <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.owasp.esapi</groupId>
+                    <artifactId>esapi</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

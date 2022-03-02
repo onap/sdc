@@ -22,10 +22,10 @@ package org.openecomp.sdc.fe.servlets;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 import com.google.common.annotations.VisibleForTesting;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.client.api.Request;
