@@ -20,8 +20,17 @@
 
 package org.openecomp.sdc.fe.servlets;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,16 +41,6 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.fe.config.ConfigurationManager;
 import org.openecomp.sdc.fe.impl.PluginStatusBL;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Response;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.openMocks;
 
 public class ConfigServletTest {
 
@@ -63,7 +62,7 @@ public class ConfigServletTest {
         openMocks(this);
         String appConfigDir = "src/test/resources/config/catalog-fe";
         ConfigurationSource configurationSource =
-                new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+            new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
         configManager = new ConfigurationManager(configurationSource);
         configServlet = new ConfigServlet();
     }
@@ -80,6 +79,7 @@ public class ConfigServletTest {
         assertEquals(expected, response.getEntity().toString());
         assertEquals(response.getStatus(), HttpStatus.SC_OK);
     }
+
     @Test
     public void validateGetPluginsConfigurationReturnsCorrectConfiguration() {
 
@@ -89,9 +89,10 @@ public class ConfigServletTest {
 
         Response response = configServlet.getPluginsConfiguration(httpServletRequest);
 
-        assertEquals(response.getEntity().toString(),expectedEntity);
+        assertEquals(response.getEntity().toString(), expectedEntity);
         assertEquals(response.getStatus(), HttpStatus.SC_OK);
     }
+
     @Test
     public void validateGetPluginsConfigurationResponsesWithServerErrorIfExceptionIsThrown() {
 

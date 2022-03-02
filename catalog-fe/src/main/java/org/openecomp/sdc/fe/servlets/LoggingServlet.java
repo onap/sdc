@@ -19,7 +19,7 @@
  */
 package org.openecomp.sdc.fe.servlets;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.common.servlets.BasicServlet;
 import org.openecomp.sdc.fe.impl.LogHandler;
