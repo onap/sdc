@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c298f8e_354ac207",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/acm/tosca/node-types/nodeTypes.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-04T15:32:12Z",
+      "side": 1,
+      "message": "This new model, AUTOMATION COMPOSITION, is missing some direct definitions, for example:\n- tosca.capabilities.Node\n- tosca.relationships.DependsOn\n- tosca.interfaces.node.lifecycle.Standard\n- ...\n\nand the definitions dependencies:\n- tosca.capabilities.Root\n- tosca.relationships.Root\n- tosca.interfaces.relationship.Configure\n- tosca.interfaces.Root\n- ...\n\nAnd so on... Same can apply for other types, like data types, policy types, etc. I haven\u0027t gone through all the files.\n\nThe missing type definitions can have a direct impact on SDC functionalities and cause unpredictable/awkward bugs.\n\nIn my opinion, it would be good to address the issue in this ticket. If not, we could handle that in a separate bug ticket.",
+      "range": {
+        "startLine": 16,
+        "startChar": 14,
+        "endLine": 16,
+        "endChar": 37
+      },
+      "revId": "89b03075f1bd959699b338a48ed8b4a6ede893bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
