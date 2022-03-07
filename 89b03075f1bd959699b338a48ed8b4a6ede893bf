@@ -22,6 +22,30 @@
       "revId": "89b03075f1bd959699b338a48ed8b4a6ede893bf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "314494f0_743ce15d",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/acm/tosca/node-types/nodeTypes.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-07T14:51:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c298f8e_354ac207",
+      "range": {
+        "startLine": 16,
+        "startChar": 14,
+        "endLine": 16,
+        "endChar": 37
+      },
+      "revId": "89b03075f1bd959699b338a48ed8b4a6ede893bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
