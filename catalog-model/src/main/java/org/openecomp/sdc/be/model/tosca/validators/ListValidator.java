@@ -69,6 +69,9 @@ public class ListValidator implements PropertyTypeValidator {
                 case JSON:
                     innerValidator = ToscaPropertyType.JSON.getValidator();
                     break;
+                case MAP:
+                	innerValidator = ToscaPropertyType.MAP.getValidator();
+                	break;
                 default:
                     log.debug("inner Tosca Type is unknown. {}", innerToscaType);
                     return false;
@@ -88,7 +91,7 @@ public class ListValidator implements PropertyTypeValidator {
             for (int i = 0; i < size; i++) {
                 JsonElement currentValue = jo.get(i);
                 String element = JsonUtils.toString(currentValue);
-                if (!innerValidator.isValid(element, null, allDataTypes)) {
+                if (!innerValidator.isValid(element, innerToscaType.equals(ToscaPropertyType.MAP)? ToscaPropertyType.STRING.getType(): null, allDataTypes)) {
                     log.debug("validation of element : {} failed", element);
                     return false;
                 }

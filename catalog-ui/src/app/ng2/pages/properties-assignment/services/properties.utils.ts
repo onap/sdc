@@ -130,6 +130,13 @@ export class PropertiesUtils {
                 property.flattenedChildren = [];
                 Object.keys(property.valueObj).forEach((key) => {
                     property.flattenedChildren.push(...this.createListOrMapChildren(property, key, property.valueObj[key]))
+                    let index = property.flattenedChildren.length - 1;
+                    if (property.schemaType == "map" && property.valueObj[key]){
+                        let nestedValue:object = property.valueObj[key];
+                        Object.keys(nestedValue).forEach((keyNested) => {
+                            property.flattenedChildren.push(...this.createListOrMapChildren(property.flattenedChildren[index], keyNested, nestedValue[keyNested]))
+                        });
+                    };
                 });
             } else if (property.derivedDataType === DerivedPropertyType.COMPLEX) {
                 property.flattenedChildren = this.createFlattenedChildren(property.type, property.name);
