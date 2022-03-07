@@ -41,6 +41,7 @@ export class DerivedFEProperty extends PropertyBEModel {
     canBeDeclared: boolean;
     mapKey: string;
     mapKeyError: string;
+    mapInlist: boolean
 
     constructor(property: PropertyBEModel, parentName?: string, createChildOfListOrMap?: boolean, key?:string, value?:any) {
         if (!createChildOfListOrMap) { //creating a standard derived prop
@@ -60,6 +61,11 @@ export class DerivedFEProperty extends PropertyBEModel {
                 this.mapKey = property.schema.property.type.split('.').pop();
                 this.mapKeyError = null;
                 this.type = property.schema.property.type;
+                if (this.type == PROPERTY_TYPES.MAP){
+                    this.mapInlist = true;
+                }
+
+                this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
             } else { //map
                 if (key) {
                     this.mapKey = key;
@@ -69,9 +75,19 @@ export class DerivedFEProperty extends PropertyBEModel {
                     this.mapKeyError = 'Key cannot be empty.';
                 }
                 this.type = property.type;
+                if (property.schema.property.type == PROPERTY_TYPES.MAP){
+                    const schProp = new SchemaProperty();
+                    schProp.isSimpleType = true;
+                    schProp.isDataType = false;
+                    schProp.simpleType = PROPERTY_TYPES.STRING;
+                    this.schema = new SchemaPropertyGroupModel(schProp);
+                    this.schemaType = PROPERTY_TYPES.STRING;
+                } else {
+                    this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
+                }
+	
             }
             this.valueObj = (this.type == PROPERTY_TYPES.JSON && typeof value == 'object') ? JSON.stringify(value) : value;
-            this.schema = new SchemaPropertyGroupModel(new SchemaProperty(property.schema.property));
             this.updateValueObjOrig();
         }
         // this.constraints = property ? property.constraints : null;
@@ -97,6 +113,7 @@ export class DerivedFEProperty extends PropertyBEModel {
     public hasValueObjChanged() {
         return !_.isEqual(this.valueObj, this.valueObjOrig);
     }
+
 }
 export class DerivedFEPropertyMap {
     [parentPath: string]: Array<DerivedFEProperty>;
