@@ -22,6 +22,9 @@
 @import '../../../../../../assets/styles/override.less';
 
 .operation-handler {
+    overflow: scroll;
+    max-height: 700px;
+    max-width: 100%;
     font-family: @font-opensans-regular;
     user-select: none;
     padding-top: 12px;
@@ -220,4 +223,8 @@
         }
 
     }
+}
+
+.operation-handler::-webkit-scrollbar-track {
+    border: 0;
 }

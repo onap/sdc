@@ -22,6 +22,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.Gson;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
@@ -53,6 +55,8 @@ import org.openecomp.sdc.be.tosca.model.ToscaInterfaceOperationImplementation;
 import org.openecomp.sdc.be.tosca.model.ToscaLifecycleOperationDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaProperty;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyAssignment;
+import org.openecomp.sdc.be.tosca.model.ToscaPropertyAssignmentJsonSerializer;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
@@ -147,12 +151,8 @@ public class InterfacesOperationsConverter {
         return toscaResourceName.substring(toscaResourceName.lastIndexOf(DOT) + 1);
     }
 
-    private static boolean isArtifactPresent(Map.Entry<String, OperationDataDefinition> operationEntry) {
-        final boolean isImplementationPresent = !Objects.isNull(operationEntry.getValue().getImplementation());
-        if (isImplementationPresent) {
-            return !Objects.isNull(operationEntry.getValue().getImplementation().getArtifactName());
-        }
-        return false;
+    private static boolean isArtifactPresent(final OperationDataDefinition operationDataDefinition) {
+        return operationDataDefinition.getImplementation() != null && operationDataDefinition.getImplementation().getArtifactName() != null;
     }
 
     private static String getInputValue(final OperationInputDefinition input) {
@@ -178,13 +178,22 @@ public class InterfacesOperationsConverter {
         return interfaceType;
     }
 
-    private static Map<String, Object> getObjectAsMap(Object obj) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        if (obj instanceof ToscaInterfaceDefinition) {
-            //Prevent empty field serialization in interface definition
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    private static Map<String, Object> getObjectAsMap(final Object obj) {
+        final Map<String, Object> objectAsMap;
+        if (obj instanceof Map) {
+            objectAsMap = (Map<String, Object>) obj;
+        } else {
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final SimpleModule module = new SimpleModule("ToscaPropertyAssignmentSerializer");
+            module.addSerializer(ToscaPropertyAssignment.class, new ToscaPropertyAssignmentJsonSerializer());
+            objectMapper.registerModule(module);
+            if (obj instanceof ToscaInterfaceDefinition) {
+                //Prevent empty field serialization in interface definition
+                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            }
+            objectAsMap = objectMapper.convertValue(obj, Map.class);
         }
-        Map<String, Object> objectAsMap = obj instanceof Map ? (Map<String, Object>) obj : objectMapper.convertValue(obj, Map.class);
+
         final String defaultEntry = DEFAULT.getElementName();
         if (objectAsMap.containsKey(defaultEntry)) {
             objectAsMap.put(DEFAULT_HAS_UNDERSCORE, objectAsMap.remove(defaultEntry));
@@ -263,10 +272,10 @@ public class InterfacesOperationsConverter {
         final Map<String, Object> toscaOperationMap = new HashMap<>();
         for (final Entry<String, OperationDataDefinition> operationEntry : operations.entrySet()) {
             final ToscaLifecycleOperationDefinition toscaLifecycleOperationDefinition = new ToscaLifecycleOperationDefinition();
-            handleInterfaceOperationImplementation(component, componentInstance, isAssociatedComponent, operationEntry,
-                toscaLifecycleOperationDefinition);
+            handleInterfaceOperationImplementation(component, componentInstance, isAssociatedComponent, operationEntry.getValue(),
+                toscaLifecycleOperationDefinition, dataTypes);
             toscaLifecycleOperationDefinition.setDescription(operationEntry.getValue().getDescription());
-            fillToscaOperationInputs(operationEntry.getValue(), dataTypes, toscaLifecycleOperationDefinition, isServiceProxyInterface);
+            fillToscaOperationInputs(operationEntry.getValue(), dataTypes, toscaLifecycleOperationDefinition);
             toscaOperationMap.put(operationEntry.getValue().getName(), toscaLifecycleOperationDefinition);
         }
         toscaInterfaceDefinition.setOperations(toscaOperationMap);
@@ -286,37 +295,56 @@ public class InterfacesOperationsConverter {
 
     private void handleInterfaceOperationImplementation(final Component component, final ComponentInstance componentInstance,
                                                         final boolean isAssociatedComponent,
-                                                        final Entry<String, OperationDataDefinition> operationEntry,
-                                                        final ToscaLifecycleOperationDefinition toscaOperation) {
+                                                        final OperationDataDefinition operationDataDefinition,
+                                                        final ToscaLifecycleOperationDefinition toscaOperation,
+                                                        final Map<String, DataTypeDefinition> dataTypes) {
         final String operationArtifactPath;
         final ToscaInterfaceOperationImplementation toscaInterfaceOperationImplementation = new ToscaInterfaceOperationImplementation();
         toscaInterfaceOperationImplementation.setPrimary(new ToscaArtifactDefinition());
         final ToscaArtifactDefinition toscaArtifactDefinition = toscaInterfaceOperationImplementation.getPrimary();
-        if (isArtifactPresent(operationEntry) && StringUtils.isNotEmpty(operationEntry.getValue().getImplementation().getArtifactName())) {
+        if (isArtifactPresent(operationDataDefinition) && StringUtils.isNotEmpty(operationDataDefinition.getImplementation().getArtifactName())) {
             operationArtifactPath = OperationArtifactUtil
-                .createOperationArtifactPath(component, componentInstance, operationEntry.getValue(), isAssociatedComponent);
+                .createOperationArtifactPath(component, componentInstance, operationDataDefinition, isAssociatedComponent);
             toscaArtifactDefinition.setFile(operationArtifactPath);
-            toscaArtifactDefinition.setArtifact_version(!operationEntry.getValue().getImplementation().getArtifactVersion()
-                .equals(NumberUtils.INTEGER_ZERO.toString()) ? operationEntry.getValue().getImplementation().getArtifactVersion() : null);
-            toscaArtifactDefinition.setType(operationEntry.getValue().getImplementation().getArtifactType());
-            handleInterfaceOperationImplementationProperties(operationEntry, toscaArtifactDefinition);
+            toscaArtifactDefinition.setArtifact_version(!operationDataDefinition.getImplementation().getArtifactVersion()
+                .equals(NumberUtils.INTEGER_ZERO.toString()) ? operationDataDefinition.getImplementation().getArtifactVersion() : null);
+            toscaArtifactDefinition.setType(operationDataDefinition.getImplementation().getArtifactType());
+            final Map<String, ToscaPropertyAssignment> propertiesMap = handleImplementationProperties(operationDataDefinition, dataTypes);
+            if (!propertiesMap.isEmpty()) {
+                toscaArtifactDefinition.setProperties(propertiesMap);
+            }
             toscaOperation.setImplementation(
                 toscaArtifactDefinition.getType() != null ? toscaInterfaceOperationImplementation : operationArtifactPath);
         } else {
-            toscaArtifactDefinition.setFile(operationEntry.getValue().getImplementation().getArtifactName());
+            toscaArtifactDefinition.setFile(operationDataDefinition.getImplementation().getArtifactName());
             toscaOperation.setImplementation(toscaInterfaceOperationImplementation);
         }
     }
 
-    private void handleInterfaceOperationImplementationProperties(final Entry<String, OperationDataDefinition> operationEntry,
-                                                                  final ToscaArtifactDefinition toscaArtifactDefinition) {
-        final var properties = operationEntry.getValue().getImplementation().getProperties();
-        if (CollectionUtils.isNotEmpty(properties)) {
-            final Map<String, String> propertiesMap = new HashMap<>();
-            properties.stream().filter(propertyDataDefinition -> StringUtils.isNotEmpty(propertyDataDefinition.getValue()))
-                .forEach(propertyDataDefinition -> propertiesMap.put(propertyDataDefinition.getName(), propertyDataDefinition.getValue()));
-            toscaArtifactDefinition.setProperties(propertiesMap);
+    private Map<String, ToscaPropertyAssignment> handleImplementationProperties(final OperationDataDefinition operationDataDefinition,
+                                                                                final Map<String, DataTypeDefinition> dataTypes) {
+        if (operationDataDefinition.getImplementation() == null) {
+            return new HashMap<>();
         }
+
+        final List<PropertyDataDefinition> properties = operationDataDefinition.getImplementation().getProperties();
+        if (CollectionUtils.isEmpty(properties)) {
+            return new HashMap<>();
+        }
+
+        final Map<String, ToscaPropertyAssignment> propertiesMap = new HashMap<>();
+        properties.stream()
+            .filter(propertyDataDefinition -> StringUtils.isNotEmpty(propertyDataDefinition.getValue()))
+            .forEach(propertyDataDefinition -> {
+                    final String propertyValue =
+                        propertyDataDefinition.getValue() != null ? propertyDataDefinition.getValue() : propertyDataDefinition.getDefaultValue();
+                    final ToscaPropertyAssignment toscaPropertyAssignment = new ToscaPropertyAssignment();
+                    toscaPropertyAssignment.setValue(propertyConvertor.convertToToscaObject(propertyDataDefinition, propertyValue, dataTypes, false));
+                    propertiesMap.put(propertyDataDefinition.getName(), toscaPropertyAssignment);
+                }
+            );
+
+        return propertiesMap;
     }
 
     public void removeInterfacesWithoutOperations(final Map<String, Object> interfaceMap) {
@@ -373,7 +401,7 @@ public class InterfacesOperationsConverter {
     }
 
     private void fillToscaOperationInputs(OperationDataDefinition operation, Map<String, DataTypeDefinition> dataTypes,
-                                          ToscaLifecycleOperationDefinition toscaOperation, boolean isServiceProxyInterface) {
+                                          ToscaLifecycleOperationDefinition toscaOperation) {
         if (Objects.isNull(operation.getInputs()) || operation.getInputs().isEmpty()) {
             toscaOperation.setInputs(null);
             return;
@@ -389,4 +417,5 @@ public class InterfacesOperationsConverter {
         }
         toscaOperation.setInputs(toscaInputs);
     }
+
 }

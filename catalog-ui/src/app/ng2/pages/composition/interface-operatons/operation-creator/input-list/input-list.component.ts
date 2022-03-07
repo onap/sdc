@@ -45,10 +45,13 @@ export class InputListComponent {
   }
   @Input() dataTypeMap: Map<string, DataTypeModel>;
   @Input() isViewOnly: boolean;
+  @Input() title: string;
+  @Input() emptyMessage: string;
+  @Input() allowDeletion: boolean = false;
   @Output('onValueChange') inputValueChangeEvent: EventEmitter<InputOperationParameter> = new EventEmitter<InputOperationParameter>();
   @Output('onDelete') inputDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
 
-  _inputs: Array<InputOperationParameter>;
+  _inputs: Array<InputOperationParameter> = [];
 
   getDataType(type: string): DataTypeModel {
     return this.dataTypeMap.get(type);

@@ -34,6 +34,7 @@ class InputListItemStubComponent {
   @Input() dataTypeMap: any;
   @Input() valueObjRef: any;
   @Input() schema: any;
+  @Input() allowDeletion: any;
   @Input() isViewOnly: boolean;
 }
 
