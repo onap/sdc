@@ -66,6 +66,7 @@ export class InterfaceOperationHandlerComponent {
 
     toscaArtifactTypeSelected: string;
     toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
+    artifactTypeProperties: Array<InputOperationParameter> = [];
 
     toscaArtifactTypes: Array<DropdownValue> = [];
 
@@ -112,6 +113,7 @@ export class InterfaceOperationHandlerComponent {
         this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
         this.artifactName = this.operationToUpdate.implementation.artifactName;
         this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
+        this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
         this.getArtifactTypesSelected();
     }
 
@@ -142,6 +144,7 @@ export class InterfaceOperationHandlerComponent {
                 this.artifactName = undefined;
             }
             this.toscaArtifactTypeProperties = undefined;
+            this.artifactTypeProperties = undefined;
         } else {
             this.getArtifactTypesSelected();
         }
@@ -158,6 +161,7 @@ export class InterfaceOperationHandlerComponent {
             artifact.artifactType = toscaArtifactType.type;
             artifact.properties = toscaArtifactType.properties;
             this.toscaArtifactTypeProperties = artifact.properties;
+            this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
             this.toscaArtifactTypeSelected = artifact.artifactType;
             this.operationToUpdate.implementation = artifact;
             this.getArtifactTypesSelected();
@@ -225,6 +229,7 @@ export class InterfaceOperationHandlerComponent {
             this.toscaArtifactTypeSelected = this.operationToUpdate.implementation.artifactType;
             this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
             this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
+            this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
             this.enableAddArtifactImplementation = true;
         }
         this.validateRequiredField();
@@ -272,6 +277,15 @@ export class InterfaceOperationHandlerComponent {
         inputOperationParameter.value = changedInput.value;
     }
 
+    onArtifactPropertyValueChange(changedProperty: InputOperationParameter) {
+        if (changedProperty.value instanceof Object) {
+            changedProperty.value = JSON.stringify(changedProperty.value);
+        }
+        this.toscaArtifactTypeProperties.find(artifactProperty => artifactProperty.name == changedProperty.name);
+        const property = this.toscaArtifactTypeProperties.find(artifactProperty => artifactProperty.name == changedProperty.name);
+        property.value = changedProperty.value;
+    }
+
     /**
      * Handles the add input event.
      * @param input the input to add
@@ -303,5 +317,22 @@ export class InterfaceOperationHandlerComponent {
         }
         currentInputs.splice(currentInputs.indexOf(input1), 1);
         this.inputs = Array.from(currentInputs);
+    }
+
+    private convertArtifactsPropertiesToInput(): Array<InputOperationParameter> {
+        if (!this.toscaArtifactTypeProperties) {
+            return [];
+        }
+        const inputList: Array<InputOperationParameter> = [];
+        this.toscaArtifactTypeProperties.forEach(property => {
+            const input = new InputOperationParameter();
+            input.name = property.name;
+            input.type = property.type;
+            input.schema = property.schema;
+            input.toscaDefaultValue = property.defaultValue;
+            input.value = property.value;
+            inputList.push(input);
+        });
+        return inputList;
     }
 }

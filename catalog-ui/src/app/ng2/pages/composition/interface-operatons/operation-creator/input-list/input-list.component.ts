@@ -44,9 +44,12 @@ export class InputListComponent {
       });
     }
   }
-  _inputs: Array<InputOperationParameter>;
+  _inputs: Array<InputOperationParameter> = [];
   @Input() dataTypeMap: DataTypesMap;
   @Input() isViewOnly: boolean;
+  @Input() title: string;
+  @Input() emptyMessage: string;
+  @Input() allowDeletion: boolean = false;
   @Output('onValueChange') inputValueChangeEvent: EventEmitter<InputOperationParameter> = new EventEmitter<InputOperationParameter>();
   @Output('onDelete') inputDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
 
