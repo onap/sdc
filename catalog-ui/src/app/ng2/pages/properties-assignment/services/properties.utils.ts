@@ -129,7 +129,14 @@ export class PropertiesUtils {
             if (property.derivedDataType == DerivedPropertyType.LIST || property.derivedDataType == DerivedPropertyType.MAP) {
                 property.flattenedChildren = [];
                 Object.keys(property.valueObj).forEach((key) => {
-                    property.flattenedChildren.push(...this.createListOrMapChildren(property, key, property.valueObj[key]))
+                    property.flattenedChildren.push(...this.createListOrMapChildren(property, key, property.valueObj[key]));
+                    const lastCreatedChild = property.flattenedChildren.slice(-1)[0];
+                    if (property.schemaType == PROPERTY_TYPES.MAP && property.valueObj[key]){
+                        const nestedValue:object = property.valueObj[key];
+                        Object.keys(nestedValue).forEach((keyNested) => {
+                            property.flattenedChildren.push(...this.createListOrMapChildren(lastCreatedChild, keyNested, nestedValue[keyNested]));
+                        });
+                    };
                 });
             } else if (property.derivedDataType === DerivedPropertyType.COMPLEX) {
                 property.flattenedChildren = this.createFlattenedChildren(property.type, property.name);

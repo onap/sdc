@@ -157,7 +157,7 @@ export class PropertyFEModel extends PropertyBEModel {
                     _.set(this.valueObj, childPropName, null);
                 }
             } else {
-                _.set(this.valueObj, childPropName, childProp.valueObj);
+                _.set(this.valueObj, childPropName, childProp.valueObj);        
             }
             if (childProp.valueObjIsChanged) {
                 _.set(this.valueObjValidation, childPropName, childProp.valueObjIsValid);
@@ -175,7 +175,6 @@ export class PropertyFEModel extends PropertyBEModel {
         if (!childProp.isChildOfListOrMap || childProp.derivedDataType !== DerivedPropertyType.MAP) {
             return;
         }
-
         const childParentNames = this.getParentNamesArray(childProp.parentName);
         const oldActualMapKey = childProp.getActualMapKey();
 
@@ -240,7 +239,7 @@ export class PropertyFEModel extends PropertyBEModel {
         let nameToInsert: string = parentProp.name;
 
         if (parentProp.isChildOfListOrMap) {
-            if (!noHashKeys && parentProp.derivedDataType == DerivedPropertyType.MAP) {
+            if (!noHashKeys && parentProp.derivedDataType == DerivedPropertyType.MAP && !parentProp.mapInlist) {
                 nameToInsert = parentProp.getActualMapKey();
             } else { //LIST
                 let siblingProps = this.flattenedChildren.filter(prop => prop.parentName == parentProp.parentName).map(prop => prop.propertiesName);
