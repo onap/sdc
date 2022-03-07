@@ -24,6 +24,10 @@ import com.google.gson.JsonObject;
 
 public class JsonUtils {
 
+    private JsonUtils() {
+
+    }
+
     public static String toString(JsonElement jsonElement) {
         if (jsonElement == null) {
             return null;
@@ -48,6 +52,9 @@ public class JsonUtils {
     }
 
     public static boolean isEmptyJson(final JsonElement json) {
+        if (json == null || json.isJsonNull()) {
+            return true;
+        }
         if (json.isJsonArray()) {
             return json.getAsJsonArray().isEmpty();
         }

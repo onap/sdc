@@ -32,17 +32,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.common.util.JsonUtils;
 
 public class ToscaListValueConverter extends ToscaValueBaseConverter implements ToscaValueConverter {
 
     private static final Logger log = Logger.getLogger(ToscaListValueConverter.class.getName());
-    private static ToscaListValueConverter listConverter = new ToscaListValueConverter();
-    private JsonParser jsonParser = new JsonParser();
+    private static final ToscaListValueConverter listConverter = new ToscaListValueConverter();
 
     private ToscaListValueConverter() {
     }
@@ -77,16 +78,8 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
                     return value;
                 }
             }
-            JsonElement jsonElement = null;
-            try {
-                StringReader reader = new StringReader(value);
-                JsonReader jsonReader = new JsonReader(reader);
-                jsonReader.setLenient(true);
-                jsonElement = jsonParser.parse(jsonReader);
-            } catch (JsonSyntaxException e) {
-                log.debug("convertToToscaValue failed to parse json value :", e);
-                return null;
-            }
+            JsonElement jsonElement;
+            jsonElement = parseToJson(value);
             if (jsonElement == null || jsonElement.isJsonNull()) {
                 log.debug("convertToToscaValue json element is null");
                 return null;
@@ -122,7 +115,6 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
                         if (propertyDefinition == null) {
                             log.debug("The property {} was not found under data type {}", propName, dataTypeDefinition.getName());
                             continue;
-                            // return null;
                         }
                         String type = propertyDefinition.getType();
                         ToscaPropertyType propertyType = ToscaPropertyType.isValidType(type);
@@ -132,13 +124,17 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
                                 ToscaValueConverter valueConverter = propertyType.getValueConverter();
                                 convValue = valueConverter.convertToToscaValue(elementValue.getAsString(), type, dataTypes);
                             } else {
-                                if (ToscaPropertyType.MAP.equals(type) || ToscaPropertyType.LIST.equals(propertyType)) {
-                                    ToscaValueConverter valueConverter = propertyType.getValueConverter();
-                                    String json = gson.toJson(elementValue);
-                                    String innerTypeRecursive = propertyDefinition.getSchema().getProperty().getType();
-                                    convValue = valueConverter.convertToToscaValue(json, innerTypeRecursive, dataTypes);
+                                if (JsonUtils.isEmptyJson(elementValue)) {
+                                    convValue = null;
                                 } else {
-                                    convValue = handleComplexJsonValue(elementValue);
+                                    if (ToscaPropertyType.MAP == propertyType || ToscaPropertyType.LIST == propertyType) {
+                                        ToscaValueConverter valueConverter = propertyType.getValueConverter();
+                                        String json = gson.toJson(elementValue);
+                                        String innerTypeRecursive = propertyDefinition.getSchema().getProperty().getType();
+                                        convValue = valueConverter.convertToToscaValue(json, innerTypeRecursive, dataTypes);
+                                    } else {
+                                        convValue = handleComplexJsonValue(elementValue);
+                                    }
                                 }
                             }
                         } else {
@@ -155,6 +151,18 @@ public class ToscaListValueConverter extends ToscaValueBaseConverter implements 
         } catch (JsonParseException e) {
             log.debug("Failed to parse json : {}", value, e);
             BeEcompErrorManager.getInstance().logBeInvalidJsonInput("List Converter");
+            return null;
+        }
+    }
+
+    private JsonElement parseToJson(final String value) {
+        try {
+            final StringReader reader = new StringReader(value);
+            final JsonReader jsonReader = new JsonReader(reader);
+            jsonReader.setLenient(true);
+            return JsonParser.parseReader(jsonReader);
+        } catch (final JsonSyntaxException e) {
+            log.debug("convertToToscaValue failed to parse json value :", e);
             return null;
         }
     }

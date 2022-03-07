@@ -1,7 +1,7 @@
 /*
  * -
  *  ============LICENSE_START=======================================================
- *  Copyright (C) 2021 Nordix Foundation.
+ *  Copyright (C) 2022 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,24 +18,25 @@
  *  SPDX-License-Identifier: Apache-2.0
  *  ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.tosca.model;
 
-import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import java.io.IOException;
 
-@Getter
-@Setter
-public class ToscaArtifactDefinition {
+/**
+ * Jackson JSON serializer for the ToscaPropertyAssignment class
+ */
+public class ToscaPropertyAssignmentJsonSerializer extends StdSerializer<ToscaPropertyAssignment> {
 
-    private String type;
-    private String file;
-    private String repository;
-    private String description;
-    private String deploy_path;
-    private String artifact_version;
-    private String checksum;
-    private String checksum_algorithm;
-    private Map<String, ToscaPropertyAssignment> properties;
+    public ToscaPropertyAssignmentJsonSerializer() {
+        super(ToscaPropertyAssignment.class);
+    }
 
+    @Override
+    public void serialize(ToscaPropertyAssignment toscaPropertyAssignment, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        gen.writeObject(toscaPropertyAssignment.getValue());
+    }
 }

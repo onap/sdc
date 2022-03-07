@@ -42,6 +42,7 @@ export class InputListItemComponent implements OnInit {
   @Input() isMapChild: boolean = false;
   @Input() listIndex: number;
   @Input() isViewOnly: boolean;
+  @Input() allowDeletion: boolean = false;
   @Output('onValueChange') onValueChangeEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output('onDelete') onDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
   @Output('onChildListItemDelete') onChildListItemDeleteEvent: EventEmitter<number> = new EventEmitter<number>();
@@ -145,7 +146,7 @@ export class InputListItemComponent implements OnInit {
   }
 
   showInputDelete(): boolean {
-    return !this.isViewOnly && (this.isRoot() || this.isMapChild);
+    return this.allowDeletion && !this.isViewOnly && (this.isRoot() || this.isMapChild);
   }
 
   resolveType(): string {

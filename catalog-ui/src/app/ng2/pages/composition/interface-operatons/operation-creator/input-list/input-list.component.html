@@ -19,8 +19,11 @@
   ~  ============LICENSE_END=========================================================
   -->
 
-<label>{{ 'INPUT_LIST_TITLE' | translate }}</label>
+<label *ngIf="title">{{title}}</label>
 <div class="input-tree">
+  <div *ngIf="!_inputs.length">
+    {{emptyMessage}}
+  </div>
   <ul *ngFor="let input of _inputs">
     <app-input-list-item
         [name]="input.name"
@@ -29,6 +32,7 @@
         [valueObjRef]="input.value"
         [schema]="input.schema"
         [isViewOnly]="isViewOnly"
+        [allowDeletion]="allowDeletion"
         (onValueChange)="onValueChange($event)"
         (onDelete)="onDelete($event)">
     </app-input-list-item>
