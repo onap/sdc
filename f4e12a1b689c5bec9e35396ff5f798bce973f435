@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec21d958_b9614ca5",
+        "filename": "catalog-ui/src/app/models/properties-inputs/derived-fe-property.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-07T15:09:22Z",
+      "side": 1,
+      "message": "please, use PROPERTY_TYPES.MAP",
+      "range": {
+        "startLine": 78,
+        "startChar": 53,
+        "endLine": 78,
+        "endChar": 58
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b81ffd6_80c4920a",
+        "filename": "catalog-ui/src/app/models/properties-inputs/derived-fe-property.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-07T15:09:22Z",
+      "side": 1,
+      "message": "could be replaced by \"const\"",
+      "range": {
+        "startLine": 79,
+        "startChar": 20,
+        "endLine": 79,
+        "endChar": 23
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2d3f7a1_9b3e55d9",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-07T15:09:22Z",
+      "side": 1,
+      "message": "please, if possible, add missing \u0027;\u0027",
+      "range": {
+        "startLine": 132,
+        "startChar": 122,
+        "endLine": 132,
+        "endChar": 123
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d6db485_364d6695",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-07T15:09:22Z",
+      "side": 1,
+      "message": "for more clarity, you could already set a variable here to be reused on line 137: property.flattenedChildren[index].\nAs a suggestion, you could use \u0027property.flattenedChildren.slice(-1)\u0027 to get the last index.",
+      "range": {
+        "startLine": 133,
+        "startChar": 20,
+        "endLine": 133,
+        "endChar": 70
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "704b0526_ad7188af",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-07T15:09:22Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 134,
+        "startChar": 47,
+        "endLine": 134,
+        "endChar": 52
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4738c7a6_9df5753c",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-07T15:09:22Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 135,
+        "startChar": 24,
+        "endLine": 135,
+        "endChar": 27
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
