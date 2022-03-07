@@ -138,7 +138,7 @@ class ToscaValueBaseConverterTest {
         final Object objectProperty = jsonObjectAsMap.get("objectProperty");
         assertTrue(objectProperty instanceof Map);
         final Map<String, Object> objectPropertyAsMap = (Map<String, Object>) objectProperty;
-        assertEquals(4, objectPropertyAsMap.keySet().size());
+        assertEquals(3, objectPropertyAsMap.keySet().size());
         assertTrue(objectPropertyAsMap.containsKey("string"));
         assertEquals(innerObject.get("string").getAsString(), objectPropertyAsMap.get("string"));
         assertEquals(innerObject.get("int").getAsInt(), objectPropertyAsMap.get("int"));

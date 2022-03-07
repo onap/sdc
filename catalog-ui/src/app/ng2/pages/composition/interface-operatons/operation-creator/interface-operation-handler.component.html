@@ -104,30 +104,27 @@
                 </div>
             </div>
             <div class="form-item" *ngIf="toscaArtifactTypeSelected && enableAddArtifactImplementation">
-                <label class="sdc-input__label">{{ 'ENTITY_VIEWER_PROPERTIES_TAB' | translate }}</label>
-                <div class="generic-table">
-                    <div class="header-row table-row">
-                        <span class="cell header-cell field-input-name">{{ 'IMPLEMENTATION_ARTIFACT_PROPERTY_NAME' | translate }}</span>
-                        <span class="cell header-cell field-input-type">{{ 'IMPLEMENTATION_ARTIFACT_PROPERTY_TYPE' | translate }}</span>
-                        <span class="cell header-cell field-input-value">{{ 'IMPLEMENTATION_ARTIFACT_PROPERTY_VALUE' | translate }}</span>
-                    </div>
-
-                    <div class="empty-msg data-row" *ngIf="!toscaArtifactTypeProperties.length">
-                        <div>{{ 'EMPTY_PARAM_TABLE_HEADER' | translate }}</div>
-                    </div>
-                    <property-param-row
-                        *ngFor="let property of toscaArtifactTypeProperties"
-                        class="data-row"
-                        [artifactProperty]="property"
-                        [isPropertyValueValid]="propertyValueValidation">
-                    </property-param-row>
-                </div>
+                <input-list
+                    *ngIf="artifactTypeProperties && dataTypeMap"
+                    [title]="'ARTIFACT_PROPERTY_LIST_TITLE' | translate"
+                    [emptyMessage]="'ARTIFACT_PROPERTY_LIST_EMPTY' | translate"
+                    [inputs]="artifactTypeProperties"
+                    [dataTypeMap]="dataTypeMap"
+                    [isViewOnly]="isViewOnly"
+                    [allowDeletion]="false"
+                    (onValueChange)="onArtifactPropertyValueChange($event)"
+                >
+                </input-list>
             </div>
         </div>
         <div class="group-with-border content-row" *ngIf="dataTypeMap">
             <input-list
-                [inputs]="inputs" [dataTypeMap]="dataTypeMap"
+                [title]="'INPUT_LIST_TITLE' | translate"
+                [emptyMessage]="'INPUT_LIST_EMPTY' | translate"
+                [inputs]="inputs"
+                [dataTypeMap]="dataTypeMap"
                 [isViewOnly]="isViewOnly"
+                [allowDeletion]="true"
                 (onValueChange)="onInputValueChange($event)"
                 (onDelete)="onInputDelete($event)"
             >

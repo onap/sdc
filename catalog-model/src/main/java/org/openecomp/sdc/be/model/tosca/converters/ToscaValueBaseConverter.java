@@ -98,12 +98,19 @@ public class ToscaValueBaseConverter {
     }
 
     private Map<String, Object> handleJsonObject(final JsonElement jsonElement) {
-        final Map<String, Object> jsonObjectAsMap = new HashMap<>();
         final JsonObject jsonObject = jsonElement.getAsJsonObject();
-        for (final Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-            jsonObjectAsMap.put(entry.getKey(), handleComplexJsonValue(entry.getValue()));
+        if (jsonObject.entrySet().isEmpty()) {
+            return null;
         }
-        return jsonObjectAsMap;
+        final Map<String, Object> jsonObjectAsMap = new HashMap<>();
+        for (final Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+            final Object value = handleComplexJsonValue(entry.getValue());
+            if (value != null) {
+                jsonObjectAsMap.put(entry.getKey(), value);
+            }
+
+        }
+        return jsonObjectAsMap.isEmpty() ? null : jsonObjectAsMap;
     }
 
     private List<Object> handleJsonArray(final JsonElement entry) {

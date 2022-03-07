@@ -66,6 +66,8 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -73,6 +75,7 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.ServiceMetadataDefinition;
+import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
 import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
@@ -366,10 +369,10 @@ class InterfacesOperationsConverterTest {
     @Test
     void interfaceWithInputsToscaExportTest() {
         final Component component = new Service();
-        final InterfaceDefinition aInterfaceWithInput = new InterfaceDefinition();
+        final InterfaceDefinition anInterfaceWithInput = new InterfaceDefinition();
         final String interfaceName = "myInterfaceName";
         final String interfaceType = "my.type." + interfaceName;
-        aInterfaceWithInput.setType(interfaceType);
+        anInterfaceWithInput.setType(interfaceType);
         final String input1Name = "input1";
         final InputDataDefinition input1 = createInput("string", "input1 description", false, "input1 value");
         final String input2Name = "input2";
@@ -377,9 +380,9 @@ class InterfacesOperationsConverterTest {
         final Map<String, InputDataDefinition> inputMap = new HashMap<>();
         inputMap.put(input1Name, input1);
         inputMap.put(input2Name, input2);
-        aInterfaceWithInput.setInputs(inputMap);
+        anInterfaceWithInput.setInputs(inputMap);
         component.setInterfaces(new HashMap<>());
-        component.getInterfaces().put(interfaceName, aInterfaceWithInput);
+        component.getInterfaces().put(interfaceName, anInterfaceWithInput);
         final ToscaNodeType nodeType = new ToscaNodeType();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
         final ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
@@ -395,6 +398,62 @@ class InterfacesOperationsConverterTest {
         validateInterfaceInputs(toscaTemplateYaml, interfaceName, inputMap);
     }
 
+    @Test
+    void interfaceWithOperationImplementationArtifactPropertiesTest() {
+        //given
+        final Component component = new Service();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        final String interfaceName = "myInterfaceName";
+        interfaceDefinition.setType("my.type." + interfaceName);
+        final var operation1DataDefinition = new OperationDataDefinition();
+        operation1DataDefinition.setName("anOperation");
+
+        final PropertyDataDefinition listOfStringProperty = new PropertyDataDefinition();
+        listOfStringProperty.setName("listProperty");
+        listOfStringProperty.setType(ToscaType.LIST.getType());
+        final PropertyDataDefinition listOfStringSchemaProperty = new PropertyDataDefinition();
+        listOfStringSchemaProperty.setType(ToscaType.STRING.getType());
+        final SchemaDefinition listPropertySchema = new SchemaDefinition();
+        listPropertySchema.setProperty(listOfStringProperty);
+        listOfStringProperty.setSchema(listPropertySchema);
+        listOfStringProperty.setValue("[ \"value1\", \"value2\", \"value3\" ]");
+        final ArrayList<Object> propertyList = new ArrayList<>();
+        propertyList.add(listOfStringProperty);
+        final HashMap<String, Object> artifactDefinitionMapInitializer = new HashMap<>();
+        artifactDefinitionMapInitializer.put(JsonPresentationFields.PROPERTIES.getPresentation(), propertyList);
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition(artifactDefinitionMapInitializer);
+        artifactDataDefinition.setArtifactName("artifact1");
+        artifactDataDefinition.setArtifactType("my.artifact.Type");
+        operation1DataDefinition.setImplementation(artifactDataDefinition);
+        interfaceDefinition.setOperations(Map.of(operation1DataDefinition.getName(), operation1DataDefinition));
+        component.setInterfaces(new HashMap<>());
+        component.getInterfaces().put(interfaceName, interfaceDefinition);
+        //when
+        Map<String, Object> interfacesMap = interfacesOperationsConverter
+            .getInterfacesMap(component, null, component.getInterfaces(), null, false, true);
+        //then
+        assertTrue(interfacesMap.containsKey(interfaceName));
+        final Map<String, Object> actualInterfaceMap = (Map<String, Object>) interfacesMap.get(interfaceName);
+        assertTrue(actualInterfaceMap.containsKey(operation1DataDefinition.getName()));
+        final Map<String, Object> actualOperationMap = (Map<String, Object>) actualInterfaceMap.get(operation1DataDefinition.getName());
+        assertTrue(actualOperationMap.containsKey("implementation"));
+        final Map<String, Object> actualImplementationMap = (Map<String, Object>) actualOperationMap.get("implementation");
+        assertTrue(actualImplementationMap.containsKey("primary"));
+        final Map<String, Object> actualArtifactImplementationMap = (Map<String, Object>) actualImplementationMap.get("primary");
+        assertTrue(actualArtifactImplementationMap.containsKey("properties"));
+        final Map<String, Object> actualArtifactPropertiesMap = (Map<String, Object>) actualArtifactImplementationMap.get("properties");
+        assertEquals(actualArtifactPropertiesMap.keySet().size(), 1);
+        assertTrue(actualArtifactPropertiesMap.containsKey(listOfStringProperty.getName()));
+        final Object expectedListObject = actualArtifactPropertiesMap.get(listOfStringProperty.getName());
+        assertTrue(expectedListObject instanceof List);
+        final List<String> expectedListOfStringPropValue = (List<String>) expectedListObject;
+        assertEquals(expectedListOfStringPropValue.size(), 3);
+        assertTrue(expectedListOfStringPropValue.contains("value1"));
+        assertTrue(expectedListOfStringPropValue.contains("value2"));
+        assertTrue(expectedListOfStringPropValue.contains("value3"));
+    }
+
+
     private void validateInterfaceInputs(final String yaml, final String interfaceName, final Map<String, InputDataDefinition> expectedInputMap) {
         String fixedMainYaml = yaml;
         final String nullString = "null";
@@ -404,7 +463,7 @@ class InterfacesOperationsConverterTest {
         if (fixedMainYaml.endsWith(nullString)) {
             fixedMainYaml = fixedMainYaml.substring(0, fixedMainYaml.length() - nullString.length());
         }
-        final Map<String, Object> yamlMap = (Map<String, Object>) new Yaml().load(fixedMainYaml);
+        final Map<String, Object> yamlMap = new Yaml().load(fixedMainYaml);
         final Map<String, Object> nodeTypesMap = (Map<String, Object>) yamlMap.get(NODE_TYPES.getElementName());
         final Map<String, Object> node = (Map<String, Object>) nodeTypesMap.get(NODE_TYPE_NAME);
         final Map<String, Object> interfacesMap = (Map<String, Object>) node.get(INTERFACES.getElementName());
