@@ -5,6 +5,93 @@
 Release Notes
 =============
 
+Version: 1.10.2
+==============
+
+:Release Date: 2022-03-15
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.6.6
+
+Release Purpose
+----------------
+SDC Jakarta
+
+**Epics**
+    N/A
+
+**Stories**
+
+*  `SDC-3885 <https://jira.onap.org/browse/SDC-3885>`_ - Remove single request bottleneck from the simulator 
+*  `SDC-3886 <https://jira.onap.org/browse/SDC-3886>`_ - Implement improved MinIo client
+*  `SDC-3861 <https://jira.onap.org/browse/SDC-3861>`_ - Support for multiple directives
+*  `SDC-3898 <https://jira.onap.org/browse/SDC-3898>`_ - Support properties of type List<Map<String, String>>
+*  `SDC-3891 <https://jira.onap.org/browse/SDC-3891>`_ - Update SDC for rename of TOSCA CL to ACM
+*  `SDC-3891 <https://jira.onap.org/browse/SDC-3882>`_ - Support occurrences on node templates
+*  `SDC-3891 <https://jira.onap.org/browse/SDC-3897>`_ - Support complex types in interface operation inputs
+*  `SDC-3891 <https://jira.onap.org/browse/SDC-3899>`_ - Support complex types for artifact properties in interface operation implementation
+*  `SDC-3891 <https://jira.onap.org/browse/SDC-3887>`_ - Support instance count on node template
+
+**Bug Fixes**
+
+*  `SDC-3881 <https://jira.onap.org/browse/SDC-3881>`_ - Fix NSD plugin to find version by model and category metadata 
+*  `SDC-3892 <https://jira.onap.org/browse/SDC-3892>`_ - SDC build failing
+*  `SDC-3889 <https://jira.onap.org/browse/SDC-3889>`_ - Error when no derived from exists
+*  `SDC-3888 <https://jira.onap.org/browse/SDC-3888>`_ - VSP upload with large files can handle the upload status incorrectly
+*  `SDC-3901 <https://jira.onap.org/browse/SDC-3901>`_ - Cannot create node filter capability if capability has different type properties
+*  `SDC-3901 <https://jira.onap.org/browse/SDC-3907>`_ - Exception when mouse over and out the node pallet in the composition screen
+*  `SDC-3901 <https://jira.onap.org/browse/SDC-3905>`_ - Error updating node filter capability
+*  `SDC-3901 <https://jira.onap.org/browse/SDC-3904>`_ - Error creating node filter capability using get_property
+
+**Tasks**
+
+*  `SDC-3877 <https://jira.onap.org/browse/SDC-3877>`_ - Implement redirecting root url to sdc1
+*  `SDC-3870 <https://jira.onap.org/browse/SDC-3870>`_ - Include new category to NSD generation plugin
+*  `SDC-3880 <https://jira.onap.org/browse/SDC-3880>`_ - Fix SDC-Helm-Validator CSITs
+*  `SDC-3895 <https://jira.onap.org/browse/SDC-3895>`_ - Update vulnerable dependencies
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.10.1
 ==============
 
