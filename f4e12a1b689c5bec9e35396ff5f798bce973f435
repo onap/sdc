@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "76f439fd_f30682b6",
+        "filename": "catalog-ui/src/app/models/properties-inputs/derived-fe-property.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T10:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ec21d958_b9614ca5",
+      "range": {
+        "startLine": 78,
+        "startChar": 53,
+        "endLine": 78,
+        "endChar": 58
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b81ffd6_80c4920a",
         "filename": "catalog-ui/src/app/models/properties-inputs/derived-fe-property.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "958aa516_48303003",
+        "filename": "catalog-ui/src/app/models/properties-inputs/derived-fe-property.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T10:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b81ffd6_80c4920a",
+      "range": {
+        "startLine": 79,
+        "startChar": 20,
+        "endLine": 79,
+        "endChar": 23
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "87bfc473_a6874d5c",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T10:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2d3f7a1_9b3e55d9",
+      "range": {
+        "startLine": 132,
+        "startChar": 122,
+        "endLine": 132,
+        "endChar": 123
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0d6db485_364d6695",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c13cd629_b606b178",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T10:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d6db485_364d6695",
+      "range": {
+        "startLine": 133,
+        "startChar": 20,
+        "endLine": 133,
+        "endChar": 70
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "ce1aca4e_db083de0",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T10:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "704b0526_ad7188af",
+      "range": {
+        "startLine": 134,
+        "startChar": 47,
+        "endLine": 134,
+        "endChar": 52
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4738c7a6_9df5753c",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
         "patchSetId": 1
@@ -137,6 +257,30 @@
       "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c34c7a0_387c4fd7",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T10:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4738c7a6_9df5753c",
+      "range": {
+        "startLine": 135,
+        "startChar": 24,
+        "endLine": 135,
+        "endChar": 27
+      },
+      "revId": "f4e12a1b689c5bec9e35396ff5f798bce973f435",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
