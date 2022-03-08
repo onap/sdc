@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f33c5cad_0e9054d3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T09:36:02Z",
+      "side": 1,
+      "message": "the main purpose of the method is to delete the VSP, I think it would be better if the name reflected that, maybe \u0027deleteVsp\u0027",
+      "range": {
+        "startLine": 290,
+        "startChar": 21,
+        "endLine": 290,
+        "endChar": 42
+      },
+      "revId": "fd243b2629b3a28170b624178b153ae603645588",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
