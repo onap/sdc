@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44a2e347_3724ccb1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "change \u0027VSPs\u0027 to \u0027specifications\u0027",
+      "range": {
+        "startLine": 42,
+        "startChar": 76,
+        "endLine": 42,
+        "endChar": 80
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37293e56_db60c7c5",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "The ASD types are being added to the SDC model (for now at least) so this can be removed",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 5
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "094bfe8d_5a1f35ea",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "this should be ETSI_ENTRY_CERTIFICATE, i.e. same as in the base class",
+      "range": {
+        "startLine": 61,
+        "startChar": 43,
+        "endLine": 61,
+        "endChar": 60
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b9bf407_260fe4c1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "these wont be in the TOSCA.meta",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 22
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60467516_e9f954eb",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "create a method getOnboardingManifest() which can be overridden in subclasses",
+      "range": {
+        "startLine": 252,
+        "startChar": 43,
+        "endLine": 252,
+        "endChar": 74
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69088375_3b9ce326",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "rename it isAsdPackage",
+      "range": {
+        "startLine": 59,
+        "startChar": 12,
+        "endLine": 59,
+        "endChar": 26
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17dd4f2b_f0a8fd2b",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "why not use the existing getManifest method?",
+      "range": {
+        "startLine": 296,
+        "startChar": 0,
+        "endLine": 300,
+        "endChar": 0
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc4f3750_6eb7c9b7",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdManifestOnboarding.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "This seems to be a lot of duplication of code between this class and SOL004ManifestOnboarding",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 71
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f47e618_110fe678",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdManifestOnboarding.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "dont seem to validate for asd, e.g no pnf entries",
+      "range": {
+        "startLine": 246,
+        "startChar": 10,
+        "endLine": 247,
+        "endChar": 116
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02432476_99d3f079",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestTokenType.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "ASD metadata entries should only be valid for ASDs",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 84
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db4a44ad_90660893",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ToscaMetaEntryAsd.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-08T11:20:44Z",
+      "side": 1,
+      "message": "These wont be in the TOSCA.meta onboarded, they will be in the manifest so dont belong here",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 43
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
