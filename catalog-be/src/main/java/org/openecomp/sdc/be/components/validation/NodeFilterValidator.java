@@ -257,11 +257,11 @@ public class NodeFilterValidator {
                         capabilityDefinition -> capabilityDefinition.getProperties().stream().anyMatch(
                             componentInstanceProperty -> uiConstraint.getServicePropertyName()
                                 .equalsIgnoreCase(componentInstanceProperty.getName())))).findFirst();
-            if (optionalCapabilityDefinitionList.isPresent()) {
-                optionalComponentInstanceProperty = optionalCapabilityDefinitionList.get().stream().findAny()
-                    .map(capabilityDefinition -> capabilityDefinition.getProperties().get(0));
+            if (optionalCapabilityDefinitionList.isPresent() && !optionalCapabilityDefinitionList.get().isEmpty()) {
+                optionalComponentInstanceProperty = getComponentInstanceProperty(optionalCapabilityDefinitionList.get().get(0), uiConstraint.getServicePropertyName());
             }
         }
+
         if (optionalComponentInstanceProperty.isEmpty()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.SELECTED_PROPERTY_NOT_PRESENT, uiConstraint.getServicePropertyName()));
         }
@@ -272,6 +272,10 @@ public class NodeFilterValidator {
         }
         return isValidValueCheck(optionalComponentInstanceProperty.get().getType(), String.valueOf(uiConstraint.getValue()),
             uiConstraint.getServicePropertyName());
+    }
+    
+    private Optional<ComponentInstanceProperty> getComponentInstanceProperty(CapabilityDefinition capabilityDefinition, final String propertyName){
+    	return capabilityDefinition.getProperties().stream().filter(property -> property.getName().equals(propertyName)).findAny();
     }
 
     private Either<Boolean, ResponseFormat> isValidValueCheck(String type, String value, String propertyName) {
