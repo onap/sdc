@@ -18,6 +18,7 @@ package org.openecomp.sdcrests.vsp.rest.services;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
+import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -72,6 +73,7 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspComputeDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDescriptionDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspRequestDto;
+import org.openecomp.sdcrests.vsp.rest.CatalogVspClient;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToVspComputeDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapItemToVspDetailsDto;
@@ -120,6 +122,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     private static final String SUBMIT_ITEM_ACTION = "Submit_Item";
     private static final String ATTACHMENT_FILENAME = "attachment; filename=";
     private static final String SUBMIT_HEALED_VERSION_ERROR = "VSP Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductsImpl.class);
     private static final Object VALIDATION_VSP_CACHE_LOCK = new Object();
     private static ItemCreationDto cachedValidationVsp;
@@ -130,6 +133,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     private final ActivityLogManager activityLogManager;
     private final NotificationPropagationManager notifier;
     private final UniqueValueUtil uniqueValueUtil;
+    private final CatalogVspClient catalogVspClient;
+
 
     public VendorSoftwareProductsImpl() {
         this.itemManager = AsdcItemManagerFactory.getInstance().createInterface();
@@ -139,6 +144,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
         this.notifier = NotificationPropagationManagerFactory.getInstance().createInterface();
         this.uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+        this.catalogVspClient = new CatalogVspClientImpl();
     }
 
     public VendorSoftwareProductsImpl(AsdcItemManager itemManager,
@@ -147,7 +153,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                                       VendorSoftwareProductManager vendorSoftwareProductManager,
                                       ActivityLogManager activityLogManager,
                                       NotificationPropagationManager notifier,
-                                      UniqueValueUtil uniqueValueUtil) {
+                                      UniqueValueUtil uniqueValueUtil,
+                                      CatalogVspClient catalogVspClient) {
         this.itemManager = itemManager;
         this.permissionsManager = permissionsManager;
         this.versioningManager = versioningManager;
@@ -155,6 +162,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         this.activityLogManager = activityLogManager;
         this.notifier = notifier;
         this.uniqueValueUtil = uniqueValueUtil;
+        this.catalogVspClient = catalogVspClient;
     }
 
     @Override
@@ -275,6 +283,19 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         if (!vsp.getType().equals(ItemType.vsp.name())) {
             throw new CoreException((new ErrorCode.ErrorCodeBuilder().withMessage(String.format("Vsp with id %s does not exist.", vspId)).build()));
         }
+        //call to sdc2/rest/v1/catalog/resources/csar/{csaruuid}
+        try {
+            Optional<String> optUsedInVf = catalogVspClient.findNameOfVfUsingVsp(vspId, user);
+            if (null != optUsedInVf && optUsedInVf.isPresent()) {
+                return Response.status(Response.Status.FORBIDDEN).entity(
+                        new Exception(ErrorMessagesFormatBuilder.getErrorWithParameters(Messages.DELETE_VSP_ERROR_USED_BY_VF.getErrorMessage(), optUsedInVf.get(), optUsedInVf.get()))
+                ).build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new CoreException((new ErrorCode.ErrorCodeBuilder().withMessage(String.format("Vsp with id %s cannot be deleted due to error %s.", vspId, e.getMessage())).build()))).build();
+        }
+
+
         Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
         if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
             return getResponseDeletionOk(vspId, user, vsp);
