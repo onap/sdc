@@ -31,7 +31,7 @@ import { ComponentMetadata } from '../../../../models/component-metadata';
 import { ServiceInstanceObject } from '../../../../models/service-instance-properties-and-interfaces';
 import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
 import {CapabilitiesFilterPropertiesEditorComponent} from "../../../pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.component";
-import {CapabilitiesConstraintObject} from "../capabilities-constraint/capabilities-constraint.component";
+import { CapabilitiesConstraintObjectUI} from "../capabilities-constraint/capabilities-constraint.component";
 import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
 
 export class ConstraintObject {
@@ -136,7 +136,7 @@ export class ServiceDependenciesComponent {
     parentServiceInputs: InputBEModel[] = [];
     parentServiceProperties: PropertyBEModel[] = [];
     constraintProperties: ConstraintObject[] = [];
-    constraintCapabilities: CapabilitiesConstraintObject[] = [];
+    constraintCapabilities: CapabilitiesConstraintObjectUI[] = [];
     operatorTypes: any[];
     capabilities: string = ToscaFilterConstraintType.CAPABILITIES;
     properties: string = ToscaFilterConstraintType.PROPERTIES;
@@ -151,7 +151,7 @@ export class ServiceDependenciesComponent {
     @Input() selectedInstanceProperties: PropertyBEModel[] = [];
     @Output() updateRulesListEvent: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
     @Output() updateNodeFilterProperties: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
-    @Output() updateNodeFilterCapabilities: EventEmitter<CapabilitiesConstraintObject[]> = new EventEmitter<CapabilitiesConstraintObject[]>();
+    @Output() updateNodeFilterCapabilities: EventEmitter<CapabilitiesConstraintObjectUI[]> = new EventEmitter<CapabilitiesConstraintObjectUI[]>();
     @Output() loadRulesListEvent:EventEmitter<any> = new EventEmitter();
     @Output() dependencyStatus = new EventEmitter<boolean>();
 
@@ -216,7 +216,7 @@ export class ServiceDependenciesComponent {
                 this.componentInstancesConstraints = response.nodeFilterforNode;
                 const nodeFilterPropertiesResponse: ConstraintObject[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
                 this.constraintProperties = nodeFilterPropertiesResponse;
-                const nodeFilterCapabilitiesResponse: CapabilitiesConstraintObject[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].capabilities;
+                const nodeFilterCapabilitiesResponse: CapabilitiesConstraintObjectUI[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].capabilities;
                 this.constraintCapabilities = nodeFilterCapabilitiesResponse;
             }
         });
@@ -352,7 +352,7 @@ export class ServiceDependenciesComponent {
         this.topologyTemplateService.createServiceFilterCapabilitiesConstraints(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
-            new CapabilitiesConstraintObject(this.modalInstance.instance.dynamicContent.instance.currentRule),
+            new CapabilitiesConstraintObjectUI(this.modalInstance.instance.dynamicContent.instance.currentRule),
             this.compositeService.componentType,
             constraintType
         ).subscribe( (response) => {
@@ -375,7 +375,7 @@ export class ServiceDependenciesComponent {
             CapabilitiesFilterPropertiesEditorComponent,
             {
                 serviceRuleIndex: index,
-                serviceRules: _.map(this.constraintCapabilities, (rule) => new CapabilitiesConstraintObject(rule)),
+                serviceRules: _.map(this.constraintCapabilities, (rule) => new CapabilitiesConstraintObjectUI(rule)),
                 currentServiceName: this.currentServiceInstance.name,
                 operatorTypes: this.operatorTypes,
                 compositeServiceName: this.compositeService.name,
@@ -438,7 +438,7 @@ export class ServiceDependenciesComponent {
         this.topologyTemplateService.updateServiceFilterCapabilitiesConstraint(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
-            new CapabilitiesConstraintObject(this.modalInstance.instance.dynamicContent.instance.currentRule),
+            new CapabilitiesConstraintObjectUI(this.modalInstance.instance.dynamicContent.instance.currentRule),
             this.compositeService.componentType,
             constraintType,
             index
