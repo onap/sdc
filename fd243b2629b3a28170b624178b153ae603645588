@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "405fea04_2aafcaf1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-10T17:55:41Z",
+      "side": 1,
+      "message": "please, follow the ONAP commit message guidelines: https://wiki.onap.org/display/DW/Commit+Messages",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 28
+      },
+      "revId": "fd243b2629b3a28170b624178b153ae603645588",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21a25230_c286ed99",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-10T17:55:41Z",
+      "side": 1,
+      "message": "I would suggest to unwrap this else. There is no need for the else, as the previous if is returning.",
+      "range": {
+        "startLine": 281,
+        "startChar": 10,
+        "endLine": 281,
+        "endChar": 14
+      },
+      "revId": "fd243b2629b3a28170b624178b153ae603645588",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed56fa47_70a3adeb",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-10T17:55:41Z",
+      "side": 1,
+      "message": "I suggest to change to isVspArchived",
+      "range": {
+        "startLine": 282,
+        "startChar": 22,
+        "endLine": 282,
+        "endChar": 27
+      },
+      "revId": "fd243b2629b3a28170b624178b153ae603645588",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f33c5cad_0e9054d3",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 5
