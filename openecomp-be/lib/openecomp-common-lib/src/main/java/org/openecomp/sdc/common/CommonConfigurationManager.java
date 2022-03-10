@@ -125,6 +125,16 @@ public class CommonConfigurationManager {
     }
 
     /**
+     * This method can be used to access any yaml whole section configuration.
+     *
+     * @param yamlSection  The yaml section that must be accessed
+     * @return map of entries configured for the specified section
+     */
+    public Map<String, Object> getConfigValue(String yamlSection) {
+        return this.configuration.get(yamlSection);
+    }
+
+    /**
      * This method can be used to access a specific configuration parameter in the configuration in the yamlSection predefined in the constructor.
      *
      * @param name         The name of the config
