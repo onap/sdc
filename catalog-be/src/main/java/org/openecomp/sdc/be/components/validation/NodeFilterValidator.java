@@ -90,14 +90,15 @@ public class NodeFilterValidator {
 
     public Either<Boolean, ResponseFormat> validateFilter(final Component parentComponent, final String componentInstanceId,
                                                           final List<String> uiConstraints, final NodeFilterConstraintAction action,
-                                                          final NodeFilterConstraintType nodeFilterConstraintType) {
+                                                          final NodeFilterConstraintType nodeFilterConstraintType,
+                                                          final String capabilityName) {
         try {
             if (NodeFilterConstraintAction.ADD == action || NodeFilterConstraintAction.UPDATE == action) {
                 for (final String uiConstraint : uiConstraints) {
                     final UIConstraint constraint = new ConstraintConvertor().convert(uiConstraint);
                     if (ConstraintConvertor.PROPERTY_CONSTRAINT.equals(constraint.getSourceType())) {
                         final Either<Boolean, ResponseFormat> booleanResponseFormatEither = validatePropertyConstraint(parentComponent,
-                            componentInstanceId, constraint);
+                            componentInstanceId, constraint, capabilityName);
                         if (booleanResponseFormatEither.isRight()) {
                             return booleanResponseFormatEither;
                         }
@@ -141,7 +142,7 @@ public class NodeFilterValidator {
     }
 
     private Either<Boolean, ResponseFormat> validatePropertyConstraint(final Component parentComponent, final String componentInstanceId,
-                                                                       final UIConstraint uiConstraint) {
+                                                                       final UIConstraint uiConstraint, final String capabilityName) {
         String source = SOURCE;
         final Optional<ComponentInstance> optionalComponentInstance;
         final List<PropertyDefinition> propertyDefinitions = parentComponent.getProperties();
@@ -161,8 +162,8 @@ public class NodeFilterValidator {
         if (CollectionUtils.isNotEmpty(sourcePropertyDefinition)) {
             final Optional<? extends PropertyDefinition> sourceSelectedProperty = sourcePropertyDefinition.stream()
                 .filter(property -> uiConstraint.getValue().equals(property.getName())).findFirst();
-            final Optional<? extends PropertyDefinition> targetComponentInstanceProperty = parentComponent.getComponentInstancesProperties()
-                .get(componentInstanceId).stream().filter(property -> uiConstraint.getServicePropertyName().equals(property.getName())).findFirst();
+            Optional<? extends PropertyDefinition> targetComponentInstanceProperty = getProperty(parentComponent, componentInstanceId, capabilityName, uiConstraint.getServicePropertyName());
+           
             source = !targetComponentInstanceProperty.isPresent() ? "Target" : SOURCE;
             if (sourceSelectedProperty.isPresent() && targetComponentInstanceProperty.isPresent()) {
                 return validatePropertyData(uiConstraint, sourceSelectedProperty, targetComponentInstanceProperty);
@@ -170,6 +171,27 @@ public class NodeFilterValidator {
         }
         final String missingProperty = source.equals(SOURCE) ? uiConstraint.getValue().toString() : uiConstraint.getServicePropertyName();
         return Either.right(componentsUtils.getResponseFormat(ActionStatus.MAPPED_PROPERTY_NOT_FOUND, source, missingProperty));
+    }
+    
+    private Optional<ComponentInstanceProperty> getProperty(final Component parentComponent, final String componentInstanceId,
+            final String capabilityName, final String propertyName) {
+
+        if (StringUtils.isEmpty(capabilityName)) {
+            return parentComponent.getComponentInstancesProperties().get(componentInstanceId).stream()
+                    .filter(property -> propertyName.equals(property.getName())).findFirst();
+        } else {
+            final Optional<ComponentInstance> componentInstanceOptional = parentComponent.getComponentInstances().stream()
+                    .filter(componentInstance -> componentInstance.getUniqueId().equals(componentInstanceId)).findAny();
+            if (componentInstanceOptional.isPresent()) {
+                for (final List<CapabilityDefinition> listOfCaps : componentInstanceOptional.get().getCapabilities().values()) {
+                    final Optional<CapabilityDefinition> capDef = listOfCaps.stream().filter(cap -> cap.getName().equals(capabilityName)).findAny();
+                    if (capDef.isPresent()) {
+                        return capDef.get().getProperties().stream().filter(property -> propertyName.equals(property.getName())).findFirst();
+                    }
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private Either<Boolean, ResponseFormat> validateInputConstraint(final Component parentComponent, final String componentInstanceId,

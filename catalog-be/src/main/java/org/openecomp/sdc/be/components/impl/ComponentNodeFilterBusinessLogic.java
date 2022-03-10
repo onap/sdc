@@ -164,7 +164,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         throws BusinessLogicException {
         final Component component = getComponent(componentId);
         CINodeFilterDataDefinition nodeFilterDataDefinition = validateAndReturnNodeFilterDefinition(componentInstanceId, action, constraint,
-            component, nodeFilterConstraintType);
+            component, nodeFilterConstraintType, capabilityName);
         boolean wasLocked = false;
         try {
             if (shouldLock) {
@@ -204,7 +204,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         throws BusinessLogicException {
         final Component component = getComponent(componentId);
         CINodeFilterDataDefinition nodeFilterDataDefinition = validateAndReturnNodeFilterDefinition(componentInstanceId, action, constraint,
-            component, nodeFilterConstraintType);
+            component, nodeFilterConstraintType, "");
         boolean wasLocked = false;
         try {
             if (shouldLock) {
@@ -291,9 +291,10 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
     private CINodeFilterDataDefinition validateAndReturnNodeFilterDefinition(final String componentInstanceId,
                                                                              final NodeFilterConstraintAction action, final String constraint,
                                                                              final Component component,
-                                                                             final NodeFilterConstraintType nodeFilterConstraintType)
+                                                                             final NodeFilterConstraintType nodeFilterConstraintType,
+                                                                             final String capabilityName)
         throws BusinessLogicException {
-        validateNodeFilter(component, componentInstanceId, action, constraint, nodeFilterConstraintType);
+        validateNodeFilter(component, componentInstanceId, action, constraint, nodeFilterConstraintType, capabilityName);
         final Optional<CINodeFilterDataDefinition> cINodeFilterDataDefinition = getCiNodeFilterDataDefinition(componentInstanceId, component);
         if (!cINodeFilterDataDefinition.isPresent()) {
             throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
@@ -302,9 +303,9 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
     }
 
     private void validateNodeFilter(final Component component, final String componentInstanceId, final NodeFilterConstraintAction action,
-                                    final String constraint, final NodeFilterConstraintType nodeFilterConstraintType) throws BusinessLogicException {
+                                    final String constraint, final NodeFilterConstraintType nodeFilterConstraintType, final String capabilityName) throws BusinessLogicException {
         final Either<Boolean, ResponseFormat> response = nodeFilterValidator
-            .validateFilter(component, componentInstanceId, Collections.singletonList(constraint), action, nodeFilterConstraintType);
+            .validateFilter(component, componentInstanceId, Collections.singletonList(constraint), action, nodeFilterConstraintType, capabilityName);
         if (response.isRight()) {
             throw new BusinessLogicException(
                 componentsUtils.getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
@@ -323,7 +324,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         }
         return addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD, uiConstraint.getServicePropertyName(),
             new ConstraintConvertor().convert(uiConstraint), true, componentTypeEnum, nodeFilterConstraintType,
-            StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? "" : uiConstraint.getCapabilityName());
+            uiConstraint.getCapabilityName());
     }
 
     public StorageOperationStatus associateNodeFilterToComponentInstance(final String componentId,
