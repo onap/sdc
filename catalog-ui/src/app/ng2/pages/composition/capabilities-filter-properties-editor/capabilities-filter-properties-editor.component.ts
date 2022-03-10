@@ -137,7 +137,7 @@ export class CapabilitiesFilterPropertiesEditorComponent {
     if (!this.currentRule.sourceName && this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value) {
       this.currentRule.sourceName = this.SOURCE_TYPES.STATIC.value;
     }
-    if (!this.input.componentInstanceCapabilitiesMap) {
+    if (this.input.componentInstanceCapabilitiesMap) {
       this.selectedCapabilitiesPropertyObject = Array.from(this.input.componentInstanceCapabilitiesMap
       .get(this.currentRule.capabilityName))
       .find(property => property.name == this.currentRule.servicePropertyName);
@@ -176,8 +176,8 @@ export class CapabilitiesFilterPropertiesEditorComponent {
     this.filterOptionsByType();
   }
 
-  onServicePropertyChanged() {
-    this.updateOperatorTypesList();
+  onServicePropertyChanged() { 
+    this.syncRuleData();
     this.filterOptionsByType();
     this.currentRule.value = '';
   }
