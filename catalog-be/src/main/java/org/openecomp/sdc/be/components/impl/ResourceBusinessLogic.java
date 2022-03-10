@@ -117,6 +117,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -168,6 +169,7 @@ import org.openecomp.sdc.be.ui.model.UiComponentDataTransfer;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.CommonBeUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -1553,13 +1555,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 resource = createRIAndRelationsFromYaml(yamlName, resource, instancesToCreate, topologyTemplateYaml,
                     nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName, null);
             }
-
             log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
             loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
                 "Finished to create nodes, RI and Relation  from yaml: {}", yamlName);
             // validate update vf module group names
+            Optional<Map<String, GroupDefinition>> asdGroups = checkAndCreateAsdTypeVfModules(parsedToscaYamlInfo.getInstances());
+            Map<String, GroupDefinition> parsedGroups = parsedToscaYamlInfo.getGroups();
+            if (asdGroups.isPresent()) {
+                parsedGroups.putAll(asdGroups.get());
+            }
             final Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic
-                .validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), resource.getSystemName());
+                .validateUpdateVfGroupNames(parsedGroups, resource.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {
                 rollback(inTransaction, resource, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ByResponseFormatComponentException(validateUpdateVfGroupNamesRes.right().value());
@@ -1572,7 +1578,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             if (!validateUpdateVfGroupNamesRes.left().value().isEmpty()) {
                 groups = validateUpdateVfGroupNamesRes.left().value();
             } else {
-                groups = parsedToscaYamlInfo.getGroups();
+                groups = parsedGroups;
             }
             final Either<Resource, ResponseFormat> createGroupsOnResource = createGroupsOnResource(resource, groups);
             if (createGroupsOnResource.isRight()) {
@@ -1633,6 +1639,67 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(), NodeTypeEnum.Resource);
             }
         }
+    }
+
+    private Optional<Map<String, GroupDefinition>> checkAndCreateAsdTypeVfModules(Map<String, UploadComponentInstanceInfo> instances) {
+        Map<String, GroupDefinition> addAsdGroups = new HashMap<>();
+        if (isNotEmpty(instances) || instances != null) {
+            for (Map.Entry<String, UploadComponentInstanceInfo> instance : instances.entrySet()) {
+                if (isNotEmpty(instance.getValue().getArtifacts()) || instance.getValue().getArtifacts() != null) {
+                    Map<String, UploadArtifactInfo> artifactsMap = instance.getValue().getArtifacts()
+                        .get(ToscaTagNamesEnum.ARTIFACTS.getElementName());
+                    if (isNotEmpty(artifactsMap) || artifactsMap != null) {
+                        for (Map.Entry<String , UploadArtifactInfo> artifact : artifactsMap.entrySet()) {
+                            if (artifact.getValue().getType().equals(Constants.ASD_DEPLOYMENT_ITEM)) {
+                                GroupDefinition groupDefinition = new GroupDefinition();
+                                groupDefinition.setName(artifact.getKey());
+                                groupDefinition.setType(Constants.DEFAULT_GROUP_VF_MODULE);
+                                addAsdTypeProperties(groupDefinition);
+                                addAsdGroups.put(groupDefinition.getName(), groupDefinition);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return Optional.of(addAsdGroups);
+    }
+
+    private void addAsdTypeProperties(GroupDefinition groupDefinition) {
+        List<GroupProperty> properties = new ArrayList<>();
+        GroupProperty propIsBase = new GroupProperty();
+        propIsBase.setName(Constants.IS_BASE);
+        propIsBase.setValue("true");
+        properties.add(propIsBase);
+        GroupProperty propVfModuleLabel = new GroupProperty();
+        propVfModuleLabel.setName(Constants.VF_MODULE_LABEL);
+        propVfModuleLabel.setValue(groupDefinition.getName());
+        properties.add(propVfModuleLabel);
+        GroupProperty propVfModuleDescription = new GroupProperty();
+        propVfModuleDescription.setName(Constants.VF_MODULE_DESCRIPTION);
+        propVfModuleDescription.setValue("VF Module representing deployment item " + groupDefinition.getName());
+        properties.add(propVfModuleDescription);
+        GroupProperty propMinVfModuleInstances = new GroupProperty();
+        propMinVfModuleInstances.setName(Constants.MIN_VF_MODULE_INSTANCES);
+        propMinVfModuleInstances.setValue("1");
+        properties.add(propMinVfModuleInstances);
+        GroupProperty propMaxVfModuleInstances = new GroupProperty();
+        propMaxVfModuleInstances.setName(Constants.MAX_VF_MODULE_INSTANCES);
+        propMaxVfModuleInstances.setValue("1");
+        properties.add(propMaxVfModuleInstances);
+        GroupProperty propInitialCount = new GroupProperty();
+        propInitialCount.setName(Constants.INITIAL_COUNT);
+        propInitialCount.setValue("1");
+        properties.add(propInitialCount);
+        GroupProperty propVfModuleType = new GroupProperty();
+        propVfModuleType.setName(Constants.VF_MODULE_TYPE);
+        propVfModuleType.setValue("Base");
+        properties.add(propVfModuleType);
+        GroupProperty propVolumeGroup = new GroupProperty();
+        propVolumeGroup.setName(Constants.VOLUME_GROUP);
+        propVolumeGroup.setValue("false");
+        properties.add(propVolumeGroup);
+        groupDefinition.convertFromGroupProperties(properties);
     }
 
     private boolean processSubstitutableAsNodeType(final Resource resource, final ParsedToscaYamlInfo parsedToscaYamlInfo) {
@@ -2140,8 +2207,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     return Either.right(createArtifactsFromCsar.right().value());
                 }
                 return Either.left(createArtifactsFromCsar.left().value());
-            } else {
-                return csarArtifactsAndGroupsBusinessLogic.deleteVFModules(resource, csarInfo, shouldLock, inTransaction);
             }
         }
         return Either.left(resource);
