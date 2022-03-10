@@ -1,0 +1,6 @@
+catalogNotificationsConfig:
+  # catalog backend protocol
+
+  catalogBeProtocol: http
+  catalogBeHttpPort: 8080
+  catalogBeFqdn: localhost
