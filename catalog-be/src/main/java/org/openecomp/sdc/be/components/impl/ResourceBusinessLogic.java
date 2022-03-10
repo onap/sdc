@@ -117,6 +117,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
@@ -1558,6 +1559,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
                 "Finished to create nodes, RI and Relation  from yaml: {}", yamlName);
             // validate update vf module group names
+            Optional<Map<String, GroupDefinition>> ASDGroups = checkAndCreateASDTypeVfModules(parsedToscaYamlInfo.getInstances());
+            if (ASDGroups.isPresent()) {
+                Map<String, GroupDefinition> parsedGroups = parsedToscaYamlInfo.getGroups();
+                ASDGroups.get().entrySet().forEach(group -> parsedGroups.put(group.getKey(), group.getValue()));
+                parsedToscaYamlInfo.setGroups(parsedGroups);
+            }
             final Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes = groupBusinessLogic
                 .validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), resource.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {
@@ -1633,6 +1640,73 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 graphLockOperation.unlockComponentByName(resource.getSystemName(), resource.getUniqueId(), NodeTypeEnum.Resource);
             }
         }
+    }
+
+    private Optional<Map<String, GroupDefinition>> checkAndCreateASDTypeVfModules(Map<String, UploadComponentInstanceInfo> instances) {
+        Map<String, GroupDefinition> addASDGroups = new HashMap<>();
+        if (!instances.isEmpty()) {
+            for (Map.Entry<String, UploadComponentInstanceInfo> instance : instances.entrySet()) {
+                if (instance.getValue().getArtifacts() != null) {
+                    for (Map.Entry<String, Map<String, UploadArtifactInfo>> artifacts : instance.getValue().getArtifacts().entrySet()) {
+                        for (Map.Entry<String, UploadArtifactInfo> artifact : artifacts.getValue().entrySet()) {
+                            if (artifact.getValue().getType().equals(Constants.ASD_DEPLOYMENT_ITEM)) {
+                                GroupDefinition groupDefinition = new GroupDefinition();
+                                String[] helm_chart_name = artifact.getValue().getFile().split(".tgz");
+                                if (!helm_chart_name[0].isEmpty()) {
+                                    groupDefinition.setName(helm_chart_name[0]);
+                                }
+                                groupDefinition.setType(Constants.DEFAULT_GROUP_VF_MODULE);
+                                addAsdTypeProperties(groupDefinition);
+                                addASDGroups.put(groupDefinition.getName(), groupDefinition);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return Optional.of(addASDGroups);
+    }
+
+    private void addAsdTypeProperties(GroupDefinition groupDefinition) {
+        List<GroupProperty> properties = new ArrayList<>();
+        GroupProperty prop1 = new GroupProperty();
+        prop1.setName(Constants.IS_BASE);
+        prop1.setValue("true");
+        properties.add(prop1);
+        GroupProperty prop2 = new GroupProperty();
+        prop2.setName(Constants.VF_MODULE_LABEL);
+        prop2.setValue(groupDefinition.getName());
+        properties.add(prop2);
+        GroupProperty prop3 = new GroupProperty();
+        prop3.setName(Constants.VF_MODULE_DESCRIPTION);
+        properties.add(prop3);
+        GroupProperty prop4 = new GroupProperty();
+        prop4.setName(Constants.MIN_VF_MODULE_INSTANCES);
+        prop4.setValue("1");
+        properties.add(prop4);
+        GroupProperty prop5 = new GroupProperty();
+        prop5.setName(Constants.MAX_VF_MODULE_INSTANCES);
+        prop5.setValue("1");
+        properties.add(prop5);
+        GroupProperty prop6 = new GroupProperty();
+        prop6.setName(Constants.INITIAL_COUNT);
+        prop6.setValue("1");
+        properties.add(prop6);
+        GroupProperty prop7 = new GroupProperty();
+        prop7.setName(Constants.VF_MODULE_TYPE);
+        prop7.setValue("Base");
+        properties.add(prop7);
+        GroupProperty prop8 = new GroupProperty();
+        prop8.setName(Constants.VOLUME_GROUP);
+        prop8.setValue("false");
+        properties.add(prop8);
+        GroupProperty prop9 = new GroupProperty();
+        prop9.setName(Constants.AVAILABILITY_ZONE_COUNT);
+        properties.add(prop9);
+        GroupProperty prop10 = new GroupProperty();
+        prop10.setName(Constants.VFC_LIST);
+        properties.add(prop10);
+        groupDefinition.convertFromGroupProperties(properties);
     }
 
     private boolean processSubstitutableAsNodeType(final Resource resource, final ParsedToscaYamlInfo parsedToscaYamlInfo) {

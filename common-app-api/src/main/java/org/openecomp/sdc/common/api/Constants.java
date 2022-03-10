@@ -146,8 +146,17 @@ public final class Constants {
     //Plugin BL
     public static final String PLUGIN_BL_COMPONENT = "pluginStatusBL";
     public static final String DEFAULT_MODEL_NAME = "SDC AID";
-
-
+    //ASD properties
+    public static final String VF_MODULE_LABEL = "vf_module_label";
+    public static final String VF_MODULE_DESCRIPTION = "vf_module_description";
+    public static final String MIN_VF_MODULE_INSTANCES = "min_vf_module_instances";
+    public static final String MAX_VF_MODULE_INSTANCES = "max_vf_module_instances";
+    public static final String INITIAL_COUNT = "initial_count";
+    public static final String VF_MODULE_TYPE = "vf_module_type";
+    public static final String VOLUME_GROUP = "volume_group";
+    public static final String AVAILABILITY_ZONE_COUNT = "availability_zone_count";
+    public static final String VFC_LIST = "vfc_list";
+    public static final String ASD_DEPLOYMENT_ITEM= "AsdDeploymentItem";
 
     private Constants() {
     }
