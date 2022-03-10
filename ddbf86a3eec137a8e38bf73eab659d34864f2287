@@ -22,6 +22,30 @@
       "revId": "ddbf86a3eec137a8e38bf73eab659d34864f2287",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4304f03d_aaecadc7",
+        "filename": "catalog-ui/src/app/models/interfaceOperation.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-10T17:07:37Z",
+      "side": 1,
+      "message": "the problem was in the input list value initialization: InputListComponent.initValue method (catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/input-list/input-list.component.ts).\nIt was ignoring the default value; it was just reading the value, otherwise setting a default empty value based on the type. Now I changed to consider the default value in case there is no value present.",
+      "parentUuid": "59113d1e_9010fe8a",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 38
+      },
+      "revId": "ddbf86a3eec137a8e38bf73eab659d34864f2287",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
