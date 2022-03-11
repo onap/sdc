@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a7bbf2e_d404abf3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/SdcBeRestCall.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "I would suggest to change to find instead of get.\nAlso, please, document the method.",
+      "range": {
+        "startLine": 28,
+        "startChar": 21,
+        "endLine": 28,
+        "endChar": 40
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "079eeeab_e6eaff86",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "I suggest you to be more specific in the name of the class and interface. Maybe change to CatalogVspClient.",
+      "range": {
+        "startLine": 47,
+        "startChar": 13,
+        "endLine": 47,
+        "endChar": 55
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b5a7e25_34e16691",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "better to create a specific exception for this class, like CatalogRestClientException, and wrap the exceptions here with a meaningful message",
+      "range": {
+        "startLine": 58,
+        "startChar": 75,
+        "endLine": 58,
+        "endChar": 91
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7af94330_2124f642",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "throw CatalogRestClientException with a meaningful message",
+      "range": {
+        "startLine": 62,
+        "startChar": 16,
+        "endLine": 62,
+        "endChar": 38
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71e09f51_1a734cd3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "this would be really an error, so I suggest to change to error.",
+      "range": {
+        "startLine": 80,
+        "startChar": 19,
+        "endLine": 80,
+        "endChar": 23
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1eb8ee2_8d620cd3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "Please, provide a more meaningful message, e.g.:\nAn error occurred while retrieving the usage of VSP \u003cvspId\u003e through the rest endpoint \u003crest-url\u003e.\nYou could wrap the same message in the CatalogRestClientException",
+      "range": {
+        "startLine": 80,
+        "startChar": 24,
+        "endLine": 80,
+        "endChar": 46
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a2a709a_735d7a83",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "fix formatting: space before curl brackets",
+      "range": {
+        "startLine": 86,
+        "startChar": 69,
+        "endLine": 86,
+        "endChar": 70
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c275ddf_60a7e2ee",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "CatalogRestClientException",
+      "range": {
+        "startLine": 86,
+        "startChar": 60,
+        "endLine": 86,
+        "endChar": 69
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a892d66_f17b5f30",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "this would be an error",
+      "range": {
+        "startLine": 95,
+        "startChar": 19,
+        "endLine": 95,
+        "endChar": 23
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "912e3f1d_fb7f84fc",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/SdcBeRestCallImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "There is already a way to work with YAML configuration files in the project. I would recommend to reuse what is there. Take a look on the method:\n\"org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageManager#readMinIoStorageArtifactStorageConfig\" that reads the onboarding backend configuration file. \nThe file that is provided to the docker is created from here:\nopenecomp-be/dist/sdc-onboard-backend-docker/artifacts/chef-repo/cookbooks/sdc-onboard-backend/templates/default/configuration.yaml.erb.\nI believe you are reading the same file here, so just use the \"CommonConfigurationManager.getInstance()\" / \"org.openecomp.sdc.common.CommonConfigurationManager#getConfigValue(java.lang.String, java.lang.String, T)\" to get the value you need.",
+      "range": {
+        "startLine": 85,
+        "startChar": 4,
+        "endLine": 115,
+        "endChar": 5
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7829846a_f52b6414",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "remove comment, better to document in the getNameOfVfUsingVsp if not yet.",
+      "range": {
+        "startLine": 286,
+        "startChar": 8,
+        "endLine": 286,
+        "endChar": 64
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d52844b1_25605da0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T10:51:16Z",
+      "side": 1,
+      "message": "should always be optional, if getNameOfVfUsingVsp is returning null, please fix to always return an optional",
+      "range": {
+        "startLine": 289,
+        "startChar": 16,
+        "endLine": 289,
+        "endChar": 39
+      },
+      "revId": "e623254ed96e7cd121334a678615b74cb5136e2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
