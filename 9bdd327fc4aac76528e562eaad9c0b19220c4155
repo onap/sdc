@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f165c28d_97398cca",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T15:41:50Z",
+      "side": 1,
+      "message": "I believe this is basically a copy from methods you have currently on the ETSIServiceImpl class.\nIf you extract those methods to a Asd specific class, you could reuse here.",
+      "range": {
+        "startLine": 160,
+        "startChar": 20,
+        "endLine": 160,
+        "endChar": 32
+      },
+      "revId": "9bdd327fc4aac76528e562eaad9c0b19220c4155",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
