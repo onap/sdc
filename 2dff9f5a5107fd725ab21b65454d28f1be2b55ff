@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "36b552e4_879e02db",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T15:14:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ad3afb3_4f08f2f8",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 5
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "094bfe8d_5a1f35ea",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
         "patchSetId": 4
@@ -191,6 +215,30 @@
     },
     {
       "key": {
+        "uuid": "030f06d5_d91896a5",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T15:14:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03267ed8_749835fd",
+      "range": {
+        "startLine": 61,
+        "startChar": 43,
+        "endLine": 61,
+        "endChar": 60
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b9bf407_260fe4c1",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
         "patchSetId": 4
@@ -259,6 +307,30 @@
       "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b4fb43b_89c2a967",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T15:14:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3fad933_a1e94435",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 22
+      },
+      "revId": "2dff9f5a5107fd725ab21b65454d28f1be2b55ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
