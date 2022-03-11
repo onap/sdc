@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ee98b45d_15fb1725",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T12:48:58Z",
+      "side": 1,
+      "message": "I suggest to rename to onboardingManifest, this is not the type itself, but the instance. Also to remove the redundant variable in the line 325.",
+      "range": {
+        "startLine": 322,
+        "startChar": 104,
+        "endLine": 322,
+        "endChar": 116
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00eb3037_3f906c9e",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T12:48:58Z",
+      "side": 1,
+      "message": "I suggest to remove the redundant else to reduce the code complexity",
+      "range": {
+        "startLine": 58,
+        "startChar": 12,
+        "endLine": 58,
+        "endChar": 16
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f2366cb_30b6e747",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T12:48:58Z",
+      "side": 1,
+      "message": "you are repeating this call in every condition. You should move this to the top, before the initial if, on line 51, and remove all other calls",
+      "range": {
+        "startLine": 65,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 9
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfe9624b_7ff56418",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T12:48:58Z",
+      "side": 1,
+      "message": "this is not related to ETSI. It would be better to move to another place with more correlation if possible.",
+      "range": {
+        "startLine": 59,
+        "startChar": 12,
+        "endLine": 59,
+        "endChar": 26
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "217beed8_44079691",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T12:48:58Z",
+      "side": 1,
+      "message": "the token attribute is there to represent the entry, avoiding the use of the enum name. It is better for maintenance when you don\u0027t rely on the enum name, so a change in the name will not break the business logic.",
+      "range": {
+        "startLine": 98,
+        "startChar": 63,
+        "endLine": 98,
+        "endChar": 70
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43babcf8_c8d03534",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T12:48:58Z",
+      "side": 1,
+      "message": "same here for ASD related methods, we should move to another class as this is not related to ETSI",
+      "range": {
+        "startLine": 256,
+        "startChar": 21,
+        "endLine": 256,
+        "endChar": 36
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
