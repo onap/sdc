@@ -18,8 +18,6 @@
                         (dndStart)="onDragStart($event, paletteElement)"
                         (drag)="onDraggableMoved($event)"
                         [dndEffectAllowed]="'copyMove'"
-                        (mouseenter)="onMouseOver($event, paletteElement)"
-                        (mouseleave)="onMouseOut(paletteElement)"
                         [attr.data-tests-id]="paletteElement.name">
                        <palette-element [paletteElement]="paletteElement"></palette-element>
                    </div>
