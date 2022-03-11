@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cc180bf_317a5ad8",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 7
+      },
+      "lineNbr": 1262,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T15:14:09Z",
+      "side": 1,
+      "message": "Do we need those entries? I could not find anything in this change related to those prefixes.",
+      "range": {
+        "startLine": 1261,
+        "startChar": 2,
+        "endLine": 1262,
+        "endChar": 16
+      },
+      "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8de14888_391d404f",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T15:14:09Z",
+      "side": 1,
+      "message": "why not call the getOnboardingManifest() here and implement it in the child classes?",
+      "range": {
+        "startLine": 329,
+        "startChar": 48,
+        "endLine": 329,
+        "endChar": 60
+      },
+      "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3fc2bee_6f135db3",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-11T15:14:09Z",
+      "side": 1,
+      "message": "could be simplified to:\nnull !\u003d manifest \u0026\u0026 manifest.getMetadata().entrySet().stream()\n            .anyMatch(manifestEntry -\u003e ENTRY_DEFINITION_TYPE.getToken().equalsIgnoreCase(manifestEntry.getKey()))",
+      "range": {
+        "startLine": 97,
+        "startChar": 15,
+        "endLine": 99,
+        "endChar": 47
+      },
+      "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
