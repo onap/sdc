@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "21ab2ccc_b7ba8eb0",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-11T12:08:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "85f08489_f49e3e7e",
+      "range": {
+        "startLine": 165,
+        "startChar": 8,
+        "endLine": 167,
+        "endChar": 47
+      },
+      "revId": "0ba2477513aafabb86cefb7c331c98fb93d8f7f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "68de53f4_f09ab5f6",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "0ba2477513aafabb86cefb7c331c98fb93d8f7f4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3576bf0_b697561a",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-11T12:08:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68de53f4_f09ab5f6",
+      "range": {
+        "startLine": 173,
+        "startChar": 12,
+        "endLine": 173,
+        "endChar": 47
+      },
+      "revId": "0ba2477513aafabb86cefb7c331c98fb93d8f7f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "61351415_2ad02d43",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-11T12:08:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b04115f4_dc0c08d0",
+      "range": {
+        "startLine": 175,
+        "startChar": 0,
+        "endLine": 175,
+        "endChar": 42
+      },
+      "revId": "0ba2477513aafabb86cefb7c331c98fb93d8f7f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "77d283eb_5c737bc0",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "0ba2477513aafabb86cefb7c331c98fb93d8f7f4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d5f8f2f_b6f048d9",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-11T12:08:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "77d283eb_5c737bc0",
+      "range": {
+        "startLine": 212,
+        "startChar": 103,
+        "endLine": 212,
+        "endChar": 121
+      },
+      "revId": "0ba2477513aafabb86cefb7c331c98fb93d8f7f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
