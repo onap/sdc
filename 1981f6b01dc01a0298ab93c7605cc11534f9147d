@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44f088c6_e7f8bf73",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 923,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-11T18:23:37Z",
+      "side": 1,
+      "message": "ok, looking at the output of this its not as straightforward as I though.\nNodeTemplate instanceCount should be a map and we should convert the string value from componentInstance.getCount(). Can reuse ToscaMapValueConverter to do the conversion, e.g. see PropertyConverter::convertToToscaObject line 162 where similar is done for property values",
+      "range": {
+        "startLine": 923,
+        "startChar": 0,
+        "endLine": 923,
+        "endChar": 85
+      },
+      "revId": "1981f6b01dc01a0298ab93c7605cc11534f9147d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23add836_1b1ffb88",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/panel/panel-tabs/properties-tab/properties-tab.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-11T18:23:37Z",
+      "side": 1,
+      "message": "should be \"get_input\" instead of \"GET_INPUT\"",
+      "range": {
+        "startLine": 205,
+        "startChar": 67,
+        "endLine": 205,
+        "endChar": 97
+      },
+      "revId": "1981f6b01dc01a0298ab93c7605cc11534f9147d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
