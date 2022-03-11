@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ccdaecf_b7f70e48",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 926,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-11T11:29:46Z",
+      "side": 1,
+      "message": "Instead of returning just the name of the input in the instanceCountInput, the UI should provide the actual value to be used, e.g. \n\n{\"get_input\":\"myInput\"}\n\nso there would then be no need for this handling here, would just need:\nnodeTemplate.setInstance_count(compnentInstance.getInstanceCount())\n\nThe name of instanceCountInput should therefore return to instanceCount.\n\nthe instanceCountGetFunctionType is possibily needed for validation so should be in the call from the UI but not used here for this purpose",
+      "range": {
+        "startLine": 922,
+        "startChar": 0,
+        "endLine": 926,
+        "endChar": 13
+      },
+      "revId": "b526b862945a997ab377e58e8f9a99942e77e1b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
