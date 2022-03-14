@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "26ac0bc0_b3f22533",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-14T16:45:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8de14888_391d404f",
+      "range": {
+        "startLine": 329,
+        "startChar": 48,
+        "endLine": 329,
+        "endChar": 60
+      },
+      "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d3fc2bee_6f135db3",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
         "patchSetId": 7
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "e9af14bd_3324a258",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-14T16:45:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d3fc2bee_6f135db3",
+      "range": {
+        "startLine": 97,
+        "startChar": 15,
+        "endLine": 99,
+        "endChar": 47
+      },
+      "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aeb1bf1_f79304b5",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
         "patchSetId": 7
@@ -91,6 +139,30 @@
       "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bd5b8a9_30a24e6c",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-14T16:45:54Z",
+      "side": 1,
+      "message": "i tried to use the original at the begining but it was throwing exception \u0027manifest not found\u0027 when used by ValidatorFactory::getValidator, preventing to get the right validator...",
+      "parentUuid": "3aeb1bf1_f79304b5",
+      "range": {
+        "startLine": 373,
+        "startChar": 24,
+        "endLine": 373,
+        "endChar": 49
+      },
+      "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
