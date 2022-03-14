@@ -68,6 +68,29 @@
       "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3aeb1bf1_f79304b5",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-14T10:02:36Z",
+      "side": 1,
+      "message": "I would say that this method has no effective difference from getManifestInputStream, is there a particular reason to not use getManifestInputStream instead?",
+      "range": {
+        "startLine": 373,
+        "startChar": 24,
+        "endLine": 373,
+        "endChar": 49
+      },
+      "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
