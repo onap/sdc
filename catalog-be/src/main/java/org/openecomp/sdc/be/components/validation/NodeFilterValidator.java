@@ -320,10 +320,8 @@ public class NodeFilterValidator {
     private Either<Boolean, ResponseFormat> validateComponentPropertyConstraint(final Component component, final UIConstraint uiConstraint) {
         String source = SOURCE;
         final List<PropertyDefinition> propertyDefinitions = component.getProperties();
-        List<? extends PropertyDefinition> sourcePropertyDefinition =
-            component.getName().equals(uiConstraint.getSourceName()) && propertyDefinitions != null ? propertyDefinitions : Collections.emptyList();
-        if (CollectionUtils.isNotEmpty(sourcePropertyDefinition)) {
-            final Optional<? extends PropertyDefinition> sourceSelectedProperty = sourcePropertyDefinition.stream()
+        if (CollectionUtils.isNotEmpty(propertyDefinitions)) {
+            final Optional<? extends PropertyDefinition> sourceSelectedProperty = propertyDefinitions.stream()
                 .filter(property -> uiConstraint.getValue().equals(property.getName())).findFirst();
             final Optional<? extends PropertyDefinition> targetComponentProperty = component.getProperties().stream()
                 .filter(property -> uiConstraint.getServicePropertyName().equals(property.getName())).findFirst();

@@ -125,9 +125,14 @@ export class ServiceDependenciesEditorComponent {
   }
 
   onServicePropertyChanged() {
+    if(this.SOURCE_TYPES.SERVICE_INPUT.value === this.currentRule.sourceType || this.SOURCE_TYPES.SERVICE_PROPERTY.value === this.currentRule.sourceType){
+      this.currentRule.sourceName = "SELF";
+    } else {
+      this.currentRule.sourceName = "";
+    }
     this.updateSelectedPropertyObj();
     this.updateOperatorTypesList();
-    this.currentRule.sourceName = "";
+    this.updateSourceTypesRelatedValues();
     this.currentRule.value = "";
   }
 
@@ -139,17 +144,9 @@ export class ServiceDependenciesEditorComponent {
     this.updateSourceTypesRelatedValues();
   }
 
-  onSelectSourceType(value: any) {
-    this.currentRule.sourceName = value;
-    this.updateSourceTypesRelatedValues();
-    if (this.listOfValuesToAssign) {
-      this.currentRule.value = this.listOfValuesToAssign[0].value
-    }
-  }
-
   private loadSourceTypesData() {
     const SELF = "SELF";
-    if (this.SOURCE_TYPES.SERVICE_INPUT.value === this.currentRule.sourceType) {
+    if (this.SOURCE_TYPES.SERVICE_INPUT.value === this.currentRule.sourceType || this.SOURCE_TYPES.SERVICE_PROPERTY.value === this.currentRule.sourceType) {
       this.currentRule.sourceName = SELF;
     }
     this.sourceTypes = [];
