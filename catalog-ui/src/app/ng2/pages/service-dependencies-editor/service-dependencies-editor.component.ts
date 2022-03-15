@@ -125,10 +125,16 @@ export class ServiceDependenciesEditorComponent {
   }
 
   onServicePropertyChanged() {
+    if(this.SOURCE_TYPES.SERVICE_PROPERTY.value === this.currentRule.sourceType){
+      this.currentRule.sourceName = "SELF";
+    }else {
+      this.currentRule.sourceName = "";
+    }
     this.updateSelectedPropertyObj();
     this.updateOperatorTypesList();
-    this.currentRule.sourceName = "";
+    this.updateSourceTypesRelatedValues();
     this.currentRule.value = "";
+    
   }
 
   onSelectFunctionType(value: any) {
@@ -176,6 +182,7 @@ export class ServiceDependenciesEditorComponent {
         );
       }
     }
+    this.currentRule.sourceName = SELF;
   }
 
   loadSourceTypeBySelectedFunction = (): any => {

@@ -27,7 +27,7 @@
 
                 <div class="i-sdc-form-item rule-input-field" *ngIf="isPropertyFunctionSelected()">
                     <label class="i-sdc-form-label required">Source</label>
-                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="sourceType" [values]="sourceTypes" [(value)]="currentRule.sourceName" (elementChanged)="onSelectSourceType($event.value)"></ui-element-dropdown>
+                    <input class="i-sdc-form-select" data-tests-id="sourceType" [disabled]="true" [(value)]="currentRule.sourceName" type="text">
                 </div>
 
                 <div  [ngClass]="isComplexListMapType() && isStaticSource() ? 'complex-input-field' : ''"
