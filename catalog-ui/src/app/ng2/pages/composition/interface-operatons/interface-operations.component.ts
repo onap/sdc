@@ -238,15 +238,23 @@ export class InterfaceOperationsComponent {
 
   private updateInterfaceOperation() {
     this.isLoading = true;
-    const operationUpdated: InterfaceOperationModel = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
+    const interfaceOperationHandlerComponentInstance: InterfaceOperationHandlerComponent = this.modalInstance.instance.dynamicContent.instance;
+    const operationUpdated: InterfaceOperationModel = interfaceOperationHandlerComponentInstance.operationToUpdate;
+    const isArtifactChecked = interfaceOperationHandlerComponentInstance.enableAddArtifactImplementation;
+    if (!isArtifactChecked) {
+      let artifactName = interfaceOperationHandlerComponentInstance.artifactName;
+      artifactName = artifactName === undefined ? '' : artifactName;
+      operationUpdated.implementation = new ArtifactModel({'artifactName': artifactName} as ArtifactModel);
+    }
     this.topologyTemplateService.updateComponentInstanceInterfaceOperation(
         this.componentMetaData.uniqueId,
         this.componentMetaData.componentType,
         this.componentInstanceSelected.uniqueId,
-        operationUpdated).subscribe((updatedComponentInstance: ComponentInstance) => {
-          this.componentInstanceSelected = new ComponentInstance(updatedComponentInstance);
-          this.initComponentInstanceInterfaceOperations();
-    });
+        operationUpdated)
+        .subscribe((updatedComponentInstance: ComponentInstance) => {
+            this.componentInstanceSelected = new ComponentInstance(updatedComponentInstance);
+            this.initComponentInstanceInterfaceOperations();
+        });
     this.modalServiceNg2.closeCurrentModal();
     this.isLoading = false;
   }
