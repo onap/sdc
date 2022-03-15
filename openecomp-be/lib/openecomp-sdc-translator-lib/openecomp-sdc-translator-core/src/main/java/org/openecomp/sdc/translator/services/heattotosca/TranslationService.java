@@ -42,6 +42,8 @@ import org.openecomp.sdc.heat.datatypes.model.Output;
 import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.DataModelUtil;
@@ -181,7 +183,7 @@ public class TranslationService {
 
     private void createHeatStackGroup(ServiceTemplate serviceTemplate, FileData heatFileData, HeatOrchestrationTemplate heatOrchestrationTemplate,
                                       TranslationContext context) {
-        ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
+        ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()));
         final String fileName = heatFileData.getFile();
         final String heatStackGroupId = FileUtils.getFileWithoutExtention(fileName) + "_group";
         GroupDefinition groupDefinition = new GroupDefinition();
