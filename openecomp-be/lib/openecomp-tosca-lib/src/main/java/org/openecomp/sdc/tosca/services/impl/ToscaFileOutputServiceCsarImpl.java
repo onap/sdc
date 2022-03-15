@@ -15,10 +15,18 @@
  */
 package org.openecomp.sdc.tosca.services.impl;
 
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CREATED_BY_ENTRY;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CSAR_VERSION_ENTRY;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ENTRY_DEFINITIONS;
-import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.TOSCA_META_FILE_VERSION_ENTRY;
+import org.apache.commons.io.IOUtils;
+import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
+import org.openecomp.core.utilities.file.FileContentHandler;
+import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.logging.api.Logger;
+import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
+import org.openecomp.sdc.tosca.exceptions.CsarCreationErrorBuilder;
+import org.openecomp.sdc.tosca.exceptions.CsarMissingEntryPointErrorBuilder;
+import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -29,17 +37,12 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.apache.commons.io.IOUtils;
-import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
-import org.openecomp.core.utilities.file.FileContentHandler;
-import org.openecomp.core.utilities.file.FileUtils;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.logging.api.Logger;
-import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
-import org.openecomp.sdc.tosca.exceptions.CsarCreationErrorBuilder;
-import org.openecomp.sdc.tosca.exceptions.CsarMissingEntryPointErrorBuilder;
-import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
+
+import static org.openecomp.sdc.tosca.csar.ManifestTokenType.ENTRY_DEFINITION_TYPE;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CREATED_BY_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.CSAR_VERSION_ENTRY;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.ENTRY_DEFINITIONS;
+import static org.openecomp.sdc.tosca.csar.ToscaMetaEntryVersion261.TOSCA_META_FILE_VERSION_ENTRY;
 
 public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
 
@@ -56,6 +59,11 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
     private static final String SPACE = " ";
     private static final String FILE_SEPARATOR = File.separator;
     private static final Logger logger = LoggerFactory.getLogger(ToscaFileOutputServiceCsarImpl.class);
+    private final AsdPackageHelper asdPackageHelper;
+
+    public ToscaFileOutputServiceCsarImpl(AsdPackageHelper asdPackageHelper) {
+        this.asdPackageHelper = asdPackageHelper;
+    }
 
     @Override
     public byte[] createOutputFile(ToscaServiceModel toscaServiceModel, FileContentHandler externalArtifacts) {
@@ -63,13 +71,13 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(baos))) {
             packDefinitions(zos, toscaServiceModel.getServiceTemplates());
             FileContentHandler artifactFiles = toscaServiceModel.getArtifactFiles();
-            if (artifactFiles != null && !artifactFiles.isEmpty()) {
-                packArtifacts(zos, artifactFiles);
-            }
             if (toscaServiceModel.getEntryDefinitionServiceTemplate() == null) {
                 throw new CoreException(new CsarMissingEntryPointErrorBuilder().build());
             }
-            createAndPackToscaMetaFile(zos, toscaServiceModel.getEntryDefinitionServiceTemplate());
+            if (artifactFiles != null) {
+                packArtifacts(zos, artifactFiles);
+            }
+            createAndPackToscaMetaFile(zos, toscaServiceModel.getEntryDefinitionServiceTemplate(), isAsdPackage(artifactFiles));
             if (externalArtifacts != null) {
                 packExternalArtifacts(zos, externalArtifacts);
             }
@@ -80,11 +88,12 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
     }
 
     @Override
-    public String createMetaFile(String entryDefinitionsFileName) {
+    public String createMetaFile(String entryDefinitionsFileName, boolean isAsdPackage) {
         return TOSCA_META_FILE_VERSION_ENTRY.getName() + META_FILE_DELIMITER + SPACE + TOSCA_META_FILE_VERSION_VALUE + System.lineSeparator()
             + CSAR_VERSION_ENTRY.getName() + META_FILE_DELIMITER + SPACE + CSAR_VERSION_VALUE + System.lineSeparator() + CREATED_BY_ENTRY.getName()
             + META_FILE_DELIMITER + SPACE + CREATED_BY_VALUE + System.lineSeparator() + ENTRY_DEFINITIONS.getName() + META_FILE_DELIMITER + SPACE
-            + DEFINITIONS_FOLDER_NAME + FILE_SEPARATOR + entryDefinitionsFileName;
+            + DEFINITIONS_FOLDER_NAME + FILE_SEPARATOR + entryDefinitionsFileName
+            + (isAsdPackage ? System.lineSeparator() + ENTRY_DEFINITION_TYPE.getToken() + META_FILE_DELIMITER + SPACE + "asd" : "");
     }
 
     @Override
@@ -92,8 +101,14 @@ public class ToscaFileOutputServiceCsarImpl implements ToscaFileOutputService {
         return ARTIFACTS_FOLDER_NAME;
     }
 
-    private void createAndPackToscaMetaFile(ZipOutputStream zos, String entryDefinitionsFileName) throws IOException {
-        String metaFile = createMetaFile(entryDefinitionsFileName);
+    private boolean isAsdPackage(FileContentHandler artifactFiles){
+
+        return artifactFiles != null && !artifactFiles.isEmpty() && asdPackageHelper.isAsdPackage(artifactFiles);
+
+    }
+
+    private void createAndPackToscaMetaFile(ZipOutputStream zos, String entryDefinitionsFileName, boolean isAsdPackage) throws IOException {
+        String metaFile = createMetaFile(entryDefinitionsFileName, isAsdPackage);
         zos.putNextEntry(new ZipEntry(TOSCA_META_FOLDER_NAME + FILE_SEPARATOR + TOSCA_META_FILE_NAME));
         writeBytesToZip(zos, new ByteArrayInputStream(metaFile.getBytes()));
     }

@@ -60,6 +60,8 @@ import org.openecomp.sdc.datatypes.error.ErrorLevel;
 import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestFile;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.translator.TestUtils;
 import org.openecomp.sdc.translator.datatypes.heattotosca.TranslationContext;
@@ -144,7 +146,7 @@ public class BaseResourceTranslationTest {
                                             .build());
         }
 
-        return new ToscaFileOutputServiceCsarImpl().createOutputFile(translatorOutput.getToscaServiceModel(), null);
+        return new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils())).createOutputFile(translatorOutput.getToscaServiceModel(), null);
 
     }
 

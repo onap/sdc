@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import org.onap.sdc.tosca.datatypes.model.ArtifactDefinition;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.datatypes.ToscaArtifactType;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
@@ -46,7 +48,7 @@ public class FunctionTranslationGetFileImpl implements FunctionTranslation {
         artifactParameters.add(ToscaConstants.MODELABLE_ENTITY_NAME_SELF);
         returnValue.put(ToscaFunctions.GET_ARTIFACT.getFunctionName(), artifactParameters);
         artifactParameters.add(artifactId);
-        ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
+        ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()));
         if (functionTranslator.getToscaTemplate() instanceof NodeTemplate) {
             NodeTemplate nodeTemplate = (NodeTemplate) functionTranslator.getToscaTemplate();
             ArtifactDefinition artifactDefinition = createArtifactDefinition(file, toscaFileOutputService);

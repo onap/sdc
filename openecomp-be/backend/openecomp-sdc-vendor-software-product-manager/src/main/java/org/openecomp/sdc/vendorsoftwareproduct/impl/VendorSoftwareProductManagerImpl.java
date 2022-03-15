@@ -69,7 +69,9 @@ import org.openecomp.sdc.heat.datatypes.manifest.FileData;
 import org.openecomp.sdc.heat.datatypes.manifest.ManifestContent;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
 import org.openecomp.sdc.tosca.csar.Manifest;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
 import org.openecomp.sdc.validation.util.ValidationManagerUtil;
@@ -545,7 +547,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             populateVersionsForVlm(vspDetails.getVendorId(), vlmVersion);
         }
         final PackageInfo packageInfo = createPackageInfo(vspDetails);
-        final ToscaFileOutputServiceCsarImpl toscaServiceTemplateServiceCsar = new ToscaFileOutputServiceCsarImpl();
+        final ToscaFileOutputServiceCsarImpl toscaServiceTemplateServiceCsar = new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()));
         final FileContentHandler licenseArtifacts = licenseArtifactsService
             .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion, vspDetails.getFeatureGroups());
         final ETSIService etsiService = new ETSIServiceImpl();

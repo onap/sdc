@@ -38,6 +38,8 @@ import org.onap.sdc.tosca.datatypes.model.ServiceTemplate;
 import org.onap.sdc.tosca.services.ToscaExtensionYamlUtil;
 import org.openecomp.core.enrichment.factory.EnrichmentManagerFactory;
 import org.openecomp.core.utilities.file.FileUtils;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.datatypes.ToscaServiceModel;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -114,7 +116,7 @@ public class EnrichmentManagerImplTest {
     try (FileOutputStream fos = new FileOutputStream(file))
 
     {
-      ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
+      ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()));
       fos.write(toscaFileOutputService.createOutputFile(toscaServiceModel, null));
     }
 
