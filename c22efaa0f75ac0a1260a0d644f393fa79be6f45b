@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26dddd15_3f7e432c",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdPackageHelper.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-15T14:12:29Z",
+      "side": 1,
+      "message": "would be great to add unit tests for this class",
+      "range": {
+        "startLine": 40,
+        "startChar": 13,
+        "endLine": 40,
+        "endChar": 29
+      },
+      "revId": "c22efaa0f75ac0a1260a0d644f393fa79be6f45b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
