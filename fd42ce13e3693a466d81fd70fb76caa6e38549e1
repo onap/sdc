@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f6340e5_bee7e233",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-15T11:12:43Z",
+      "side": 1,
+      "message": "please, adjust formatting, it is breaking the line limit. I would suggest:\n\ngetManifestMetadata(metadata).stream()\n            .filter(requiredEntry -\u003e !metadata.containsKey(requiredEntry) || (ENTRY_DEFINITION_TYPE.getToken().equalsIgnoreCase(requiredEntry)\n                \u0026\u0026 !isValidEntryDefinitionType(requiredEntry, metadata.get(requiredEntry))))\n            .forEach(requiredEntry -\u003e\n                reportError(ErrorLevel.ERROR, String.format(Messages.MANIFEST_METADATA_MISSING_ENTRY.getErrorMessage(), requiredEntry))\n            );",
+      "range": {
+        "startLine": 365,
+        "startChar": 8,
+        "endLine": 366,
+        "endChar": 150
+      },
+      "revId": "fd42ce13e3693a466d81fd70fb76caa6e38549e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d411a2c5_6607ad74",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdManifestOnboarding.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-15T11:12:43Z",
+      "side": 1,
+      "message": "this method and getAsdMetadata are not manifest related. I would rather put in a separate class, maybe \"AsdPackageHelper\".\nIt is just a suggestion, what do you think?",
+      "range": {
+        "startLine": 48,
+        "startChar": 26,
+        "endLine": 48,
+        "endChar": 38
+      },
+      "revId": "fd42ce13e3693a466d81fd70fb76caa6e38549e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

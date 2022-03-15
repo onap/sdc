@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "eb52ad31_d35d5fd5",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/templates/default/BE-configuration.yaml.erb",
+        "patchSetId": 7
+      },
+      "lineNbr": 1262,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-15T11:12:43Z",
+      "side": 1,
+      "message": "talking to Javier, the \"org.onap.policy.clamp.controlloop.\" entry was from a previous rebase, then the configuration changed after that. He just removed.\nThe other entry he said it is necessary for the ASD package.",
+      "parentUuid": "1cc180bf_317a5ad8",
+      "range": {
+        "startLine": 1261,
+        "startChar": 2,
+        "endLine": 1262,
+        "endChar": 16
+      },
+      "revId": "33f412b06f2d3724872ebf71ee4cee1bd82d380d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8de14888_391d404f",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
         "patchSetId": 7
