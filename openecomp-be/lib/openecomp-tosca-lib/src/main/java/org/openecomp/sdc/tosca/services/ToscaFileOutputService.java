@@ -26,7 +26,7 @@ public interface ToscaFileOutputService {
 
     byte[] createOutputFile(ToscaServiceModel toscaServiceModel, FileContentHandler externalArtifacts);
 
-    String createMetaFile(String entryDefinitionsFileName);
+    String createMetaFile(String entryDefinitionsFileName, boolean isAsdPackage);
 
     String getArtifactsFolderName();
 }
