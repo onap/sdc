@@ -50,6 +50,8 @@ import org.openecomp.sdc.heat.datatypes.model.Resource;
 import org.openecomp.sdc.heat.services.HeatConstants;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.datatypes.ToscaCapabilityType;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.openecomp.sdc.tosca.datatypes.ToscaGroupType;
@@ -418,7 +420,7 @@ public class ResourceTranslationContrailServiceInstanceImpl extends ResourceTran
         serviceInstanceGroupDefinition.setType(ToscaGroupType.HEAT_STACK);
         Map<String, Object> groupProperties = new HashMap<>();
         groupProperties
-            .put("heat_file", "../" + (new ToscaFileOutputServiceCsarImpl()).getArtifactsFolderName() + "/" + translateTo.getHeatFileName());
+            .put("heat_file", "../" + (new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()))).getArtifactsFolderName() + "/" + translateTo.getHeatFileName());
         serviceInstanceGroupDefinition.setProperties(groupProperties);
         serviceInstanceGroupDefinition.setMembers(new ArrayList<>());
         String heatStackGroupKey = translateTo.getTranslatedId() + "_group";

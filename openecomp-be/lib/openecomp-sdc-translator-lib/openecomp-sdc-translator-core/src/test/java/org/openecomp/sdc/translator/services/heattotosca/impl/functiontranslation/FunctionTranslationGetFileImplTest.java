@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.onap.sdc.tosca.datatypes.model.NodeTemplate;
 import org.openecomp.core.utilities.file.FileUtils;
 import org.openecomp.sdc.heat.datatypes.model.HeatOrchestrationTemplate;
+import org.openecomp.sdc.tosca.csar.AsdPackageHelper;
+import org.openecomp.sdc.tosca.csar.ManifestUtils;
 import org.openecomp.sdc.tosca.services.ToscaConstants;
 import org.openecomp.sdc.tosca.services.ToscaFileOutputService;
 import org.openecomp.sdc.tosca.services.impl.ToscaFileOutputServiceCsarImpl;
@@ -81,7 +83,7 @@ public class FunctionTranslationGetFileImplTest {
       Assert.assertNotNull(nodeTemplate.getArtifacts());
       Assert.assertNotNull(
           nodeTemplate.getArtifacts().get(FileUtils.getFileWithoutExtention((String) function)));
-      ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl();
+      ToscaFileOutputService toscaFileOutputService = new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()));
       Assert.assertEquals(
           nodeTemplate.getArtifacts().get(FileUtils.getFileWithoutExtention((String) function))
               .getFile(), "../" + toscaFileOutputService.getArtifactsFolderName() + "/" + function);
