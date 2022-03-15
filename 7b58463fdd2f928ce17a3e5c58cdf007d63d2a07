@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "433e6fc5_1aaa3c55",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-15T11:25:17Z",
+      "side": 1,
+      "message": "in my opinion, this action would be more suitable for the createMetaFile method, which is responsible to create the metafile content.",
+      "range": {
+        "startLine": 103,
+        "startChar": 8,
+        "endLine": 103,
+        "endChar": 136
+      },
+      "revId": "7b58463fdd2f928ce17a3e5c58cdf007d63d2a07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
