@@ -242,6 +242,7 @@ export class ServiceDependenciesComponent {
         const rulesListOrig = this.componentInstancesConstraints;
         this.constraintProperties = [];
         this.constraintCapabilities = [];
+        this.loadNodeFilter();
         this.updateComponentInstance(this.isDependent, rulesListOrig);
     }
 
