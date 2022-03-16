@@ -30,7 +30,7 @@
     <ul *ngIf="isExpanded">
       <li class="input-value">
         <ng-container *ngIf="isViewOnly">
-          {{valueObjRef}}<em class="empty-value" *ngIf="!valueObjRef">empty</em>
+          {{valueObjRef}}<em class="empty-value" *ngIf="valueObjRef !== false && !valueObjRef">empty</em>
         </ng-container>
         <input *ngIf="!isViewOnly" [type]="getSimpleValueInputType()" name="value"
                [(ngModel)]="valueObjRef"
