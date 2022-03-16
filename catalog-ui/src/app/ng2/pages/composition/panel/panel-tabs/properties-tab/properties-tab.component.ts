@@ -202,8 +202,7 @@ export class PropertiesTabComponent implements OnInit {
 
             _.forEach(this.inputs, (input: InputModel) => {
                 if(input.type === "integer"){
-                    this.selectInputs.push(new DropdownValue('{' + ToscaGetFunctionType.GET_INPUT.toLowerCase + ":" + input.name + '}', input.name));
-                    console.log('{' + ToscaGetFunctionType.GET_INPUT.toLowerCase + ":" + input.name + '}', input.name);
+                    this.selectInputs.push(new DropdownValue('{' + ToscaGetFunctionType.GET_INPUT.toLowerCase() + ":" + input.name + '}', input.name));
                 }
             });
 
@@ -298,7 +297,6 @@ export class PropertiesTabComponent implements OnInit {
 
     private saveOccurrences = () => {
         if(this.component instanceof FullComponentInstance && this.isOccurrencesFormValid(this.component)) {
-            console.log("this.component.instanceCount: " + this.component.instanceCount);
             this.updateComponentInstance(this.component);
         }
     }
