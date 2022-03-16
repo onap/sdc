@@ -16,6 +16,31 @@ operations:
     inputs:
       action:
         type: org.openecomp.resource.datatypes.Action
+      stringInput:
+        type: string
+        default: this is a string
+      booleanInput:
+        type: boolean
+        default: true
+      integerInput:
+        type: integer
+        description: an integer
+        status: supported
+        required: true
+        default: 11
+      floatInput:
+        type: float
+        required: false
+        default: 11.1
+      complexInput:
+        type: onap.datatypes.partner.access_details
+        status: experimental
+        default:
+          dsl_stability_profile: dsl_stability_profile_value
+          central_splitter: false
+          service_restoration_sla: service_restoration_sla_value
+          battery_backup: true
+          partner_priorty_assist: false
   stop:
     implementation: "camunda/executeAction"
     inputs:

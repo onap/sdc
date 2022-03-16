@@ -29,6 +29,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIRED;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.STATUS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
 
+import com.google.gson.Gson;
 import fj.data.Either;
 import java.util.Arrays;
 import java.util.Collections;
@@ -64,6 +65,7 @@ import org.springframework.stereotype.Component;
 public class InterfaceDefinitionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceDefinitionHandler.class);
+    private static final String WITH_ATTRIBUTE = "with attribute '{}': '{}'";
     private final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
 
     public InterfaceDefinitionHandler(final InterfaceOperationBusinessLogic interfaceOperationBusinessLogic) {
@@ -169,34 +171,50 @@ public class InterfaceDefinitionHandler {
             operationInput.setUniqueId(UUID.randomUUID().toString());
             operationInput.setInputId(operationInput.getUniqueId());
             operationInput.setName(interfaceInput.getKey());
-            if (interfaceInput.getValue() instanceof Map) {
-                final LinkedHashMap<String, Object> inputPropertyValue = (LinkedHashMap<String, Object>) interfaceInput.getValue();
-                LOGGER.info("createModuleInterface: i interfaceInput.getKey() {}, {} , {}  ", interfaceInput.getKey(), inputPropertyValue.keySet(),
-                    inputPropertyValue.values());
-                if (inputPropertyValue.get(TYPE.getElementName()) != null) {
-                    operationInput.setType(inputPropertyValue.get(TYPE.getElementName()).toString());
-                }
-                if (inputPropertyValue.get(DESCRIPTION.getElementName()) != null) {
-                    operationInput.setDescription(inputPropertyValue.get(DESCRIPTION.getElementName()).toString());
-                }
-                if (inputPropertyValue.get(REQUIRED.getElementName()) != null) {
-                    operationInput.setRequired(Boolean.getBoolean(inputPropertyValue.get(REQUIRED.getElementName()).toString()));
-                }
-                if (inputPropertyValue.get(DEFAULT.getElementName()) != null) {
-                    operationInput.setToscaDefaultValue(inputPropertyValue.get(DEFAULT.getElementName()).toString());
-                }
-                if (inputPropertyValue.get(STATUS.getElementName()) != null) {
-                    operationInput.setStatus(inputPropertyValue.get(STATUS.getElementName()).toString());
-                }
-            } else if (interfaceInput.getValue() instanceof String) {
-                final String value = (String) interfaceInput.getValue();
-                operationInput.setDefaultValue(value);
-                operationInput.setToscaDefaultValue(value);
-                operationInput.setValue(value);
-            }
+            handleInputToscaDefinition(interfaceInput.getKey(), interfaceInput.getValue(), operationInput);
             inputs.add(operationInput);
         }
         return inputs;
+    }
+
+    private void handleInputToscaDefinition(final String inputName, final Object value, final OperationInputDefinition operationInput) {
+        if (value instanceof Map) {
+            final LinkedHashMap<String, Object> inputPropertyValue = (LinkedHashMap<String, Object>) value;
+            LOGGER.debug("Creating interface operation input '{}'", inputName);
+            if (inputPropertyValue.get(TYPE.getElementName()) != null) {
+                final String type = inputPropertyValue.get(TYPE.getElementName()).toString();
+                LOGGER.debug(WITH_ATTRIBUTE, TYPE.getElementName(), type);
+                operationInput.setType(type);
+            }
+            if (inputPropertyValue.get(DESCRIPTION.getElementName()) != null) {
+                final String description = inputPropertyValue.get(DESCRIPTION.getElementName()).toString();
+                LOGGER.debug(WITH_ATTRIBUTE, DESCRIPTION.getElementName(), description);
+                operationInput.setDescription(description);
+            }
+            if (inputPropertyValue.get(REQUIRED.getElementName()) != null) {
+                final boolean required = Boolean.parseBoolean(inputPropertyValue.get(REQUIRED.getElementName()).toString());
+                LOGGER.debug(WITH_ATTRIBUTE, REQUIRED.getElementName(), required);
+                operationInput.setRequired(required);
+            }
+            if (inputPropertyValue.get(DEFAULT.getElementName()) != null) {
+                final Gson gson = new Gson();
+                final String json = gson.toJson(inputPropertyValue.get(DEFAULT.getElementName()));
+                LOGGER.debug(WITH_ATTRIBUTE, DEFAULT.getElementName(), json);
+                operationInput.setToscaDefaultValue(json);
+            }
+            if (inputPropertyValue.get(STATUS.getElementName()) != null) {
+                final String status = inputPropertyValue.get(STATUS.getElementName()).toString();
+                LOGGER.debug(WITH_ATTRIBUTE, STATUS.getElementName(), status);
+                operationInput.setStatus(status);
+            }
+            return;
+        }
+        if (value instanceof String) {
+            final String stringValue = (String) value;
+            operationInput.setDefaultValue(stringValue);
+            operationInput.setToscaDefaultValue(stringValue);
+            operationInput.setValue(stringValue);
+        }
     }
 
     private Optional<ArtifactDataDefinition> handleOperationImplementation(final Map<String, Object> operationDefinitionMap) {
