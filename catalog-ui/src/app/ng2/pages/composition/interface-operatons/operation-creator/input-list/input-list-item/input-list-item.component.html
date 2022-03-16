@@ -50,6 +50,7 @@
               [schema]="property.schema"
               [nestingLevel]="nestingLevel + 1"
               [isViewOnly]="isViewOnly"
+              [allowDeletion]="allowDeletion"
               (onValueChange)="onPropertyValueChange($event)">
           </app-input-list-item>
         </ng-container>
@@ -76,6 +77,7 @@
             [listIndex]="i"
             [isListChild]="true"
             [isViewOnly]="isViewOnly"
+            [allowDeletion]="allowDeletion"
             (onValueChange)="onPropertyValueChange($event)"
             (onChildListItemDelete)="onListItemDelete($event)">
         </app-input-list-item>
@@ -106,6 +108,7 @@
             [isMapChild]="true"
             [nestingLevel]="nestingLevel + 1"
             [isViewOnly]="isViewOnly"
+            [allowDeletion]="allowDeletion"
             (onValueChange)="onPropertyValueChange($event)"
             (onDelete)="onMapKeyDelete($event)">
         </app-input-list-item>
