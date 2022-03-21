@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4cb5c84d_65ad6d21",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-21T11:51:11Z",
+      "side": 1,
+      "message": "do we need this? already done on line 329",
+      "range": {
+        "startLine": 324,
+        "startChar": 16,
+        "endLine": 324,
+        "endChar": 123
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1fdb5c25_ffd61959",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-21T11:51:11Z",
+      "side": 1,
+      "message": "if this is null then NPE will already have been thrown by propertyDefinitions.stream()",
+      "range": {
+        "startLine": 325,
+        "startChar": 19,
+        "endLine": 325,
+        "endChar": 47
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
