@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ae3b721a_4dac4c6f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-03-21T15:36:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "4cb5c84d_65ad6d21",
+      "range": {
+        "startLine": 324,
+        "startChar": 16,
+        "endLine": 324,
+        "endChar": 123
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1fdb5c25_ffd61959",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bbdfec3_d5ed4f1d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-03-21T15:36:31Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1fdb5c25_ffd61959",
+      "range": {
+        "startLine": 325,
+        "startChar": 19,
+        "endLine": 325,
+        "endChar": 47
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "8519b6e7_ae40e87b",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-03-21T15:36:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9bfddc35_9a3d44d0",
+      "range": {
+        "startLine": 130,
+        "startChar": 4,
+        "endLine": 130,
+        "endChar": 5
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e6f1eb47_3dadf996",
         "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "0a905928_bd2560e7",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-03-21T15:36:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e6f1eb47_3dadf996",
+      "range": {
+        "startLine": 148,
+        "startChar": 2,
+        "endLine": 148,
+        "endChar": 20
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e11b7b1b_aa19e263",
         "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
         "patchSetId": 1
@@ -105,6 +201,30 @@
       "writtenOn": "2022-03-21T12:43:12Z",
       "side": 1,
       "message": "there is a condition on line 159 for doing this and here you are king of overriding/ignoring it. Not sure the business rule around it, will all source types have the same name?",
+      "range": {
+        "startLine": 185,
+        "startChar": 4,
+        "endLine": 185,
+        "endChar": 39
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fa865a9_71182311",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-03-21T15:36:31Z",
+      "side": 1,
+      "message": "As far as I know I think all will have a sourceName of SELF unless the sourceType is static, then the sourceName will be empty",
+      "parentUuid": "e11b7b1b_aa19e263",
       "range": {
         "startLine": 185,
         "startChar": 4,
