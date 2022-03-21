@@ -71,6 +71,29 @@
     },
     {
       "key": {
+        "uuid": "e6f1eb47_3dadf996",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-21T12:49:22Z",
+      "side": 1,
+      "message": "I believe you\u0027ve removed the only call to this function in service-dependencies-editor.component.html, so it is not used anymore and should be removed.",
+      "range": {
+        "startLine": 148,
+        "startChar": 2,
+        "endLine": 148,
+        "endChar": 20
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e11b7b1b_aa19e263",
         "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
         "patchSetId": 1
