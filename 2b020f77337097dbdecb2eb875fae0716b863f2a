@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df3d053b_a87304c8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-21T15:32:26Z",
+      "side": 1,
+      "message": "please, adjust commit message to follow the onap guidelines: https://wiki.onap.org/display/DW/Commit+Messages",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 61
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78d3f5be_8428d4f3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-21T15:32:26Z",
+      "side": 1,
+      "message": "throw CatalogRestClientException with a meaningful message",
+      "range": {
+        "startLine": 74,
+        "startChar": 16,
+        "endLine": 74,
+        "endChar": 38
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09437806_a0e53e70",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-21T15:32:26Z",
+      "side": 1,
+      "message": "please adjust format, no new line between } and else:\n\"} else {\"\nOr remove the unnecessary else to reduce complexity",
+      "range": {
+        "startLine": 87,
+        "startChar": 12,
+        "endLine": 88,
+        "endChar": 18
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d220516_aa3853df",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-21T15:32:26Z",
+      "side": 1,
+      "message": "same here, add the real exception to the stack by passing to the exception constructor",
+      "range": {
+        "startLine": 95,
+        "startChar": 18,
+        "endLine": 95,
+        "endChar": 70
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce57d6cf_ae4d9330",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-21T15:32:26Z",
+      "side": 1,
+      "message": "I recommend to not loose the real exception and wrap here in the constructor along with the a message. Use the super constructor (String message, Throwable cause) for that. E.g.:\nthrow new CatalogRestClientException(\"Failed to load HTTP configuration\", e);",
+      "range": {
+        "startLine": 108,
+        "startChar": 18,
+        "endLine": 108,
+        "endChar": 50
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
