@@ -45,6 +45,52 @@
       "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bfddc35_9a3d44d0",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-21T12:43:12Z",
+      "side": 1,
+      "message": "fix formatting, add space",
+      "range": {
+        "startLine": 130,
+        "startChar": 4,
+        "endLine": 130,
+        "endChar": 5
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e11b7b1b_aa19e263",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-21T12:43:12Z",
+      "side": 1,
+      "message": "there is a condition on line 159 for doing this and here you are king of overriding/ignoring it. Not sure the business rule around it, will all source types have the same name?",
+      "range": {
+        "startLine": 185,
+        "startChar": 4,
+        "endLine": 185,
+        "endChar": 39
+      },
+      "revId": "ca7d88b1239b494720a6cc8327b8c1e1246eec5e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
