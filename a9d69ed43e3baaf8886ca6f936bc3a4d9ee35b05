@@ -425,6 +425,30 @@
     },
     {
       "key": {
+        "uuid": "bbf85e99_80b0e377",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2219,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-21T15:56:21Z",
+      "side": 1,
+      "message": "that is essentially the same thing as just removing the call to deleleVFModules as the groups will not have been created by this point now.\nIf thats the case it would be clearer to just remove the call to deleteVFModules than re-arranging",
+      "parentUuid": "bbc6b2f3_8b7146a1",
+      "range": {
+        "startLine": 2217,
+        "startChar": 11,
+        "endLine": 2219,
+        "endChar": 13
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d1fb43d_c6536ee6",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/api/Constants.java",
         "patchSetId": 1
