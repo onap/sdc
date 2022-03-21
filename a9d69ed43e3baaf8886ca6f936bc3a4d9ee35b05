@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c70a7dbb_3079dcfe",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1562,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "674f8899_19abd168",
+      "range": {
+        "startLine": 1562,
+        "startChar": 51,
+        "endLine": 1562,
+        "endChar": 60
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d348dc81_3ebdb155",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4efbf9c_b44dafbf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d348dc81_3ebdb155",
+      "range": {
+        "startLine": 1564,
+        "startChar": 16,
+        "endLine": 1564,
+        "endChar": 92
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "befd96a2_c6832c17",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1565,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd60dafb_8c68049d",
+      "range": {
+        "startLine": 1565,
+        "startChar": 16,
+        "endLine": 1565,
+        "endChar": 112
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9588a44_5ab08952",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f2d2fa0_7ce4bdeb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1650,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d9588a44_5ab08952",
+      "range": {
+        "startLine": 1650,
+        "startChar": 88,
+        "endLine": 1650,
+        "endChar": 134
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "91f915a0_eff4ec98",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1656,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "883afaa1_83ce6151",
+      "range": {
+        "startLine": 1656,
+        "startChar": 0,
+        "endLine": 1656,
+        "endChar": 80
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da159887_d2d5a42a",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 1
@@ -137,6 +257,30 @@
       "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d2122ba_d4d6e9fa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1672,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da159887_d2d5a42a",
+      "range": {
+        "startLine": 1672,
+        "startChar": 22,
+        "endLine": 1672,
+        "endChar": 27
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "29fa36eb_073b98e9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1681,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "92df2233_6043bc6c",
+      "range": {
+        "startLine": 1681,
+        "startChar": 0,
+        "endLine": 1681,
+        "endChar": 55
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e6b4ee69_1ac8a677",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 1
@@ -183,6 +351,30 @@
       "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "433e1e23_a74879f3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1708,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e6b4ee69_1ac8a677",
+      "range": {
+        "startLine": 1706,
+        "startChar": 0,
+        "endLine": 1708,
+        "endChar": 31
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "bbc6b2f3_8b7146a1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2219,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "I moved up the artifact creation to avoid this check, vfmodules creation for asd works fine. Let me know your thoughts.",
+      "parentUuid": "3162f3bb_a2173a42",
+      "range": {
+        "startLine": 2217,
+        "startChar": 11,
+        "endLine": 2219,
+        "endChar": 13
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d1fb43d_c6536ee6",
         "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/api/Constants.java",
         "patchSetId": 1
@@ -229,6 +445,30 @@
       "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cee8b73b_63f23133",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/common/api/Constants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-03-21T09:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d1fb43d_c6536ee6",
+      "range": {
+        "startLine": 159,
+        "startChar": 53,
+        "endLine": 159,
+        "endChar": 70
+      },
+      "revId": "a9d69ed43e3baaf8886ca6f936bc3a4d9ee35b05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
