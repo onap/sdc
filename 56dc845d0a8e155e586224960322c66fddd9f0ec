@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "556522e4_101979bf",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/AsdValidator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-21T13:46:12Z",
+      "side": 1,
+      "message": "No need to override methods when the impl is the same as the base class",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "56dc845d0a8e155e586224960322c66fddd9f0ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa04c308_04215df0",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorFactory.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-21T13:46:12Z",
+      "side": 1,
+      "message": "note sure we need all the checks on isAsdPackage - just call before the if on line 53 and remove from here?",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 9
+      },
+      "revId": "56dc845d0a8e155e586224960322c66fddd9f0ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcf63b7c_9ff9cf14",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdManifestOnboarding.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-21T13:46:12Z",
+      "side": 1,
+      "message": "Should also check if the manifest entry is valid for ASD, i.e isMetadataAsdEntry()",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 49
+      },
+      "revId": "56dc845d0a8e155e586224960322c66fddd9f0ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de575ced_4fe4b2ca",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdManifestOnboarding.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-21T13:46:12Z",
+      "side": 1,
+      "message": "does thie method need to be overwritten?",
+      "range": {
+        "startLine": 92,
+        "startChar": 42,
+        "endLine": 92,
+        "endChar": 74
+      },
+      "revId": "56dc845d0a8e155e586224960322c66fddd9f0ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ee78805_845ee5b2",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdPackageHelper.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-21T13:46:12Z",
+      "side": 1,
+      "message": "Looks like there is a lot of duplication of code between this class and ETSIServiceImpl. Please re-work to have common code in one class which is reused in both locations",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 31
+      },
+      "revId": "56dc845d0a8e155e586224960322c66fddd9f0ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
