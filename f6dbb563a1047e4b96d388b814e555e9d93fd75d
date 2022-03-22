@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d1c67d5_ea11087a",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdPackageHelper.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-22T14:53:39Z",
+      "side": 1,
+      "message": "please, log also the exception to not loose it:\nLOGGER.warn(\"Manifest file not found\", ioe);",
+      "range": {
+        "startLine": 53,
+        "startChar": 12,
+        "endLine": 53,
+        "endChar": 51
+      },
+      "revId": "f6dbb563a1047e4b96d388b814e555e9d93fd75d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

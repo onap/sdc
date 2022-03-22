@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "866ea7cc_f3956a77",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/SOL004MetaDirectoryValidator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-22T14:53:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee98b45d_15fb1725",
+      "range": {
+        "startLine": 322,
+        "startChar": 104,
+        "endLine": 322,
+        "endChar": 116
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "00eb3037_3f906c9e",
         "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorFactory.java",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e690468f_a1b732e1",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-22T14:53:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "00eb3037_3f906c9e",
+      "range": {
+        "startLine": 58,
+        "startChar": 12,
+        "endLine": 58,
+        "endChar": 16
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fb09c432_9c04d7c4",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/csar/validation/ValidatorFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-22T14:53:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f2366cb_30b6e747",
+      "range": {
+        "startLine": 65,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 9
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dfe9624b_7ff56418",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIService.java",
         "patchSetId": 6
@@ -91,6 +163,30 @@
       "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c924bf8f_8b5c7c61",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-api/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIService.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-22T14:53:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dfe9624b_7ff56418",
+      "range": {
+        "startLine": 59,
+        "startChar": 12,
+        "endLine": 59,
+        "endChar": 26
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "ef48fb32_9cd44287",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-22T14:53:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "217beed8_44079691",
+      "range": {
+        "startLine": 98,
+        "startChar": 63,
+        "endLine": 98,
+        "endChar": 70
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "43babcf8_c8d03534",
         "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
         "patchSetId": 6
@@ -137,6 +257,30 @@
       "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "80d410e4_b66d6b21",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-22T14:53:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43babcf8_c8d03534",
+      "range": {
+        "startLine": 256,
+        "startChar": 21,
+        "endLine": 256,
+        "endChar": 36
+      },
+      "revId": "25a43ff7ad3e4a489ef74511807bf142c8bf8796",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
