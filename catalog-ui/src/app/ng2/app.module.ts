@@ -45,6 +45,7 @@ import {UiElementsModule} from './components/ui/ui-elements.module';
 import {ConnectionWizardModule} from './pages/composition/graph/connection-wizard/connection-wizard.module';
 import {InterfaceOperationModule} from './pages/interface-operation/interface-operation.module';
 import {OperationCreatorModule} from './pages/interface-operation/operation-creator/operation-creator.module';
+import {OperationCreatorInterfaceDefinitionModule} from './pages/interface-definition/operation-creator/operation-creator-interface-definition.module';
 import {LayoutModule} from './components/layout/layout.module';
 import {UserService} from './services/user.service';
 import {DynamicComponentService} from './services/dynamic-component.service';
@@ -158,6 +159,7 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     InterfaceOperationModule,
     InterfaceDefinitionModule,
     OperationCreatorModule,
+    OperationCreatorInterfaceDefinitionModule,
     InterfaceOperationHandlerModule,
     ServicePathCreatorModule,
     ServicePathsListModule,

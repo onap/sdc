@@ -1,0 +1,96 @@
+<!--
+  ~ Copyright (C) 2016-2018 European Support Limited
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+ 
+<div class="cell field-name">
+    <ui-element-input
+        *ngIf="!isAssociateWorkflow"
+        [testId]="'param-name-' + (param.name || 'unnamed')"
+        [(value)]="param.name"
+        (valueChange)="onChangeName()"
+        [readonly]="readonly">
+    </ui-element-input>
+    <span *ngIf="isAssociateWorkflow">{{param.name}}</span>
+</div>
+
+<div class="cell field-type">
+    <ui-element-dropdown
+        *ngIf="!isAssociateWorkflow"
+        [testId]="'param-type-' + (param.name || 'unnamed')"
+        [values]="propTypeEnum"
+        [(value)]="param.type"
+        (valueChange)="onChangeType()"
+        [readonly]="readonly">
+    </ui-element-dropdown>
+    <span *ngIf="isAssociateWorkflow">{{param.type}}</span>
+</div>
+
+<div class="cell field-property" *ngIf="isInputParam">
+    <select
+        *ngIf="filteredInputProps.length || operationOutputCats.length || !isAssociateWorkflow"
+        [(ngModel)]="param.inputId"
+        (change)="onChangeProperty($event)"
+        [ngClass]="{'disabled': readonly}"
+        [attr.data-tests-id]="'value-param-property-' + (param.name || 'unnamed')">
+        <option
+            *ngFor="let prop of filteredInputProps"
+            [ngValue]="prop.value">
+            {{prop.label}}
+        </option>
+        <optgroup
+            *ngFor="let operation of operationOutputCats"
+            label="{{operation.operationName}}">
+            <option
+                *ngFor="let output of operation.outputs"
+                [ngValue]="output.value">
+                {{output.label}}
+            </option>
+        </optgroup>
+        <optgroup
+                *ngFor="let cap of filteredCapabilitiesProps"
+                label="{{cap.capabilityName}}">
+            <option
+                    *ngFor="let prop of cap.properties"
+                    [ngValue]="prop.value">
+                {{prop.label}}
+            </option>
+        </optgroup>
+    </select>
+    <span
+        *ngIf="!filteredInputProps.length && !operationOutputCats.length && isAssociateWorkflow"
+        class="no-properties-error">
+        {{ 'PARAM_NONE_OF_TYPE' | translate }}
+    </span>
+</div>
+
+<div class="cell field-mandatory" *ngIf="!isAssociateWorkflow">
+    <checkbox
+        *ngIf="!isAssociateWorkflow"
+        [attr.data-tests-id]="'param-mandatory-' + (param.name || 'unnamed')"
+        [(checked)]="param.required"
+        [ngClass]="{'disabled':readonly}">
+    </checkbox>
+</div>
+
+<div class="cell remove" *ngIf="!isAssociateWorkflow && !readonly">
+    <svg-icon
+        name="trash-o"
+        mode="info"
+        size="small"
+        [attr.data-tests-id]="'param-remove-' + (param.name || 'unnamed')"
+        (click)="onRemoveParam(param)"
+        [clickable]="true">
+  </svg-icon>
+</div>
