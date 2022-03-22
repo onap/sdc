@@ -29,7 +29,7 @@ import {PluginsService} from "app/ng2/services/plugins.service";
 import {SelectedComponentType} from "../common/store/graph.actions";
 
 import {WorkspaceService} from "../../workspace/workspace.service";
-import {ComponentInstanceInterfaceModel, InterfaceOperationModel} from "../../../../models/interfaceOperation";
+import {ComponentInterfaceDefinitionModel, InterfaceOperationModel} from "../../../../models/interfaceOperation";
 import {InterfaceOperationHandlerComponent} from "./operation-creator/interface-operation-handler.component";
 
 import {ArtifactModel, ButtonModel, ComponentInstance, ComponentMetadata, InputBEModel, InterfaceModel, ModalModel} from 'app/models';
@@ -85,7 +85,7 @@ class ModalTranslation {
   }
 }
 
-export class UIInterfaceModel extends ComponentInstanceInterfaceModel {
+export class UIInterfaceModel extends ComponentInterfaceDefinitionModel {
   isCollapsed: boolean = false;
 
   constructor(interf?: any) {
@@ -163,7 +163,7 @@ export class InterfaceOperationsComponent {
     this.sortInterfaces();
   }
 
-  private initInterfaces(interfaces: ComponentInstanceInterfaceModel[]): void {
+  private initInterfaces(interfaces: ComponentInterfaceDefinitionModel[]): void {
     this.interfaces = _.map(interfaces, (interfaceModel) => new UIInterfaceModel(interfaceModel));
   }
 
