@@ -60,7 +60,7 @@ public class ToscaRelationshipBuilder {
                 operationDefinitionMap.put(operationUi.getOperationType(), toscaOperationAssignment);
             }
             toscaInterfaceDefinition.setOperations(operationDefinitionMap);
-            interfaceMap.put(InterfaceTypesNameUtil.buildShortName(interfaceType), toscaInterfaceDefinition);
+            interfaceMap.put(interfaceType, toscaInterfaceDefinition);
         }
         toscaRelationship.setInterfaces(interfaceMap);
         return toscaRelationship;
