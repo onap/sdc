@@ -68,9 +68,11 @@ import org.onap.sdc.frontend.ci.tests.utilities.FileHandling;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
 
+@Ignore // solved in https://gerrit.onap.org/r/c/sdc/+/127976
 public class ImportVfcUiTest extends SetupCDTest {
 
     private String filePath;

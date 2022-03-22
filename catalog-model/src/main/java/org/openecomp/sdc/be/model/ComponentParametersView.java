@@ -274,9 +274,9 @@ public class ComponentParametersView {
     public void disableAll() {
         ignoreUsers = true;
         ignoreGroups = true;
-        ignorePolicies = true;
         ignoreComponentInstances = true;
         ignoreComponentInstancesProperties = true;
+        ignoreComponentInstancesAttributes = true;
         ignoreProperties = true;
         ignoreAttributes = true;
         ignoreCapabilities = true;
@@ -287,14 +287,15 @@ public class ComponentParametersView {
         ignoreArtifacts = true;
         ignoreInterfaces = true;
         ignoreInterfaceInstances = true;
+        ignoreComponentInstancesInterfaces = true;
         ignoreDerivedFrom = true;
         ignoreInputs = true;
         ignoreOutputs = true;
-        ignoreComponentInstancesAttributes = true;
         ignoreComponentInstancesInputs = true;
         ignoreComponentInstancesOutputs = true;
         ignoreCapabiltyProperties = true;
         ignoreServicePath = true;
+        ignorePolicies = true;
         ignoreNodeFilterRequirements = true;
         ignoreNodeFilter = true;
         ignoreSubstitutionFilter = true;
