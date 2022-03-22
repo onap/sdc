@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.utils.InterfaceOperationUtils;
@@ -47,6 +48,7 @@ import org.openecomp.sdc.be.components.validation.InterfaceOperationValidation;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.ArtifactCassandraDao;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
@@ -290,39 +292,42 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                     } else {
                         Optional<Map.Entry<String, Operation>> optionalOperation = getOperationFromInterfaceDefinition(interfaceDef,
                             operation.getUniqueId());
-                        if (!optionalOperation.isPresent()) {
+                        if (optionalOperation.isEmpty()) {
                             janusGraphDao.rollback();
                             return Either
                                 .right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
                         }
-                        Operation storedOperation = optionalOperation.get().getValue();
-                        String artifactUuId = storedOperation.getImplementation().getArtifactUUID();
-                        String artifactUniqueId = storedOperation.getImplementation().getUniqueId();
-                        if (!InterfaceOperationUtils.isArtifactInUse(storedComponent, storedOperation.getUniqueId(), artifactUniqueId)) {
-                            Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither = artifactToscaOperation
-                                .getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
-                            if (getArtifactEither.isLeft()) {
-                                Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromComponent = artifactToscaOperation
-                                    .removeArifactFromResource(componentId, artifactUniqueId,
-                                        NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()), true);
-                                if (removeArifactFromComponent.isRight()) {
-                                    janusGraphDao.rollback();
-                                    ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
-                                        componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
-                                        storedOperation.getImplementation().getArtifactDisplayName());
-                                    return Either.right(responseFormatByArtifactId);
-                                }
-                                CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
-                                if (cassandraStatus != CassandraOperationStatus.OK) {
-                                    janusGraphDao.rollback();
-                                    ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
-                                        componentsUtils.convertFromStorageResponse(componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
-                                        storedOperation.getImplementation().getArtifactDisplayName());
-                                    return Either.right(responseFormatByArtifactId);
+                        final Operation storedOperation = optionalOperation.get().getValue();
+                        final ArtifactDataDefinition implementation = storedOperation.getImplementation();
+                        final String artifactUniqueId = implementation.getUniqueId();
+                        if (StringUtils.isNotEmpty(artifactUniqueId)) {
+                            if (!InterfaceOperationUtils.isArtifactInUse(storedComponent, storedOperation.getUniqueId(), artifactUniqueId)) {
+                                Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither = artifactToscaOperation
+                                    .getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
+                                if (getArtifactEither.isLeft()) {
+                                    Either<ArtifactDefinition, StorageOperationStatus> removeArifactFromComponent = artifactToscaOperation
+                                        .removeArifactFromResource(componentId, artifactUniqueId,
+                                            NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()), true);
+                                    if (removeArifactFromComponent.isRight()) {
+                                        janusGraphDao.rollback();
+                                        ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
+                                            componentsUtils.convertFromStorageResponse(removeArifactFromComponent.right().value()),
+                                            implementation.getArtifactDisplayName());
+                                        return Either.right(responseFormatByArtifactId);
+                                    }
+                                    CassandraOperationStatus cassandraStatus = artifactCassandraDao.deleteArtifact(artifactUniqueId);
+                                    if (cassandraStatus != CassandraOperationStatus.OK) {
+                                        janusGraphDao.rollback();
+                                        ResponseFormat responseFormatByArtifactId = componentsUtils.getResponseFormatByArtifactId(
+                                            componentsUtils.convertFromStorageResponse(
+                                                componentsUtils.convertToStorageOperationStatus(cassandraStatus)),
+                                            implementation.getArtifactDisplayName());
+                                        return Either.right(responseFormatByArtifactId);
+                                    }
                                 }
                             }
                         }
-                        updateOperationOnInterface(interfaceDef, operation, artifactUuId);
+                        updateOperationOnInterface(interfaceDef, operation, implementation.getArtifactUUID());
                     }
                 }
                 interfacesCollection.add(interfaceDef);

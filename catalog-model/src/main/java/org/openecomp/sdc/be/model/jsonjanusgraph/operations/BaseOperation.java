@@ -39,9 +39,9 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.janusgraph.core.JanusGraphVertex;
 import org.openecomp.sdc.be.dao.impl.HealingPipelineDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
@@ -1009,7 +1009,13 @@ public abstract class BaseOperation {
             if (!currMap.containsKey(pathKeys.get(0))) {
                 currMap.put(pathKeys.get(0), new MapDataDefinition<>());
             }
-            MapDataDefinition currDeepElement = currMap.get(pathKeys.get(0));
+            Object object = currMap.get(pathKeys.get(0));
+            MapDataDefinition currDeepElement = null;
+            if (object instanceof MapDataDefinition) {
+                currDeepElement = (MapDataDefinition) object;
+            } else {
+                currDeepElement = new MapDataDefinition(currMap);
+            }
             for (int i = 1; i < pathKeys.size(); ++i) {
                 if (currDeepElement.findByKey(pathKeys.get(i)) == null) {
                     currDeepElement.put(pathKeys.get(i), new MapDataDefinition<>());
