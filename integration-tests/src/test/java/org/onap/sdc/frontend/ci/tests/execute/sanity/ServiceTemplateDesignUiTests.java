@@ -91,6 +91,7 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.Yaml;
 
@@ -240,6 +241,7 @@ public class ServiceTemplateDesignUiTests extends SetupCDTest {
     }
 
     @Test(dependsOnMethods = "addRelationshipTemplate")
+    @Ignore
     public void updateInterfaceOperation() throws Exception {
         homePage.isLoaded();
         componentPage = (ComponentPage) homePage.clickOnComponent(vfResourceCreateData.getName());
