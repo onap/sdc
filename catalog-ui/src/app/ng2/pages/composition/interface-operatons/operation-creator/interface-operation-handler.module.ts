@@ -25,16 +25,14 @@ import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {FormElementsModule} from "app/ng2/components/ui/form-components/form-elements.module";
 import {TranslateModule} from "app/ng2/shared/translator/translate.module";
-
-
+import {AddInputComponent} from './add-input/add-input.component';
+import {InputListComponent} from './input-list/input-list.component';
+import {InputListItemComponent} from './input-list/input-list-item/input-list-item.component';
+import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
+import {InterfaceOperationHandlerComponent} from "./interface-operation-handler.component";
 import {SdcUiComponentsModule} from "onap-ui-angular/dist";
-import { InterfaceOperationHandlerComponent } from "app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component";
-import { PropertyParamRowComponent } from "app/ng2/pages/composition/interface-operatons/operation-creator/property-param-row/property-param-row.component";
-import { UiElementsModule } from "app/ng2/components/ui/ui-elements.module";
-import { PropertyTableModule } from "app/ng2/components/logic/properties-table/property-table.module";
-import { AddInputComponent } from './add-input/add-input.component';
-import { InputListComponent } from './input-list/input-list.component';
-import { InputListItemComponent } from './input-list/input-list-item/input-list-item.component';
+import {UiElementsModule} from "app/ng2/components/ui/ui-elements.module";
+import {PropertyTableModule} from "app/ng2/components/logic/properties-table/property-table.module";
 
 @NgModule({
   declarations: [
