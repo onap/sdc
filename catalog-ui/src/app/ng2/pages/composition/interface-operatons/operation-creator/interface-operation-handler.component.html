@@ -25,19 +25,30 @@
 
         <div class="side-by-side">
             <div class="form-item">
-                <sdc-input
+                <sdc-dropdown
                     label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
-                    [(value)]="interfaceType"
-                    [disabled]=!isViewOnly>
-                </sdc-input>
+                    [required]="true"
+                    [testId]="'interface-name'"
+                    [selectedOption]="selectedInterfaceType"
+                    [placeHolder]="'Select...'"
+                    [disabled]="isViewOnly || isEdit"
+                    (changed)="onSelectInterface($event)"
+                    [options]="interfaceTypeOptions">
+                </sdc-dropdown>
             </div>
 
             <div class="form-item">
-                <sdc-input
+                <sdc-dropdown
+                    #interfaceOperationDropDown
                     label="{{ 'OPERATION_NAME' | translate }}"
-                    [(value)]="operationToUpdate.name"
-                    [disabled]=!isViewOnly>
-                </sdc-input>
+                    [required]="true"
+                    [testId]="'operation-name'"
+                    [selectedOption]="selectedInterfaceOperation"
+                    [placeHolder]="'Select...'"
+                    [disabled]="isViewOnly || isEdit"
+                    (changed)="onSelectOperation($event)"
+                    [options]="interfaceOperationOptions">
+                </sdc-dropdown>
             </div>
         </div>
 
