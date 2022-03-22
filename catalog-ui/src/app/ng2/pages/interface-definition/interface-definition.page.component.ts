@@ -20,26 +20,27 @@
 */
 import {Component, ComponentRef, Inject, Input} from '@angular/core';
 import {Component as IComponent} from 'app/models/components/component';
+import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
 
 import {ISdcConfig, SdcConfigToken} from "app/ng2/config/sdc-config.config";
 import {TranslateService} from "app/ng2/shared/translator/translate.service";
-
+import {IModalButtonComponent, SdcUiServices} from 'onap-ui-angular';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
+
 import {ModalService} from 'app/ng2/services/modal.service';
-import {ButtonModel, CapabilitiesGroup, ModalModel, OperationModel} from 'app/models';
+import {
+    ButtonModel,
+    CapabilitiesGroup,
+    InputBEModel,
+    InterfaceModel,
+    ModalModel,
+    OperationModel,
+    WORKFLOW_ASSOCIATION_OPTIONS
+} from 'app/models';
 
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
-
-import {SdcUiServices} from 'onap-ui-angular';
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
-import {
-    ComponentInterfaceDefinitionModel,
-    InputOperationParameter,
-    InterfaceOperationModel
-} from "../../../models/interfaceOperation";
-import {
-    PropertyParamRowComponent
-} from "../composition/interface-operatons/operation-creator/property-param-row/property-param-row.component";
+import {InterfaceOperationModel} from "../../../models/interfaceOperation";
 import {
     InterfaceOperationHandlerComponent
 } from "../composition/interface-operatons/operation-creator/interface-operation-handler.component";
@@ -49,15 +50,17 @@ import {
 import {ToscaArtifactModel} from "../../../models/toscaArtifact";
 import {ToscaArtifactService} from "../../services/tosca-artifact.service";
 import {
-    UIInterfaceOperationModel
-} from "../composition/interface-operatons/interface-operations.component";
+    InterfaceOperationComponent
+} from "../interface-operation/interface-operation.page.component";
+import {Observable} from "rxjs/Observable";
+import {PluginsService} from 'app/ng2/services/plugins.service';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
     isEllipsis: boolean;
     MAX_LENGTH = 75;
 
-    constructor(operation: UIOperationModel) {
+    constructor(operation: OperationModel) {
         super(operation);
 
         if (!operation.description) {
@@ -109,15 +112,14 @@ class ModalTranslation {
     }
 }
 
-export class UIInterfaceModel extends ComponentInterfaceDefinitionModel {
+export class UIInterfaceModel extends InterfaceModel {
     isCollapsed: boolean = false;
 
     constructor(interf?: any) {
         super(interf);
-        this.operations = _.map(
-            this.operations,
-            (operation) => new UIInterfaceOperationModel(operation)
-        );
+        if (this.operations) {
+            this.operations = this.operations.map((operation) => new UIOperationModel(operation));
+        }
     }
 
     toggleCollapse() {
@@ -130,16 +132,18 @@ export class UIInterfaceModel extends ComponentInterfaceDefinitionModel {
     selector: 'interface-definition',
     templateUrl: './interface-definition.page.component.html',
     styleUrls: ['interface-definition.page.component.less'],
-    providers: [ModalService, TranslateService]
+    providers: [ModalService, TranslateService, InterfaceOperationComponent]
 })
-
 export class InterfaceDefinitionComponent {
 
     modalInstance: ComponentRef<ModalComponent>;
+    // modalInstance: ModalComponent;
     interfaces: UIInterfaceModel[];
-    inputs: Array<InputOperationParameter> = [];
+    // interfaces: Array<InterfaceModel>;
+    // inputs: Array<InputOperationParameter> = [];
+    inputs: InputBEModel[];
 
-    properties: Array<PropertyParamRowComponent> = [];
+    // properties: Array<PropertyParamRowComponent> = [];
     deploymentArtifactsFilePath: Array<DropdownValue> = [];
 
     toscaArtifactTypes: Array<DropdownValue> = [];
@@ -153,6 +157,10 @@ export class InterfaceDefinitionComponent {
     capabilities: CapabilitiesGroup;
     isViewOnly: boolean;
 
+    openOperation: OperationModel;
+    enableWorkflowAssociation: boolean;
+    workflowIsOnline: boolean;
+
     @Input() component: IComponent;
     @Input() readonly: boolean;
     @Input() enableMenuItems: Function;
@@ -162,24 +170,60 @@ export class InterfaceDefinitionComponent {
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
         @Inject("$state") private $state: ng.ui.IStateService,
         @Inject("Notification") private notification: any,
+        // @Inject(InterfaceOperationComponent) private interfaceOperationComponent: InterfaceOperationComponent,
+        // private interfaceOperationComponent: InterfaceOperationComponent,
         private translateService: TranslateService,
         private componentServiceNg2: ComponentServiceNg2,
         private modalServiceNg2: ModalService,
         private modalServiceSdcUI: SdcUiServices.ModalService,
         private topologyTemplateService: TopologyTemplateService,
-        private toscaArtifactService: ToscaArtifactService
+        private toscaArtifactService: ToscaArtifactService,
+        private ComponentServiceNg2: ComponentServiceNg2,
+        private WorkflowServiceNg2: WorkflowServiceNg2,
+        private ModalServiceSdcUI: SdcUiServices.ModalService,
+        private PluginsService: PluginsService
     ) {
         this.modalTranslation = new ModalTranslation(translateService);
         this.interfaceTypesMap = new Map<string, string[]>();
+        // this.interfaceOperationComponent=new InterfaceOperationComponent();
     }
 
     ngOnInit(): void {
-        console.info("this.component.lifecycleState ", this.component.lifecycleState);
-        if (this.component) {
-            this.isViewOnly = this.component.componentMetadata.isComponentDataEditable();
-            this.initInterfaceDefinition();
-            this.loadInterfaceTypes();
-            this.loadToscaArtifacts();
+        this.isLoading = true;
+        this.interfaces = [];
+        this.workflowIsOnline = !_.isUndefined(this.PluginsService.getPluginByStateUrl('workflowDesigner'));
+        Observable.forkJoin(
+            this.ComponentServiceNg2.getInterfaceOperations(this.component),
+            this.ComponentServiceNg2.getComponentInputs(this.component),
+            this.ComponentServiceNg2.getInterfaceTypes(this.component),
+            this.ComponentServiceNg2.getCapabilitiesAndRequirements(this.component.componentType, this.component.uniqueId)
+        ).subscribe((response: any[]) => {
+            const callback = (workflows) => {
+                this.isLoading = false;
+                this.initInterfaces(response[0].interfaces);
+                this.sortInterfaces();
+                this.inputs = response[1].inputs;
+                this.interfaceTypes = response[2];
+                this.workflows = (workflows.items) ? workflows.items : workflows;
+                this.capabilities = response[3].capabilities;
+            };
+            if (this.enableWorkflowAssociation && this.workflowIsOnline) {
+                this.WorkflowServiceNg2.getWorkflows().subscribe(
+                    callback,
+                    (err) => {
+                        this.workflowIsOnline = false;
+                        callback([]);
+                    }
+                );
+            } else {
+                callback([]);
+            }
+        });
+    }
+
+    initInterfaces(interfaces: InterfaceModel[]): void {
+        if (interfaces) {
+            this.interfaces = interfaces.map((interf) => new UIInterfaceModel(interf));
         }
     }
 
@@ -190,15 +234,18 @@ export class InterfaceDefinitionComponent {
     private disableSaveButton = (): boolean => {
         return this.isViewOnly ||
             (this.isEnableAddArtifactImplementation()
-                && (!this.modalInstance.instance.dynamicContent.instance.toscaArtifactTypeSelected ||
-                    !this.modalInstance.instance.dynamicContent.instance.artifactName)
+                && (!this.modalInstance.instance.dynamicContent.toscaArtifactTypeSelected ||
+                    !this.modalInstance.instance.dynamicContent.artifactName)
             );
     }
 
     onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
+        const isEdit = operation !== undefined;
         const cancelButton: ButtonModel = new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal);
-        const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue', () =>
-            this.updateOperation(), this.disableSaveButton);
+        const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue',
+            () => isEdit ? this.updateOperation() : this.createOperationCallback(),
+            this.disableSaveButton
+        );
         const interfaceDataModal: ModalModel =
             new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', [saveButton, cancelButton], 'custom');
         this.modalInstance = this.modalServiceNg2.createCustomModal(interfaceDataModal);
@@ -209,12 +256,14 @@ export class InterfaceDefinitionComponent {
             {
                 deploymentArtifactsFilePath: this.deploymentArtifactsFilePath,
                 toscaArtifactTypes: this.toscaArtifactTypes,
-                selectedInterface: interfaceModel,
-                selectedInterfaceOperation: operation,
+                selectedInterface: interfaceModel ? interfaceModel : new UIInterfaceModel(),
+                selectedInterfaceOperation: operation ? operation : new InterfaceOperationModel(),
                 validityChangedCallback: this.disableSaveButton,
                 isViewOnly: this.isViewOnly,
+                isEdit: isEdit,
                 interfaceTypesMap: this.interfaceTypesMap,
-            });
+            }
+        );
         this.modalInstance.instance.open();
     }
 
@@ -239,6 +288,28 @@ export class InterfaceDefinitionComponent {
         this.modalServiceNg2.closeCurrentModal();
     }
 
+    private createOperationCallback(): void {
+        const operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
+        console.log('createOperationCallback', operationToUpdate);
+        console.log('this.component', this.component);
+        // this.componentServiceNg2.createInterfaceOperation(this.component, operationToUpdate).subscribe();
+        this.componentServiceNg2.createComponentInterfaceOperation(this.component.uniqueId, this.component.getTypeUrl(), operationToUpdate)
+        .subscribe((newOperation: InterfaceOperationModel) => {
+            const foundInterface = this.interfaces.find(value => value.type === newOperation.interfaceType);
+            if (foundInterface) {
+                foundInterface.operations.push(new UIOperationModel(new OperationModel(newOperation)));
+            } else {
+                const uiInterfaceModel = new UIInterfaceModel();
+                uiInterfaceModel.type = newOperation.interfaceType;
+                uiInterfaceModel.uniqueId = newOperation.interfaceType;
+                uiInterfaceModel.operations = [];
+                uiInterfaceModel.operations.push(new UIOperationModel(new OperationModel(newOperation)));
+                this.interfaces.push(uiInterfaceModel);
+            }
+        });
+        this.modalServiceNg2.closeCurrentModal();
+    }
+
     private handleEnableAddArtifactImplementation = (newOperation: InterfaceOperationModel): InterfaceOperationModel => {
         if (!this.isEnableAddArtifactImplementation()) {
             newOperation.implementation.artifactType = null;
@@ -248,7 +319,8 @@ export class InterfaceDefinitionComponent {
     }
 
     private isEnableAddArtifactImplementation = (): boolean => {
-        return this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
+        return false;
+        // return this.modalInstance.instance.dynamicContent.enableAddArtifactImplementation;
     }
 
     private initInterfaceDefinition() {
@@ -257,7 +329,7 @@ export class InterfaceDefinitionComponent {
         this.topologyTemplateService.getComponentInterfaceOperations(this.component.componentType, this.component.uniqueId)
         .subscribe((response) => {
             if (response.interfaces) {
-                this.interfaces = _.map(response.interfaces, (interfaceModel) => new UIInterfaceModel(interfaceModel));
+                this.interfaces = response.interfaces.map((interfaceModel) => new UIInterfaceModel(interfaceModel));
             }
             this.isLoading = false;
         });
@@ -301,11 +373,11 @@ export class InterfaceDefinitionComponent {
     }
 
     isAllCollapsed(): boolean {
-        return _.every(this.interfaces, (interfaceData) => interfaceData.isCollapsed);
+        return this.interfaces.every((interfaceData) => interfaceData.isCollapsed);
     }
 
     isAllExpanded(): boolean {
-        return _.every(this.interfaces, (interfaceData) => !interfaceData.isCollapsed);
+        return this.interfaces.every((interfaceData) => !interfaceData.isCollapsed);
     }
 
     isInterfaceListEmpty(): boolean {
@@ -313,8 +385,180 @@ export class InterfaceDefinitionComponent {
     }
 
     isOperationListEmpty(): boolean {
-        return _.filter(this.interfaces, (interfaceData) =>
-            interfaceData.operations && interfaceData.operations.length > 0).length > 0;
+        return this.interfaces.filter((interfaceData) => interfaceData.operations && interfaceData.operations.length > 0).length > 0;
+    }
+
+    onRemoveOperation = (event: Event, operation: OperationModel): void => {
+        event.stopPropagation();
+
+        const deleteButton: IModalButtonComponent = {
+            id: 'deleteButton',
+            text: this.modalTranslation.DELETE_BUTTON,
+            type: 'primary',
+            size: 'small',
+            closeModal: true,
+            callback: () => {
+                this.ComponentServiceNg2
+                .deleteInterfaceOperation(this.component, operation)
+                .subscribe(() => {
+                    const curInterf = this.interfaces.find((interf) => interf.type === operation.interfaceType);
+                    const index = curInterf.operations.findIndex((el) => el.uniqueId === operation.uniqueId);
+                    curInterf.operations.splice(index, 1);
+                    if (!curInterf.operations.length) {
+                        const interfIndex = this.interfaces.findIndex((interf) => interf.type === operation.interfaceType);
+                        this.interfaces.splice(interfIndex, 1);
+                    }
+                });
+            }
+        };
+
+        const cancelButton: IModalButtonComponent = {
+            id: 'cancelButton',
+            text: this.modalTranslation.CANCEL_BUTTON,
+            type: 'secondary',
+            size: 'small',
+            closeModal: true,
+            callback: () => {
+                this.openOperation = null;
+            },
+        };
+
+        this.ModalServiceSdcUI.openWarningModal(
+            this.modalTranslation.DELETE_TITLE,
+            this.modalTranslation.deleteText(operation.name),
+            'deleteOperationModal',
+            [deleteButton, cancelButton],
+        );
+    }
+
+    // onAddOperation = (operation?: OperationModel): void => {
+    //
+    //     // const modalMap = {
+    //     //     create: {
+    //     //         modalTitle: this.modalTranslation.CREATE_TITLE,
+    //     //         saveBtnText: this.modalTranslation.CREATE_BUTTON,
+    //     //         submitCallback: this.createOperation,
+    //     //     },
+    //     //     edit: {
+    //     //         modalTitle: this.modalTranslation.EDIT_TITLE,
+    //     //         saveBtnText: this.modalTranslation.SAVE_BUTTON,
+    //     //         submitCallback: this.updateOperation,
+    //     //     }
+    //     // };
+    //
+    //     const modalData = {
+    //         modalTitle: this.modalTranslation.CREATE_TITLE,
+    //         saveBtnText: this.modalTranslation.CREATE_BUTTON,
+    //         submitCallback: this.createOperation,
+    //     };
+    //     // const modalData = operation ? modalMap.edit : modalMap.create;
+    //
+    //     // if (this.openOperation) {
+    //     //     if (operation ? operation.uniqueId === this.openOperation.uniqueId : !this.openOperation.uniqueId) {
+    //     //         operation = this.openOperation;
+    //     //     }
+    //     // }
+    //
+    //     const cancelButton: IModalButtonComponent = {
+    //         id: 'cancelButton',
+    //         text: this.modalTranslation.CANCEL_BUTTON,
+    //         type: 'secondary',
+    //         size: 'small',
+    //         closeModal: true,
+    //         callback: () => {
+    //             this.openOperation = null;
+    //         },
+    //     };
+    //
+    //     const saveButton: IModalButtonComponent = {
+    //         id: 'saveButton',
+    //         text: modalData.saveBtnText,
+    //         type: 'primary',
+    //         size: 'small',
+    //         closeModal: true,
+    //         callback: () => {
+    //             const modalInstance = this.modalInstance.instance;
+    //
+    //             const {
+    //                 operation,
+    //                 isUsingExistingWF,
+    //                 createParamLists
+    //             } = modalInstance.dynamicContent;
+    //             createParamLists();
+    //             this.openOperation = {...operation};
+    //
+    //             if (this.enableWorkflowAssociation && !isUsingExistingWF()) {
+    //                 operation.workflowId = null;
+    //                 operation.workflowVersionId = null;
+    //             }
+    //
+    //             modalData.submitCallback(operation);
+    //         }
+    //     };
+    //
+    //     const input: OperationCreatorInput = {
+    //         allWorkflows: this.workflows,
+    //         inputOperation: operation,
+    //         interfaces: this.interfaces,
+    //         inputProperties: this.inputs,
+    //         enableWorkflowAssociation: this.enableWorkflowAssociation,
+    //         readonly: this.readonly,
+    //         interfaceTypes: this.interfaceTypes,
+    //         validityChangedCallback: this.enableOrDisableSaveButton,
+    //         workflowIsOnline: this.workflowIsOnline,
+    //         capabilities: CapabilitiesGroup.getFlattenedCapabilities(this.capabilities).filter((capability: Capability) => capability.ownerId === this.component.uniqueId)
+    //     };
+    //
+    //     const modalConfig: IModalConfig = {
+    //         title: modalData.modalTitle,
+    //         size: 'l',
+    //         type: 'custom',
+    //         buttons: [saveButton, cancelButton] as IModalButtonComponent[]
+    //     };
+    //
+    //     this.modalInstance = this.ModalServiceSdcUI.openCustomModal(modalConfig, OperationCreatorInterfaceDefinitionComponent, input);
+    // }
+
+    private createOperation = (operation: OperationModel): void => {
+        this.ComponentServiceNg2.createInterfaceOperation(this.component, operation).subscribe((response: OperationModel) => {
+            this.openOperation = null;
+
+            let curInterf = this.interfaces.find((interf) => interf.type === operation.interfaceType);
+
+            if (!curInterf) {
+                curInterf = new UIInterfaceModel({
+                    type: response.interfaceType,
+                    uniqueId: response.uniqueId,
+                    operations: []
+                });
+                this.interfaces.push(curInterf);
+            }
+
+            const newOpModel = new UIOperationModel(response);
+            curInterf.operations.push(newOpModel);
+            this.sortInterfaces();
+
+            if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXTERNAL && operation.artifactData) {
+                this.ComponentServiceNg2.uploadInterfaceOperationArtifact(this.component, newOpModel, operation).subscribe();
+            } else if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
+                this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, response).subscribe();
+            } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
+                this.$state.go('workspace.plugins', {path: 'workflowDesigner'});
+            }
+        });
+    }
+
+    private enableOrDisableSaveButton = (shouldEnable: boolean): void => {
+        const saveButton = this.modalInstance.instance.dynamicContent.getButtonById('saveButton');
+        saveButton.disabled = !shouldEnable;
+    }
+
+    private sortInterfaces(): void {
+        this.interfaces = this.interfaces.filter((interf) => interf.operations && interf.operations.length > 0); // remove empty interfaces
+        this.interfaces.sort((a, b) => a.type.localeCompare(b.type)); // sort interfaces alphabetically
+        this.interfaces.forEach((interf) => {
+            interf.operations.sort((a, b) => a.name.localeCompare(b.name)); // sort operations alphabetically
+        });
     }
 
 }

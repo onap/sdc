@@ -1,0 +1,207 @@
+<!--
+  ~ Copyright © 2016-2018 European Support Limited
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<div class="operation-creator-interface-definition">
+    <loader [display]="isLoading" [size]="'large'" [relative]="true"></loader>
+
+    <form class="w-sdc-form">
+
+        <div class="side-by-side">
+            <div class="form-item">
+                <sdc-dropdown
+                    label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
+                    [required]="true"
+                    testId="interface-name"
+                    [selectedOption]="getSelectedDropdown(interfaceNames, operation.interfaceType)"
+                    placeHolder="Select..."
+                    [disabled]="readonly"
+                    (changed)="onSelectInterface($event)"
+                    [options]="interfaceNames">
+                </sdc-dropdown>
+            </div>
+
+            <div class="form-item" *ngIf="!isInterfaceOther()">
+                <sdc-dropdown
+                    #operationNamesDropdown
+                    label="{{ 'OPERATION_NAME' | translate }}"
+                    [required]="true"
+                    testId="operation-name"
+                    [selectedOption]="getSelectedDropdown(operationNames, operation.name)"
+                    placeHolder="Select..."
+                    [disabled]="readonly"
+                    (changed)="onSelectOperationName($event)"
+                    [options]="operationNames">
+                </sdc-dropdown>
+            </div>
+            <div class="form-item" *ngIf="isInterfaceOther()">
+                <sdc-input
+                    label="{{ 'OPERATION_NAME' | translate }}"
+                    [(value)]="operation.name"
+                    testId="operationName"
+                    (valueChange)="onChangeName()"
+                    [disabled]="readonly">
+                </sdc-input>
+            </div>
+
+        </div>
+
+        <div class="i-sdc-form-item sdc-input">
+            <span class="sdc-input__label">{{ 'OPERATION_DESCRIPTION' | translate }}</span>
+            <textarea
+                data-tests-id="operationDescription"
+                rows="2"
+                name="description"
+                [(ngModel)]="descriptionValue"
+                [ngClass]="{'disabled': readonly}">
+            </textarea>
+        </div>
+
+        <div class="side-by-side" *ngIf="enableWorkflowAssociation">
+            <div class="form-item">
+                <sdc-dropdown
+                    #workflowAssignmentDropdown
+                    label="{{ 'OPERATION_WORKFLOW_ASSIGNMENT' | translate }}"
+                    placeHolder="Select..."
+                    testId="association-type"
+                    [selectedOption]="toDropDownOption(workflowAssociationType)"
+                    [options]="associationOptions"
+                    (changed)="toggleAssociateWorkflow($event)"
+                    [disabled]="readonly">
+                </sdc-dropdown>
+            </div>
+
+            <div class="form-item" *ngIf="!isUsingExistingWF() && !isUsingExternalWF()"></div>
+
+            <div
+                *ngIf="isUsingExternalWF()"
+                class="form-item sdc-input">
+                <label class="sdc-input__label">{{ 'OPERATION_ARTIFACT' | translate }}</label>
+                <div class="i-sdc-form-item i-sdc-form-file-upload">
+                    <span
+                        class="i-sdc-form-file-name"
+                        data-tests-id="artifactFilename">
+                        {{ operation.artifactFileName }}
+                    </span>
+                    <div
+                        *ngIf="operation.artifactFileName"
+                        class="i-sdc-form-file-upload-x-btn"
+                        data-tests-id="clearArtifact"
+                        (click)="onChangeArtifactFile({ target: {} })"></div>
+                    <label
+                        class="i-sdc-form-file-upload-label"
+                        [ngClass]="{'disabled': readonly}">
+                        <input
+                            type="file"
+                            base-sixty-four-input
+                            maxsize="10240"
+                            data-tests-id="artifactUpload"
+                            (change)="onChangeArtifactFile($event)"
+                            (click)="$event.target.value = ''"
+                        />
+                        <div class="file-upload-browse-btn">Browse</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-item sdc-input" *ngIf="isUsingExistingWF()">
+                <label class="sdc-input__label required">{{ 'OPERATION_WORKFLOW' | translate }}
+                    <span class="archive-warning" *ngIf="workflowIsOnline && archivedWorkflowId === operation.workflowId">({{ 'OPERATION_WORKFLOW_ARCHIVED' | translate }})</span>
+                    <span class="no-workflow-warning" *ngIf="!workflowIsOnline">{{ 'OPERATION_NO_WORKFLOW_CONNECTION' | translate }}</span>
+                    <span class="no-workflow-warning" *ngIf="workflowIsOnline && !workflows.length">{{ 'OPERATION_NO_WORKFLOW_ERROR' | translate }}</span>
+                </label>
+                <sdc-dropdown
+                    placeHolder="Select..."
+                    testId="associated-workflow"
+                    [selectedOption]="getSelectedDropdown(workflows, operation.workflowId)"
+                    [options]="workflows"
+                    (changed)="onSelectWorkflow($event)"
+                    [disabled]="readonly || !workflows.length || !workflowIsOnline">
+                </sdc-dropdown>
+            </div>
+
+            <div class="form-item sdc-input" *ngIf="isUsingExistingWF()">
+                <sdc-dropdown
+                    *ngIf="workflowIsOnline && workflows.length"
+                    label="{{ 'OPERATION_WORKFLOW_VERSION' | translate }}"
+                    testId="associated-workflow-version"
+                    [selectedOption]="getSelectedDropdown(workflowVersions, operation.workflowVersionId)"
+                    [options]="workflowVersions"
+                    (changed)="changeWorkflowVersion($event)"
+                    [disabled]="!operation.workflowId || archivedWorkflowId === operation.workflowId || readonly">
+                </sdc-dropdown>
+            </div>
+        </div>
+
+        <div class="separator-buttons">
+            <tabs #propertyInputTabs tabStyle="round-tabs" (tabChanged)="tabChanged($event)" [hideIndicationOnTabChange]="true">
+                <tab tabTitle="Inputs"></tab>
+                <tab tabTitle="Outputs"></tab>
+            </tabs>
+            <a
+                class="add-param-link add-btn"
+                *ngIf="!isUsingExistingWF() && !readonly"
+                data-tests-id="addInputParameter"
+                [ngClass]="{'disabled':!canAdd()}"
+                (click)="addParam()">{{ currentTab === TYPE_INPUT ? 'Add Input' : 'Add Output' }}</a>
+        </div>
+
+        <div class="generic-table">
+            <div class="header-row table-row">
+                <span class="cell header-cell field-name">{{ 'OPERATION_PARAM_NAME' | translate }}</span>
+                <span class="cell header-cell field-type">{{ 'OPERATION_PARAM_TYPE' | translate }}</span>
+                <span class="cell header-cell field-property" *ngIf="currentTab == TYPE_INPUT">
+                    {{ 'OPERATION_PARAM_PROPERTY' | translate }}
+                    <span
+                        *ngIf="!isUsingExistingWF()"
+                        class="sprite-new info-icon"
+                        tooltip="{{propertyTooltipText}}"
+                        tooltipDelay="0">
+                    </span>
+                </span>
+                <span class="cell header-cell field-mandatory" *ngIf="!isUsingExistingWF()">{{ 'OPERATION_PARAM_MANDATORY' | translate }}</span>
+                <span class="cell header-cell remove" *ngIf="!isUsingExistingWF() && !readonly">●●●</span>
+            </div>
+
+            <div class="empty-msg data-row" *ngIf="tableParameters.length === 0">
+                <div>{{ 'EMPTY_PARAM_TABLE_HEADER' | translate }}</div>
+                <div *ngIf="isUsingExistingWF() && !operation.workflowVersionId">
+                    <div *ngIf="workflows.length">
+                        <span class="bold-message">{{ 'EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_1' | translate }}</span>
+                        <span>{{ 'EMPTY_PARAM_TABLE_NO_SELECTED_WORKFLOW_2' | translate }}</span>
+                    </div>
+                    <div *ngIf="!workflows.length">
+                        Only <span class="bold-message">certified</span> workflow versions can be assigned to an operation
+                    </div>
+                </div>
+            </div>
+
+            <param-row
+                    *ngFor="let param of tableParameters"
+                    class="data-row"
+                    [isInputParam]="currentTab === TYPE_INPUT"
+                    [isAssociateWorkflow]="isUsingExistingWF()"
+                    [param]="param"
+                    [inputProps]="inputProperties"
+                    [capabilitiesProps]="componentCapabilities"
+                    [operationOutputs]="operationOutputs"
+                    [onRemoveParam]="onRemoveParam"
+                    [readonly]="readonly"
+                    [validityChanged]="validityChanged">
+            </param-row>
+        </div>
+
+    </form>
+</div>
