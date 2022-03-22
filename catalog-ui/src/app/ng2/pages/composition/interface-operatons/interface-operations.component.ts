@@ -20,7 +20,9 @@
 */
 
 import {Component, ComponentRef, Inject, Input} from '@angular/core';
-import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
+import {
+    TopologyTemplateService
+} from '../../../services/component-services/topology-template.service';
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {ModalService} from 'app/ng2/services/modal.service';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
@@ -29,265 +31,282 @@ import {PluginsService} from "app/ng2/services/plugins.service";
 import {SelectedComponentType} from "../common/store/graph.actions";
 
 import {WorkspaceService} from "../../workspace/workspace.service";
-import {ComponentInterfaceDefinitionModel, InterfaceOperationModel} from "../../../../models/interfaceOperation";
-import {InterfaceOperationHandlerComponent} from "./operation-creator/interface-operation-handler.component";
+import {
+    ComponentInterfaceDefinitionModel,
+    InterfaceOperationModel
+} from "../../../../models/interfaceOperation";
+import {
+    InterfaceOperationHandlerComponent
+} from "./operation-creator/interface-operation-handler.component";
 
-import {ArtifactModel, ButtonModel, ComponentInstance, ComponentMetadata, InputBEModel, InterfaceModel, ModalModel} from 'app/models';
+import {
+    ArtifactModel,
+    ButtonModel,
+    ComponentInstance,
+    ComponentMetadata,
+    InputBEModel,
+    InterfaceModel,
+    ModalModel
+} from 'app/models';
 import {ArtifactGroupType} from "../../../../utils/constants";
-import {DropdownValue} from "../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {
+    DropdownValue
+} from "../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {ToscaArtifactService} from "../../../services/tosca-artifact.service";
 import {ToscaArtifactModel} from "../../../../models/toscaArtifact";
 
 export class UIInterfaceOperationModel extends InterfaceOperationModel {
-  isCollapsed: boolean = true;
-  isEllipsis: boolean;
-  MAX_LENGTH = 75;
-  constructor(operation: InterfaceOperationModel) {
-    super(operation);
+    isCollapsed: boolean = true;
+    isEllipsis: boolean;
+    MAX_LENGTH = 75;
 
-    if (!operation.description) {
-      this.description = '';
+    constructor(operation: InterfaceOperationModel) {
+        super(operation);
+
+        if (!operation.description) {
+            this.description = '';
+        }
+
+        if (this.description.length > this.MAX_LENGTH) {
+            this.isEllipsis = true;
+        } else {
+            this.isEllipsis = false;
+        }
     }
 
-    if (this.description.length > this.MAX_LENGTH) {
-      this.isEllipsis = true;
-    } else {
-      this.isEllipsis = false;
+    getDescriptionEllipsis(): string {
+        if (this.isCollapsed && this.description.length > this.MAX_LENGTH) {
+            return this.description.substr(0, this.MAX_LENGTH - 3) + '...';
+        }
+        return this.description;
     }
-  }
 
-  getDescriptionEllipsis(): string {
-    if (this.isCollapsed && this.description.length > this.MAX_LENGTH) {
-      return this.description.substr(0, this.MAX_LENGTH - 3) + '...';
+    toggleCollapsed(e) {
+        e.stopPropagation();
+        this.isCollapsed = !this.isCollapsed;
     }
-    return this.description;
-  }
-
-  toggleCollapsed(e) {
-    e.stopPropagation();
-    this.isCollapsed = !this.isCollapsed;
-  }
 }
 
 class ModalTranslation {
-  EDIT_TITLE: string;
-  CANCEL_BUTTON: string;
-  CLOSE_BUTTON: string;
-  SAVE_BUTTON: string;
+    EDIT_TITLE: string;
+    CANCEL_BUTTON: string;
+    CLOSE_BUTTON: string;
+    SAVE_BUTTON: string;
 
-  constructor(private TranslateService: TranslateService) {
-    this.TranslateService.languageChangedObservable.subscribe(lang => {
-      this.EDIT_TITLE = this.TranslateService.translate('INTERFACE_EDIT_TITLE');
-      this.CANCEL_BUTTON = this.TranslateService.translate("INTERFACE_CANCEL_BUTTON");
-      this.CLOSE_BUTTON = this.TranslateService.translate("INTERFACE_CLOSE_BUTTON");
-      this.SAVE_BUTTON = this.TranslateService.translate("INTERFACE_SAVE_BUTTON");
-    });
-  }
+    constructor(private TranslateService: TranslateService) {
+        this.TranslateService.languageChangedObservable.subscribe(lang => {
+            this.EDIT_TITLE = this.TranslateService.translate('INTERFACE_EDIT_TITLE');
+            this.CANCEL_BUTTON = this.TranslateService.translate("INTERFACE_CANCEL_BUTTON");
+            this.CLOSE_BUTTON = this.TranslateService.translate("INTERFACE_CLOSE_BUTTON");
+            this.SAVE_BUTTON = this.TranslateService.translate("INTERFACE_SAVE_BUTTON");
+        });
+    }
 }
 
 export class UIInterfaceModel extends ComponentInterfaceDefinitionModel {
-  isCollapsed: boolean = false;
+    isCollapsed: boolean = false;
 
-  constructor(interf?: any) {
-    super(interf);
-    this.operations = _.map(
-        this.operations,
-        (operation) => new UIInterfaceOperationModel(operation)
-    );
-  }
+    constructor(interf?: any) {
+        super(interf);
+        this.operations = _.map(
+            this.operations,
+            (operation) => new UIInterfaceOperationModel(operation)
+        );
+    }
 
-  toggleCollapse() {
-    this.isCollapsed = !this.isCollapsed;
-  }
+    toggleCollapse() {
+        this.isCollapsed = !this.isCollapsed;
+    }
 }
 
 @Component({
-  selector: 'app-interface-operations',
-  templateUrl: './interface-operations.component.html',
-  styleUrls: ['./interface-operations.component.less'],
-  providers: [ModalService, TranslateService]
+    selector: 'app-interface-operations',
+    templateUrl: './interface-operations.component.html',
+    styleUrls: ['./interface-operations.component.less'],
+    providers: [ModalService, TranslateService]
 })
 export class InterfaceOperationsComponent {
-  interfaces: UIInterfaceModel[];
-  inputs: Array<InputBEModel>;
-  isLoading: boolean;
-  interfaceTypes: { [interfaceType: string]: string[] };
-  topologyTemplate: TopologyTemplate;
-  componentMetaData: ComponentMetadata;
-  componentInstanceSelected: ComponentInstance;
-  modalInstance: ComponentRef<ModalComponent>;
-  modalTranslation: ModalTranslation;
-  componentInstancesInterfaces: Map<string, InterfaceModel[]>;
+    interfaces: UIInterfaceModel[];
+    inputs: Array<InputBEModel>;
+    isLoading: boolean;
+    interfaceTypes: { [interfaceType: string]: string[] };
+    topologyTemplate: TopologyTemplate;
+    componentMetaData: ComponentMetadata;
+    componentInstanceSelected: ComponentInstance;
+    modalInstance: ComponentRef<ModalComponent>;
+    modalTranslation: ModalTranslation;
+    componentInstancesInterfaces: Map<string, InterfaceModel[]>;
 
-  deploymentArtifactsFilePath: Array<DropdownValue> = [];
-  toscaArtifactTypes: Array<DropdownValue> = [];
+    deploymentArtifactsFilePath: Array<DropdownValue> = [];
+    toscaArtifactTypes: Array<DropdownValue> = [];
 
-  @Input() component: ComponentInstance;
-  @Input() isViewOnly: boolean;
-  @Input() enableMenuItems: Function;
-  @Input() disableMenuItems: Function;
-  @Input() componentType: SelectedComponentType;
+    @Input() component: ComponentInstance;
+    @Input() isViewOnly: boolean;
+    @Input() enableMenuItems: Function;
+    @Input() disableMenuItems: Function;
+    @Input() componentType: SelectedComponentType;
 
 
-  constructor(
-      private TranslateService: TranslateService,
-      private PluginsService: PluginsService,
-      private topologyTemplateService: TopologyTemplateService,
-      private toscaArtifactService: ToscaArtifactService,
-      private modalServiceNg2: ModalService,
-      private workspaceService: WorkspaceService,
-      @Inject("Notification") private Notification: any,
-  ) {
-    this.modalTranslation = new ModalTranslation(TranslateService);
-  }
-
-  ngOnInit(): void {
-    this.componentMetaData = this.workspaceService.metadata;
-    this.loadComponentInstances();
-    this.loadDeployedArtifacts();
-    this.loadToscaArtifacts()
-  }
-
-  private loadComponentInstances() {
-    this.isLoading = true;
-    this.topologyTemplateService.getComponentInstances(this.componentMetaData.componentType, this.componentMetaData.uniqueId)
-    .subscribe((response) => {
-      this.componentInstanceSelected = response.componentInstances.find(ci => ci.uniqueId === this.component.uniqueId);
-      this.initComponentInstanceInterfaceOperations();
-      this.isLoading = false;
-    });
-  }
-
-  private initComponentInstanceInterfaceOperations() {
-    this.initInterfaces(this.componentInstanceSelected.interfaces);
-    this.sortInterfaces();
-  }
-
-  private initInterfaces(interfaces: ComponentInterfaceDefinitionModel[]): void {
-    this.interfaces = _.map(interfaces, (interfaceModel) => new UIInterfaceModel(interfaceModel));
-  }
-
-  private sortInterfaces(): void {
-    this.interfaces = _.filter(this.interfaces, (interf) => interf.operations && interf.operations.length > 0); // remove empty interfaces
-    this.interfaces.sort((a, b) => a.type.localeCompare(b.type)); // sort interfaces alphabetically
-    _.forEach(this.interfaces, (interf) => {
-      interf.operations.sort((a, b) => a.name.localeCompare(b.name)); // sort operations alphabetically
-    });
-  }
-
-  collapseAll(value: boolean = true): void {
-    _.forEach(this.interfaces, (interf) => {
-      interf.isCollapsed = value;
-    });
-  }
-
-  isAllCollapsed(): boolean {
-    return _.every(this.interfaces, (interf) => interf.isCollapsed);
-  }
-
-  isAllExpanded(): boolean {
-    return _.every(this.interfaces, (interf) => !interf.isCollapsed);
-  }
-
-  isListEmpty(): boolean {
-    return _.filter(
-        this.interfaces,
-        (interf) => interf.operations && interf.operations.length > 0
-    ).length === 0;
-  }
-
-  private enableOrDisableSaveButton = (): boolean => {
-    return this.isViewOnly;
-  }
-
-  onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
-
-    const buttonList = [];
-    if (this.isViewOnly) {
-      const closeButton: ButtonModel = new ButtonModel(this.modalTranslation.CLOSE_BUTTON, 'outline white', this.cancelAndCloseModal);
-      buttonList.push(closeButton);
-    } else {
-      const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue', () =>
-          this.updateInterfaceOperation(), this.enableOrDisableSaveButton);
-      const cancelButton: ButtonModel = new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal);
-      buttonList.push(saveButton);
-      buttonList.push(cancelButton);
+    constructor(
+        private TranslateService: TranslateService,
+        private PluginsService: PluginsService,
+        private topologyTemplateService: TopologyTemplateService,
+        private toscaArtifactService: ToscaArtifactService,
+        private modalServiceNg2: ModalService,
+        private workspaceService: WorkspaceService,
+        @Inject("Notification") private Notification: any,
+    ) {
+        this.modalTranslation = new ModalTranslation(TranslateService);
     }
-    const modalModel: ModalModel = new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', buttonList, 'custom');
-    this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
 
-    this.modalServiceNg2.addDynamicContentToModal(
-        this.modalInstance,
-        InterfaceOperationHandlerComponent,
-        {
-          deploymentArtifactsFilePath: this.deploymentArtifactsFilePath,
-          toscaArtifactTypes: this.toscaArtifactTypes,
-          selectedInterface: interfaceModel,
-          selectedInterfaceOperation: operation,
-          validityChangedCallback: this.enableOrDisableSaveButton,
-          isViewOnly: this.isViewOnly
+    ngOnInit(): void {
+        this.componentMetaData = this.workspaceService.metadata;
+        this.loadComponentInstances();
+        this.loadDeployedArtifacts();
+        this.loadToscaArtifacts()
+    }
+
+    private loadComponentInstances() {
+        this.isLoading = true;
+        this.topologyTemplateService.getComponentInstances(this.componentMetaData.componentType, this.componentMetaData.uniqueId)
+        .subscribe((response) => {
+            this.componentInstanceSelected = response.componentInstances.find(ci => ci.uniqueId === this.component.uniqueId);
+            this.initComponentInstanceInterfaceOperations();
+            this.isLoading = false;
+        });
+    }
+
+    private initComponentInstanceInterfaceOperations() {
+        this.initInterfaces(this.componentInstanceSelected.interfaces);
+        this.sortInterfaces();
+    }
+
+    private initInterfaces(interfaces: ComponentInterfaceDefinitionModel[]): void {
+        this.interfaces = _.map(interfaces, (interfaceModel) => new UIInterfaceModel(interfaceModel));
+    }
+
+    private sortInterfaces(): void {
+        this.interfaces = _.filter(this.interfaces, (interf) => interf.operations && interf.operations.length > 0); // remove empty interfaces
+        this.interfaces.sort((a, b) => a.type.localeCompare(b.type)); // sort interfaces alphabetically
+        _.forEach(this.interfaces, (interf) => {
+            interf.operations.sort((a, b) => a.name.localeCompare(b.name)); // sort operations alphabetically
+        });
+    }
+
+    collapseAll(value: boolean = true): void {
+        _.forEach(this.interfaces, (interf) => {
+            interf.isCollapsed = value;
+        });
+    }
+
+    isAllCollapsed(): boolean {
+        return _.every(this.interfaces, (interf) => interf.isCollapsed);
+    }
+
+    isAllExpanded(): boolean {
+        return _.every(this.interfaces, (interf) => !interf.isCollapsed);
+    }
+
+    isListEmpty(): boolean {
+        return _.filter(
+            this.interfaces,
+            (interf) => interf.operations && interf.operations.length > 0
+        ).length === 0;
+    }
+
+    private enableOrDisableSaveButton = (): boolean => {
+        return this.isViewOnly;
+    }
+
+    onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
+
+        const buttonList = [];
+        if (this.isViewOnly) {
+            const closeButton: ButtonModel = new ButtonModel(this.modalTranslation.CLOSE_BUTTON, 'outline white', this.cancelAndCloseModal);
+            buttonList.push(closeButton);
+        } else {
+            const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue', () =>
+                this.updateInterfaceOperation(), this.enableOrDisableSaveButton);
+            const cancelButton: ButtonModel = new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal);
+            buttonList.push(saveButton);
+            buttonList.push(cancelButton);
         }
-    );
-    this.modalInstance.instance.open();
-  }
+        const modalModel: ModalModel = new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', buttonList, 'custom');
+        this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
 
-  private cancelAndCloseModal = () => {
-    this.loadComponentInstances();
-    return this.modalServiceNg2.closeCurrentModal();
-  }
-
-  private updateInterfaceOperation() {
-    this.isLoading = true;
-    const interfaceOperationHandlerComponentInstance: InterfaceOperationHandlerComponent = this.modalInstance.instance.dynamicContent.instance;
-    const operationUpdated: InterfaceOperationModel = interfaceOperationHandlerComponentInstance.operationToUpdate;
-    const isArtifactChecked = interfaceOperationHandlerComponentInstance.enableAddArtifactImplementation;
-    if (!isArtifactChecked) {
-      let artifactName = interfaceOperationHandlerComponentInstance.artifactName;
-      artifactName = artifactName === undefined ? '' : artifactName;
-      operationUpdated.implementation = new ArtifactModel({'artifactName': artifactName} as ArtifactModel);
+        this.modalServiceNg2.addDynamicContentToModal(
+            this.modalInstance,
+            InterfaceOperationHandlerComponent,
+            {
+                deploymentArtifactsFilePath: this.deploymentArtifactsFilePath,
+                toscaArtifactTypes: this.toscaArtifactTypes,
+                selectedInterface: interfaceModel ? interfaceModel : new UIInterfaceModel(),
+                selectedInterfaceOperation: operation ? operation : new InterfaceOperationModel(),
+                validityChangedCallback: this.enableOrDisableSaveButton,
+                isViewOnly: this.isViewOnly
+            }
+        );
+        this.modalInstance.instance.open();
     }
-    this.topologyTemplateService.updateComponentInstanceInterfaceOperation(
-        this.componentMetaData.uniqueId,
-        this.componentMetaData.componentType,
-        this.componentInstanceSelected.uniqueId,
-        operationUpdated)
+
+    private cancelAndCloseModal = () => {
+        this.loadComponentInstances();
+        return this.modalServiceNg2.closeCurrentModal();
+    }
+
+    private updateInterfaceOperation() {
+        this.isLoading = true;
+        const interfaceOperationHandlerComponentInstance: InterfaceOperationHandlerComponent = this.modalInstance.instance.dynamicContent.instance;
+        const operationUpdated: InterfaceOperationModel = interfaceOperationHandlerComponentInstance.operationToUpdate;
+        const isArtifactChecked = interfaceOperationHandlerComponentInstance.enableAddArtifactImplementation;
+        if (!isArtifactChecked) {
+            let artifactName = interfaceOperationHandlerComponentInstance.artifactName;
+            artifactName = artifactName === undefined ? '' : artifactName;
+            operationUpdated.implementation = new ArtifactModel({'artifactName': artifactName} as ArtifactModel);
+        }
+        this.topologyTemplateService.updateComponentInstanceInterfaceOperation(
+            this.componentMetaData.uniqueId,
+            this.componentMetaData.componentType,
+            this.componentInstanceSelected.uniqueId,
+            operationUpdated)
         .subscribe((updatedComponentInstance: ComponentInstance) => {
             this.componentInstanceSelected = new ComponentInstance(updatedComponentInstance);
             this.initComponentInstanceInterfaceOperations();
         });
-    this.modalServiceNg2.closeCurrentModal();
-    this.isLoading = false;
-  }
+        this.modalServiceNg2.closeCurrentModal();
+        this.isLoading = false;
+    }
 
-  loadDeployedArtifacts() {
-    this.topologyTemplateService.getArtifactsByType(this.componentMetaData.componentType, this.componentMetaData.uniqueId, ArtifactGroupType.DEPLOYMENT)
-    .subscribe(response => {
-      let artifactsDeployment = response.deploymentArtifacts;
-      if (artifactsDeployment) {
-        let deploymentArtifactsFound = <ArtifactModel[]>_.values(artifactsDeployment)
-        deploymentArtifactsFound.forEach(value => {
-          this.deploymentArtifactsFilePath.push(new DropdownValue(value, value.artifactType.concat('->').concat(value.artifactName)));
+    loadDeployedArtifacts() {
+        this.topologyTemplateService.getArtifactsByType(this.componentMetaData.componentType, this.componentMetaData.uniqueId, ArtifactGroupType.DEPLOYMENT)
+        .subscribe(response => {
+            let artifactsDeployment = response.deploymentArtifacts;
+            if (artifactsDeployment) {
+                let deploymentArtifactsFound = <ArtifactModel[]>_.values(artifactsDeployment)
+                deploymentArtifactsFound.forEach(value => {
+                    this.deploymentArtifactsFilePath.push(new DropdownValue(value, value.artifactType.concat('->').concat(value.artifactName)));
+                });
+            }
+        }, error => {
+            this.Notification.error({
+                message: 'Failed to Load the Deployed Artifacts:' + error,
+                title: 'Failure'
+            });
         });
-      }}, error => {
-      this.Notification.error({
-        message: 'Failed to Load the Deployed Artifacts:' + error,
-        title: 'Failure'
-      });
-    });
-  }
+    }
 
-  loadToscaArtifacts() {
-    this.toscaArtifactService.getToscaArtifacts(this.componentMetaData.model).subscribe(response => {
-      if (response) {
-        let toscaArtifactsFound = <ToscaArtifactModel[]>_.values(response);
-        toscaArtifactsFound.forEach(value => this.toscaArtifactTypes.push(new DropdownValue(value, value.type)));
-      }
-    }, error => {
-      this.Notification.error({
-        message: 'Failed to Load Tosca Artifacts:' + error,
-        title: 'Failure'
-      });
-    });
-  }
+    loadToscaArtifacts() {
+        this.toscaArtifactService.getToscaArtifacts(this.componentMetaData.model).subscribe(response => {
+            if (response) {
+                let toscaArtifactsFound = <ToscaArtifactModel[]>_.values(response);
+                toscaArtifactsFound.forEach(value => this.toscaArtifactTypes.push(new DropdownValue(value, value.type)));
+            }
+        }, error => {
+            this.Notification.error({
+                message: 'Failed to Load Tosca Artifacts:' + error,
+                title: 'Failure'
+            });
+        });
+    }
 
 }
