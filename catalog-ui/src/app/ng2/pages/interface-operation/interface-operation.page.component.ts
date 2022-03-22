@@ -1,36 +1,52 @@
+/*
+* ============LICENSE_START=======================================================
+* SDC
+* ================================================================================
+*  Copyright (C) 2022 Nordix Foundation. All rights reserved.
+*  ================================================================================
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*  you may not use this file except in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*        http://www.apache.org/licenses/LICENSE-2.0
+*  Unless required by applicable law or agreed to in writing, software
+*  distributed under the License is distributed on an "AS IS" BASIS,
+*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*  See the License for the specific language governing permissions and
+*  limitations under the License.
+*
+*  SPDX-License-Identifier: Apache-2.0
+*  ============LICENSE_END=========================================================
+*/
 import * as _ from "lodash";
-import { Component, Input, Inject } from '@angular/core';
-import {Component as IComponent } from 'app/models/components/component';
+import {Component, Inject, Input} from '@angular/core';
+import {Component as IComponent} from 'app/models/components/component';
 
-import { SdcConfigToken, ISdcConfig } from "app/ng2/config/sdc-config.config";
-import {TranslateService } from "app/ng2/shared/translator/translate.service";
+import {ISdcConfig, SdcConfigToken} from "app/ng2/config/sdc-config.config";
+import {TranslateService} from "app/ng2/shared/translator/translate.service";
 
-import {Observable } from "rxjs/Observable";
+import {Observable} from "rxjs/Observable";
 
-import { ModalComponent } from 'onap-ui-angular/dist/modals/modal.component';
-import {ModalService } from 'app/ng2/services/modal.service';
+import {ModalComponent} from 'onap-ui-angular/dist/modals/modal.component';
+import {ModalService} from 'app/ng2/services/modal.service';
 import {
-    InputBEModel,
-    OperationModel,
-    InterfaceModel,
-    WORKFLOW_ASSOCIATION_OPTIONS,
     CapabilitiesGroup,
-    Capability
+    Capability,
+    InputBEModel,
+    InterfaceModel,
+    OperationModel,
+    WORKFLOW_ASSOCIATION_OPTIONS
 } from 'app/models';
 
-// import {SdcUiComponents } from 'sdc-ui/lib/angular';
-// import {ModalButtonComponent } from 'sdc-ui/lib/angular/components';
-// import { IModalButtonComponent, IModalConfig } from 'sdc-ui/lib/angular/modals/models/modal-config';
+import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
+import {PluginsService} from 'app/ng2/services/plugins.service';
+import {WorkflowServiceNg2} from 'app/ng2/services/workflow.service';
 
-import {ComponentServiceNg2 } from 'app/ng2/services/component-services/component.service';
-import {PluginsService } from 'app/ng2/services/plugins.service';
-import {WorkflowServiceNg2 } from 'app/ng2/services/workflow.service';
-
-import { OperationCreatorComponent, OperationCreatorInput } from 'app/ng2/pages/interface-operation/operation-creator/operation-creator.component';
-import { IModalButtonComponent } from 'onap-ui-angular';
-import { ModalButtonComponent } from 'onap-ui-angular';
-import { IModalConfig } from 'onap-ui-angular';
-import { SdcUiServices } from 'onap-ui-angular';
+import {
+    OperationCreatorComponent,
+    OperationCreatorInput
+} from 'app/ng2/pages/interface-operation/operation-creator/operation-creator.component';
+import {IModalButtonComponent, IModalConfig, SdcUiServices} from 'onap-ui-angular';
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
@@ -143,7 +159,6 @@ export class InterfaceOperationComponent {
         private WorkflowServiceNg2: WorkflowServiceNg2,
         private ModalServiceNg2: ModalService,
         private ModalServiceSdcUI: SdcUiServices.ModalService
-        
     ) {
         this.enableWorkflowAssociation = sdcConfig.enableWorkflowAssociation;
         this.modalTranslation = new ModalTranslation(TranslateService);
@@ -164,7 +179,7 @@ export class InterfaceOperationComponent {
                 this.sortInterfaces();
                 this.inputs = response[1].inputs;
                 this.interfaceTypes = response[2];
-                this.workflows = (workflows.items) ? workflows.items: workflows;
+                this.workflows = (workflows.items) ? workflows.items : workflows;
                 this.capabilities = response[3].capabilities;
             };
             if (this.enableWorkflowAssociation && this.workflowIsOnline) {
@@ -308,16 +323,16 @@ export class InterfaceOperationComponent {
             closeModal: true,
             callback: () => {
                 this.ComponentServiceNg2
-                    .deleteInterfaceOperation(this.component, operation)
-                    .subscribe(() => {
-                        const curInterf = _.find(this.interfaces, (interf) => interf.type === operation.interfaceType);
-                        const index = _.findIndex(curInterf.operations, (el) => el.uniqueId === operation.uniqueId);
-                        curInterf.operations.splice(index, 1);
-                        if (!curInterf.operations.length) {
-                            const interfIndex = _.findIndex(this.interfaces, (interf) => interf.type === operation.interfaceType);
-                            this.interfaces.splice(interfIndex, 1);
-                        }
-                    });
+                .deleteInterfaceOperation(this.component, operation)
+                .subscribe(() => {
+                    const curInterf = _.find(this.interfaces, (interf) => interf.type === operation.interfaceType);
+                    const index = _.findIndex(curInterf.operations, (el) => el.uniqueId === operation.uniqueId);
+                    curInterf.operations.splice(index, 1);
+                    if (!curInterf.operations.length) {
+                        const interfIndex = _.findIndex(this.interfaces, (interf) => interf.type === operation.interfaceType);
+                        this.interfaces.splice(interfIndex, 1);
+                    }
+                });
             }
         };
 
@@ -372,7 +387,7 @@ export class InterfaceOperationComponent {
             } else if (response.workflowId && operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.EXISTING) {
                 this.WorkflowServiceNg2.associateWorkflowArtifact(this.component, response).subscribe();
             } else if (operation.workflowAssociationType === WORKFLOW_ASSOCIATION_OPTIONS.NEW) {
-                this.$state.go('workspace.plugins', { path: 'workflowDesigner' });
+                this.$state.go('workspace.plugins', {path: 'workflowDesigner'});
             }
         });
     }
