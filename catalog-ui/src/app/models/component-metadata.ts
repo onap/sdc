@@ -19,7 +19,7 @@
  */
 
 import { CapabilitiesGroup, RequirementsGroup } from 'app/models';
-import { ComponentType } from 'app/utils';
+import {ComponentState, ComponentType} from 'app/utils';
 import { IMainCategory } from './category';
 import { Metadata } from "app/models/metadata";
 /**
@@ -214,5 +214,9 @@ export class ComponentMetadata implements IComponentMetadata {
 
     public getTypeUrl(): string {
         return this.componentType === ComponentType.RESOURCE ? 'resources/' : 'services/';
+    }
+
+    public isComponentDataEditable(): boolean {
+        return this.lifecycleState !== ComponentState.NOT_CERTIFIED_CHECKOUT;
     }
 }
