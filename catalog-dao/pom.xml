@@ -174,18 +174,6 @@ Modifications copyright (c) 2018 Nokia
     </dependency>
 
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-regex</artifactId>
-      <version>${regex.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.lucene</groupId>
-          <artifactId>lucene-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
       <groupId>com.google.code.bean-matchers</groupId>
       <artifactId>bean-matchers</artifactId>
       <version>${bean-matchers.version}</version>
