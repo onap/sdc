@@ -22,6 +22,30 @@
       "revId": "f6dbb563a1047e4b96d388b814e555e9d93fd75d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c41892b7_06fa660f",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdPackageHelper.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-23T08:17:10Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "8d1c67d5_ea11087a",
+      "range": {
+        "startLine": 53,
+        "startChar": 12,
+        "endLine": 53,
+        "endChar": 51
+      },
+      "revId": "f6dbb563a1047e4b96d388b814e555e9d93fd75d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
