@@ -61,4 +61,14 @@ public class NoneStorageManager implements ArtifactStorageManager {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void delete(final String vspId, final String versionId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void deleteVsp(final String vspId) {
+        throw new UnsupportedOperationException();
+    }
+
 }

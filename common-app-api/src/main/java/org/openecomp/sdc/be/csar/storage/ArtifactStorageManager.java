@@ -68,4 +68,8 @@ public interface ArtifactStorageManager {
     InputStream get(final String vspId, final String versionId);
 
     void delete(ArtifactInfo artifactInfo);
+
+    void delete(final String vspId, final String versionId);
+
+    void deleteVsp(final String vspId);
 }

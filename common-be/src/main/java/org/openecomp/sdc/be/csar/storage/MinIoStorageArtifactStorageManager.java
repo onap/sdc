@@ -27,6 +27,7 @@ import io.minio.GetObjectArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.StatObjectArgs;
 import java.io.InputStream;
@@ -170,7 +171,24 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
             LOGGER.error("Failed to delete - bucket: '{}', object: '{}'", minioObject.getBucket(), minioObject.getObjectName(), e);
             throw new ArtifactStorageException(String.format("Failed to delete '%s'", minioObject.getObjectName()), e);
         }
+    }
 
+    @Override
+    public void delete(final String vspId, final String versionId) {
+        delete(new MinIoArtifactInfo(vspId, versionId));
+    }
+
+    @Override
+    public void deleteVsp(final String vspId) {
+        LOGGER.debug("DELETE VSP - bucket: '{}'", vspId);
+        try {
+            minioClient.removeBucket(RemoveBucketArgs.builder()
+                .bucket(vspId)
+                .build());
+        } catch (final Exception e) {
+            LOGGER.error("Failed to delete VSP - bucket: '{}'", vspId, e);
+            throw new ArtifactStorageException(String.format("Failed to delete VSP '%s'", vspId), e);
+        }
     }
 
     private MinIoStorageArtifactStorageConfig readMinIoStorageArtifactStorageConfig() {
