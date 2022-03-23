@@ -173,6 +173,11 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
 
     }
 
+    @Override
+    public void delete(final String vspId, final String versionId) {
+        delete(new MinIoArtifactInfo(vspId, versionId));
+    }
+
     private MinIoStorageArtifactStorageConfig readMinIoStorageArtifactStorageConfig() {
         final var commonConfigurationManager = CommonConfigurationManager.getInstance();
         final Map<String, Object> endpoint = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, ENDPOINT, null);
