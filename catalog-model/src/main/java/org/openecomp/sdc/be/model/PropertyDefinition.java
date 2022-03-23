@@ -46,6 +46,9 @@ public class PropertyDefinition extends PropertyDataDefinition implements IOpera
 
     public PropertyDefinition(PropertyDefinition pd) {
         super(pd);
+        if (pd.getSchema() != null && pd.getSchema().getProperty() instanceof PropertyDefinition) {
+            this.getSchema().setProperty(new PropertyDefinition(pd.getSchema().getProperty()));
+        }
         setConstraints(pd.getConstraints());
     }
 

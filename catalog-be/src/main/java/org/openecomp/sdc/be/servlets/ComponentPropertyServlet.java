@@ -24,9 +24,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -66,8 +64,8 @@ import org.slf4j.LoggerFactory;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDCE-2 APIs")})
-@Servers({@Server(url = "/sdc2/rest")})
+@Tag(name = "SDCE-2 APIs")
+@Server(url = "/sdc2/rest")
 @Singleton
 public class ComponentPropertyServlet extends BeGenericServlet {
 
@@ -316,7 +314,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
                 return buildErrorResponse(responseFormat);
             }
             //Validate value and Constraint of property and Fetch all data types from cache
-            Either<Boolean, ResponseFormat> constraintValidatorResponse = PropertyValueConstraintValidationUtil.getInstance()
+            Either<Boolean, ResponseFormat> constraintValidatorResponse = new PropertyValueConstraintValidationUtil()
                 .validatePropertyConstraints(properties.values(), applicationDataTypeCache,
                     propertyBusinessLogic.getComponentModelByComponentId(componentId));
             if (constraintValidatorResponse.isRight()) {
@@ -328,7 +326,7 @@ public class ComponentPropertyServlet extends BeGenericServlet {
                 Either<EntryData<String, PropertyDefinition>, ResponseFormat> status = propertyBusinessLogic
                     .updateComponentProperty(componentId, propertyDefinition.getUniqueId(), propertyDefinition, userId);
                 if (status.isRight()) {
-                    log.info("Failed to update Property. Reason - ", status.right().value());
+                    log.info("Failed to update Property. Reason - {}", status.right().value());
                     return buildErrorResponse(status.right().value());
                 }
                 EntryData<String, PropertyDefinition> property = status.left().value();

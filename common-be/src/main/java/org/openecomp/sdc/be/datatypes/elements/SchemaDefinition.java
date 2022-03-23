@@ -20,10 +20,14 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
 /**
  * Schema allows to create new types that can be used along TOSCA definitions.
@@ -45,7 +49,25 @@ public class SchemaDefinition extends ToscaDataDefinition {
         this.setDerivedFrom(derivedFrom);
         this.setConstraints(constraints);
         this.setProperties(properties);
+    }
 
+    public SchemaDefinition(final SchemaDefinition schemaDefinition) {
+        if (schemaDefinition == null) {
+            return;
+        }
+        this.derivedFrom = schemaDefinition.getDerivedFrom();
+        if (CollectionUtils.isNotEmpty(schemaDefinition.getConstraints())) {
+            this.constraints = new ArrayList<>(schemaDefinition.getConstraints());
+        }
+        if (schemaDefinition.getProperty() != null) {
+            this.property = new PropertyDataDefinition(schemaDefinition.getProperty());
+        }
+        if (MapUtils.isNotEmpty(schemaDefinition.getProperties())) {
+            this.properties = new HashMap<>();
+            for (final Entry<String, PropertyDataDefinition> propertyEntry : schemaDefinition.getProperties().entrySet()) {
+                this.properties.put(propertyEntry.getKey(), new PropertyDataDefinition(propertyEntry.getValue()));
+            }
+        }
     }
 
     public String getDerivedFrom() {
