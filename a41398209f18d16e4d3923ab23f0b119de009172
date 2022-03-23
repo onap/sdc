@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "da7f77a5_bdb2ccdb",
+        "filename": "openecomp-be/lib/openecomp-sdc-vendor-software-product-lib/openecomp-sdc-vendor-software-product-core/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/services/impl/etsi/ETSIServiceImpl.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-23T13:47:40Z",
+      "side": 1,
+      "message": "I think you took my comment up wrong, this class should not use AsdPackageHelper class, the code that was repeated in AsdPackageHelper and ETSIServiceImpl should be extracted to a separate class that is used from both AsdPackageHelper and ETSIServiceImpl",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 53
+      },
+      "revId": "a41398209f18d16e4d3923ab23f0b119de009172",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "980c5884_4a870b9b",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/AsdManifestOnboarding.java",
         "patchSetId": 14
