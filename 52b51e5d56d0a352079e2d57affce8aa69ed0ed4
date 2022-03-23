@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7db2b5eb_10c8c588",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-23T19:40:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa270639_4060737c",
+      "range": {
+        "startLine": 117,
+        "startChar": 13,
+        "endLine": 117,
+        "endChar": 39
+      },
+      "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e1630ef0_b819c34c",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b22f24d_1c7b1b52",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-23T19:40:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1630ef0_b819c34c",
+      "range": {
+        "startLine": 285,
+        "startChar": 25,
+        "endLine": 285,
+        "endChar": 36
+      },
+      "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "47b98bc4_d74ec7de",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-23T19:40:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b247067a_99da9456",
+      "range": {
+        "startLine": 286,
+        "startChar": 43,
+        "endLine": 286,
+        "endChar": 70
+      },
+      "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3e4e730_c656e4ba",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 2
@@ -91,6 +163,30 @@
       "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a3d7cf7_df6cf4d4",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-23T19:40:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3e4e730_c656e4ba",
+      "range": {
+        "startLine": 282,
+        "startChar": 12,
+        "endLine": 289,
+        "endChar": 13
+      },
+      "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
