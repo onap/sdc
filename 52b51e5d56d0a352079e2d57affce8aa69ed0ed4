@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa270639_4060737c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-23T16:53:45Z",
+      "side": 1,
+      "message": "please, add some tests for the introduced code",
+      "range": {
+        "startLine": 117,
+        "startChar": 13,
+        "endLine": 117,
+        "endChar": 39
+      },
+      "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b247067a_99da9456",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-23T16:53:45Z",
+      "side": 1,
+      "message": "this is not a bad request, which indicates the client sent incorrect request information, which is not the case. Not sure which status to use, but I think I would go with \"500 Internal Server Error\" or \"424 Failed Dependency\"",
+      "range": {
+        "startLine": 286,
+        "startChar": 43,
+        "endLine": 286,
+        "endChar": 70
+      },
+      "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3e4e730_c656e4ba",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-23T16:53:45Z",
+      "side": 1,
+      "message": "would be good to extract this as a method and reuse on line 294",
+      "range": {
+        "startLine": 282,
+        "startChar": 12,
+        "endLine": 289,
+        "endChar": 13
+      },
+      "revId": "52b51e5d56d0a352079e2d57affce8aa69ed0ed4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
