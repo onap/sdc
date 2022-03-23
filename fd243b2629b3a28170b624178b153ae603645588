@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9cebb3b8_83a1adaf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-23T15:26:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "405fea04_2aafcaf1",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 28
+      },
+      "revId": "fd243b2629b3a28170b624178b153ae603645588",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21a25230_c286ed99",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "fd243b2629b3a28170b624178b153ae603645588",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8998731e_602580c4",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-23T15:26:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21a25230_c286ed99",
+      "range": {
+        "startLine": 281,
+        "startChar": 10,
+        "endLine": 281,
+        "endChar": 14
+      },
+      "revId": "fd243b2629b3a28170b624178b153ae603645588",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "32448e83_736610f0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 282,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-23T15:26:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed56fa47_70a3adeb",
+      "range": {
+        "startLine": 282,
+        "startChar": 22,
+        "endLine": 282,
+        "endChar": 27
+      },
+      "revId": "fd243b2629b3a28170b624178b153ae603645588",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f33c5cad_0e9054d3",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "fd243b2629b3a28170b624178b153ae603645588",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8da433ff_27d3dbb1",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-23T15:26:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f33c5cad_0e9054d3",
+      "range": {
+        "startLine": 290,
+        "startChar": 21,
+        "endLine": 290,
+        "endChar": 42
+      },
+      "revId": "fd243b2629b3a28170b624178b153ae603645588",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
