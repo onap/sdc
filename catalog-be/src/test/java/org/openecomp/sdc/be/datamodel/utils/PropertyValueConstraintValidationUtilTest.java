@@ -20,34 +20,33 @@
 
 package org.openecomp.sdc.be.datamodel.utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fj.data.Either;
-import java.io.BufferedReader;
-import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -58,7 +57,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-public class PropertyValueConstraintValidationUtilTest {
+class PropertyValueConstraintValidationUtilTest {
 
 	@Mock
 	ApplicationDataTypeCache applicationDataTypeCache;
@@ -72,10 +71,10 @@ public class PropertyValueConstraintValidationUtilTest {
 
 	private Map<String, DataTypeDefinition> dataTypeDefinitionMap;
 
-	@Before
-	public void init() {
+	@BeforeEach
+	void init() throws IOException {
 		MockitoAnnotations.openMocks(this);
-		ResponseFormatManager responseFormatManagerMock = Mockito.mock(ResponseFormatManager.class);
+		ResponseFormatManager responseFormatManagerMock = mock(ResponseFormatManager.class);
 		when(responseFormatManagerMock.getResponseFormat(any())).thenReturn(new ResponseFormat());
 		when(responseFormatManagerMock.getResponseFormat(any(), any())).thenReturn(new ResponseFormat());
 		when(responseFormatManagerMock.getResponseFormat(any(), any(), any())).thenReturn(new ResponseFormat());
@@ -85,9 +84,9 @@ public class PropertyValueConstraintValidationUtilTest {
 	}
 
 	@Test
-	public void primitiveValueSuccessTest() {
+	void primitiveValueSuccessTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("integer");
@@ -97,13 +96,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void primitiveValueFailTest() {
+	void primitiveValueFailTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("integer");
@@ -112,13 +111,13 @@ public class PropertyValueConstraintValidationUtilTest {
 		Either<Boolean, ResponseFormat> responseEither = propertyValueConstraintValidationUtil.validatePropertyConstraints(
 			Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void complexWithValidValueSuccessTest() {
+	void complexWithValidValueSuccessTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
@@ -128,13 +127,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 					Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void complexWithValidValueFailTest() {
+	void complexWithValidValueFailTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
@@ -143,13 +142,13 @@ public class PropertyValueConstraintValidationUtilTest {
 		Either<Boolean, ResponseFormat> responseEither = propertyValueConstraintValidationUtil
 			.validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void complexWithListWithPrimitiveValueSuccessTest() {
+	void complexWithListWithPrimitiveValueSuccessTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
@@ -159,13 +158,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void complexWithListWithPrimitiveValueFailTest() {
+	void complexWithListWithPrimitiveValueFailTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
@@ -175,13 +174,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void complexWithMapWithPrimitiveValueSuccessTest() {
+	void complexWithMapWithPrimitiveValueSuccessTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
@@ -191,13 +190,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void complexWithMapWithPrimitiveValueFailTest() {
+	void complexWithMapWithPrimitiveValueFailTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
@@ -207,13 +206,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void inputValidValueSuccessTest() {
+	void inputValidValueSuccessTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		InputDefinition inputDefinition = new InputDefinition();
 		inputDefinition.setInputPath("propetyName#ipv6_ra_mode");
@@ -227,13 +226,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(inputDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void inputValidValueFailTest() {
+	void inputValidValueFailTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		InputDefinition inputDefinition = new InputDefinition();
 		inputDefinition.setInputPath("propetyName#ipv6_ra_mode");
@@ -246,13 +245,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(inputDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void serviceConsumptionValidValueSuccessTest() {
+	void serviceConsumptionValidValueSuccessTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
@@ -263,12 +262,109 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
+
 	@Test
-	public void serviceConsumptionValidValueFailTest() {
+	void listOfComplexSuccessTest() {
+		when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+		final var propertyDefinition = new PropertyDefinition();
+		final String type = "list";
+		propertyDefinition.setType(type);
+		final SchemaDefinition schemaDefinition = new SchemaDefinition();
+		final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+		final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+		schemaProperty.setType(schemaType);
+		schemaDefinition.setProperty(schemaProperty);
+		propertyDefinition.setSchema(schemaDefinition);
+		final String value = "[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}]";
+		propertyDefinition.setValue(value);
+		final String name = "listOfComplex";
+		propertyDefinition.setName(name);
+
+		Either<Boolean, ResponseFormat> responseEither =
+			propertyValueConstraintValidationUtil
+				.validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+		assertTrue(responseEither.isLeft());
+		//original object values should not be changed
+		assertEquals(name, propertyDefinition.getName());
+		assertEquals(type, propertyDefinition.getType());
+		assertEquals(value, propertyDefinition.getValue());
+		assertEquals(schemaType, propertyDefinition.getSchemaType());
+	}
+
+	@Test
+	void listOfComplexSuccessTest1() {
+		when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+		final var propertyDefinition = new PropertyDefinition();
+		final String type = "list";
+		propertyDefinition.setType(type);
+		final String listSchemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+		final PropertyDataDefinition listSchemaProperty = new PropertyDataDefinition();
+		listSchemaProperty.setType(listSchemaType);
+		final SchemaDefinition listSchemaDefinition = new SchemaDefinition();
+		listSchemaDefinition.setProperty(listSchemaProperty);
+		final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+		schemaProperty.setSchema(listSchemaDefinition);
+		final String schemaType = "list";
+		schemaProperty.setType(schemaType);
+		final SchemaDefinition schemaDefinition = new SchemaDefinition();
+		schemaDefinition.setProperty(schemaProperty);
+		propertyDefinition.setSchema(schemaDefinition);
+		final String value = "[[{\"ipv6_address_mode\": \"dhcpv6-stateful\"}, {\"ipv6_address_mode\": \"dhcpv6-stateless\"}], [{\"ipv6_address_mode\": \"dhcpv6-stateful\"}]]";
+		propertyDefinition.setValue(value);
+		final String name = "listOfComplex";
+		propertyDefinition.setName(name);
+
+		Either<Boolean, ResponseFormat> responseEither =
+			propertyValueConstraintValidationUtil
+				.validatePropertyConstraints(Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+		assertTrue(responseEither.isLeft());
+		//original object values should not be changed
+		assertEquals(name, propertyDefinition.getName());
+		assertEquals(type, propertyDefinition.getType());
+		assertEquals(value, propertyDefinition.getValue());
+		assertEquals(schemaType, propertyDefinition.getSchemaType());
+	}
+
+	@Test
+	void mapOfComplexSuccessTest() {
+		when(applicationDataTypeCache.getAll(null)).thenReturn(Either.left(dataTypeDefinitionMap));
+
+		final var propertyDefinition = new PropertyDefinition();
+		final String type = "map";
+		propertyDefinition.setType(type);
+		final SchemaDefinition schemaDefinition = new SchemaDefinition();
+		final PropertyDataDefinition schemaProperty = new PropertyDataDefinition();
+		final String schemaType = "org.openecomp.datatypes.heat.network.neutron.Subnet";
+		schemaProperty.setType(schemaType);
+		schemaDefinition.setProperty(schemaProperty);
+		propertyDefinition.setSchema(schemaDefinition);
+		final String value = "{\"key1\": {\"ipv6_address_mode\": \"dhcpv6-stateful\"}, \"key2\": {\"ipv6_address_mode\": \"dhcpv6-stateless\"}}";
+		propertyDefinition.setValue(value);
+		final String name = "mapOfComplex";
+		propertyDefinition.setName(name);
+
+		Either<Boolean, ResponseFormat> responseEither =
+			propertyValueConstraintValidationUtil.validatePropertyConstraints(
+				Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
+
+		assertTrue(responseEither.isLeft());
+		//original object values should not be changed
+		assertEquals(name, propertyDefinition.getName());
+		assertEquals(type, propertyDefinition.getType());
+		assertEquals(value, propertyDefinition.getValue());
+		assertEquals(schemaType, propertyDefinition.getSchemaType());
+	}
+
+	@Test
+	void serviceConsumptionValidValueFailTest() {
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("org.openecomp.datatypes.heat.network.neutron.Subnet");
@@ -279,13 +375,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void bandwidthTypeValueSuccessTest(){
+	void bandwidthTypeValueSuccessTest(){
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
@@ -294,13 +390,13 @@ public class PropertyValueConstraintValidationUtilTest {
 
 		Either<Boolean, ResponseFormat> responseEither = propertyValueConstraintValidationUtil.validatePropertyConstraints(
 			Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void bandwidthTypeValueFailTest(){
+	void bandwidthTypeValueFailTest(){
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
@@ -310,13 +406,13 @@ public class PropertyValueConstraintValidationUtilTest {
 		Either<Boolean, ResponseFormat> responseEither = propertyValueConstraintValidationUtil.validatePropertyConstraints(
 			Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void bandwidthDownstreamValueSuccessTest(){
+	void bandwidthDownstreamValueSuccessTest(){
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
@@ -327,13 +423,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void bandwidthDownstreamValueFailTest(){
+	void bandwidthDownstreamValueFailTest(){
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
@@ -344,13 +440,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void bandwidthUpstreamValueSuccessTest(){
+	void bandwidthUpstreamValueSuccessTest(){
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
@@ -361,13 +457,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void bandwidthUpstreamValueFailTest(){
+	void bandwidthUpstreamValueFailTest(){
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
@@ -378,13 +474,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
 	@Test
-	public void bandwidthUnitsValueSuccessTest(){
+	void bandwidthUnitsValueSuccessTest(){
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
@@ -395,13 +491,13 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isLeft());
+		assertTrue(responseEither.isLeft());
 	}
 
 	@Test
-	public void bandwidthUnitsValueFailTest(){
+	void bandwidthUnitsValueFailTest(){
 		Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> either = Either.left(dataTypeDefinitionMap);
-		Mockito.when(applicationDataTypeCache.getAll(null)).thenReturn(either);
+		when(applicationDataTypeCache.getAll(null)).thenReturn(either);
 
 		PropertyDefinition propertyDefinition = new PropertyDefinition();
 		propertyDefinition.setType("onap.datatypes.partner.bandwidth");
@@ -412,16 +508,16 @@ public class PropertyValueConstraintValidationUtilTest {
 				propertyValueConstraintValidationUtil.validatePropertyConstraints(
 						Collections.singletonList(propertyDefinition), applicationDataTypeCache, null);
 
-		Assert.assertTrue(responseEither.isRight());
+		assertTrue(responseEither.isRight());
 	}
 
-	private void createDataTypeMap() {
+	private void createDataTypeMap() throws IOException {
 		Type constraintType = new TypeToken<PropertyConstraint>() {}.getType();
 		Type typeOfHashMap = new TypeToken<Map<String, DataTypeDefinition>>() { }.getType();
 		Gson gson = new GsonBuilder().registerTypeAdapter(constraintType,
 				new PropertyOperation.PropertyConstraintDeserialiser()).create();
 
-		dataTypeDefinitionMap = gson.fromJson(readFile(), typeOfHashMap);
+		dataTypeDefinitionMap = gson.fromJson(readDataTypeDefinitionFile(), typeOfHashMap);
 
 		DataTypeDefinition dataTypeDefinition = dataTypeDefinitionMap.get("org.openecomp.datatypes.heat.network"
 				+ ".neutron.Subnet");
@@ -448,19 +544,8 @@ public class PropertyValueConstraintValidationUtilTest {
 		listProperty.getSchema().setProperty(definition);
 	}
 
-	private static String readFile() {
-		StringBuilder stringBuilder = new StringBuilder();
-		File file = new File(Objects.requireNonNull(
-				PropertyValueConstraintValidationUtilTest.class.getClassLoader().getResource("types/datatypes"
-						+ "/constraintTest.json")).getFile());
-		Path logFile = Paths.get(file.getAbsolutePath());
-		try (BufferedReader reader = Files.newBufferedReader(logFile, StandardCharsets.UTF_8)) {
-			reader.lines().forEach(stringBuilder::append);
-		} catch (Exception e) {
-			Assert.fail(e.getMessage());
-			e.printStackTrace();
-		}
-		return stringBuilder.toString();
+	private static String readDataTypeDefinitionFile() throws IOException {
+		return Files.readString(Paths.get("src/test/resources/types/datatypes/constraintTest.json"));
 	}
 
 }

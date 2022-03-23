@@ -84,14 +84,16 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         super(pr);
     }
 
-    public PropertyDataDefinition(PropertyDataDefinition propertyDataDefinition) {
+    public PropertyDataDefinition(final PropertyDataDefinition propertyDataDefinition) {
         super();
         this.setUniqueId(propertyDataDefinition.getUniqueId());
         this.setRequired(propertyDataDefinition.isRequired());
         this.setDefaultValue(propertyDataDefinition.getDefaultValue());
         this.setDefinition(propertyDataDefinition.getDefinition());
         this.setDescription(propertyDataDefinition.getDescription());
-        this.setSchema(propertyDataDefinition.getSchema());
+        if (propertyDataDefinition.getSchema() != null) {
+            this.setSchema(new SchemaDefinition(propertyDataDefinition.getSchema()));
+        }
         this.setPassword(propertyDataDefinition.isPassword());
         this.setType(propertyDataDefinition.getType());
         this.setName(propertyDataDefinition.getName());

@@ -15,6 +15,38 @@
     "modificationTime": 1550136564103,
     "toscaPresentation": {}
   },
+  "list": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "name": "list",
+    "uniqueId": "list.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1550136564103,
+    "modificationTime": 1550136564103,
+    "toscaPresentation": {}
+  },
+  "map": {
+    "derivedFrom": {
+      "name": "tosca.datatypes.Root",
+      "uniqueId": "tosca.datatypes.Root.datatype",
+      "description": "The TOSCA root Data Type all other TOSCA base Data Types derive from",
+      "creationTime": 1550136563278,
+      "modificationTime": 1550136563278,
+      "toscaPresentation": {}
+    },
+    "name": "map",
+    "uniqueId": "map.datatype",
+    "derivedFromName": "tosca.datatypes.Root",
+    "creationTime": 1550136564103,
+    "modificationTime": 1550136564103,
+    "toscaPresentation": {}
+  },
   "org.openecomp.datatypes.heat.network.neutron.Subnet": {
     "derivedFrom": {
       "name": "tosca.datatypes.Root",

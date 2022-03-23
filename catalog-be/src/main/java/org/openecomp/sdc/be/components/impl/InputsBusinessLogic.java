@@ -336,7 +336,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<Boolean, ResponseFormat> validateInputValueConstraint(List<InputDefinition> inputs, final String model) {
-        PropertyValueConstraintValidationUtil propertyValueConstraintValidationUtil = PropertyValueConstraintValidationUtil.getInstance();
+        PropertyValueConstraintValidationUtil propertyValueConstraintValidationUtil = new PropertyValueConstraintValidationUtil();
         List<InputDefinition> inputDefinitions = new ArrayList<>();
         for (InputDefinition inputDefinition : inputs) {
             InputDefinition inputDef = new InputDefinition();

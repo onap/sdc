@@ -548,7 +548,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (Objects.nonNull(operationInputDefinition.getParentPropertyType())) {
             inputDefinition.setProperties(Collections.singletonList(propertyDefinition));
         }
-        return PropertyValueConstraintValidationUtil.getInstance().validatePropertyConstraints(Collections.singletonList(inputDefinition),
+        return new PropertyValueConstraintValidationUtil().validatePropertyConstraints(Collections.singletonList(inputDefinition),
             applicationDataTypeCache, model);
     }
 
