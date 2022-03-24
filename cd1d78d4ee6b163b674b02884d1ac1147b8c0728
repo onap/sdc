@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "2e757af2_8badbb0f",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T15:10:43Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it be for the delete? The main method that you are working here is the delete method. If the get fails, what failed in the end was your attempt to delete.\nI see delete has already an exception handling. If this is for the get, so please, surround the get method instead of the whole \"get and delete\" and give a more meaningful message.",
+      "parentUuid": "48c9414c_6591b063",
+      "range": {
+        "startLine": 182,
+        "startChar": 83,
+        "endLine": 182,
+        "endChar": 91
+      },
+      "revId": "cd1d78d4ee6b163b674b02884d1ac1147b8c0728",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "99d27a58_d956eed3",
         "filename": "common-be/src/test/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManagerTest.java",
         "patchSetId": 1
