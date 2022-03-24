@@ -80,8 +80,8 @@ public class DefaultExceptionMapper implements ExceptionMapper<Exception> {
         return buildResponse(Status.INTERNAL_SERVER_ERROR, code);
     }
 
-    private Response buildResponse(Status notFound, ErrorCode code) {
-        return Response.status(notFound).entity(toEntity(notFound, code)).build();
+    private Response buildResponse(final Status status, final ErrorCode code) {
+        return Response.status(status).entity(toEntity(status, code)).build();
     }
 
     private Response transform(ConstraintViolationException validationException) {

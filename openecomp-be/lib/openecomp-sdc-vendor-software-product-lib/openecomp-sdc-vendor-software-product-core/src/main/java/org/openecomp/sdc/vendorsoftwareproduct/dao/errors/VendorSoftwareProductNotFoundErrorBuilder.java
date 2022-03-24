@@ -23,11 +23,10 @@ import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProdu
 
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
+import org.openecomp.sdc.common.errors.Messages;
 
 public class VendorSoftwareProductNotFoundErrorBuilder {
 
-    private static final String VSP_FOUND_MSG = "Vendor software product with Id %s not found.";
-    private static final String VSP_ID_AND_VERSION_ID_NOT_FOUND_MSG = "Vendor Software Product with id '%s' and version id '%s' not found.";
     private final ErrorCode.ErrorCodeBuilder builder = new ErrorCode.ErrorCodeBuilder();
 
     /**
@@ -38,13 +37,13 @@ public class VendorSoftwareProductNotFoundErrorBuilder {
     public VendorSoftwareProductNotFoundErrorBuilder(String vendorSoftwareProductId) {
         builder.withId(VSP_NOT_FOUND);
         builder.withCategory(ErrorCategory.APPLICATION);
-        builder.withMessage(String.format(VSP_FOUND_MSG, vendorSoftwareProductId));
+        builder.withMessage(Messages.VSP_NOT_FOUND.formatMessage(vendorSoftwareProductId));
     }
 
     public VendorSoftwareProductNotFoundErrorBuilder(final String vendorSoftwareProductId, final String vendorSoftwareProductVersionId) {
         builder.withId(VSP_NOT_FOUND);
         builder.withCategory(ErrorCategory.APPLICATION);
-        builder.withMessage(String.format(VSP_ID_AND_VERSION_ID_NOT_FOUND_MSG, vendorSoftwareProductId, vendorSoftwareProductVersionId));
+        builder.withMessage(Messages.VSP_VERSION_NOT_FOUND.formatMessage(vendorSoftwareProductId, vendorSoftwareProductVersionId));
     }
 
     public ErrorCode build() {
