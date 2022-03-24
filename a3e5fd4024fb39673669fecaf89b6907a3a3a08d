@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "60126a66_a3d90238",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-24T15:00:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42f492be_60a7a9fc",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 0
+      },
+      "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c88e124f_34e1b2ca",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
         "patchSetId": 15
@@ -71,6 +95,54 @@
     },
     {
       "key": {
+        "uuid": "969449ba_892d5a08",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-24T15:00:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5dd0d93_becc23b3",
+      "range": {
+        "startLine": 41,
+        "startChar": 104,
+        "endLine": 41,
+        "endChar": 111
+      },
+      "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc9e47f5_2663b5f8",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-24T15:00:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c88e124f_34e1b2ca",
+      "range": {
+        "startLine": 41,
+        "startChar": 121,
+        "endLine": 41,
+        "endChar": 137
+      },
+      "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08dd2cf7_6949a01b",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
         "patchSetId": 15
@@ -91,6 +163,30 @@
       "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42ed09f2_938c221b",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-24T15:00:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08dd2cf7_6949a01b",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 51
+      },
+      "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
