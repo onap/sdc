@@ -21,13 +21,27 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
+import static org.openecomp.sdc.common.errors.Messages.DELETE_VSP_ERROR;
+import static org.openecomp.sdc.common.errors.Messages.DELETE_VSP_FROM_STORAGE_ERROR;
+
+import java.util.List;
+import java.util.UUID;
+import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
@@ -36,17 +50,6 @@ import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdc.versioning.types.ItemStatus;
-
-import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.openMocks;
-import static org.openecomp.sdc.common.errors.Messages.DELETE_VSP_ERROR;
 
 class VendorSoftwareProductsImplTest {
 
@@ -67,64 +70,94 @@ class VendorSoftwareProductsImplTest {
     private NotificationPropagationManager notificationPropagationManager;
     @Mock
     private UniqueValueUtil uniqueValueUtil;
+    @Mock
+    private ArtifactStorageManager artifactStorageManager;
 
+    @InjectMocks
     private VendorSoftwareProductsImpl vendorSoftwareProducts;
+
+    private Item item;
 
     @BeforeEach
     public void setUp() {
         openMocks(this);
 
-        vendorSoftwareProducts = new VendorSoftwareProductsImpl(
-                itemManager,
-                permissionsManager,
-                versioningManager,
-                vendorSoftwareProductManager,
-                activityLogManager,
-                notificationPropagationManager,
-                uniqueValueUtil);
-
-        Item item = new Item();
+        item = new Item();
         item.setType("vsp");
         item.setId(vspId);
-        when(itemManager.get(
-                ArgumentMatchers.eq(vspId))).thenReturn(item);
+        when(itemManager.get(vspId)).thenReturn(item);
     }
 
     @Test
     void deleteVspOk() {
-
         Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
         assertEquals(HttpStatus.SC_OK, rsp.getStatus());
         assertNull(rsp.getEntity());
+    }
+
+    @Test
+    void deleteVspWithS3Ok() {
+        when(artifactStorageManager.isEnabled()).thenReturn(true);
+        Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_OK, rsp.getStatus());
+        assertNull(rsp.getEntity());
+    }
+
+    @Test
+    void deleteVspWithS3Fail() {
+        when(artifactStorageManager.isEnabled()).thenReturn(true);
+        doThrow(new RuntimeException()).when(artifactStorageManager).delete(anyString());
+        Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, rsp.getStatus());
+        assertEquals(rsp.getEntity().getClass(), Exception.class);
+        assertEquals(((Exception) rsp.getEntity()).getLocalizedMessage(), DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId));
     }
 
     @Test
     void deleteCertifiedVsp() {
-        Item item = new Item();
-        item.setType("vsp");
-        item.setId(vspId);
         item.addVersionStatus(VersionStatus.Certified);
-        when(itemManager.get(
-                ArgumentMatchers.eq(vspId))).thenReturn(item);
+        when(itemManager.get(vspId)).thenReturn(item);
 
         Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
         assertEquals(HttpStatus.SC_FORBIDDEN, rsp.getStatus());
         assertEquals(rsp.getEntity().getClass(), Exception.class);
-        assertEquals(((Exception)rsp.getEntity()).getLocalizedMessage(), DELETE_VSP_ERROR.getErrorMessage());
+        assertEquals(((Exception) rsp.getEntity()).getLocalizedMessage(), DELETE_VSP_ERROR.getErrorMessage());
     }
 
     @Test
     void deleteCertifiedArchivedVsp() {
-        Item item = new Item();
-        item.setType("vsp");
-        item.setId(vspId);
         item.setStatus(ItemStatus.ARCHIVED);
         item.addVersionStatus(VersionStatus.Certified);
-        when(itemManager.get(
-                ArgumentMatchers.eq(vspId))).thenReturn(item);
+        when(itemManager.get(vspId)).thenReturn(item);
         when(itemManager.list(any())).thenReturn(List.of(item));
         Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
         assertEquals(HttpStatus.SC_OK, rsp.getStatus());
         assertNull(rsp.getEntity());
+    }
+
+    @Test
+    void deleteCertifiedArchivedVspWithS3OK() {
+        when(artifactStorageManager.isEnabled()).thenReturn(true);
+        item.setStatus(ItemStatus.ARCHIVED);
+        item.addVersionStatus(VersionStatus.Certified);
+        when(itemManager.get(vspId)).thenReturn(item);
+        when(itemManager.list(any())).thenReturn(List.of(item));
+        Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_OK, rsp.getStatus());
+        assertNull(rsp.getEntity());
+    }
+
+    @Test
+    void deleteCertifiedArchivedVspWithS3Fail() {
+        when(artifactStorageManager.isEnabled()).thenReturn(true);
+        doThrow(new RuntimeException()).when(artifactStorageManager).delete(anyString());
+        item.setStatus(ItemStatus.ARCHIVED);
+        item.addVersionStatus(VersionStatus.Certified);
+        when(itemManager.get(vspId)).thenReturn(item);
+        when(itemManager.list(any())).thenReturn(List.of(item));
+        Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
+        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, rsp.getStatus());
+        assertEquals(rsp.getEntity().getClass(), Exception.class);
+        assertEquals(((Exception) rsp.getEntity()).getLocalizedMessage(), DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId));
     }
 }
