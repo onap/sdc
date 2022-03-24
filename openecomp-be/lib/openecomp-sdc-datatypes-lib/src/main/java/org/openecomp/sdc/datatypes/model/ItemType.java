@@ -19,4 +19,14 @@
  */
 package org.openecomp.sdc.datatypes.model;
 
-public enum ItemType {vlm, vsp}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+public enum ItemType {
+    vlm("vlm"), vsp("vsp");
+
+    @Getter
+    private final String name;
+
+}
