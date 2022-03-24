@@ -645,7 +645,7 @@ export class TopologyTemplateService {
             }
         };
         return this.http.put<ComponentInstance>(this.baseUrl + this
-        .getServerTypeUrl(componentMetaDataType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/interfaceOperation', operationList);
+        .getServerTypeUrl(componentMetaDataType) + componentMetaDataId + '/' + componentInstanceId + '/interfaceOperation', operationList);
     }
 
 }

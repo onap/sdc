@@ -24,6 +24,13 @@
       <div>{{ 'INTERFACE_DATA_EMPTY' | translate }}</div>
     </div>
   </div>
+  <div
+      class="top-add-btn add-btn"
+      [ngClass]="{'disabled': readonly}"
+      data-tests-id="add-operation"
+      (click)="onSelectInterfaceOperation(undefined, undefined)">
+    {{ 'INTERFACE_ADD_OPERATION' | translate }}
+  </div>
   <div class="operation-list">
     <div *ngIf="!isInterfaceListEmpty()">
       <div class="expand-collapse" *ngIf="isOperationListEmpty()">
@@ -38,11 +45,11 @@
         </a>
       </div>
 
-      <div class="interface-row" *ngFor="let interface of interfaces">
-        <div class="interface-accordion" (click)="interface.toggleCollapse()">
+      <div class="interface-row" *ngFor="let interface1 of interfaces">
+        <div class="interface-accordion" (click)="interface1.toggleCollapse()">
           <span
               class="chevron-container"
-              [ngClass]="{'isCollapsed': interface.isCollapsed}"
+              [ngClass]="{'isCollapsed': interface1.isCollapsed}"
               *ngIf="isOperationListEmpty()">
               <svg-icon
                   name="caret1-down-o"
@@ -50,10 +57,10 @@
                   size="small">
               </svg-icon>
           </span>
-          <span class="interface-name">{{interface.type}}</span>
+          <span class="interface-name">{{interface1.type}}</span>
         </div>
 
-        <div class="generic-table" *ngIf="!interface.isCollapsed && isOperationListEmpty()">
+        <div class="generic-table" *ngIf="!interface1.isCollapsed && isOperationListEmpty()">
           <div class="header-row table-row">
             <span
                 class="cell header-cell field-name header-name">
@@ -63,20 +70,14 @@
               {{ 'INTERFACE_HEADER_DESCRIPTION' | translate }}
             </span>
           </div>
-
-          <div class="data-row" *ngFor="let operation of interface.operations"
-               (click)="onSelectInterfaceOperation(interface, operation)">
-            <span
-                class="cell field-name">
-                {{operation.name}}
-            </span>
-            <span class="cell field-description"
-                  [ngClass]="{'collapsed': operation.isCollapsed}">
-              {{operation.getDescriptionEllipsis()}}
+          <div class="data-row" *ngFor="let operation of interface1.operations" (click)="onSelectInterfaceOperation(interface1, operation)">
+            <span class="cell field-name">{{operation.name}}</span>
+            <span class="cell field-description" [ngClass]="{'collapsed': operation.isCollapsed}">
+                {{operation.getDescriptionEllipsis()}}
               <span class="more-or-less link" (click)="operation.toggleCollapsed($event)">
-                {{!operation.isEllipsis ? '' : operation.isCollapsed ? 'More' : 'Less'}}
+                  {{!operation.isEllipsis ? '' : operation.isCollapsed ? 'More' : 'Less'}}
+                </span>
               </span>
-            </span>
           </div>
         </div>
       </div>
