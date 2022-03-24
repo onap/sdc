@@ -46,6 +46,30 @@
       "revId": "418a73853937f921b5f1cb2d58b53935575a7cc6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b580aa5_f17a08da",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T15:05:47Z",
+      "side": 0,
+      "message": "I see, I missed the other method... Thanks",
+      "parentUuid": "e5e06c1d_87a2d221",
+      "range": {
+        "startLine": 139,
+        "startChar": 8,
+        "endLine": 142,
+        "endChar": 9
+      },
+      "revId": "418a73853937f921b5f1cb2d58b53935575a7cc6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
