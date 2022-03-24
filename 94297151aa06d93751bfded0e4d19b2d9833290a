@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "72c9d655_18ba13a0",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/csar/storage/ArtifactStorageManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-24T10:51:39Z",
+      "side": 1,
+      "message": "Yes thats fine, the existing method delete(ArtifactInfo artifactInfo) I believe is used for that.\nI dont mind if keep delete(ArtifactInfo artifactInfo) or delete(final String vspId, final String versionId) to delete individual versions - but should only be one.\n\nNew method then to delete everything in the bucket and the bucket itself",
+      "parentUuid": "e8933ab4_8f1adf85",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 39
+      },
+      "revId": "94297151aa06d93751bfded0e4d19b2d9833290a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ce561380_ee393522",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
         "patchSetId": 3
