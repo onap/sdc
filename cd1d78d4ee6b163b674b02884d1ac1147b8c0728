@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "48c9414c_6591b063",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-24T14:54:53Z",
+      "side": 1,
+      "message": "this exception is for \u0027itemResult.get()\u0027 \nso, if it fails , no version ID",
+      "parentUuid": "23ebfdc6_643e6552",
+      "range": {
+        "startLine": 182,
+        "startChar": 83,
+        "endLine": 182,
+        "endChar": 91
+      },
+      "revId": "cd1d78d4ee6b163b674b02884d1ac1147b8c0728",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "99d27a58_d956eed3",
         "filename": "common-be/src/test/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManagerTest.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "3cc007a5_47c295b0",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-24T14:54:53Z",
+      "side": 1,
+      "message": "no, it should not, bcz other \u0027get \u0027 throws exception",
+      "parentUuid": "99d27a58_d956eed3",
+      "range": {
+        "startLine": 176,
+        "startChar": 8,
+        "endLine": 178,
+        "endChar": 11
+      },
+      "revId": "cd1d78d4ee6b163b674b02884d1ac1147b8c0728",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d2bfa50c_b97ddf77",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "cd1d78d4ee6b163b674b02884d1ac1147b8c0728",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d235b01_4140a5c4",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-24T14:54:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2bfa50c_b97ddf77",
+      "range": {
+        "startLine": 307,
+        "startChar": 19,
+        "endLine": 307,
+        "endChar": 23
+      },
+      "revId": "cd1d78d4ee6b163b674b02884d1ac1147b8c0728",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
