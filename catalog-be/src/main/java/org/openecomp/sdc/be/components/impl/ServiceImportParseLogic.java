@@ -1384,7 +1384,7 @@ public class ServiceImportParseLogic {
     public Service createSubstitutionFilterOnService(Service service,
                                                      ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties)
         throws BusinessLogicException {
-        if (substitutionFilterProperties.isEmpty()) {
+        if (substitutionFilterProperties == null || substitutionFilterProperties.isEmpty()) {
             return service;
         }
         substitutionFilterBusinessLogic.addSubstitutionFilterInGraph(service.getUniqueId(), substitutionFilterProperties);
