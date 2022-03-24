@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24ed3eb2_965b7533",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T14:42:48Z",
+      "side": 0,
+      "message": "why did you remove this exception handling?",
+      "range": {
+        "startLine": 139,
+        "startChar": 8,
+        "endLine": 142,
+        "endChar": 9
+      },
+      "revId": "418a73853937f921b5f1cb2d58b53935575a7cc6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

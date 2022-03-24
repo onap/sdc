@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23ebfdc6_643e6552",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T14:42:48Z",
+      "side": 1,
+      "message": "please, add also the version id to the error, e.g.:\nFailed to delete VSP \u0027%s\u0027, could not delete version \u0027%s\u0027",
+      "range": {
+        "startLine": 182,
+        "startChar": 83,
+        "endLine": 182,
+        "endChar": 91
+      },
+      "revId": "cd1d78d4ee6b163b674b02884d1ac1147b8c0728",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99d27a58_d956eed3",
+        "filename": "common-be/src/test/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManagerTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T14:42:48Z",
+      "side": 1,
+      "message": "this test should fail as the exception was removed.",
+      "range": {
+        "startLine": 176,
+        "startChar": 8,
+        "endLine": 178,
+        "endChar": 11
+      },
+      "revId": "cd1d78d4ee6b163b674b02884d1ac1147b8c0728",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2bfa50c_b97ddf77",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T14:42:48Z",
+      "side": 1,
+      "message": "I believe this should be an error",
+      "range": {
+        "startLine": 307,
+        "startChar": 19,
+        "endLine": 307,
+        "endChar": 23
+      },
+      "revId": "cd1d78d4ee6b163b674b02884d1ac1147b8c0728",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
