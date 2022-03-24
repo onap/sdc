@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
@@ -209,9 +210,86 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
                 lockComponent(componentId, component, "Update Interface Operation on Component instance");
                 wasLocked = true;
             }
-            final StorageOperationStatus status =
-                toscaOperationFacade.updateComponentInterfaces(component.getUniqueId(), component.getInterfaces(), interfaceDefinitionType);
+            final StorageOperationStatus status = toscaOperationFacade.updateComponentInterfaces(component, interfaceDefinitionType);
             if (status != StorageOperationStatus.OK) {
+                janusGraphDao.rollback();
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+                LOGGER.error("Exception occurred when updating Component Instance Interfaces {}", responseFormat);
+                errorWrapper.setInnerElement(responseFormat);
+                return Optional.empty();
+            }
+            janusGraphDao.commit();
+        } catch (final Exception e) {
+            janusGraphDao.rollback();
+            LOGGER.error("Exception occurred when updating Interface Operation on Component Instance: ", e);
+            responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+            errorWrapper.setInnerElement(responseFormat);
+            throw new BusinessLogicException(responseFormat);
+        } finally {
+            if (wasLocked) {
+                unlockComponent(component.getUniqueId(), componentTypeEnum);
+            }
+        }
+        return Optional.of(component);
+    }
+
+    public Optional<Component> createInterfaceOperationInResource(final String componentId, final InterfaceDefinition interfaceDefinition,
+                                                                  final ComponentTypeEnum componentTypeEnum,
+                                                                  final Wrapper<ResponseFormat> errorWrapper, final boolean shouldLock)
+        throws BusinessLogicException {
+        final Component component = getComponent(componentId);
+        ResponseFormat responseFormat;
+        final String componentInterfaceUpdatedKey = interfaceDefinition.getType();
+
+        Map<String, InterfaceDefinition> componentInterfaceMap = component.getInterfaces();
+        if (MapUtils.isEmpty(componentInterfaceMap)) {
+            componentInterfaceMap = new HashMap<>();
+            component.setInterfaces(componentInterfaceMap);
+        }
+
+        interfaceDefinition.setUniqueId(componentInterfaceUpdatedKey);
+        interfaceDefinition.setToscaResourceName(componentInterfaceUpdatedKey);
+
+        final Optional<OperationDataDefinition> optionalOperationDataDefinition = interfaceDefinition.getOperations().values().stream().findFirst();
+        if (optionalOperationDataDefinition.isEmpty()) {
+            responseFormat = componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
+            LOGGER.debug("Failed to found interface operation on component instance with id {}, error: {}", componentId, responseFormat);
+            errorWrapper.setInnerElement(responseFormat);
+            return Optional.empty();
+        }
+
+        final OperationDataDefinition updatedOperationDataDefinition = optionalOperationDataDefinition.get();
+        updatedOperationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+
+        final InterfaceDefinition interfaceDefinitionFound = componentInterfaceMap.get(componentInterfaceUpdatedKey);
+        if (interfaceDefinitionFound != null) {
+            final Map<String, OperationDataDefinition> operationsFromComponent = interfaceDefinitionFound.getOperations();
+            final String updatedOperationDataDefinitionName = updatedOperationDataDefinition.getName();
+            final boolean find = operationsFromComponent.containsKey(updatedOperationDataDefinitionName);
+            if (find) {
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NAME_ALREADY_IN_USE,
+                    updatedOperationDataDefinitionName);
+                LOGGER.error("Operation '{}' for Interface '{}' already exist, error: '{}'", updatedOperationDataDefinitionName,
+                    componentInterfaceUpdatedKey, responseFormat);
+                errorWrapper.setInnerElement(responseFormat);
+                return Optional.empty();
+            } else {
+                operationsFromComponent.put(updatedOperationDataDefinitionName, updatedOperationDataDefinition);
+                interfaceDefinition.setOperations(operationsFromComponent);
+            }
+        }
+
+        componentInterfaceMap.put(componentInterfaceUpdatedKey, interfaceDefinition);
+
+        boolean wasLocked = false;
+        try {
+            if (shouldLock) {
+                lockComponent(componentId, component, "Update Interface Operation on Component instance");
+                wasLocked = true;
+            }
+            final Either<InterfaceDefinition, StorageOperationStatus> operationStatusEither =
+                toscaOperationFacade.addInterfaceToComponent(componentInterfaceUpdatedKey, interfaceDefinition, component);
+            if (operationStatusEither.isRight()) {
                 janusGraphDao.rollback();
                 responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
                 LOGGER.error("Exception occurred when updating Component Instance Interfaces {}", responseFormat);
