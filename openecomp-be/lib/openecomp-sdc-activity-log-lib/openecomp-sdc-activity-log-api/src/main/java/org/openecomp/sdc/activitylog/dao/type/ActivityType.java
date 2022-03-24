@@ -26,6 +26,7 @@ public enum ActivityType {
   Create_Version,
   Commit,
   Submit,
+  Delete_From_Storage,
   Upload_Artifact,
   Upload_Network_Package,
   Revert,
