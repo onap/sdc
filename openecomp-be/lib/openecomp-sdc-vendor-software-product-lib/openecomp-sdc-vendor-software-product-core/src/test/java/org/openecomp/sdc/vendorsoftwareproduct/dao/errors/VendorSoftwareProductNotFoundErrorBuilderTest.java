@@ -16,6 +16,7 @@
 package org.openecomp.sdc.vendorsoftwareproduct.dao.errors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.openecomp.sdc.common.errors.Messages.VSP_VERSION_NOT_FOUND;
 import static org.openecomp.sdc.vendorsoftwareproduct.errors.VendorSoftwareProductErrorCodes.VSP_NOT_FOUND;
 
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class VendorSoftwareProductNotFoundErrorBuilderTest {
         final ErrorCode actualErrorCode = errorBuilder.build();
         assertEquals(ErrorCategory.APPLICATION, actualErrorCode.category());
         assertEquals(VSP_NOT_FOUND, actualErrorCode.id());
-        final String expectedMsg = String.format("Vendor Software Product with id '%s' and version id '%s' not found.", vspId, vspVersionId);
+        final String expectedMsg = VSP_VERSION_NOT_FOUND.formatMessage(vspId, vspVersionId);
         assertEquals(expectedMsg, actualErrorCode.message());
     }
 }

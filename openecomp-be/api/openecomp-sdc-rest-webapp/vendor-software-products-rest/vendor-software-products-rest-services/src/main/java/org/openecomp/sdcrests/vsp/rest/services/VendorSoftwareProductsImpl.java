@@ -42,7 +42,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
-import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
@@ -101,6 +100,7 @@ import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspDetailsDto;
 import org.openecomp.sdcrests.vendorsoftwareproducts.types.VspRequestDto;
 import org.openecomp.sdcrests.vsp.rest.CatalogVspClient;
 import org.openecomp.sdcrests.vsp.rest.VendorSoftwareProducts;
+import org.openecomp.sdcrests.vsp.rest.exception.VendorSoftwareProductsExceptionSupplier;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapComputeEntityToVspComputeDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapItemToVspDetailsDto;
 import org.openecomp.sdcrests.vsp.rest.mapping.MapPackageInfoToPackageInfoDto;
@@ -281,60 +281,100 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     @Override
-    public Response deleteVsp(String vspId, String user) {
-        Item vsp = itemManager.get(vspId);
-        if (!vsp.getType().equals(ItemType.vsp.name())) {
-            throw new CoreException((new ErrorCode.ErrorCodeBuilder().withMessage(String.format("Vsp with id %s does not exist.", vspId)).build()));
-        }
-        try {
-            Optional<String> optUsedInVf = catalogVspClient.findNameOfVfUsingVsp(vspId, user);
-            if (optUsedInVf.isPresent()) {
-                return Response.status(Response.Status.FORBIDDEN).entity(
-                        new Exception(ErrorMessagesFormatBuilder.getErrorWithParameters(Messages.DELETE_VSP_ERROR_USED_BY_VF.getErrorMessage(), optUsedInVf.get(), optUsedInVf.get()))
-                ).build();
-            }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new CoreException((new ErrorCode.ErrorCodeBuilder().withMessage(String.format("Vsp with id %s cannot be deleted due to error %s.", vspId, e.getMessage())).build()))).build();
+    public Response deleteVsp(final String vspId, final String user) {
+        final Item vsp = itemManager.get(vspId);
+        if (!ItemType.vsp.getName().equals(vsp.getType())) {
+            throw VendorSoftwareProductsExceptionSupplier.vspNotFound(vspId).get();
         }
 
-        Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
-        final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
-        if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
-            if (artifactStorageManager.isEnabled() && !deleteVspFromStorage(vspId, artifactStorageManager)) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(new Exception(Messages.DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId))).build();
-            }
-            return deleteVsp(vspId, user, vsp);
-        } else {
-            final var isVspArchived = getVspList(null, ItemStatus.ARCHIVED.name(), user).stream().anyMatch(item -> item.getId().equals(vspId));
-            if (isVspArchived) {
-                if (artifactStorageManager.isEnabled() && !deleteVspFromStorage(vspId, artifactStorageManager)) {
-                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity(new Exception(Messages.DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId))).build();
-                }
-                return deleteVsp(vspId, user, vsp);
-            }
-            return Response.status(Response.Status.FORBIDDEN).entity(new Exception(Messages.DELETE_VSP_ERROR.getErrorMessage())).build();
-        }
-    }
+        checkIfCanDeleteVsp(vsp, user);
 
-    private boolean deleteVspFromStorage(final String vspId, final ArtifactStorageManager artifactStorageManager) {
         try {
-            artifactStorageManager.delete(vspId);
+            deleteVspFromStorage(vspId, user);
         } catch (final Exception e) {
-            LOGGER.error("Failed to delete VSP '{}'", vspId, e);
-            return false;
+            logDeleteFromStorageFailure(vspId, user);
+            throw VendorSoftwareProductsExceptionSupplier.deleteVspFromStorageFailure(vspId).get();
         }
-        return true;
+
+        try {
+            deleteVsp(vspId, user, vsp);
+        } catch (final Exception e) {
+            throw VendorSoftwareProductsExceptionSupplier.deleteVspFromDatabaseFailure(vspId).get();
+        }
+
+        return Response.ok().build();
     }
 
-    private Response deleteVsp(String vspId, String user, Item vsp) {
+    private void checkIfCanDeleteVsp(final Item vsp, final String user) {
+        final String vspId = vsp.getId();
+
+        checkIfVspInUse(user, vspId);
+
+        if (isVspItemNeverCertified(vsp)) {
+            return;
+        }
+        if (!isVspItemArchived(vspId, user)) {
+            throw VendorSoftwareProductsExceptionSupplier.deleteNotArchivedVsp(vspId).get();
+        }
+    }
+
+    private void checkIfVspInUse(final String user, final String vspId) {
+        final Optional<String> vfNameThatUsesVspOpt;
+        try {
+            vfNameThatUsesVspOpt = catalogVspClient.findNameOfVfUsingVsp(vspId, user);
+        } catch (final Exception e) {
+            throw VendorSoftwareProductsExceptionSupplier.deleteGenericError(vspId).get();
+        }
+        if (vfNameThatUsesVspOpt.isPresent()) {
+            final String vfName = vfNameThatUsesVspOpt.get();
+            throw VendorSoftwareProductsExceptionSupplier.vspInUseByVf(vfName).get();
+        }
+    }
+
+    private boolean isVspItemArchived(final String vspId, final String user) {
+        return getVspList(null, ItemStatus.ARCHIVED.name(), user).stream().anyMatch(item -> vspId.equals(item.getId()));
+    }
+
+    private boolean isVspItemNeverCertified(final Item vsp) {
+        final Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
+        return certifiedVersionsCounter == null || certifiedVersionsCounter == 0;
+    }
+
+    private void deleteVspFromStorage(final String vspId, final String user) {
+        final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
+        if (artifactStorageManager.isEnabled()) {
+            artifactStorageManager.delete(vspId);
+            logDeleteFromStorageAllSuccess(vspId, user);
+        }
+    }
+
+    private void logDeleteFromStorageFailure(final String vspId, final String user) {
+        final String message = Messages.DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId);
+        try {
+            versioningManager.list(vspId).forEach(version -> activityLogManager.logActivity(
+                new ActivityLogEntity(vspId, version, ActivityType.Delete_From_Storage, user, false, message, message)
+            ));
+        } catch (final Exception e) {
+            LOGGER.error("Could not log activity '{}'", message, e);
+        }
+    }
+    private void logDeleteFromStorageAllSuccess(final String vspId, final String user) {
+        final String message = String.format("VSP '%s' fully deleted from the storage", vspId);
+        try {
+            versioningManager.list(vspId).forEach(version -> activityLogManager.logActivity(
+                new ActivityLogEntity(vspId, version, ActivityType.Delete_From_Storage, user, true, message, message)
+            ));
+        } catch (final Exception e) {
+            LOGGER.error("Could not log activity '{}'", message, e);
+        }
+    }
+
+    private void deleteVsp(final String vspId, final String user, final Item vsp) {
         versioningManager.list(vspId).forEach(version -> vendorSoftwareProductManager.deleteVsp(vspId, version));
         itemManager.delete(vsp);
         permissionsManager.deleteItemPermissions(vspId);
         uniqueValueUtil.deleteUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, vsp.getName());
         notifyUsers(vspId, vsp.getName(), null, null, user, NotificationEventTypes.DELETE);
-        return Response.ok().build();
     }
 
     @Override

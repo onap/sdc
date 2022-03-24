@@ -399,24 +399,6 @@ class OrchestrationTemplateCandidateImplTest {
             .putUploadAsFinished(candidateId, versionId, vspUploadStatusDto.getLockId(), VspUploadStatus.ERROR, user);
     }
 
-//    @Test
-//    void uploadTestWithLatestStatusComplete() {
-//        final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
-//        vspUploadStatusDto.setComplete(true);
-//        //given
-//        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(candidateId, versionId, user)).thenReturn(Optional.of(vspUploadStatusDto));
-//        final Attachment mock = Mockito.mock(Attachment.class);
-//        when(mock.getDataHandler()).thenReturn(Mockito.mock(DataHandler.class));
-//        //when
-//        final CoreException actualException = assertThrows(CoreException.class,
-//            () -> orchestrationTemplateCandidate.upload(candidateId, versionId, mock, user));
-//        final CoreException expectedException = couldNotAcceptPackageNoUploadInProgress(candidateId, versionId).get();
-//        //then
-//        assertEquals(expectedException.code().id(), actualException.code().id());
-//        assertEquals(expectedException.code().message(), actualException.code().message());
-//        verify(orchestrationTemplateCandidateUploadManager).findLatestStatus(candidateId, versionId, user);
-//    }
-
     @Test
     void uploadTestWithUploadInProgress() {
         final VspUploadStatusDto vspUploadStatusDto = new VspUploadStatusDto();
