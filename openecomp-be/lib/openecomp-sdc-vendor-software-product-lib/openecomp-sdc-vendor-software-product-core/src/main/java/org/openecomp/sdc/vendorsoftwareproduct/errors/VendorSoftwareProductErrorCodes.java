@@ -85,6 +85,11 @@ public class VendorSoftwareProductErrorCodes {
     public static final String VSP_UPLOAD_STATUS_NOT_FOUND_ERROR = "VSP_UPLOAD_STATUS_NOT_FOUND_ERROR";
     public static final String VSP_UPLOAD_ALREADY_FINISHED_ERROR = "VSP_UPLOAD_ALREADY_FINISHED_ERROR";
     public static final String VSP_UPLOAD_ALREADY_IN_STATUS_ERROR = "VSP_UPLOAD_ALREADY_IN_STATUS_ERROR";
+    public static final String VSP_DELETE_ALREADY_IN_USE_BY_VF = "VSP_DELETE_ALREADY_IN_USE_BY_VF";
+    public static final String VSP_DELETE_NOT_ARCHIVED = "VSP_DELETE_NOT_ARCHIVED";
+    public static final String VSP_DELETE_GENERIC_ERROR = "VSP_DELETE_GENERIC_ERROR";
+    public static final String VSP_DELETE_FROM_STORAGE_ERROR = "VSP_DELETE_FROM_STORAGE_ERROR";
+    public static final String VSP_DELETE_FROM_DATABASE_ERROR = "VSP_DELETE_FROM_DATABASE_ERROR";
 
     private VendorSoftwareProductErrorCodes() {
     }
