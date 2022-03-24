@@ -22,6 +22,7 @@
 package org.openecomp.sdcrests.vsp.rest;
 
 import java.util.Optional;
+import org.openecomp.sdc.common.errors.CatalogRestClientException;
 
 public interface CatalogVspClient {
 
@@ -31,5 +32,5 @@ public interface CatalogVspClient {
      * @param vspId        the id of the vsp
      * @param user         the user to perform the action
      */
-    Optional<String> findNameOfVfUsingVsp(String vspId, String user) throws Exception;
+    Optional<String> findNameOfVfUsingVsp(String vspId, String user) throws CatalogRestClientException;
 }

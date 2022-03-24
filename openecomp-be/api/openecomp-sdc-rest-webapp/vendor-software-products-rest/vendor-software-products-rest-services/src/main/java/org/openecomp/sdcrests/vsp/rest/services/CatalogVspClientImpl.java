@@ -21,9 +21,14 @@
 
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static javax.ws.rs.core.HttpHeaders.ACCEPT;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import org.jetbrains.annotations.Nullable;
-import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.common.api.Constants;
@@ -33,31 +38,16 @@ import org.openecomp.sdc.common.http.client.api.HttpRequest;
 import org.openecomp.sdc.common.http.client.api.HttpResponse;
 import org.openecomp.sdc.logging.api.Logger;
 import org.openecomp.sdc.logging.api.LoggerFactory;
-import org.openecomp.sdcrests.item.rest.services.catalog.notification.EntryNotConfiguredException;
 import org.openecomp.sdcrests.item.rest.services.catalog.notification.http.HttpConfiguration;
 import org.openecomp.sdcrests.vsp.rest.CatalogVspClient;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
-
-import static javax.ws.rs.core.HttpHeaders.ACCEPT;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 public class CatalogVspClientImpl implements CatalogVspClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogVspClientImpl.class);
     private static final String URL_GET_RESOURCE_BY_CSAR_UUID = "%s://%s:%s/sdc2/rest/v1/catalog/resources/csar/%s";
-    private static final String CONFIG_FILE_PROPERTY = "configuration.yaml";
     private static final String CONFIG_SECTION = "catalogNotificationsConfig";
     public static final String NAME = "name";
     public static final String SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID = "sdc2/rest/v1/catalog/resources/csar/{csaruuid}";
-
-    public CatalogVspClientImpl() { }
 
     /**
      * Returns the name of a VF which is using the provided VSP.
