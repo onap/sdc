@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "e8933ab4_8f1adf85",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/csar/storage/ArtifactStorageManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T10:30:54Z",
+      "side": 1,
+      "message": "I agree in having a delete all method, but during the onboard we also have the need to delete a specific version, to overwrite an existing package if another one is uploaded for the same version (not certified version)",
+      "parentUuid": "a9377df5_406ed7a2",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 39
+      },
+      "revId": "94297151aa06d93751bfded0e4d19b2d9833290a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ce561380_ee393522",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
         "patchSetId": 3
