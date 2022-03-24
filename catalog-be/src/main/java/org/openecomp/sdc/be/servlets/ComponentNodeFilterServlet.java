@@ -64,7 +64,7 @@ import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Path("/v1/catalog/{componentType}/{componentId}/componentInstance/{componentInstanceId}/{constraintType}")
+@Path("/v1/catalog")
 @Tags({@Tag(name = "SDCE-2 APIs")})
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -99,7 +99,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/nodeFilter")
+    @Path("/{componentType}/{componentId}/componentInstance/{componentInstanceId}/{constraintType}/nodeFilter")
     @Operation(description = "Add Component Filter Constraint", method = "POST", summary = "Add Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Create Component Filter"),
@@ -154,7 +154,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{constraintIndex}/nodeFilter")
+    @Path("/{componentType}/{componentId}/componentInstance/{componentInstanceId}/{constraintType}/{constraintIndex}/nodeFilter")
     @Operation(description = "Update Component Filter Constraint", method = "PUT", summary = "Update Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Create Component Filter"),
@@ -208,7 +208,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{constraintIndex}/nodeFilter")
+    @Path("/{componentType}/{componentId}/componentInstance/{componentInstanceId}/{constraintType}/{constraintIndex}/nodeFilter")
     @Operation(description = "Delete Component Filter Constraint", method = "Delete", summary = "Delete Component Filter Constraint", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Response.class)))),
         @ApiResponse(responseCode = "201", description = "Delete Component Filter Constraint"),

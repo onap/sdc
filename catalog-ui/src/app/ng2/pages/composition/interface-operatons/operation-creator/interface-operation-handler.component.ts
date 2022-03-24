@@ -18,17 +18,18 @@
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
 */
-
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {UIInterfaceModel} from "../interface-operations.component";
 import {InputOperationParameter, InterfaceOperationModel, IOperationParamsList} from "../../../../../models/interfaceOperation";
 import {TranslateService} from "../../../../shared/translator/translate.service";
-import {IDropDownOption} from "onap-ui-angular/dist/form-elements/dropdown/dropdown-models";
 import {DropdownValue} from "../../../../components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {ArtifactModel} from "../../../../../models/artifacts";
 import {PropertyBEModel} from "../../../../../models/properties-inputs/property-be-model";
 import {PropertyParamRowComponent} from "./property-param-row/property-param-row.component";
 import {PropertyFEModel} from "../../../../../models/properties-inputs/property-fe-model";
+import {IDropDownOption} from 'onap-ui-angular';
+import {ComponentServiceNg2} from "../../../../services/component-services/component.service";
+import {DropDownComponent} from "onap-ui-angular/dist/form-elements/dropdown/dropdown.component";
 import {DataTypeService} from "../../../../services/data-type.service";
 import {Observable} from "rxjs/Observable";
 import {DataTypeModel} from "../../../../../models/data-types";
@@ -43,13 +44,15 @@ export class InterfaceOperationHandlerComponent {
 
     @Input() private modelName: string;
     @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
+    @ViewChild('interfaceOperationDropDown') interfaceOperationDropDown: DropDownComponent;
+
     input: {
         toscaArtifactTypes: Array<DropdownValue>;
         selectedInterface: UIInterfaceModel;
         selectedInterfaceOperation: InterfaceOperationModel;
         validityChangedCallback: Function;
         isViewOnly: boolean;
-        interfaceTypesMap: Map<string, string[]>;
+        isEdit: boolean;
     };
 
     dataTypeMap$: Observable<Map<string, DataTypeModel>>;
@@ -64,10 +67,13 @@ export class InterfaceOperationHandlerComponent {
     isLoading: boolean = false;
     readonly: boolean;
     isViewOnly: boolean;
+    isEdit: boolean;
     interfaceTypes: Array<DropdownValue> = [];
-    interfaceOperations: Array<DropdownValue> = [];
-
-    interfaceTypesMap: Map<string, string[]>;
+    interfaceTypeOptions: Array<DropDownOption> = [];
+    selectedInterfaceType: DropDownOption = undefined;
+    interfaceOperationMap: Map<string, Array<string>> = new Map<string, Array<string>>();
+    interfaceOperationOptions: Array<DropDownOption> = [];
+    selectedInterfaceOperation: DropDownOption = undefined;
 
     toscaArtifactTypeSelected: string;
     toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
@@ -80,7 +86,7 @@ export class InterfaceOperationHandlerComponent {
     propertyValueValid: boolean = true;
     inputTypeOptions: any[];
 
-    constructor(private dataTypeService: DataTypeService) {
+    constructor(private dataTypeService: DataTypeService, private componentServiceNg2: ComponentServiceNg2) {
         this.dataTypeMap$ = new Observable<Map<string, DataTypeModel>>(subscriber => {
             this.dataTypeService.findAllDataTypesByModel(this.modelName)
             .then((dataTypesMap: Map<string, DataTypeModel>) => {
@@ -95,6 +101,7 @@ export class InterfaceOperationHandlerComponent {
 
     ngOnInit() {
         this.isViewOnly = this.input.isViewOnly;
+        this.isEdit = this.input.isEdit;
         this.interfaceType = this.input.selectedInterface.type;
         this.operationToUpdate = this.input.selectedInterfaceOperation;
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
@@ -113,18 +120,56 @@ export class InterfaceOperationHandlerComponent {
         }
 
         this.inputs = Array.from(this.operationToUpdate.inputs.listToscaDataDefinition);
-        this.interfaceTypesMap = this.input.interfaceTypesMap;
-        this.loadInterfaceTypesAndOperations();
         this.removeImplementationQuote();
         this.validityChanged();
         this.loadInterfaceOperationImplementation();
+        this.loadInterfaceType();
+    }
+
+    private loadInterfaceType() {
+        this.componentServiceNg2.getInterfaceTypesByModel(undefined)
+        .subscribe(response => {
+            if (response) {
+                this.interfaceOperationMap = new Map<string, Array<string>>();
+                for (const interfaceType of Object.keys(response).sort()) {
+                    const operationList = response[interfaceType];
+                    operationList.sort();
+                    this.interfaceOperationMap.set(interfaceType, operationList);
+                    const operationDropDownOption: DropDownOption = new DropDownOption(interfaceType);
+                    this.interfaceTypeOptions.push(operationDropDownOption);
+                    if (this.interfaceType == interfaceType) {
+                        this.selectedInterfaceType = operationDropDownOption;
+                    }
+                }
+                this.loadInterfaceTypeOperations();
+            }
+        });
+    }
+
+    loadInterfaceTypeOperations() {
+        this.interfaceOperationOptions = new Array<DropDownOption>();
+        const interfaceOperationList = this.interfaceOperationMap.get(this.interfaceType);
+
+        if (interfaceOperationList) {
+            interfaceOperationList.forEach(operationName => {
+                const operationOption = new DropDownOption(operationName, operationName);
+                this.interfaceOperationOptions.push(operationOption);
+                if (this.operationToUpdate.name == operationName) {
+                    this.selectedInterfaceOperation = operationOption
+                }
+            });
+        }
+
+        this.interfaceOperationDropDown.allOptions = this.interfaceOperationOptions;
     }
 
     private loadInterfaceOperationImplementation() {
         this.toscaArtifactTypes = this.input.toscaArtifactTypes;
-        this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
-        this.artifactName = this.operationToUpdate.implementation.artifactName;
-        this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
+        if (this.operationToUpdate.implementation) {
+            this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
+            this.artifactName = this.operationToUpdate.implementation.artifactName;
+            this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
+        }
         this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
         this.getArtifactTypesSelected();
     }
@@ -348,11 +393,43 @@ export class InterfaceOperationHandlerComponent {
         return inputList;
     }
 
-    private loadInterfaceTypesAndOperations() {
-        console.log("loadInterfaceTypesAndOperations ", this.interfaceTypesMap.keys());
-
-        Array.from(this.interfaceTypesMap.keys()).forEach(value => this.interfaceTypes.push(new DropdownValue(value, value)));
-        console.log("loadInterfaceTypesAndOperations interfaceType ", this.interfaceTypes);
+    onSelectInterface(dropDownOption: DropDownOption) {
+        if (dropDownOption) {
+            this.setInterfaceType(dropDownOption);
+        } else {
+            this.setInterfaceType(undefined);
+        }
+        this.setInterfaceOperation(undefined);
+        this.interfaceOperationDropDown.selectOption({} as IDropDownOption);
+        this.loadInterfaceTypeOperations();
     }
 
+    onSelectOperation(dropDownOption: DropDownOption) {
+        if (this.selectedInterfaceType && dropDownOption) {
+            this.setInterfaceOperation(dropDownOption);
+        }
+    }
+
+    private setInterfaceType(dropDownOption: DropDownOption) {
+        this.selectedInterfaceType = dropDownOption ? dropDownOption : undefined;
+        this.interfaceType = dropDownOption ? dropDownOption.value : undefined;
+        this.operationToUpdate.interfaceType = dropDownOption ? dropDownOption.value : undefined;
+        this.operationToUpdate.interfaceId = dropDownOption ? dropDownOption.value : undefined;
+    }
+
+    private setInterfaceOperation(dropDownOption: DropDownOption) {
+        this.operationToUpdate.name = dropDownOption ? dropDownOption.value : undefined;
+        this.operationToUpdate.operationType = dropDownOption ? dropDownOption.value : undefined;
+        this.selectedInterfaceOperation = dropDownOption ? dropDownOption : undefined;
+    }
+}
+
+class DropDownOption implements IDropDownOption {
+    value: string;
+    label: string;
+
+    constructor(value: string, label?: string) {
+        this.value = value;
+        this.label = label || value;
+    }
 }

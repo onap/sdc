@@ -238,12 +238,44 @@ export class ComponentServiceNg2 {
         });
     }
 
+    createComponentInterfaceOperation(componentMetaDataId: string,
+                                      componentMetaDataType: string,
+                                      operation: InterfaceOperationModel): Observable<InterfaceOperationModel> {
+        const operationList = {
+            interfaces: {
+                [operation.interfaceType]: {
+                    type: operation.interfaceType,
+                    operations: {
+                        [operation.name]: new BEInterfaceOperationModel(operation)
+                    }
+                }
+            }
+        };
+        console.log(operationList);
+        console.log(this.baseUrl + componentMetaDataType + componentMetaDataId + '/resource/interfaceOperation')
+        return this.http.post<any>(this.baseUrl + componentMetaDataType + componentMetaDataId + '/resource/interfaceOperation', operationList)
+        .map((res: any) => {
+            const interf: InterfaceModel = _.find(res.interfaces, interf => interf.type === operation.interfaceType);
+            const newOperation: OperationModel = _.find(interf.operations, op => op.name === operation.name);
+
+            return new InterfaceOperationModel({
+                ...newOperation,
+                interfaceType: interf.type,
+                interfaceId: interf.uniqueId,
+            });
+        });
+    }
+
     deleteInterfaceOperation(component: Component, operation: OperationModel): Observable<OperationModel> {
         return this.http.delete<OperationModel>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/interfaces/' + operation.interfaceId + '/operations/' + operation.uniqueId);
     }
 
     getInterfaceTypes(component: Component): Observable<{ [id: string]: Array<string> }> {
-        return this.http.get<any>(this.baseUrl + 'interfaceLifecycleTypes' + ((component && component.model) ? '?model=' + component.model : ''))
+        return this.getInterfaceTypesByModel(component && component.model);
+    }
+
+    getInterfaceTypesByModel(model: string): Observable<{ [id: string]: Array<string> }> {
+        return this.http.get<any>(this.baseUrl + 'interfaceLifecycleTypes' + ((model) ? '?model=' + model : ''))
         .map((res: any) => {
             const interfaceMap = {};
             if (!res) {
