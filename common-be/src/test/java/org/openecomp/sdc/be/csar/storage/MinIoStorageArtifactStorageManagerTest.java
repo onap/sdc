@@ -171,6 +171,7 @@ class MinIoStorageArtifactStorageManagerTest {
         verify(minioClient).bucketExists(bucketExistsArgs);
     }
 
+
     @Test
     void testGetOK() throws Exception {
         when(minioClient.getObject(any(GetObjectArgs.class))).thenReturn(
