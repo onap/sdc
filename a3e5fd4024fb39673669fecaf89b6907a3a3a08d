@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42f492be_60a7a9fc",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-24T12:57:00Z",
+      "side": 1,
+      "message": "Add javadoc to the class and public methods",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 0
+      },
+      "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c88e124f_34e1b2ca",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-24T12:57:00Z",
+      "side": 1,
+      "message": "rename abstratManifest to manifestHandler, same comment in other methods",
+      "range": {
+        "startLine": 41,
+        "startChar": 121,
+        "endLine": 41,
+        "endChar": 137
+      },
+      "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5dd0d93_becc23b3",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-24T12:57:00Z",
+      "side": 1,
+      "message": "\u0027handler\u0027 is too vague (handler of what) rename to fileContentHandler",
+      "range": {
+        "startLine": 41,
+        "startChar": 104,
+        "endLine": 41,
+        "endChar": 111
+      },
+      "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08dd2cf7_6949a01b",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/csar/ManifestUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-24T12:57:00Z",
+      "side": 1,
+      "message": "doesnt appear to serve any prupose",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 51
+      },
+      "revId": "a3e5fd4024fb39673669fecaf89b6907a3a3a08d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
