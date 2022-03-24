@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9377df5_406ed7a2",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/csar/storage/ArtifactStorageManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-24T10:10:38Z",
+      "side": 1,
+      "message": "If im reading the impl right, the first method is used to delete the individual csars for the different versions and the second method is to then delete the empty bucket. \nI dont think makes sense from an interface point of view to split these out (the bucket is an implmentation detail for the Minio impl of the interface).\nI would rather have a method deleteVsp(final String vspId) which deletes the csars and bucket in its impl. It can read the contents of the bucket from minio and loop through deleting them . It is also safer in that if something happens to cause a mismatch between what is in the bucket and what sdc thinks is in the bucket then the deletion will happen successfully anyway.",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 39
+      },
+      "revId": "94297151aa06d93751bfded0e4d19b2d9833290a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
