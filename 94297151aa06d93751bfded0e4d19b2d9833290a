@@ -22,6 +22,75 @@
       "revId": "94297151aa06d93751bfded0e4d19b2d9833290a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2afba00c_2e921ae9",
+        "filename": "common-app-api/src/main/java/org/openecomp/sdc/be/csar/storage/ArtifactStorageManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T10:28:56Z",
+      "side": 1,
+      "message": "please, document the methods",
+      "range": {
+        "startLine": 72,
+        "startChar": 4,
+        "endLine": 74,
+        "endChar": 39
+      },
+      "revId": "94297151aa06d93751bfded0e4d19b2d9833290a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce561380_ee393522",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T10:28:56Z",
+      "side": 1,
+      "message": "Please, add tests for the new methods. Sorry, forgot to catch that in the previous review.",
+      "range": {
+        "startLine": 43,
+        "startChar": 13,
+        "endLine": 43,
+        "endChar": 47
+      },
+      "revId": "94297151aa06d93751bfded0e4d19b2d9833290a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2fffde6c_63f6ee5a",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-24T10:28:56Z",
+      "side": 1,
+      "message": "I would suggest to call simply \"delete\".\nWe could also delete everything in this method, list and delete the objects of the bucket and then remove the bucket.",
+      "range": {
+        "startLine": 182,
+        "startChar": 16,
+        "endLine": 182,
+        "endChar": 25
+      },
+      "revId": "94297151aa06d93751bfded0e4d19b2d9833290a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
