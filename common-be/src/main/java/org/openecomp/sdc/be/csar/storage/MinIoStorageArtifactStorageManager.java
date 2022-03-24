@@ -24,9 +24,11 @@ import static org.openecomp.sdc.common.errors.Messages.EXTERNAL_CSAR_STORE_CONFI
 
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
+import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.StatObjectArgs;
 import java.io.InputStream;
@@ -134,12 +136,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
     @Override
     public InputStream get(final ArtifactInfo artifactInfo) {
         final MinIoArtifactInfo minioObject = (MinIoArtifactInfo) artifactInfo;
-        try {
-            return get(minioObject.getBucket(), minioObject.getObjectName());
-        } catch (final Exception e) {
-            LOGGER.error("Failed to get - bucket: '{}', object: '{}'", minioObject.getBucket(), minioObject.getObjectName(), e);
-            throw new ArtifactStorageException("Failed to get Object", e);
-        }
+        return get(minioObject.getBucket(), minioObject.getObjectName());
     }
 
     @Override
@@ -171,6 +168,26 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
             throw new ArtifactStorageException(String.format("Failed to delete '%s'", minioObject.getObjectName()), e);
         }
 
+    }
+
+    @Override
+    public void delete(final String vspId) {
+        LOGGER.debug("DELETE VSP - bucket: '{}'", vspId);
+        final var listObjects = minioClient.listObjects(ListObjectsArgs.builder().bucket(vspId).build());
+        listObjects.forEach(itemResult -> {
+            try {
+                delete(new MinIoArtifactInfo(vspId, itemResult.get().objectName()));
+            } catch (final Exception e) {
+                LOGGER.error("Failed to delete VSP - bucket: '{}'", vspId, e);
+                throw new ArtifactStorageException(String.format("Failed to delete VSP '%s'", vspId), e);
+            }
+        });
+        try {
+            minioClient.removeBucket(RemoveBucketArgs.builder().bucket(vspId).build());
+        } catch (final Exception e) {
+            LOGGER.error("Failed to delete VSP - bucket: '{}'", vspId, e);
+            throw new ArtifactStorageException(String.format("Failed to delete VSP '%s'", vspId), e);
+        }
     }
 
     private MinIoStorageArtifactStorageConfig readMinIoStorageArtifactStorageConfig() {

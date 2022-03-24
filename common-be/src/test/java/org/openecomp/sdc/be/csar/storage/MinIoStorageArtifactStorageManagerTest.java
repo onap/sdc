@@ -20,17 +20,29 @@
 
 package org.openecomp.sdc.be.csar.storage;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import io.minio.BucketExistsArgs;
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
+import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
+import io.minio.RemoveBucketArgs;
+import io.minio.RemoveObjectArgs;
+import io.minio.StatObjectArgs;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import javax.activation.DataHandler;
+import okhttp3.Headers;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +56,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.Credentials;
 import org.openecomp.sdc.be.csar.storage.MinIoStorageArtifactStorageConfig.EndPoint;
+import org.openecomp.sdc.be.csar.storage.exception.ArtifactStorageException;
 
 @ExtendWith(MockitoExtension.class)
 class MinIoStorageArtifactStorageManagerTest {
@@ -78,7 +91,7 @@ class MinIoStorageArtifactStorageManagerTest {
     }
 
     @Test
-    void testUpload() throws Exception {
+    void testUploadOK() throws Exception {
 
         when(builderBucketExistsArgs
             .bucket(anyString())
@@ -95,7 +108,23 @@ class MinIoStorageArtifactStorageManagerTest {
     }
 
     @Test
-    void testPersist() {
+    void testUploadFail() throws Exception {
+
+        when(builderBucketExistsArgs
+            .bucket(anyString())
+            .build()
+        ).thenReturn(new BucketExistsArgs());
+        when(minioClient.bucketExists(any(BucketExistsArgs.class))).thenReturn(false);
+
+        final Attachment attachment = mockAttachment();
+        doThrow(new RuntimeException()).when(minioClient).makeBucket(any(MakeBucketArgs.class));
+        assertThrows(ArtifactStorageException.class, () -> {
+            testSubject.upload(VSP_ID, VERSION_ID, attachment.getDataHandler().getInputStream());
+        });
+    }
+
+    @Test
+    void testPersistOK() {
         final ArtifactInfo result = testSubject.persist(VSP_ID, VERSION_ID, new MinIoArtifactInfo(VSP_ID, VERSION_ID));
         Assertions.assertNotNull(result);
         Assertions.assertTrue(result instanceof MinIoArtifactInfo);
@@ -104,8 +133,49 @@ class MinIoStorageArtifactStorageManagerTest {
     }
 
     @Test
+    void testPersistFail() throws Exception {
+        doThrow(new RuntimeException()).when(minioClient).statObject(any(StatObjectArgs.class));
+        assertThrows(ArtifactStorageException.class, () -> {
+            testSubject.persist(VSP_ID, VERSION_ID, new MinIoArtifactInfo(VSP_ID, VERSION_ID));
+        });
+    }
+
+    @Test
     void testIsEnabled() {
         Assertions.assertTrue(testSubject.isEnabled());
+    }
+
+    @Test
+    void testDeleteVersionFail() throws Exception {
+        doThrow(new RuntimeException()).when(minioClient).removeObject(any(RemoveObjectArgs.class));
+        assertThrows(ArtifactStorageException.class, () -> {
+            testSubject.delete(new MinIoArtifactInfo(VSP_ID, VERSION_ID));
+        });
+    }
+
+    @Test
+    void testDeleteVspFail() throws Exception {
+        doThrow(new RuntimeException()).when(minioClient).removeBucket(any(RemoveBucketArgs.class));
+        assertThrows(ArtifactStorageException.class, () -> {
+            testSubject.delete(VSP_ID);
+        });
+    }
+
+    @Test
+    void testGetOK() throws Exception {
+        when(minioClient.getObject(any(GetObjectArgs.class))).thenReturn(
+            new GetObjectResponse(Headers.of(), "", "", "",
+                new FileInputStream(Path.of("src/test/resources/s3StoreArtifactStorageManager/dummy.csar").toFile())));
+        final InputStream inputStream = testSubject.get(new MinIoArtifactInfo(VSP_ID, VERSION_ID));
+        assertNotNull(inputStream);
+    }
+
+    @Test
+    void testGetFail() throws Exception {
+        doThrow(new RuntimeException()).when(minioClient).getObject(any(GetObjectArgs.class));
+        assertThrows(ArtifactStorageException.class, () -> {
+            final InputStream inputStream = testSubject.get(new MinIoArtifactInfo(VSP_ID, VERSION_ID));
+        });
     }
 
     private Attachment mockAttachment() throws IOException {

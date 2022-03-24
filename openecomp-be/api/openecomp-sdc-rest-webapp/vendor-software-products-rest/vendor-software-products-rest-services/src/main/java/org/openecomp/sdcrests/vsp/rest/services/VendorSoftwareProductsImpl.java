@@ -15,6 +15,30 @@
  */
 package org.openecomp.sdcrests.vsp.rest.services;
 
+import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
+import static org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod.NetworkPackage;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.MapUtils;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
@@ -22,6 +46,8 @@ import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
+import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
@@ -85,31 +111,6 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static javax.ws.rs.core.HttpHeaders.CONTENT_DISPOSITION;
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductConstants.UniqueValues.VENDOR_SOFTWARE_PRODUCT_NAME;
-import static org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod.NetworkPackage;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-
 @Named
 @Service("vendorSoftwareProducts")
 @Scope(value = "prototype")
@@ -130,15 +131,17 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     private final ActivityLogManager activityLogManager;
     private final NotificationPropagationManager notifier;
     private final UniqueValueUtil uniqueValueUtil;
+    private final ArtifactStorageManager artifactStorageManager;
 
     public VendorSoftwareProductsImpl() {
-        this.itemManager = AsdcItemManagerFactory.getInstance().createInterface();;
+        this.itemManager = AsdcItemManagerFactory.getInstance().createInterface();
         this.permissionsManager = PermissionsManagerFactory.getInstance().createInterface();
         this.versioningManager = VersioningManagerFactory.getInstance().createInterface();
         this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
         this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
         this.notifier = NotificationPropagationManagerFactory.getInstance().createInterface();
         this.uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+        this.artifactStorageManager = new StorageFactory().createArtifactStorageManager();
     }
 
     public VendorSoftwareProductsImpl(AsdcItemManager itemManager,
@@ -147,7 +150,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                                       VendorSoftwareProductManager vendorSoftwareProductManager,
                                       ActivityLogManager activityLogManager,
                                       NotificationPropagationManager notifier,
-                                      UniqueValueUtil uniqueValueUtil) {
+                                      UniqueValueUtil uniqueValueUtil,
+                                      ArtifactStorageManager artifactStorageManager) {
         this.itemManager = itemManager;
         this.permissionsManager = permissionsManager;
         this.versioningManager = versioningManager;
@@ -155,6 +159,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         this.activityLogManager = activityLogManager;
         this.notifier = notifier;
         this.uniqueValueUtil = uniqueValueUtil;
+        this.artifactStorageManager = artifactStorageManager;
     }
 
     @Override
@@ -277,13 +282,32 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
         Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
         if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
+            if (artifactStorageManager.isEnabled() && !deleteVspFromStorage(vspId)) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(new Exception(Messages.DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId))).build();
+            }
             return deleteVsp(vspId, user, vsp);
+        } else {
+            final var isVspArchived = getVspList(null, ItemStatus.ARCHIVED.name(), user).stream().anyMatch(item -> item.getId().equals(vspId));
+            if (isVspArchived) {
+                if (artifactStorageManager.isEnabled() && !deleteVspFromStorage(vspId)) {
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(new Exception(Messages.DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId))).build();
+                }
+                return deleteVsp(vspId, user, vsp);
+            }
+            return Response.status(Response.Status.FORBIDDEN).entity(new Exception(Messages.DELETE_VSP_ERROR.getErrorMessage())).build();
         }
-        final var isVspArchived = getVspList(null, ItemStatus.ARCHIVED.name(), user).stream().anyMatch(item -> item.getId().equals(vspId));
-        if (isVspArchived) {
-            return deleteVsp(vspId, user, vsp);
+    }
+
+    private boolean deleteVspFromStorage(final String vspId) {
+        try {
+            artifactStorageManager.delete(vspId);
+        } catch (final Exception e) {
+            LOGGER.error("Failed to delete VSP '{}'", vspId, e);
+            return false;
         }
-        return Response.status(Response.Status.FORBIDDEN).entity(new Exception(Messages.DELETE_VSP_ERROR.getErrorMessage())).build();
+        return true;
     }
 
     private Response deleteVsp(String vspId, String user, Item vsp) {
@@ -339,7 +363,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                 Predicate<Item> validationVspFilter = item -> ItemType.vsp.name().equals(item.getType()) && VALIDATION_VSP_NAME
                     .equals(item.getName());
                 String validationVspId = itemManager.list(validationVspFilter).stream().findFirst().orElseThrow(() -> new IllegalStateException(
-                    "Vsp with name " + VALIDATION_VSP_NAME + " does not exist even though the name exists according to " + "unique value util"))
+                        "Vsp with name " + VALIDATION_VSP_NAME + " does not exist even though the name exists according to " + "unique value util"))
                     .getId();
                 Version validationVspVersion = versioningManager.list(validationVspId).iterator().next();
                 cachedValidationVsp = new ItemCreationDto();
