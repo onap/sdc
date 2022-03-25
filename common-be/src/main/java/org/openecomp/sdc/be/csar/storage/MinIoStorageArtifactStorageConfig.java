@@ -20,11 +20,9 @@
 
 package org.openecomp.sdc.be.csar.storage;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@AllArgsConstructor
-@Getter
+@Data
 public class MinIoStorageArtifactStorageConfig implements ArtifactStorageConfig {
 
     private final boolean isEnabled;
@@ -33,8 +31,7 @@ public class MinIoStorageArtifactStorageConfig implements ArtifactStorageConfig 
     private final String tempPath;
     private final int uploadPartSize;
 
-    @AllArgsConstructor
-    @Getter
+    @Data
     public static class EndPoint {
 
         private final String host;
@@ -42,8 +39,7 @@ public class MinIoStorageArtifactStorageConfig implements ArtifactStorageConfig 
         private final boolean secure;
     }
 
-    @AllArgsConstructor
-    @Getter
+    @Data
     public static class Credentials {
 
         private final String accessKey;

@@ -35,7 +35,6 @@
  import org.onap.sdc.tosca.services.YamlUtil;
  import org.openecomp.core.utilities.file.FileContentHandler;
  import org.openecomp.core.utilities.file.FileUtils;
- import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
  import org.openecomp.sdc.be.csar.storage.StorageFactory;
  import org.openecomp.sdc.be.model.ArtifactDefinition;
  import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.builder.NsdToscaMetadataBuilder;

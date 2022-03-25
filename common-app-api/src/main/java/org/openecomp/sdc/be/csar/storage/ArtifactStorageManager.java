@@ -75,4 +75,5 @@ public interface ArtifactStorageManager {
      * @param vspId - VSP ID
      */
     void delete(String vspId);
+
 }
