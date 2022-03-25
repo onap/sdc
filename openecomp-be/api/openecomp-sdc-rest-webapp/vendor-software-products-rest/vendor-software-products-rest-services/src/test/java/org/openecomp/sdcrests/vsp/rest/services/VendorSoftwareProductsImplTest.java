@@ -50,6 +50,7 @@ import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
 import org.openecomp.sdc.common.errors.CoreException;
+import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
@@ -87,6 +88,8 @@ class VendorSoftwareProductsImplTest {
     private ArtifactStorageManager artifactStorageManager;
     @Mock
     private CatalogVspClient catalogVspClient;
+    @Mock
+    private StorageFactory storageFactory;
 
     @InjectMocks
     private VendorSoftwareProductsImpl vendorSoftwareProducts;
@@ -103,6 +106,7 @@ class VendorSoftwareProductsImplTest {
         item.setType("vsp");
         item.setId(vspId);
         when(itemManager.get(vspId)).thenReturn(item);
+        when(storageFactory.createArtifactStorageManager()).thenReturn(artifactStorageManager);
     }
 
     @Test

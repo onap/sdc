@@ -54,6 +54,8 @@ import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -99,8 +101,6 @@ class OrchestrationTemplateCandidateImplTest {
     @Mock
     private ActivityLogManager activityLogManager;
     @Mock
-    private ArtifactStorageManager artifactStorageManager;
-    @Mock
     private PackageSizeReducer packageSizeReducer;
     @Mock
     private OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager;
@@ -108,54 +108,56 @@ class OrchestrationTemplateCandidateImplTest {
     private StorageFactory storageFactory;
     @Mock
     private Attachment fileToUpload;
+    @Mock
+    private ArtifactStorageManager artifactStorageManager;
     @InjectMocks
     private OrchestrationTemplateCandidateImpl orchestrationTemplateCandidate;
 
+    @TempDir
+    Path tempDir;
+
     @BeforeEach
-    public void setUp() {
-        try {
-            MockitoAnnotations.openMocks(this);
-            UploadFileResponse uploadFileResponse = new UploadFileResponse();
-            uploadFileResponse.setOnboardingType(OnboardingTypesEnum.ZIP);
-            uploadFileResponse.setNetworkPackageName("test");
-            when(candidateManager.upload(any(), any())).thenReturn(uploadFileResponse);
+    public void setUp() throws IOException {
+        MockitoAnnotations.openMocks(this);
+        UploadFileResponse uploadFileResponse = new UploadFileResponse();
+        uploadFileResponse.setOnboardingType(OnboardingTypesEnum.ZIP);
+        uploadFileResponse.setNetworkPackageName("test");
+        when(candidateManager.upload(any(), any())).thenReturn(uploadFileResponse);
 
-            // get using the candidate manager.
-            Optional<Pair<String, byte[]>> zipFile = Optional.of(Pair.of("Hello", "World".getBytes()));
+        // get using the candidate manager.
+        Optional<Pair<String, byte[]>> zipFile = Optional.of(Pair.of("Hello", "World".getBytes()));
 
-            when(candidateManager.get(
-                ArgumentMatchers.eq(candidateId),
-                ArgumentMatchers.any())).thenReturn(zipFile);
+        when(candidateManager.get(
+            ArgumentMatchers.eq(candidateId),
+            ArgumentMatchers.any())).thenReturn(zipFile);
 
-            when(vendorSoftwareProductManager.get(
-                ArgumentMatchers.eq(softwareProductId),
-                ArgumentMatchers.any())).thenReturn(zipFile);
+        when(vendorSoftwareProductManager.get(
+            ArgumentMatchers.eq(softwareProductId),
+            ArgumentMatchers.any())).thenReturn(zipFile);
 
-            OrchestrationTemplateActionResponse processResponse = new OrchestrationTemplateActionResponse();
-            processResponse.setStatus(UploadFileStatus.Success);
-            when(candidateManager.process(
-                ArgumentMatchers.eq(candidateId),
-                ArgumentMatchers.any())).thenReturn(processResponse);
+        OrchestrationTemplateActionResponse processResponse = new OrchestrationTemplateActionResponse();
+        processResponse.setStatus(UploadFileStatus.Success);
+        when(candidateManager.process(
+            ArgumentMatchers.eq(candidateId),
+            ArgumentMatchers.any())).thenReturn(processResponse);
 
-            ValidationResponse vr = new ValidationResponse();
-            when(candidateManager.updateFilesDataStructure(
-                ArgumentMatchers.eq(candidateId),
-                ArgumentMatchers.any(),
-                ArgumentMatchers.any())).thenReturn(vr);
+        ValidationResponse vr = new ValidationResponse();
+        when(candidateManager.updateFilesDataStructure(
+            ArgumentMatchers.eq(candidateId),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any())).thenReturn(vr);
 
-            FilesDataStructure fds = new FilesDataStructure();
-            fds.setArtifacts(Arrays.asList("a", "b"));
-            fds.setNested(Arrays.asList("foo", "bar"));
-            fds.setUnassigned(Arrays.asList("c", "d"));
-            fds.setModules(Arrays.asList(new Module(), new Module()));
+        FilesDataStructure fds = new FilesDataStructure();
+        fds.setArtifacts(Arrays.asList("a", "b"));
+        fds.setNested(Arrays.asList("foo", "bar"));
+        fds.setUnassigned(Arrays.asList("c", "d"));
+        fds.setModules(Arrays.asList(new Module(), new Module()));
 
-            when(candidateManager.getFilesDataStructure(
-                ArgumentMatchers.eq(candidateId),
-                ArgumentMatchers.any())).thenReturn(Optional.of(fds));
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+        when(candidateManager.getFilesDataStructure(
+            ArgumentMatchers.eq(candidateId),
+            ArgumentMatchers.any())).thenReturn(Optional.of(fds));
+        when(storageFactory.createArtifactStorageManager()).thenReturn(artifactStorageManager);
+        when(storageFactory.createPackageSizeReducer()).thenReturn(Optional.of(packageSizeReducer));
     }
 
     @Test
@@ -194,6 +196,45 @@ class OrchestrationTemplateCandidateImplTest {
         assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
     }
 
+    @Test
+    void uploadArtifactStorageTest() throws IOException {
+        //given
+        final String vspId = "vspId";
+        final String versionId = "versionId";
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user)).thenReturn(Optional.empty());
+        final UUID lockId = UUID.randomUUID();
+        when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user))
+            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.UPLOADING));
+        when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user))
+            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.VALIDATING));
+        when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user))
+            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.PROCESSING));
+        when(artifactStorageManager.isEnabled()).thenReturn(true);
+        final MinIoStorageArtifactStorageConfig minIoConfig =
+            new MinIoStorageArtifactStorageConfig(true,
+                new EndPoint("", 9000, true),
+                new Credentials("", ""), tempDir.toString(), 1000
+            );
+
+        when(artifactStorageManager.getStorageConfiguration()).thenReturn(minIoConfig);
+        final MinIoArtifactInfo artifactInfo = new MinIoArtifactInfo(vspId, versionId);
+        final Attachment attachmentMock = mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar"));
+        final byte[] attachmentBytes = attachmentMock.getObject(byte[].class);
+        artifactInfo.setBytes(attachmentBytes);
+        final ArgumentCaptor<Path> reduceTempDirectoryArg = ArgumentCaptor.forClass(Path.class);
+        when(packageSizeReducer.reduce(reduceTempDirectoryArg.capture())).thenReturn(attachmentBytes);
+        when(artifactStorageManager.upload(eq(vspId), eq(versionId), any(InputStream.class))).thenReturn(artifactInfo);
+        //when
+        Response response = orchestrationTemplateCandidate.upload(vspId, versionId, attachmentMock, user);
+        //then
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+        final Path actualReduceTempFolder = reduceTempDirectoryArg.getValue();
+        final Path expectedReduceTempFolder = tempDir.resolve(Path.of(vspId, versionId));
+        assertTrue(actualReduceTempFolder.startsWith(expectedReduceTempFolder),
+            String.format("Reduce temporary directory should be '%s'", expectedReduceTempFolder));
+    }
+
     @NotNull
     private VspUploadStatusDto createVspUploadStatus(final UUID lockId, final VspUploadStatus uploadStatus) {
         final VspUploadStatusDto vspUploadStatusProcessing = new VspUploadStatusDto();
@@ -204,7 +245,6 @@ class OrchestrationTemplateCandidateImplTest {
 
     @Test
     void uploadNotSignedArtifactStorageManagerIsEnabledTest() throws IOException {
-        when(storageFactory.createArtifactStorageManager()).thenReturn(artifactStorageManager);
         when(artifactStorageManager.isEnabled()).thenReturn(true);
         when(artifactStorageManager.getStorageConfiguration()).thenReturn(new MinIoStorageArtifactStorageConfig
             (true, new EndPoint("host", 9000, false), new Credentials("accessKey", "secretKey"), "tempPath", 10_000_000));

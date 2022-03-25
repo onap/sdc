@@ -54,12 +54,12 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
     private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateCandidateDaoZusammenImpl.class);
     private static final String EMPTY_DATA = "{}";
     private final ZusammenAdaptor zusammenAdaptor;
-    private final ArtifactStorageManager artifactStorageManager;
+    private final StorageFactory storageFactory;
 
     public OrchestrationTemplateCandidateDaoZusammenImpl(final ZusammenAdaptor zusammenAdaptor) {
         this.zusammenAdaptor = zusammenAdaptor;
         LOGGER.info("Instantiating artifactStorageManager");
-        this.artifactStorageManager = new StorageFactory().createArtifactStorageManager();
+        this.storageFactory = new StorageFactory();
     }
 
     @Override
@@ -158,6 +158,7 @@ public class OrchestrationTemplateCandidateDaoZusammenImpl implements Orchestrat
             final String originalFileSuffix = candidateData.getOriginalFileSuffix();
             originalPackageElement.getInfo().addProperty(InfoPropertyName.ORIGINAL_FILE_NAME.getVal(), originalFileName);
             originalPackageElement.getInfo().addProperty(InfoPropertyName.ORIGINAL_FILE_SUFFIX.getVal(), originalFileSuffix);
+            final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
             originalPackageElement.getInfo().addProperty("storeCsarsExternally", artifactStorageManager.isEnabled());
             if (artifactStorageManager.isEnabled()) {
                 final ArtifactInfo candidateArtifactInfo = candidateData.getArtifactInfo();

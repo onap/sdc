@@ -27,6 +27,12 @@ import java.nio.file.Path;
  */
 public interface PackageSizeReducer {
 
+    /**
+     * Reduces the package in the given path based on the package reducer configuration.
+     *
+     * @param path the package path
+     * @return the reduced package in bytes
+     */
     byte[] reduce(Path path);
 
 }
