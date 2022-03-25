@@ -22,6 +22,30 @@
       "revId": "79cf78b81b7fca0bcf0eb891885aab64a4b27abe",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "610d5a19_17646781",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-25T10:57:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dbd39b2a_2649be84",
+      "range": {
+        "startLine": 74,
+        "startChar": 16,
+        "endLine": 75,
+        "endChar": 13
+      },
+      "revId": "79cf78b81b7fca0bcf0eb891885aab64a4b27abe",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
