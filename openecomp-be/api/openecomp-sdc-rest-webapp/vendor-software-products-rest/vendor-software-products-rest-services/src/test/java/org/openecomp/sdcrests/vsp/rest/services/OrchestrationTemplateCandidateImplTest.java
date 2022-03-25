@@ -54,6 +54,8 @@ import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -99,8 +101,6 @@ class OrchestrationTemplateCandidateImplTest {
     @Mock
     private ActivityLogManager activityLogManager;
     @Mock
-    private ArtifactStorageManager artifactStorageManager;
-    @Mock
     private PackageSizeReducer packageSizeReducer;
     @Mock
     private OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager;
@@ -108,8 +108,13 @@ class OrchestrationTemplateCandidateImplTest {
     private StorageFactory storageFactory;
     @Mock
     private Attachment fileToUpload;
+    @Mock
+    private ArtifactStorageManager artifactStorageManager;
     @InjectMocks
     private OrchestrationTemplateCandidateImpl orchestrationTemplateCandidate;
+
+    @TempDir
+    Path tempDir;
 
     @BeforeEach
     public void setUp() {
@@ -192,6 +197,45 @@ class OrchestrationTemplateCandidateImplTest {
             mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar")), user);
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+    }
+
+    @Test
+    void uploadArtifactStorageTest() throws IOException {
+        //given
+        final String vspId = "vspId";
+        final String versionId = "versionId";
+        when(orchestrationTemplateCandidateUploadManager.findLatestStatus(vspId, versionId, user)).thenReturn(Optional.empty());
+        final UUID lockId = UUID.randomUUID();
+        when(orchestrationTemplateCandidateUploadManager.putUploadInProgress(vspId, versionId, user))
+            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.UPLOADING));
+        when(orchestrationTemplateCandidateUploadManager.putUploadInValidation(vspId, versionId, user))
+            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.VALIDATING));
+        when(orchestrationTemplateCandidateUploadManager.putUploadInProcessing(vspId, versionId, user))
+            .thenReturn(createVspUploadStatus(lockId, VspUploadStatus.PROCESSING));
+        when(artifactStorageManager.isEnabled()).thenReturn(true);
+        final MinIoStorageArtifactStorageConfig minIoConfig =
+            new MinIoStorageArtifactStorageConfig(true,
+                new EndPoint("", 9000, true),
+                new Credentials("", ""), tempDir.toString(), 1000
+            );
+
+        when(artifactStorageManager.getStorageConfiguration()).thenReturn(minIoConfig);
+        final MinIoArtifactInfo artifactInfo = new MinIoArtifactInfo(vspId, versionId);
+        final Attachment attachmentMock = mockAttachment("filename.csar", this.getClass().getResource("/files/sample-not-signed.csar"));
+        final byte[] attachmentBytes = attachmentMock.getObject(byte[].class);
+        artifactInfo.setBytes(attachmentBytes);
+        final ArgumentCaptor<Path> reduceTempDirectoryArg = ArgumentCaptor.forClass(Path.class);
+        when(packageSizeReducer.reduce(reduceTempDirectoryArg.capture())).thenReturn(attachmentBytes);
+        when(artifactStorageManager.upload(eq(vspId), eq(versionId), any(InputStream.class))).thenReturn(artifactInfo);
+        //when
+        Response response = orchestrationTemplateCandidate.upload(vspId, versionId, attachmentMock, user);
+        //then
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertTrue(((UploadFileResponseDto) response.getEntity()).getErrors().isEmpty());
+        final Path actualReduceTempFolder = reduceTempDirectoryArg.getValue();
+        final Path expectedReduceTempFolder = tempDir.resolve(Path.of(vspId, versionId));
+        assertTrue(actualReduceTempFolder.startsWith(expectedReduceTempFolder),
+            String.format("Reduce temporary directory should be '%s'", expectedReduceTempFolder));
     }
 
     @NotNull

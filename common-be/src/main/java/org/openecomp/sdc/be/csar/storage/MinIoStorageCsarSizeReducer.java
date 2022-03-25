@@ -26,6 +26,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -40,6 +41,7 @@ import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.openecomp.sdc.be.csar.storage.exception.CsarSizeReducerException;
+import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,13 +52,38 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
     private static final Set<String> ALLOWED_CERTIFICATE_EXTENSIONS = Set.of("cert", "crt");
     private static final String CSAR_EXTENSION = "csar";
     private static final String UNEXPECTED_PROBLEM_HAPPENED_WHILE_READING_THE_CSAR = "An unexpected problem happened while reading the CSAR '%s'";
+    private static final String EXTERNAL_CSAR_STORE = "externalCsarStore";
+
     @Getter
     private final AtomicBoolean reduced = new AtomicBoolean(false);
 
-    private final CsarPackageReducerConfiguration configuration;
+    private CsarPackageReducerConfiguration configuration;
 
-    public MinIoStorageCsarSizeReducer(final CsarPackageReducerConfiguration configuration) {
+    public MinIoStorageCsarSizeReducer() {
+        this.configuration = readPackageReducerConfiguration();
+    }
+
+    MinIoStorageCsarSizeReducer(final CsarPackageReducerConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    private CsarPackageReducerConfiguration readPackageReducerConfiguration() {
+        final var commonConfigurationManager = CommonConfigurationManager.getInstance();
+        final List<String> foldersToStrip = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "foldersToStrip", new ArrayList<>());
+        final int sizeLimit = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "sizeLimit", 1000000);
+        final int thresholdEntries = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, "thresholdEntries", 10000);
+        LOGGER.info("Folders to strip: '{}'", String.join(", ", foldersToStrip));
+        final Set<Path> foldersToStripPathSet = foldersToStrip.stream().map(Path::of).collect(Collectors.toSet());
+        return new CsarPackageReducerConfiguration(foldersToStripPathSet, sizeLimit, thresholdEntries);
+    }
+
+    @Override
+    public void reloadConfig() {
+        final CsarPackageReducerConfiguration actualConfig = readPackageReducerConfiguration();
+        if (actualConfig.equals(this.configuration)) {
+            return;
+        }
+        this.configuration = actualConfig;
     }
 
     @Override
@@ -76,7 +103,7 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
             zf.entries().asIterator().forEachRemaining(zipProcessingFunction.getProcessZipConsumer(csarPackagePath, zf, zos));
         } catch (final IOException ex1) {
             rollback(reducedCsarPath);
-            LOGGER.error("Could not read ZIP stream '{}'", csarPackagePath.toString(), ex1);
+            LOGGER.error("Could not read ZIP stream '{}'", csarPackagePath, ex1);
             final var errorMsg = String.format(UNEXPECTED_PROBLEM_HAPPENED_WHILE_READING_THE_CSAR, csarPackagePath);
             throw new CsarSizeReducerException(errorMsg, ex1);
         }
@@ -190,7 +217,7 @@ public class MinIoStorageCsarSizeReducer implements PackageSizeReducer {
                 .map(ZipEntry::getName).map(Path::of)
                 .collect(Collectors.toList());
         } catch (final IOException e) {
-            LOGGER.error("Failed to read ZipFile '{}'", csarPackagePath.toString(), e);
+            LOGGER.error("Failed to read ZipFile '{}'", csarPackagePath, e);
             final var errorMsg = String.format(UNEXPECTED_PROBLEM_HAPPENED_WHILE_READING_THE_CSAR, csarPackagePath);
             throw new CsarSizeReducerException(errorMsg, e);
         }

@@ -75,4 +75,9 @@ public interface ArtifactStorageManager {
      * @param vspId - VSP ID
      */
     void delete(String vspId);
+
+    /**
+     * Reloads the configuration if it was modified.
+     */
+    void reloadConfig();
 }

@@ -66,4 +66,9 @@ public class NoneStorageManager implements ArtifactStorageManager {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void reloadConfig() {
+        throw new UnsupportedOperationException();
+    }
+
 }

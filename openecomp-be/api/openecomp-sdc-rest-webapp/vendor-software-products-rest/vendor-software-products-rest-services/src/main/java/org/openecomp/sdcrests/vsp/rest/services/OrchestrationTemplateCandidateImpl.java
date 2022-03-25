@@ -104,7 +104,6 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
     private final VendorSoftwareProductManager vendorSoftwareProductManager;
     private final ActivityLogManager activityLogManager;
     private final ArtifactStorageManager artifactStorageManager;
-    private final StorageFactory storageFactory;
     private final PackageSizeReducer packageSizeReducer;
     private final OrchestrationTemplateCandidateUploadManager orchestrationTemplateCandidateUploadManager;
 
@@ -114,10 +113,9 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         this.vendorSoftwareProductManager = VspManagerFactory.getInstance().createInterface();
         this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
         LOGGER.info("Instantiating artifactStorageManager");
-        this.storageFactory = new StorageFactory();
-        this.artifactStorageManager = storageFactory.createArtifactStorageManager();
+        this.artifactStorageManager = new StorageFactory().createArtifactStorageManager();
         LOGGER.info("Instantiating packageSizeReducer");
-        this.packageSizeReducer = storageFactory.createPackageSizeReducer().orElse(null);
+        this.packageSizeReducer = new StorageFactory().createPackageSizeReducer().orElse(null);
         this.orchestrationTemplateCandidateUploadManager = orchestrationTemplateCandidateUploadManager;
     }
 
@@ -132,7 +130,6 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
         this.vendorSoftwareProductManager = vendorSoftwareProductManager;
         this.activityLogManager = activityLogManager;
         this.artifactStorageManager = artifactStorageManager;
-        this.storageFactory = new StorageFactory();
         this.packageSizeReducer = packageSizeReducer;
         this.orchestrationTemplateCandidateUploadManager = orchestrationTemplateCandidateUploadManager;
     }
@@ -154,7 +151,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             final DataHandler dataHandler = fileToUpload.getDataHandler();
             final var filename = ValidationUtils.sanitizeInputString(dataHandler.getName());
             ArtifactInfo artifactInfo = null;
-            final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
+            artifactStorageManager.reloadConfig();
             if (artifactStorageManager.isEnabled()) {
                 artifactInfo = handleArtifactStorage(vspId, versionId, filename, dataHandler);
                 fileToUploadBytes = artifactInfo.getBytes();
@@ -239,6 +236,7 @@ public class OrchestrationTemplateCandidateImpl implements OrchestrationTemplate
             LOGGER.error("Package Size Reducer not configured", e);
             throw new ArtifactStorageException(ERROR_HAS_OCCURRED_WHILE_PERSISTING_THE_ARTIFACT.formatMessage(filename));
         }
+        packageSizeReducer.reloadConfig();
         try {
             LOGGER.debug("STARTED -> reducing '{}'", tempArtifactPath.toString());
             artifactInfo.setBytes(packageSizeReducer.reduce(tempArtifactPath));

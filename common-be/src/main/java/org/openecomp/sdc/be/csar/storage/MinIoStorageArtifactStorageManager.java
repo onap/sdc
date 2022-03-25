@@ -50,8 +50,8 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
     private static final String TEMP_PATH = "tempPath";
     private static final String EXTERNAL_CSAR_STORE = "externalCsarStore";
     @Getter
-    private final MinIoStorageArtifactStorageConfig storageConfiguration;
-    private final MinioClient minioClient;
+    private MinIoStorageArtifactStorageConfig storageConfiguration;
+    private MinioClient minioClient;
 
     public MinIoStorageArtifactStorageManager() {
         this.storageConfiguration = readMinIoStorageArtifactStorageConfig();
@@ -203,6 +203,22 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
         } catch (final Exception e) {
             throw new ArtifactStorageException(String.format("An unexpected error occurred while checking for vsp '%s'", vspId), e);
         }
+    }
+
+    /**
+     * Reloads the client if there is any change to the configuration.
+     */
+    @Override
+    public void reloadConfig() {
+        final MinIoStorageArtifactStorageConfig actualConfig = readMinIoStorageArtifactStorageConfig();
+        if (!storageConfiguration.equals(actualConfig)) {
+            storageConfiguration = actualConfig;
+            reloadClient();
+        }
+    }
+
+    private void reloadClient() {
+        this.minioClient = initMinioClient();
     }
 
     private MinIoStorageArtifactStorageConfig readMinIoStorageArtifactStorageConfig() {
