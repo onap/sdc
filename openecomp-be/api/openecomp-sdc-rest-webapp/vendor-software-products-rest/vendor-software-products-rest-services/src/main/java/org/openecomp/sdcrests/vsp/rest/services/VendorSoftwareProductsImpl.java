@@ -133,9 +133,8 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     private final ActivityLogManager activityLogManager;
     private final NotificationPropagationManager notifier;
     private final UniqueValueUtil uniqueValueUtil;
-    private final ArtifactStorageManager artifactStorageManager;
+    private final StorageFactory storageFactory;
     private final CatalogVspClient catalogVspClient;
-
 
     public VendorSoftwareProductsImpl() {
         this.itemManager = AsdcItemManagerFactory.getInstance().createInterface();
@@ -145,7 +144,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
         this.notifier = NotificationPropagationManagerFactory.getInstance().createInterface();
         this.uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
-        this.artifactStorageManager = new StorageFactory().createArtifactStorageManager();
+        this.storageFactory = new StorageFactory();
         this.catalogVspClient = new CatalogVspClientImpl();
     }
 
@@ -156,7 +155,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
                                       ActivityLogManager activityLogManager,
                                       NotificationPropagationManager notifier,
                                       UniqueValueUtil uniqueValueUtil,
-                                      ArtifactStorageManager artifactStorageManager,
+                                      final StorageFactory storageFactory,
                                       CatalogVspClient catalogVspClient) {
         this.itemManager = itemManager;
         this.permissionsManager = permissionsManager;
@@ -165,7 +164,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         this.activityLogManager = activityLogManager;
         this.notifier = notifier;
         this.uniqueValueUtil = uniqueValueUtil;
-        this.artifactStorageManager = artifactStorageManager;
+        this.storageFactory = storageFactory;
         this.catalogVspClient = catalogVspClient;
     }
 
@@ -299,8 +298,9 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
 
         Integer certifiedVersionsCounter = vsp.getVersionStatusCounters().get(VersionStatus.Certified);
+        final ArtifactStorageManager artifactStorageManager = storageFactory.createArtifactStorageManager();
         if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
-            if (artifactStorageManager.isEnabled() && !deleteVspFromStorage(vspId)) {
+            if (artifactStorageManager.isEnabled() && !deleteVspFromStorage(vspId, artifactStorageManager)) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new Exception(Messages.DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId))).build();
             }
@@ -308,7 +308,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         } else {
             final var isVspArchived = getVspList(null, ItemStatus.ARCHIVED.name(), user).stream().anyMatch(item -> item.getId().equals(vspId));
             if (isVspArchived) {
-                if (artifactStorageManager.isEnabled() && !deleteVspFromStorage(vspId)) {
+                if (artifactStorageManager.isEnabled() && !deleteVspFromStorage(vspId, artifactStorageManager)) {
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity(new Exception(Messages.DELETE_VSP_FROM_STORAGE_ERROR.formatMessage(vspId))).build();
                 }
@@ -318,7 +318,7 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         }
     }
 
-    private boolean deleteVspFromStorage(final String vspId) {
+    private boolean deleteVspFromStorage(final String vspId, final ArtifactStorageManager artifactStorageManager) {
         try {
             artifactStorageManager.delete(vspId);
         } catch (final Exception e) {
