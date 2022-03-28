@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.minio.BucketExistsArgs;
@@ -155,10 +156,19 @@ class MinIoStorageArtifactStorageManagerTest {
 
     @Test
     void testDeleteVspFail() throws Exception {
+        when(minioClient.bucketExists(BucketExistsArgs.builder().bucket(VSP_ID).build())).thenReturn(true);
         doThrow(new RuntimeException()).when(minioClient).removeBucket(any(RemoveBucketArgs.class));
-        assertThrows(ArtifactStorageException.class, () -> {
-            testSubject.delete(VSP_ID);
-        });
+        assertThrows(ArtifactStorageException.class, () -> testSubject.delete(VSP_ID));
+    }
+
+    @Test
+    void testDeleteVspBucketNotFound() throws Exception {
+        final BucketExistsArgs bucketExistsArgs = BucketExistsArgs.builder().bucket(VSP_ID).build();
+        //when
+        when(minioClient.bucketExists(bucketExistsArgs)).thenReturn(false);
+        testSubject.delete(VSP_ID);
+        //then
+        verify(minioClient).bucketExists(bucketExistsArgs);
     }
 
     @Test

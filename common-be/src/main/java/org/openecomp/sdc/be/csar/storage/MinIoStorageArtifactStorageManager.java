@@ -92,7 +92,7 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
 
         try {
             // Make bucket if not exist.
-            final boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(vspId).build());
+            final boolean found = bucketExists(vspId);
 
             if (!found) {
                 // Make a new bucket ${vspId} .
@@ -174,6 +174,10 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
     @Override
     public void delete(final String vspId) {
         LOGGER.debug("DELETE VSP - bucket: '{}'", vspId);
+        if (!bucketExists(vspId)) {
+            LOGGER.debug("VSP '{}' bucket was not found while trying to delete it", vspId);
+            return;
+        }
         final var listObjects = minioClient.listObjects(ListObjectsArgs.builder().bucket(vspId).build());
         listObjects.forEach(itemResult -> {
             Item versionId;
@@ -190,6 +194,14 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
         } catch (final Exception e) {
             LOGGER.error("Failed to delete VSP - bucket: '{}'", vspId, e);
             throw new ArtifactStorageException(String.format("Failed to delete VSP '%s'", vspId), e);
+        }
+    }
+
+    private boolean bucketExists(final String vspId) {
+        try {
+            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(vspId).build());
+        } catch (final Exception e) {
+            throw new ArtifactStorageException(String.format("An unexpected error occurred while checking for vsp '%s'", vspId), e);
         }
     }
 
