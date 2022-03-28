@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "c4db3786_3ed7904c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-28T14:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "78d3f5be_8428d4f3",
+      "range": {
+        "startLine": 74,
+        "startChar": 16,
+        "endLine": 74,
+        "endChar": 38
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "09437806_a0e53e70",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
         "patchSetId": 3
@@ -68,6 +92,30 @@
       "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be3307fb_eac4f596",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-28T14:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "09437806_a0e53e70",
+      "range": {
+        "startLine": 87,
+        "startChar": 12,
+        "endLine": 88,
+        "endChar": 18
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "b51a1325_163576a6",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-28T14:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d220516_aa3853df",
+      "range": {
+        "startLine": 95,
+        "startChar": 18,
+        "endLine": 95,
+        "endChar": 70
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ce57d6cf_ae4d9330",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
         "patchSetId": 3
@@ -114,6 +186,30 @@
       "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9829eb7_e83d23b9",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-03-28T14:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce57d6cf_ae4d9330",
+      "range": {
+        "startLine": 108,
+        "startChar": 18,
+        "endLine": 108,
+        "endChar": 50
+      },
+      "revId": "2b020f77337097dbdecb2eb875fae0716b863f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
