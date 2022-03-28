@@ -27,7 +27,7 @@
                     testId="interface-name"
                     [selectedOption]="getSelectedDropdown(interfaceNames, operation.interfaceType)"
                     placeHolder="Select..."
-                    [disabled]="readonly"
+                    [disabled]="readonly ||isEditMode"
                     (changed)="onSelectInterface($event)"
                     [options]="interfaceNames">
                 </sdc-dropdown>
@@ -41,7 +41,7 @@
                     testId="operation-name"
                     [selectedOption]="getSelectedDropdown(operationNames, operation.name)"
                     placeHolder="Select..."
-                    [disabled]="readonly"
+                    [disabled]="readonly || isEditMode"
                     (changed)="onSelectOperationName($event)"
                     [options]="operationNames">
                 </sdc-dropdown>
