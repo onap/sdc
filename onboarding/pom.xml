@@ -58,7 +58,7 @@
         <datastax.cassandra.version>3.8.0</datastax.cassandra.version>
         <groovy.minimal.version>1.5.8</groovy.minimal.version>
         <http.client.version>${httpclient.version}</http.client.version>
-        <http.core.version>4.4.1</http.core.version>
+        <http.core.version>${httpcore.version}</http.core.version>
         <httpasyncclient.version>4.1.2</httpasyncclient.version>
         <com.sun.xml.version>2.3.3</com.sun.xml.version>
         <javax.el.version>2.2.6</javax.el.version>
