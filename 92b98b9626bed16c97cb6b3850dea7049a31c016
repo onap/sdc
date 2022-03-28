@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7db02e63_681dacb9",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/PropertyDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-28T12:25:26Z",
+      "side": 1,
+      "message": "Is there a reason why this would be here instead of in the super class constructor?",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 9
+      },
+      "revId": "92b98b9626bed16c97cb6b3850dea7049a31c016",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
