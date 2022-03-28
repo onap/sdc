@@ -22,6 +22,30 @@
       "revId": "92b98b9626bed16c97cb6b3850dea7049a31c016",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f72108ee_1737630c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/PropertyDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-28T15:18:52Z",
+      "side": 1,
+      "message": "The Schema-\u003eproperty field have the parent type PropertyDataDefinition.\nThere was a part of the code that was expecting a PropertyDefinition instead, which has a list of constraints. So not all the cases will have a PropertyDefinition, it can be a PropertyDataDefinition (or at least that is what the design indicates), and that is why I left only inside the PropertyDefinition constructor instead of putting in the super.",
+      "parentUuid": "7db02e63_681dacb9",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 9
+      },
+      "revId": "92b98b9626bed16c97cb6b3850dea7049a31c016",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
