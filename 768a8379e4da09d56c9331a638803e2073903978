@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "edd0f01b_305d37ca",
+        "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-28T11:42:33Z",
+      "side": 1,
+      "message": "artifactFiles beinng null will not be a problem if you check with null-safe check from CollectionUtils instead of artifactFiles.isEmpty()",
+      "parentUuid": "0c3356e9_ddd3230b",
+      "range": {
+        "startLine": 80,
+        "startChar": 16,
+        "endLine": 80,
+        "endChar": 177
+      },
+      "revId": "768a8379e4da09d56c9331a638803e2073903978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "44e46d62_006262fe",
         "filename": "openecomp-be/lib/openecomp-tosca-lib/src/main/java/org/openecomp/sdc/tosca/services/impl/ToscaFileOutputServiceCsarImpl.java",
         "patchSetId": 3
