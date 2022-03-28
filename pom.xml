@@ -92,7 +92,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <snakeyaml.version>1.29</snakeyaml.version>
         <functionaljava.version>4.9</functionaljava.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <httpcore.version>4.4.1</httpcore.version>
+        <httpcore.version>4.4.15</httpcore.version>
         <json-simple.version>1.1</json-simple.version>
 
         <!-- PM Dictionary validation -->
