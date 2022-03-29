@@ -53,6 +53,7 @@ import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -66,6 +67,7 @@ class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
     private final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
     private final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
 
     @InjectMocks
     private final ServiceBusinessLogic bl = new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
@@ -74,7 +76,7 @@ class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
         serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
         artifactToscaOperation, componentContactIdValidator,
         componentNameValidator, componentTagsValidator, componentValidator, componentIconValidator,
-        componentProjectCodeValidator, componentDescriptionValidator);
+        componentProjectCodeValidator, componentDescriptionValidator, modelOperation);
 
     private Service serviceToActivate;
     private ActivationRequestInformation activationRequestInformation;

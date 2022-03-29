@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
@@ -41,7 +42,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -51,16 +54,20 @@ import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.GroupInstance;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ToscaOperationException;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.plugins.ServiceCreationPlugin;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -659,6 +666,39 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         assertFalse(resourceIdList.contains(resourceInUse));
     }
 
+    @Test
+    void testDeleteArchivedService_NotFound() {
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        assertThrows(StorageException.class, () -> bl.deleteServiceAllVersions("1", user));
+    }
+
+    @Test
+    void testDeleteArchivedService_NotArchived() {
+        String serviceId = "12345";
+        Either<Component, StorageOperationStatus> eitherService = Either.left(createNewService());
+        eitherService.left().value().setArchived(false);
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+        final ComponentException actualException = assertThrows(ComponentException.class, () -> bl.deleteServiceAllVersions(serviceId, user));
+        assertEquals(actualException.getActionStatus(), ActionStatus.COMPONENT_NOT_ARCHIVED);
+        assertEquals(actualException.getParams()[0], serviceId);
+    }
+
+    @Test
+    void testDeleteArchivedService_DeleteServiceSpecificModel() throws ToscaOperationException {
+        String serviceId = "12345";
+        String model = "serviceSpecificModel";
+        List<String> deletedServcies= new ArrayList<>();
+        deletedServcies.add("54321");
+        Model normativeExtensionModel = new Model("normativeExtensionModel", ModelTypeEnum.NORMATIVE_EXTENSION);
+        Either<Component, StorageOperationStatus> eitherService = Either.left(createNewService());
+        eitherService.left().value().setArchived(true);
+        eitherService.left().value().setModel(model);
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+        Mockito.when(toscaOperationFacade.deleteService(Mockito.anyString(), Mockito.eq(true))).thenReturn(deletedServcies);
+        Mockito.when(modelOperation.findModelByName(model)).thenReturn(Optional.of(normativeExtensionModel));
+        bl.deleteServiceAllVersions(serviceId, user);
+        Mockito.verify(modelOperation, Mockito.times(1)).deleteModel(normativeExtensionModel, false);
+    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
