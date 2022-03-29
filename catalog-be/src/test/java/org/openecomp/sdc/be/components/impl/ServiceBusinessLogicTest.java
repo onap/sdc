@@ -28,8 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Lists;
@@ -61,6 +65,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.plugins.ServiceCreationPlugin;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -659,6 +664,33 @@ class ServiceBusinessLogicTest extends ServiceBusinessLogicBaseTestSetup {
         assertFalse(resourceIdList.contains(resourceInUse));
     }
 
+    @Test
+    void testDeleteArchivedService_NotFound() {
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        assertThrows(StorageException.class, () -> bl.deleteArchivedService("1", user));
+    }
+
+    @Test
+    void testDeleteArchivedService_NotArchived() {
+        Either<Component, StorageOperationStatus> eitherService = Either.left(createNewService());
+        eitherService.left().value().setArchived(false);
+        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+        assertThrows(StorageException.class, () -> bl.deleteArchivedService("1", user));
+    }
+
+    @Test
+    void testDeleteArchivedService() {
+//        Either<Component, StorageOperationStatus> eitherService = Either.left(createNewService());
+//        eitherService.left().value().setArchived(true);
+//        Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
+//
+//        List<String> deletedService = toscaOperationFacade.deleteService(eitherService.left().value().getUniqueId());
+////        deletedService.add(eitherService.left().value().getUniqueId());
+////        Mockito.when(toscaOperationFacade.deleteService(eitherService.left().value().getUniqueId())).thenReturn(deletedService);
+//
+//        bl.deleteArchivedService("1", user);
+//        assertTrue(deletedService.contains(eitherService.left().value().getUniqueId()));
+    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
