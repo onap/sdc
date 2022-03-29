@@ -1301,6 +1301,30 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(serviceRelations);
     }
 
+    public void deleteArchivedService(String serviceId, User user) {
+        validateUserExists(user);
+        Either<Service, StorageOperationStatus> serviceStatus = toscaOperationFacade.getToscaElement(serviceId);
+        if (serviceStatus.isRight()) {
+            log.debug("Failed to get service {}", serviceId);
+            componentException(serviceStatus.right().value());
+        }
+        Service service = serviceStatus.left().value();
+        if (Boolean.FALSE.equals(service.isArchived())) {
+            log.debug("The service, {}, requested for delete has not been archived.", serviceId);
+            componentException(StorageOperationStatus.COMPONENT_NOT_ARCHIVED);
+        }
+        try {
+            List<String> deletedServiceList = toscaOperationFacade.deleteService(service.getUniqueId());
+            if (log.isDebugEnabled()) {
+                deletedServiceList.forEach(deletedS -> log.debug("Component {} was deleted.", deletedS));
+            }
+            updateCatalog(service, ChangeTypeEnum.DELETE);
+        } catch (ComponentException exception) {
+            log.debug("Failed to delete service, {}, in ServiceServlet", serviceId);
+            throw exception;
+        }
+    }
+
     public ResponseFormat deleteService(String serviceId, User user) {
         ResponseFormat responseFormat;
         validateUserExists(user);

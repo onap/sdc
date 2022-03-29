@@ -150,6 +150,17 @@ public abstract class ToscaElementOperation extends BaseOperation {
         return Either.left(vertexG);
     }
 
+    protected GraphVertex getHighestVersionFrom(GraphVertex v) {
+        Either<GraphVertex, JanusGraphOperationStatus> childVertexE = janusGraphDao
+                .getChildVertex(v, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
+        GraphVertex highestVersionVertex = v;
+        while (childVertexE.isLeft()) {
+            highestVersionVertex = childVertexE.left().value();
+            childVertexE = janusGraphDao.getChildVertex(highestVersionVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
+        }
+        return highestVersionVertex;
+    }
+
     public Either<ToscaElement, StorageOperationStatus> getToscaElement(String uniqueId) {
         return getToscaElement(uniqueId, new ComponentParametersView());
     }
