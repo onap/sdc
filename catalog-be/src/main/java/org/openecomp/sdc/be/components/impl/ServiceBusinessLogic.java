@@ -102,6 +102,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -123,6 +124,7 @@ import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
@@ -133,6 +135,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.plugins.ServiceCreationPlugin;
@@ -194,6 +197,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private ServiceCategoryValidator serviceCategoryValidator;
     @Autowired
     private ServiceValidator serviceValidator;
+    private final ModelOperation modelOperation;
 
     @Autowired
     public ServiceBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
@@ -205,7 +209,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 ComponentContactIdValidator componentContactIdValidator, ComponentNameValidator componentNameValidator,
                                 ComponentTagsValidator componentTagsValidator, ComponentValidator componentValidator,
                                 ComponentIconValidator componentIconValidator, ComponentProjectCodeValidator componentProjectCodeValidator,
-                                ComponentDescriptionValidator componentDescriptionValidator) {
+                                ComponentDescriptionValidator componentDescriptionValidator, ModelOperation modelOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -214,6 +218,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         this.serviceDistributionValidation = serviceDistributionValidation;
         this.forwardingPathValidator = forwardingPathValidator;
         this.uiComponentDataConverter = uiComponentDataConverter;
+        this.modelOperation = modelOperation;
     }
 
     @Autowired
@@ -1301,7 +1306,39 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return Either.left(serviceRelations);
     }
 
-    public ResponseFormat deleteService(String serviceId, User user) {
+    public void deleteServiceAllVersions(String serviceId, User user) {
+        validateUserExists(user);
+        Either<Service, StorageOperationStatus> serviceStatus = toscaOperationFacade.getToscaElement(serviceId);
+        if (serviceStatus.isRight()) {
+            log.debug("Failed to get service {}", serviceId);
+            componentException(serviceStatus.right().value());
+        }
+        Service service = serviceStatus.left().value();
+        if (Boolean.FALSE.equals(service.isArchived())) {
+            log.debug("The service, {}, requested for delete has not been archived.", serviceId);
+            throw new ComponentException(ActionStatus.COMPONENT_NOT_ARCHIVED, serviceId);
+        }
+        List<String> deletedServiceList = new ArrayList<>();
+        try {
+            String model = service.getModel();
+            final Optional<Model> modelOptional = modelOperation.findModelByName(model);
+            deletedServiceList = toscaOperationFacade.deleteService(service.getInvariantUUID(), true);
+            if (log.isDebugEnabled()) {
+                deletedServiceList.forEach(deletedS -> log.debug("Component {} was deleted.", deletedS));
+            }
+            if (modelOptional.isPresent() && modelOptional.get().getModelType() == ModelTypeEnum.NORMATIVE_EXTENSION) {
+                modelOperation.deleteModel(modelOptional.get(), false);
+            }
+            toscaOperationFacade.commitAndCheck(service.getUniqueId());
+            updateCatalog(service, ChangeTypeEnum.DELETE);
+        } catch (ComponentException exception) {
+            log.debug("Failed to delete service, {}, in ServiceServlet", serviceId);
+            janusGraphDao.rollback();
+            throw exception;
+        }
+    }
+
+    public ResponseFormat markServiceForDeletion(String serviceId, User user) {
         ResponseFormat responseFormat;
         validateUserExists(user);
         Either<Service, StorageOperationStatus> serviceStatus = toscaOperationFacade.getToscaElement(serviceId);
