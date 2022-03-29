@@ -78,6 +78,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionDeployEvent;
 import org.openecomp.sdc.be.resources.data.auditing.DistributionNotificationEvent;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
@@ -110,6 +111,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
     protected CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
     protected ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
     protected ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
+    protected ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
     IElementOperation mockElementDao = new ElementOperationMock();
     DistributionEngine distributionEngine =  Mockito.mock(DistributionEngine.class);
     ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
@@ -209,7 +211,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
                 serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
                 artifactToscaOperation, componentContactIdValidator,
                 componentNameValidator, componentTagsValidator, componentValidator,
-                componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
+                componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator, modelOperation);
         bl.setComponentContactIdValidator(componentContactIdValidator);
         bl.setComponentIconValidator(componentIconValidator);
         bl.setComponentTagsValidator(componentTagsValidator);

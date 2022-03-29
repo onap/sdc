@@ -64,6 +64,7 @@ public enum StorageOperationStatus {
     PROPERTY_NAME_ALREADY_EXISTS,
     INVALID_PROPERTY,
     COMPONENT_IS_ARCHIVED,
+    COMPONENT_NOT_ARCHIVED,
     DECLARED_INPUT_USED_BY_OPERATION;
     // @formatter:on
 

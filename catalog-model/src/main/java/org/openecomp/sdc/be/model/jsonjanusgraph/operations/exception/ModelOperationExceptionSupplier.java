@@ -57,4 +57,8 @@ public class ModelOperationExceptionSupplier {
         return () -> new OperationException(ActionStatus.UNKNOWN_MODEL_TYPE, modelType);
     }
 
+    public static Supplier<OperationException> componentInUse(final String stringOfServices) {
+        return () -> new OperationException(ActionStatus.COMPONENT_IN_USE_BY_ANOTHER_COMPONENT, stringOfServices);
+    }
+
 }
