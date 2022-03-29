@@ -1,0 +1,556 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45db18e6_df98da07",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1304,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "In my opinion, responses should be handled by the controller, this method should be void. You could use a ComponentException or similar to throw errors when needed.",
+      "range": {
+        "startLine": 1304,
+        "startChar": 11,
+        "endLine": 1304,
+        "endChar": 25
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60ead6b4_a5d2409e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1304,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "I suggest to change to deleteArchivedService",
+      "range": {
+        "startLine": 1304,
+        "startChar": 26,
+        "endLine": 1304,
+        "endChar": 49
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91f847e5_af980d37",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1317,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "this list of string is not used, why have it as a return?",
+      "range": {
+        "startLine": 1317,
+        "startChar": 19,
+        "endLine": 1317,
+        "endChar": 31
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e8c652f_1246912f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1325,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "just let the exception to be thrown. There is a org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper that will handle ComponentException thrown in an endpoint.",
+      "range": {
+        "startLine": 1323,
+        "startChar": 8,
+        "endLine": 1325,
+        "endChar": 9
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43dd580b_8d7053cd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "I suggest to change to:\nDeletes an archived service",
+      "range": {
+        "startLine": 305,
+        "startChar": 30,
+        "endLine": 305,
+        "endChar": 55
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26b63b03_59f27b45",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 995,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "In my opinion, we should not use Either, just return the List\u003cString\u003e. For errors (Either.right cases), you can just throw a custom runtime or checked exception with the StorageOperationStatus (to support storing this information from sub calls with Either returns)",
+      "range": {
+        "startLine": 995,
+        "startChar": 11,
+        "endLine": 995,
+        "endChar": 55
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01f063a8_cb31d776",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 997,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "I recommend to just assign straight to the variable:\nfinal Either\u003cGraphVertex, StorageOperationStatus\u003e componentToDelete \u003d",
+      "range": {
+        "startLine": 996,
+        "startChar": 8,
+        "endLine": 997,
+        "endChar": 25
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebeeb1e8_a55afc2a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 999,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "before proceeding, you need to check if it is right (error or not found)",
+      "range": {
+        "startLine": 999,
+        "startChar": 85,
+        "endLine": 999,
+        "endChar": 109
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2b6f1ef_2b54579a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1001,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "are you deleting all the services versions? You should check if any version is in use, not only the highest one.",
+      "range": {
+        "startLine": 1001,
+        "startChar": 11,
+        "endLine": 1001,
+        "endChar": 39
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c83aa729_579d9dc5",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "use just anyMatch:\nallParents.left().value().stream().anyMatch(this::checkIfInUse)",
+      "range": {
+        "startLine": 1008,
+        "startChar": 16,
+        "endLine": 1008,
+        "endChar": 106
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c24b9d8_86094c05",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1014,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "suggest to change to:\nList\u003cString\u003e affectedComponentIds \u003d new ArrayList\u003c\u003e();",
+      "range": {
+        "startLine": 1014,
+        "startChar": 8,
+        "endLine": 1014,
+        "endChar": 107
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb91d41a_b7ff9bc1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "please, surround this for in a try catch finally. Include the \"commitAndCheck(highestVersion.getUniqueId())\" as the last line of the try.\nIn the catch, do a \"janusGraphDao.rollback()\".\nAlso, if any deletion fails on line 1017 \"if (deleteToscaElement.isRight())\", also do a rollback and return.\nIt would be good to lock all the services before any delete:\n\nStorageOperationStatus storageOperationStatus \u003d graphLockOperation.lockComponent(service.getUniqueId(), NodeTypeEnum.Service);\n\nthen release the lock in the finally.",
+      "range": {
+        "startLine": 1015,
+        "startChar": 8,
+        "endLine": 1015,
+        "endChar": 65
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f268dcc_00c45903",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "related to the suggestion on line 1014:\naffectedComponentIds.add(elementV.getUniqueId());",
+      "range": {
+        "startLine": 1022,
+        "startChar": 13,
+        "endLine": 1022,
+        "endChar": 77
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5619c703_63336a06",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "related to the suggestion on line 1014:\nEither.left(affectedComponentIds)",
+      "range": {
+        "startLine": 1025,
+        "startChar": 49,
+        "endLine": 1025,
+        "endChar": 69
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "087c5130_98ad12d6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1028,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "avoid using Either, just return a List\u003cGraphVertex\u003e",
+      "range": {
+        "startLine": 1028,
+        "startChar": 12,
+        "endLine": 1028,
+        "endChar": 64
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1052ca75_fed30942",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1028,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "avoid to use abbreviation for better clarity: vertex or graphVertex",
+      "range": {
+        "startLine": 1028,
+        "startChar": 91,
+        "endLine": 1028,
+        "endChar": 92
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0bd0f05b_c94aa053",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1036,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "why use a map if you are returning the map values?",
+      "range": {
+        "startLine": 1036,
+        "startChar": 8,
+        "endLine": 1036,
+        "endChar": 62
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c4cadf4_5501973b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1037,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "suggest to change to parentVertex;\nadd a space after the variable and before the colon. Also after the \"for\".\nPlease, use the ONAP Java coding style with column limit of 150 characteres: https://wiki.onap.org/display/DW/Java+code+style.",
+      "range": {
+        "startLine": 1037,
+        "startChar": 24,
+        "endLine": 1037,
+        "endChar": 26
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e40fe7a3_8c02c642",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "please, unwrap from the Either to remove unnecessary complexity",
+      "range": {
+        "startLine": 1038,
+        "startChar": 27,
+        "endLine": 1038,
+        "endChar": 42
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b53051e_69dbf78d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "breaking line limit of 150 characters",
+      "range": {
+        "startLine": 1042,
+        "startChar": 16,
+        "endLine": 1042,
+        "endChar": 190
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3be6b83_8e8c9518",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1064,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "with following suggestions, this variable is not needed",
+      "range": {
+        "startLine": 1064,
+        "startChar": 8,
+        "endLine": 1064,
+        "endChar": 32
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "284862a2_bb5a8ee0",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1076,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "this whole code is only for the log.debug entry on line 1073. So, check first if the debug log is enabled with log.isDebugEnabled() before calling anything in this block.",
+      "range": {
+        "startLine": 1070,
+        "startChar": 16,
+        "endLine": 1076,
+        "endChar": 17
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dece0ba9_eb6b0216",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1078,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "return true;",
+      "range": {
+        "startLine": 1077,
+        "startChar": 16,
+        "endLine": 1078,
+        "endChar": 22
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "652da36c_88a27dc7",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1081,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-29T17:47:28Z",
+      "side": 1,
+      "message": "return false;",
+      "range": {
+        "startLine": 1081,
+        "startChar": 5,
+        "endLine": 1081,
+        "endChar": 20
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
