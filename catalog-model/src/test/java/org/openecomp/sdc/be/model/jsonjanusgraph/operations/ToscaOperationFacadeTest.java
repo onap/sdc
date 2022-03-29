@@ -36,6 +36,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -70,6 +71,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openecomp.sdc.be.config.ComponentType;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
@@ -84,6 +87,7 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -106,7 +110,10 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
+import org.openecomp.sdc.be.model.operations.StorageException;
+import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -136,6 +143,9 @@ public class ToscaOperationFacadeTest {
 
     @Mock
     private NodeTemplateOperation nodeTemplateOperationMock;
+
+    @Mock
+    private IGraphLockOperation graphLockOperationMock;
 
     @Before
     public void setUp() throws Exception {
@@ -405,6 +415,148 @@ public class ToscaOperationFacadeTest {
             .thenReturn(Either.left(toscaElement));
         result = testInstance.getToscaElement(id, JsonParseFlagEnum.ParseAll);
         assertTrue(result.isLeft());
+    }
+
+    @Test
+    public void testDeleteService_ServiceInUse() {
+        String invariantUUID = "12345";
+        String serviceUid = "1";
+        GraphVertex service1 = getTopologyTemplateVertex();
+        service1.setUniqueId(serviceUid);
+        List<GraphVertex> allResourcesToDelete = new ArrayList<>();
+        allResourcesToDelete.add(service1);
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, invariantUUID);
+        ToscaElement toscaElement = getToscaElementForTest();
+        toscaElement.setUniqueId(serviceUid);
+        String service2Name = "service2Name";
+        Map<String, Object> service2MetadataJson = new HashMap<>();
+        service2MetadataJson.put(GraphPropertyEnum.COMPONENT_TYPE.getProperty(), ComponentType.SERVICE);
+        service2MetadataJson.put(GraphPropertyEnum.NAME.getProperty(), service2Name);
+        String service2Uid = "2";
+        GraphVertex usingService = getTopologyTemplateVertex();
+        usingService.setUniqueId(service2Uid);
+        usingService.setMetadataJson(service2MetadataJson);
+        List<GraphVertex> inUseBy = new ArrayList<>();
+        inUseBy.add(usingService);
+
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).
+                thenReturn(Either.left(allResourcesToDelete));
+        doReturn(Either.left(toscaElement)).when(topologyTemplateOperationMock).getToscaElement(eq(service1), any(ComponentParametersView.class));
+        when(topologyTemplateOperationMock.
+                getComponentByLabelAndId(serviceUid, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+                thenReturn(Either.left(service1));
+        when(janusGraphDaoMock.getParentVertices(any(GraphVertex.class), any(), eq(JsonParseFlagEnum.ParseAll))).
+                thenReturn(Either.left(inUseBy)).thenReturn(Either.left(inUseBy));
+        final OperationException actualException = assertThrows(OperationException.class, () -> testInstance.deleteService(invariantUUID));
+        assertEquals(actualException.getActionStatus(), ActionStatus.COMPONENT_IN_USE_BY_ANOTHER_COMPONENT);
+        assertEquals(actualException.getParams()[0], ComponentType.SERVICE +  " " + service2Name);
+    }
+
+    @Test
+    public void testDeleteService_WithOneVersion() {
+        String invariantUUID = "12345";
+        String serviceUid = "1";
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, invariantUUID);
+        GraphVertex service1 = getTopologyTemplateVertex();
+        service1.setUniqueId(serviceUid);
+        List<GraphVertex> allResourcesToDelete = new ArrayList<>();
+        allResourcesToDelete.add(service1);
+        ToscaElement toscaElement = getToscaElementForTest();
+        toscaElement.setUniqueId(serviceUid);
+        List<String> affectedComponentIds = new ArrayList<>();
+        affectedComponentIds.add(service1.getUniqueId());
+
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).
+                thenReturn(Either.left(allResourcesToDelete));
+        doReturn(Either.left(toscaElement)).when(topologyTemplateOperationMock).getToscaElement(eq(service1), any(ComponentParametersView.class));
+        when(topologyTemplateOperationMock.
+                getComponentByLabelAndId(serviceUid, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+                thenReturn(Either.left(service1));
+        when(janusGraphDaoMock.getParentVertices(eq(service1), any(), eq(JsonParseFlagEnum.ParseAll))).thenReturn(Either.right(JanusGraphOperationStatus.OK));
+        when(graphLockOperationMock.lockComponent(service1.getUniqueId(), NodeTypeEnum.Service)).
+                thenReturn(StorageOperationStatus.OK);
+        when(topologyTemplateOperationMock.deleteToscaElement(service1)).thenReturn(Either.left(toscaElement));
+        assertEquals(affectedComponentIds, testInstance.deleteService(invariantUUID));
+    }
+
+    @Test
+    public void testDeleteService_WithTwoVersions() {
+        String invariantUUID = "12345";
+        String serviceUid = "1";
+        String service2Uid = "2";
+        GraphVertex service = getTopologyTemplateVertex();
+        service.setUniqueId(serviceUid);
+        GraphVertex serviceV2 = getTopologyTemplateVertex();
+        serviceV2.setUniqueId(service2Uid);
+        ToscaElement toscaElement = getToscaElementForTest();
+        toscaElement.setUniqueId(serviceUid);
+        ToscaElement toscaElement2 = getToscaElementForTest();
+        toscaElement2.setUniqueId(service2Uid);
+        List<String> affectedComponentIds = new ArrayList<>();
+        affectedComponentIds.add(service.getUniqueId());
+        affectedComponentIds.add(serviceV2.getUniqueId());
+        List<GraphVertex> allResourcesToDelete = new ArrayList<>();
+        allResourcesToDelete.add(service);
+        allResourcesToDelete.add(serviceV2);
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, invariantUUID);
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).
+                thenReturn(Either.left(allResourcesToDelete));
+        doReturn(Either.left(toscaElement)).when(topologyTemplateOperationMock).
+                getToscaElement(eq(service), any(ComponentParametersView.class));
+        doReturn(Either.left(toscaElement2)).when(topologyTemplateOperationMock).
+                getToscaElement(eq(serviceV2), any(ComponentParametersView.class));
+        when(topologyTemplateOperationMock.
+                getComponentByLabelAndId(serviceUid, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+                thenReturn(Either.left(service));
+        when(topologyTemplateOperationMock.
+                getComponentByLabelAndId(service2Uid, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+                thenReturn(Either.left(serviceV2));
+        when(janusGraphDaoMock.getParentVertices(any(GraphVertex.class), any(), eq(JsonParseFlagEnum.ParseAll))).thenReturn(Either.right(JanusGraphOperationStatus.OK));
+        when(graphLockOperationMock.lockComponent(service.getUniqueId(), NodeTypeEnum.Service)).
+            thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperationMock.lockComponent(serviceV2.getUniqueId(), NodeTypeEnum.Service)).
+                thenReturn(StorageOperationStatus.OK);
+        when(topologyTemplateOperationMock.deleteToscaElement(service)).thenReturn(Either.left(toscaElement));
+        when(topologyTemplateOperationMock.deleteToscaElement(serviceV2)).thenReturn(Either.left(toscaElement));
+        assertEquals(affectedComponentIds, testInstance.deleteService(invariantUUID));
+    }
+
+    @Test
+    public void testDeleteService_FailDelete() {
+        String invariantUUID = "12345";
+        String serviceUid = "1";
+        GraphVertex service = getTopologyTemplateVertex();
+        service.setUniqueId(serviceUid);
+        ToscaElement toscaElement = getToscaElementForTest();
+        toscaElement.setUniqueId(serviceUid);
+        List<GraphVertex> allResourcesToDelete = new ArrayList<>();
+        allResourcesToDelete.add(service);
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, invariantUUID);
+
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(allResourcesToDelete));
+        doReturn(Either.left(toscaElement)).when(topologyTemplateOperationMock).getToscaElement(eq(service), any(ComponentParametersView.class));
+        when(topologyTemplateOperationMock.getComponentByLabelAndId(serviceUid, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+                thenReturn(Either.left(service));
+        when(janusGraphDaoMock.getParentVertices(eq(service), any(), eq(JsonParseFlagEnum.ParseAll))).thenReturn(Either.right(JanusGraphOperationStatus.OK));
+        when(graphLockOperationMock.lockComponent(service.getUniqueId(), NodeTypeEnum.Service)).
+                thenReturn(StorageOperationStatus.OK);
+        when(topologyTemplateOperationMock.deleteToscaElement(service))
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        assertThrows(StorageException.class, () -> testInstance.deleteService(invariantUUID));
+    }
+
+    @Test
+    public void testDeleteService_NotFound() {
+        String invariantUUID = "12345";
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, invariantUUID);
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).
+                thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        assertThrows(StorageException.class, () -> testInstance.deleteService(invariantUUID));
     }
 
     @Test
