@@ -115,6 +115,7 @@ import org.openecomp.sdc.be.model.catalog.CatalogComponent;
 import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -991,21 +992,99 @@ public class ToscaOperationFacade {
         return Either.left(checkIfInUseAndDelete(allMarked));
     }
 
-    private List<String> checkIfInUseAndDelete(List<GraphVertex> allMarked) {
+    public Either<List<String>, StorageOperationStatus> deleteService(String serviceID) {
+        Either<GraphVertex, StorageOperationStatus> componentToDelete;
+        componentToDelete = topologyTemplateOperation
+                .getComponentByLabelAndId(serviceID, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll);
+        GraphVertex highestVersion = topologyTemplateOperation.getHighestVersionFrom(componentToDelete.left().value());
+        highestVersion = this.janusGraphDao.getVertexById(highestVersion.getUniqueId(), JsonParseFlagEnum.ParseAll).left().value();
+        if(checkIfInUse(highestVersion)) {
+            log.debug("Unable to delete highestVersion, {}, as it is in use", highestVersion.getUniqueId());
+            return Either.right(StorageOperationStatus.GRAPH_IS_LOCK);
+        }
+        List<GraphVertex> allServiceVerticesToDelete = new ArrayList<>();
+        Either<List<GraphVertex>, JanusGraphOperationStatus> allParents = getAllParents(highestVersion);
+        if(allParents.isLeft()) {
+            if (allParents.left().value().stream().filter(this::checkIfInUse).anyMatch(this::checkIfInUse)) {
+                return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(allParents.right().value()));
+            }
+            allServiceVerticesToDelete.addAll(allParents.left().value());
+        }
+        allServiceVerticesToDelete.add(highestVersion);
+        Either<List<String>, StorageOperationStatus> affectedComponentIds = Either.left(new ArrayList<>());
+        for (GraphVertex elementV : allServiceVerticesToDelete) {
+             Either<ToscaElement, StorageOperationStatus> deleteToscaElement = deleteToscaElement(elementV);
+             if (deleteToscaElement.isRight()) {
+                 log.debug("Failed to delete element UniqueID {}, Name {}, error {}", elementV.getUniqueId(),
+                         elementV.getMetadataProperties().get(GraphPropertyEnum.NAME), deleteToscaElement.right().value());
+                 return Either.right(deleteToscaElement.right().value());
+             }
+             affectedComponentIds.left().value().add(elementV.getUniqueId());
+        }
+        StorageOperationStatus sc = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(commitAndCheck(highestVersion.getUniqueId()));
+        return sc == StorageOperationStatus.OK ? affectedComponentIds : Either.right(sc);
+    }
+
+    private Either<List<GraphVertex>, JanusGraphOperationStatus> getAllParents(GraphVertex v) {
+        Either<List<GraphVertex>, JanusGraphOperationStatus> parentVertices = janusGraphDao
+                .getParentVertices(v, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);
+        if(parentVertices.isRight()) {
+            log.debug("No parent vortices found for {}", v.getUniqueId());
+            return parentVertices;
+        }
+        Either<GraphVertex, JanusGraphOperationStatus> parentVertex;
+        Map<String, GraphVertex> allParents = new HashMap<>();
+        for(GraphVertex cv: parentVertices.left().value()) {
+            parentVertex = Either.left(cv);
+            while (parentVertex.isLeft()) {
+                GraphVertex currentVertex = parentVertex.left().value();
+                parentVertex = janusGraphDao.getParentVertex(currentVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);
+                Either<List<GraphVertex>, JanusGraphOperationStatus> currentVertexParents = janusGraphDao.getParentVertices(currentVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);
+                if (currentVertexParents.isLeft()) {
+                    currentVertexParents.left().value().forEach(cvp -> allParents.put(cvp.getUniqueId(), cvp));
+                }
+                allParents.put(currentVertex.getUniqueId(), currentVertex);
+            }
+        }
+        return Either.left(new ArrayList<>(allParents.values()));
+    }
+
+    private JanusGraphOperationStatus commitAndCheck(String componentId) {
+        JanusGraphOperationStatus status = janusGraphDao.commit();
+        if (!status.equals(JanusGraphOperationStatus.OK)) {
+            log.debug("error occurred when trying to DELETE {}. Return code is: {}", componentId, status);
+            return status;
+        }
+        return JanusGraphOperationStatus.OK;
+    }
+
+    private boolean checkIfInUse(GraphVertex elementV) {
         final List<EdgeLabelEnum> forbiddenEdgeLabelEnums = Arrays
-            .asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
+                .asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
+        boolean isInUse = false;
+        for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
+            Either<Edge, JanusGraphOperationStatus> belongingEdgeByCriteria = janusGraphDao
+                    .getBelongingEdgeByCriteria(elementV, edgeLabelEnum, null);
+            if (belongingEdgeByCriteria.isLeft()) {
+                log.debug("Element {} in use.", elementV.getUniqueId());
+                Either<List<GraphVertex>, JanusGraphOperationStatus> inUseBy = janusGraphDao.getParentVertices(elementV, edgeLabelEnum, JsonParseFlagEnum.ParseAll);
+                if (inUseBy.isLeft()) {
+                    for (GraphVertex v: inUseBy.left().value()) {
+                        log.debug("Unable to delete {} {}. It is in use by {} {}.", elementV.getType(), elementV.getUniqueId(),
+                                v.getType(), v.getUniqueId());
+                    }
+                }
+                isInUse = true;
+                break;
+            }
+        }
+     return isInUse;
+    }
+
+    private List<String> checkIfInUseAndDelete(List<GraphVertex> allMarked) {
         List<String> deleted = new ArrayList<>();
         for (GraphVertex elementV : allMarked) {
-            boolean isAllowedToDelete = true;
-            for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
-                Either<Edge, JanusGraphOperationStatus> belongingEdgeByCriteria = janusGraphDao
-                    .getBelongingEdgeByCriteria(elementV, edgeLabelEnum, null);
-                if (belongingEdgeByCriteria.isLeft()) {
-                    log.debug("Marked element {} in use. don't delete it", elementV.getUniqueId());
-                    isAllowedToDelete = false;
-                    break;
-                }
-            }
+            boolean isAllowedToDelete = !checkIfInUse(elementV);
             if (isAllowedToDelete) {
                 Either<ToscaElement, StorageOperationStatus> deleteToscaElement = deleteToscaElement(elementV);
                 if (deleteToscaElement.isRight()) {
