@@ -67,6 +67,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -98,6 +99,7 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
     private ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     private ForwardingPathOperation forwardingPathOperation  = Mockito.mock(ForwardingPathOperation.class);
+    private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
 
     User user = null;
     Service serviceResponse = null;
@@ -165,7 +167,8 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
             artifactsBusinessLogic, distributionEngine, componentInstanceBusinessLogic,
             serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
             artifactToscaOperation, componentContactIdValidator, componentNameValidator,
-            componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
+            componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator,
+            modelOperation);
         bl.setUserAdmin(mockUserAdmin);
         bl.setGraphLockOperation(graphLockOperation);
         bl.setJanusGraphDao(mockJanusGraphDao);

@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.servlets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Objects;
 import com.google.gson.reflect.TypeToken;
 import com.jcabi.aspects.Loggable;
 import fj.data.Either;
@@ -52,6 +53,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -108,6 +110,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
     private static final String MODIFIER_ID_IS = "modifier id is {}";
     private final ElementBusinessLogic elementBusinessLogic;
     private final ServiceBusinessLogic serviceBusinessLogic;
+
+    public enum Action {DELETE, MARK_AS_DELETE}
 
     @Inject
     public ServiceServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
@@ -269,7 +273,8 @@ public class ServiceServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Service not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteService(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request) {
+    public Response deleteService(@PathParam("serviceId") final String serviceId, @QueryParam("action") final String action,
+                                  @Context final HttpServletRequest request) {
         ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
@@ -284,7 +289,13 @@ public class ServiceServlet extends AbstractValidationsServlet {
                 .log(LoggerSupportabilityActions.DELETE_SERVICE, StatusCode.STARTED, "Starting to delete service {} by user {} ", serviceIdLower,
                     userId);
             ServiceBusinessLogic businessLogic = getServiceBL(context);
-            ResponseFormat actionResponse = businessLogic.deleteService(serviceIdLower, modifier);
+            ResponseFormat actionResponse;
+            if (Objects.equal(action, Action.DELETE.name())) {
+                businessLogic.deleteArchivedService(serviceIdLower, modifier);
+                actionResponse = componentsUtils.getResponseFormat(ActionStatus.NO_CONTENT);
+            } else {
+                actionResponse = businessLogic.deleteService(serviceIdLower, modifier);
+            }
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
                 log.debug("failed to delete service");
                 return buildErrorResponse(actionResponse);
@@ -298,6 +309,38 @@ public class ServiceServlet extends AbstractValidationsServlet {
             throw e;
         }
     }
+
+//    @DELETE
+//    @Path("/services/delete/{serviceId}")
+//    @Tags({@Tag(name = "SDCE-2 APIs")})
+//    @Operation(description = "Delete Archived Service", method = "DELETE", summary = "Return no content", responses = {
+//            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+//            @ApiResponse(responseCode = "204", description = "Service deleted"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+//            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+//            @ApiResponse(responseCode = "404", description = "Service not found")})
+//    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+//    public Response deleteArchivedService(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request) {
+//        String url = request.getMethod() + " " + request.getRequestURI();
+//        log.debug(START_HANDLE_REQUEST_OF, url);
+//        String userId = request.getHeader(Constants.USER_ID_HEADER);
+//        User modifier = new User();
+//        modifier.setUserId(userId);
+//        log.debug(MODIFIER_ID_IS, userId);
+//        try {
+//            String serviceIdLower = serviceId.toLowerCase();
+//            loggerSupportability
+//                    .log(LoggerSupportabilityActions.DELETE_SERVICE, StatusCode.STARTED, "Starting to delete service {} by user {} ", serviceIdLower,
+//                            userId);
+//            serviceBusinessLogic.deleteArchivedService(serviceId, modifier);
+//            loggerSupportability
+//                    .log(LoggerSupportabilityActions.DELETE_SERVICE, StatusCode.COMPLETE, "Ended deleting service {} by user {}", serviceIdLower, userId);
+//            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
+//        } catch (Exception e) {
+//            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Archived Service");
+//            log.debug("delete service failed with exception", e);
+//            throw e;
+//        }
+//    }
 
     @DELETE
     @Path("/services/{serviceName}/{version}")
