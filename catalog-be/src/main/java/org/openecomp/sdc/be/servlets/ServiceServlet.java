@@ -300,6 +300,38 @@ public class ServiceServlet extends AbstractValidationsServlet {
     }
 
     @DELETE
+    @Path("/services/delete/{serviceId}")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Operation(description = "Delete Archived Service", method = "DELETE", summary = "Return no content", responses = {
+            @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+            @ApiResponse(responseCode = "204", description = "Service deleted"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
+            @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
+            @ApiResponse(responseCode = "404", description = "Service not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response deleteArchivedService(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request) {
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        String userId = request.getHeader(Constants.USER_ID_HEADER);
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug(MODIFIER_ID_IS, userId);
+        try {
+            String serviceIdLower = serviceId.toLowerCase();
+            loggerSupportability
+                    .log(LoggerSupportabilityActions.DELETE_SERVICE, StatusCode.STARTED, "Starting to delete service {} by user {} ", serviceIdLower,
+                            userId);
+            serviceBusinessLogic.deleteArchivedService(serviceId, modifier);
+            loggerSupportability
+                    .log(LoggerSupportabilityActions.DELETE_SERVICE, StatusCode.COMPLETE, "Ended deleting service {} by user {}", serviceIdLower, userId);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Archived Service");
+            log.debug("delete service failed with exception", e);
+            throw e;
+        }
+    }
+
+    @DELETE
     @Path("/services/{serviceName}/{version}")
     @Tags({@Tag(name = "SDCE-2 APIs")})
     @Operation(description = "Delete Service By Name And Version", method = "DELETE", summary = "Returns no content", responses = {
