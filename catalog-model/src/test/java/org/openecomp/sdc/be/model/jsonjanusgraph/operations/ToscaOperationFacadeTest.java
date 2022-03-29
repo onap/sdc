@@ -36,6 +36,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -84,6 +85,7 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -107,6 +109,8 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
+import org.openecomp.sdc.be.model.operations.StorageException;
+import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -136,6 +140,9 @@ public class ToscaOperationFacadeTest {
 
     @Mock
     private NodeTemplateOperation nodeTemplateOperationMock;
+
+    @Mock
+    private IGraphLockOperation graphLockOperationMock;
 
     @Before
     public void setUp() throws Exception {
@@ -406,6 +413,111 @@ public class ToscaOperationFacadeTest {
         result = testInstance.getToscaElement(id, JsonParseFlagEnum.ParseAll);
         assertTrue(result.isLeft());
     }
+
+//    @Test
+//    public void testDeleteService_WithTwoVersions() {
+//        GraphVertex graphVertex = getTopologyTemplateVertex();
+//        graphVertex.setUniqueId("1");
+//        ToscaElement toscaElement = getToscaElementForTest();
+//        GraphVertex graphVertex2 = getTopologyTemplateVertex();
+//        graphVertex2.setUniqueId("2");
+//        List<GraphVertex> parentVertices = new ArrayList<>();
+//        parentVertices.add(graphVertex2);
+//        List<String> affectedComponentIds = new ArrayList<>();
+//        affectedComponentIds.add(graphVertex.getUniqueId());
+//        affectedComponentIds.add(graphVertex2.getUniqueId());
+//        JanusGraphOperationStatus notFound = JanusGraphOperationStatus.NOT_FOUND;
+//
+//        when(topologyTemplateOperationMock.getComponentByLabelAndId("1", ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+//                thenReturn(Either.left(graphVertex));
+//        when(topologyTemplateOperationMock.getHighestVersionFrom(graphVertex)).thenReturn(graphVertex);
+//        when(janusGraphDaoMock.getVertexById(graphVertex.getUniqueId(), JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+//        when(janusGraphDaoMock.getParentVertices(graphVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll))
+//                .thenReturn(Either.left(parentVertices));
+//        when(janusGraphDaoMock.getParentVertices(graphVertex2, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll))
+//                .thenReturn(Either.right(notFound));
+//        when(janusGraphDaoMock.getParentVertex(graphVertex2, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll)).
+//            thenReturn(Either.right(notFound));
+//        List<EdgeLabelEnum> forbiddenEdgeLabelEnums = Arrays
+//                .asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
+//        for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
+//            when(janusGraphDaoMock.getBelongingEdgeByCriteria(graphVertex, edgeLabelEnum, null)).
+//                    thenReturn(Either.right(notFound));
+//        }
+//        for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
+//            when(janusGraphDaoMock.getBelongingEdgeByCriteria(graphVertex2, edgeLabelEnum, null)).
+//                    thenReturn(Either.right(notFound));
+//        }
+//        when(graphLockOperationMock.lockComponent(graphVertex.getUniqueId(), NodeTypeEnum.Service)).
+//            thenReturn(StorageOperationStatus.OK);
+//        when(graphLockOperationMock.lockComponent(graphVertex2.getUniqueId(), NodeTypeEnum.Service)).
+//                thenReturn(StorageOperationStatus.OK);
+//        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex)).thenReturn(Either.left(toscaElement));
+//        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex2)).thenReturn(Either.left(toscaElement));
+//        when(janusGraphDaoMock.commit()).thenReturn(JanusGraphOperationStatus.OK);
+//        assertEquals(affectedComponentIds, testInstance.deleteService("1"));
+//    }
+//
+//    @Test
+//    public void testDeleteService_WithOneVersion() {
+//        GraphVertex graphVertex = getTopologyTemplateVertex();
+//        ToscaElement toscaElement = getToscaElementForTest();
+//        List<String> affectedComponentIds = new ArrayList<>();
+//        affectedComponentIds.add(graphVertex.getUniqueId());
+//        JanusGraphOperationStatus notFound = JanusGraphOperationStatus.NOT_FOUND;
+//        when(topologyTemplateOperationMock.getComponentByLabelAndId("1", ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+//                thenReturn(Either.left(graphVertex));
+//        when(topologyTemplateOperationMock.getHighestVersionFrom(graphVertex)).thenReturn(graphVertex);
+//        when(janusGraphDaoMock.getVertexById(graphVertex.getUniqueId(), JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+//        when(janusGraphDaoMock.getParentVertices(graphVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll))
+//                .thenReturn(Either.right(notFound));
+//        List<EdgeLabelEnum> forbiddenEdgeLabelEnums = Arrays
+//                .asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
+//        for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
+//            when(janusGraphDaoMock.getBelongingEdgeByCriteria(graphVertex, edgeLabelEnum, null)).
+//                    thenReturn(Either.right(notFound));
+//        }
+//        when(graphLockOperationMock.lockComponent(graphVertex.getUniqueId(), NodeTypeEnum.Service)).
+//                thenReturn(StorageOperationStatus.OK);
+//        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex)).thenReturn(Either.left(toscaElement));
+//        when(janusGraphDaoMock.commit()).thenReturn(JanusGraphOperationStatus.OK);
+//        assertEquals(affectedComponentIds, testInstance.deleteService("1"));
+//    }
+//
+//    @Test
+//    public void testDeleteService_FailDelete() {
+//        Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>();
+//        metadataProperties.put(GraphPropertyEnum.NAME, "graphVertex");
+//        GraphVertex graphVertex = getTopologyTemplateVertex();
+//        graphVertex.setMetadataProperties(metadataProperties);
+//        List<String> affectedComponentIds = new ArrayList<>();
+//        affectedComponentIds.add(graphVertex.getUniqueId());
+//        JanusGraphOperationStatus notFound = JanusGraphOperationStatus.NOT_FOUND;
+//        when(topologyTemplateOperationMock.getComponentByLabelAndId("1", ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+//                thenReturn(Either.left(graphVertex));
+//        when(topologyTemplateOperationMock.getHighestVersionFrom(graphVertex)).thenReturn(graphVertex);
+//        when(janusGraphDaoMock.getVertexById(graphVertex.getUniqueId(), JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(graphVertex));
+//        when(janusGraphDaoMock.getParentVertices(graphVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll))
+//                .thenReturn(Either.right(notFound));
+//        List<EdgeLabelEnum> forbiddenEdgeLabelEnums = Arrays
+//                .asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
+//        for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
+//            when(janusGraphDaoMock.getBelongingEdgeByCriteria(graphVertex, edgeLabelEnum, null)).
+//                    thenReturn(Either.right(notFound));
+//        }
+//        when(graphLockOperationMock.lockComponent(graphVertex.getUniqueId(), NodeTypeEnum.Service)).
+//                thenReturn(StorageOperationStatus.OK);
+//        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex))
+//                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+//        assertThrows(StorageException.class, () -> testInstance.deleteService("1"));
+//    }
+//
+//    @Test
+//    public void testDeleteService_NotFound() {
+//        when(topologyTemplateOperationMock.getComponentByLabelAndId("1", ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+//                thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+//        assertThrows(StorageException.class, () -> testInstance.deleteService("1"));
+//    }
 
     @Test
     public void testMarkComponentToDelete() {
