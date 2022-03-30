@@ -205,6 +205,12 @@ public class MinIoStorageArtifactStorageManager implements ArtifactStorageManage
         }
     }
 
+    @Override
+    public boolean isExists(final String vspId) {
+        LOGGER.debug("isExists - bucket: '{}'", vspId);
+        return bucketExists(vspId);
+    }
+
     private MinIoStorageArtifactStorageConfig readMinIoStorageArtifactStorageConfig() {
         final var commonConfigurationManager = CommonConfigurationManager.getInstance();
         final Map<String, Object> endpoint = commonConfigurationManager.getConfigValue(EXTERNAL_CSAR_STORE, ENDPOINT, null);

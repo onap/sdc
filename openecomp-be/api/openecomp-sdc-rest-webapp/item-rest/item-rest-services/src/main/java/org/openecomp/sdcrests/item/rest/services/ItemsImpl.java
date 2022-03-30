@@ -36,6 +36,8 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
+import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
@@ -87,6 +89,12 @@ public class ItemsImpl implements Items {
                 getManagersProvider().getItemManager().archive(item);
                 break;
             case RESTORE:
+                final ArtifactStorageManager artifactStorageManager = new StorageFactory().createArtifactStorageManager();
+                if (artifactStorageManager.isEnabled() && !artifactStorageManager.isExists(itemId)) {
+                    LOGGER.error("Unable to restore partially deleted item '{}'", itemId);
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+                        new Exception("Unable to restore partially deleted VSP, re-try VSP deletion")).build();
+                }
                 getManagersProvider().getItemManager().restore(item);
                 break;
             default:
