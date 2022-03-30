@@ -19,18 +19,23 @@
  */
 package org.openecomp.sdcrests.item.rest.services;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.openecomp.sdcrests.item.types.ItemAction.ARCHIVE;
 import static org.openecomp.sdcrests.item.types.ItemAction.RESTORE;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Response;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
@@ -38,8 +43,8 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 import org.openecomp.sdc.versioning.types.Item;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ItemsImplTest {
+@ExtendWith(MockitoExtension.class)
+class ItemsImplTest {
 
     private static final String ITEM_ID = "ITEM_ID";
     private static final String USER = "USER";
@@ -57,70 +62,72 @@ public class ItemsImplTest {
     @Mock
     private ActivityLogManager activityManager;
 
-    @Test
-    public void shouldInitActionSideAffectsMap() {
-        ItemsImpl items = new ItemsImpl();
-        items.initActionSideAffectsMap();
-        assertEquals(items.getActionSideAffectsMap().size(),2);
+    @InjectMocks
+    private ItemsImpl items;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void shouldActOnEmptyItem() {
-        ItemsImpl items = new ItemsImpl();
+    void shouldInitActionSideAffectsMap() {
+        items.initActionSideAffectsMap();
+        assertEquals(items.getActionSideAffectsMap().size(), 2);
+    }
+
+    @Test
+    void shouldActOnEmptyItem() {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
-        Mockito.when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Mockito.when(itemManager.get(Mockito.any())).thenReturn(null);
+        when(managersProvider.getItemManager()).thenReturn(itemManager);
+        when(itemManager.get(any())).thenReturn(null);
         Response response = items.actOn(request, ITEM_ID, USER);
         assertEquals(response.getStatus(), Response.Status.NOT_FOUND.getStatusCode());
     }
 
     @Test
-    public void shouldActOnARCHIVE() {
-        ItemsImpl items = new ItemsImpl();
+    void shouldActOnARCHIVE() {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
-        Mockito.when(itemManager.get(Mockito.any())).thenReturn(item);
-        Mockito.when(request.getAction()).thenReturn(ARCHIVE);
-        Mockito.when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Mockito.when(managersProvider.getVersioningManager()).thenReturn(versioningManager);
-        Mockito.when(versioningManager.list(Mockito.any())).thenReturn(getVersions());
-        Mockito.when(managersProvider.getActivityLogManager()).thenReturn(activityManager);
+        when(itemManager.get(any())).thenReturn(item);
+        when(request.getAction()).thenReturn(ARCHIVE);
+        when(managersProvider.getItemManager()).thenReturn(itemManager);
+        when(managersProvider.getVersioningManager()).thenReturn(versioningManager);
+        when(versioningManager.list(any())).thenReturn(getVersions());
+        when(managersProvider.getActivityLogManager()).thenReturn(activityManager);
         items.actOn(request, ITEM_ID, USER);
-        Mockito.verify(itemManager).archive(Mockito.any());
+        verify(itemManager).archive(any());
     }
 
     @Test
-    public void shouldActOnRESTORE() {
-        ItemsImpl items = new ItemsImpl();
+    void shouldActOnRESTORE() {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
-        Mockito.when(itemManager.get(Mockito.any())).thenReturn(item);
-        Mockito.when(request.getAction()).thenReturn(RESTORE);
-        Mockito.when(managersProvider.getItemManager()).thenReturn(itemManager);
-        Mockito.when(managersProvider.getVersioningManager()).thenReturn(versioningManager);
-        Mockito.when(versioningManager.list(Mockito.any())).thenReturn(getVersions());
-        Mockito.when(managersProvider.getActivityLogManager()).thenReturn(activityManager);
+        when(itemManager.get(any())).thenReturn(item);
+        when(request.getAction()).thenReturn(RESTORE);
+        when(managersProvider.getItemManager()).thenReturn(itemManager);
+        when(managersProvider.getVersioningManager()).thenReturn(versioningManager);
+        when(versioningManager.list(any())).thenReturn(getVersions());
+        when(managersProvider.getActivityLogManager()).thenReturn(activityManager);
         items.actOn(request, ITEM_ID, USER);
-        Mockito.verify(itemManager).restore(Mockito.any());
+        verify(itemManager).restore(any());
     }
 
     @Test
-    public void shouldGetItem() {
-        ItemsImpl items = new ItemsImpl();
+    void shouldGetItem() {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
-        Mockito.when(managersProvider.getItemManager()).thenReturn(itemManager);
+        when(managersProvider.getItemManager()).thenReturn(itemManager);
         Response response = items.getItem(ITEM_ID, USER);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     }
 
     @Test
-    public void shouldList() {
-        ItemsImpl items = new ItemsImpl();
+    void shouldList() {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
-        Mockito.when(managersProvider.getItemManager()).thenReturn(itemManager);
+        when(managersProvider.getItemManager()).thenReturn(itemManager);
         Response response = items.list(null, null, null, null, null, USER);
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
     }
