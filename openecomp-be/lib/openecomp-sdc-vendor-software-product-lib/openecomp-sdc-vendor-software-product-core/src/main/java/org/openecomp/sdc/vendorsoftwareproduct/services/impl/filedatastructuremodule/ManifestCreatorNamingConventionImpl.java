@@ -97,7 +97,7 @@ public class ManifestCreatorNamingConventionImpl implements ManifestCreator {
     }
 
     private boolean isPmDictionary(String artifact, ManifestContent existingManifest) {
-        return existingManifest.getData().stream().filter(fileData -> fileData.getType().equals(FileData.Type.PM_DICTIONARY)).map(FileData::getFile)
+        return existingManifest.getData().stream().filter(fileData -> FileData.Type.PM_DICTIONARY.equals(fileData.getType())).map(FileData::getFile)
             .anyMatch(pmDictionaryFile -> pmDictionaryFile.equals(artifact));
     }
 
