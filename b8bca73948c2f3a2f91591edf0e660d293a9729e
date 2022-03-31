@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4bba0acf_2b5a47ca",
+        "filename": "catalog-be/src/main/resources/scripts/sdcBePy/tosca/models/normativeTypesList.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T17:35:55Z",
+      "side": 1,
+      "message": "I think you also have to add to:\ncatalog-be/src/main/resources/scripts/sdcBePy/tosca/data/onapTypesToUpgrade.json\nas well for the types to be deployed in an upgrade scenario",
+      "range": {
+        "startLine": 117,
+        "startChar": 4,
+        "endLine": 118,
+        "endChar": 47
+      },
+      "revId": "b8bca73948c2f3a2f91591edf0e660d293a9729e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
