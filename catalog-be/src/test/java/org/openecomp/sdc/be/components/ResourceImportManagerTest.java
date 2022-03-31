@@ -514,8 +514,8 @@ public class ResourceImportManagerTest {
         final Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
         assertNotNull(interfaces);
         assertEquals(1, interfaces.size());
-        final InterfaceDefinition interfaceDefinition = interfaces.get("Standard");
-        assertTrue(interfaces.containsKey(InterfaceTypesNameUtil.buildShortName(interfaceDefinition.getType())));
+        final InterfaceDefinition interfaceDefinition = interfaces.get("tosca.interfaces.node.lifecycle.Standard");
+        assertTrue(interfaces.containsKey(interfaceDefinition.getType()));
         Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
         operations.values().forEach(operationDataDefinition ->
             assertTrue(operations.containsKey(operationDataDefinition.getName())));

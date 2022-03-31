@@ -392,15 +392,14 @@ public class ResourceImportManager {
         Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
             .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.INTERFACES);
         if (toscaInterfaces.isLeft()) {
-            Map<String, Object> jsonInterfaces = toscaInterfaces.left().value();
             Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
-            for (final Entry<String, Object> interfaceNameValue : jsonInterfaces.entrySet()) {
+            for (final Entry<String, Object> interfaceNameValue : toscaInterfaces.left().value().entrySet()) {
                 final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(), resource.getModel());
                 if (eitherInterface.isRight()) {
                     log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(), resource.getName());
                 } else {
                     final InterfaceDefinition interfaceDefinition = eitherInterface.left().value();
-                    moduleInterfaces.put(interfaceNameValue.getKey(), interfaceDefinition);
+                    moduleInterfaces.put(interfaceDefinition.getType(), interfaceDefinition);
                 }
             }
             if (!moduleInterfaces.isEmpty()) {

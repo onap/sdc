@@ -67,7 +67,7 @@ import {map} from "rxjs/operators";
 import {CapabilitiesConstraintObject} from "../../components/logic/capabilities-constraint/capabilities-constraint.component";
 import {
     BEInterfaceOperationModel,
-    ComponentInstanceInterfaceModel,
+    ComponentInterfaceDefinitionModel,
     InterfaceOperationModel
 } from "../../../models/interfaceOperation";
 import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
