@@ -108,8 +108,8 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
         }
         final OperationDataDefinition updatedOperationDataDefinition = optionalOperationDataDefinition.get();
         final Optional<ComponentInstanceInterface> optionalComponentInstanceInterface = componentInstanceInterfaceList.stream().filter(
-            ci -> ci.getOperations().values().stream().anyMatch(
-                operationDataDefinition -> operationDataDefinition.getUniqueId().equalsIgnoreCase(updatedOperationDataDefinition.getUniqueId())))
+                ci -> ci.getOperations().values().stream().anyMatch(
+                    operationDataDefinition -> operationDataDefinition.getUniqueId().equalsIgnoreCase(updatedOperationDataDefinition.getUniqueId())))
             .findFirst();
         if (optionalComponentInstanceInterface.isEmpty()) {
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT);
@@ -162,6 +162,75 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
             }
         }
         return componentInstanceOptional;
+    }
+
+    public Optional<Component> updateResourceInterfaceOperation(final String componentId,
+                                                                final InterfaceDefinition interfaceDefinition,
+                                                                final ComponentTypeEnum componentTypeEnum,
+                                                                final Wrapper<ResponseFormat> errorWrapper,
+                                                                final boolean shouldLock) throws BusinessLogicException {
+        final var component = getComponent(componentId);
+        ResponseFormat responseFormat;
+
+        Map<String, InterfaceDefinition> componentInterfaceMap = component.getInterfaces();
+        final String interfaceDefinitionType = interfaceDefinition.getType();
+        if (MapUtils.isEmpty(componentInterfaceMap)) {
+            componentInterfaceMap = new HashMap<>();
+            componentInterfaceMap.put(interfaceDefinitionType, interfaceDefinition);
+            component.setInterfaces(componentInterfaceMap);
+        } else {
+            InterfaceDefinition componentInterfaceDefinition = componentInterfaceMap.get(interfaceDefinitionType);
+            if (componentInterfaceDefinition == null) {
+                componentInterfaceDefinition = interfaceDefinition;
+                componentInterfaceMap.put(interfaceDefinitionType, interfaceDefinition);
+            }
+
+            final Map<String, OperationDataDefinition> interfaceDefinitionOperations = interfaceDefinition.getOperations();
+            final Optional<OperationDataDefinition> optionalOperationDataDefinition = interfaceDefinitionOperations.values().stream().findFirst();
+            if (optionalOperationDataDefinition.isEmpty()) {
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND);
+                LOGGER.debug("Failed to found interface operation on provided InterfaceDefinition {}, error: {}",
+                    interfaceDefinitionType, responseFormat);
+                errorWrapper.setInnerElement(responseFormat);
+                return Optional.empty();
+            }
+            final var updatedOperationDataDefinition = optionalOperationDataDefinition.get();
+            updateOperationDefinitionImplementation(updatedOperationDataDefinition);
+            Map<String, OperationDataDefinition> componentOperationDataDefinitionMap = componentInterfaceDefinition.getOperations();
+            if (MapUtils.isEmpty(componentOperationDataDefinitionMap)) {
+                componentOperationDataDefinitionMap = new HashMap<>();
+                componentInterfaceDefinition.setOperations(componentOperationDataDefinitionMap);
+            }
+            componentOperationDataDefinitionMap.replace(updatedOperationDataDefinition.getName(), updatedOperationDataDefinition);
+        }
+        boolean wasLocked = false;
+        try {
+            if (shouldLock) {
+                lockComponent(componentId, component, "Update Interface Operation on Component instance");
+                wasLocked = true;
+            }
+            final StorageOperationStatus status =
+                toscaOperationFacade.updateComponentInterfaces(component.getUniqueId(), component.getInterfaces(), interfaceDefinitionType);
+            if (status != StorageOperationStatus.OK) {
+                janusGraphDao.rollback();
+                responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+                LOGGER.error("Exception occurred when updating Component Instance Interfaces {}", responseFormat);
+                errorWrapper.setInnerElement(responseFormat);
+                return Optional.empty();
+            }
+            janusGraphDao.commit();
+        } catch (final Exception e) {
+            janusGraphDao.rollback();
+            LOGGER.error("Exception occurred when updating Interface Operation on Component Instance: ", e);
+            responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
+            errorWrapper.setInnerElement(responseFormat);
+            throw new BusinessLogicException(responseFormat);
+        } finally {
+            if (wasLocked) {
+                unlockComponent(component.getUniqueId(), componentTypeEnum);
+            }
+        }
+        return Optional.of(component);
     }
 
     public User validateUser(final String userId) {

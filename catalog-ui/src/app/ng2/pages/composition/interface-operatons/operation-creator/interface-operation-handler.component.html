@@ -28,7 +28,7 @@
                 <sdc-input
                     label="{{ 'OPERATION_INTERFACE_TYPE' | translate }}"
                     [(value)]="interfaceType"
-                    [disabled]=isViewOnly>
+                    [disabled]=!isViewOnly>
                 </sdc-input>
             </div>
 
@@ -36,7 +36,7 @@
                 <sdc-input
                     label="{{ 'OPERATION_NAME' | translate }}"
                     [(value)]="operationToUpdate.name"
-                    [disabled]=isViewOnly>
+                    [disabled]=!isViewOnly>
                 </sdc-input>
             </div>
         </div>

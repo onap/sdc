@@ -37,10 +37,10 @@ public class DaoStatusConverter {
             case NOT_FOUND:
                 return StorageOperationStatus.NOT_FOUND;
             case NOT_CREATED:
-                return StorageOperationStatus.SCHEMA_ERROR;
             case INDEX_CANNOT_BE_CHANGED:
                 return StorageOperationStatus.SCHEMA_ERROR;
             case MISSING_UNIQUE_ID:
+            case ILLEGAL_ARGUMENT:
                 return StorageOperationStatus.BAD_REQUEST;
             case ALREADY_LOCKED:
                 return StorageOperationStatus.FAILED_TO_LOCK_ELEMENT;
@@ -50,8 +50,6 @@ public class DaoStatusConverter {
                 return StorageOperationStatus.INVALID_ID;
             case MATCH_NOT_FOUND:
                 return StorageOperationStatus.MATCH_NOT_FOUND;
-            case ILLEGAL_ARGUMENT:
-                return StorageOperationStatus.BAD_REQUEST;
             case ALREADY_EXIST:
                 return StorageOperationStatus.ENTITY_ALREADY_EXISTS;
             case PROPERTY_NAME_ALREADY_EXISTS:
