@@ -139,6 +139,30 @@
       "revId": "5d3d62b16f151c5b97cce5378f6dd2cf56543459",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "718c6c24_1d1c5797",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-31T17:23:20Z",
+      "side": 1,
+      "message": "Done. Added an error in case the package size reducer is not configured. I believe there is no reason to store anything if it is not configured.\nAlso, I split the reduce operation from the deletion of the temporary file.",
+      "parentUuid": "93cf6b93_47781867",
+      "range": {
+        "startLine": 236,
+        "startChar": 12,
+        "endLine": 236,
+        "endChar": 32
+      },
+      "revId": "5d3d62b16f151c5b97cce5378f6dd2cf56543459",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
