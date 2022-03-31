@@ -18,36 +18,46 @@
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
 */
-import {Component, Input, Inject, ComponentRef} from '@angular/core';
-import {Component as IComponent } from 'app/models/components/component';
+import {Component, ComponentRef, Inject, Input} from '@angular/core';
+import {Component as IComponent} from 'app/models/components/component';
 
-import { SdcConfigToken, ISdcConfig } from "app/ng2/config/sdc-config.config";
-import {TranslateService } from "app/ng2/shared/translator/translate.service";
+import {ISdcConfig, SdcConfigToken} from "app/ng2/config/sdc-config.config";
+import {TranslateService} from "app/ng2/shared/translator/translate.service";
 
-import { ModalComponent } from 'app/ng2/components/ui/modal/modal.component';
-import {ModalService } from 'app/ng2/services/modal.service';
-import {
-    OperationModel,
-    InterfaceModel,
-    CapabilitiesGroup,
-    ButtonModel, ModalModel
-} from 'app/models';
+import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
+import {ModalService} from 'app/ng2/services/modal.service';
+import {ButtonModel, CapabilitiesGroup, ModalModel, OperationModel} from 'app/models';
 
-import {ComponentServiceNg2 } from 'app/ng2/services/component-services/component.service';
+import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 
-import { SdcUiServices } from 'onap-ui-angular';
+import {SdcUiServices} from 'onap-ui-angular';
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
-import {InputOperationParameter, InterfaceOperationModel} from "../../../models/interfaceOperation";
-import {PropertyParamRowComponent} from "../composition/interface-operatons/operation-creator/property-param-row/property-param-row.component";
-import {InterfaceOperationHandlerComponent} from "../composition/interface-operatons/operation-creator/interface-operation-handler.component";
-import {DropdownValue} from "../../components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {
+    ComponentInterfaceDefinitionModel,
+    InputOperationParameter,
+    InterfaceOperationModel
+} from "../../../models/interfaceOperation";
+import {
+    PropertyParamRowComponent
+} from "../composition/interface-operatons/operation-creator/property-param-row/property-param-row.component";
+import {
+    InterfaceOperationHandlerComponent
+} from "../composition/interface-operatons/operation-creator/interface-operation-handler.component";
+import {
+    DropdownValue
+} from "../../components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {ToscaArtifactModel} from "../../../models/toscaArtifact";
+import {ToscaArtifactService} from "../../services/tosca-artifact.service";
+import {
+    UIInterfaceOperationModel
+} from "../composition/interface-operatons/interface-operations.component";
 
 export class UIOperationModel extends OperationModel {
     isCollapsed: boolean = true;
     isEllipsis: boolean;
     MAX_LENGTH = 75;
 
-    constructor(operation: OperationModel) {
+    constructor(operation: UIOperationModel) {
         super(operation);
 
         if (!operation.description) {
@@ -99,15 +109,14 @@ class ModalTranslation {
     }
 }
 
-// tslint:disable-next-line:max-classes-per-file
-export class UIInterfaceModel extends InterfaceModel {
+export class UIInterfaceModel extends ComponentInterfaceDefinitionModel {
     isCollapsed: boolean = false;
 
-    constructor(interfaceData?: any) {
-        super(interfaceData);
+    constructor(interf?: any) {
+        super(interf);
         this.operations = _.map(
             this.operations,
-            (operation) => new UIOperationModel(operation)
+            (operation) => new UIInterfaceOperationModel(operation)
         );
     }
 
@@ -134,12 +143,15 @@ export class InterfaceDefinitionComponent {
     deploymentArtifactsFilePath: Array<DropdownValue> = [];
 
     toscaArtifactTypes: Array<DropdownValue> = [];
+    interfaceTypesTest: Array<DropdownValue> = [];
+    interfaceTypesMap: Map<string, string[]>;
 
     isLoading: boolean;
     interfaceTypes: { [interfaceType: string]: string[] };
     modalTranslation: ModalTranslation;
     workflows: any[];
     capabilities: CapabilitiesGroup;
+    isViewOnly: boolean;
 
     @Input() component: IComponent;
     @Input() readonly: boolean;
@@ -149,18 +161,25 @@ export class InterfaceDefinitionComponent {
     constructor(
         @Inject(SdcConfigToken) private sdcConfig: ISdcConfig,
         @Inject("$state") private $state: ng.ui.IStateService,
+        @Inject("Notification") private notification: any,
         private translateService: TranslateService,
         private componentServiceNg2: ComponentServiceNg2,
         private modalServiceNg2: ModalService,
         private modalServiceSdcUI: SdcUiServices.ModalService,
-        private topologyTemplateService: TopologyTemplateService
+        private topologyTemplateService: TopologyTemplateService,
+        private toscaArtifactService: ToscaArtifactService
     ) {
         this.modalTranslation = new ModalTranslation(translateService);
+        this.interfaceTypesMap = new Map<string, string[]>();
     }
 
     ngOnInit(): void {
-        if(this.component) {
+        console.info("this.component.lifecycleState ", this.component.lifecycleState);
+        if (this.component) {
+            this.isViewOnly = this.component.componentMetadata.isComponentDataEditable();
             this.initInterfaceDefinition();
+            this.loadInterfaceTypes();
+            this.loadToscaArtifacts();
         }
     }
 
@@ -168,14 +187,18 @@ export class InterfaceDefinitionComponent {
         return this.modalServiceNg2.closeCurrentModal();
     }
 
-    private enableOrDisableSaveButton = (): boolean => {
-        return true;
+    private disableSaveButton = (): boolean => {
+        return this.isViewOnly ||
+            (this.isEnableAddArtifactImplementation()
+                && (!this.modalInstance.instance.dynamicContent.instance.toscaArtifactTypeSelected ||
+                    !this.modalInstance.instance.dynamicContent.instance.artifactName)
+            );
     }
 
     onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
         const cancelButton: ButtonModel = new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal);
         const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue', () =>
-        null, this.enableOrDisableSaveButton);
+            this.updateOperation(), this.disableSaveButton);
         const interfaceDataModal: ModalModel =
             new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', [saveButton, cancelButton], 'custom');
         this.modalInstance = this.modalServiceNg2.createCustomModal(interfaceDataModal);
@@ -188,11 +211,44 @@ export class InterfaceDefinitionComponent {
                 toscaArtifactTypes: this.toscaArtifactTypes,
                 selectedInterface: interfaceModel,
                 selectedInterfaceOperation: operation,
-                validityChangedCallback: this.enableOrDisableSaveButton,
-                isViewOnly: true
-            }
-        );
+                validityChangedCallback: this.disableSaveButton,
+                isViewOnly: this.isViewOnly,
+                interfaceTypesMap: this.interfaceTypesMap,
+            });
         this.modalInstance.instance.open();
+    }
+
+    private updateOperation = (): void => {
+        let operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
+        this.componentServiceNg2.updateComponentInterfaceOperation(this.component.uniqueId, operationToUpdate)
+        .subscribe((newOperation: InterfaceOperationModel) => {
+            let oldOpIndex;
+            let oldInterf;
+            this.interfaces.forEach(interf => {
+                interf.operations.forEach(op => {
+                    if (op.uniqueId === newOperation.uniqueId) {
+                        oldInterf = interf;
+                        oldOpIndex = interf.operations.findIndex((el) => el.uniqueId === op.uniqueId);
+                    }
+                });
+            });
+            newOperation = this.handleEnableAddArtifactImplementation(newOperation);
+            oldInterf.operations.splice(oldOpIndex, 1);
+            oldInterf.operations.push(new InterfaceOperationModel(newOperation));
+        });
+        this.modalServiceNg2.closeCurrentModal();
+    }
+
+    private handleEnableAddArtifactImplementation = (newOperation: InterfaceOperationModel): InterfaceOperationModel => {
+        if (!this.isEnableAddArtifactImplementation()) {
+            newOperation.implementation.artifactType = null;
+            newOperation.implementation.artifactVersion = null;
+        }
+        return newOperation;
+    }
+
+    private isEnableAddArtifactImplementation = (): boolean => {
+        return this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
     }
 
     private initInterfaceDefinition() {
@@ -207,8 +263,39 @@ export class InterfaceDefinitionComponent {
         });
     }
 
+    private loadToscaArtifacts() {
+        this.toscaArtifactService.getToscaArtifacts(this.component.model).subscribe(response => {
+            if (response) {
+                let toscaArtifactsFound = <ToscaArtifactModel[]>_.values(response);
+                toscaArtifactsFound.forEach(value => this.toscaArtifactTypes.push(new DropdownValue(value, value.type)));
+            }
+        }, error => {
+            this.notification.error({
+                message: 'Failed to Load Tosca Artifacts:' + error,
+                title: 'Failure'
+            });
+        });
+    }
+
+    private loadInterfaceTypes() {
+        this.componentServiceNg2.getInterfaceTypes(this.component).subscribe(response => {
+            if (response) {
+                console.info("loadInterfaceTypes ", response);
+                for (const interfaceType in response) {
+                    this.interfaceTypesMap.set(interfaceType, response[interfaceType]);
+                    this.interfaceTypesTest.push(new DropdownValue(interfaceType, interfaceType));
+                }
+            }
+        }, error => {
+            this.notification.error({
+                message: 'Failed to Load Interface Types:' + error,
+                title: 'Failure'
+            });
+        });
+    }
+
     collapseAll(value: boolean = true): void {
-        _.forEach(this.interfaces, (interfaceData) => {
+        this.interfaces.forEach(interfaceData => {
             interfaceData.isCollapsed = value;
         });
     }
