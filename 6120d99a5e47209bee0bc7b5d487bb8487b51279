@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aae292f1_16bf3f26",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T09:12:38Z",
+      "side": 1,
+      "message": "why chnage this, what if interfaceJson instanceof Strng line 413 -\u003e uniqueId not set?",
+      "range": {
+        "startLine": 402,
+        "startChar": 19,
+        "endLine": 402,
+        "endChar": 74
+      },
+      "revId": "6120d99a5e47209bee0bc7b5d487bb8487b51279",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19312d24_3f849212",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T09:12:38Z",
+      "side": 1,
+      "message": "Is this accurate? Looks like the scenario here is no interface operations provided in the call rather than on the component.\n\nBut probably should check if the given interface operation exists on the compoenent as could cause problem on line 190 if it doesnt",
+      "range": {
+        "startLine": 182,
+        "startChar": 12,
+        "endLine": 183,
+        "endChar": 137
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "180a6320_8c0765b8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInterfaceOperationBusinessLogic.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T09:12:38Z",
+      "side": 1,
+      "message": "Don think you need the foreach here just\ncomponent.getInterfaces().get(componentInterfaceUpdatedKey)",
+      "range": {
+        "startLine": 190,
+        "startChar": 8,
+        "endLine": 190,
+        "endChar": 48
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a146feea_0b188b5f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T09:12:38Z",
+      "side": 1,
+      "message": "why change this? Does it impact on any existing functionality?",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 50
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5836457_9d37b9e0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T09:12:38Z",
+      "side": 1,
+      "message": "why change? Does it impact on any existing functionality?",
+      "range": {
+        "startLine": 402,
+        "startChar": 0,
+        "endLine": 402,
+        "endChar": 97
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f2a5f85_c5411229",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInterfaceOperationServlet.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T09:12:38Z",
+      "side": 1,
+      "message": "the component type will always be resource, so can hard-code and remove second \u0027resource\u0027",
+      "range": {
+        "startLine": 160,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 71
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38a77692_f6e61f6b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/builder/ToscaRelationshipBuilder.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T09:12:38Z",
+      "side": 1,
+      "message": "What chaneg? Does it impact on any existing functionality?",
+      "range": {
+        "startLine": 63,
+        "startChar": 29,
+        "endLine": 63,
+        "endChar": 42
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

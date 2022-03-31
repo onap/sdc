@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f828f2eb_6ec6439a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ComponentInterfaceOperationServlet.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-03-31T09:12:38Z",
+      "side": 1,
+      "message": "componentType will always be \u0027resource\u0027 so can be hard-coded and the second \u0027resource\u0027 removed",
+      "range": {
+        "startLine": 160,
+        "startChar": 11,
+        "endLine": 160,
+        "endChar": 52
+      },
+      "revId": "dcf6a21795012cb9e7b422a695f67a7bf82371b3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
