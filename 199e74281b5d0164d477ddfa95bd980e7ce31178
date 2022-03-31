@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "bd3c86a4_cb89559b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceDefinitionHandler.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-31T12:40:32Z",
+      "side": 1,
+      "message": ".. and IT",
+      "parentUuid": "96534cb0_9dfc869c",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 91,
+        "endChar": 50
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e5836457_9d37b9e0",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
         "patchSetId": 15
@@ -178,6 +202,30 @@
       "side": 1,
       "message": "discovered discrepancy during the implementation \ncovered by unit test",
       "parentUuid": "e5836457_9d37b9e0",
+      "range": {
+        "startLine": 402,
+        "startChar": 0,
+        "endLine": 402,
+        "endChar": 97
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a4a3ddc_bfa90835",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-31T12:40:32Z",
+      "side": 1,
+      "message": ".. and IT",
+      "parentUuid": "0622f13d_8881c3fd",
       "range": {
         "startLine": 402,
         "startChar": 0,
@@ -272,6 +320,30 @@
       "side": 1,
       "message": "discovered discrepancy during the implementation \ncovered by unit test",
       "parentUuid": "38a77692_f6e61f6b",
+      "range": {
+        "startLine": 63,
+        "startChar": 29,
+        "endLine": 63,
+        "endChar": 42
+      },
+      "revId": "199e74281b5d0164d477ddfa95bd980e7ce31178",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9a358b8_1207d6a8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/builder/ToscaRelationshipBuilder.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-03-31T12:40:32Z",
+      "side": 1,
+      "message": ".. and IT",
+      "parentUuid": "de2e075b_bcab8cb1",
       "range": {
         "startLine": 63,
         "startChar": 29,
