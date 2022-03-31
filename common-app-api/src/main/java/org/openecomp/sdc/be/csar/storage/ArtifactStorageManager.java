@@ -76,4 +76,11 @@ public interface ArtifactStorageManager {
      */
     void delete(String vspId);
 
+    /**
+     * Check if VSP exists
+     *
+     * @param vspId - VSP ID
+     * @return {@code true} if exists, {@code false} otherwise
+     */
+    boolean exists(String vspId);
 }

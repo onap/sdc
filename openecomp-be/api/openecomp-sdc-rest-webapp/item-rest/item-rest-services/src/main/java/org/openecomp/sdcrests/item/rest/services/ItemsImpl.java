@@ -15,6 +15,8 @@
  */
 package org.openecomp.sdcrests.item.rest.services;
 
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
@@ -36,6 +38,10 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
+import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
+import org.openecomp.sdc.be.csar.storage.StorageFactory;
+import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
+import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.impl.types.PermissionTypes;
 import org.openecomp.sdc.logging.api.Logger;
@@ -80,13 +86,20 @@ public class ItemsImpl implements Items {
     public Response actOn(ItemActionRequestDto request, String itemId, String user) {
         Item item = getManagersProvider().getItemManager().get(itemId);
         if (item == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity(new Exception("Item does not exist.")).build();
+            return Response.status(NOT_FOUND).entity(new Exception("Item does not exist.")).build();
         }
         switch (request.getAction()) {
             case ARCHIVE:
                 getManagersProvider().getItemManager().archive(item);
                 break;
             case RESTORE:
+                final var artifactStorageManager = new StorageFactory().createArtifactStorageManager();
+                if (artifactStorageManager.isEnabled() && !artifactStorageManager.exists(itemId)) {
+                    LOGGER.error("Unable to restore partially deleted item '{}'", itemId);
+                    final var errorCode =
+                        new ErrorCodeBuilder().withId(INTERNAL_SERVER_ERROR.name()).withMessage("Unable to restore partially deleted VSP, re-try VSP deletion").build();
+                    return Response.status(INTERNAL_SERVER_ERROR).entity(new ErrorCodeAndMessage(INTERNAL_SERVER_ERROR, errorCode)).build();
+                }
                 getManagersProvider().getItemManager().restore(item);
                 break;
             default:
