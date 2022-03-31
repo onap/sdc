@@ -30,7 +30,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class NoneStorageManagerTest {
 
-    public static final MinIoArtifactInfo UPLOADED_ARTIFACT_INFO = new MinIoArtifactInfo("bucket", "object");
+    public static final String VSP_ID = "vsp-id";
+    public static final String VERSION_ID = "version-id";
+    public static final MinIoArtifactInfo UPLOADED_ARTIFACT_INFO = new MinIoArtifactInfo(VSP_ID, VERSION_ID);
     private NoneStorageManager testSubject;
 
     @BeforeEach
@@ -46,13 +48,19 @@ class NoneStorageManagerTest {
     @Test
     void testPersist() {
         Assertions.assertThrows(UnsupportedOperationException.class,
-            () -> testSubject.persist("vspId", "versionId", UPLOADED_ARTIFACT_INFO));
+            () -> testSubject.persist(VSP_ID, VERSION_ID, UPLOADED_ARTIFACT_INFO));
     }
 
     @Test
     void testUpload() {
         Assertions.assertThrows(UnsupportedOperationException.class,
-            () -> testSubject.upload("vspId", "versionId", new ByteArrayInputStream(new byte[0])));
+            () -> testSubject.upload(VSP_ID, VERSION_ID, new ByteArrayInputStream(new byte[0])));
+    }
+
+    @Test
+    void testPut() {
+        Assertions.assertThrows(UnsupportedOperationException.class,
+            () -> testSubject.put(VSP_ID, VERSION_ID, new ByteArrayInputStream(new byte[0])));
     }
 
     @Test
@@ -61,13 +69,28 @@ class NoneStorageManagerTest {
     }
 
     @Test
-    void testGet() {
+    void testGetArtifactInfo() {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> testSubject.get(UPLOADED_ARTIFACT_INFO));
     }
 
     @Test
-    void testDelete() {
+    void testGetString() {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> testSubject.get(VSP_ID, VERSION_ID));
+    }
+
+    @Test
+    void testDeleteArtifactInfo() {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> testSubject.delete(UPLOADED_ARTIFACT_INFO));
+    }
+
+    @Test
+    void testDeleteString() {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> testSubject.delete(VSP_ID));
+    }
+
+    @Test
+    void testIsExists() {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> testSubject.exists(VSP_ID));
     }
 
     @Test

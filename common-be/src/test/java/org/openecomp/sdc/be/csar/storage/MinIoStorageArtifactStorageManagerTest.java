@@ -35,9 +35,11 @@ import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import io.minio.RemoveBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.StatObjectArgs;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -142,6 +144,14 @@ class MinIoStorageArtifactStorageManagerTest {
     }
 
     @Test
+    void testPutFail() throws Exception {
+        doThrow(new RuntimeException()).when(minioClient).putObject(any(PutObjectArgs.class));
+        assertThrows(ArtifactStorageException.class, () -> {
+            testSubject.put(VSP_ID, VERSION_ID, new ByteArrayInputStream(new byte[0]));
+        });
+    }
+
+    @Test
     void testIsEnabled() {
         Assertions.assertTrue(testSubject.isEnabled());
     }
@@ -185,6 +195,20 @@ class MinIoStorageArtifactStorageManagerTest {
         doThrow(new RuntimeException()).when(minioClient).getObject(any(GetObjectArgs.class));
         assertThrows(ArtifactStorageException.class, () -> {
             final InputStream inputStream = testSubject.get(new MinIoArtifactInfo(VSP_ID, VERSION_ID));
+        });
+    }
+
+    @Test
+    void testIsExistsOK() throws Exception {
+        when(minioClient.bucketExists(any(BucketExistsArgs.class))).thenReturn(true);
+        Assertions.assertTrue(testSubject.exists(VSP_ID));
+    }
+
+    @Test
+    void testIsExistsFail() throws Exception {
+        doThrow(new RuntimeException()).when(minioClient).bucketExists(any(BucketExistsArgs.class));
+        assertThrows(ArtifactStorageException.class, () -> {
+            Assertions.assertTrue(testSubject.exists(VSP_ID));
         });
     }
 
