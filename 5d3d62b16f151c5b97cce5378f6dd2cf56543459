@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fae4bc14_2e416d56",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageConfig.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-31T16:59:19Z",
+      "side": 1,
+      "message": "I was using to compare the current configuration with equals, after reading again from the file. @Data implements the equals, along with hash code and setters for non final fields.\n@RequiredArgsConstructor would replace the @AllArgsConstructor as all the fields are required.\nWe could only add the equals here, but for me this is a good candidate for a @Data object.\nAnd, in the current version, I\u0027m not using equals anymore, but it is a good practice to have it, along with the hash code.\nI see no harm in keeping it as @Data. What do you think?",
+      "parentUuid": "657930a0_f07cb5c8",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 5
+      },
+      "revId": "5d3d62b16f151c5b97cce5378f6dd2cf56543459",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "27cfef9a_5659bc37",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/csar/storage/MinIoStorageArtifactStorageConfig.java",
         "patchSetId": 3
@@ -82,6 +106,30 @@
       "writtenOn": "2022-03-31T16:35:39Z",
       "side": 1,
       "message": "in this case missing deletion of the file in L242, isn\u0027t ?",
+      "range": {
+        "startLine": 236,
+        "startChar": 12,
+        "endLine": 236,
+        "endChar": 32
+      },
+      "revId": "5d3d62b16f151c5b97cce5378f6dd2cf56543459",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93cf6b93_47781867",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/OrchestrationTemplateCandidateImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-03-31T16:59:19Z",
+      "side": 1,
+      "message": "Right, I will fix it.\nBesides that, a null packageSizeReducer would give null pointer on line 240.",
+      "parentUuid": "ba8b3d11_9b0ac901",
       "range": {
         "startLine": 236,
         "startChar": 12,
