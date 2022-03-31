@@ -88,7 +88,7 @@ public class InterfaceDefinitionHandler {
             }
             final String type = (String) typeObj;
             interfaceDefinition.setType(type);
-            interfaceDefinition.setUniqueId(type.toLowerCase());
+            interfaceDefinition.setUniqueId(type);
         }
         final Map<String, InputDefinition> inputDefinitionMap = handleInputs(interfaceDefinitionToscaMap);
         if (!inputDefinitionMap.isEmpty()) {
