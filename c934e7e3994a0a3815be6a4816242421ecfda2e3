@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f75b389d_ac94dc06",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/exception/VendorSoftwareProductsExceptionSupplier.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-04-01T11:45:56Z",
+      "side": 1,
+      "message": "I\u0027d suggest to replace with \n@NoArgsConstructor(access \u003d AccessLevel.PRIVATE)\nto improve test coverage",
+      "range": {
+        "startLine": 39,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 5
+      },
+      "revId": "c934e7e3994a0a3815be6a4816242421ecfda2e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a6cc2af_cf3bda5e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/test/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImplTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-04-01T11:45:56Z",
+      "side": 1,
+      "message": "typo?",
+      "range": {
+        "startLine": 263,
+        "startChar": 26,
+        "endLine": 263,
+        "endChar": 28
+      },
+      "revId": "c934e7e3994a0a3815be6a4816242421ecfda2e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cceeeb85_14a38284",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/test/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImplTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-04-01T11:45:56Z",
+      "side": 1,
+      "message": "typo?",
+      "range": {
+        "startLine": 274,
+        "startChar": 41,
+        "endLine": 274,
+        "endChar": 43
+      },
+      "revId": "c934e7e3994a0a3815be6a4816242421ecfda2e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
