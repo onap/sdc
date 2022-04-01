@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b46fe52_f902db31",
+        "filename": "catalog-be/src/main/resources/import/tosca/nfv-types/asdInNsd/asdInNsd.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-01T09:55:15Z",
+      "side": 1,
+      "message": "change to string",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 20
+      },
+      "revId": "af66d5cb5d6b2147d3c620c51893a4dc3c91a6c9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
