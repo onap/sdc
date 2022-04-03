@@ -22,6 +22,30 @@
       "revId": "af66d5cb5d6b2147d3c620c51893a4dc3c91a6c9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9286e88_2ac0dcb3",
+        "filename": "catalog-be/src/main/resources/import/tosca/nfv-types/asdInNsd/asdInNsd.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-03T19:08:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b46fe52_f902db31",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 20
+      },
+      "revId": "af66d5cb5d6b2147d3c620c51893a4dc3c91a6c9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
