@@ -22,6 +22,30 @@
       "revId": "217a62b23edf79c45e32691a0745056bfcd0eab8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "951fe89b_a315af27",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 3169,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-04T10:59:20Z",
+      "side": 1,
+      "message": "Working on revert",
+      "parentUuid": "8d3860a8_fd5eaa21",
+      "range": {
+        "startLine": 3169,
+        "startChar": 16,
+        "endLine": 3169,
+        "endChar": 19
+      },
+      "revId": "217a62b23edf79c45e32691a0745056bfcd0eab8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
