@@ -239,3 +239,4 @@ For more information regarding SDC Troubleshooting please refer to the following
 ##### [JIRA](http://jira.onap.org)
 
 ##### [WIKI](https://wiki.onap.org/display/DW/Service+Design+and+Creation+%28SDC%29+Portal)
+Dummy change for testing https://jira.linuxfoundation.org/plugins/servlet/theme/portal/2/IT-23792
