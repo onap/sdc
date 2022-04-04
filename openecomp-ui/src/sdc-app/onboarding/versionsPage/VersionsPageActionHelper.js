@@ -14,8 +14,7 @@
  * permissions and limitations under the License.
  */
 import ItemsHelper from '../../common/helpers/ItemsHelper.js';
-import { actionTypes } from './VersionsPageConstants.js';
-import { itemTypes } from './VersionsPageConstants.js';
+import { actionTypes, itemTypes } from './VersionsPageConstants.js';
 import { modalContentMapper } from 'sdc-app/common/modal/ModalContentMapper.js';
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
@@ -26,6 +25,7 @@ import {
     onboardingActions
 } from 'sdc-app/onboarding/OnboardingConstants.js';
 import { notificationActions } from 'nfvo-components/notification/NotificationsConstants.js';
+import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper';
 
 const VersionsPageActionHelper = {
     fetchVersions(dispatch, { itemType, itemId }) {
@@ -110,6 +110,18 @@ const VersionsPageActionHelper = {
         dispatch(
             notificationActions.showSuccess({
                 message: i18n('Item successfully restored')
+            })
+        );
+    },
+
+    async deleteItemFromArchive(dispatch, itemId) {
+        await SoftwareProductActionHelper.softwareProductDelete(itemId);
+        await ScreensHelper.loadScreen(dispatch, {
+            screen: enums.SCREEN.ONBOARDING_CATALOG
+        });
+        dispatch(
+            notificationActions.showSuccess({
+                message: i18n('Item successfully deleted')
             })
         );
     }
