@@ -98,7 +98,9 @@ export const mapActionsToProps = (
         },
         onArchive: () => VersionsPageActionHelper.archiveItem(dispatch, itemId),
         onRestore: () =>
-            VersionsPageActionHelper.restoreItemFromArchive(dispatch, itemId)
+            VersionsPageActionHelper.restoreItemFromArchive(dispatch, itemId),
+        onDelete: () =>
+            VersionsPageActionHelper.deleteItemFromArchive(dispatch, itemId)
     };
 };
 

@@ -21,22 +21,36 @@ import SVGIcon from 'onap-ui-react/lib/components/SVGIcon.js';
 import { Button } from 'onap-ui-react';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 
-const ArchiveRestoreButton = ({ depricateAction, title, isArchived }) => (
+const ArchiveRestoreButton = ({
+    deprecateAction,
+    title,
+    isArchived,
+    deleteAction
+}) => (
     <div className="deprecate-btn-wrapper">
+        ,
         {isArchived ? (
-            <Button
-                data-test-id="deprecate-action-btn"
-                className="depricate-btn"
-                onClick={depricateAction}>
-                {title}
-            </Button>
+            <div>
+                <Button
+                    data-test-id="deprecate-action-btn"
+                    className="deprecate-btn"
+                    onClick={deprecateAction}>
+                    {title}
+                </Button>
+                <Button
+                    data-test-id="delete-action-btn"
+                    className="deprecate-btn"
+                    onClick={deleteAction}>
+                    {i18n('DELETE')}
+                </Button>
+            </div>
         ) : (
             <SVGIcon
                 data-test-id="deprecate-action-btn"
                 name="archiveBox"
                 title={i18n('Archive')}
                 color="secondary"
-                onClick={depricateAction}
+                onClick={deprecateAction}
             />
         )}
     </div>
@@ -50,6 +64,7 @@ const VersionPageTitle = ({
     itemName,
     isArchived,
     onRestore,
+    onDelete,
     onArchive,
     isCollaborator
 }) => {
@@ -62,9 +77,10 @@ const VersionPageTitle = ({
             {isCollaborator && (
                 <ArchiveRestoreButton
                     isArchived={isArchived}
-                    depricateAction={
+                    deprecateAction={
                         isArchived ? () => onRestore() : () => onArchive()
                     }
+                    deleteAction={isArchived ? () => onDelete() : null}
                     title={i18n(isArchived ? 'RESTORE' : 'ARCHIVE')}
                 />
             )}
@@ -95,7 +111,8 @@ class VersionsPage extends React.Component {
             isManual,
             isArchived,
             onArchive,
-            onRestore
+            onRestore,
+            onDelete
         } = this.props;
         const depricatedTitle = isArchived ? i18n('(Archived)') : '';
         return (
@@ -106,6 +123,7 @@ class VersionsPage extends React.Component {
                     onArchive={onArchive}
                     isArchived={isArchived}
                     onRestore={onRestore}
+                    onDelete={onDelete}
                     isCollaborator={isCollaborator}
                 />
                 <PermissionsView

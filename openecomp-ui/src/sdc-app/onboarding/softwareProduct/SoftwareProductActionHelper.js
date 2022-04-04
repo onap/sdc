@@ -715,6 +715,10 @@ const SoftwareProductActionHelper = {
         }
     },
 
+    softwareProductDelete(itemId) {
+        return RestAPIUtil.destroy(`${baseUrl()}/${itemId}`);
+    },
+
     setIsValidityData(dispatch, { isValidityData }) {
         dispatch({
             type: actionTypes.softwareProductEditor.IS_VALIDITY_DATA_CHANGED,

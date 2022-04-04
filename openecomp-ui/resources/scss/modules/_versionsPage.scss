@@ -64,6 +64,9 @@
             justify-content: flex-end;
             margin-bottom: 10px;
             align-self: center;
+            .deprecate-btn {
+                margin-left: 10px;
+            }
             .svg-icon-wrapper {
                 &:hover {
                     fill: $light-blue;
