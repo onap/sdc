@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d3860a8_fd5eaa21",
+        "filename": "catalog-be/src/main/resources/import/tosca/data-types/dataTypes.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 3169,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-04T09:39:55Z",
+      "side": 1,
+      "message": "why do we specifically need to use capital case?",
+      "range": {
+        "startLine": 3169,
+        "startChar": 16,
+        "endLine": 3169,
+        "endChar": 19
+      },
+      "revId": "217a62b23edf79c45e32691a0745056bfcd0eab8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
