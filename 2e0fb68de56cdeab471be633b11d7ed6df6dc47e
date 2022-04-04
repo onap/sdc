@@ -237,6 +237,30 @@
     },
     {
       "key": {
+        "uuid": "bd32d964_a2a868cc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-04T15:30:29Z",
+      "side": 1,
+      "message": "This change was not applied.",
+      "parentUuid": "2491416d_b9eaaadd",
+      "range": {
+        "startLine": 305,
+        "startChar": 30,
+        "endLine": 305,
+        "endChar": 55
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "26b63b03_59f27b45",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 1
@@ -460,6 +484,30 @@
       "side": 1,
       "message": "I actually wanted it to iterate over all the Graph Vertices in the list so all the Graph Vertices that are in use will be logged instead of just the first one.",
       "parentUuid": "c83aa729_579d9dc5",
+      "range": {
+        "startLine": 1008,
+        "startChar": 16,
+        "endLine": 1008,
+        "endChar": 106
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4bd1840_6170d028",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-04T15:30:29Z",
+      "side": 1,
+      "message": "Ok, I see. A little bit awkward but it works. The problem is that the present log in checkIfInUSe is done only for debugging purposes. In production, for example, debug logging level will be disabled, so it will be a wast to call that for logging purposes in all situations.\nIf you still want to do this for debug purposes, you should check here if the debug log is enabled and then call the filter, ex:\n\nboolean isServiceInUse \u003d false;\n        if (log.isDebugEnabled()) {\n            for (final GraphVertex graphVertex : allServiceVerticesToDelete) {\n                if (checkIfInUse(graphVertex)) {\n                    isServiceInUse \u003d true;\n                }\n            }\n//            isServiceInUse \u003d allServiceVerticesToDelete.stream().filter(this::checkIfInUse).count() \u003e 0;\n        } else {\n            isServiceInUse \u003d allServiceVerticesToDelete.stream().anyMatch(this::checkIfInUse);\n        }\n        if (isServiceInUse) {\n            throwStorageException(StorageOperationStatus.GRAPH_IS_LOCK);\n        }\n\nStill a little bit awkward to call the filter and after an any match for the same method, so for more clarity I would do a common for each. But it is just a suggestion.\n\nAnd you could put this piece of code in a separate method, i.g boolean isAnyServiceInUse",
+      "parentUuid": "f15ab364_8e040491",
       "range": {
         "startLine": 1008,
         "startChar": 16,
@@ -848,6 +896,30 @@
     },
     {
       "key": {
+        "uuid": "2a4cd03c_39a98e78",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1037,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-04T15:30:29Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c59057b5_0fd370fc",
+      "range": {
+        "startLine": 1037,
+        "startChar": 24,
+        "endLine": 1037,
+        "endChar": 26
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e40fe7a3_8c02c642",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 1
@@ -883,6 +955,30 @@
       "side": 1,
       "message": "I can\u0027t unwrap this since parentVertex is of type Either\u003cGraphVertex, JanusGraphOperationStatus\u003e",
       "parentUuid": "e40fe7a3_8c02c642",
+      "range": {
+        "startLine": 1038,
+        "startChar": 27,
+        "endLine": 1038,
+        "endChar": 42
+      },
+      "revId": "2e0fb68de56cdeab471be633b11d7ed6df6dc47e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "badf8866_c26ad5ca",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-04T15:30:29Z",
+      "side": 1,
+      "message": "You could do something like this:\n\nfor (GraphVertex currentParentVertex: parentVertices.left().value()) {\n            GraphVertex currentVertex \u003d currentParentVertex;\n            while (currentVertex !\u003d null) {                \n                Either\u003cList\u003cGraphVertex\u003e, JanusGraphOperationStatus\u003e currentVertexParentVertices \u003d\n                    janusGraphDao.getParentVertices(currentVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);\n                if (currentVertexParentVertices.isLeft()) {\n                    allParents.addAll(currentVertexParentVertices.left().value());\n                }\n                allParents.add(currentVertex);\n                currentVertex \u003d janusGraphDao.getParentVertex(currentVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll)\n                    .either(graphVertex -\u003e graphVertex, janusGraphOperationStatus -\u003e null);\n            }\n        }\n\nif not, at least move the \"parentVertex \u003d janusGraphDao.getParentVertex(currentVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);\" to the last line of the while.",
+      "parentUuid": "dcb1ff12_9320ceca",
       "range": {
         "startLine": 1038,
         "startChar": 27,
