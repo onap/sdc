@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import org.jetbrains.annotations.Nullable;
+import org.apache.http.HttpStatus;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.common.api.Constants;
@@ -46,45 +46,61 @@ public class CatalogVspClientImpl implements CatalogVspClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogVspClientImpl.class);
     private static final String URL_GET_RESOURCE_BY_CSAR_UUID = "%s://%s:%s/sdc2/rest/v1/catalog/resources/csar/%s";
     private static final String CONFIG_SECTION = "catalogNotificationsConfig";
+    private static final String VSP_USE_NOT_FOUND = "SVC4635";
     public static final String NAME = "name";
     public static final String SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID = "sdc2/rest/v1/catalog/resources/csar/{csaruuid}";
 
     /**
-     * Returns the name of a VF which is using the provided VSP.
-     * It returns an empty optional in case the VSP is not used by any VF,
-     * or throws ans exception if any error occurs during the process.
+     * Returns the name of a VF which is using the provided VSP. It returns an empty optional in case the VSP is not used by any VF, or throws an
+     * exception if any error occurs during the process.
      *
-     * @param vspId        the id of the vsp
-     * @param user         the user to perform the action
+     * @param vspId the id of the vsp
+     * @param user  the user to perform the action
      */
     @Override
     public Optional<String> findNameOfVfUsingVsp(String vspId, String user) throws CatalogRestClientException {
+        HttpConfiguration httpConfig = getHttpConfiguration();
+        if (null == httpConfig) {
+            throw new CatalogRestClientException(
+                ErrorMessagesFormatBuilder.getErrorWithParameters(Messages.DELETE_VSP_UNEXPECTED_ERROR_USED_BY_VF.getErrorMessage(),
+                    vspId, SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID));
+        }
+        final Properties headers = new Properties();
+        headers.put(Constants.USER_ID_HEADER, user);
+        headers.put(ACCEPT, APPLICATION_JSON);
+        String url = String.format(URL_GET_RESOURCE_BY_CSAR_UUID, httpConfig.getCatalogBeProtocol(),
+            httpConfig.getCatalogBeFqdn(), httpConfig.getCatalogBeHttpPort(), vspId);
+        final HttpResponse<String> httpResponse;
         try {
-            HttpConfiguration httpConfig = getHttpConfiguration();
-            if (null == httpConfig) {
-                throw new CatalogRestClientException(ErrorMessagesFormatBuilder.getErrorWithParameters(Messages.DELETE_VSP_UNEXPECTED_ERROR_USED_BY_VF.getErrorMessage(),
-                        vspId, SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID));
-            }
-            final Properties headers = new Properties();
-            headers.put(Constants.USER_ID_HEADER, user);
-            headers.put(ACCEPT, APPLICATION_JSON);
-            String url = String.format(URL_GET_RESOURCE_BY_CSAR_UUID, httpConfig.getCatalogBeProtocol(),
-                    httpConfig.getCatalogBeFqdn(), httpConfig.getCatalogBeHttpPort(), vspId);
-            final HttpResponse<String> httpResponse;
             httpResponse = HttpRequest.get(url, headers);
+        } catch (final Exception e) {
+            String formattedErrorMessage = ErrorMessagesFormatBuilder.getErrorWithParameters(
+                Messages.DELETE_VSP_UNEXPECTED_ERROR_USED_BY_VF.getErrorMessage(),
+                vspId, SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID);
+            LOGGER.error(formattedErrorMessage, e);
+            throw new CatalogRestClientException(formattedErrorMessage, e);
+        }
+        if (httpResponse.getStatusCode() != HttpStatus.SC_OK) {
+            if (httpResponse.getResponse().contains(VSP_USE_NOT_FOUND)) {
+                LOGGER.debug("VSP usage in VF not found", httpResponse.getResponse());
+                return Optional.empty();
+            }
+            throw new CatalogRestClientException(ErrorMessagesFormatBuilder.getErrorWithParameters(Messages.DELETE_VSP_UNEXPECTED_ERROR_USED_BY_VF
+                .getErrorMessage(), vspId, SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID));
+        }
+        return Optional.of(getVspNameUsedInVf(httpResponse));
+    }
+
+    private String getVspNameUsedInVf(HttpResponse<String> httpResponse) {
+        try {
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> respObject = mapper.readValue(httpResponse.getResponse(), Map.class);
-            return Optional.of((String) respObject.get(NAME));
-
+            return (String) respObject.get(NAME);
         } catch (Exception e) {
-            String formattedErrorMessage = ErrorMessagesFormatBuilder.getErrorWithParameters(Messages.DELETE_VSP_UNEXPECTED_ERROR_USED_BY_VF.getErrorMessage(),
-                    vspId, SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID);
-            LOGGER.error(formattedErrorMessage,  e);
-            throw new CatalogRestClientException(formattedErrorMessage, e);
+            throw new CatalogRestClientException("Could not parse find VSP usage response", e);
         }
     }
 
-    @Nullable
     private HttpConfiguration getHttpConfiguration() throws CatalogRestClientException {
         HttpConfiguration httpConfig;
         try {
