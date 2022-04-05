@@ -52,7 +52,7 @@ public class CatalogVspClientImpl implements CatalogVspClient {
     /**
      * Returns the name of a VF which is using the provided VSP.
      * It returns an empty optional in case the VSP is not used by any VF,
-     * or throws ans exception if any error occurs during the process.
+     * or throws an exception if any error occurs during the process.
      *
      * @param vspId        the id of the vsp
      * @param user         the user to perform the action
@@ -72,6 +72,9 @@ public class CatalogVspClientImpl implements CatalogVspClient {
                     httpConfig.getCatalogBeFqdn(), httpConfig.getCatalogBeHttpPort(), vspId);
             final HttpResponse<String> httpResponse;
             httpResponse = HttpRequest.get(url, headers);
+            if (httpResponse.getStatusCode() >= 400) {
+                return Optional.empty();
+            }
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> respObject = mapper.readValue(httpResponse.getResponse(), Map.class);
             return Optional.of((String) respObject.get(NAME));
