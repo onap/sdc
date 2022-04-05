@@ -5,6 +5,86 @@
 Release Notes
 =============
 
+Version: 1.11.0
+==============
+
+:Release Date: 2022-04-05
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.6.6
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+    N/A
+
+**Stories**
+*  `SDC-3893 <https://jira.onap.org/browse/SDC-3893>`_ - UI support for editing interfaces on a node type
+*  `SDC-3931 <https://jira.onap.org/browse/SDC-3931>`_ - Delete VSP - Handling partial delete failure
+*  `SDC-3935 <https://jira.onap.org/browse/SDC-3935>`_ - Delete VSP - Restore of partially deleted VSP
+*  `SDC-3948 <https://jira.onap.org/browse/SDC-3948>`_ - Add ASD artifact type to SDC AID model
+*  `SDC-3893 <https://jira.onap.org/browse/SDC-3893>`_ - UI support for editing interfaces on a node type
+*  `SDC-3894 <https://jira.onap.org/browse/SDC-3894>`_ - Delete VSP - Restrict deletion of archived VSPs if used in VF
+*  `SDC-3884 <https://jira.onap.org/browse/SDC-3884>`_ - Copy entry_defintion_type to TOSCA.meta
+*  `SDC-3890 <https://jira.onap.org/browse/SDC-3890>`_ - Delete VSP - Support deletion of archived VSPs in onboarding BE
+
+**Bug Fixes**
+*  `SDC-3939 <https://jira.onap.org/browse/SDC-3939>`_ - NPE thrown in service import
+*  `SDC-3934 <https://jira.onap.org/browse/SDC-3934>`_ - Package storage and reducer config are not reloading when there is a config change
+*  `SDC-3937 <https://jira.onap.org/browse/SDC-3937>`_ - PM_DICTIONARY check is causing nullpointer
+*  `SDC-3926 <https://jira.onap.org/browse/SDC-3926>`_ - Setting value of list or map property with complex type results in single value
+*  `SDC-3928 <https://jira.onap.org/browse/SDC-3928>`_ - Fix unable to update 'Interface Name' in VF
+
+**Tasks**
+
+*  `SDC-3933 <https://jira.onap.org/browse/SDC-3933>`_ - Upgrade vulnerable dependency 'org.apache.httpcomponents:httpcore'
+*  `SDC-3927 <https://jira.onap.org/browse/SDC-3927>`_ - Remove unused vulnerable dependency
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
+
 Version: 1.10.3
 ==============
 
