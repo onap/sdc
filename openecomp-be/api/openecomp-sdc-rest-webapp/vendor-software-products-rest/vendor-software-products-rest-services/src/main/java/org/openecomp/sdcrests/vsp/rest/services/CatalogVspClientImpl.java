@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
 import org.openecomp.core.validation.errors.ErrorMessagesFormatBuilder;
 import org.openecomp.sdc.common.CommonConfigurationManager;
@@ -46,13 +47,14 @@ public class CatalogVspClientImpl implements CatalogVspClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogVspClientImpl.class);
     private static final String URL_GET_RESOURCE_BY_CSAR_UUID = "%s://%s:%s/sdc2/rest/v1/catalog/resources/csar/%s";
     private static final String CONFIG_SECTION = "catalogNotificationsConfig";
+    private static final String VSP_USE_NOT_FOUND = "SVC4635";
     public static final String NAME = "name";
     public static final String SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID = "sdc2/rest/v1/catalog/resources/csar/{csaruuid}";
 
     /**
      * Returns the name of a VF which is using the provided VSP.
      * It returns an empty optional in case the VSP is not used by any VF,
-     * or throws ans exception if any error occurs during the process.
+     * or throws an exception if any error occurs during the process.
      *
      * @param vspId        the id of the vsp
      * @param user         the user to perform the action
@@ -71,7 +73,19 @@ public class CatalogVspClientImpl implements CatalogVspClient {
             String url = String.format(URL_GET_RESOURCE_BY_CSAR_UUID, httpConfig.getCatalogBeProtocol(),
                     httpConfig.getCatalogBeFqdn(), httpConfig.getCatalogBeHttpPort(), vspId);
             final HttpResponse<String> httpResponse;
-            httpResponse = HttpRequest.get(url, headers);
+            try {
+                httpResponse = HttpRequest.get(url, headers);
+            } catch (final Exception e) {
+                throw new CatalogRestClientException("An error has occurred while retrieving the VSP usage", e);
+            }
+            if (httpResponse.getStatusCode() != HttpStatus.SC_OK) {
+                if (httpResponse.getResponse().contains(VSP_USE_NOT_FOUND)) {
+                    LOGGER.debug("VSP usage in VF not found", httpResponse.getResponse());
+                    return Optional.empty();
+                }
+                throw new CatalogRestClientException(ErrorMessagesFormatBuilder.getErrorWithParameters(Messages.DELETE_VSP_UNEXPECTED_ERROR_USED_BY_VF
+                        .getErrorMessage(), vspId, SDC_2_REST_V_1_CATALOG_RESOURCES_CSAR_CSARUUID));
+            }
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> respObject = mapper.readValue(httpResponse.getResponse(), Map.class);
             return Optional.of((String) respObject.get(NAME));
