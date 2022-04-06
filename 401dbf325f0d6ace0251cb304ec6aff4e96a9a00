@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a145fb1_097ee37f",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-06T11:21:29Z",
+      "side": 1,
+      "message": "This method flow does not seems to be right.\n\nThis call will return a promise, which can be a success or a failure.\n\nThe success message should be only shown if the call was successful. Otherwise a failure message. \nThe failure seems to be already be handled by the RestAPIUtil with the catch blocks on the calls:\n\"\n.catch(error \u003d\u003e {\n                store.dispatch({\n                    type: LoaderConstants.RECEIVE_RESPONSE,\n                    url: error.config.url\n                });\n                errorResponseHandler(error.response);\n                return Promise.reject({\n                    responseJSON: error.response.data\n                });\n            });\n\"\n\nThe screen should be loading before this call and, on the finally part of the promise, it should call something to stop loading the screen. I also believe that the RestAPIUtil already shows/hides the loading spinner, with the events:\n\n\"store.dispatch({ type: LoaderConstants.SEND_REQUEST, url: url });\"\nand \n\"store.dispatch({type: LoaderConstants.RECEIVE_RESPONSE, url: result.config.url});\"\n\nso there would be no reason to handle it in this method.\n\n\nIf I\u0027m not wrong, I believe you should be doing something like this:\nScreensHelper.loadScreen(dispatch, {\n            screen: enums.SCREEN.ONBOARDING_CATALOG\n        }).then(response -\u003e \ndispatch(\n            notificationActions.showSuccess({\n                message: i18n(\u0027Item successfully deleted\u0027)\n            })\n        );\n);\n\nbut this may not work as the RestAPIUtil code is already catching an error, so maybe the showSuccess code will always be executed. In this case, we could do something like:\n\nconst response \u003d await ScreensHelper.loadScreen(dispatch, {\n            screen: enums.SCREEN.ONBOARDING_CATALOG\n        })\n//evaluate the response to check if it is a success or not, then, if successful, call the showSuccess.\n\nFor the best, there should be a way to pass the success handling callback function to the RestAPIUtil, but this is something not yet supported there.",
+      "range": {
+        "startLine": 118,
+        "startChar": 14,
+        "endLine": 118,
+        "endChar": 71
+      },
+      "revId": "401dbf325f0d6ace0251cb304ec6aff4e96a9a00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
