@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ed2c3e5_a40a70a0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/CatalogVspClientImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-06T11:33:06Z",
+      "side": 1,
+      "message": "I understand the API is returning a 400 in case of 404 if the VSP is not being in use, so this solution will work on this case. But it is not clear if this was a VSP not being in use or something else.\nIn a supposed scenario, maybe the API changed and the client is now really broken, doing a bad request. This code will just return empty, saying that the VSP is not in use, which could not be the case.\nWe should do a better error handling to differentiate a VSP not in use from other errors. We probably need to match a HTTP status along with an expected message from the API.",
+      "range": {
+        "startLine": 75,
+        "startChar": 12,
+        "endLine": 77,
+        "endChar": 13
+      },
+      "revId": "e3c9cb94189142b2a9351d6931ec8a312f53b947",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
