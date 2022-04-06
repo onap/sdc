@@ -29,6 +29,7 @@
 		<module>togglz-rest</module>
 		<module>unique-type-rest</module>
 		<module>externaltesting-rest</module>
+		<module>metrics-rest</module>
 	</modules>
 
 </project>
