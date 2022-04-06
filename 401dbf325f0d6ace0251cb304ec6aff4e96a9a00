@@ -22,6 +22,30 @@
       "revId": "401dbf325f0d6ace0251cb304ec6aff4e96a9a00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eddf6f47_a74441b5",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-06T11:24:15Z",
+      "side": 1,
+      "message": "For reference on promise and async/await:\nhttps://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises",
+      "parentUuid": "9a145fb1_097ee37f",
+      "range": {
+        "startLine": 118,
+        "startChar": 14,
+        "endLine": 118,
+        "endChar": 71
+      },
+      "revId": "401dbf325f0d6ace0251cb304ec6aff4e96a9a00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
