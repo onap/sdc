@@ -84,6 +84,7 @@
             <ref bean="togglz"/>
             <ref bean="items"/>
             <ref bean="uniqueTypes"/>
+            <ref bean="prometheusMetricsController"/>
         </jaxrs:serviceBeans>
 
         <jaxrs:providers>

@@ -19,7 +19,6 @@
         <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
         <replacer.plugin.version>1.5.3</replacer.plugin.version>
         <ui.version>${project.version}</ui.version>
-        <micrometer.version>1.8.4</micrometer.version>
     </properties>
 
     <dependencies>
