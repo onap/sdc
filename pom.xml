@@ -191,6 +191,8 @@ Modifications copyright (c) 2018-2019 Nokia
         <docker.username>docker</docker.username>
         <docker.registry>nexus3.onap.org:10001</docker.registry>
 
+        <micrometer.version>1.8.4</micrometer.version>
+
         <verbose>false</verbose>
     </properties>
 
