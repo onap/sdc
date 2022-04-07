@@ -70,6 +70,30 @@
       "revId": "401dbf325f0d6ace0251cb304ec6aff4e96a9a00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f1071730_5db58622",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-07T17:29:13Z",
+      "side": 1,
+      "message": "Ok, I missed that await throws an exception for rejected promises: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await#promise_rejection\n\nSorry for the whole disturbance. Still, I feel that the await is just an excuse to not handle the promise, maybe I\u0027m wrong.",
+      "parentUuid": "bd4a08b4_8403ed2d",
+      "range": {
+        "startLine": 118,
+        "startChar": 14,
+        "endLine": 118,
+        "endChar": 71
+      },
+      "revId": "401dbf325f0d6ace0251cb304ec6aff4e96a9a00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
