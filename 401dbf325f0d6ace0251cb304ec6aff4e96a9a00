@@ -46,6 +46,30 @@
       "revId": "401dbf325f0d6ace0251cb304ec6aff4e96a9a00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd4a08b4_8403ed2d",
+        "filename": "openecomp-ui/src/sdc-app/onboarding/versionsPage/VersionsPageActionHelper.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-04-07T17:23:08Z",
+      "side": 1,
+      "message": "I tested here. It is working as expected. When there is an error, error message shown in UI and it stays in same page, it is not proceeding further to dispatch success message. Only successful deletion redirects to homepage and shows success message. Thanks for information. It was really helpful for testing.",
+      "parentUuid": "eddf6f47_a74441b5",
+      "range": {
+        "startLine": 118,
+        "startChar": 14,
+        "endLine": 118,
+        "endChar": 71
+      },
+      "revId": "401dbf325f0d6ace0251cb304ec6aff4e96a9a00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
