@@ -5,6 +5,73 @@
 Release Notes
 =============
 
+Version: 1.11.1
+==============
+
+:Release Date: 2022-04-08
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.6.6
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+    N/A
+
+**Stories**
+*  `SDC-3938 <https://jira.onap.org/browse/SDC-3938>`_ - Add ASD node and data types to SDC AID model
+*  `SDC-3952 <https://jira.onap.org/browse/SDC-3952>`_ - Delete VSP - Onboarding UI support for VSP deletion 
+
+**Bug Fixes**
+*  `SDC-3953 <https://jira.onap.org/browse/SDC-3953>`_ - Fix error handling for VSP usage check in VF 
+
+**Tasks**
+    N/A
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.0
 ==============
 
