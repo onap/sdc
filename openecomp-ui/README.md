@@ -4,13 +4,13 @@
 
 ###Install `npm`
 
-Install npm v6.
+Install npm v8.6.0.
 
 ###Install `Node.js`
 
-Install node v10.17.0 (as in the pom.xml <nodeVersion>v10.17.0</nodeVersion>).
+Install node v14.17.1 (as in the pom.xml <nodeVersion>v14.17.1</nodeVersion>).
 
-* To manage different versions of node, is recommended to install "n" (https://github.com/tj/n).
+* To manage different versions of node, it is recommended to install "n" (https://github.com/tj/n).
 
 ### Install `gulp`
 
