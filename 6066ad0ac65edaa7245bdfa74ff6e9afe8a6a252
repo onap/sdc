@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77784396_d739fca8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/PrometheusMetricsServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-04-09T21:37:24Z",
+      "side": 1,
+      "message": "2022",
+      "range": {
+        "startLine": 4,
+        "startChar": 21,
+        "endLine": 4,
+        "endChar": 23
+      },
+      "revId": "6066ad0ac65edaa7245bdfa74ff6e9afe8a6a252",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
