@@ -28,7 +28,6 @@ const ArchiveRestoreButton = ({
     deleteAction
 }) => (
     <div className="deprecate-btn-wrapper">
-        ,
         {isArchived ? (
             <div>
                 <Button

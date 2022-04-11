@@ -20,6 +20,9 @@ import VersionsPageCreationActionHelper from './creation/VersionsPageCreationAct
 import PermissionsActionHelper from '../permissions/PermissionsActionHelper.js';
 import { onboardingMethod as onboardingMethodType } from 'sdc-app/onboarding/softwareProduct/SoftwareProductConstants.js';
 import VersionsPageView from './VersionsPage.jsx';
+import { actionTypes as ModalActionTypes } from 'nfvo-components/modal/GlobalModalConstants';
+import i18n from 'nfvo-utils/i18n/i18n';
+import { itemTypes } from 'sdc-app/onboarding/versionsPage/VersionsPageConstants';
 
 export const mapStateToProps = ({
     users: { userInfo },
@@ -99,8 +102,29 @@ export const mapActionsToProps = (
         onArchive: () => VersionsPageActionHelper.archiveItem(dispatch, itemId),
         onRestore: () =>
             VersionsPageActionHelper.restoreItemFromArchive(dispatch, itemId),
-        onDelete: () =>
-            VersionsPageActionHelper.deleteItemFromArchive(dispatch, itemId)
+        onDelete: () => {
+            let confirmMsgCode;
+            if (itemType === itemTypes.LICENSE_MODEL) {
+                confirmMsgCode = 'vlm.delete.archived.warning';
+            } else if (itemType === itemTypes.SOFTWARE_PRODUCT) {
+                confirmMsgCode = 'vsp.delete.archived.warning';
+            }
+            dispatch({
+                type: ModalActionTypes.GLOBAL_MODAL_WARNING,
+                data: {
+                    msg: i18n(confirmMsgCode),
+                    confirmationButtonText: i18n('button.proceed.label'),
+                    title: i18n('WARNING'),
+
+                    onConfirmed: () =>
+                        VersionsPageActionHelper.deleteArchivedItem(
+                            dispatch,
+                            itemId,
+                            itemType
+                        )
+                }
+            });
+        }
     };
 };
 

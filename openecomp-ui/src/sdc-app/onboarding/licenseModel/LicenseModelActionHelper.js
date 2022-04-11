@@ -17,7 +17,6 @@ import RestAPIUtil from 'nfvo-utils/RestAPIUtil.js';
 import Configuration from 'sdc-app/config/Configuration.js';
 import { actionTypes } from './LicenseModelConstants.js';
 import { actionTypes as modalActionTypes } from 'nfvo-components/modal/GlobalModalConstants.js';
-import { actionsEnum as vcActionsEnum } from 'nfvo-components/panel/versionController/VersionControllerConstants.js';
 import i18n from 'nfvo-utils/i18n/i18n.js';
 import LicenseAgreementActionHelper from './licenseAgreement/LicenseAgreementActionHelper.js';
 import FeatureGroupsActionHelper from './featureGroups/FeatureGroupsActionHelper.js';
@@ -147,7 +146,7 @@ const LicenseModelActionHelper = {
             const onCommit = comment => {
                 return this.performVCAction(dispatch, {
                     licenseModelId,
-                    action: vcActionsEnum.COMMIT,
+                    action: VersionControllerActionsEnum.COMMIT,
                     version,
                     comment
                 }).then(() => {
@@ -176,7 +175,7 @@ const LicenseModelActionHelper = {
     performSubmitAction(dispatch, { licenseModelId, version }) {
         return putLicenseModelAction({
             itemId: licenseModelId,
-            action: vcActionsEnum.SUBMIT,
+            action: VersionControllerActionsEnum.SUBMIT,
             version
         }).then(() => {
             return ItemsHelper.checkItemStatus(dispatch, {
@@ -231,7 +230,7 @@ const LicenseModelActionHelper = {
                 return Promise.resolve(updatedVersion);
             }
             if (!inMerge) {
-                if (action === vcActionsEnum.SUBMIT) {
+                if (action === VersionControllerActionsEnum.SUBMIT) {
                     return this.manageSubmitAction(dispatch, {
                         licenseModelId,
                         version,
@@ -248,7 +247,7 @@ const LicenseModelActionHelper = {
                             itemType: itemTypes.LICENSE_MODEL,
                             itemId: licenseModelId
                         });
-                        if (action === vcActionsEnum.SYNC) {
+                        if (action === VersionControllerActionsEnum.SYNC) {
                             return MergeEditorActionHelper.analyzeSyncResult(
                                 dispatch,
                                 { itemId: licenseModelId, version }
@@ -286,6 +285,10 @@ const LicenseModelActionHelper = {
                 }
             });
         });
+    },
+
+    deleteLicenseModel(licenseModelId) {
+        return RestAPIUtil.destroy(`${baseUrl()}/${licenseModelId}`);
     }
 };
 

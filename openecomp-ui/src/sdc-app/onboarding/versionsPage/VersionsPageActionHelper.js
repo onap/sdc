@@ -26,6 +26,7 @@ import {
 } from 'sdc-app/onboarding/OnboardingConstants.js';
 import { notificationActions } from 'nfvo-components/notification/NotificationsConstants.js';
 import SoftwareProductActionHelper from 'sdc-app/onboarding/softwareProduct/SoftwareProductActionHelper';
+import LicenseModelActionHelper from 'sdc-app/onboarding/licenseModel/LicenseModelActionHelper';
 
 const VersionsPageActionHelper = {
     fetchVersions(dispatch, { itemType, itemId }) {
@@ -114,14 +115,28 @@ const VersionsPageActionHelper = {
         );
     },
 
-    async deleteItemFromArchive(dispatch, itemId) {
-        await SoftwareProductActionHelper.softwareProductDelete(itemId);
+    async deleteArchivedItem(dispatch, itemId, itemType) {
+        let successMsgCode;
+        if (itemType === itemTypes.LICENSE_MODEL) {
+            await LicenseModelActionHelper.deleteLicenseModel(itemId);
+            successMsgCode = 'vlm.delete.success';
+        } else if (itemType === itemTypes.SOFTWARE_PRODUCT) {
+            await SoftwareProductActionHelper.softwareProductDelete(itemId);
+            successMsgCode = 'vsp.delete.success';
+        } else {
+            console.error(
+                `Invalid item type "${itemType}". Expecting one of ${
+                    itemTypes.LICENSE_MODEL
+                } or ${itemTypes.SOFTWARE_PRODUCT}`
+            );
+            return;
+        }
         await ScreensHelper.loadScreen(dispatch, {
             screen: enums.SCREEN.ONBOARDING_CATALOG
         });
         dispatch(
             notificationActions.showSuccess({
-                message: i18n('Item successfully deleted')
+                message: i18n(successMsgCode)
             })
         );
     }
