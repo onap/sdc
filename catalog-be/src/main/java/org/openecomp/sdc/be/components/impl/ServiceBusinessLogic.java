@@ -88,6 +88,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datamodel.utils.PropertyValueConstraintValidationUtil;
@@ -1299,6 +1300,26 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         final ServiceRelations serviceRelations = new ForwardingPathUtils()
             .convertServiceToServiceRelations(serviceResponseFormatEither.left().value());
         return Either.left(serviceRelations);
+    }
+
+    public List<GraphVertex> getServicesUsingService(String serviceId, User user) {
+        validateUserExists(user);
+        Either<Service, StorageOperationStatus> serviceStatus = toscaOperationFacade.getToscaElement(serviceId);
+        if (serviceStatus.isRight()) {
+            log.debug("Failed to get service {}", serviceId);
+            componentException(serviceStatus.right().value());
+        }
+        Service service = serviceStatus.left().value();
+        try {
+            List<GraphVertex> servicesUsingThisService = toscaOperationFacade.getServicesUsingService(service.getUniqueId());
+            if (log.isDebugEnabled()) {
+                servicesUsingThisService.forEach(vertexIdUsing -> log.debug("Component {} is using component {}.", vertexIdUsing, service.getUniqueId()));
+            }
+            return servicesUsingThisService;
+        } catch (ComponentException exception) {
+            log.debug("Failed to get services using service {}, in ServiceServlet", serviceId);
+            throw exception;
+        }
     }
 
     public void deleteArchivedService(String serviceId, User user) {

@@ -418,6 +418,14 @@ export class ComponentServiceNg2 {
         return this.http.get<InstanceBePropertiesMap>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {params: params});
     }
 
+    deleteService(componentType: string, componentId: string) {
+        return this.http.delete(this.baseUrl + this.getServerTypeUrl(componentType) + 'delete/' + componentId, {});
+    }
+
+    getServicesInUseByService(componentType: string, componentId: string) {
+        return this.http.get(this.baseUrl + this.getServerTypeUrl(componentType) + 'using/' + componentId, {});
+    }
+
     createServiceProperty(component: Component, propertyModel: PropertyBEModel): Observable<PropertyBEModel> {
         let serverObject = {};
         serverObject[propertyModel.name] = propertyModel;

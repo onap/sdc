@@ -999,6 +999,38 @@ public class ToscaOperationFacade {
         return Either.left(checkIfInUseAndDelete(allMarked));
     }
 
+    public List<GraphVertex> getServicesUsingService(String serviceID) {
+        Either<GraphVertex, StorageOperationStatus> componentToCheck = topologyTemplateOperation
+            .getComponentByLabelAndId(serviceID, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll);
+        if (componentToCheck.isRight()) {
+            throwStorageException(componentToCheck.right().value());
+        }
+        GraphVertex highestVersion = topologyTemplateOperation.getHighestVersionFrom(componentToCheck.left().value());
+        highestVersion = janusGraphDao.getVertexById(highestVersion.getUniqueId(), JsonParseFlagEnum.ParseAll).left().value();
+        List<GraphVertex> allServiceVerticesToCheck = new ArrayList<>();
+        allServiceVerticesToCheck.add(highestVersion);
+        List<GraphVertex> allParents = getAllParents(highestVersion);
+        if (allParents != null) {
+            allServiceVerticesToCheck.addAll(allParents);
+        }
+        Set<GraphVertex> inUseBy = new TreeSet<>(Comparator.comparing(GraphVertex::getUniqueId));
+        final List<EdgeLabelEnum> forbiddenEdgeLabelEnums = Arrays
+            .asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
+        for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
+            Either<Edge, JanusGraphOperationStatus> belongingEdgeByCriteria = janusGraphDao
+                .getBelongingEdgeByCriteria(highestVersion, edgeLabelEnum, null);
+            if (belongingEdgeByCriteria.isLeft()) {
+                Either<List<GraphVertex>, JanusGraphOperationStatus> inUseByVertex =
+                    janusGraphDao.getParentVertices(highestVersion, edgeLabelEnum, JsonParseFlagEnum.ParseAll);
+                if (inUseByVertex.isLeft()) {
+                    inUseBy.addAll(inUseByVertex.left().value());
+                }
+
+            }
+        }
+        return new ArrayList<>(inUseBy);
+    }
+
     public List<String> deleteService(String serviceID) {
         Either<GraphVertex, StorageOperationStatus> componentToDelete = topologyTemplateOperation
                 .getComponentByLabelAndId(serviceID, ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll);

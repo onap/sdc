@@ -83,6 +83,11 @@ const SDC_MENU_CONFIG = {
                                 "confirmationModal": "distribution-state/reject"
                             }
                         },
+                        "delete": {
+                            "text": "Delete",
+                            "url": "lifecycleState/DELETE",
+                            "alertModal": "lifecycleState/DELETE"
+                        },
                         "checkOut": {"text": "Check Out", "url": "lifecycleState/CHECKOUT"}
                     }
                 },
@@ -138,6 +143,10 @@ const SDC_MENU_CONFIG = {
         "lifecycleState/UNDOCHECKOUT": {
             "title": "Delete Version Confirmation",
             "message": "Are you sure you want to delete this version?"
+        },
+        "lifecycleState/DELETE": {
+            "title": "Delete All Versions Confirmation",
+            "message": "Are you sure you want to delete this component and all it's versions?"
         },
         "exitWithoutSaving": {
             "title": "Exit Without Saving Confirmation",

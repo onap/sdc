@@ -596,6 +596,9 @@ export class WorkspaceViewModel {
                         this.verifyIfDependenciesExist();
                         this.$scope.reload(component);
                         break;
+                    case 'lifecycleState/DELETE':
+                        this.$scope.handleDeleteArchivedService();
+                        break;
                     case 'distribution/PROD/activate':
                         this.Notification.success({
                             message: this.$filter('translate')("DISTRIBUTE_SUCCESS_MESSAGE_TEXT"),
@@ -613,7 +616,42 @@ export class WorkspaceViewModel {
             this.ChangeLifecycleStateHandler.changeLifecycleState(this.$scope.component, data, this.$scope, onSuccess);
         };
 
-
+        this.$scope.handleDeleteArchivedService = (): void => {
+            this.$scope.isLoading = true;
+            const typeComponent = this.$scope.component.componentType;
+            this.ComponentServiceNg2.deleteService(typeComponent, this.$scope.component.uniqueId).subscribe(()=> {
+                this.$scope.isLoading = false;
+                if (this.$state.params.previousState) {
+                    switch (this.$state.params.previousState) {
+                        case 'catalog':
+                        case 'dashboard':
+                            this.$state.go(this.$state.params.previousState);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                this.deleteArchiveCache();
+                this.Notification.success({
+                    message: this.$scope.component.name + ' ' + this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TEXT"),
+                    title: this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TITLE")
+                });
+            }, () => {
+                this.ComponentServiceNg2.getServicesInUseByService(typeComponent, this.$scope.component.uniqueId).subscribe((listOfServices) => {
+                    if (listOfServices != null) {
+                        this.$scope.isLoading = false;
+                        let listOfServicesFormatted: Array<string> = [];
+                        for (var service of listOfServices as Array<Map<string, Object>>) {
+                            listOfServicesFormatted.push(" " + service["name"] + " v" + service["version"]);
+                        }
+                        this.Notification.error({
+                            message: this.$scope.component.name + ' is in use by service: ' + listOfServicesFormatted,
+                            title: 'Error service in use'
+                        });
+                    }
+                }, () => { this.$scope.isLoading = false; });
+            });
+        };
 
         this.$scope.isViewMode = ():boolean => {
             return this.$scope.mode === WorkspaceMode.VIEW;

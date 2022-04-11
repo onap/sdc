@@ -69,6 +69,7 @@ import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.datamodel.ServiceRelations;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -679,6 +680,47 @@ public class ServiceServlet extends AbstractValidationsServlet {
         } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Get Service");
             log.debug("get service relations data failed with exception", e);
+            throw e;
+        }
+    }
+
+    @GET
+    @Path("/services/using/{serviceId}")
+    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Operation(description = "Retrieve services that use the requested service", method = "GET",
+        summary = "Returns a list of the metadata of the services ", responses = {
+        @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
+        @ApiResponse(responseCode = "200", description = "Services found"),
+        @ApiResponse(responseCode = "204", description = "No Services found"),
+        @ApiResponse(responseCode = "403", description = "Restricted operation"),
+        @ApiResponse(responseCode = "404", description = "Service not found")})
+    @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
+    public Response getServicesUsingService(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request) {
+        String url = request.getMethod() + " " + request.getRequestURI();
+        log.debug(START_HANDLE_REQUEST_OF, url);
+        String userId = request.getHeader(Constants.USER_ID_HEADER);
+        User modifier = new User();
+        modifier.setUserId(userId);
+        log.debug(MODIFIER_ID_IS, userId);
+        try {
+            String serviceIdLower = serviceId.toLowerCase();
+            loggerSupportability
+                .log(LoggerSupportabilityActions.DELETE_SERVICE, StatusCode.STARTED,
+                    "Starting to get services that use the requested service {} by user {} ", serviceIdLower, userId);
+            List<GraphVertex> inUseBy = serviceBusinessLogic.getServicesUsingService(serviceId, modifier);
+            if (inUseBy.isEmpty()) {
+                return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
+            }
+            List<Map<String, Object>> inUseByFormatted = new ArrayList<>();
+            for (GraphVertex graphVertex : inUseBy) {
+                inUseByFormatted.add(graphVertex.getMetadataJson());
+            }
+            loggerSupportability.log(LoggerSupportabilityActions.DELETE_SERVICE, StatusCode.COMPLETE,
+                "Ended Get services using service {} by user {}", serviceIdLower, userId);
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), inUseByFormatted);
+        } catch (Exception e) {
+            BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Retrieve services that use the requested service");
+            log.debug("Get services using requested service failed with exception", e);
             throw e;
         }
     }

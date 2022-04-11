@@ -88,7 +88,11 @@ export class ChangeLifecycleStateHandler {
             const onOk: Function = (confirmationText) => {
                 comment.userRemarks = confirmationText;
                 scope.isLoading = true;
-                component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+                if (data.url === 'lifecycleState/DELETE') {
+                    onSuccess(component);
+                } else {
+                    component.changeLifecycleState(data.url, comment).then(onSuccess, onError);
+                }
             };
 
             const modalTitle = this.sdcMenu.alertMessages[data.alertModal].title;
