@@ -96,9 +96,7 @@ public class InterfaceDefinitionOperationsModal extends AbstractPageObject {
             addInputComponent.fillValue(inputData);
         });
         clickOnSave();
-        //there is no feedback from the UI to check if the update was successful. Forcing a wait time trying to guarantee that,
-        // although time is never a guarantee in this case.
-        new Actions(webDriver).pause(Duration.ofSeconds(5)).perform();
+        isLoaded();
     }
 
     private void fillDescription(final String description) {
