@@ -32,6 +32,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import static org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils.waitForLoader;
+
 /**
  * Represents the Composition Interface Operations Modal.
  */
@@ -61,6 +63,14 @@ public class InterfaceDefinitionOperationsModal extends AbstractPageObject {
             this.addInputComponent = new InterfaceOperationAddInputComponent(webDriver);
             this.addInputComponent.isLoaded();
         }
+    }
+
+    public void isUnloaded() {
+        waitForElementInvisibility(By.xpath(XpathSelector.TITLE_SPAN.getXPath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.INTERFACE_NAME_LABEL.getXPath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.OPERATION_NAME_LABEL.getXPath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.SAVE_BTN.getXPath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.CANCEL_BTN.getXPath()));
     }
 
     private void clickOnSave() {
@@ -96,9 +106,7 @@ public class InterfaceDefinitionOperationsModal extends AbstractPageObject {
             addInputComponent.fillValue(inputData);
         });
         clickOnSave();
-        //there is no feedback from the UI to check if the update was successful. Forcing a wait time trying to guarantee that,
-        // although time is never a guarantee in this case.
-        new Actions(webDriver).pause(Duration.ofSeconds(5)).perform();
+        waitForLoader();
     }
 
     private void fillDescription(final String description) {
