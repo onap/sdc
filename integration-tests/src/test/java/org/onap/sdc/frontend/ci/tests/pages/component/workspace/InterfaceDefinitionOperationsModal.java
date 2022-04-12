@@ -63,6 +63,14 @@ public class InterfaceDefinitionOperationsModal extends AbstractPageObject {
         }
     }
 
+    public void isUnloaded() {
+        waitForElementInvisibility(By.xpath(XpathSelector.TITLE_SPAN.getXPath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.INTERFACE_NAME_LABEL.getXPath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.OPERATION_NAME_LABEL.getXPath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.SAVE_BTN.getXPath()));
+        waitForElementInvisibility(By.xpath(XpathSelector.CANCEL_BTN.getXPath()));
+    }
+
     private void clickOnSave() {
         waitToBeClickable(By.xpath(XpathSelector.SAVE_BTN.getXPath())).click();
     }
@@ -96,9 +104,7 @@ public class InterfaceDefinitionOperationsModal extends AbstractPageObject {
             addInputComponent.fillValue(inputData);
         });
         clickOnSave();
-        //there is no feedback from the UI to check if the update was successful. Forcing a wait time trying to guarantee that,
-        // although time is never a guarantee in this case.
-        new Actions(webDriver).pause(Duration.ofSeconds(5)).perform();
+        isUnloaded();
     }
 
     private void fillDescription(final String description) {
