@@ -15,22 +15,6 @@
  */
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
-import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.ITEM_NAME;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.SUBMIT_DESCRIPTION;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_ID;
-import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
-import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto.VendorLicenseModelAction.Submit;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
 import org.openecomp.core.util.UniqueValueUtil;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
@@ -80,6 +64,19 @@ import org.openecomp.sdcrests.wrappers.GenericCollectionWrapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import javax.inject.Named;
+import javax.ws.rs.core.Response;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.openecomp.sdc.itempermissions.notifications.NotificationConstants.PERMISSION_USER;
+import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.*;
+import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto.VendorLicenseModelAction.Submit;
 
 @Named
 @Service("vendorLicenseModels")
@@ -217,8 +214,8 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
 
         final Integer certifiedVersionsCounter = vlm.getVersionStatusCounters().get(VersionStatus.Certified);
         final boolean wasVlmAtLeastOnceCertified = certifiedVersionsCounter != null && certifiedVersionsCounter > 0;
-        if (wasVlmAtLeastOnceCertified) {
-            throw VendorLicenseModelExceptionSupplier.cantDeleteCertifiedVlm(vlmId).get();
+        if (wasVlmAtLeastOnceCertified && !ItemStatus.ARCHIVED.equals(vlm.getStatus())) {
+            throw VendorLicenseModelExceptionSupplier.cantDeleteCertifiedAndNotArchivedVlm(vlmId).get();
         }
 
         asdcItemManager.delete(vlm);

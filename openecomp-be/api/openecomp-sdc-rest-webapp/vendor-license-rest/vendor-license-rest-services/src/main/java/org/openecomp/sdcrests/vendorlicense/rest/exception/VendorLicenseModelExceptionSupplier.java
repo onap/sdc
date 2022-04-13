@@ -21,9 +21,6 @@
 
 package org.openecomp.sdcrests.vendorlicense.rest.exception;
 
-import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.VLM_IS_CERTIFIED_DELETE_ERROR;
-import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.VLM_IS_IN_USE_DELETE_ERROR;
-
 import java.util.List;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
@@ -32,6 +29,8 @@ import org.openecomp.sdc.common.errors.CoreException;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
 import org.openecomp.sdc.vendorlicense.errors.VendorLicenseModelNotFoundErrorBuilder;
+
+import static org.openecomp.sdc.vendorlicense.errors.VendorLicenseErrorCodes.*;
 
 /**
  * Supplies exceptions happened for a Vendor License Model operation .
@@ -70,15 +69,15 @@ public class VendorLicenseModelExceptionSupplier {
     }
 
     /**
-     * Provides a cannot delete certified Vendor License Model exception.
+     * Provides a cannot delete certified and not archived Vendor License Model exception.
      *
      * @param vmlId the Vendor License Model id
      * @return a Supplier for the exception
      */
-    public static Supplier<CoreException> cantDeleteCertifiedVlm(final String vmlId) {
-        final String errorMsg = String.format("Vendor License Model '%s' has been certified and cannot be deleted.", vmlId);
+    public static Supplier<CoreException> cantDeleteCertifiedAndNotArchivedVlm(final String vmlId) {
+        final String errorMsg = String.format("Vendor License Model '%s' has been certified, but not archived and cannot be deleted.", vmlId);
         final ErrorCode errorCode = new ErrorCodeBuilder()
-            .withId(VLM_IS_CERTIFIED_DELETE_ERROR)
+            .withId(VLM_IS_CERTIFIED_AND_NOT_ARCHIVED_DELETE_ERROR)
             .withMessage(errorMsg)
             .build();
         return () -> new CoreException((errorCode));

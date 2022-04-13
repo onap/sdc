@@ -22,19 +22,6 @@
 package org.openecomp.sdcrests.vendorlicense.rest.services;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -55,7 +42,20 @@ import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.vendorlicense.rest.exception.VendorLicenseModelExceptionSupplier;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 class VendorLicenseModelsImplTest {
 
@@ -168,7 +168,7 @@ class VendorLicenseModelsImplTest {
         //when
         final CoreException actualException = assertThrows(CoreException.class, () -> vendorLicenseModels.deleteLicenseModel(vlmId, userId));
         //then
-        final CoreException expectedException = VendorLicenseModelExceptionSupplier.cantDeleteCertifiedVlm(vlmId).get();
+        final CoreException expectedException = VendorLicenseModelExceptionSupplier.cantDeleteCertifiedAndNotArchivedVlm(vlmId).get();
         assertEquals(expectedException.code().id(), actualException.code().id());
         assertEquals(expectedException.code().message(), actualException.code().message());
         assertEquals(expectedException.code().category(), actualException.code().category());
@@ -196,4 +196,42 @@ class VendorLicenseModelsImplTest {
         assertEquals(expectedException.code().message(), actualException.code().message());
     }
 
+    @Test
+    void deleteLicenseModel_CertifiedAndArchived_SuccessTest() {
+        final String vlmId = "vlmId";
+        final String userId = "userId";
+        final Item vlmItem = new Item();
+        vlmItem.setId(vlmId);
+        vlmItem.setType(ItemType.vlm.getName());
+        vlmItem.setStatus(ItemStatus.ARCHIVED);
+        vlmItem.addVersionStatus(VersionStatus.Certified);
+        when(asdcItemManager.get(vlmId)).thenReturn(vlmItem);
+
+        final Response response = vendorLicenseModels.deleteLicenseModel(vlmId, userId);
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        verify(asdcItemManager).delete(vlmItem);
+        verify(permissionsManager).deleteItemPermissions(vlmItem.getId());
+        verify(uniqueValueUtil).deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlmItem.getName());
+        verify(notifier).notifySubscribers(any(Event.class), eq(userId));
+    }
+
+    @Test
+    void deleteLicenseModel_CertifiedAndNotArchived_FailTest() {
+        final String vlmId = "vlmId";
+        final String userId = "userId";
+        final String errorMessageText = "Vendor License Model 'vlmId' has been certified, but not archived and cannot be deleted.";
+        final Item vlmItem = new Item();
+        vlmItem.setId(vlmId);
+        vlmItem.setType(ItemType.vlm.getName());
+        vlmItem.setStatus(ItemStatus.ACTIVE);
+        vlmItem.addVersionStatus(VersionStatus.Certified);
+        when(asdcItemManager.get(vlmId)).thenReturn(vlmItem);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            vendorLicenseModels.deleteLicenseModel(vlmId, userId);
+        });
+
+        assertEquals(errorMessageText, exception.getMessage());
+    }
 }
