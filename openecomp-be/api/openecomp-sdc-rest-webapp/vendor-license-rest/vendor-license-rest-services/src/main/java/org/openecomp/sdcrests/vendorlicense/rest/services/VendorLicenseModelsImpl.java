@@ -23,10 +23,12 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERS
 import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERSION_NAME;
 import static org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto.VendorLicenseModelAction.Submit;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import org.openecomp.core.dao.UniqueValueDaoFactory;
@@ -35,8 +37,6 @@ import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.activitylog.ActivityLogManagerFactory;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
-import org.openecomp.sdc.common.errors.CoreException;
-import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.common.errors.Messages;
 import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.healing.factory.HealingManagerFactory;
@@ -52,6 +52,9 @@ import org.openecomp.sdc.vendorlicense.VendorLicenseConstants;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManager;
 import org.openecomp.sdc.vendorlicense.VendorLicenseManagerFactory;
 import org.openecomp.sdc.vendorlicense.dao.types.VendorLicenseModelEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDaoFactory;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.AsdcItemManagerFactory;
 import org.openecomp.sdc.versioning.VersioningManager;
@@ -67,6 +70,7 @@ import org.openecomp.sdcrests.item.types.ItemCreationDto;
 import org.openecomp.sdcrests.item.types.ItemDto;
 import org.openecomp.sdcrests.item.types.VersionDto;
 import org.openecomp.sdcrests.vendorlicense.rest.VendorLicenseModels;
+import org.openecomp.sdcrests.vendorlicense.rest.exception.VendorLicenseModelExceptionSupplier;
 import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapVendorLicenseModelEntityToDto;
 import org.openecomp.sdcrests.vendorlicense.rest.mapping.MapVendorLicenseModelRequestDtoToVendorLicenseModelEntity;
 import org.openecomp.sdcrests.vendorlicense.types.VendorLicenseModelActionRequestDto;
@@ -86,13 +90,55 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     private static final String SUBMIT_ITEM_ACTION = "Submit_Item";
     private static final String SUBMIT_HEALED_VERSION_ERROR = "VLM Id %s: Error while submitting version %s created based on Certified version %s for healing purpose.";
     private static final Logger LOGGER = LoggerFactory.getLogger(VendorLicenseModelsImpl.class);
-    private PermissionsManager permissionsManager = PermissionsManagerFactory.getInstance().createInterface();
-    private NotificationPropagationManager notifier = NotificationPropagationManagerFactory.getInstance().createInterface();
-    private AsdcItemManager asdcItemManager = AsdcItemManagerFactory.getInstance().createInterface();
-    private VersioningManager versioningManager = VersioningManagerFactory.getInstance().createInterface();
-    private VendorLicenseManager vendorLicenseManager = VendorLicenseManagerFactory.getInstance().createInterface();
-    private ActivityLogManager activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
-    private UniqueValueUtil uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+
+    private final PermissionsManager permissionsManager;
+    private final NotificationPropagationManager notifier;
+    private final AsdcItemManager asdcItemManager;
+    private final VersioningManager versioningManager;
+    private final VendorLicenseManager vendorLicenseManager;
+    private final ActivityLogManager activityLogManager;
+    private final UniqueValueUtil uniqueValueUtil;
+    private final VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao;
+
+    public VendorLicenseModelsImpl() {
+        this.permissionsManager = PermissionsManagerFactory.getInstance().createInterface();
+        this.notifier = NotificationPropagationManagerFactory.getInstance().createInterface();
+        this.asdcItemManager = AsdcItemManagerFactory.getInstance().createInterface();
+        this.versioningManager = VersioningManagerFactory.getInstance().createInterface();
+        this.vendorLicenseManager = VendorLicenseManagerFactory.getInstance().createInterface();
+        this.activityLogManager = ActivityLogManagerFactory.getInstance().createInterface();
+        this.uniqueValueUtil = new UniqueValueUtil(UniqueValueDaoFactory.getInstance().createInterface());
+        this.vendorSoftwareProductInfoDao = VendorSoftwareProductInfoDaoFactory.getInstance().createInterface();
+    }
+
+    /**
+     * Test purpose constructor.
+     * @param permissionsManager the {@link PermissionsManager} instance
+     * @param notifier the {@link NotificationPropagationManager} instance
+     * @param asdcItemManager the {@link AsdcItemManager} instance
+     * @param versioningManager the {@link VersioningManager} instance
+     * @param vendorLicenseManager the {@link VendorLicenseManager} instance
+     * @param activityLogManager the {@link ActivityLogManager} instance
+     * @param uniqueValueUtil the {@link UniqueValueUtil} instance
+     * @param vendorSoftwareProductInfoDao the {@link VendorSoftwareProductInfoDao} instance
+     */
+    VendorLicenseModelsImpl(final PermissionsManager permissionsManager,
+                            final NotificationPropagationManager notifier,
+                            final AsdcItemManager asdcItemManager,
+                            final VersioningManager versioningManager,
+                            final VendorLicenseManager vendorLicenseManager,
+                            final ActivityLogManager activityLogManager,
+                            final UniqueValueUtil uniqueValueUtil,
+                            final VendorSoftwareProductInfoDao vendorSoftwareProductInfoDao) {
+        this.permissionsManager = permissionsManager;
+        this.notifier = notifier;
+        this.asdcItemManager = asdcItemManager;
+        this.versioningManager = versioningManager;
+        this.vendorLicenseManager = vendorLicenseManager;
+        this.activityLogManager = activityLogManager;
+        this.uniqueValueUtil = uniqueValueUtil;
+        this.vendorSoftwareProductInfoDao = vendorSoftwareProductInfoDao;
+    }
 
     @Override
     public Response listLicenseModels(String versionStatus, String itemStatus, String user) {
@@ -158,21 +204,28 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
     }
 
     @Override
-    public Response deleteLicenseModel(String vlmId, String user) {
-        Item vlm = asdcItemManager.get(vlmId);
-        if (!vlm.getType().equals(ItemType.vlm.name())) {
-            throw new CoreException((new ErrorCode.ErrorCodeBuilder().withMessage(String.format("Vlm with id %s does not exist.", vlmId)).build()));
+    public Response deleteLicenseModel(final String vlmId, final String user) {
+        final Item vlm = asdcItemManager.get(vlmId);
+        if (vlm == null || !ItemType.vlm.getName().equals(vlm.getType())) {
+            throw VendorLicenseModelExceptionSupplier.couldNotFindVlm(vlmId).get();
         }
-        Integer certifiedVersionsCounter = vlm.getVersionStatusCounters().get(VersionStatus.Certified);
-        if (Objects.isNull(certifiedVersionsCounter) || certifiedVersionsCounter == 0) {
-            asdcItemManager.delete(vlm);
-            permissionsManager.deleteItemPermissions(vlmId);
-            uniqueValueUtil.deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlm.getName());
-            notifyUsers(vlmId, vlm.getName(), null, null, user, NotificationEventTypes.DELETE);
-            return Response.ok().build();
-        } else {
-            return Response.status(Response.Status.FORBIDDEN).entity(new Exception(Messages.DELETE_VLM_ERROR.getErrorMessage())).build();
+
+        final List<String> vlmUsedByAnyVsp = findVspsUsingVlm(vlm.getId());
+        if (!vlmUsedByAnyVsp.isEmpty()) {
+            throw VendorLicenseModelExceptionSupplier.cantDeleteUsedVlm(vlmId, vlmUsedByAnyVsp).get();
         }
+
+        final Integer certifiedVersionsCounter = vlm.getVersionStatusCounters().get(VersionStatus.Certified);
+        final boolean wasVlmAtLeastOnceCertified = certifiedVersionsCounter != null && certifiedVersionsCounter > 0;
+        if (wasVlmAtLeastOnceCertified) {
+            throw VendorLicenseModelExceptionSupplier.cantDeleteCertifiedVlm(vlmId).get();
+        }
+
+        asdcItemManager.delete(vlm);
+        permissionsManager.deleteItemPermissions(vlmId);
+        uniqueValueUtil.deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlm.getName());
+        notifyUsers(vlmId, vlm.getName(), null, null, user, NotificationEventTypes.DELETE);
+        return Response.ok().build();
     }
 
     @Override
@@ -187,6 +240,14 @@ public class VendorLicenseModelsImpl implements VendorLicenseModels {
             notifyUsers(vlmId, null, version, message, user, NotificationEventTypes.SUBMIT);
         }
         return Response.ok().build();
+    }
+
+    private List<String> findVspsUsingVlm(final String vlmId) {
+        final Collection<VspDetails> vspDetailsList = vendorSoftwareProductInfoDao.list(null);
+        return vspDetailsList.stream()
+            .filter(vspDetails -> vlmId.equals(vspDetails.getVendorId()))
+            .map(VspDetails::getName)
+            .collect(Collectors.toList());
     }
 
     private void submit(String vlmId, Version version, String message, String user) {
