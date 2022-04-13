@@ -30,8 +30,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +64,6 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class UserAdminServlet extends BeGenericServlet {
 
-    private static final String UTF_8 = "UTF-8";
     private static final String ROLE_DELIMITER = ",";
     private static final Logger log = Logger.getLogger(UserAdminServlet.class);
     private final UserBusinessLogic userBusinessLogic;
@@ -160,12 +157,7 @@ public class UserAdminServlet extends BeGenericServlet {
         @ApiResponse(responseCode = "500", description = "Internal Server Error")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public User authorize(@HeaderParam(value = Constants.USER_ID_HEADER) String userId, @HeaderParam("HTTP_CSP_FIRSTNAME") String firstName,
-                          @HeaderParam("HTTP_CSP_LASTNAME") String lastName, @HeaderParam("HTTP_CSP_EMAIL") String email)
-        throws UnsupportedEncodingException {
-        userId = userId != null ? URLDecoder.decode(userId, UTF_8) : null;
-        firstName = firstName != null ? URLDecoder.decode(firstName, UTF_8) : null;
-        lastName = lastName != null ? URLDecoder.decode(lastName, UTF_8) : null;
-        email = email != null ? URLDecoder.decode(email, UTF_8) : null;
+                          @HeaderParam("HTTP_CSP_LASTNAME") String lastName, @HeaderParam("HTTP_CSP_EMAIL") String email) {
         User authUser = new User();
         authUser.setUserId(userId);
         authUser.setFirstName(firstName);

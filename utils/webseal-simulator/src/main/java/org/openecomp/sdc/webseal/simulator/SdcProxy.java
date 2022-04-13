@@ -23,10 +23,8 @@ package org.openecomp.sdc.webseal.simulator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -204,7 +202,7 @@ public class SdcProxy extends HttpServlet {
         return contextPaths;
     }
 
-    private String getUri(HttpServletRequest request, Map<String, String[]> requestParameters) throws UnsupportedEncodingException {
+    private String getUri(HttpServletRequest request, Map<String, String[]> requestParameters) {
         String suffix = request.getRequestURI();
         if (getContextPaths().stream().anyMatch(request.getRequestURI()::contains)) {
             suffix = alignUrlProxy(suffix);
@@ -316,7 +314,7 @@ public class SdcProxy extends HttpServlet {
         return SDC1 + requestURI;
     }
 
-    private StringBuilder alignUrlParameters(Map<String, String[]> requestParameters) throws UnsupportedEncodingException {
+    private StringBuilder alignUrlParameters(Map<String, String[]> requestParameters) {
         final var query = new StringBuilder();
         for (final Entry<String, String[]> entry : requestParameters.entrySet()) {
             for (final String value : entry.getValue()) {
@@ -325,7 +323,7 @@ public class SdcProxy extends HttpServlet {
                 } else {
                     query.append("&");
                 }
-                query.append(String.format("&%s=%s", URLEncoder.encode(entry.getKey(), "UTF-8"), URLEncoder.encode(value, "UTF-8")));
+                query.append(String.format("&%s=%s", entry.getKey(), value));
             }
         }
         return query;
