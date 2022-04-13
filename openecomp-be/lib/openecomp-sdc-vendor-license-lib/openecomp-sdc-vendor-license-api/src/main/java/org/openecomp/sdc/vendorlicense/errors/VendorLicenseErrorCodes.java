@@ -19,6 +19,10 @@
  */
 package org.openecomp.sdc.vendorlicense.errors;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VendorLicenseErrorCodes {
 
     public static final String VENDOR_LICENSE_MODEL_NOT_FOUND = "VENDOR_LICENSE_MODEL_NOT_FOUND";
@@ -30,4 +34,6 @@ public class VendorLicenseErrorCodes {
     public static final String LIMIT_INVALID_TIME = "LIMIT_INVALID_TIME";
     public static final String DUPLICATE_LIMIT_NAME_NOT_ALLOWED = "DUPLICATE_LIMIT_NAME_NOT_ALLOWED";
     public static final String DATE_RANGE_INVALID = "DATE_RANGE_INVALID";
+    public static final String VLM_IS_IN_USE_DELETE_ERROR = "VLM_IS_IN_USE_DELETE_ERROR";
+    public static final String VLM_IS_CERTIFIED_DELETE_ERROR = "VLM_IS_CERTIFIED_DELETE_ERROR";
 }

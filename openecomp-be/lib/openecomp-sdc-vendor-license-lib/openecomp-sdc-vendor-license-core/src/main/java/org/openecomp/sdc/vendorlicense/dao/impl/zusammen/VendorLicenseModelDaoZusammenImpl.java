@@ -15,6 +15,8 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.impl.zusammen;
 
+import static org.openecomp.sdc.versioning.dao.impl.zusammen.ItemZusammenDaoImpl.ItemInfoProperty.ITEM_TYPE;
+
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.SessionContext;
 import com.amdocs.zusammen.datatypes.item.Action;
@@ -34,7 +36,7 @@ import org.openecomp.sdc.versioning.types.VersionableEntityStoreType;
 
 public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao {
 
-    private ZusammenAdaptor zusammenAdaptor;
+    private final ZusammenAdaptor zusammenAdaptor;
 
     public VendorLicenseModelDaoZusammenImpl(ZusammenAdaptor zusammenAdaptor) {
         this.zusammenAdaptor = zusammenAdaptor;
@@ -50,7 +52,7 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
     public Collection<VendorLicenseModelEntity> list(VendorLicenseModelEntity vendorLicenseModelEntity) {
         ElementToVLMGeneralConvertor convertor = new ElementToVLMGeneralConvertor();
         return zusammenAdaptor.listItems(ZusammenUtil.createSessionContext()).stream()
-            .filter(item -> "VendorLicenseModel".equals(item.getInfo().getProperty("item_type"))).map(item -> {
+            .filter(item -> "VendorLicenseModel".equals(item.getInfo().getProperty(ITEM_TYPE.getName()))).map(item -> {
                 VendorLicenseModelEntity entity = convertor.convert(item);
                 entity.setId(item.getId().getValue());
                 entity.setVersion(null);
