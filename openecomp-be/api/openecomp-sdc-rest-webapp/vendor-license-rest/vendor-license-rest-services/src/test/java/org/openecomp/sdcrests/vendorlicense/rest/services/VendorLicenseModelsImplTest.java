@@ -30,7 +30,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collection;
 import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -52,7 +51,9 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
+import org.openecomp.sdc.versioning.dao.types.VersionStatus;
 import org.openecomp.sdc.versioning.types.Item;
+import org.openecomp.sdc.versioning.types.ItemStatus;
 import org.openecomp.sdcrests.vendorlicense.rest.exception.VendorLicenseModelExceptionSupplier;
 
 class VendorLicenseModelsImplTest {
@@ -159,5 +160,38 @@ class VendorLicenseModelsImplTest {
         assertEquals(expectedException.code().id(), actualException.code().id());
         assertEquals(expectedException.code().message(), actualException.code().message());
     }
+    @Test
+    void deleteLicenseModel_CertifiedAndArchived_SuccessTest() {
+        final String vlmId = "vlmId";
+        final String userId = "userId";
+        final Item vlmItem = new Item();
+        vlmItem.setId(vlmId);
+        vlmItem.setType(ItemType.vlm.getName());
+        vlmItem.setStatus(ItemStatus.ARCHIVED);
+        vlmItem.addVersionStatus(VersionStatus.Certified);
+        when(asdcItemManager.get(vlmId)).thenReturn(vlmItem);
 
+        final Response response = vendorLicenseModels.deleteLicenseModel(vlmId, userId);
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        verify(asdcItemManager).delete(vlmItem);
+        verify(permissionsManager).deleteItemPermissions(vlmItem.getId());
+        verify(uniqueValueUtil).deleteUniqueValue(VendorLicenseConstants.UniqueValues.VENDOR_NAME, vlmItem.getName());
+        verify(notifier).notifySubscribers(any(Event.class), eq(userId));
+    }
+    @Test
+    void deleteLicenseModel_CertifiedNotArchived_FailTest() {
+        final String vlmId = "vlmId";
+        final String userId = "userId";
+        final Item vlmItem = new Item();
+        vlmItem.setId(vlmId);
+        vlmItem.setType(ItemType.vlm.getName());
+        vlmItem.setStatus(ItemStatus.ACTIVE);
+        vlmItem.addVersionStatus(VersionStatus.Certified);
+        when(asdcItemManager.get(vlmId)).thenReturn(vlmItem);
+
+        final Response response = vendorLicenseModels.deleteLicenseModel(vlmId, userId);
+
+        assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+    }
 }
