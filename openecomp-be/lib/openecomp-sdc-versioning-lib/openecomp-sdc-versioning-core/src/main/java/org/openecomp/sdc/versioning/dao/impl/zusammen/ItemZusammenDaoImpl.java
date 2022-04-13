@@ -21,9 +21,13 @@ package org.openecomp.sdc.versioning.dao.impl.zusammen;
 
 import com.amdocs.zusammen.datatypes.Id;
 import com.amdocs.zusammen.datatypes.item.Info;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.core.zusammen.api.ZusammenUtil;
 import org.openecomp.sdc.versioning.dao.ItemDao;
@@ -33,7 +37,7 @@ import org.openecomp.sdc.versioning.types.ItemStatus;
 
 public class ItemZusammenDaoImpl implements ItemDao {
 
-    private ZusammenAdaptor zusammenAdaptor;
+    private final ZusammenAdaptor zusammenAdaptor;
 
     public ItemZusammenDaoImpl(ZusammenAdaptor zusammenAdaptor) {
         this.zusammenAdaptor = zusammenAdaptor;
@@ -74,7 +78,7 @@ public class ItemZusammenDaoImpl implements ItemDao {
         item.setId(zusammenItem.getId().getValue());
         item.setName(zusammenItem.getInfo().getName());
         item.setDescription(zusammenItem.getInfo().getDescription());
-        zusammenItem.getInfo().getProperties().entrySet().forEach(property -> addPropertyToItem(property.getKey(), property.getValue(), item));
+        zusammenItem.getInfo().getProperties().forEach((key, value) -> addPropertyToItem(key, value, item));
         item.setCreationTime(zusammenItem.getCreationTime());
         item.setModificationTime(zusammenItem.getModificationTime());
         if (item.getStatus() == null) {
@@ -85,17 +89,23 @@ public class ItemZusammenDaoImpl implements ItemDao {
     }
 
     private void addPropertyToItem(String propertyKey, Object propertyValue, Item item) {
-        switch (propertyKey) {
-            case InfoPropertyName.ITEM_TYPE:
+        final ItemInfoProperty itemInfoProperty = ItemInfoProperty.findByName(propertyKey).orElse(null);
+        if (itemInfoProperty == null) {
+            item.addProperty(propertyKey, propertyValue);
+            return;
+        }
+
+        switch (itemInfoProperty) {
+            case ITEM_TYPE:
                 item.setType((String) propertyValue);
                 break;
-            case InfoPropertyName.ITEM_OWNER:
+            case ITEM_OWNER:
                 item.setOwner((String) propertyValue);
                 break;
-            case InfoPropertyName.ITEM_STATUS:
+            case ITEM_STATUS:
                 item.setStatus(ItemStatus.valueOf((String) propertyValue));
                 break;
-            case InfoPropertyName.ITEM_VERSIONS_STATUSES:
+            case ITEM_VERSIONS_STATUSES:
                 for (Map.Entry<String, Number> statusCounter : ((Map<String, Number>) propertyValue).entrySet()) {
                     item.getVersionStatusCounters().put(VersionStatus.valueOf(statusCounter.getKey()), statusCounter.getValue().intValue());
                 }
@@ -109,25 +119,29 @@ public class ItemZusammenDaoImpl implements ItemDao {
         Info info = new Info();
         info.setName(item.getName());
         info.setDescription(item.getDescription());
-        info.addProperty(InfoPropertyName.ITEM_TYPE, item.getType());
-        info.addProperty(InfoPropertyName.ITEM_OWNER, item.getOwner());
+        info.addProperty(ItemInfoProperty.ITEM_TYPE.getName(), item.getType());
+        info.addProperty(ItemInfoProperty.ITEM_OWNER.getName(), item.getOwner());
         if (item.getStatus() != null) {
-            info.addProperty(InfoPropertyName.ITEM_STATUS, item.getStatus());
+            info.addProperty(ItemInfoProperty.ITEM_STATUS.getName(), item.getStatus());
         }
-        info.addProperty(InfoPropertyName.ITEM_VERSIONS_STATUSES, item.getVersionStatusCounters());
-        item.getProperties().entrySet().forEach(property -> info.addProperty(property.getKey(), property.getValue()));
+        info.addProperty(ItemInfoProperty.ITEM_VERSIONS_STATUSES.getName(), item.getVersionStatusCounters());
+        item.getProperties().forEach(info::addProperty);
         return info;
     }
 
-    private static final class InfoPropertyName {
+    @AllArgsConstructor
+    @Getter
+    public enum ItemInfoProperty {
+        ITEM_TYPE("item_type"),
+        ITEM_VERSIONS_STATUSES("item_versions_statuses"),
+        ITEM_OWNER("Owner"),
+        ITEM_STATUS("status");
 
-        private static final String ITEM_TYPE = "item_type";
-        private static final String ITEM_VERSIONS_STATUSES = "item_versions_statuses";
-        private static final String ITEM_OWNER = "Owner";
-        private static final String ITEM_STATUS = "status";
+        private final String name;
 
-        private InfoPropertyName() {
-            throw new IllegalStateException("Constants class");
+        public static Optional<ItemInfoProperty> findByName(final String name) {
+            return Arrays.stream(values()).filter(itemInfoProperty -> itemInfoProperty.getName().equals(name)).findFirst();
         }
+
     }
 }

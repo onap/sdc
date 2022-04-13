@@ -18,6 +18,7 @@ package org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen;
 
 import static org.openecomp.core.zusammen.api.ZusammenUtil.buildStructuralElement;
 import static org.openecomp.core.zusammen.api.ZusammenUtil.createSessionContext;
+import static org.openecomp.sdc.versioning.dao.impl.zusammen.ItemZusammenDaoImpl.ItemInfoProperty.ITEM_TYPE;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
 import com.amdocs.zusammen.datatypes.SessionContext;
@@ -31,6 +32,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.openecomp.core.zusammen.api.ZusammenAdaptor;
 import org.openecomp.sdc.datatypes.model.ElementType;
+import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.VendorSoftwareProductInfoDao;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToVSPGeneralConvertor;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.impl.zusammen.convertor.ElementToVSPQuestionnaireConvertor;
@@ -60,7 +62,8 @@ public class VendorSoftwareProductInfoDaoZusammenImpl implements VendorSoftwareP
     @Override
     public Collection<VspDetails> list(VspDetails entity) {
         return zusammenAdaptor.listItems(createSessionContext()).stream()
-            .filter(item -> "VendorSoftwareProduct".equals(item.getInfo().getProperty("item_type"))).map(new ElementToVSPGeneralConvertor()::convert)
+            .filter(item -> ItemType.vsp.getName().equals(item.getInfo().getProperty(ITEM_TYPE.getName())))
+            .map(new ElementToVSPGeneralConvertor()::convert)
             .collect(Collectors.toList());
     }
 
