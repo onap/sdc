@@ -45,6 +45,7 @@ import {
 import {
     CacheService
 } from 'app/services-ng2';
+import { SdcUiCommon, SdcUiComponents, SdcUiServices } from 'onap-ui-angular';
 import { AutomatedUpgradeService } from '../../ng2/pages/automated-upgrade/automated-upgrade.service';
 import { CatalogService } from '../../ng2/services/catalog.service';
 import { ComponentServiceNg2 } from '../../ng2/services/component-services/component.service';
@@ -151,6 +152,7 @@ export class WorkspaceViewModel {
         'ComponentServiceNg2',
         'AutomatedUpgradeService',
         'EventBusService',
+        'ModalServiceSdcUI',
         'PluginsService',
         'WorkspaceNg1BridgeService',
         'workspaceService'
@@ -176,6 +178,7 @@ export class WorkspaceViewModel {
                 private ComponentServiceNg2: ComponentServiceNg2,
                 private AutomatedUpgradeService: AutomatedUpgradeService,
                 private eventBusService: EventBusService,
+                private modalServiceSdcUI: SdcUiServices.ModalService,
                 private pluginsService: PluginsService,
                 private workspaceNg1BridgeService: WorkspaceNg1BridgeService,
                 private workspaceService: WorkspaceService) {
@@ -613,7 +616,48 @@ export class WorkspaceViewModel {
             this.ChangeLifecycleStateHandler.changeLifecycleState(this.$scope.component, data, this.$scope, onSuccess);
         };
 
+        this.$scope.deleteArchivedComponent = (): void => {
+            const modalTitle: string = this.$filter('translate')("COMPONENT_VIEW_DELETE_MODAL_TITLE");
+            const modalMessage: string = this.$filter('translate')("COMPONENT_VIEW_DELETE_MODAL_TEXT");
+            const modalButton = {
+                testId: 'ok-button',
+                text: this.sdcMenu.alertMessages.okButton,
+                type: SdcUiCommon.ButtonType.warning,
+                callback: this.$scope.handleDeleteArchivedComponent,
+                closeModal: true
+            } as SdcUiComponents.ModalButtonComponent;
+            this.modalServiceSdcUI.openWarningModal(modalTitle, modalMessage, 'alert-modal', [modalButton]);
+        };
 
+        this.$scope.handleDeleteArchivedComponent = (): void => {
+            this.$scope.isLoading = true;
+            const typeComponent = this.$scope.component.componentType;
+            this.ComponentServiceNg2.deleteComponent(typeComponent, this.$scope.component.uniqueId).subscribe(()=> {
+                this.deleteArchiveCache();
+                this.Notification.success({
+                    message: this.$scope.component.name + ' ' + this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TEXT"),
+                    title: this.$filter('translate')("DELETE_SUCCESS_MESSAGE_TITLE")
+                });
+                if (this.$state.params.previousState) {
+                    switch (this.$state.params.previousState) {
+                        case 'catalog':
+                        case 'dashboard':
+                            this.$state.go(this.$state.params.previousState);
+                            break;
+                        default:
+                            this.$state.go('dashboard');
+                            break;
+                    }
+                }
+                this.$scope.isLoading = false;
+            }, () => {
+                this.Notification.error({
+                    message: this.$scope.component.name + ' ' + this.$filter('translate')('DELETE_FAILURE_MESSAGE_TEXT'),
+                    title: this.$filter('translate')('DELETE_FAILURE_MESSAGE_TITLE')
+                });
+                this.$scope.isLoading = false;
+            });
+        };
 
         this.$scope.isViewMode = ():boolean => {
             return this.$scope.mode === WorkspaceMode.VIEW;
