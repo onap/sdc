@@ -743,6 +743,8 @@ public class ModelConverter {
             } else {
                 resource.setResourceVendorModelNumber("");
             }
+            Boolean isNormative = toscaElement.getMetadataValue(JsonPresentationFields.NORMATIVE) == null ? false : (Boolean) toscaElement.getMetadataValue(JsonPresentationFields.NORMATIVE);
+            resource.getComponentMetadataDefinition().getMetadataDataDefinition().setNormative(isNormative);
         } else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
             Service service = (Service) component;
             if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE)) != null) {
@@ -1308,6 +1310,7 @@ public class ModelConverter {
             } else {
                 toscaElement.setMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER, "");
             }
+            toscaElement.setMetadataValue(JsonPresentationFields.NORMATIVE, ((Resource) component).getComponentMetadataDefinition().getMetadataDataDefinition().isNormative());
         } else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
             // field isn't mandatory , but shouldn't be null(should be an empty string instead)
             if (((Service) component).getServiceType() != null) {

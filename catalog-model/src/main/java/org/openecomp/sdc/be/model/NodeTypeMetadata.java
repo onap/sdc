@@ -43,6 +43,7 @@ public class NodeTypeMetadata {
     private String vendorRelease;
     private String resourceVendorModelNumber;
     private String resourceType = ResourceTypeEnum.VFC.getValue();
+    private boolean isNormative = true;
     private List<String> tags;
     private List<CategoryDefinition> categories;
 
