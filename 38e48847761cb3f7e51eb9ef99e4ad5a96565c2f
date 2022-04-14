@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7ec3d5a8_79f1756e",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 620,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-14T15:29:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "480b3619_329b7cdc",
+      "range": {
+        "startLine": 620,
+        "startChar": 39,
+        "endLine": 620,
+        "endChar": 61
+      },
+      "revId": "38e48847761cb3f7e51eb9ef99e4ad5a96565c2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1f9174bc_5edd4e98",
         "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "38e48847761cb3f7e51eb9ef99e4ad5a96565c2f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e09f8a97_a109dcb4",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-14T15:29:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f9174bc_5edd4e98",
+      "range": {
+        "startLine": 623,
+        "startChar": 24,
+        "endLine": 623,
+        "endChar": 28
+      },
+      "revId": "38e48847761cb3f7e51eb9ef99e4ad5a96565c2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "992d75bd_89585444",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-14T15:29:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "572b7c7c_da9652a7",
+      "range": {
+        "startLine": 641,
+        "startChar": 28,
+        "endLine": 641,
+        "endChar": 77
+      },
+      "revId": "38e48847761cb3f7e51eb9ef99e4ad5a96565c2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bd2dc107_2a6cd3d7",
         "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
         "patchSetId": 3
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "2c51e661_603e55f9",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 644,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-14T15:29:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd2dc107_2a6cd3d7",
+      "range": {
+        "startLine": 644,
+        "startChar": 28,
+        "endLine": 644,
+        "endChar": 34
+      },
+      "revId": "38e48847761cb3f7e51eb9ef99e4ad5a96565c2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "658a6700_b9071130",
         "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
         "patchSetId": 3
@@ -105,6 +201,30 @@
       "writtenOn": "2022-04-14T14:02:44Z",
       "side": 1,
       "message": "I believe the subscribe accept three functions, one for success, other for error and a third for completed:\n.subscribe(\n    res \u003d\u003e console.log(\u0027HTTP response\u0027, res),\n    err \u003d\u003e console.log(\u0027HTTP Error\u0027, err),\n    () \u003d\u003e console.log(\u0027HTTP request completed.\u0027)\n);\n\nThe \"this.$scope.isLoading \u003d false;\" you should put on the completed part and remove from the other functions.\nThe error should be handled somehow, at least by showing some error alert with the error message. There is probably another example in the system, probably you can achieve that with the \"this.Notification\" object.",
+      "range": {
+        "startLine": 654,
+        "startChar": 16,
+        "endLine": 654,
+        "endChar": 46
+      },
+      "revId": "38e48847761cb3f7e51eb9ef99e4ad5a96565c2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0254384_2518223b",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-14T15:29:33Z",
+      "side": 1,
+      "message": "Hmm I just tried putting the \"this.$scope.isLoading \u003d false;\" part in the completed function but after an error the loading wheel is still there and I\u0027m then unable to click anything",
+      "parentUuid": "658a6700_b9071130",
       "range": {
         "startLine": 654,
         "startChar": 16,
