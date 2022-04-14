@@ -173,4 +173,8 @@ public class JsonPresentationFieldsExtractor {
     public String getModel() {
         return (String) properties.get(JsonPresentationFields.MODEL.getPresentation());
     }
+    
+    public Boolean isNormative() {
+        return (Boolean) properties.get(JsonPresentationFields.NORMATIVE.getPresentation());
+    }
 }

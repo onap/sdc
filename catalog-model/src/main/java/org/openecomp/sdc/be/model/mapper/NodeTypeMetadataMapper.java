@@ -46,6 +46,7 @@ public class NodeTypeMetadataMapper {
         uploadResourceInfo.setResourceType(nodeTypeMetadata.getResourceType());
         uploadResourceInfo.setTags(nodeTypeMetadata.getTags());
         uploadResourceInfo.setCategories(nodeTypeMetadata.getCategories());
+        uploadResourceInfo.setNormative(nodeTypeMetadata.isNormative());
         return uploadResourceInfo;
     }
 
