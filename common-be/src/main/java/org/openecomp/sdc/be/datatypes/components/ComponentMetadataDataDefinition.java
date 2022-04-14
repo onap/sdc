@@ -74,6 +74,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
     private Boolean isVspArchived = false;
     private Map<String, String> categorySpecificMetadata;
     private String model;
+    private boolean deleteRestricted = false;
 
     protected ComponentMetadataDataDefinition(ComponentMetadataDataDefinition other) {
         this.uniqueId = other.getUniqueId();
@@ -102,6 +103,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.archiveTime = other.getArchiveTime();
         this.categorySpecificMetadata = other.getCategorySpecificMetadata();
         this.model = other.getModel();
+        this.deleteRestricted = other.isDeleteRestricted();
     }
 
     protected ComponentMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
@@ -129,6 +131,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.isVspArchived = extractor.isVspArchived();
         this.archiveTime = extractor.getArchiveTime();
         this.model = extractor.getModel();
+        this.deleteRestricted = extractor.isDeleteRestricted() == null ? false: extractor.isDeleteRestricted();
     }
 
     public void setUniqueId(String uniqueId) {

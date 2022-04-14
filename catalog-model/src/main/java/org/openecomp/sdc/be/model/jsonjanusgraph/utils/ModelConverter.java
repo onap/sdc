@@ -743,6 +743,8 @@ public class ModelConverter {
             } else {
                 resource.setResourceVendorModelNumber("");
             }
+            Boolean isDeleteRestriced = toscaElement.getMetadataValue(JsonPresentationFields.DELETE_RESTRICTED) == null ? false : (Boolean) toscaElement.getMetadataValue(JsonPresentationFields.DELETE_RESTRICTED);
+            resource.getComponentMetadataDefinition().getMetadataDataDefinition().setDeleteRestricted(isDeleteRestriced);
         } else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
             Service service = (Service) component;
             if (((String) toscaElement.getMetadataValue(JsonPresentationFields.SERVICE_TYPE)) != null) {
@@ -1308,6 +1310,7 @@ public class ModelConverter {
             } else {
                 toscaElement.setMetadataValue(JsonPresentationFields.RESOURCE_VENDOR_MODEL_NUMBER, "");
             }
+            toscaElement.setMetadataValue(JsonPresentationFields.DELETE_RESTRICTED, ((Resource) component).getComponentMetadataDefinition().getMetadataDataDefinition().isDeleteRestricted());
         } else if (component.getComponentType() == ComponentTypeEnum.SERVICE) {
             // field isn't mandatory , but shouldn't be null(should be an empty string instead)
             if (((Service) component).getServiceType() != null) {

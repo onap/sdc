@@ -173,4 +173,8 @@ public class JsonPresentationFieldsExtractor {
     public String getModel() {
         return (String) properties.get(JsonPresentationFields.MODEL.getPresentation());
     }
+    
+    public Boolean isDeleteRestricted() {
+        return (Boolean) properties.get(JsonPresentationFields.DELETE_RESTRICTED.getPresentation());
+    }
 }

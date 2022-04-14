@@ -70,6 +70,7 @@ public enum JsonPresentationFields {
     DERIVED_FROM_GENERIC_VERSION("derivedFromGenericVersion", null),
     SERVICE_FUNCTION("serviceFunction", null),
     MODEL("model", null),
+    DELETE_RESTRICTED("deleteRestricted", null),
     DATA_TYPES("data_types", GraphPropertyEnum.DATA_TYPES),
 
     ////Inputs

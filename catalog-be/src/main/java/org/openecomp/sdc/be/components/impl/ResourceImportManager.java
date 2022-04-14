@@ -148,7 +148,7 @@ public class ResourceImportManager {
         lifecycleChangeInfo.setUserRemarks("certification on import");
         Function<Resource, Boolean> validator = resource -> resourceBusinessLogic.validatePropertiesDefaultValues(resource);
         return importCertifiedResource(resourceYml, resourceMetaData, creator, validator, lifecycleChangeInfo, isInTransaction, createNewVersion,
-            needLock, null, null, false, null, null, false);
+                needLock, null, null, false, null, null, false);
     }
 
     public void importAllNormativeResource(final String resourcesYaml, final NodeTypesMetadataList nodeTypesMetadataList, final User user,
@@ -215,6 +215,7 @@ public class ResourceImportManager {
             setMetaDataFromJson(resourceMetaData, resource);
             populateResourceFromYaml(resourceYml, resource);
             validationFunction.apply(resource);
+            resource.getComponentMetadataDefinition().getMetadataDataDefinition().setDeleteRestricted(resourceMetaData.isNormative());
             checkResourceExists(createNewVersion, csarInfo, resource);
             resource = resourceBusinessLogic
                 .createOrUpdateResourceByImport(resource, creator, true, isInTransaction, needLock, csarInfo, nodeName, isNested).left;

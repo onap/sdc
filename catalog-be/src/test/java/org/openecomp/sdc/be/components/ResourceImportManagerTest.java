@@ -155,7 +155,7 @@ public class ResourceImportManagerTest {
 
         testSetConstantMetaData(resource);
         testSetMetaDataFromJson(resource, resourceMD);
-
+        
         testSetDerivedFrom(resource);
         testSetProperties(resource);
 
@@ -432,6 +432,7 @@ public class ResourceImportManagerTest {
         resourceMD.setTags(Collections.singletonList("BlockStorage"));
         resourceMD.setDescription("Represents a server-local block storage device (i.e., not shared) offering evenly sized blocks of data from which raw storage volumes can be created.");
         resourceMD.setResourceVendorModelNumber("vendorReleaseNumber");
+        resourceMD.setNormative(true);
         return resourceMD;
     }
 
@@ -538,7 +539,7 @@ public class ResourceImportManagerTest {
         for (String tag : resource.getTags()) {
             assertTrue(resourceMD.getTags().contains(tag));
         }
-
+        assertEquals(resourceMD.isNormative(), resource.getComponentMetadataDefinition().getMetadataDataDefinition().isDeleteRestricted());
     }
 
     private void testSetConstantMetaData(Resource resource) {
