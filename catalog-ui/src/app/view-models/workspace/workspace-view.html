@@ -90,6 +90,13 @@
                         data-ng-class="{'disabled' : !isValidForm || isDisableMode() || isViewMode() || unsavedChanges}" ng-click="changeLifecycleState('deleteVersion')"
                         class="sprite-new delete-btn" data-tests-id="delete_version" sdc-smart-tooltip="Delete" prevent-double-click>Delete</span>
 
+                    <span ng-if="!isCreateMode() && component.isArchived"
+                          ng-click="deleteArchivedComponent()"
+                          class="sprite-new delete-btn"
+                          data-tests-id="delete_archive_version"
+                          sdc-smart-tooltip="Delete Service"
+                          prevent-double-click>Delete</span>
+
                     <span data-ng-click = "archiveComponent()"
                         ng-model-options="{ debounce: 300 }"
                         data-ng-class="{'disabled' : !component.isLatestVersion()}"
