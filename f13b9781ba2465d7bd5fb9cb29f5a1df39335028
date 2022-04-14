@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "959bf431_c12c70b4",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-14T23:10:58Z",
+      "side": 1,
+      "message": "use \u0027Never\u0027 instead of \u0027Not\u0027 as not just the current state considered",
+      "range": {
+        "startLine": 211,
+        "startChar": 22,
+        "endLine": 211,
+        "endChar": 39
+      },
+      "revId": "f13b9781ba2465d7bd5fb9cb29f5a1df39335028",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f79e3d8_6d9a2dee",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-14T23:10:58Z",
+      "side": 1,
+      "message": "Error message not accurate for case where VLM is in use",
+      "range": {
+        "startLine": 220,
+        "startChar": 79,
+        "endLine": 220,
+        "endChar": 104
+      },
+      "revId": "f13b9781ba2465d7bd5fb9cb29f5a1df39335028",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
