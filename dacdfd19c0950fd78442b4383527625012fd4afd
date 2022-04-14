@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cedcb53e_c42e8ca1",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-04-14T12:49:02Z",
+      "side": 1,
+      "message": "My suggestion would be to keep it generic for both service and resources, just like restore and archive component. if we could avoid this if condition check, it applies to both.",
+      "range": {
+        "startLine": 621,
+        "startChar": 12,
+        "endLine": 621,
+        "endChar": 35
+      },
+      "revId": "dacdfd19c0950fd78442b4383527625012fd4afd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52be8c50_719af47d",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-04-14T12:49:02Z",
+      "side": 1,
+      "message": "change to component may be, to keep it generic?",
+      "range": {
+        "startLine": 623,
+        "startChar": 74,
+        "endLine": 623,
+        "endChar": 81
+      },
+      "revId": "dacdfd19c0950fd78442b4383527625012fd4afd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0d3a40b_45b2aa1e",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-04-14T12:49:02Z",
+      "side": 1,
+      "message": "rename to deleteComponent?",
+      "range": {
+        "startLine": 638,
+        "startChar": 37,
+        "endLine": 638,
+        "endChar": 50
+      },
+      "revId": "dacdfd19c0950fd78442b4383527625012fd4afd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
