@@ -22,6 +22,29 @@
       "revId": "aa30dbee1ac132daea573f9747005eeece4616b9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "590e0f8e_f20fef2c",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-14T16:53:02Z",
+      "side": 1,
+      "message": "This error message used here \"VLM has been certified and cannot be deleted.\" is not really accurate",
+      "range": {
+        "startLine": 217,
+        "startChar": 80,
+        "endLine": 217,
+        "endChar": 104
+      },
+      "revId": "aa30dbee1ac132daea573f9747005eeece4616b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
