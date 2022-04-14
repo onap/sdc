@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e8fdef1_b261c855",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-04-14T14:42:38Z",
+      "side": 1,
+      "message": "flip equal to avoid potential NPE",
+      "range": {
+        "startLine": 209,
+        "startChar": 49,
+        "endLine": 209,
+        "endChar": 56
+      },
+      "revId": "aa30dbee1ac132daea573f9747005eeece4616b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
