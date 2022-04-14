@@ -418,6 +418,10 @@ export class ComponentServiceNg2 {
         return this.http.get<InstanceBePropertiesMap>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/filteredproperties/' + filterData.propertyName, {params: params});
     }
 
+    deleteComponent(componentType: string, componentId: string) {
+        return this.http.delete(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + "?deleteAction=DELETE", {});
+    }
+
     createServiceProperty(component: Component, propertyModel: PropertyBEModel): Observable<PropertyBEModel> {
         let serverObject = {};
         serverObject[propertyModel.name] = propertyModel;
