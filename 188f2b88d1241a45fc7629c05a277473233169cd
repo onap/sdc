@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ebaf6c8_d70c2c69",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-15T08:07:12Z",
+      "side": 1,
+      "message": "as Vasyl asked, by just flipping the equals ItemStatus.ARCHIVED.equals(vlm.getStatus()) you will avoid a null pointer in that case, no need to test \"vlm.getStatus() !\u003d null\"",
+      "range": {
+        "startLine": 209,
+        "startChar": 38,
+        "endLine": 209,
+        "endChar": 108
+      },
+      "revId": "188f2b88d1241a45fc7629c05a277473233169cd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
