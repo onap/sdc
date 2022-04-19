@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c8626ee3_9c100bf3",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-19T11:47:15Z",
+      "side": 1,
+      "message": "changed according to the new logic",
+      "parentUuid": "959bf431_c12c70b4",
+      "range": {
+        "startLine": 211,
+        "startChar": 22,
+        "endLine": 211,
+        "endChar": 39
+      },
+      "revId": "f13b9781ba2465d7bd5fb9cb29f5a1df39335028",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4f79e3d8_6d9a2dee",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "f13b9781ba2465d7bd5fb9cb29f5a1df39335028",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5e4a01a_c173eaf8",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-19T11:47:15Z",
+      "side": 1,
+      "message": "reworked on the logic to throw messages based on the condition that happened",
+      "parentUuid": "4f79e3d8_6d9a2dee",
+      "range": {
+        "startLine": 220,
+        "startChar": 79,
+        "endLine": 220,
+        "endChar": 104
+      },
+      "revId": "f13b9781ba2465d7bd5fb9cb29f5a1df39335028",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
