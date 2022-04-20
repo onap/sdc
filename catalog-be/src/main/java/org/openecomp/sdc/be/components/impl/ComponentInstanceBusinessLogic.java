@@ -915,7 +915,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     }
                     if (CollectionUtils.isNotEmpty(filteredGroups)) {
                         filteredGroups.stream()
-                            .filter(g -> g.getArtifacts().stream().anyMatch(p -> p.equals(artifactDefinition.getGeneratedFromId()))).findFirst()
+                            .filter(g -> g.getArtifacts() != null && g.getArtifacts().stream().anyMatch(p -> p.equals(artifactDefinition.getGeneratedFromId()))).findFirst()
                             .ifPresent(g -> fillInstanceArtifactMap(groupInstancesArtifacts, artifactDefinition, g));
                     }
                 }
