@@ -1208,6 +1208,145 @@ public class ToscaOperationFacadeTest {
             .deleteToscaDataElement(anyString(), eq(EdgeLabelEnum.OUTPUTS), eq(VertexTypeEnum.OUTPUTS), anyString(), eq(JsonPresentationFields.NAME));
     }
 
+    @Test
+    public void testDeleteResource_ResourceInUse() {
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setUniqueId("1");
+        GraphVertex usingComponent = getTopologyTemplateVertex();
+        usingComponent.setUniqueId("2");
+        Map<String, Object> metadataJson = new HashMap<>();
+        metadataJson.put("COMPONENT_TYPE", "SERVICE");
+        metadataJson.put("NAME", "serviceName");
+        usingComponent.setMetadataJson(metadataJson);
+        List<GraphVertex> inUseBy = new ArrayList<>();
+        inUseBy.add(usingComponent);
+        Map<String,Object> metadata = new HashMap<>();
+        metadata.put("ex1", new Object());
+        graphVertex.setMetadataJson(metadata);
+        ToscaElement toscaElement = getToscaElementForTest();
+        toscaElement.setUniqueId("1");
+        List<GraphVertex> allResourcesToDelete = new ArrayList<>();
+        allResourcesToDelete.add(graphVertex);
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, "1");
+
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).
+                thenReturn(Either.left(allResourcesToDelete));
+        when(topologyTemplateOperationMock.
+                getComponentByLabelAndId("1", ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll)).
+                thenReturn(Either.left(graphVertex));
+        doReturn(Either.left(toscaElement)).when(topologyTemplateOperationMock).getToscaElement(eq(graphVertex), any(ComponentParametersView.class));
+        when(janusGraphDaoMock.getParentVertices(any(GraphVertex.class), any(), eq(JsonParseFlagEnum.ParseAll))).thenReturn(Either.left(inUseBy));
+        assertThrows(OperationException.class, () -> testInstance.deleteComponent("1", NodeTypeEnum.Resource));
+    }
+
+    @Test
+    public void testDeleteResource_WithTwoVersions() {
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setUniqueId("1");
+        Map<String,Object> metadata1 = new HashMap<>();
+        metadata1.put("ex1", new Object());
+        graphVertex.setMetadataJson(metadata1);
+        ToscaElement toscaElement1 = getToscaElementForTest();
+        toscaElement1.setUniqueId("1");
+        ToscaElement toscaElement2 = getToscaElementForTest();
+        toscaElement2.setUniqueId("2");
+        GraphVertex graphVertex2 = getTopologyTemplateVertex();
+        graphVertex2.setUniqueId("2");
+        Map<String,Object> metadata2 = new HashMap<>();
+        metadata2.put("ex2", new Object());
+        graphVertex.setMetadataJson(metadata2);
+        List<GraphVertex> parentVertices = new ArrayList<>();
+        parentVertices.add(graphVertex2);
+        List<String> affectedComponentIds = new ArrayList<>();
+        affectedComponentIds.add(graphVertex.getUniqueId());
+        affectedComponentIds.add(graphVertex2.getUniqueId());
+
+        when(graphLockOperationMock.lockComponent(graphVertex.getUniqueId(), NodeTypeEnum.Resource)).
+                thenReturn(StorageOperationStatus.OK);
+        when(graphLockOperationMock.lockComponent(graphVertex2.getUniqueId(), NodeTypeEnum.Resource)).
+                thenReturn(StorageOperationStatus.OK);
+        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex)).thenReturn(Either.left(toscaElement1));
+        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex2)).thenReturn(Either.left(toscaElement2));
+        List<GraphVertex> allResourcesToDelete = new ArrayList<>();
+        allResourcesToDelete.add(graphVertex);
+        allResourcesToDelete.add(graphVertex2);
+        Map<GraphPropertyEnum, Object> propertiesToMatch1 = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch1.put(GraphPropertyEnum.INVARIANT_UUID, "1");
+        Map<GraphPropertyEnum, Object> propertiesToMatch2 = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch2.put(GraphPropertyEnum.INVARIANT_UUID, "2");
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch1, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(allResourcesToDelete));
+        when(topologyTemplateOperationMock.getComponentByLabelAndId(graphVertex.getUniqueId(), ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll))
+                .thenReturn(Either.left(graphVertex));
+        when(topologyTemplateOperationMock.getComponentByLabelAndId(graphVertex2.getUniqueId(), ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll))
+                .thenReturn(Either.left(graphVertex2));
+        doReturn(Either.left(toscaElement1)).when(topologyTemplateOperationMock).getToscaElement(eq(graphVertex), any(ComponentParametersView.class));
+        doReturn(Either.left(toscaElement2)).when(topologyTemplateOperationMock).getToscaElement(eq(graphVertex2), any(ComponentParametersView.class));
+        when(janusGraphDaoMock.getParentVertices(any(GraphVertex.class), any(), any())).thenReturn(Either.right(JanusGraphOperationStatus.OK));
+        assertEquals(affectedComponentIds, testInstance.deleteComponent("1", NodeTypeEnum.Resource));
+    }
+
+    @Test
+    public void testDeleteResource_WithOneVersion() {
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setUniqueId("1");
+        Map<String,Object> metadata = new HashMap<>();
+        metadata.put("ex1", new Object());
+        graphVertex.setMetadataJson(metadata);
+        ToscaElement toscaElement = getToscaElementForTest();
+        List<String> affectedComponentIds = new ArrayList<>();
+        affectedComponentIds.add(graphVertex.getUniqueId());
+        when(graphLockOperationMock.lockComponent(graphVertex.getUniqueId(), NodeTypeEnum.Resource)).
+                thenReturn(StorageOperationStatus.OK);
+        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex)).thenReturn(Either.left(toscaElement));
+        List<GraphVertex> allResourcesToDelete = new ArrayList<>();
+        allResourcesToDelete.add(graphVertex);
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, "1");
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(allResourcesToDelete));
+        when(topologyTemplateOperationMock.getComponentByLabelAndId(any(), any(), any())).thenReturn(Either.left(graphVertex));
+        doReturn(Either.left(toscaElement)).when(topologyTemplateOperationMock).getToscaElement(eq(graphVertex), any(ComponentParametersView.class));
+        when(janusGraphDaoMock.getParentVertices(any(GraphVertex.class), any(), any())).thenReturn(Either.right(JanusGraphOperationStatus.OK));
+        assertEquals(affectedComponentIds, testInstance.deleteComponent("1", NodeTypeEnum.Resource));
+    }
+
+    @Test
+    public void testDeleteResource_FailDelete() {
+        Map<GraphPropertyEnum, Object> metadataProperties = new HashMap<>();
+        metadataProperties.put(GraphPropertyEnum.NAME, "graphVertex");
+        GraphVertex graphVertex = getTopologyTemplateVertex();
+        graphVertex.setUniqueId("1");
+        graphVertex.setMetadataProperties(metadataProperties);
+        ToscaElement toscaElement1 = getToscaElementForTest();
+        toscaElement1.setUniqueId("1");
+        List<String> affectedComponentIds = new ArrayList<>();
+        affectedComponentIds.add(graphVertex.getUniqueId());
+
+        List<GraphVertex> allResourcesToDelete = new ArrayList<>();
+        allResourcesToDelete.add(graphVertex);
+        when(graphLockOperationMock.lockComponent(graphVertex.getUniqueId(), NodeTypeEnum.Resource)).
+                thenReturn(StorageOperationStatus.OK);
+        when(topologyTemplateOperationMock.deleteToscaElement(graphVertex))
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, "1");
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).thenReturn(Either.left(allResourcesToDelete));
+        doReturn(Either.left(toscaElement1)).when(topologyTemplateOperationMock).getToscaElement(eq(graphVertex), any(ComponentParametersView.class));
+        when(topologyTemplateOperationMock.getComponentByLabelAndId(graphVertex.getUniqueId(), ToscaElementTypeEnum.TOPOLOGY_TEMPLATE, JsonParseFlagEnum.ParseAll))
+                .thenReturn(Either.left(graphVertex));
+        when(janusGraphDaoMock.getParentVertices(any(GraphVertex.class), any(), any())).thenReturn(Either.right(JanusGraphOperationStatus.OK));
+        assertThrows(StorageException.class, () -> testInstance.deleteComponent("1", NodeTypeEnum.Resource));
+    }
+
+    @Test
+    public void testDeleteResource_NotFound() {
+        Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, "1");
+        when(janusGraphDaoMock.getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata)).
+                thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        assertThrows(StorageException.class, () -> testInstance.deleteComponent("1", NodeTypeEnum.Resource));
+    }
+
     private StorageOperationStatus associateRequirementsToServiceWithStatus(StorageOperationStatus status) {
         Map<String, ListRequirementDataDefinition> requirementsMap = new HashedMap();
         String componentId = "componentid";

@@ -49,6 +49,7 @@ import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -74,6 +75,7 @@ public class CheckoutTest extends LifecycleTestBase {
     private final ModelBusinessLogic modelBusinessLogic = Mockito.mock(ModelBusinessLogic.class);
     private final DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic = Mockito.mock(PolicyTypeBusinessLogic.class);
+    private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
     @InjectMocks
     ResourceBusinessLogic bl = new ResourceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
         groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation, artifactsBusinessLogic,
@@ -82,7 +84,7 @@ public class CheckoutTest extends LifecycleTestBase {
         uiComponentDataConverter, csarBusinessLogic, artifactToscaOperation, propertyBusinessLogic,
         componentContactIdValidator, componentNameValidator, componentTagsValidator, componentValidator,
         componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator ,policyBusinessLogic, modelBusinessLogic,
-        dataTypeBusinessLogic, policyTypeBusinessLogic);
+        dataTypeBusinessLogic, policyTypeBusinessLogic, modelOperation);
 
     @Before
     public void setup() {

@@ -20,38 +20,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.servlet.ServletContext;
-
+import fj.data.Either;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -121,6 +90,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperatio
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTypeOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
@@ -133,6 +103,7 @@ import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.CsarOperation;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.ModelOperation;
 import org.openecomp.sdc.be.model.operations.impl.PolicyTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -154,7 +125,37 @@ import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
-import fj.data.Either;
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 public class ResourceBusinessLogicTest {
 
@@ -218,6 +219,7 @@ public class ResourceBusinessLogicTest {
 	private final ArtifactTypeOperation artifactTypeOperation = Mockito.mock(ArtifactTypeOperation.class);
 	private final DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
 	private final PolicyTypeBusinessLogic policyTypeBusinessLogic = Mockito.mock(PolicyTypeBusinessLogic.class);
+	private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
 
 	private YamlTemplateParsingHandler yamlTemplateParsingHandler = Mockito.mock(YamlTemplateParsingHandler.class);
 	@InjectMocks
@@ -325,7 +327,7 @@ public class ResourceBusinessLogicTest {
 				csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
 				artifactToscaOperation, propertyBusinessLogic, componentContactIdValidator, componentNameValidator,
 				componentTagsValidator, componentValidator,	componentIconValidator, componentProjectCodeValidator,
-				componentDescriptionValidator, policyBusinessLogic, modelBusinessLogic, dataTypeBusinessLogic, policyTypeBusinessLogic);
+				componentDescriptionValidator, policyBusinessLogic, modelBusinessLogic, dataTypeBusinessLogic, policyTypeBusinessLogic, modelOperation);
 		bl.setElementDao(mockElementDao);
 		bl.setUserAdmin(mockUserAdmin);
 		bl.setCapabilityTypeOperation(capabilityTypeOperation);
@@ -2505,5 +2507,28 @@ public class ResourceBusinessLogicTest {
 
 		assertTrue(result.isRight());
 		assertTrue(result.right().value() instanceof ByActionStatusComponentException);
+	}
+
+	@Test
+	public void testDeleteResource_NotFound() {
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+		ResponseFormat respFormat = componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND), "");
+		ResponseFormat actualResponseFormat = bl.deleteResource("1", user);
+		assertEquals(respFormat.getStatus(), actualResponseFormat.getStatus());
+	}
+
+	@Test
+	public void testDeleteResource_NotArchived() {
+		Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(Either.left(resourceResponse));
+		assertThrows(ComponentException.class, () -> bl.deleteResourceAllVersions(resourceResponse.getUniqueId(), user));
+	}
+
+	@Test
+	public void testDeleteResource_IsInUse() {
+		Resource resourceObject = createResourceObject(true);
+		Mockito.when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(resourceObject));
+		resourceObject.setArchived(true);
+		Mockito.when(toscaOperationFacade.deleteComponent(resourceObject.getInvariantUUID(), NodeTypeEnum.Resource)).thenThrow(OperationException.class);
+		assertThrows(OperationException.class, () -> bl.deleteResourceAllVersions(resourceResponse.getUniqueId(), user));
 	}
 }
