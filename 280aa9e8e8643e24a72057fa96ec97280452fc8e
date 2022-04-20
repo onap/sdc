@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8b5b00af_b79b7c6f",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/exception/VendorLicenseModelExceptionSupplier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T09:15:12Z",
+      "side": 1,
+      "message": "same here. Please, configure your IDE to not use wildcard imports",
+      "range": {
+        "startLine": 33,
+        "startChar": 76,
+        "endLine": 33,
+        "endChar": 78
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4db3d463_e99c7fb4",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/exception/VendorLicenseModelExceptionSupplier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T09:15:12Z",
+      "side": 1,
+      "message": "I suggest to change to: Vendor License Model \u0027%s\u0027 has been certified and must be archived before deleting.",
+      "range": {
+        "startLine": 78,
+        "startChar": 47,
+        "endLine": 78,
+        "endChar": 132
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d25b6f8_87f38029",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/exception/VendorLicenseModelExceptionSupplier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T09:15:12Z",
+      "side": 1,
+      "message": "this code must match the one in the openecomp-be/api/openecomp-sdc-rest-webapp/openecomp-sdc-common-rest/src/main/resources/errorCodesToResponseStatusMapping.json. Please, change there too.",
+      "range": {
+        "startLine": 80,
+        "startChar": 20,
+        "endLine": 80,
+        "endChar": 66
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a3fd2239_9a1f378b",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T09:15:12Z",
+      "side": 1,
+      "message": "please, don\u0027t use wildcard import, be specific",
+      "range": {
+        "startLine": 78,
+        "startChar": 76,
+        "endLine": 78,
+        "endChar": 77
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8918e49d_41e6c60d",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/test/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImplTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T09:15:12Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 58,
+        "startChar": 33,
+        "endLine": 58,
+        "endChar": 35
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8690c83a_5e7a90d5",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/test/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImplTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T09:15:12Z",
+      "side": 1,
+      "message": "use the VendorLicenseModelExceptionSupplier to compare the CoreException. The id, category and message in the ErrorCode inside the exception are important to check. See deleteLicenseModel_cantDeleteCertifiedTest",
+      "range": {
+        "startLine": 223,
+        "startChar": 8,
+        "endLine": 223,
+        "endChar": 131
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9a46324_4ae02732",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/test/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImplTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T09:15:12Z",
+      "side": 1,
+      "message": "Be specific about the exceptions you expect.",
+      "range": {
+        "startLine": 231,
+        "startChar": 8,
+        "endLine": 231,
+        "endChar": 65
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
