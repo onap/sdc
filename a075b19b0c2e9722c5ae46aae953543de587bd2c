@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "86f1fd24_49014970",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1326,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "no tests were added for this condition. For void methods, you can use Mockito.verify to see if it was called or not",
+      "range": {
+        "startLine": 1324,
+        "startChar": 12,
+        "endLine": 1326,
+        "endChar": 13
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ecab7fd1_ae63b213",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "please, use common equals:\nAction.DELETE.name().equals(action)",
+      "range": {
+        "startLine": 293,
+        "startChar": 16,
+        "endLine": 293,
+        "endChar": 59
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d48d069a_525063ba",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "remove commented code",
+      "range": {
+        "startLine": 313,
+        "startChar": 0,
+        "endLine": 343,
+        "endChar": 7
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f04224d_bd9a7156",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "you could get the exception and check its content (action status and params):\n\nfinal ComponentException actualException \u003d assertThrows(ComponentException.class ...",
+      "range": {
+        "startLine": 675,
+        "startChar": 8,
+        "endLine": 675,
+        "endChar": 90
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8e8f868_7b1b41f8",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "try to use org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum.COMPONENT_TYPE.getProperty()",
+      "range": {
+        "startLine": 1022,
+        "startChar": 78,
+        "endLine": 1022,
+        "endChar": 93
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9cb09aa7_5af7dedc",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "remove space",
+      "range": {
+        "startLine": 1022,
+        "startChar": 41,
+        "endLine": 1022,
+        "endChar": 42
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54e0897f_df0b6e35",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1022,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "same here:\norg.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum.NAME.getProperty()",
+      "range": {
+        "startLine": 1022,
+        "startChar": 139,
+        "endLine": 1022,
+        "endChar": 145
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c643a45c_52cb32b0",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "this is not a \"Model\" related exception. Maybe create a new one: ToscaOperationExceptionSupplier.\nAlso, I couldn\u0027t find tests for this exception.",
+      "range": {
+        "startLine": 1025,
+        "startChar": 18,
+        "endLine": 1025,
+        "endChar": 64
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2f5d784_4e41b625",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T10:37:28Z",
+      "side": 1,
+      "message": "why not return the Set itself?",
+      "range": {
+        "startLine": 1103,
+        "startChar": 8,
+        "endLine": 1103,
+        "endChar": 40
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
