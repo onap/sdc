@@ -25,19 +25,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.openecomp.sdc.asdctool.impl.validator.config.ValidationConfigManager;
 import org.openecomp.sdc.asdctool.impl.validator.report.Report;
 import org.openecomp.sdc.asdctool.impl.validator.report.ReportFileNioHelper;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 
-public class ReportManagerTest {
+class ReportManagerTest {
 
     private static final String VERTEX_1_ID = "testID1";
     private static final String TASK_1_FAILED_NAME = "testFailedTask1";
@@ -64,15 +66,22 @@ public class ReportManagerTest {
 
     private final VertexResult successResult = new VertexResult();
 
-    private final static String resourcePath = new File("src/test/resources").getAbsolutePath();
-    private final static String csvReportFilePath = ValidationConfigManager
-        .csvReportFilePath(resourcePath, System::currentTimeMillis);
-    private final static String txtReportFilePath = ValidationConfigManager.txtReportFilePath(resourcePath);
+    private static String csvReportFilePath;
+    private static String txtReportFilePath;
 
     private final GraphVertex vertexScanned = Mockito.mock(GraphVertex.class);
 
+    @TempDir
+    static Path reportOutputPath;
+
+    @BeforeAll
+    static void beforeAll() {
+        csvReportFilePath = ValidationConfigManager.csvReportFilePath(reportOutputPath.toString(), System::currentTimeMillis);
+        txtReportFilePath = ValidationConfigManager.txtReportFilePath(reportOutputPath.toString());
+    }
+
     @Test
-    public void testReportTaskEnd() {
+    void testReportTaskEnd() {
         // when
         Report report = Report.make();
         report.addSuccess(VERTEX_1_ID, TASK_1_NAME, successResult);
@@ -91,7 +100,7 @@ public class ReportManagerTest {
     }
 
     @Test
-    public void testAddFailedVertex() {
+    void testAddFailedVertex() {
         // when
         Report report = Report.make();
         report.addFailure(TASK_1_NAME, VERTEX_1_ID);
@@ -110,7 +119,7 @@ public class ReportManagerTest {
     }
 
     @Test
-    public void testPrintValidationTaskStatus() {
+    void testPrintValidationTaskStatus() {
         // given
         when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
 
@@ -128,7 +137,7 @@ public class ReportManagerTest {
     }
 
     @Test
-    public void testWriteReportLineToFile() {
+    void testWriteReportLineToFile() {
         // when
         List<String> reportTxtFile = ReportFileNioHelper.withTxtFile(txtReportFilePath, file -> {
             file.writeReportLineToFile(DUMMY_MESSAGE);
@@ -142,7 +151,7 @@ public class ReportManagerTest {
     }
 
     @Test
-    public void testReportValidatorTypeSummary() {
+    void testReportValidatorTypeSummary() {
         // when
         List<String> reportTxtFile = ReportFileNioHelper.withTxtFile(txtReportFilePath, file -> {
             file.reportValidatorTypeSummary(VALIDATOR_NAME, failedTasksNames, successTasksNames);
@@ -159,7 +168,7 @@ public class ReportManagerTest {
     }
 
     @Test
-    public void testReportStartValidatorRun() {
+    void testReportStartValidatorRun() {
         // when
         List<String> reportTxtFile = ReportFileNioHelper.withTxtFile(txtReportFilePath, file -> {
             file.reportStartValidatorRun(VALIDATOR_NAME, COMPONENT_SUM);
@@ -174,7 +183,7 @@ public class ReportManagerTest {
     }
 
     @Test
-    public void testReportStartTaskRun() {
+    void testReportStartTaskRun() {
         // given
         when(vertexScanned.getUniqueId()).thenReturn(UNIQUE_ID);
 
