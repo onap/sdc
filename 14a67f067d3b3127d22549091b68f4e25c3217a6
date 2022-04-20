@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d97227d_153c1bd8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4235,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "please, add space",
+      "range": {
+        "startLine": 4235,
+        "startChar": 24,
+        "endLine": 4235,
+        "endChar": 25
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "294fadc5_c5e622a9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4236,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "to improve readability and method size, I would suggest to create one method to delete and other to mark as deleted and call here for each situation.",
+      "range": {
+        "startLine": 4236,
+        "startChar": 12,
+        "endLine": 4236,
+        "endChar": 14
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09fc6190_56858672",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4266,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "move to the previous line",
+      "range": {
+        "startLine": 4265,
+        "startChar": 9,
+        "endLine": 4266,
+        "endChar": 8
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5b2d57d_4e356cc1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4288,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "is this in use by your changes?\nI would suggest to move this method to the janus graph dao, it is not Resource specific",
+      "range": {
+        "startLine": 4288,
+        "startChar": 17,
+        "endLine": 4288,
+        "endChar": 40
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "855a3430_dd4ce456",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4301,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 4301,
+        "startChar": 24,
+        "endLine": 4301,
+        "endChar": 45
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97572eae_e444b195",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "being an optional, would it be ever set to null? Have you tested without the parameter to check?\n\nI suggest to move this out of the parameter, to a variable, to improve readability.",
+      "range": {
+        "startLine": 241,
+        "startChar": 20,
+        "endLine": 241,
+        "endChar": 138
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b881514f_33d9407e",
+        "filename": "catalog-be/src/test/resources/config/catalog-be/error-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2324,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "SVC4692",
+      "range": {
+        "startLine": 2324,
+        "startChar": 14,
+        "endLine": 2324,
+        "endChar": 21
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7dc9ca3f_78a17b50",
+        "filename": "catalog-be/src/test/resources/config/catalog-be/error-configuration.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2332,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "SVC4693",
+      "range": {
+        "startLine": 2332,
+        "startChar": 14,
+        "endLine": 2332,
+        "endChar": 21
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52c3341e_b6c13302",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1001,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "I see your commit is dependent on https://gerrit.onap.org/r/c/sdc/+/128166, correct? I see a lot of similarities between the code. It is better to create a relation chain instead of reintroducing the same code and having difficult merge conflicts.",
+      "range": {
+        "startLine": 1001,
+        "startChar": 56,
+        "endLine": 1001,
+        "endChar": 70
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bfe448eb_3c1743f2",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-20T14:55:56Z",
+      "side": 1,
+      "message": "at least log the exception",
+      "range": {
+        "startLine": 1038,
+        "startChar": 27,
+        "endLine": 1038,
+        "endChar": 36
+      },
+      "revId": "14a67f067d3b3127d22549091b68f4e25c3217a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
