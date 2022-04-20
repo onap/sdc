@@ -31,26 +31,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -67,6 +47,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.DeleteActionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
@@ -88,6 +69,27 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -218,7 +220,10 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @DELETE
     @Path("/resources/{resourceId}")
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteResource(@PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request) {
+    public Response deleteResource(@PathParam("resourceId") final String resourceId,
+                                   @Parameter(description = "Optional parameter to determine the delete action")
+                                   @QueryParam("deleteAction") final DeleteActionEnum deleteAction,
+                                   @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
@@ -227,21 +232,25 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         modifier.setUserId(userId);
         log.debug(MODIFIER_ID_IS, userId);
         loggerSupportability.log(LoggerSupportabilityActions.DELETE_RESOURCE, StatusCode.STARTED, "Starting to delete Resource by user {}", userId);
-        Response response;
         try {
             String resourceIdLower = resourceId.toLowerCase();
-            ResponseFormat actionResponse = resourceBusinessLogic.deleteResource(resourceIdLower, modifier);
+            ResponseFormat actionResponse;
+            if (DeleteActionEnum.DELETE.equals(deleteAction)) {
+                resourceBusinessLogic.deleteResourceAllVersions(resourceId, modifier);
+                actionResponse = componentsUtils.getResponseFormat(ActionStatus.NO_CONTENT);
+            } else {
+                actionResponse = resourceBusinessLogic.deleteResource(resourceIdLower, modifier);
+            }
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
                 log.debug("failed to delete resource");
-                response = buildErrorResponse(actionResponse);
-                return response;
+                return buildErrorResponse(actionResponse);
             }
-            response = buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
+
             loggerSupportability.log(LoggerSupportabilityActions.DELETE_RESOURCE, StatusCode.COMPLETE, "Ended delete Resource by user {}", userId);
-            return response;
-        } catch (JSONException e) {
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.NO_CONTENT), null);
+        } catch (Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Delete Resource");
-            log.debug("delete resource failed with exception", e);
+            log.debug("delete resource failed with exception ", e);
             throw e;
         }
     }
