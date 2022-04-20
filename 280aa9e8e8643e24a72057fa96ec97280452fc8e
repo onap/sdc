@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "79f42253_7e20a6e1",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/exception/VendorLicenseModelExceptionSupplier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "done and configured",
+      "parentUuid": "8b5b00af_b79b7c6f",
+      "range": {
+        "startLine": 33,
+        "startChar": 76,
+        "endLine": 33,
+        "endChar": 78
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4db3d463_e99c7fb4",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/exception/VendorLicenseModelExceptionSupplier.java",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b76dd00a_da9decc0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/exception/VendorLicenseModelExceptionSupplier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4db3d463_e99c7fb4",
+      "range": {
+        "startLine": 78,
+        "startChar": 47,
+        "endLine": 78,
+        "endChar": 132
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "b32bc540_33204c39",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/exception/VendorLicenseModelExceptionSupplier.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d25b6f8_87f38029",
+      "range": {
+        "startLine": 80,
+        "startChar": 20,
+        "endLine": 80,
+        "endChar": 66
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a3fd2239_9a1f378b",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
         "patchSetId": 4
@@ -91,6 +163,30 @@
       "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3990a604_3e45393a",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3fd2239_9a1f378b",
+      "range": {
+        "startLine": 78,
+        "startChar": 76,
+        "endLine": 78,
+        "endChar": 77
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "000d208c_728862e7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/test/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImplTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8918e49d_41e6c60d",
+      "range": {
+        "startLine": 58,
+        "startChar": 33,
+        "endLine": 58,
+        "endChar": 35
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8690c83a_5e7a90d5",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/test/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImplTest.java",
         "patchSetId": 4
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "64b6bb1e_726c0b4e",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/test/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImplTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "Test moved to deleteLicenseModel_cantDeleteCertifiedAndNotArchivedTest",
+      "parentUuid": "8690c83a_5e7a90d5",
+      "range": {
+        "startLine": 223,
+        "startChar": 8,
+        "endLine": 223,
+        "endChar": 131
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b9a46324_4ae02732",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/test/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImplTest.java",
         "patchSetId": 4
@@ -160,6 +304,30 @@
       "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f91dffd_bdff7abc",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/test/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImplTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "Test moved to deleteLicenseModel_cantDeleteCertifiedAndNotArchivedTest",
+      "parentUuid": "b9a46324_4ae02732",
+      "range": {
+        "startLine": 231,
+        "startChar": 8,
+        "endLine": 231,
+        "endChar": 65
+      },
+      "revId": "280aa9e8e8643e24a72057fa96ec97280452fc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }

@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9ceff270_6b8b86b7",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e8fdef1_b261c855",
+      "range": {
+        "startLine": 209,
+        "startChar": 49,
+        "endLine": 209,
+        "endChar": 56
+      },
+      "revId": "aa30dbee1ac132daea573f9747005eeece4616b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "590e0f8e_f20fef2c",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "aa30dbee1ac132daea573f9747005eeece4616b9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23714bd6_4f2eee96",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-license-rest/vendor-license-rest-services/src/main/java/org/openecomp/sdcrests/vendorlicense/rest/services/VendorLicenseModelsImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-20T15:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "590e0f8e_f20fef2c",
+      "range": {
+        "startLine": 217,
+        "startChar": 80,
+        "endLine": 217,
+        "endChar": 104
+      },
+      "revId": "aa30dbee1ac132daea573f9747005eeece4616b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
