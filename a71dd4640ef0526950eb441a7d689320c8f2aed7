@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e77769a_855faa9d",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:56:31Z",
+      "side": 1,
+      "message": "Do we need a cancel button as well, if they change their mind after reading the warning message",
+      "range": {
+        "startLine": 622,
+        "startChar": 0,
+        "endLine": 622,
+        "endChar": 33
+      },
+      "revId": "a71dd4640ef0526950eb441a7d689320c8f2aed7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d6aa0be_9edce7a8",
+        "filename": "catalog-ui/src/assets/languages/en_US.json",
+        "patchSetId": 4
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:56:31Z",
+      "side": 1,
+      "message": "Reword:\nAll versions of this component will be permanently deleted. This action cannot be undone. Are you sure you want to proceed?",
+      "range": {
+        "startLine": 246,
+        "startChar": 39,
+        "endLine": 246,
+        "endChar": 102
+      },
+      "revId": "a71dd4640ef0526950eb441a7d689320c8f2aed7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
