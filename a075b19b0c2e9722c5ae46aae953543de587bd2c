@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "452d7635_906899de",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "rename \u0027deleteServiceAllVersions\u0027",
+      "range": {
+        "startLine": 1309,
+        "startChar": 16,
+        "endLine": 1309,
+        "endChar": 37
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "86f1fd24_49014970",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
         "patchSetId": 6
@@ -18,6 +41,98 @@
         "startChar": 12,
         "endLine": 1326,
         "endChar": 13
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f7f2dfe_3c3fbbb0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1326,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "might be better to delete the model after the service and only if the service has been successfully deleted\nand commit here after the service versions and model has been deleted instead of when just the service versions are deleted",
+      "range": {
+        "startLine": 1322,
+        "startChar": 11,
+        "endLine": 1326,
+        "endChar": 13
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20a8f023_d778fc90",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1338,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "rename markServiceForDeletion",
+      "range": {
+        "startLine": 1338,
+        "startChar": 26,
+        "endLine": 1338,
+        "endChar": 39
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6968e087_01068ffa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "add @Parameter to document the param so the user understands how to use it",
+      "range": {
+        "startLine": 276,
+        "startChar": 81,
+        "endLine": 276,
+        "endChar": 103
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0b8ffb1_b097d54c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "can we use the enum here instead of string to ensure valid value is passed",
+      "range": {
+        "startLine": 276,
+        "startChar": 110,
+        "endLine": 276,
+        "endChar": 116
       },
       "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -48,6 +163,29 @@
     },
     {
       "key": {
+        "uuid": "13e5977a_984e694a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "According to the java doc for this method it should be considered deprecated, use git fetch java.util.Objects.equals instead",
+      "range": {
+        "startLine": 293,
+        "startChar": 16,
+        "endLine": 293,
+        "endChar": 29
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d48d069a_525063ba",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
         "patchSetId": 6
@@ -71,6 +209,29 @@
     },
     {
       "key": {
+        "uuid": "9541926b_7d020b32",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "remove commented out code",
+      "range": {
+        "startLine": 313,
+        "startChar": 0,
+        "endLine": 344,
+        "endChar": 0
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1f04224d_bd9a7156",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
         "patchSetId": 6
@@ -87,6 +248,29 @@
         "startChar": 8,
         "endLine": 675,
         "endChar": 90
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "050bd5ce_65b430fe",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1016,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "Should be able to get all versions of the component using getComponentListByInvariantUuid. The invariantUuid is the same for all versions of the component\nCan we then just pass all the components to checkIfInUseAndDelete then to reuse existing code rather than creating new code to do the same thing",
+      "range": {
+        "startLine": 1009,
+        "startChar": 7,
+        "endLine": 1016,
+        "endChar": 9
       },
       "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -186,6 +370,29 @@
     },
     {
       "key": {
+        "uuid": "e96674c2_b40ea407",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "this is not an operation on a model",
+      "range": {
+        "startLine": 1025,
+        "startChar": 0,
+        "endLine": 1025,
+        "endChar": 89
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b2f5d784_4e41b625",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 6
@@ -202,6 +409,75 @@
         "startChar": 8,
         "endLine": 1103,
         "endChar": 40
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8578fb6f_72ab1b99",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1120,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "rename to \u0027isInUse\u0027",
+      "range": {
+        "startLine": 1120,
+        "startChar": 20,
+        "endLine": 1120,
+        "endChar": 32
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5281cd0d_7ec7a01e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1128,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "Just get the parent from the edge? i.e. belongingEdgeByCriteria.left().value().inVertex()\nor just go straight to get the parents without first getting the edges (i.e. remove the call to getBelongingEdgeByCriteria)",
+      "range": {
+        "startLine": 1127,
+        "startChar": 15,
+        "endLine": 1128,
+        "endChar": 109
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20912cb5_5e6644d4",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1136,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-20T10:44:55Z",
+      "side": 1,
+      "message": "a lot of this code is duplicated in getComponentsUsingComponent, refactor to reduce code duplication",
+      "range": {
+        "startLine": 1123,
+        "startChar": 4,
+        "endLine": 1136,
+        "endChar": 18
       },
       "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
