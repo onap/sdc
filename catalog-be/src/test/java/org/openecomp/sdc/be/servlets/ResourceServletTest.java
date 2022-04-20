@@ -69,6 +69,7 @@ import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.DeleteActionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
@@ -289,7 +290,7 @@ class ResourceServletTest extends JerseyTest {
         String formatEndpoint = "/v1/catalog/resources/{resourceId}";
         String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{", "}");
 
-        when(resourceBusinessLogic.deleteResource(any(), any(User.class)))
+        when(resourceBusinessLogic.deleteResource(any(), any(User.class), any(DeleteActionEnum.class)))
             .thenReturn(notFoundResponseFormat);
 
         Response response = target()
@@ -311,7 +312,7 @@ class ResourceServletTest extends JerseyTest {
         String formatEndpoint = "/v1/catalog/resources/{resourceId}";
         String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{", "}");
 
-        when(resourceBusinessLogic.deleteResource(any(), any(User.class)))
+        when(resourceBusinessLogic.deleteResource(any(), any(User.class), any(DeleteActionEnum.class)))
             .thenThrow(new JSONException("Test exception: deleteResource"));
 
         Response response = target()
@@ -333,7 +334,7 @@ class ResourceServletTest extends JerseyTest {
         String formatEndpoint = "/v1/catalog/resources/{resourceId}";
         String path = StrSubstitutor.replace(formatEndpoint, parametersMap, "{", "}");
 
-        when(resourceBusinessLogic.deleteResource(eq(resourceId.toLowerCase()), any(User.class)))
+        when(resourceBusinessLogic.deleteResource(eq(resourceId.toLowerCase()), any(User.class), any(DeleteActionEnum.class)))
             .thenReturn(noContentResponseFormat);
 
         Response response = target()

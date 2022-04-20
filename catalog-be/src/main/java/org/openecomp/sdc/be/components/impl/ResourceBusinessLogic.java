@@ -86,6 +86,11 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
@@ -100,6 +105,7 @@ import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.DeleteActionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -4212,9 +4218,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
      *
      * @param resourceId
      * @param user
+     * @param deleteAction
      * @return
      */
-    public ResponseFormat deleteResource(String resourceId, User user) {
+    public ResponseFormat deleteResource(String resourceId, User user, DeleteActionEnum deleteAction) {
         ResponseFormat responseFormat;
         validateUserExists(user);
         Either<Resource, StorageOperationStatus> resourceStatus = toscaOperationFacade.getToscaElement(resourceId);
@@ -4222,8 +4229,19 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.debug("failed to get resource {}", resourceId);
             return componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resourceStatus.right().value()), "");
         }
+
         Resource resource = resourceStatus.left().value();
         StorageOperationStatus result = StorageOperationStatus.OK;
+
+        if (deleteAction == DeleteActionEnum.DELETE) {
+            return deleteResource(resourceId, resource);
+        } else {
+            return markResourceAsDeleted(resourceId, resource, result);
+        }
+    }
+
+    private ResponseFormat markResourceAsDeleted(String resourceId, Resource resource, StorageOperationStatus result) {
+        ResponseFormat responseFormat;
         lockComponent(resourceId, resource, "Mark resource to delete");
         try {
             result = markComponentToDelete(resource);
@@ -4242,6 +4260,40 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
             graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
         }
+    }
+
+    private ResponseFormat deleteResource(String resourceId, Resource resource) {
+        ResponseFormat responseFormat;
+        StorageOperationStatus result;
+        if (Boolean.FALSE.equals(resource.isArchived())) {
+            log.debug("The resource, {}, requested for delete has not been archived.", resourceId);
+            result = StorageOperationStatus.COMPONENT_NOT_ARCHIVED;
+            responseFormat = componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(result), resource.getName());
+            return responseFormat;
+        }
+
+        Either<Boolean, StorageOperationStatus> isComponentInUse = toscaOperationFacade.isComponentInUse(resourceId);
+        if (isComponentInUse.isLeft() && isComponentInUse.left().value()) {
+            log.debug("The resource, {}, requested for delete is in use.", resourceId);
+            result = StorageOperationStatus.COMPONENT_IS_IN_USE;
+            responseFormat = componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(result), resource.getName());
+            return responseFormat;
+        }
+
+        Either<List<String>, StorageOperationStatus> deletedResourceList = toscaOperationFacade.deleteResource(resourceId);
+
+        if (deletedResourceList.isRight()) {
+            ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deletedResourceList.right().value());
+            responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, resource.getName());
+            return responseFormat;
+        }
+
+        deletedResourceList.left().forEach(deletedResource -> log.debug("Component {} was deleted.", deletedResource));
+        updateCatalog(resource, ChangeTypeEnum.DELETE);
+        result = StorageOperationStatus.OK;
+        ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(result);
+        responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, resource.getName());
+        return responseFormat;
     }
 
     public ResponseFormat deleteResourceByNameAndVersion(String resourceName, String version, User user) {
