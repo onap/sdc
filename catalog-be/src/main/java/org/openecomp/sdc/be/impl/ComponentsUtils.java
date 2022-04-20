@@ -764,6 +764,12 @@ public class ComponentsUtils {
             case COMPONENT_IS_ARCHIVED:
                 responseEnum = ActionStatus.COMPONENT_IS_ARCHIVED;
                 break;
+            case COMPONENT_NOT_ARCHIVED:
+                responseEnum = ActionStatus.COMPONENT_NOT_ARCHIVED;
+                break;
+            case COMPONENT_IS_IN_USE:
+                responseEnum = ActionStatus.COMPONENT_IN_USE_BY_ANOTHER_COMPONENT;
+                break;
             case DECLARED_INPUT_USED_BY_OPERATION:
                 responseEnum = ActionStatus.DECLARED_INPUT_USED_BY_OPERATION;
                 break;

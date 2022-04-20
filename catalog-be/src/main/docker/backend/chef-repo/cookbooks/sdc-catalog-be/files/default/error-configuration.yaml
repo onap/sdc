@@ -2634,3 +2634,19 @@ errors:
         message: "Artifact type '%1' already exist.",
         messageId: "SVC4163"
     }
+
+    #---------SVC4164-----------------------------
+    # %1 - Component name
+    COMPONENT_NOT_ARCHIVED: {
+        code: 403,
+        message: "Component '%1' is not archived",
+        messageId: "SVC4692"
+    }
+
+    #---------SVC4165-----------------------------
+    # %1 - List of services
+    COMPONENT_IN_USE_BY_ANOTHER_COMPONENT: {
+        code: 403,
+        message: "Component is in use by '%1'",
+        messageId: "SVC4693"
+    }

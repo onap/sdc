@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -67,6 +68,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.DeleteActionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
@@ -88,6 +90,7 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
@@ -218,7 +221,9 @@ public class ResourcesServlet extends AbstractValidationsServlet {
     @DELETE
     @Path("/resources/{resourceId}")
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response deleteResource(@PathParam("resourceId") final String resourceId, @Context final HttpServletRequest request) {
+    public Response deleteResource(@PathParam("resourceId") final String resourceId,
+                                   @Parameter(description = "Action on Delete (Mark for deletion or actually Delete)", required = false) @QueryParam("deleteAction") Optional<DeleteActionEnum> deleteAction,
+                                   @Context final HttpServletRequest request) {
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
@@ -230,7 +235,10 @@ public class ResourcesServlet extends AbstractValidationsServlet {
         Response response;
         try {
             String resourceIdLower = resourceId.toLowerCase();
-            ResponseFormat actionResponse = resourceBusinessLogic.deleteResource(resourceIdLower, modifier);
+            ResponseFormat actionResponse = resourceBusinessLogic.deleteResource(
+                    resourceIdLower,
+                    modifier,
+                    null != deleteAction ? deleteAction.orElseGet(() -> DeleteActionEnum.MARK_AS_DELETE) : DeleteActionEnum.MARK_AS_DELETE);
             if (actionResponse.getStatus() != HttpStatus.SC_NO_CONTENT) {
                 log.debug("failed to delete resource");
                 response = buildErrorResponse(actionResponse);

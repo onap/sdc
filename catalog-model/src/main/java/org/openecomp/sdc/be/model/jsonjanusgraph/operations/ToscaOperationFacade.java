@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +43,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
@@ -79,6 +81,7 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -116,6 +119,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
+import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -145,6 +149,8 @@ public class ToscaOperationFacade {
     private static final Logger log = Logger.getLogger(ToscaOperationFacade.class.getName());
     @Autowired
     private NodeTypeOperation nodeTypeOperation;
+    @Autowired
+    private IGraphLockOperation graphLockOperation;
     @Autowired
     private TopologyTemplateOperation topologyTemplateOperation;
     @Autowired
@@ -990,6 +996,124 @@ public class ToscaOperationFacade {
         }
         List<GraphVertex> allMarked = allComponentsMarkedForDeletion.left().value();
         return Either.left(checkIfInUseAndDelete(allMarked));
+    }
+
+    public Either<List<String>, StorageOperationStatus> deleteResource(String resourceId) {
+        final Either<GraphVertex, JanusGraphOperationStatus> vertexResult = janusGraphDao.getVertexById(resourceId);
+        if (vertexResult.isRight()) {
+            JanusGraphOperationStatus status = vertexResult.right().value();
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+        }
+        GraphVertex highestVersion = topologyTemplateOperation.getHighestVersionFrom(vertexResult.left().value());
+        highestVersion = janusGraphDao.getVertexById(highestVersion.getUniqueId(), JsonParseFlagEnum.ParseAll).left().value();
+
+        List<GraphVertex> allResourceVerticesToDelete = new ArrayList<>();
+        allResourceVerticesToDelete.add(highestVersion);
+        List<GraphVertex> allParents = getAllParents(highestVersion);
+        if (allParents != null) {
+            allResourceVerticesToDelete.addAll(allParents);
+        }
+        boolean isServiceInUse = isAnyResourceInUse(allResourceVerticesToDelete);
+        if (isServiceInUse) {
+            return Either.right(StorageOperationStatus.COMPONENT_IS_IN_USE);
+        }
+
+        List<String> affectedComponentIds = new ArrayList<>();
+        try {
+            for (GraphVertex elementV : allResourceVerticesToDelete) {
+                StorageOperationStatus storageOperationStatus = graphLockOperation.lockComponent(elementV.getUniqueId(), NodeTypeEnum.Resource);
+                if (!storageOperationStatus.equals(StorageOperationStatus.OK)) {
+                    throwStorageException(storageOperationStatus);
+                    return Either.right(storageOperationStatus);
+                }
+                Either<ToscaElement, StorageOperationStatus> deleteToscaElement = deleteToscaElement(elementV);
+                if (deleteToscaElement.isRight()) {
+                    log.debug("Failed to delete element UniqueID {}, Name {}, error {}", elementV.getUniqueId(),
+                            elementV.getMetadataProperties().get(GraphPropertyEnum.NAME), deleteToscaElement.right().value());
+                    return Either.right(deleteToscaElement.right().value());
+                }
+                affectedComponentIds.add(elementV.getUniqueId());
+            }
+            commitAndCheck(highestVersion.getUniqueId());
+        } catch (Exception exception) {
+            janusGraphDao.rollback();
+            return Either.right(StorageOperationStatus.GENERAL_ERROR);
+        } finally {
+            for (GraphVertex elementV : allResourceVerticesToDelete) {
+                graphLockOperation.unlockComponent(elementV.getUniqueId(), NodeTypeEnum.Resource);
+            }
+        }
+        return Either.left(affectedComponentIds);
+    }
+
+    private void commitAndCheck(String componentId) {
+        JanusGraphOperationStatus status = janusGraphDao.commit();
+        if (!status.equals(JanusGraphOperationStatus.OK)) {
+            log.debug("error occurred when trying to DELETE {}. Return code is: {}", componentId, status);
+            throwStorageException(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status));
+        }
+    }
+
+    private List<GraphVertex> getAllParents(GraphVertex vertex) {
+        Either<List<GraphVertex>, JanusGraphOperationStatus> parentVertices = janusGraphDao
+                .getParentVertices(vertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);
+        if (parentVertices.isRight()) {
+            log.debug("No parent vortices found for {}", vertex.getUniqueId());
+            return null;
+        }
+        Set<GraphVertex> allParents = new TreeSet<>(Comparator.comparing(GraphVertex::getUniqueId));
+        for (GraphVertex currentParentVertex: parentVertices.left().value()) {
+            GraphVertex currentVertex = currentParentVertex;
+            while (currentVertex != null) {
+                Either<List<GraphVertex>, JanusGraphOperationStatus> currentVertexParentVertices =
+                        janusGraphDao.getParentVertices(currentVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll);
+                if (currentVertexParentVertices.isLeft()) {
+                    allParents.addAll(currentVertexParentVertices.left().value());
+                }
+                allParents.add(currentVertex);
+                currentVertex = janusGraphDao.getParentVertex(currentVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.ParseAll)
+                        .either(graphVertex -> graphVertex, janusGraphOperationStatus -> null);
+            }
+        }
+        return new ArrayList<>(allParents);
+    }
+
+    private boolean isAnyResourceInUse(List<GraphVertex> resourceVertices) {
+        boolean isResourceInUse = false;
+        if (log.isDebugEnabled()) {
+            for (final GraphVertex graphVertex : resourceVertices) {
+                if (checkIfInUse(graphVertex)) {
+                    isResourceInUse = true;
+                }
+            }
+        } else {
+            isResourceInUse = resourceVertices.stream().anyMatch(this::checkIfInUse);
+        }
+        return isResourceInUse;
+    }
+
+    private boolean checkIfInUse(GraphVertex elementV) {
+        final List<EdgeLabelEnum> forbiddenEdgeLabelEnums = Arrays
+                .asList(EdgeLabelEnum.INSTANCE_OF, EdgeLabelEnum.PROXY_OF, EdgeLabelEnum.ALLOTTED_OF);
+        for (EdgeLabelEnum edgeLabelEnum : forbiddenEdgeLabelEnums) {
+            Either<Edge, JanusGraphOperationStatus> belongingEdgeByCriteria = janusGraphDao
+                    .getBelongingEdgeByCriteria(elementV, edgeLabelEnum, null);
+            if (belongingEdgeByCriteria.isLeft()) {
+                Either<List<GraphVertex>, JanusGraphOperationStatus> inUseBy =
+                        janusGraphDao.getParentVertices(elementV, edgeLabelEnum, JsonParseFlagEnum.ParseAll);
+                if (inUseBy.isLeft()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Element {} in use.", elementV.getUniqueId());
+                        for (GraphVertex v : inUseBy.left().value()) {
+                            log.debug("Unable to delete {} {}. It is in use by {} {}.", elementV.getType(), elementV.getUniqueId(),
+                                    v.getType(), v.getUniqueId());
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private List<String> checkIfInUseAndDelete(List<GraphVertex> allMarked) {

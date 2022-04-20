@@ -86,6 +86,11 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datamodel.api.HighestFilterEnum;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
@@ -100,6 +105,7 @@ import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
+import org.openecomp.sdc.be.datatypes.enums.DeleteActionEnum;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -4214,7 +4220,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
      * @param user
      * @return
      */
-    public ResponseFormat deleteResource(String resourceId, User user) {
+    public ResponseFormat deleteResource(String resourceId, User user, DeleteActionEnum deleteAction) {
         ResponseFormat responseFormat;
         validateUserExists(user);
         Either<Resource, StorageOperationStatus> resourceStatus = toscaOperationFacade.getToscaElement(resourceId);
@@ -4222,26 +4228,85 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             log.debug("failed to get resource {}", resourceId);
             return componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resourceStatus.right().value()), "");
         }
+
         Resource resource = resourceStatus.left().value();
         StorageOperationStatus result = StorageOperationStatus.OK;
-        lockComponent(resourceId, resource, "Mark resource to delete");
-        try {
-            result = markComponentToDelete(resource);
-            if (result == StorageOperationStatus.OK) {
-                responseFormat = componentsUtils.getResponseFormat(ActionStatus.NO_CONTENT);
-            } else {
-                ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(result);
+
+        if (deleteAction== DeleteActionEnum.DELETE) {
+            if (Boolean.FALSE.equals(resource.isArchived())) {
+                log.debug("The resource, {}, requested for delete has not been archived.", resourceId);
+                result = StorageOperationStatus.COMPONENT_NOT_ARCHIVED;
+                responseFormat = componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(result), resource.getName());
+                return responseFormat;
+            }
+
+            Either<Boolean, StorageOperationStatus> isComponentInUse = toscaOperationFacade.isComponentInUse(resourceId);
+            if (isComponentInUse.isLeft() && isComponentInUse.left().value()) {
+                log.debug("The resource, {}, requested for delete is in use.", resourceId);
+                result = StorageOperationStatus.COMPONENT_IS_IN_USE;
+                responseFormat = componentsUtils.getResponseFormatByResource(componentsUtils.convertFromStorageResponse(result), resource.getName());
+                return responseFormat;
+            }
+
+            Either<List<String>, StorageOperationStatus> deletedResourceList = toscaOperationFacade.deleteResource(resourceId);
+
+            if (deletedResourceList.isRight()) {
+                ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(deletedResourceList.right().value());
                 responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, resource.getName());
+                return responseFormat;
             }
+
+            deletedResourceList.left().forEach(deletedResource -> log.debug("Component {} was deleted.", deletedResource));
+            updateCatalog(resource, ChangeTypeEnum.DELETE);
+            result = StorageOperationStatus.OK;
+            ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(result);
+            responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, resource.getName());
             return responseFormat;
-        } finally {
-            if (!StorageOperationStatus.OK.equals(result)) {
-                janusGraphDao.rollback();
-            } else {
-                janusGraphDao.commit();
-            }
-            graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
         }
+        else {
+            lockComponent(resourceId, resource, "Mark resource to delete");
+            try {
+                result = markComponentToDelete(resource);
+                if (result == StorageOperationStatus.OK) {
+                    responseFormat = componentsUtils.getResponseFormat(ActionStatus.NO_CONTENT);
+                } else {
+                    ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(result);
+                    responseFormat = componentsUtils.getResponseFormatByResource(actionStatus, resource.getName());
+                }
+                return responseFormat;
+            } finally {
+                if (!StorageOperationStatus.OK.equals(result)) {
+                    janusGraphDao.rollback();
+                } else {
+                    janusGraphDao.commit();
+                }
+                graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
+            }
+        }
+    }
+
+    private void deleteEdgesOfVertexType(GraphVertex highestVersion, VertexTypeEnum vertexType) {
+        Either<GraphVertex, JanusGraphOperationStatus> vertexRoot = janusGraphDao.getVertexByLabel(vertexType);
+        if (vertexRoot.isLeft()) {
+            janusGraphDao.deleteAllEdges(vertexRoot.left().value(), highestVersion, EdgeLabelEnum.VERSION);
+        }
+    }
+
+    /**
+     * Walks on children until highest version is reached
+     *
+     * @param v
+     * @return
+     */
+    private GraphVertex getHighestVersionFrom(GraphVertex v) {
+        Either<GraphVertex, JanusGraphOperationStatus> childVertexE = janusGraphDao
+                .getChildVertex(v, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
+        GraphVertex highestVersionVertex = v;
+        while (childVertexE.isLeft()) {
+            highestVersionVertex = childVertexE.left().value();
+            childVertexE = janusGraphDao.getChildVertex(highestVersionVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
+        }
+        return highestVersionVertex;
     }
 
     public ResponseFormat deleteResourceByNameAndVersion(String resourceName, String version, User user) {
