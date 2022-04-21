@@ -65,56 +65,46 @@
         <div class="group-with-border content-row">
             <label class="occurrences-label"> {{ 'INTERFACE_OPERATION_IMPLEMENTATION' | translate}}</label>
             <div class="form-item">
-                <checkbox [label]="'Add Artifact To Implementation'"
-                          [(checked)]="enableAddArtifactImplementation"
-                          (checkedChange)="onMarkToAddArtifactToImplementation($event)"
-                          [disabled]=isViewOnly>
-                </checkbox>
-            </div>
-            <div class="form-item" *ngIf="!enableAddArtifactImplementation">
                 <sdc-input
-                    label="{{'INTERFACE_OPERATION_IMPLEMENTATION_NAME' | translate}}"
+                    label="{{'INTERFACE_OPERATION_IMPLEMENTATION_ARTIFACT_URI' | translate}}"
                     testId="interface-operation-implementation-name"
                     [(value)]="artifactName"
-                    (valueChange)="onImplementationNameChange($event)"
+                    (valueChange)="onURIChange($event)"
                     [disabled]=isViewOnly>
                 </sdc-input>
             </div>
-
-            <div class="side-by-side" *ngIf="enableAddArtifactImplementation">
-                <div class="form-item" *ngIf="toscaArtifactTypes">
-                    <sdc-dropdown
-                        label="{{ 'TOSCA_ARTIFACT_TYPE' | translate }}"
-                        testId="selectToscaArtifactType"
-                        [required]="true"
-                        [selectedOption]="toscaArtifactTypeSelected"
-                        placeHolder="{{toscaArtifactTypeSelected != undefined ? toscaArtifactTypeSelected : 'Select...'}}"
-                        (changed)="onSelectToscaArtifactType($event)"
-                        [options]="toscaArtifactTypes"
-                        [disabled]=isViewOnly>
-                    </sdc-dropdown>
-                </div>
-                <div class="form-item" *ngIf="toscaArtifactTypeSelected && enableAddArtifactImplementation">
-                    <sdc-input
-                        label="{{ 'INTERFACE_OPERATION_IMPLEMENTATION_FILE' | translate }}"
-                        data-tests-id="artifactFile"
-                        [(value)]="artifactName"
-                        [required]="true"
-                        (valueChange)="onArtifactFileChange($event)"
-                        [disabled]=isViewOnly>
-                    </sdc-input>
-                </div>
-                <div class="form-item">
-                    <sdc-input
-                        label="{{ 'ARTIFACT_VERSION' | translate }}"
-                        data-tests-id="artifactVersion"
-                        [(value)]="artifactVersion"
-                        (valueChange)="onArtifactVersionChange($event)"
-                        [disabled]=isViewOnly>
-                    </sdc-input>
-                </div>
+            <br>
+            <div class="form-item">
+                <checkbox [label]="'ADD_ARTIFACT_DETAILS' | translate"
+                    [(checked)]="enableAddArtifactImplementation"
+                    (checkedChange)="onMarkToAddArtifactToImplementation($event)"
+                    [disabled]=isViewOnly>
+                </checkbox>
+            </div>
+            <div class="form-item" *ngIf="toscaArtifactTypes && enableAddArtifactImplementation">
+                <br>
+                <sdc-dropdown
+                    label="{{ 'TOSCA_ARTIFACT_TYPE' | translate }}"
+                    testId="selectToscaArtifactType"
+                    [required]="true"
+                    [selectedOption]="toscaArtifactTypeSelected"
+                    placeHolder="{{toscaArtifactTypeSelected != undefined ? toscaArtifactTypeSelected : 'Select...'}}"
+                    (changed)="onSelectToscaArtifactType($event)"
+                    [options]="toscaArtifactTypes"
+                    [disabled]=isViewOnly>
+                </sdc-dropdown>
+            </div>
+            <div class="form-item" *ngIf="enableAddArtifactImplementation">
+                <sdc-input
+                    label="{{ 'ARTIFACT_VERSION' | translate }}"
+                    data-tests-id="artifactVersion"
+                    [(value)]="artifactVersion"
+                    (valueChange)="onArtifactVersionChange($event)"
+                    [disabled]=isViewOnly>
+                </sdc-input>
             </div>
             <div class="form-item" *ngIf="toscaArtifactTypeSelected && enableAddArtifactImplementation">
+                <br>
                 <input-list
                     *ngIf="artifactTypeProperties && dataTypeMap"
                     [title]="'ARTIFACT_PROPERTY_LIST_TITLE' | translate"
