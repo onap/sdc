@@ -25,7 +25,7 @@ limitations under the License.
     <parent>
         <artifactId>catalog-be-plugins</artifactId>
         <groupId>org.openecomp.sdc</groupId>
-        <version>1.10.3-SNAPSHOT</version>
+        <version>1.10.4-SNAPSHOT</version>
     </parent>
 
     <packaging>pom</packaging>
