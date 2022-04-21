@@ -263,7 +263,7 @@ export class InterfaceOperationsComponent {
         if (!isArtifactChecked) {
             let artifactName = interfaceOperationHandlerComponentInstance.artifactName;
             artifactName = artifactName === undefined ? '' : artifactName;
-            operationUpdated.implementation = new ArtifactModel({'artifactName': artifactName} as ArtifactModel);
+            operationUpdated.implementation = new ArtifactModel({'artifactName': artifactName, 'artifactVersion': ''} as ArtifactModel);
         }
         this.topologyTemplateService.updateComponentInstanceInterfaceOperation(
             this.componentMetaData.uniqueId,
