@@ -5,6 +5,95 @@
 Release Notes
 =============
 
+Version: 1.11.2
+==============
+
+:Release Date: 2022-04-23
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+
+    N/A
+
+**Stories**
+
+*  `SDC-3964 <https://jira.onap.org/browse/SDC-3964>`_ - Onboarding UI support for VLM deletion
+*  `SDC-3957 <https://jira.onap.org/browse/SDC-3957>`_ - Add application metrics in the catalog backend
+*  `SDC-3956 <https://jira.onap.org/browse/SDC-3956>`_ - Add application metrics in the onboarding backend
+*  `SDC-3966 <https://jira.onap.org/browse/SDC-3966>`_ - Restrict deletion of a VLM that is in use by any VSP
+*  `SDC-3968 <https://jira.onap.org/browse/SDC-3968>`_ - Delete VLM - Support deletion of archived VLMs in onboarding BE
+*  `SDC-3972 <https://jira.onap.org/browse/SDC-3972>`_ - Delete VFC - distinguish between system deployed or user deployed VFCs
+*  `SDC-3981 <https://jira.onap.org/browse/SDC-3981>`_ - Delete VFC - restrict deletion of system deployed VFCs
+*  `SDC-3936 <https://jira.onap.org/browse/SDC-3936>`_ - Delete Service - Support deletion of archived services in SDC BE
+*  `SDC-3962 <https://jira.onap.org/browse/SDC-3962>`_ - Delete service - UI support for deleting services
+*  `SDC-3969 <https://jira.onap.org/browse/SDC-3969>`_ - Add an UI feedback when saving a interface operation
+*  `SDC-3973 <https://jira.onap.org/browse/SDC-3973>`_ - Delete Service - Support deletion of archived VFs in SDC BE
+
+**Bug Fixes**
+
+*  `SDC-3960 <https://jira.onap.org/browse/SDC-3960>`_ - Adjust onboarding UI min node npm version
+*  `SDC-3957 <https://jira.onap.org/browse/SDC-3957>`_ - Add application metrics in the catalog backend
+*  `SDC-3967 <https://jira.onap.org/browse/SDC-3967>`_ - Failed to launch to SDC from Portal
+*  `SDC-3971 <https://jira.onap.org/browse/SDC-3971>`_ - Fix incorrect version in metrics-rest
+*  `SDC-3975 <https://jira.onap.org/browse/SDC-3975>`_ - Unit tests with conflicting output folder, resulting in intermittent build errors
+*  `SDC-3974 <https://jira.onap.org/browse/SDC-3974>`_ - NPE thrown when adding ASD VF to a service
+*  `SDC-3985 <https://jira.onap.org/browse/SDC-3985>`_ - Edit/Delete options for directives are not disabled when service is checked in / certified
+*  `SDC-3986 <https://jira.onap.org/browse/SDC-3986>`_ - Fix check to restrict deletion for system deployed VFCs
+
+**Tasks**
+
+*  `SDC-3932 <https://jira.onap.org/browse/SDC-3932>`_ - Remove deprecated/unused base images
+*  `DOC-782 <https://jira.onap.org/browse/DOC-782>`_ - Create docs for 'Jakarta' main release
+*  `SDC-3984 <https://jira.onap.org/browse/SDC-3984>`_ - Replace deprecated GEventEvaluator with JaninoEventEvaluator
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.1
 ==============
 
@@ -26,16 +115,20 @@ Release Purpose
 SDC Kohn early release
 
 **Epics**
+
     N/A
 
 **Stories**
+
 *  `SDC-3938 <https://jira.onap.org/browse/SDC-3938>`_ - Add ASD node and data types to SDC AID model
 *  `SDC-3952 <https://jira.onap.org/browse/SDC-3952>`_ - Delete VSP - Onboarding UI support for VSP deletion 
 
 **Bug Fixes**
+
 *  `SDC-3953 <https://jira.onap.org/browse/SDC-3953>`_ - Fix error handling for VSP usage check in VF 
 
 **Tasks**
+
     N/A
 
 Security Notes
@@ -93,9 +186,11 @@ Release Purpose
 SDC Kohn early release
 
 **Epics**
+
     N/A
 
 **Stories**
+
 *  `SDC-3893 <https://jira.onap.org/browse/SDC-3893>`_ - UI support for editing interfaces on a node type
 *  `SDC-3931 <https://jira.onap.org/browse/SDC-3931>`_ - Delete VSP - Handling partial delete failure
 *  `SDC-3935 <https://jira.onap.org/browse/SDC-3935>`_ - Delete VSP - Restore of partially deleted VSP
@@ -106,6 +201,7 @@ SDC Kohn early release
 *  `SDC-3890 <https://jira.onap.org/browse/SDC-3890>`_ - Delete VSP - Support deletion of archived VSPs in onboarding BE
 
 **Bug Fixes**
+
 *  `SDC-3939 <https://jira.onap.org/browse/SDC-3939>`_ - NPE thrown in service import
 *  `SDC-3934 <https://jira.onap.org/browse/SDC-3934>`_ - Package storage and reducer config are not reloading when there is a config change
 *  `SDC-3937 <https://jira.onap.org/browse/SDC-3937>`_ - PM_DICTIONARY check is causing nullpointer
@@ -179,6 +275,7 @@ SDC Jakarta
     N/A
 
 **Bug Fixes**
+
 *  `SDC-3921 <https://jira.onap.org/browse/SDC-3921>`_ - Map entry deletion not showing for inputs of type map<a complex type> in interface operation 
 *  `SDC-3922 <https://jira.onap.org/browse/SDC-3922>`_ - Node filters not loading while editing the select directive list 
 *  `SDC-3919 <https://jira.onap.org/browse/SDC-3919>`_ - Instance count not being added correctly to node template
