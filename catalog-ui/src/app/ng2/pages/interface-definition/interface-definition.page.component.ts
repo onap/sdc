@@ -29,6 +29,7 @@ import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 
 import {ModalService} from 'app/ng2/services/modal.service';
 import {
+    ArtifactModel,
     ButtonModel,
     CapabilitiesGroup,
     InputBEModel,
@@ -62,7 +63,6 @@ export class UIOperationModel extends OperationModel {
 
     constructor(operation: OperationModel) {
         super(operation);
-
         if (!operation.description) {
             this.description = '';
         }
@@ -263,7 +263,15 @@ export class InterfaceDefinitionComponent {
     }
 
     private updateOperation = (): void => {
-        let operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
+        this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = true;
+        const interfaceOperationHandlerComponentInstance: InterfaceOperationHandlerComponent = this.modalInstance.instance.dynamicContent.instance;
+        const operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
+        const isArtifactChecked = interfaceOperationHandlerComponentInstance.enableAddArtifactImplementation;
+        if (!isArtifactChecked) {
+            let artifactName = interfaceOperationHandlerComponentInstance.artifactName;
+            artifactName = artifactName === undefined ? '' : artifactName;
+            operationToUpdate.implementation = new ArtifactModel({'artifactName': artifactName, 'artifactVersion': ''} as ArtifactModel);
+        }
         this.componentServiceNg2.updateComponentInterfaceOperation(this.component.uniqueId, operationToUpdate)
         .subscribe((newOperation: InterfaceOperationModel) => {
             let oldOpIndex;
@@ -273,17 +281,21 @@ export class InterfaceDefinitionComponent {
                     if (op.uniqueId === newOperation.uniqueId) {
                         oldInterf = interf;
                         oldOpIndex = interf.operations.findIndex((el) => el.uniqueId === op.uniqueId);
+                        console.log('found operation', interf.type, oldOpIndex);
                     }
                 });
             });
-            newOperation = this.handleEnableAddArtifactImplementation(newOperation);
             oldInterf.operations.splice(oldOpIndex, 1);
             oldInterf.operations.push(new InterfaceOperationModel(newOperation));
+        }, error => {}, () => {
+            this.sortInterfaces();
+            this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+            this.modalServiceNg2.closeCurrentModal();
         });
-        this.modalServiceNg2.closeCurrentModal();
     }
 
     private createOperationCallback(): void {
+        this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = true;
         const operationToUpdate = this.modalInstance.instance.dynamicContent.instance.operationToUpdate;
         console.log('createOperationCallback', operationToUpdate);
         console.log('this.component', this.component);
@@ -300,8 +312,10 @@ export class InterfaceDefinitionComponent {
                 uiInterfaceModel.operations.push(new UIOperationModel(new OperationModel(newOperation)));
                 this.interfaces.push(uiInterfaceModel);
             }
+        }, error => {}, () => {
+            this.modalServiceNg2.currentModal.instance.dynamicContent.instance.isLoading = false;
+            this.modalServiceNg2.closeCurrentModal();
         });
-        this.modalServiceNg2.closeCurrentModal();
     }
 
     private handleEnableAddArtifactImplementation = (newOperation: InterfaceOperationModel): InterfaceOperationModel => {
