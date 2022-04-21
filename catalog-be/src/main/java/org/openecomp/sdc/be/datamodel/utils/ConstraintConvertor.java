@@ -39,12 +39,14 @@ public class ConstraintConvertor {
     public static final String EQUAL_OPERATOR = ConstraintType.EQUAL.getTypes().get(1);
     public static final String GREATER_THAN_OPERATOR = ConstraintType.GREATER_THAN.getTypes().get(1);
     public static final String LESS_THAN_OPERATOR = ConstraintType.LESS_THAN.getTypes().get(1);
+    public static final String GREATER_OR_EQUAL_OPERATOR = ConstraintType.GREATER_OR_EQUAL.getTypes().get(1);
+    public static final String LESS_OR_EQUAL_OPERATOR = ConstraintType.LESS_OR_EQUAL.getTypes().get(1);
     public static final String STATIC_CONSTRAINT = "static";
     public static final String PROPERTY_CONSTRAINT = "property";
     public static final String SERVICE_INPUT_CONSTRAINT = "service_input";
     public static final String SELF = "SELF";
     private static final Logger logger = LoggerFactory.getLogger(ConstraintConvertor.class);
-    private static Set<String> SUPPORTED_CONSTRAINT_LIST = ImmutableSet.of(EQUAL_OPERATOR, GREATER_THAN_OPERATOR, LESS_THAN_OPERATOR);
+    private static Set<String> SUPPORTED_CONSTRAINT_LIST = ImmutableSet.of(EQUAL_OPERATOR, GREATER_THAN_OPERATOR, LESS_THAN_OPERATOR, GREATER_OR_EQUAL_OPERATOR, LESS_OR_EQUAL_OPERATOR);
     private static Set<String> SUPPORTED_FUNCTIONS = ImmutableSet
         .of(ToscaFunctions.GET_INPUT.getFunctionName(), ToscaFunctions.GET_PROPERTY.getFunctionName());
 
