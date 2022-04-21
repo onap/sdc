@@ -178,15 +178,8 @@ export class InterfaceOperationHandlerComponent {
         this.operationToUpdate.description = value;
     }
 
-    onImplementationNameChange(value: any) {
-        this.readonly = true
-        if (value || value === '') {
-            let artifact = new ArtifactModel();
-            artifact.artifactName = value;
-            this.operationToUpdate.implementation = artifact;
-            this.enableAddArtifactImplementation = false;
-            this.readonly = false;
-        }
+    onURIChange(value: any){
+            this.operationToUpdate.implementation.artifactName = value;
     }
 
     onPropertyValueChange = (propertyValue) => {
@@ -223,13 +216,6 @@ export class InterfaceOperationHandlerComponent {
             this.toscaArtifactTypeSelected = artifact.artifactType;
             this.operationToUpdate.implementation = artifact;
             this.getArtifactTypesSelected();
-        }
-        this.validateRequiredField();
-    }
-
-    onArtifactFileChange(value: any) {
-        if (value) {
-            this.operationToUpdate.implementation.artifactName = value;
         }
         this.validateRequiredField();
     }
