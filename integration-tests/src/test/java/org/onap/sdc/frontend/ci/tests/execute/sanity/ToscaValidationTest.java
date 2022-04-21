@@ -425,7 +425,7 @@ public class ToscaValidationTest extends SetupCDTest {
             reportStartTestPrint("validateServiceNodeTemplateMetadataUsingParser", vnfFile);
             Map<String, String> generateServiceNodeTemplateMetadataToExpectedObject = generateServiceNodeTemplateMetadataToExpectedObject(resourceReqDetails, resource, componentInstanceDefinition);
             List<NodeTemplate> serviceNodeTemplates = fdntCsarHelper.getServiceNodeTemplates();
-            Metadata serviceNodeTemplateMetadata = serviceNodeTemplates.get(0).getMetaData();
+            Metadata serviceNodeTemplateMetadata = serviceNodeTemplates.get(0).getMetadata();
             Either<Boolean, Map<String, Object>> serviceNodeTemplateToscaMetadataValidatorAgainstParser = ToscaValidation.serviceToscaMetadataValidatorAgainstParser(generateServiceNodeTemplateMetadataToExpectedObject, serviceNodeTemplateMetadata);
             if (serviceNodeTemplateToscaMetadataValidatorAgainstParser.isRight()) {
                 status.add(false);
@@ -498,7 +498,7 @@ public class ToscaValidationTest extends SetupCDTest {
 
     public List<Boolean> validateServiceModuleMetadataUsingParser(ISdcCsarHelper fdntCsarHelper, Map<String, ToscaGroupsTopologyTemplateDefinition> expectedToscaServiceGroupsDefinitionObject, String vnfFile, List<Boolean> status) {
         reportStartTestPrint("validateServiceModuleMetadataUsingParser", vnfFile);
-        String customizationUUID = fdntCsarHelper.getServiceNodeTemplates().get(0).getMetaData().getValue("customizationUUID");
+        String customizationUUID = fdntCsarHelper.getServiceNodeTemplates().get(0).getMetadata().getValue("customizationUUID");
         List<Group> actualGroups = fdntCsarHelper.getVfModulesByVf(customizationUUID);
         Either<Boolean, Map<String, Object>> toscaServiceModuleMetadataValidator = ToscaValidation.serviceToscaGroupMetadataValidatorUsingParser(expectedToscaServiceGroupsDefinitionObject, actualGroups);
         if (toscaServiceModuleMetadataValidator.isRight()) {
@@ -509,7 +509,7 @@ public class ToscaValidationTest extends SetupCDTest {
 
     public List<Boolean> validateServiceModulePropertyUsingParser(ISdcCsarHelper fdntCsarHelper, Map<String, ToscaGroupsTopologyTemplateDefinition> expectedToscaServiceGroupsDefinitionObject, String vnfFile, List<Boolean> status) {
         reportStartTestPrint("validateServiceModuleMetadataUsingParser", vnfFile);
-        String customizationUUID = fdntCsarHelper.getServiceNodeTemplates().get(0).getMetaData().getValue("customizationUUID");
+        String customizationUUID = fdntCsarHelper.getServiceNodeTemplates().get(0).getMetadata().getValue("customizationUUID");
         List<Group> actualGroups = fdntCsarHelper.getVfModulesByVf(customizationUUID);
         Either<Boolean, Map<String, Object>> toscaServiceModuleMetadataValidator = ToscaValidation.serviceToscaGroupPropertyValidatorUsingParser(expectedToscaServiceGroupsDefinitionObject, actualGroups);
         if (toscaServiceModuleMetadataValidator.isRight()) {
