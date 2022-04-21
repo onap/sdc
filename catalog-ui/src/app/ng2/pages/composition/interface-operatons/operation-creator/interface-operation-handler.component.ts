@@ -178,7 +178,7 @@ export class InterfaceOperationHandlerComponent {
         this.operationToUpdate.description = value;
     }
 
-    onImplementationNameChange(value: any) {
+    onURIChangeWithoutDetails(value: any) {
         this.readonly = true
         if (value || value === '') {
             let artifact = new ArtifactModel();
@@ -227,7 +227,7 @@ export class InterfaceOperationHandlerComponent {
         this.validateRequiredField();
     }
 
-    onArtifactFileChange(value: any) {
+    onURIChangeWithDetails(value: any) {
         if (value) {
             this.operationToUpdate.implementation.artifactName = value;
         }

@@ -65,7 +65,7 @@
         <div class="group-with-border content-row">
             <label class="occurrences-label"> {{ 'INTERFACE_OPERATION_IMPLEMENTATION' | translate}}</label>
             <div class="form-item">
-                <checkbox [label]="'Add Artifact To Implementation'"
+                <checkbox [label]="'Add Artifact Details'"
                           [(checked)]="enableAddArtifactImplementation"
                           (checkedChange)="onMarkToAddArtifactToImplementation($event)"
                           [disabled]=isViewOnly>
@@ -73,10 +73,10 @@
             </div>
             <div class="form-item" *ngIf="!enableAddArtifactImplementation">
                 <sdc-input
-                    label="{{'INTERFACE_OPERATION_IMPLEMENTATION_NAME' | translate}}"
+                    label="{{'INTERFACE_OPERATION_IMPLEMENTATION_ARTIFACT_URI' | translate}}"
                     testId="interface-operation-implementation-name"
                     [(value)]="artifactName"
-                    (valueChange)="onImplementationNameChange($event)"
+                    (valueChange)="onURIChangeWithoutDetails($event)"
                     [disabled]=isViewOnly>
                 </sdc-input>
             </div>
@@ -96,11 +96,11 @@
                 </div>
                 <div class="form-item" *ngIf="toscaArtifactTypeSelected && enableAddArtifactImplementation">
                     <sdc-input
-                        label="{{ 'INTERFACE_OPERATION_IMPLEMENTATION_FILE' | translate }}"
+                        label="{{ 'INTERFACE_OPERATION_IMPLEMENTATION_ARTIFACT_URI' | translate }}"
                         data-tests-id="artifactFile"
                         [(value)]="artifactName"
                         [required]="true"
-                        (valueChange)="onArtifactFileChange($event)"
+                        (valueChange)="onURIChangeWithDetails($event)"
                         [disabled]=isViewOnly>
                     </sdc-input>
                 </div>
