@@ -55,7 +55,7 @@ limitations under the License.
         <it.helm-validator.version>1.3.1</it.helm-validator.version>
 
         <!-- parser-->
-        <sdc-tosca-parser.version>1.6.6</sdc-tosca-parser.version>
+        <sdc-tosca-parser.version>1.7.0</sdc-tosca-parser.version>
     </properties>
 
     <dependencies>
