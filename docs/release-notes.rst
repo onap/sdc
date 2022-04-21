@@ -5,6 +5,76 @@
 Release Notes
 =============
 
+Version: 1.10.4
+==============
+
+:Release Date: 2022-04-21
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.6.6
+
+Release Purpose
+----------------
+SDC Jakarta
+
+**Epics**
+    N/A
+
+**Stories**
+    N/A
+
+**Bug Fixes**
+*  `SDC-3926 <https://jira.onap.org/browse/SDC-3926>`_ - Setting value of list or map property with complex type results in single value
+*  `SDC-3937 <https://jira.onap.org/browse/SDC-3937>`_ - PM_DICTIONARY check is causing nullpointer
+*  `SDC-3939 <https://jira.onap.org/browse/SDC-3939>`_ - NPE thrown in service import
+*  `SDC-3967 <https://jira.onap.org/browse/SDC-3967>`_ - Fix encoding/decoding issue
+*  `DOC-765 <https://jira.onap.org/browse/DOC-765>`_ - RTD verify job is failing
+
+**Tasks**
+*  `SDC-3927 <https://jira.onap.org/browse/SDC-3927>`_ - Remove unused vulnerable dependency
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.10.3
 ==============
 
