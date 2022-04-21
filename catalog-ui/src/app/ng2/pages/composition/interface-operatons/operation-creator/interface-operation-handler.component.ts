@@ -96,7 +96,7 @@ export class InterfaceOperationHandlerComponent {
         this.isViewOnly = this.input.isViewOnly;
         this.isEdit = this.input.isEdit;
         this.interfaceType = this.input.selectedInterface.type;
-        this.operationToUpdate = this.input.selectedInterfaceOperation;
+        this.operationToUpdate = new InterfaceOperationModel(this.input.selectedInterfaceOperation);
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
         this.operationToUpdate.interfaceType = this.input.selectedInterface.type;
         this.modelName = this.input.modelName;
@@ -182,28 +182,25 @@ export class InterfaceOperationHandlerComponent {
         this.operationToUpdate.description = value;
     }
 
-    onImplementationNameChange(value: any) {
-        this.readonly = true
-        if (value || value === '') {
+    onURIChange(value: string | undefined) {
+        if(!this.operationToUpdate.implementation){
             let artifact = new ArtifactModel();
-            artifact.artifactName = value;
             this.operationToUpdate.implementation = artifact;
-            this.enableAddArtifactImplementation = false;
-            this.readonly = false;
         }
+        this.operationToUpdate.implementation.artifactName = value ? value : '';
     }
 
     onPropertyValueChange = (propertyValue) => {
         this.emitter.emit(propertyValue);
     }
 
-    onMarkToAddArtifactToImplementation(event: any) {
+    onMarkToAddArtifactToImplementation(event: boolean) {
         if (!event) {
             this.toscaArtifactTypeSelected = undefined;
             this.artifactVersion = undefined;
             if (this.operationToUpdate.implementation.artifactType) {
                 this.operationToUpdate.implementation.artifactName = '';
-                this.artifactName = undefined;
+                this.operationToUpdate.implementation.artifactVersion = '';
             }
             this.toscaArtifactTypeProperties = undefined;
             this.artifactTypeProperties = undefined;
@@ -218,8 +215,8 @@ export class InterfaceOperationHandlerComponent {
         if (type) {
             let toscaArtifactType = type.value;
             let artifact = new ArtifactModel();
-            this.artifactName = undefined;
-            this.artifactVersion = undefined;
+            artifact.artifactName = this.operationToUpdate.implementation.artifactName;
+            artifact.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
             artifact.artifactType = toscaArtifactType.type;
             artifact.properties = toscaArtifactType.properties;
             this.toscaArtifactTypeProperties = artifact.properties;
@@ -231,17 +228,8 @@ export class InterfaceOperationHandlerComponent {
         this.validateRequiredField();
     }
 
-    onArtifactFileChange(value: any) {
-        if (value) {
-            this.operationToUpdate.implementation.artifactName = value;
-        }
-        this.validateRequiredField();
-    }
-
-    onArtifactVersionChange(value: any) {
-        if (value) {
-            this.operationToUpdate.implementation.artifactVersion = value;
-        }
+    onArtifactVersionChange(value: string | undefined) {
+            this.operationToUpdate.implementation.artifactVersion = value ? value : '';
     }
 
     onAddInput(inputOperationParameter: InputOperationParameter) {
@@ -287,9 +275,11 @@ export class InterfaceOperationHandlerComponent {
 
     private getArtifactTypesSelected() {
         if (this.operationToUpdate.implementation && this.operationToUpdate.implementation.artifactType) {
-            this.artifactName = this.operationToUpdate.implementation.artifactName;
+            this.artifactName =
+                this.artifactName ? this.artifactName : this.operationToUpdate.implementation.artifactName;
             this.toscaArtifactTypeSelected = this.operationToUpdate.implementation.artifactType;
-            this.artifactVersion = this.operationToUpdate.implementation.artifactVersion;
+            this.artifactVersion =
+                this.artifactVersion ? this.artifactVersion : this.operationToUpdate.implementation.artifactVersion;
             this.toscaArtifactTypeProperties = this.operationToUpdate.implementation.properties;
             this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
             this.enableAddArtifactImplementation = true;
