@@ -129,5 +129,7 @@ public enum ActionStatus {
     //ArtifactType
     ARTIFACT_TYPE_ALREADY_EXIST, FAILED_CREATE_ARTIFACTS_TYPES,
     //TOSCA node types
-    INVALID_NODE_TYPES_YAML
+    INVALID_NODE_TYPES_YAML,
+    //system deployed resources
+    CANNOT_DELETE_SYSTEM_DEPLOYED_RESOURCES
 }

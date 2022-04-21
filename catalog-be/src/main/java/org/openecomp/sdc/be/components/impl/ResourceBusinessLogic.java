@@ -4223,6 +4223,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             return componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resourceStatus.right().value()), "");
         }
         Resource resource = resourceStatus.left().value();
+        if (isComponentSystemDeployed(resource)) {
+            throw new ByActionStatusComponentException(ActionStatus.CANNOT_DELETE_SYSTEM_DEPLOYED_RESOURCES, ComponentTypeEnum.RESOURCE.getValue(),
+                resource.getName());
+        }
         StorageOperationStatus result = StorageOperationStatus.OK;
         lockComponent(resourceId, resource, "Mark resource to delete");
         try {
@@ -4242,6 +4246,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             }
             graphLockOperation.unlockComponent(resourceId, NodeTypeEnum.Resource);
         }
+    }
+
+    private boolean isComponentSystemDeployed(Resource resource) {
+        return resource.getComponentMetadataDefinition().getMetadataDataDefinition().isNormative();
     }
 
     public ResponseFormat deleteResourceByNameAndVersion(String resourceName, String version, User user) {

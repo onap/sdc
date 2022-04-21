@@ -2634,3 +2634,11 @@ errors:
         message: "Artifact type '%1' already exist.",
         messageId: "SVC4163"
     }
+
+    #---------SVC4164-----------------------------
+    # %1 - resourceid
+    CANNOT_DELETE_SYSTEM_DEPLOYED_RESOURCES: {
+        code: 409,
+        message: "System deployed '%1' cannot be deleted",
+        messageId: "SVC4164"
+    }
