@@ -77,7 +77,9 @@ export class ConstraintObjectUI extends ConstraintObject{
 export const OPERATOR_TYPES = {
     EQUAL: 'equal',
     GREATER_THAN: 'greater_than',
-    LESS_THAN: 'less_than'
+    LESS_THAN: 'less_than',
+    GREATER_OR_EQUAL: 'greater_or_equal',
+    LESS_OR_EQUAL: 'less_or_equal'
 };
 
 // tslint:disable-next-line:max-classes-per-file
@@ -165,7 +167,9 @@ export class ServiceDependenciesComponent {
         this.operatorTypes = [
             {label: '>', value: OPERATOR_TYPES.GREATER_THAN},
             {label: '<', value: OPERATOR_TYPES.LESS_THAN},
-            {label: '=', value: OPERATOR_TYPES.EQUAL}
+            {label: '=', value: OPERATOR_TYPES.EQUAL},
+            {label: '>=', value: OPERATOR_TYPES.GREATER_OR_EQUAL},
+            {label: '<=', value: OPERATOR_TYPES.LESS_OR_EQUAL}
         ];
         this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId)
         .subscribe((result: ComponentGenericResponse) => {
@@ -457,6 +461,8 @@ export class ServiceDependenciesComponent {
             case OPERATOR_TYPES.LESS_THAN: return '<';
             case OPERATOR_TYPES.EQUAL: return '=';
             case OPERATOR_TYPES.GREATER_THAN: return '>';
+            case OPERATOR_TYPES.GREATER_OR_EQUAL: return '>=';
+            case OPERATOR_TYPES.LESS_OR_EQUAL: return '<=';
         }
     }
 
