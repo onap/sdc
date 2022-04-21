@@ -9,7 +9,7 @@
     <parent>
         <artifactId>openecomp-sdc</artifactId>
         <groupId>org.openecomp.sdc</groupId>
-        <version>1.10.3-SNAPSHOT</version>
+        <version>1.10.4-SNAPSHOT</version>
     </parent>
 
     <modules>
