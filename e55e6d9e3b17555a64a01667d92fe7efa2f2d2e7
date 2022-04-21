@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5bd7f98_9b5ce53d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4221,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-21T13:03:55Z",
+      "side": 1,
+      "message": "please, add some real documentation",
+      "range": {
+        "startLine": 4217,
+        "startChar": 5,
+        "endLine": 4221,
+        "endChar": 26
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc697a09_5514fd6f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-21T13:03:55Z",
+      "side": 1,
+      "message": "I would set this as an error.",
+      "range": {
+        "startLine": 1039,
+        "startChar": 16,
+        "endLine": 1039,
+        "endChar": 21
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
