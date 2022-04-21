@@ -123,8 +123,18 @@ export class InterfaceOperationModel extends BEInterfaceOperationModel {
             this.description = operation.description;
             this.operationType = operation.operationType;
             this.uniqueId = operation.uniqueId;
-            this.inputParams = operation.inputParams;
-            this.implementation = operation.implementation;
+            if (operation.inputParams && operation.inputParams.listToscaDataDefinition) {
+                const listToscaDataDefinition: InputOperationParameter[] = [];
+                operation.inputParams.listToscaDataDefinition.forEach(inputOperation => {
+                    listToscaDataDefinition.push(new InputOperationParameter(inputOperation));
+                });
+                this.inputParams = <IOperationParamsList> {
+                    'listToscaDataDefinition': listToscaDataDefinition
+                };
+            }
+            if (operation.implementation) {
+                this.implementation = new ArtifactModel(operation.implementation);
+            }
         }
     }
 
