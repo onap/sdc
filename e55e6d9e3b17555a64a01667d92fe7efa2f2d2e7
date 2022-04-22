@@ -94,6 +94,30 @@
     },
     {
       "key": {
+        "uuid": "816a2aab_ef1d6a6e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:49:53Z",
+      "side": 1,
+      "message": "agree, null values should be handled by the framework as Optional.empty(). I know it works fine with spring boot, but in this case is useless...",
+      "parentUuid": "dbf95d47_5bb516d8",
+      "range": {
+        "startLine": 238,
+        "startChar": 29,
+        "endLine": 238,
+        "endChar": 53
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "df94d072_a839f366",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 2
