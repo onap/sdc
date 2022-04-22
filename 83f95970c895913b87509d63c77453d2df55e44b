@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7bf996eb_368d4865",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T10:08:52Z",
+      "side": 1,
+      "message": "rearrange how? Please, add details to your commit message.\n\nRearrange Interface Operation Implementation form\n\nRearranges Interface Operation Implementation form by ...",
+      "revId": "83f95970c895913b87509d63c77453d2df55e44b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e633b07_c58a5fc6",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T10:08:52Z",
+      "side": 1,
+      "message": "please, add this text as an entry in the default internationalization file",
+      "range": {
+        "startLine": 68,
+        "startChar": 35,
+        "endLine": 68,
+        "endChar": 57
+      },
+      "revId": "83f95970c895913b87509d63c77453d2df55e44b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
