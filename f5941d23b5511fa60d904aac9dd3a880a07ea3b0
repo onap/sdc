@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a5544574_765c805f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1331,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "if we are committing here, shouldn\u0027t we rollback in case of any exception? That is a question also for Michael Morris.",
+      "range": {
+        "startLine": 1331,
+        "startChar": 12,
+        "endLine": 1331,
+        "endChar": 71
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7852455d_c06fd50f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "shouldn\u0027t it be: \nOptional parameter to determine the delete action",
+      "range": {
+        "startLine": 276,
+        "startChar": 60,
+        "endLine": 276,
+        "endChar": 109
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37d24974_b5e2b90c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "remove wildcard import",
+      "range": {
+        "startLine": 40,
+        "startChar": 17,
+        "endLine": 40,
+        "endChar": 18
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23edd433_d98700f8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "remove wildcard import",
+      "range": {
+        "startLine": 52,
+        "startChar": 34,
+        "endLine": 52,
+        "endChar": 35
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "277c9340_bfcd223f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1112,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "avoid returning null for a collection return method, this helps a lot to avoid null pointer and the user can just use the .empty() instead to verify if the result is empty. Just return an empty collection with Collections.emptyList()",
+      "range": {
+        "startLine": 1112,
+        "startChar": 15,
+        "endLine": 1112,
+        "endChar": 19
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14d4903a_cb18796b",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "please, don\u0027t use wild card imports",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 36
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bd09251_05db3384",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "not used, please remove",
+      "range": {
+        "startLine": 423,
+        "startChar": 8,
+        "endLine": 428,
+        "endChar": 41
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "861fa8a4_5c6f85f9",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "please, extract the uniqueId to a variable. Same for other methods.",
+      "range": {
+        "startLine": 447,
+        "startChar": 32,
+        "endLine": 447,
+        "endChar": 35
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03bb9ad1_6aeb0ec4",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "not used, please remove",
+      "range": {
+        "startLine": 457,
+        "startChar": 24,
+        "endLine": 457,
+        "endChar": 43
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e35f378_ad77b6d0",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "not used, please remove",
+      "range": {
+        "startLine": 486,
+        "startChar": 8,
+        "endLine": 494,
+        "endChar": 42
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c3826a0d_a3e5a648",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:42:31Z",
+      "side": 1,
+      "message": "not in use, please remove",
+      "range": {
+        "startLine": 537,
+        "startChar": 8,
+        "endLine": 542,
+        "endChar": 41
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
