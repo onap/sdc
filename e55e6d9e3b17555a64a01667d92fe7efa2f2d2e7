@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1e2b0c44_506bccf1",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2650,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-04-22T09:05:22Z",
+      "side": 1,
+      "message": "I was testing here with delete button in UI for COMPONENT_IN_USE_BY_ANOTHER_COMPONENT scenario, error message is not picking the list of services. Message thrown is incomplete.",
+      "range": {
+        "startLine": 2650,
+        "startChar": 41,
+        "endLine": 2650,
+        "endChar": 45
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e5bd7f98_9b5ce53d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 2
