@@ -24,7 +24,7 @@ import { ViewEncapsulation } from '@angular/core';
 @Component({
     selector: 'tab',
     template: `
-    <div *ngIf="active" class="tab-content">
+    <div *ngIf="active && show" class="tab-content">
       <ng-content></ng-content>
     </div>
     `,
@@ -33,6 +33,7 @@ import { ViewEncapsulation } from '@angular/core';
 export class Tab {
     @Input('tabTitle') title: string;
     @Input() active:boolean = false;
+    @Input() show:boolean = true;
     @Input() indication?: number;
 
 }
