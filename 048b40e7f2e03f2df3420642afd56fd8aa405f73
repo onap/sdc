@@ -22,6 +22,30 @@
       "revId": "048b40e7f2e03f2df3420642afd56fd8aa405f73",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c228730_ede2ecb5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 4228,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-04-22T11:55:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ebbb826d_6a6df328",
+      "range": {
+        "startLine": 4227,
+        "startChar": 110,
+        "endLine": 4228,
+        "endChar": 36
+      },
+      "revId": "048b40e7f2e03f2df3420642afd56fd8aa405f73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
