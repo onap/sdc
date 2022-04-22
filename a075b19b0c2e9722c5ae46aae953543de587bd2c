@@ -993,6 +993,30 @@
     },
     {
       "key": {
+        "uuid": "6cc3411d_59e224e2",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-22T15:48:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c643a45c_52cb32b0",
+      "range": {
+        "startLine": 1025,
+        "startChar": 18,
+        "endLine": 1025,
+        "endChar": 64
+      },
+      "revId": "a075b19b0c2e9722c5ae46aae953543de587bd2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b2f5d784_4e41b625",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 6
