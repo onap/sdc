@@ -648,6 +648,8 @@ export class PropertiesAssignmentComponent {
         this.topologyTemplateService
             .createInput(this.component, inputsToCreate, this.isSelf())
             .subscribe((response) => {
+                this.selectInstanceRow(SERVICE_SELF_TITLE);
+                this.onInstanceSelectedUpdate(this.instances[0]);
                 this.setInputTabIndication(response.length);
                 this.checkedPropertiesCount = 0;
                 this.checkedChildPropertiesCount = 0;
