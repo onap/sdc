@@ -234,6 +234,30 @@
       "revId": "38e48847761cb3f7e51eb9ef99e4ad5a96565c2f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9d5eb89_83c4fca4",
+        "filename": "catalog-ui/src/app/view-models/workspace/workspace-view-model.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T15:15:56Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c0254384_2518223b",
+      "range": {
+        "startLine": 654,
+        "startChar": 16,
+        "endLine": 654,
+        "endChar": 46
+      },
+      "revId": "38e48847761cb3f7e51eb9ef99e4ad5a96565c2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
