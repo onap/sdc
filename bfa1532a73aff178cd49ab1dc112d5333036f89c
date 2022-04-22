@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30812746_dcc5c38a",
+        "filename": "catalog-ui/src/app/ng2/services/component-services/component.service.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-04-22T09:02:30Z",
+      "side": 1,
+      "message": "If you could change the queryParam keyword \u0027action\u0027 to \u0027deleteAction\u0027 would be helpful to keep it generic for both resource and service deletion, as it is used \u0027deleteAction\u0027 in resource deletion.",
+      "range": {
+        "startLine": 422,
+        "startChar": 102,
+        "endLine": 422,
+        "endChar": 108
+      },
+      "revId": "bfa1532a73aff178cd49ab1dc112d5333036f89c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
