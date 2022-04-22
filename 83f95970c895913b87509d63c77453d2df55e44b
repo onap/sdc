@@ -39,6 +39,52 @@
       "revId": "83f95970c895913b87509d63c77453d2df55e44b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2369fbbf_15a2980e",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-22T12:34:00Z",
+      "side": 1,
+      "message": "move below the artifact file uri",
+      "range": {
+        "startLine": 68,
+        "startChar": 11,
+        "endLine": 72,
+        "endChar": 27
+      },
+      "revId": "83f95970c895913b87509d63c77453d2df55e44b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1a13a70_a499661a",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-04-22T12:34:00Z",
+      "side": 1,
+      "message": "move above artifact details as well. The artifact uri file should be shown always before the optional artifact details",
+      "range": {
+        "startLine": 97,
+        "startChar": 16,
+        "endLine": 106,
+        "endChar": 22
+      },
+      "revId": "83f95970c895913b87509d63c77453d2df55e44b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
