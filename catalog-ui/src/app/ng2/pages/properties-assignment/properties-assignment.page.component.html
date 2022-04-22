@@ -40,7 +40,7 @@
                             (deleteProperty)="deleteProperty($event)">
                         </properties-table>
                     </tab>
-                    <tab tabTitle="Inputs">
+                    <tab tabTitle="Inputs" *ngIf="isSelf()">
                         <inputs-table class="properties-table"
                             [fePropertiesMap]="instanceFePropertiesMap"
                             [readonly]="isReadonly"
@@ -53,7 +53,7 @@
                             (inputChanged)="dataChanged($event)">
                         </inputs-table>
                     </tab>
-                    <tab tabTitle="Policies">
+                    <tab tabTitle="Policies" *ngIf="isSelf()">
                         <policies-table class="properties-table"
                                       [readonly]="isReadonly"
                                       [policies]="policies | searchFilter:'name':searchQuery"
