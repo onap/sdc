@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "fb8f4204_73db0c5e",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-22T16:07:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e633b07_c58a5fc6",
+      "range": {
+        "startLine": 68,
+        "startChar": 35,
+        "endLine": 68,
+        "endChar": 57
+      },
+      "revId": "83f95970c895913b87509d63c77453d2df55e44b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2369fbbf_15a2980e",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
         "patchSetId": 1
