@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a4ce4e62_f880c574",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1331,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Would we also have to lock and unlock the components here as well then?",
+      "parentUuid": "a5544574_765c805f",
+      "range": {
+        "startLine": 1331,
+        "startChar": 12,
+        "endLine": 1331,
+        "endChar": 71
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7852455d_c06fd50f",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
         "patchSetId": 10
@@ -45,6 +69,30 @@
       "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad2c0b49_49f4cd16",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7852455d_c06fd50f",
+      "range": {
+        "startLine": 276,
+        "startChar": 60,
+        "endLine": 276,
+        "endChar": 109
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "adf007ba_31143e0c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37d24974_b5e2b90c",
+      "range": {
+        "startLine": 40,
+        "startChar": 17,
+        "endLine": 40,
+        "endChar": 18
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "23edd433_d98700f8",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
         "patchSetId": 10
@@ -91,6 +163,30 @@
       "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fb7e0d9_2287ef80",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "23edd433_d98700f8",
+      "range": {
+        "startLine": 52,
+        "startChar": 34,
+        "endLine": 52,
+        "endChar": 35
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "ebfeefe6_29dfa045",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1112,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "277c9340_bfcd223f",
+      "range": {
+        "startLine": 1112,
+        "startChar": 15,
+        "endLine": 1112,
+        "endChar": 19
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "14d4903a_cb18796b",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
         "patchSetId": 10
@@ -137,6 +257,30 @@
       "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de73bc1c_d5378c1f",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "14d4903a_cb18796b",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 36
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "99d2d07d_068e721d",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2bd09251_05db3384",
+      "range": {
+        "startLine": 423,
+        "startChar": 8,
+        "endLine": 428,
+        "endChar": 41
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "861fa8a4_5c6f85f9",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
         "patchSetId": 10
@@ -183,6 +351,30 @@
       "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cac46557_6df67901",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "861fa8a4_5c6f85f9",
+      "range": {
+        "startLine": 447,
+        "startChar": 32,
+        "endLine": 447,
+        "endChar": 35
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "1d668d8b_ec4a023b",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03bb9ad1_6aeb0ec4",
+      "range": {
+        "startLine": 457,
+        "startChar": 24,
+        "endLine": 457,
+        "endChar": 43
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7e35f378_ad77b6d0",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
         "patchSetId": 10
@@ -232,6 +448,30 @@
     },
     {
       "key": {
+        "uuid": "7b223d6f_db5f06ce",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7e35f378_ad77b6d0",
+      "range": {
+        "startLine": 486,
+        "startChar": 8,
+        "endLine": 494,
+        "endChar": 42
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c3826a0d_a3e5a648",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
         "patchSetId": 10
@@ -252,6 +492,30 @@
       "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02624dbd_57f699c2",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-24T19:57:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3826a0d_a3e5a648",
+      "range": {
+        "startLine": 537,
+        "startChar": 8,
+        "endLine": 542,
+        "endChar": 41
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
