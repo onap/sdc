@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7f3e220_d30155b6",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-25T09:12:38Z",
+      "side": 1,
+      "message": "the idea here is to have the same value for both always, right? If they are different, probably the test will fail. So better having this in a single variable.\nThe same applies for the other similar cases in this file.",
+      "range": {
+        "startLine": 458,
+        "startChar": 8,
+        "endLine": 459,
+        "endChar": 32
+      },
+      "revId": "690a450b44506ca3f3b3f5d77d4ca9b999da5ff3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

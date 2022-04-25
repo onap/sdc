@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "59c25eb3_5b9070ee",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-25T09:12:38Z",
+      "side": 1,
+      "message": "Would be better to leave also the explanation for the default value as you had here:\n\"Optional parameter to determine the delete action: DELETE, which will permanent delete the Service from the system or MARK_AS_DELETE, which will logically mark the service as deleted. Default action is to MARK_AS_DELETE.\"",
+      "parentUuid": "ad2c0b49_49f4cd16",
+      "range": {
+        "startLine": 276,
+        "startChar": 60,
+        "endLine": 276,
+        "endChar": 109
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37d24974_b5e2b90c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogicTest.java",
         "patchSetId": 10
