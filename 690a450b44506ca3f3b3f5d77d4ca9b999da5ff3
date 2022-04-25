@@ -22,6 +22,30 @@
       "revId": "690a450b44506ca3f3b3f5d77d4ca9b999da5ff3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60177e88_b129c392",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-25T09:21:25Z",
+      "side": 1,
+      "message": "The invariantUUID and serviceUid are actually supposed to be different and the tests all still pass if they are different. I will change the invariantUUID in all the tests to reflect this",
+      "parentUuid": "b7f3e220_d30155b6",
+      "range": {
+        "startLine": 458,
+        "startChar": 8,
+        "endLine": 459,
+        "endChar": 32
+      },
+      "revId": "690a450b44506ca3f3b3f5d77d4ca9b999da5ff3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
