@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef70351b_b6a1fa83",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-25T17:09:20Z",
+      "side": 1,
+      "message": "it seems you are prematurely closing the modal, this call should be inside the updateComponentInstanceInterfaceOperation subscribe.\nThen, in the UI tests, after clicking to save/update, you need to wait for this spinner to show and then to disappear. You can use org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper#waitForLoader(org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper.XpathSelector, int)",
+      "range": {
+        "startLine": 279,
+        "startChar": 8,
+        "endLine": 279,
+        "endChar": 49
+      },
+      "revId": "b4838d2be5656aee8e8b10f7d1422390378dc7a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
