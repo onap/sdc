@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ee060b5e_a7dc6ce8",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2650,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-25T21:58:02Z",
+      "side": 1,
+      "message": "I think its resolved, lets recheck from UI again anyway",
+      "parentUuid": "1e2b0c44_506bccf1",
+      "range": {
+        "startLine": 2650,
+        "startChar": 41,
+        "endLine": 2650,
+        "endChar": 45
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e5bd7f98_9b5ce53d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "c6141351_fe4b4857",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4221,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-25T21:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e5bd7f98_9b5ce53d",
+      "range": {
+        "startLine": 4217,
+        "startChar": 5,
+        "endLine": 4221,
+        "endChar": 26
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9cd5c27b_0ca5bc9d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa567185_5bede1cd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4279,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-25T21:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9cd5c27b_0ca5bc9d",
+      "range": {
+        "startLine": 4279,
+        "startChar": 0,
+        "endLine": 4279,
+        "endChar": 145
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -118,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "eed8cbc5_8cbdadbb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-25T21:58:02Z",
+      "side": 1,
+      "message": "if i test not providing the parameter, it becomes null, so if i dont check for !\u003d null, i get nullpointer. I will remove the optional.",
+      "parentUuid": "816a2aab_ef1d6a6e",
+      "range": {
+        "startLine": 238,
+        "startChar": 29,
+        "endLine": 238,
+        "endChar": 53
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "df94d072_a839f366",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 2
@@ -141,6 +237,30 @@
     },
     {
       "key": {
+        "uuid": "da93a421_2db88db1",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1001,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-25T21:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df94d072_a839f366",
+      "range": {
+        "startLine": 1001,
+        "startChar": 0,
+        "endLine": 1001,
+        "endChar": 91
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cc697a09_5514fd6f",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
         "patchSetId": 2
@@ -161,6 +281,30 @@
       "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dbadfad_31dfd59e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-25T21:58:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc697a09_5514fd6f",
+      "range": {
+        "startLine": 1039,
+        "startChar": 16,
+        "endLine": 1039,
+        "endChar": 21
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
