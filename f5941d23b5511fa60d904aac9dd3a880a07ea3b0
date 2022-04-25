@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5980be04_d739edf0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1331,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-25T09:03:44Z",
+      "side": 1,
+      "message": "I think so, it would be safer that way",
+      "parentUuid": "a4ce4e62_f880c574",
+      "range": {
+        "startLine": 1331,
+        "startChar": 12,
+        "endLine": 1331,
+        "endChar": 71
+      },
+      "revId": "f5941d23b5511fa60d904aac9dd3a880a07ea3b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7852455d_c06fd50f",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
         "patchSetId": 10
