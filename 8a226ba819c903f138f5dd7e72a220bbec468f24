@@ -1,0 +1,176 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c9f12f2_27c85825",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 4284,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "you should pass true here to say you are in a transaction, so that, in this method, you are controlling the commit and rollback.",
+      "range": {
+        "startLine": 4284,
+        "startChar": 64,
+        "endLine": 4284,
+        "endChar": 69
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9894cef5_81d02ee1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 4289,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "you should rollback the janusgraph transaction here in case of an error",
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6494bfb6_a30a371f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2523,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 2523,
+        "startChar": 2,
+        "endLine": 2523,
+        "endChar": 14
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34d47551_9a916d14",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2532,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "it is good to check for the content of the exception:\nOperationException actualOperationException \u003d assertThrows(OperationException.class, () -\u003e bl.deleteResourceAllVersions(resourceResponse.getUniqueId(), user));\nYou should match the ActionStatus and the params from the exception.",
+      "range": {
+        "startLine": 2532,
+        "startChar": 2,
+        "endLine": 2532,
+        "endChar": 14
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d16f5a4_524bb601",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/lifecycle/CheckoutTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "I believe there is no need for this annotation as no @Mock annotation is being used and all constructor parameters are being passed manually.",
+      "range": {
+        "startLine": 79,
+        "startChar": 4,
+        "endLine": 79,
+        "endChar": 16
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b77f3044_64ee30ea",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/api/StorageOperationStatus.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "no need for this change, please remove if possible",
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "950fff01_1d12bbf5",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1338,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1338,
+        "startChar": 8,
+        "endLine": 1338,
+        "endChar": 20
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e5a6d37_8eb2e484",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1347,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "please, assert the exception, in this case the expected StorageOperationStatus and maybe the String[] params and message.",
+      "range": {
+        "startLine": 1347,
+        "startChar": 8,
+        "endLine": 1347,
+        "endChar": 20
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

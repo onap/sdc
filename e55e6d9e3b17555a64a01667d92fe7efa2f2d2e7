@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "42a25918_d6014c21",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4221,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T15:27:10Z",
+      "side": 1,
+      "message": "sorry, this change was not applied to the latest patch (4)",
+      "parentUuid": "c6141351_fe4b4857",
+      "range": {
+        "startLine": 4217,
+        "startChar": 5,
+        "endLine": 4221,
+        "endChar": 26
+      },
+      "revId": "e55e6d9e3b17555a64a01667d92fe7efa2f2d2e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9cd5c27b_0ca5bc9d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 2
