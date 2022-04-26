@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "51135ac6_76bf2c63",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/component/workspace/InterfaceDefinitionOperationsModal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T16:58:32Z",
+      "side": 1,
+      "message": "are you certain that the loader class in the modal is \"tlv-loader\"?\nI\u0027m asking because the method you are calling has a sleep for 0.5s which can be enough time for the current operation to complete. If you are checking for the incorrect loader, the time is what working for you, not the loader verification itself.",
+      "range": {
+        "startLine": 109,
+        "startChar": 8,
+        "endLine": 109,
+        "endChar": 24
+      },
+      "revId": "36f59b514e86b0fb04e7b99d7a6e1cbcfb32c589",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
