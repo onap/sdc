@@ -2635,7 +2635,7 @@ errors:
         messageId: "SVC4163"
     }
 
-    #---------SVC4164-----------------------------
+    #---------SVC4692-----------------------------
     # %1 - Component name
     COMPONENT_NOT_ARCHIVED: {
         code: 403,
@@ -2643,13 +2643,14 @@ errors:
         messageId: "SVC4692"
     }
 
-    #---------SVC4165-----------------------------
+    #---------SVC4693-----------------------------
     # %1 - List of services
     COMPONENT_IN_USE_BY_ANOTHER_COMPONENT: {
         code: 403,
         message: "Component is in use by '%1'",
         messageId: "SVC4693"
     }
+
     #---------SVC4164-----------------------------
     # %1 - componentType
     # %2 - component name
@@ -2658,3 +2659,4 @@ errors:
         message: "System deployed '%1' cannot be deleted '%2'",
         messageId: "SVC4164"
     }
+
