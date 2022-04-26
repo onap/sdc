@@ -2320,3 +2320,19 @@ errors:
         message: "The Model '%1' is not allowed for the imported Vendor Software Product. Allowed Models: '%2'",
         messageId: "SVC4156"
     }
+
+    #---------SVC4692-----------------------------
+    # %1 - Component name
+    COMPONENT_NOT_ARCHIVED: {
+        code: 403,
+        message: "Component '%1' is not archived",
+        messageId: "SVC4692"
+    }
+
+    #---------SVC4693-----------------------------
+    # %1 - List of services
+    COMPONENT_IN_USE_BY_ANOTHER_COMPONENT: {
+        code: 403,
+        message: "Component is in use by '%1'",
+        messageId: "SVC4693"
+    }

@@ -24,6 +24,8 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import fj.data.Either;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +51,7 @@ import org.janusgraph.core.JanusGraphVertex;
 import org.janusgraph.core.JanusGraphVertexQuery;
 import org.janusgraph.core.PropertyKey;
 import org.janusgraph.graphdb.query.JanusGraphPredicate;
+import org.openecomp.sdc.be.dao.api.exception.JanusGraphException;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.EdgePropertyEnum;
@@ -602,6 +605,39 @@ public class JanusGraphDao {
             }
             return Either.right(graph.right().value());
         }
+    }
+
+
+    /**
+     * Finds the vertices that have the given invariant id and any additional property provided.
+     *
+     * @param invariantUuid the invariant uuid
+     * @param additionalPropertiesToMatch any additional property to match along with the {@link GraphPropertyEnum#INVARIANT_UUID}
+     * @return the list of vertex that has the given invariant uuid
+     * @throws JanusGraphException if the find operation was returned an error status
+     */
+    public List<GraphVertex> findAllVertexByInvariantUuid(final String invariantUuid,
+                                                          final Map<GraphPropertyEnum, Object> additionalPropertiesToMatch) {
+        final Map<GraphPropertyEnum, Object> propertiesToMatch = new EnumMap<>(GraphPropertyEnum.class);
+        if (MapUtils.isNotEmpty(additionalPropertiesToMatch)) {
+            propertiesToMatch.putAll(additionalPropertiesToMatch);
+        }
+        propertiesToMatch.put(GraphPropertyEnum.INVARIANT_UUID, invariantUuid);
+        final Either<List<GraphVertex>, JanusGraphOperationStatus> vertexEither =
+                getByCriteria(null, propertiesToMatch, JsonParseFlagEnum.ParseMetadata);
+        if (vertexEither.isRight()) {
+            final JanusGraphOperationStatus status = vertexEither.right().value();
+            if (status == JanusGraphOperationStatus.NOT_FOUND) {
+                return Collections.emptyList();
+            }
+            final String errorMsg = String.format("Couldn't fetch vertex with invariantUUId '%s'. Status was '%s'", invariantUuid, status);
+            throw new JanusGraphException(status, errorMsg);
+        }
+        final List<GraphVertex> vertices = vertexEither.left().value();
+        if (vertices == null || vertices.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return vertices;
     }
 
     private boolean vertexValidForModel(final JanusGraphVertex vertex, final String model, final boolean includeNormativeExtensions) {
