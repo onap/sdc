@@ -22,6 +22,30 @@
       "revId": "b4838d2be5656aee8e8b10f7d1422390378dc7a3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5090c21_cf20feef",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 4
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-26T16:23:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef70351b_b6a1fa83",
+      "range": {
+        "startLine": 279,
+        "startChar": 8,
+        "endLine": 279,
+        "endChar": 49
+      },
+      "revId": "b4838d2be5656aee8e8b10f7d1422390378dc7a3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
