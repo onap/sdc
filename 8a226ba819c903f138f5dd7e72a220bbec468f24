@@ -111,6 +111,30 @@
     },
     {
       "key": {
+        "uuid": "bfefb6d8_4c2688f8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/lifecycle/CheckoutTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-26T16:29:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d16f5a4_524bb601",
+      "range": {
+        "startLine": 79,
+        "startChar": 4,
+        "endLine": 79,
+        "endChar": 16
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b77f3044_64ee30ea",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/api/StorageOperationStatus.java",
         "patchSetId": 4
