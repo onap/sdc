@@ -1677,4 +1677,15 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             properties.values().forEach(propertyDataDefinition -> propertyDataDefinition.setParentUniqueId(ownerId));
         }
     }
+
+    public GraphVertex getHighestVersionFrom(GraphVertex v) {
+        Either<GraphVertex, JanusGraphOperationStatus> childVertexE = janusGraphDao
+                .getChildVertex(v, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
+        GraphVertex highestVersionVertex = v;
+        while (childVertexE.isLeft()) {
+            highestVersionVertex = childVertexE.left().value();
+            childVertexE = janusGraphDao.getChildVertex(highestVersionVertex, EdgeLabelEnum.VERSION, JsonParseFlagEnum.NoParse);
+        }
+        return highestVersionVertex;
+    }
 }
