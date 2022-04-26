@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e694e289_5f82e9b0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 4284,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-26T17:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c9f12f2_27c85825",
+      "range": {
+        "startLine": 4284,
+        "startChar": 64,
+        "endLine": 4284,
+        "endChar": 69
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9894cef5_81d02ee1",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 4
@@ -39,6 +63,24 @@
       "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a85300d0_36b3ad67",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 4289,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-26T17:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9894cef5_81d02ee1",
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "7baaca49_24c27919",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2523,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-26T17:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6494bfb6_a30a371f",
+      "range": {
+        "startLine": 2523,
+        "startChar": 2,
+        "endLine": 2523,
+        "endChar": 14
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "34d47551_9a916d14",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
         "patchSetId": 4
@@ -85,6 +151,30 @@
       "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a2a87f9_d13b3b9c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogicTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2532,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-26T17:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34d47551_9a916d14",
+      "range": {
+        "startLine": 2532,
+        "startChar": 2,
+        "endLine": 2532,
+        "endChar": 14
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -120,6 +210,30 @@
         "id": 5565
       },
       "writtenOn": "2022-04-26T16:29:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d16f5a4_524bb601",
+      "range": {
+        "startLine": 79,
+        "startChar": 4,
+        "endLine": 79,
+        "endChar": 16
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "556b4a8c_d8c9ba0f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/lifecycle/CheckoutTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-26T17:10:23Z",
       "side": 1,
       "message": "Done",
       "parentUuid": "7d16f5a4_524bb601",
@@ -193,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "83fb2d52_a956c5de",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1338,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-26T17:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "950fff01_1d12bbf5",
+      "range": {
+        "startLine": 1338,
+        "startChar": 8,
+        "endLine": 1338,
+        "endChar": 20
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e5a6d37_8eb2e484",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
         "patchSetId": 4
@@ -213,6 +351,30 @@
       "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7746223_5984cb6d",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1347,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-26T17:10:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e5a6d37_8eb2e484",
+      "range": {
+        "startLine": 1347,
+        "startChar": 8,
+        "endLine": 1347,
+        "endChar": 20
+      },
+      "revId": "8a226ba819c903f138f5dd7e72a220bbec468f24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
