@@ -46,6 +46,30 @@
       "revId": "36f59b514e86b0fb04e7b99d7a6e1cbcfb32c589",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3085a39_d15778aa",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/component/workspace/InterfaceDefinitionOperationsModal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-27T08:22:43Z",
+      "side": 1,
+      "message": "Ok, so that is correct.\nThe problem of having a sleep time is if your current spinner/task has a different selector and takes less time in the screen than the sleep time.\nLet\u0027s say your spinner has another class/selector \"my-spinner-class\", and it takes less than 0.5 seconds in the screen. The current test will wait for 0.5s and then check if an element with the \"tlv-loader\" class is not present, which is true and will pass. But then you are checking for the incorrect spinner class and the test is still passing because of the current sleep time, not because you are checking for a spinner in the screen.\nIf it takes more than 0.5s, it would fail, as the spinner will still be on the screen when the \"tlv-loader\" class check is done (it will not find it and think that the spinner is gone and the task is done).\nWith that, you have an intermittent test.\nThat is why I was asking to check if the class is the one expected.",
+      "parentUuid": "a35d1e98_bb8685c2",
+      "range": {
+        "startLine": 109,
+        "startChar": 8,
+        "endLine": 109,
+        "endChar": 24
+      },
+      "revId": "36f59b514e86b0fb04e7b99d7a6e1cbcfb32c589",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
