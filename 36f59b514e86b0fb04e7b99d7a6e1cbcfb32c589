@@ -22,6 +22,30 @@
       "revId": "36f59b514e86b0fb04e7b99d7a6e1cbcfb32c589",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a35d1e98_bb8685c2",
+        "filename": "integration-tests/src/test/java/org/onap/sdc/frontend/ci/tests/pages/component/workspace/InterfaceDefinitionOperationsModal.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-04-27T08:13:11Z",
+      "side": 1,
+      "message": "The class name for the spinner is \"tlv-loader large\". Not sure how relevant the large is but, I set the timeout to 99999999 and the test still pass",
+      "parentUuid": "51135ac6_76bf2c63",
+      "range": {
+        "startLine": 109,
+        "startChar": 8,
+        "endLine": 109,
+        "endChar": 24
+      },
+      "revId": "36f59b514e86b0fb04e7b99d7a6e1cbcfb32c589",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
