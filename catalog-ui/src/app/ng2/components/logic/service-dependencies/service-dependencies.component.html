@@ -5,9 +5,10 @@
   <div *ngIf="isDependent && !isEditable" class="checkbox-label-mark-as-dependent">
     <label class="i-sdc-form-label">Directive: {{getActualDirectiveValue()}}</label>
     <span class="sprite-new delete-btn delete-icon"
-          (click)="onRemoveDirective()" data-tests-id="delete-input-button">
+          (click)="onRemoveDirective()" data-tests-id="delete-input-button" *ngIf="!readonly">
     </span>
-    <svg-icon-label name="edit-file-o" size="small" class="directive-edit-icon" data-tests-id="directive-edit-icon" (click)="onEditDirectives()">
+    <svg-icon-label name="edit-file-o" size="small" class="directive-edit-icon" data-tests-id="directive-edit-icon" 
+          (click)="onEditDirectives()" *ngIf="!readonly">
     </svg-icon-label>
   </div>
 
