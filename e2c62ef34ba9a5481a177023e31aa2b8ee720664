@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ce3e7b56_8e0c8243",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 4263,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-27T20:24:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be3e425c_9db9f877",
+      "range": {
+        "startLine": 4257,
+        "startChar": 4,
+        "endLine": 4263,
+        "endChar": 7
+      },
+      "revId": "e2c62ef34ba9a5481a177023e31aa2b8ee720664",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6545613c_57c5af8f",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ResourceServletTest.java",
         "patchSetId": 9
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "18658195_091e7d31",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/ResourceServletTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-27T20:24:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6545613c_57c5af8f",
+      "range": {
+        "startLine": 72,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 61
+      },
+      "revId": "e2c62ef34ba9a5481a177023e31aa2b8ee720664",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67519b44_3fabdb4a",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
         "patchSetId": 9
@@ -68,6 +116,30 @@
       "revId": "e2c62ef34ba9a5481a177023e31aa2b8ee720664",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "747742f9_b3948a09",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1690,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-27T20:24:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "67519b44_3fabdb4a",
+      "range": {
+        "startLine": 1681,
+        "startChar": 4,
+        "endLine": 1690,
+        "endChar": 5
+      },
+      "revId": "e2c62ef34ba9a5481a177023e31aa2b8ee720664",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
