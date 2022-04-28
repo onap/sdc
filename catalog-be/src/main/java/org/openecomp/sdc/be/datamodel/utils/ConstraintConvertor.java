@@ -32,6 +32,7 @@ import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 public class ConstraintConvertor {
@@ -51,6 +52,10 @@ public class ConstraintConvertor {
         .of(ToscaFunctions.GET_INPUT.getFunctionName(), ToscaFunctions.GET_PROPERTY.getFunctionName());
 
     public UIConstraint convert(String inConstraint) {
+        return convert(inConstraint, "");
+    }
+
+    public UIConstraint convert(String inConstraint, String valueType) {
         Yaml yamlSource = new Yaml();
         UIConstraint uiConstraint = new UIConstraint();
         Object content1 = yamlSource.load(inConstraint);
@@ -81,6 +86,15 @@ public class ConstraintConvertor {
             uiConstraint.setSourceType(STATIC_CONSTRAINT);
             uiConstraint.setSourceName(STATIC_CONSTRAINT);
             uiConstraint.setValue(list1);
+            return uiConstraint;
+        } else if (valueType != null && valueType.equals("string")) {
+            uiConstraint.setSourceType(STATIC_CONSTRAINT);
+            uiConstraint.setSourceName(STATIC_CONSTRAINT);
+            DumperOptions options = new DumperOptions();
+            options.setDefaultFlowStyle(DumperOptions.FlowStyle.FLOW);
+            Yaml yaml = new Yaml(options);
+            String yamlString = yaml.dump(content3);
+            uiConstraint.setValue(yamlString);
             return uiConstraint;
         } else if (content3 instanceof Map) {
             return handleMap(uiConstraint, content3);
