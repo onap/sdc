@@ -4225,10 +4225,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             return componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(resourceStatus.right().value()), "");
         }
         Resource resource = resourceStatus.left().value();
-        if (isComponentSystemDeployed(resource)) {
-            throw new ByActionStatusComponentException(ActionStatus.CANNOT_DELETE_SYSTEM_DEPLOYED_RESOURCES, ComponentTypeEnum.RESOURCE.getValue(),
-                    resource.getName());
-        }
         StorageOperationStatus result = StorageOperationStatus.OK;
         lockComponent(resourceId, resource, "Mark resource to delete");
         try {
@@ -4270,6 +4266,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             componentException(resourceStatus.right().value());
         }
         Resource resource = resourceStatus.left().value();
+        if (isComponentSystemDeployed(resource)) {
+            throw new ByActionStatusComponentException(ActionStatus.CANNOT_DELETE_SYSTEM_DEPLOYED_RESOURCES, ComponentTypeEnum.RESOURCE.getValue(),
+                resource.getName());
+        }
         if (Boolean.FALSE.equals(resource.isArchived())) {
             log.debug("The resource, {}, requested for delete has not been archived.", resourceId);
             throw new ComponentException(ActionStatus.COMPONENT_NOT_ARCHIVED, resourceId);
