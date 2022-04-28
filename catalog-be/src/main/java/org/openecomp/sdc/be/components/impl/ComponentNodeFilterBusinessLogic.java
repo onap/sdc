@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.CINodeFilterUtils;
@@ -44,6 +43,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
@@ -156,6 +156,18 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         return Optional.ofNullable(result.left().value());
     }
 
+    private String getComponentInstancePropertyType(Component component, String componentInstanceId, String propertyName) {
+        List<ComponentInstanceProperty> componentInstanceProperties = component.getComponentInstancesProperties().get(componentInstanceId);
+        if (!componentInstanceProperties.isEmpty()) {
+            for (ComponentInstanceProperty componentInstanceProperty : componentInstanceProperties) {
+                if (componentInstanceProperty.getName().equals(propertyName)) {
+                    return componentInstanceProperty.getType();
+                }
+            }
+        }
+        return null;
+    }
+
     public Optional<CINodeFilterDataDefinition> addNodeFilter(final String componentId, final String componentInstanceId,
                                                               final NodeFilterConstraintAction action, final String propertyName,
                                                               final String constraint, final boolean shouldLock,
@@ -174,6 +186,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
             final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
             requirementNodeFilterPropertyDataDefinition.setName(propertyName);
             requirementNodeFilterPropertyDataDefinition.setConstraints(Collections.singletonList(constraint));
+            requirementNodeFilterPropertyDataDefinition.setType(getComponentInstancePropertyType(component, componentInstanceId, propertyName));
             final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = addNewNodeFilter(componentId, componentInstanceId,
                 nodeFilterConstraintType, nodeFilterDataDefinition, requirementNodeFilterPropertyDataDefinition, capabilityName);
             if (result.isRight()) {
