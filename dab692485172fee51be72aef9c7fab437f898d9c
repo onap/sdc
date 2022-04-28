@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d6adfc8f_e48dce27",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ResourcesServlet.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-28T08:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3fbd4ba0_6a7fa59d",
+      "range": {
+        "startLine": 224,
+        "startChar": 0,
+        "endLine": 224,
+        "endChar": 112
+      },
+      "revId": "dab692485172fee51be72aef9c7fab437f898d9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eaeacf7c_1305bf44",
         "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/janusgraph/JanusGraphDao.java",
         "patchSetId": 10
@@ -45,6 +69,30 @@
       "revId": "dab692485172fee51be72aef9c7fab437f898d9c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e90dc286_f019a54e",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/janusgraph/JanusGraphDao.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1308,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-04-28T08:39:32Z",
+      "side": 1,
+      "message": "Correct. Removed method",
+      "parentUuid": "eaeacf7c_1305bf44",
+      "range": {
+        "startLine": 1308,
+        "startChar": 23,
+        "endLine": 1308,
+        "endChar": 44
+      },
+      "revId": "dab692485172fee51be72aef9c7fab437f898d9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
