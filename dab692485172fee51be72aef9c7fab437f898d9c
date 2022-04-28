@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eaeacf7c_1305bf44",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/janusgraph/JanusGraphDao.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1308,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-04-28T07:33:58Z",
+      "side": 1,
+      "message": "you moved this method and nothing was affected, so it seems that is not in use, correct? If that is the case, better remove it.",
+      "range": {
+        "startLine": 1308,
+        "startChar": 23,
+        "endLine": 1308,
+        "endChar": 44
+      },
+      "revId": "dab692485172fee51be72aef9c7fab437f898d9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
