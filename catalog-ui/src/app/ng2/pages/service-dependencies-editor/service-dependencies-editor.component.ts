@@ -281,4 +281,12 @@ export class ServiceDependenciesEditorComponent {
     this.onValueChange(this.selectedPropertyObj.valueObjIsValid);
   }
 
+  getValue(event: Event): string | number {
+      return (event.target as HTMLInputElement).value;
+  }
+
+  isObjTypeOf(obj: any, type: string): boolean {
+      return typeof(obj) === type;
+  }
+
 }
