@@ -281,4 +281,7 @@ export class ServiceDependenciesEditorComponent {
     this.onValueChange(this.selectedPropertyObj.valueObjIsValid);
   }
 
+  isObjTypeOf(obj: any, type: string): boolean {
+      return typeof(obj) === type;
+  }
 }
