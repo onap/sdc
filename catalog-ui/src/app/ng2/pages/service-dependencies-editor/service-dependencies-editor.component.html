@@ -46,7 +46,8 @@
                     </dynamic-property>
                     <dynamic-element
                             *ngIf="isStaticSource() && !isComplexListMapType()"
-                            [(value)]="currentRule.value"
+                            value="{{isObjTypeOf(currentRule.value, 'object') ? (currentRule.value | json) : currentRule.value}}"
+                            (input)="currentRule.value = getValue($event)"
                             class="rule-assigned-value"
                             data-tests-id="ruleAssignedValue"
                             (elementChanged)="onValueChange($event.isValid)"
