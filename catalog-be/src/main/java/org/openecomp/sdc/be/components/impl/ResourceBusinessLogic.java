@@ -5440,7 +5440,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     @Override
     public Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String resourceId,
                                                                                                    List<String> dataParamsToReturn) {
-        ComponentParametersView paramsToReturn = new ComponentParametersView(dataParamsToReturn);
+        List<String> dataParamsFromToscaElement = new ArrayList<>(dataParamsToReturn);
+        if(dataParamsToReturn.contains(ComponentFieldsEnum.NODE_FILTER.getValue())) {
+            dataParamsFromToscaElement.add(ComponentFieldsEnum.COMPONENT_INSTANCES_PROPERTIES.getValue());
+        }
+        ComponentParametersView paramsToReturn = new ComponentParametersView(dataParamsFromToscaElement);
         Either<Resource, StorageOperationStatus> resourceResultEither = toscaOperationFacade.getToscaElement(resourceId, paramsToReturn);
         if (resourceResultEither.isRight()) {
             if (resourceResultEither.right().value() == StorageOperationStatus.NOT_FOUND) {

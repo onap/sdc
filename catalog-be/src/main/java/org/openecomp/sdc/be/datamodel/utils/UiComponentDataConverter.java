@@ -38,7 +38,9 @@ import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
 import org.openecomp.sdc.be.components.validation.PolicyUtils;
 import org.openecomp.sdc.be.datatypes.components.ResourceMetadataDataDefinition;
 import org.openecomp.sdc.be.datatypes.components.ServiceMetadataDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -399,6 +401,7 @@ public class UiComponentDataConverter {
                         dataTransfer.setNodeFilterforNode(null);
                     } else {
                         final NodeFilterConverter nodeFilterConverter = new NodeFilterConverter();
+                        setNodeFilterPropertyType(resource);
                         dataTransfer.setNodeFilterforNode(nodeFilterConverter.convertDataMapToUI(resource.getNodeFilterComponents()));
                     }
                     break;
@@ -407,6 +410,22 @@ public class UiComponentDataConverter {
             }
         }
         return dataTransfer;
+    }
+
+    private void setNodeFilterPropertyType(Resource resource){
+        for(CINodeFilterDataDefinition componentNodeFilter : resource.getNodeFilterComponents().values()) {
+            if(componentNodeFilter.getProperties() != null) {
+                List<RequirementNodeFilterPropertyDataDefinition> componentNodeFilterProps =
+                        componentNodeFilter.getProperties().getListToscaDataDefinition();
+                Collection<List<ComponentInstanceProperty>> componentInstancesProperties =
+                        resource.getComponentInstancesProperties().values();
+                componentNodeFilterProps.forEach(NodeFilterProperty ->
+                        componentInstancesProperties.forEach(componentInstanceProperties -> componentInstanceProperties.stream().
+                                filter(componentInstanceProperty ->
+                                        componentInstanceProperty.getName().equals(NodeFilterProperty.getName())).
+                                forEach(componentInstanceProperty -> NodeFilterProperty.setType(componentInstanceProperty.getType()))));
+            }
+        }
     }
 
     private void setDerivedFrom(Resource resource, UiResourceDataTransfer dataTransfer) {

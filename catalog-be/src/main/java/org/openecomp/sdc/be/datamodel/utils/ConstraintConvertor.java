@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import com.google.gson.Gson;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
@@ -51,6 +52,10 @@ public class ConstraintConvertor {
         .of(ToscaFunctions.GET_INPUT.getFunctionName(), ToscaFunctions.GET_PROPERTY.getFunctionName());
 
     public UIConstraint convert(String inConstraint) {
+        return convert(inConstraint, "");
+    }
+
+    public UIConstraint convert(String inConstraint, String valueType) {
         Yaml yamlSource = new Yaml();
         UIConstraint uiConstraint = new UIConstraint();
         Object content1 = yamlSource.load(inConstraint);
@@ -81,6 +86,13 @@ public class ConstraintConvertor {
             uiConstraint.setSourceType(STATIC_CONSTRAINT);
             uiConstraint.setSourceName(STATIC_CONSTRAINT);
             uiConstraint.setValue(list1);
+            return uiConstraint;
+        } else if (valueType != null && valueType.equals("string")) {
+            uiConstraint.setSourceType(STATIC_CONSTRAINT);
+            uiConstraint.setSourceName(STATIC_CONSTRAINT);
+            Gson gson = new Gson();
+            String json = gson.toJson(content3);
+            uiConstraint.setValue(json);
             return uiConstraint;
         } else if (content3 instanceof Map) {
             return handleMap(uiConstraint, content3);
