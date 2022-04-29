@@ -22,6 +22,30 @@
       "revId": "2bf1687a9c743896a7d5a0a210947be36e0a9127",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83634525_e7e00816",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-04-29T08:12:43Z",
+      "side": 1,
+      "message": "Created 1 out of 2",
+      "parentUuid": "44f3ff82_e40ef4b1",
+      "range": {
+        "startLine": 67,
+        "startChar": 12,
+        "endLine": 85,
+        "endChar": 18
+      },
+      "revId": "2bf1687a9c743896a7d5a0a210947be36e0a9127",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
