@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.dao.cassandra;
 
 import static java.util.function.Predicate.not;
+import static org.openecomp.sdc.common.api.Constants.ADDITIONAL_TYPE_DEFINITIONS;
 
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.Mapper;
@@ -98,6 +99,7 @@ public class ToscaModelImportCassandraDao extends CassandraDao {
         final List<ToscaImportByModel> actualImportOfModelList = toscaImportByModelAccessor.findAllByModel(modelId).all();
         final List<ToscaImportByModel> removedImportList = actualImportOfModelList.stream()
             .filter(not(importOfModelList::contains))
+            .filter(not(toscaImport -> ADDITIONAL_TYPE_DEFINITIONS.equals(toscaImport.getFullPath())))
             .collect(Collectors.toList());
 
         importOfModelList.forEach(toscaImportByModelMapper::save);

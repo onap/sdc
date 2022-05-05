@@ -61,6 +61,8 @@ public final class Constants {
     public static final String CATALOG_BE = "catalog-be";
     public static final String RESOURCE_SUPPORTED_VERSION = "0.0.1";
     public static final String ARTIFACT_ID_FORMAT = "%s:%s:%s"; // resourceName:resourceVersion:artifactName
+    public static final String ADDITIONAL_TYPE_DEFINITIONS = "additional_type_definitions.yaml";
+
 
     public static final String SERVICE_ARTIFACT_ID_FORMAT = "%s:%s:%s:%s"; // serviceName:serviceVersion:nodeTemplateName:artifactName
     public static final String CONTENT_DISPOSITION = "content-disposition";

@@ -18,6 +18,8 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
+import static org.openecomp.sdc.common.api.Constants.ADDITIONAL_TYPE_DEFINITIONS;
+
 import fj.data.Either;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -65,7 +67,7 @@ import org.yaml.snakeyaml.Yaml;
 public class ModelOperation {
 
     private static final Logger log = Logger.getLogger(ModelOperation.class);
-    static final Path ADDITIONAL_TYPE_DEFINITIONS_PATH = Path.of("additional_type_definitions.yaml");
+    static final Path ADDITIONAL_TYPE_DEFINITIONS_PATH = Path.of(ADDITIONAL_TYPE_DEFINITIONS);
 
     private final JanusGraphGenericDao janusGraphGenericDao;
     private final JanusGraphDao janusGraphDao;
