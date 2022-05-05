@@ -1945,7 +1945,7 @@ public class ResourceBusinessLogicTest {
 		List<PropertyDefinition> properties = new ArrayList<>();
 		properties.add(property);
 		basic.setProperties(properties);
-		when(propertyOperation.isPropertyTypeValid(property, null)).thenReturn(true);
+		when(propertyOperation.isPropertyTypeValid(property, (String)null)).thenReturn(true);
 		when(propertyOperation.isPropertyDefaultValueValid(property, emptyDataTypes)).thenReturn(true);
 		Boolean validatePropertiesDefaultValues = bl.validatePropertiesDefaultValues(basic);
 		assertTrue(validatePropertiesDefaultValues);

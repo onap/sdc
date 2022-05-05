@@ -835,6 +835,13 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
         }
         return true;
     }
+    
+    public boolean isPropertyTypeValid(final IComplexDefaultValue property, final Map<String, DataTypeDefinition> dataTypes) {
+        if (property == null) {
+            return false;
+        }
+        return ToscaPropertyType.isValidType(property.getType()) != null || dataTypes.containsKey(property.getType());
+    }
 
     @Override
     public ImmutablePair<String, Boolean> isPropertyInnerTypeValid(IComplexDefaultValue property, Map<String, DataTypeDefinition> dataTypes) {

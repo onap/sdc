@@ -795,7 +795,7 @@ public class PropertyOperationTest extends ModelTestBase {
 		// test 1
 		testSubject = createTestSubject();
 		property = null;
-		result = testSubject.isPropertyTypeValid(property, null);
+		result = testSubject.isPropertyTypeValid(property, (String)null);
 		Assert.assertEquals(false, result);
 	}
 
