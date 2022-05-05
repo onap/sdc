@@ -423,7 +423,7 @@ public abstract class BaseBusinessLogic {
     Either<Boolean, ResponseFormat> validatePropertyDefaultValue(IComplexDefaultValue property, Map<String, DataTypeDefinition> dataTypes) {
         String type;
         String innerType = null;
-        if (!propertyOperation.isPropertyTypeValid(property, null)) {
+        if (!propertyOperation.isPropertyTypeValid(property, dataTypes)) {
             log.info("Invalid type for property '{}' type '{}'", property.getName(), property.getType());
             ResponseFormat responseFormat = componentsUtils
                 .getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
