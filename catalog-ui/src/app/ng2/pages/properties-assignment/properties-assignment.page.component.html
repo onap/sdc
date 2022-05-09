@@ -75,11 +75,11 @@
                     <span class="sprite search-icon" data-tests-id="search-button"></span>
                     <filter-properties-assignment *ngIf="isPropertiesTabSelected" #advanceSearch class="advance-search" [componentType]="component.componentType" (searchProperties)="searchPropertiesInstances($event)"></filter-properties-assignment>
                 </div>
-                <button (click)="selectInput()"
+                <button (click)="selectToscaFunctionAndValues()"
                         *ngIf="isPropertiesTabSelected && !isSelf()"
                         [disabled]="checkedPropertiesCount != 1 || isReadonly || hasChangedData"
                         class="tlv-btn blue declare-button"
-                        data-tests-id="declare-button select-input">{{btnSelectInputText}}</button>
+                        data-tests-id="declare-button select-tosca-function">{{btnToscaFunctionText}}</button>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button declare-input">Declare Input</button>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData || isSelf()" (click)="declarePropertiesToPolicies()" data-tests-id="declare-button declare-policy">Declare Policy</button>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || checkedChildPropertiesCount || isReadonly || hasChangedData" (click)="declareListProperties()" data-tests-id="declare-but($event)ton declare-list-input">Create List Input</button>
