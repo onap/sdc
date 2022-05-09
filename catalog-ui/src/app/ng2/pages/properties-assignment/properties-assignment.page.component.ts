@@ -19,7 +19,7 @@
  */
 
 import * as _ from "lodash";
-import {Component, Inject, ViewChild} from "@angular/core";
+import {Component, Inject, ViewChild, ComponentRef} from "@angular/core";
 import {PropertiesService} from "../../services/properties.service";
 import {
     ButtonModel,
@@ -41,7 +41,7 @@ import {
     Service,
     SimpleFlatProperty
 } from "app/models";
-import {ResourceType} from "app/utils";
+import {ResourceType, ToscaFunctionTypes} from "app/utils";
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
 import {ComponentInstanceServiceNg2} from "../../services/component-instance-services/component-instance.service"
@@ -68,6 +68,7 @@ import {ToscaPresentationData} from "../../../models/tosca-presentation";
 import {Observable} from "rxjs";
 import {ToscaGetFunctionType} from "../../../models/tosca-get-function-type.enum";
 import {TranslateService} from "../../shared/translator/translate.service";
+import {ModalComponent} from "../../components/ui/modal/modal.component";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -102,7 +103,6 @@ export class PropertiesAssignmentComponent {
     currentMainTab: Tab;
     isInputsTabSelected: boolean;
     isPropertiesTabSelected: boolean;
-    isInputValueSelected: boolean = false;
     isPoliciesTabSelected: boolean;
     isReadonly: boolean;
     resourceIsReadonly: boolean;
@@ -118,8 +118,6 @@ export class PropertiesAssignmentComponent {
     serviceBePropertiesMap: InstanceBePropertiesMap;
     serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
     selectedInstance_FlattenCapabilitiesList: Capability[];
-    propertyType: string;
-    btnSelectInputText: string;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -157,7 +155,6 @@ export class PropertiesAssignmentComponent {
 
     ngOnInit() {
         console.log("==>" + this.constructor.name + ": ngOnInit");
-        this.btnSelectInputText = this.translateService.translate('SELECT_INPUT_LABEL');
         this.loadingInputs = true;
         this.loadingPolicies = true;
         this.loadingInstances = true;
@@ -501,8 +498,8 @@ export class PropertiesAssignmentComponent {
         this.searchQuery = '';
     };
 
-    /**Select Properties value from defined input values**/
-    selectInput = (): void => {
+    /**Select Tosca function value from defined values**/
+    selectToscaFunctionAndValues = (): void => {
         let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
         angular.forEach(instancesIds, (instanceId: string): void => {
             let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId
@@ -518,7 +515,7 @@ export class PropertiesAssignmentComponent {
                         property.toscaGetFunctionType = null;
                         this.updateInstancePropertiesWithInput(checkedProperties, selectedInstanceData);
                     } else {
-                        let modalTitle = 'Select value from Input';
+                        let modalTitle = 'Set value using TOSCA functions';
                         const modal = this.ModalService.createCustomModal(new ModalModel(
                             'sm',
                             modalTitle,
@@ -526,20 +523,11 @@ export class PropertiesAssignmentComponent {
                             [
                                 new ButtonModel('Save', 'blue',
                                     () => {
-                                        this.loadingProperties = true;
-                                        let selectInputValue: InputFEModel = modal.instance.dynamicContent.instance.selectInputValue;
-                                        property.getInputValues = [];
-                                        const propertyInputDetail = new PropertyInputDetail();
-                                        propertyInputDetail.inputId = selectInputValue.uniqueId;
-                                        propertyInputDetail.inputName = selectInputValue.name;
-                                        propertyInputDetail.inputType = selectInputValue.type;
-                                        property.getInputValues.push(propertyInputDetail);
-                                        property.value = selectInputValue.name.indexOf("->") !== -1
-                                            ? '{"get_input":[' + selectInputValue.name.replace("->", ", ") + ']}'
-                                            : '{"get_input":"' + selectInputValue.name+ '"}' ;
-                                        property.toscaGetFunctionType = ToscaGetFunctionType.GET_INPUT;
-                                        this.updateInstancePropertiesWithInput(checkedProperties, selectedInstanceData);
-                                        modal.instance.close();
+                                    let selectedToscaFunction: string = modal.instance.dynamicContent.instance.selectToscaFunction;
+                                    if (selectedToscaFunction === ToscaFunctionTypes.GET_INPUT_TOSCA_FUNCTION) {
+                                        this.updateSelectInputValues(modal, property, checkedProperties, selectedInstanceData);
+                                    }
+                                    modal.instance.close();
                                     }
                                 ),
                                 new ButtonModel('Cancel', 'outline grey', () => {
@@ -556,6 +544,22 @@ export class PropertiesAssignmentComponent {
         });
     };
 
+    private updateSelectInputValues(modal:ComponentRef<ModalComponent>, property:PropertyBEModel, checkedProperties:PropertyBEModel[], selectedInstanceData:any) {
+        this.loadingProperties = true;
+        let selectInputValue: InputFEModel = modal.instance.dynamicContent.instance.selectValue;
+        property.getInputValues = [];
+        const propertyInputDetail = new PropertyInputDetail();
+        propertyInputDetail.inputId = selectInputValue.uniqueId;
+        propertyInputDetail.inputName = selectInputValue.name;
+        propertyInputDetail.inputType = selectInputValue.type;
+        property.getInputValues.push(propertyInputDetail);
+        property.value = selectInputValue.name.indexOf("->") !== -1
+            ? '{"get_input":[' + selectInputValue.name.replace("->", ", ") + ']}'
+            : '{"get_input":"' + selectInputValue.name+ '"}' ;
+        property.toscaGetFunctionType = ToscaGetFunctionType.GET_INPUT;
+        this.updateInstancePropertiesWithInput(checkedProperties, selectedInstanceData);
+    }
+
     updateInstancePropertiesWithInput(checkedProperties: PropertyBEModel[], selectedInstanceData: any) {
         this.componentInstanceServiceNg2.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
             this.selectedInstanceData.uniqueId, checkedProperties)
@@ -568,28 +572,8 @@ export class PropertiesAssignmentComponent {
             });
         }, () => {
             this.loadingProperties = false;
-            this.btnSelectInputText = this.translateService.translate('SELECT_INPUT_LABEL');
         });
     }
-
-    selectInputBtnLabel = () => {
-        let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
-        angular.forEach(instancesIds, (instanceId: string): void => {
-            let checkedProperties: PropertyBEModel[] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
-            angular.forEach(checkedProperties, (property: PropertyBEModel) => {
-                if(this.checkedPropertiesCount == 1) {
-                    if (property.toscaGetFunctionType == null) {
-                        this.btnSelectInputText = this.translateService.translate('SELECT_INPUT_LABEL');
-                    } else {
-                        this.btnSelectInputText = this.translateService.translate('DESELECT_INPUT_LABEL');
-                    }
-                } else {
-                    this.btnSelectInputText = this.translateService.translate('SELECT_INPUT_LABEL');
-                }
-            });
-        });
-    }
-
 
     /*** DECLARE PROPERTIES/INPUTS ***/
     declareProperties = (): void => {
@@ -1074,7 +1058,6 @@ export class PropertiesAssignmentComponent {
     updateCheckedPropertyCount = (increment: boolean): void => {
         this.checkedPropertiesCount += (increment) ? 1 : -1;
         console.log("CheckedProperties count is now.... " + this.checkedPropertiesCount);
-        this.selectInputBtnLabel();
     };
 
     updateCheckedChildPropertyCount = (increment: boolean): void => {

@@ -219,6 +219,11 @@ export class CanvasHandleTypes {
   public static TAGGED_GROUP = 'tagged-group';
 }
 
+export class ToscaFunctionTypes {
+  public static GET_INPUT_TOSCA_FUNCTION = 'get_input';
+  public static INPUT_DROPDOWN_LABEL = 'Input';
+}
+
 export class ModalType {
   static STANDARD = 'standard';
   static ERROR = 'error';

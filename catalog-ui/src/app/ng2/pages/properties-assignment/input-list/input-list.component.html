@@ -21,10 +21,17 @@
   <loader [display]="isLoading" [loaderDelay]="500" [relative]="true" [size]="'large'"></loader>
   <form class="w-sdc-form">
     <div class="i-sdc-form-item">
-      <label class="i-sdc-form-label required">Input Value</label>
-        <select [(ngModel)]="selectInputValue" name="selectInputValue">
-          <option *ngFor="let input of inputs"
-                  [ngValue]="input">{{input.name}}</option>
+      <label class="i-sdc-form-label required">TOSCA function</label>
+      <select [(ngModel)]="selectToscaFunction" name="selectToscaFunction">
+        <option *ngFor="let toscaFunction of toscaFunctions"
+                [ngValue]="toscaFunction">{{toscaFunction}}</option>
+      </select>
+    </div>
+    <div *ngIf="selectToscaFunction" class="i-sdc-form-item">
+      <label class="i-sdc-form-label required">{{loadDropdownValueLabel()}}</label>
+        <select [(ngModel)]="selectValue" name="selectValue">
+          <option *ngFor="let value of dropdownValues"
+                  [ngValue]="value">{{value.name}}</option>
         </select>
     </div>
   </form>
