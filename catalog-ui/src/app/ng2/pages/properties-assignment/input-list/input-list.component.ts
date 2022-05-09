@@ -24,7 +24,7 @@ import {
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {PropertiesService} from "../../../services/properties.service";
-import {PROPERTY_DATA} from "../../../../utils/constants";
+import {PROPERTY_DATA, ToscaFunctionTypes} from "../../../../utils/constants";
 import {DataTypeService} from "../../../services/data-type.service";
 
 @Component({
@@ -35,10 +35,13 @@ import {DataTypeService} from "../../../services/data-type.service";
 
 export class InputListComponent {
 
-    selectInputValue;
+    selectToscaFunction;
+    selectValue;
     isLoading: boolean;
     propertyType: string;
-    inputs: Array<PropertyBEModel> = [];
+    dropdownValues: Array<PropertyBEModel> = [];
+    toscaFunctions: Array<String> = [];
+    dropdownValuesLabel: string;
 
     private dataTypeProperties: Array<PropertyBEModel> = [];
     private componentMetadata: ComponentMetadata;
@@ -52,7 +55,19 @@ export class InputListComponent {
     ngOnInit() {
         this.componentMetadata = this.workspaceService.metadata;
         this.propertyType = this.propertiesService.getCheckedPropertyType();
+        this.loadToscaFunctions();
         this.loadInputValues(this.propertyType);
+    }
+
+    private loadToscaFunctions(): void {
+        this.toscaFunctions.push(ToscaFunctionTypes.GET_INPUT_TOSCA_FUNCTION);
+    }
+
+    private loadDropdownValueLabel(): string {
+        if (this.selectToscaFunction === ToscaFunctionTypes.GET_INPUT_TOSCA_FUNCTION) {
+            this.dropdownValuesLabel = ToscaFunctionTypes.INPUT_DROPDOWN_LABEL;
+        }
+        return this.dropdownValuesLabel;
     }
 
     private loadInputValues(propertyType: string): void {
@@ -61,7 +76,7 @@ export class InputListComponent {
         .subscribe((response) => {
             response.inputs.forEach((inputProperty: any) => {
                 if (propertyType === inputProperty.type) {
-                    this.inputs.push(inputProperty);
+                    this.dropdownValues.push(inputProperty);
                 } else if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(inputProperty.type) === -1 && inputProperty.type !== propertyType) {
                     this.buildInputDataForComplexType(inputProperty, propertyType);
                 }
@@ -80,7 +95,7 @@ export class InputListComponent {
                 let inputData = inputProperty.name + "->" + dataTypeProperty.name;
                 dataTypeProperty.name = inputData;
                 if (this.dataTypeProperties.indexOf(dataTypeProperty) === -1 && dataTypeProperty.type === propertyType) {
-                    this.inputs.push(dataTypeProperty);
+                    this.dropdownValues.push(dataTypeProperty);
                 }
             });
         }
