@@ -74,18 +74,31 @@ public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeI
                 newOperationDef -> prevInstanceInterfaces.stream().filter(in -> in.getUniqueId().equals(newInterfaceDef.getUniqueId())).forEach(
                     prevInterfaceDef -> prevInterfaceDef.getOperationsMap().values().stream()
                         .filter(in1 -> in1.getUniqueId().equals(newOperationDef.getUniqueId()))
-                        .forEach(oldOperationDef -> mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDef.getInputs())))));
+                        .forEach(oldOperationDef -> {
+                            newOperationDef.setDescription(oldOperationDef.getDescription());
+                            newOperationDef.setImplementation(oldOperationDef.getImplementation());
+                            if(oldOperationDef.getInputs() != null) {
+                                if(newOperationDef.getInputs() == null) {
+                                    newOperationDef.setInputs(new ListDataDefinition<>());
+                                }
+                                mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDef.getInputs());
+                            }
+                        }))));
         StorageOperationStatus updateStatus = toscaOperationFacade.updateComponentInstanceInterfaces(currentComponent, instanceId);
         return componentsUtils.convertFromStorageResponse(updateStatus);
     }
 
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> origInputs,
                                                 ListDataDefinition<OperationInputDefinition> newInputs) {
-        newInputs.getListToscaDataDefinition()
-            .forEach(inp -> origInputs.getListToscaDataDefinition().stream().filter(in -> in.getInputId().equals(inp.getInputId())).forEach(in -> {
-                inp.setSourceProperty(in.getSourceProperty());
-                inp.setSource(in.getSource());
-                inp.setValue(in.getValue());
-            }));
+            newInputs.getListToscaDataDefinition().
+                forEach(inp -> origInputs.getListToscaDataDefinition().stream().filter(in -> in.getInputId().equals(inp.getInputId())).
+                    forEach(in -> {
+                        inp.setSourceProperty(in.getSourceProperty());
+                        inp.setSource(in.getSource());
+                        inp.setValue(in.getValue());
+                    }));
+            origInputs.getListToscaDataDefinition().stream().
+                    filter(inp -> newInputs.getListToscaDataDefinition().stream().noneMatch(in -> in.getInputId().equals(inp.getInputId()))).
+                    forEach(inp -> newInputs.getListToscaDataDefinition().add(inp));
     }
 }
