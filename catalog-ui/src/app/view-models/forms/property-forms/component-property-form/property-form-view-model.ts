@@ -48,7 +48,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     propertyNameValidationPattern:RegExp;
     commentValidationPattern:RegExp;
     editPropertyModel:IEditPropertyModel;
-    modalInstanceProperty:ng.ui.bootstrap.IModalServiceInstance;    
+    modalInstanceProperty:ng.ui.bootstrap.IModalServiceInstance;
     currentPropertyIndex:number;
     isLastProperty:boolean;
     myValue:any;
@@ -101,7 +101,7 @@ export class PropertyFormViewModel {
         'CompositionService',
         'workspaceService'
     ];
- 
+
     private formState:FormState;
 
     constructor(private $scope:IPropertyFormViewModelScope,
@@ -134,7 +134,7 @@ export class PropertyFormViewModel {
         this.$scope.editPropertyModel.property.type = this.property.type ? this.property.type : null;
         this.$scope.editPropertyModel.property.value = this.$scope.editPropertyModel.property.value || this.$scope.editPropertyModel.property.defaultValue;
         this.$scope.constraints = this.property.constraints && this.property.constraints[0] ? this.property.constraints[0]["validValues"]  : null;
-        
+
         this.setMaxLength();
 
     };
@@ -193,53 +193,53 @@ export class PropertyFormViewModel {
     private initScope = ():void => {
 
         //scope properties
+        this.$scope.isLoading = true;
         this.$scope.forms = {};
         this.$scope.validationPattern = this.ValidationPattern;
         this.$scope.propertyNameValidationPattern = this.PropertyNameValidationPattern;
         this.$scope.commentValidationPattern = this.CommentValidationPattern;
-        this.$scope.isLoading = false;
         this.$scope.isNew = (this.formState === FormState.CREATE);
         this.$scope.isService = this.workspaceService.metadata.isService();
         this.$scope.modalInstanceProperty = this.$uibModalInstance;
         this.$scope.currentPropertyIndex = _.findIndex(this.filteredProperties, i=> i.name == this.property.name);
         this.$scope.isLastProperty = this.$scope.currentPropertyIndex == (this.filteredProperties.length - 1);
-        this.$scope.dataTypes = this.DataTypesService.getAllDataTypesFromModel(this.workspaceService.metadata.model);
-        this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
-        this.$scope.propertyOwnerType = this.propertyOwnerType;
-        this.$scope.modelNameFilter = this.workspaceService.metadata.model;
-
         this.$scope.editPropertyModel = {
             property : new PropertyModel(this.property),
             types : PROPERTY_DATA.TYPES,
             simpleTypes : PROPERTY_DATA.SIMPLE_TYPES}; //All simple types
 
+        this.DataTypesService.fetchDataTypesByModel(this.workspaceService.metadata.model).then(response => {
+            this.$scope.dataTypes = response.data as DataTypesMap;
+            this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
+            this.$scope.propertyOwnerType = this.propertyOwnerType;
+            this.$scope.modelNameFilter = this.workspaceService.metadata.model;
 
-        //check if property of VnfConfiguration
-        this.$scope.isVnfConfiguration = false;
-        if(this.propertyOwnerType == "component" && angular.isArray(this.compositionService.componentInstances)) {
+            //check if property of VnfConfiguration
+            this.$scope.isVnfConfiguration = false;
+            if(this.propertyOwnerType == "component" && angular.isArray(this.compositionService.componentInstances)) {
 
-            var componentPropertyOwner:ComponentInstance = this.compositionService.componentInstances.find((ci:ComponentInstance) => {
-                return ci.uniqueId === this.property.resourceInstanceUniqueId;
+                var componentPropertyOwner:ComponentInstance = this.compositionService.componentInstances.find((ci:ComponentInstance) => {
+                    return ci.uniqueId === this.property.resourceInstanceUniqueId;
+                });
+                if (componentPropertyOwner && componentPropertyOwner.componentName === 'vnfConfiguration') {
+                    this.$scope.isVnfConfiguration = true;
+                }
+            }
+
+            this.$scope.nonPrimitiveTypes = _.filter(Object.keys(this.$scope.dataTypes), (type:string)=> {
+                return this.$scope.editPropertyModel.types.indexOf(type) == -1;
             });
-            if (componentPropertyOwner && componentPropertyOwner.componentName === 'vnfConfiguration') {
-                this.$scope.isVnfConfiguration = true;
-            }
-        }
+            this.initResource();
+            this.initForNotSimpleType();
 
-        this.$scope.nonPrimitiveTypes = _.filter(Object.keys(this.$scope.dataTypes), (type:string)=> {
-            return this.$scope.editPropertyModel.types.indexOf(type) == -1;
+            this.$scope.validateJson = (json:string):boolean => {
+                if (!json) {
+                    return true;
+                }
+                return this.ValidationUtils.validateJson(json);
+            };
+            this.$scope.isLoading = false;
         });
-        this.initResource();
-        this.initForNotSimpleType();
-
-
-        this.$scope.validateJson = (json:string):boolean => {
-            if (!json) {
-                return true;
-            }
-            return this.ValidationUtils.validateJson(json);
-        };
-
 
         //scope methods
         this.$scope.save = (doNotCloseModal?:boolean):void => {
@@ -291,7 +291,7 @@ export class PropertyFormViewModel {
                         property.value = myValueString;
                     }
                     this.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).subscribe((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]),
-                            error => onPropertyFaild(error));
+                        error => onPropertyFaild(error));
                 } else {
                     if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
                         let myValueString:string = JSON.stringify(this.$scope.myValue);
@@ -417,7 +417,7 @@ export class PropertyFormViewModel {
                 return newProperty;
             };
             return this.topologyTemplateService.addProperty(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, property)
-            .map(onSuccess);
+                .map(onSuccess);
         } else {
             let onSuccess = (newProperty: PropertyModel): PropertyModel => {
                 // find exist instance property in parent component for update the new value ( find bu uniqueId )
