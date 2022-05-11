@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c555f195_987696ba",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/input-list/input-list.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-11T08:50:39Z",
+      "side": 1,
+      "message": "Can you rename the class etc as the scope will now be broader than inputs",
+      "range": {
+        "startLine": 36,
+        "startChar": 13,
+        "endLine": 36,
+        "endChar": 31
+      },
+      "revId": "7a0835b80ed9518f798847a3100b639e0605d80a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "443541f2_c79aedbb",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/input-list/input-list.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-11T08:50:39Z",
+      "side": 1,
+      "message": "This should now be executed when get_input is selected in the \u0027TOSCA function\u0027 rather than on init in preparation for when other values will be added to the tosca functions",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 48
+      },
+      "revId": "7a0835b80ed9518f798847a3100b639e0605d80a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
