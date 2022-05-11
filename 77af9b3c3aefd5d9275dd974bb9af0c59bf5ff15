@@ -46,6 +46,29 @@
       "revId": "77af9b3c3aefd5d9275dd974bb9af0c59bf5ff15",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d9f53ee_9800024a",
+        "filename": "catalog-ui/src/app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component.html",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-11T09:16:35Z",
+      "side": 1,
+      "message": "The object is displayed with a lot of blank spaces (presumably from the indentation of the json represent), which is not very user friendly, e.g.:\n\n{  \"concat\": [    {      \"get_input\": \"enterpriseasoccupier_role\"    },    \"-\",    {      \"get_input\": \"enterpriseasoccupier_status\"    }  ]}",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 127
+      },
+      "revId": "77af9b3c3aefd5d9275dd974bb9af0c59bf5ff15",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
