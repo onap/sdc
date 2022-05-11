@@ -74,7 +74,14 @@ public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeI
                 newOperationDef -> prevInstanceInterfaces.stream().filter(in -> in.getUniqueId().equals(newInterfaceDef.getUniqueId())).forEach(
                     prevInterfaceDef -> prevInterfaceDef.getOperationsMap().values().stream()
                         .filter(in1 -> in1.getUniqueId().equals(newOperationDef.getUniqueId()))
-                        .forEach(oldOperationDef -> mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDef.getInputs())))));
+                        .forEach(oldOperationDef -> {
+                            newOperationDef.setDescription(oldOperationDef.getDescription());
+                            newOperationDef.setImplementation(oldOperationDef.getImplementation());
+                            if(newOperationDef.getInputs() == null) {
+                                newOperationDef.setInputs(new ListDataDefinition<>());
+                            }
+                            mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDef.getInputs());
+                        }))));
         StorageOperationStatus updateStatus = toscaOperationFacade.updateComponentInstanceInterfaces(currentComponent, instanceId);
         return componentsUtils.convertFromStorageResponse(updateStatus);
     }
