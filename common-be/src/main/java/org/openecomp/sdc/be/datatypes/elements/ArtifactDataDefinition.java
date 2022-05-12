@@ -369,6 +369,15 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
     public List<PropertyDataDefinition> getProperties() {
         return (List<PropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
     }
+    
+    public void addProperty(final PropertyDataDefinition property) {
+        List<PropertyDataDefinition> properties =  (List<PropertyDataDefinition>) getToscaPresentationValue(JsonPresentationFields.PROPERTIES);
+        if (properties == null) {
+            properties = new ArrayList<>();
+            setProperties(properties);
+        }
+        properties.add(property);
+    }
 
     private void setProperties(final List<PropertyDataDefinition> properties) {
         setToscaPresentationValue(JsonPresentationFields.PROPERTIES, properties);

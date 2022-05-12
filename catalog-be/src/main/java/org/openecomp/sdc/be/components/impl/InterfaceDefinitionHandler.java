@@ -31,6 +31,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
 
 import com.google.gson.Gson;
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -49,9 +50,11 @@ import org.openecomp.sdc.be.datatypes.elements.InputDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
@@ -217,19 +220,68 @@ public class InterfaceDefinitionHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Optional<ArtifactDataDefinition> handleOperationImplementation(final Map<String, Object> operationDefinitionMap) {
         if (!operationDefinitionMap.containsKey(IMPLEMENTATION.getElementName())) {
             return Optional.empty();
         }
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
-        final String artifactName = (String) operationDefinitionMap.get(IMPLEMENTATION.getElementName());
-        if (OperationArtifactUtil.artifactNameIsALiteralValue(artifactName)) {
-            artifactDataDefinition.setArtifactName(artifactName);
-        } else {
-            artifactDataDefinition.setArtifactName(QUOTE + artifactName + QUOTE);
+        if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof Map && 
+                ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).containsKey("primary")) {
+            Map<String, Object> implDetails = (Map) ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("primary");
+            
+            if (implDetails.get("file") != null) {
+                artifactDataDefinition.setArtifactName(implDetails.get("file").toString());
+            }
+            if (implDetails.get("type") != null) {
+                artifactDataDefinition.setArtifactType(implDetails.get("type").toString());
+            }
+            if (implDetails.get("artifact_version") != null) {
+                artifactDataDefinition.setArtifactVersion(implDetails.get("artifact_version").toString());
+            }
+            
+            if(implDetails.get("properties") instanceof Map) {
+                List<PropertyDataDefinition> operationProperties = artifactDataDefinition.getProperties() == null ? new ArrayList<>() : artifactDataDefinition.getProperties();
+                Map<String, Object> properties = (Map<String, Object>) implDetails.get("properties");
+                properties.forEach((k,v) -> {
+                    ToscaPropertyType type = getTypeFromObject(v);
+                    if (type != null) {
+                        PropertyDataDefinition propertyDef = new PropertyDataDefinition();
+                        propertyDef.setName(k);
+                        propertyDef.setType(type.getType());
+                        propertyDef.setValue(v.toString());
+                        artifactDataDefinition.addProperty(propertyDef);
+                    }
+                });
+            }
+        }
+        if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof String) {
+            final String artifactName = (String) operationDefinitionMap.get(IMPLEMENTATION.getElementName());
+            if (OperationArtifactUtil.artifactNameIsALiteralValue(artifactName)) {
+                artifactDataDefinition.setArtifactName(artifactName);
+            } else {
+                artifactDataDefinition.setArtifactName(QUOTE + artifactName + QUOTE);
+            }
         }
         return Optional.of(artifactDataDefinition);
     }
+    
+    private ToscaPropertyType getTypeFromObject(final Object value) {
+        if (value instanceof String) {
+            return ToscaPropertyType.STRING;
+        }
+        if (value instanceof Integer) {
+            return ToscaPropertyType.INTEGER;
+        }
+        if (value instanceof Boolean) {
+            return ToscaPropertyType.BOOLEAN;
+        }
+        if (value instanceof Float || value instanceof Double) {
+            return ToscaPropertyType.FLOAT;
+        }
+        return null;
+    }
+    
 
     private Map<String, InputDefinition> handleInputs(final Map<String, Object> interfaceDefinitionToscaMap) {
         if (!interfaceDefinitionToscaMap.containsKey(INPUTS.getElementName())) {
