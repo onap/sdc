@@ -84,7 +84,7 @@
                             <div class="w-sdc-form-column" data-ng-if="showSchema()">
                                 <!-- Entry Schema -->
                                 <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.schemaType.$dirty && forms.editForm.schemaType.$invalid)}">
-                                    <label class="i-sdc-form-label required">Entry Schema</label>
+                                    <label class="i-sdc-form-label required">{{'PROPERTY_ENTRY_SCHEMA' | translate}}</label>
                                     <select class="i-sdc-form-select"
                                             data-required
                                             data-tests-id="schema-type"
@@ -92,8 +92,8 @@
                                             name="schemaType"
                                             data-ng-change="onSchemaTypeChange()"
                                             data-ng-model="editPropertyModel.property.schema.property.type">
-                                        <option value="">Choose Schema Type</option>
-                                        <option data-ng-repeat="type in editPropertyModel.simpleTypes"
+                                        <option value="">{{'PROPERTY_ENTRY_SCHEMA_CHOOSE_OPTION' | translate}}</option>
+                                        <option data-ng-repeat="type in editPropertyModel.types"
                                                 value="{{type}}">{{type}}</option>
                                         <option data-ng-repeat="type in nonPrimitiveTypes"
                                                 value="{{type}}">{{type.replace("org.openecomp.datatypes.heat.","")}}</option>

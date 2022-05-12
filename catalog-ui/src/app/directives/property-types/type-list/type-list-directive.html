@@ -17,7 +17,8 @@
  
 <div>
     <div data-ng-if="!isSchemaTypeDataType">
-        <div class="i-sdc-form-item list-new-item" data-ng-class="{error:(parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid)}">
+        <div class="i-sdc-form-item list-new-item" data-ng-class="{error:(parentFormObj['listNewItem'+fieldsPrefixName].$dirty && parentFormObj['listNewItem'+fieldsPrefixName].$invalid)}"
+             ng-if="schemaProperty.type !== 'map'">
             <input class="i-sdc-form-input"
                    data-tests-id="listNewItem{{fieldsPrefixName}}"
                    ng-if="!constraints && !((schemaProperty.simpleType||schemaProperty.type) == 'boolean')"
@@ -66,12 +67,27 @@
             </div>
         </div>
         <div class="add-btn add-list-item" data-tests-id="add-list-item{{fieldsPrefixName}}"
-             data-ng-class="{'disabled': readOnly || !schemaProperty.type || parentFormObj['listNewItem'+fieldsPrefixName].$invalid || !listNewItem.value}" data-ng-click="addListItem()">Add</div>
+             data-ng-class="{'disabled': readOnly || !schemaProperty.type || parentFormObj['listNewItem'+fieldsPrefixName].$invalid || (!listNewItem.value && schemaProperty.type !== 'map')}" data-ng-click="addListItem()">Add</div>
         <div class="list-value-items">
-                                    <span class="list-value-item" data-ng-repeat="value in valueObjRef track by $index">
-                                        {{value}}
-                                        <span ng-if="!readOnly" class="delete-list-item sprite-new small-x-button" data-ng-click="deleteListItem($index)"></span>
-                                    </span>
+            <span class="list-value-item" data-ng-repeat="value in valueObjRef track by $index">
+                <span ng-if="!readOnly" class="delete-list-item sprite-new small-x-button" data-ng-click="deleteListItem($index)"
+                      title="{{'PROPERTY_EDIT_LIST_DELETE_ITEM' | translate}}"></span>
+                <div ng-if="schemaProperty.type === 'map'">
+                    <type-map value-obj-ref="value"
+                              schema-property="stringSchema"
+                              parent-form-obj="parentFormObj"
+                              fields-prefix-name="fieldsPrefixName+''+$index"
+                              read-only="readOnly"
+                              default-value="{{undefined}}"
+                              max-length="maxLength"
+                              show-add-btn="true"
+                              constraints="constraints">
+                    </type-map>
+                </div>
+                <div ng-if="schemaProperty.type !== 'map'">
+                    {{value}}
+                </div>
+            </span>
         </div>
     </div>
     <div data-ng-if="isSchemaTypeDataType">

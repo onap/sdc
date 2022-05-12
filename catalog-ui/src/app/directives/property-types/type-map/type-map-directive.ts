@@ -40,6 +40,7 @@ export interface ITypeMapScope extends ng.IScope {
     mapDefaultValue:any;
     maxLength:number;
     constraints:string[];
+    showAddBtn: boolean;
 
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
@@ -67,17 +68,18 @@ export class TypeMapDirective implements ng.IDirective {
         readOnly: '=',//is form read only
         defaultValue: '@',//this map default value
         maxLength: '=',
-        constraints: '='
-        
+        constraints: '=',
+        showAddBtn: '=?'
     };
 
     restrict = 'E';
     replace = true;
-    template = ():string => {
+    template = (): string => {
         return require('./type-map-directive.html');
     };
 
     link = (scope:ITypeMapScope, element:any, $attr:any) => {
+        scope.showAddBtn = angular.isDefined(scope.showAddBtn) ? scope.showAddBtn : true;
         scope.MapKeyValidationPattern = this.MapKeyValidationPattern;
         scope.isMapKeysUnique = true;
 
@@ -89,6 +91,11 @@ export class TypeMapDirective implements ng.IDirective {
                 //keeping another copy of the keys, as the mapKeys gets overridden sometimes
                 scope.mapKeysStatic = Object.keys(scope.valueObjRef);
             }
+        });
+
+        scope.$watchCollection('valueObjRef', (newData: any): void => {
+            scope.mapKeys = Object.keys(scope.valueObjRef);
+            scope.mapKeysStatic = Object.keys(scope.valueObjRef);
         });
 
         //when user brows between properties in "edit property form"
@@ -119,27 +126,29 @@ export class TypeMapDirective implements ng.IDirective {
         };
 
         scope.changeKeyOfMap = (newKey:string, index:number, fieldName:string):void => {
-            let oldKey = Object.keys(scope.valueObjRef)[index];
-            let existsKeyIndex = Object.keys(scope.valueObjRef).indexOf(newKey);
-            if (existsKeyIndex > -1 && existsKeyIndex != index) {
+            const currentKeySet = Object.keys(scope.valueObjRef);
+            const currentKey = currentKeySet[index];
+            const existingKeyIndex = currentKeySet.indexOf(newKey);
+            if (existingKeyIndex > -1 && existingKeyIndex != index) {
                 scope.parentFormObj[fieldName].$setValidity('keyExist', false);
                 scope.isMapKeysUnique = false;
-            } else {
-                scope.parentFormObj[fieldName].$setValidity('keyExist', true);
-                scope.isMapKeysUnique = true;
-                if (!scope.parentFormObj[fieldName].$invalid) {
-                    //To preserve the order of the keys, delete each one and recreate
-                    let newObj = {};
-                    angular.copy(scope.valueObjRef , newObj);
-                    angular.forEach(newObj,function(value:any,key:string){
-                        delete scope.valueObjRef[key];
-                        if(key == oldKey){
-                            scope.valueObjRef[newKey] = value;
-                        }else{
-                            scope.valueObjRef[key] = value;
-                        }
-                    });
-                }
+                return;
+            }
+
+            scope.parentFormObj[fieldName].$setValidity('keyExist', true);
+            scope.isMapKeysUnique = true;
+            if (!scope.parentFormObj[fieldName].$invalid) {
+                //To preserve the order of the keys, delete each one and recreate
+                let newObj = {};
+                angular.copy(scope.valueObjRef, newObj);
+                angular.forEach(newObj, function (value: any, key: string) {
+                    delete scope.valueObjRef[key];
+                    if (key == currentKey) {
+                        scope.valueObjRef[newKey] = value;
+                    } else {
+                        scope.valueObjRef[key] = value;
+                    }
+                });
             }
         };
 
