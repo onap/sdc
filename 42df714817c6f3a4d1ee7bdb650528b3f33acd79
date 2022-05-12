@@ -22,6 +22,30 @@
       "revId": "42df714817c6f3a4d1ee7bdb650528b3f33acd79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec02b2fe_7fc9c7b3",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 591,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-12T13:45:18Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "5b9715a7_6de4dbe3",
+      "range": {
+        "startLine": 575,
+        "startChar": 0,
+        "endLine": 591,
+        "endChar": 5
+      },
+      "revId": "42df714817c6f3a4d1ee7bdb650528b3f33acd79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
