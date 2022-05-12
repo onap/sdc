@@ -99,11 +99,13 @@
                               read-only="readOnly"
             ></fields-structure>
         </div>
-        <span ng-click="deleteMapItem($index)" class="delete-map-item" data-tests-id="delete-map-item{{fieldsPrefixName}}{{$index}}" data-ng-class="{'disabled': readOnly}"></span>
+        <span ng-click="deleteMapItem($index)" class="delete-map-item" data-tests-id="delete-map-item{{fieldsPrefixName}}{{$index}}"
+              data-ng-class="{'disabled': readOnly}" title="{{'PROPERTY_EDIT_MAP_DELETE_ITEM' | translate}}"></span>
     </div>
-    <div class="add-map-item" data-ng-class="{'schema-data-type':isSchemaTypeDataType}">
+    <div class="add-map-item" data-ng-class="{'schema-data-type':isSchemaTypeDataType}" data-ng-if="showAddBtn">
         <div class="add-btn" data-tests-id="add-map-item"
-             data-ng-class="{'disabled': readOnly || !schemaProperty.type || mapKeys.indexOf('')>-1 || !isMapKeysUnique}" data-ng-click="addMapItemFields()">Add</div>
+             data-ng-class="{'disabled': readOnly || !schemaProperty.type || mapKeys.indexOf('')>-1 || !isMapKeysUnique}"
+             data-ng-click="addMapItemFields()" title="{{'PROPERTY_EDIT_MAP_ADD_ITEM' | translate}}">Add</div>
     </div>
 </div>
 

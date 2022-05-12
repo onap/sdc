@@ -37,21 +37,29 @@ export interface ITypeListScope extends ng.IScope {
     listDefaultValue:any;
     listNewItem:any;
     maxLength:number;
-    
+    stringSchema: SchemaProperty;
+
     constraints:string[];
 
     getValidationPattern(type:string):RegExp;
     validateIntRange(value:string):boolean;
     addListItem():void;
-    deleteListItem(listItemIndex:number):void
+    deleteListItem(listItemIndex:number):void;
+    getStringSchemaProperty():SchemaProperty;
 }
 
 
 export class TypeListDirective implements ng.IDirective {
 
+    private readonly stringSchema: SchemaProperty;
+
     constructor(private DataTypesService:DataTypesService,
                 private PropertyNameValidationPattern:RegExp,
-                private ValidationUtils:ValidationUtils) {  
+                private ValidationUtils:ValidationUtils) {
+        this.stringSchema = new SchemaProperty();
+        this.stringSchema.type = PROPERTY_TYPES.STRING;
+        this.stringSchema.isSimpleType = true;
+        this.stringSchema.isDataType = false;
     }
 
     scope = {
@@ -73,6 +81,7 @@ export class TypeListDirective implements ng.IDirective {
 
     link = (scope:ITypeListScope, element:any, $attr:any) => {
         scope.propertyNameValidationPattern = this.PropertyNameValidationPattern;
+        scope.stringSchema = this.stringSchema;
 
         //reset valueObjRef when schema type is changed
         scope.$watchCollection('schemaProperty.type', (newData:any):void => {
@@ -103,17 +112,22 @@ export class TypeListDirective implements ng.IDirective {
 
         scope.addListItem = ():void => {
             scope.valueObjRef = scope.valueObjRef || [];
-            let newVal = ((scope.schemaProperty.simpleType || scope.schemaProperty.type) == PROPERTY_TYPES.STRING ? scope.listNewItem.value : JSON.parse(scope.listNewItem.value));
+            let newVal;
+            if (scope.schemaProperty.type === PROPERTY_TYPES.MAP) {
+                newVal = {"": ""};
+            } else if ((scope.schemaProperty.simpleType || scope.schemaProperty.type) == PROPERTY_TYPES.STRING) {
+                newVal = scope.listNewItem.value;
+            } else {
+                newVal = JSON.parse(scope.listNewItem.value);
+            }
             scope.valueObjRef.push(newVal);
             scope.listNewItem.value = "";
         };
 
-        scope.deleteListItem = (listItemIndex:number):void => {
+        scope.deleteListItem = (listItemIndex: number): void => {
             scope.valueObjRef.splice(listItemIndex, 1);
-            if (!scope.valueObjRef.length) {
-                if (scope.listDefaultValue) {
-                    angular.copy(scope.listDefaultValue, scope.valueObjRef);
-                }
+            if (!scope.valueObjRef.length && scope.listDefaultValue) {
+                angular.copy(scope.listDefaultValue, scope.valueObjRef);
             }
         };
     };
