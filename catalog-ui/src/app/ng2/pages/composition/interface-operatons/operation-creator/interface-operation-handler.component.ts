@@ -42,7 +42,6 @@ import {DataTypeModel} from "../../../../../models/data-types";
 })
 export class InterfaceOperationHandlerComponent {
 
-    @Input() private modelName: string;
     @Output('propertyChanged') emitter: EventEmitter<PropertyFEModel> = new EventEmitter<PropertyFEModel>();
     @ViewChild('interfaceOperationDropDown') interfaceOperationDropDown: DropDownComponent;
 
@@ -53,6 +52,7 @@ export class InterfaceOperationHandlerComponent {
         validityChangedCallback: Function;
         isViewOnly: boolean;
         isEdit: boolean;
+        modelName: string;
     };
 
     dataTypeMap$: Observable<Map<string, DataTypeModel>>;
@@ -74,6 +74,7 @@ export class InterfaceOperationHandlerComponent {
     interfaceOperationMap: Map<string, Array<string>> = new Map<string, Array<string>>();
     interfaceOperationOptions: Array<DropDownOption> = [];
     selectedInterfaceOperation: DropDownOption = undefined;
+    modelName: string;
 
     toscaArtifactTypeSelected: string;
     toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
@@ -87,15 +88,7 @@ export class InterfaceOperationHandlerComponent {
     inputTypeOptions: any[];
 
     constructor(private dataTypeService: DataTypeService, private componentServiceNg2: ComponentServiceNg2) {
-        this.dataTypeMap$ = new Observable<Map<string, DataTypeModel>>(subscriber => {
-            this.dataTypeService.findAllDataTypesByModel(this.modelName)
-            .then((dataTypesMap: Map<string, DataTypeModel>) => {
-                subscriber.next(dataTypesMap);
-            });
-        });
-        this.dataTypeMap$.subscribe(value => {
-            this.dataTypeMap = value;
-        });
+
 
     }
 
@@ -106,10 +99,21 @@ export class InterfaceOperationHandlerComponent {
         this.operationToUpdate = this.input.selectedInterfaceOperation;
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
         this.operationToUpdate.interfaceType = this.input.selectedInterface.type;
+        this.modelName = this.input.modelName;
         this.initInputs();
         this.removeImplementationQuote();
         this.validityChanged();
         this.loadInterfaceOperationImplementation();
+
+        this.dataTypeMap$ = new Observable<Map<string, DataTypeModel>>(subscriber => {
+            this.dataTypeService.findAllDataTypesByModel(this.modelName)
+            .then((dataTypesMap: Map<string, DataTypeModel>) => {
+                subscriber.next(dataTypesMap);
+            });
+        });
+        this.dataTypeMap$.subscribe(value => {
+            this.dataTypeMap = value;
+        });
     }
 
     private initInputs() {
@@ -127,7 +131,7 @@ export class InterfaceOperationHandlerComponent {
     }
 
     private loadInterfaceType() {
-        this.componentServiceNg2.getInterfaceTypesByModel(undefined)
+        this.componentServiceNg2.getInterfaceTypesByModel(this.modelName)
         .subscribe(response => {
             if (response) {
                 this.interfaceOperationMap = new Map<string, Array<string>>();

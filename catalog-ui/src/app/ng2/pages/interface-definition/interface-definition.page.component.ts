@@ -212,6 +212,7 @@ export class InterfaceDefinitionComponent {
                 callback([]);
             }
         });
+        this.loadToscaArtifacts();
     }
 
     initInterfaces(interfaces: InterfaceModel[]): void {
@@ -255,6 +256,7 @@ export class InterfaceDefinitionComponent {
                 isViewOnly: this.isViewOnly,
                 isEdit: isEdit,
                 interfaceTypesMap: this.interfaceTypesMap,
+                modelName: this.component.model
             }
         );
         this.modalInstance.instance.open();

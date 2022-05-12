@@ -243,7 +243,8 @@ export class InterfaceOperationsComponent {
                 selectedInterface: interfaceModel ? interfaceModel : new UIInterfaceModel(),
                 selectedInterfaceOperation: operation ? operation : new InterfaceOperationModel(),
                 validityChangedCallback: this.enableOrDisableSaveButton,
-                isViewOnly: this.isViewOnly
+                isViewOnly: this.isViewOnly,
+                modelName: this.componentMetaData.model
             }
         );
         this.modalInstance.instance.open();
