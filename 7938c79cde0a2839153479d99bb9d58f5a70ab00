@@ -46,6 +46,30 @@
       "revId": "7938c79cde0a2839153479d99bb9d58f5a70ab00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de031a19_8a24041d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-13T13:43:01Z",
+      "side": 1,
+      "message": "I guess this can be left out of scope for the purposes of this bug and I  we can create a separate ticket to handle the copying of data. The bug really only relates to the instances not being shown at all",
+      "parentUuid": "2fefe154_8aa5e8d4",
+      "range": {
+        "startLine": 78,
+        "startChar": 28,
+        "endLine": 79,
+        "endChar": 99
+      },
+      "revId": "7938c79cde0a2839153479d99bb9d58f5a70ab00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
