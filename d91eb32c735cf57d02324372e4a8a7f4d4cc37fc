@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bfc3eecb_274cc39f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-13T08:38:41Z",
+      "side": 1,
+      "message": "Any inputs in origInputs that dont exist in newInputs add them to newInputs - so any inputs created on the instance by the user dont get lost during the version update",
+      "range": {
+        "startLine": 91,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 16
+      },
+      "revId": "d91eb32c735cf57d02324372e4a8a7f4d4cc37fc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
