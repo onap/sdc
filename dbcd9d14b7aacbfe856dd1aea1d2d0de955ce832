@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "afc26886_148816ef",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-13T09:55:29Z",
+      "side": 1,
+      "message": "please, use const for final variables",
+      "range": {
+        "startLine": 520,
+        "startChar": 24,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df0a3a48_b4bb677a",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-13T09:55:29Z",
+      "side": 1,
+      "message": "please, fix indentation in this block",
+      "range": {
+        "startLine": 527,
+        "startChar": 42,
+        "endLine": 527,
+        "endChar": 43
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a8d4bfe_4e8f9bd9",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-13T09:55:29Z",
+      "side": 1,
+      "message": "please, use const for final variables",
+      "range": {
+        "startLine": 528,
+        "startChar": 36,
+        "endLine": 528,
+        "endChar": 39
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f6dbd4a_14d7139d",
+        "filename": "catalog-ui/src/app/utils/constants.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-13T09:55:29Z",
+      "side": 1,
+      "message": "we have already one enum class for those values: ToscaGetFunctionType. Please, reuse it and apply .toLowerCase() as needed.",
+      "range": {
+        "startLine": 223,
+        "startChar": 2,
+        "endLine": 223,
+        "endChar": 55
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "202b773c_d976d64d",
+        "filename": "catalog-ui/src/app/utils/constants.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-13T09:55:29Z",
+      "side": 1,
+      "message": "I believe this should be part of the tosca-function.component.ts, even better if this label is read from internationalization file catalog-ui/src/assets/languages/en_US.json, using the translation service.",
+      "range": {
+        "startLine": 224,
+        "startChar": 2,
+        "endLine": 224,
+        "endChar": 47
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
