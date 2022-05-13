@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f329bc7_028bdf7b",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-13T14:38:28Z",
+      "side": 1,
+      "message": "better to leave inside the fetchDataTypesByModel.then scope only what is related to that call, i.e., anything that needs this.$scope.dataTypes.\nThe rest should be moved out.\nFor example, this code is does not depend on the call response.",
+      "range": {
+        "startLine": 209,
+        "startChar": 12,
+        "endLine": 217,
+        "endChar": 0
+      },
+      "revId": "754614b16d7e277e4d294d3bce98cfee095fb4d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
