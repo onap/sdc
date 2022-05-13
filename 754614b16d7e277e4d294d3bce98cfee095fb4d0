@@ -22,6 +22,30 @@
       "revId": "754614b16d7e277e4d294d3bce98cfee095fb4d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6574d02_2aea59f5",
+        "filename": "catalog-ui/src/app/view-models/forms/property-forms/component-property-form/property-form-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-05-13T15:14:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1f329bc7_028bdf7b",
+      "range": {
+        "startLine": 209,
+        "startChar": 12,
+        "endLine": 217,
+        "endChar": 0
+      },
+      "revId": "754614b16d7e277e4d294d3bce98cfee095fb4d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
