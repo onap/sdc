@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "241bcd0d_427df04d",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-13T11:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afc26886_148816ef",
+      "range": {
+        "startLine": 520,
+        "startChar": 24,
+        "endLine": 520,
+        "endChar": 27
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "df0a3a48_b4bb677a",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91f10a0e_89fe4b33",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-13T11:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "df0a3a48_b4bb677a",
+      "range": {
+        "startLine": 527,
+        "startChar": 42,
+        "endLine": 527,
+        "endChar": 43
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fcdc624b_d461ebbd",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-13T11:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a8d4bfe_4e8f9bd9",
+      "range": {
+        "startLine": 528,
+        "startChar": 36,
+        "endLine": 528,
+        "endChar": 39
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f6dbd4a_14d7139d",
         "filename": "catalog-ui/src/app/utils/constants.ts",
         "patchSetId": 3
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "49acdca6_ae140b1c",
+        "filename": "catalog-ui/src/app/utils/constants.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-13T11:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f6dbd4a_14d7139d",
+      "range": {
+        "startLine": 223,
+        "startChar": 2,
+        "endLine": 223,
+        "endChar": 55
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "202b773c_d976d64d",
         "filename": "catalog-ui/src/app/utils/constants.ts",
         "patchSetId": 3
@@ -114,6 +210,30 @@
       "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee9033ab_e256b462",
+        "filename": "catalog-ui/src/app/utils/constants.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-13T11:13:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "202b773c_d976d64d",
+      "range": {
+        "startLine": 224,
+        "startChar": 2,
+        "endLine": 224,
+        "endChar": 47
+      },
+      "revId": "dbcd9d14b7aacbfe856dd1aea1d2d0de955ce832",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
