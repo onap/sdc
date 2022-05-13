@@ -70,6 +70,30 @@
       "revId": "7938c79cde0a2839153479d99bb9d58f5a70ab00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b87f122_e88d4059",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-05-13T16:42:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de031a19_8a24041d",
+      "range": {
+        "startLine": 78,
+        "startChar": 28,
+        "endLine": 79,
+        "endChar": 99
+      },
+      "revId": "7938c79cde0a2839153479d99bb9d58f5a70ab00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
