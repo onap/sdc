@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4136e95e_49a7b1b2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-05-13T11:37:58Z",
+      "side": 1,
+      "message": "For some reason the description and implementation do not get updated but the inputs do. Not really sure why this is though...",
+      "range": {
+        "startLine": 78,
+        "startChar": 28,
+        "endLine": 79,
+        "endChar": 99
+      },
+      "revId": "7938c79cde0a2839153479d99bb9d58f5a70ab00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
