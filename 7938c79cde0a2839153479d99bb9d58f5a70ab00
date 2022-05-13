@@ -22,6 +22,30 @@
       "revId": "7938c79cde0a2839153479d99bb9d58f5a70ab00",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2fefe154_8aa5e8d4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-13T13:41:08Z",
+      "side": 1,
+      "message": "The Operation object is created from the \u0027toscaPresentation\u0027 HashMap in InterfaceInstanceDataDefinition. Once created the Operation object is not connected to the HashMap so any updates in the Operation object do not get written back into the map and hence are not persisted. You would need to explcitly call the setOperations method to persist",
+      "parentUuid": "4136e95e_49a7b1b2",
+      "range": {
+        "startLine": 78,
+        "startChar": 28,
+        "endLine": 79,
+        "endChar": 99
+      },
+      "revId": "7938c79cde0a2839153479d99bb9d58f5a70ab00",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
