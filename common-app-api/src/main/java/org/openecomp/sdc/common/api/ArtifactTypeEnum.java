@@ -58,6 +58,7 @@ public enum ArtifactTypeEnum {
     DCAE_TOSCA("DCAE_TOSCA"),
     DG_XML("DG_XML"),
     ETSI_PACKAGE("ETSI_PACKAGE"),
+    ASD_PACKAGE("ASD_PACKAGE"),
     GUIDE("GUIDE"),
     HEAT_ARTIFACT("HEAT_ARTIFACT"),
     HEAT_ENV("HEAT_ENV"),

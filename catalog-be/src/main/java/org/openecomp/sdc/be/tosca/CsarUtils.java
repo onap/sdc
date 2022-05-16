@@ -19,6 +19,7 @@
  */
 package org.openecomp.sdc.be.tosca;
 
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.openecomp.sdc.be.tosca.ComponentCache.MergeStrategy.overwriteIfSameVersions;
 import static org.openecomp.sdc.be.tosca.FJToVavrHelper.Try0.fromEither;
 
@@ -82,6 +83,7 @@ import org.openecomp.sdc.be.dao.cassandra.SdcSchemaFilesCassandraDao;
 import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -103,6 +105,7 @@ import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -1125,6 +1128,25 @@ public class CsarUtils {
         return Either.left(new CsarDefinition(componentArtifacts));
     }
 
+    private void checkForASDTypeComponent(Component component, List<ComponentInstance> componentInstances) {
+        componentInstances.forEach(instance -> {
+            Map<String, ToscaArtifactDataDefinition> artifacts = instance.getToscaArtifacts();
+            if (isNotEmpty(artifacts) || artifacts != null) {
+                for (Map.Entry<String, ToscaArtifactDataDefinition> artifact : artifacts.entrySet()) {
+                    if (artifact.getValue().getType().equals(Constants.ASD_DEPLOYMENT_ITEM)) {
+                        Map<String, ArtifactDefinition> deploymentArtifacts = component.getDeploymentArtifacts();
+                        for (Map.Entry<String, ArtifactDefinition> deploymentArtifact : deploymentArtifacts.entrySet()) {
+                            if (deploymentArtifact.getValue().getArtifactType().equals(ArtifactTypeEnum.ETSI_PACKAGE.name())) {
+                                deploymentArtifact.getValue().setArtifactType(ArtifactTypeEnum.ASD_PACKAGE.name());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     private void printResult(ComponentArtifacts componentArtifacts, String name) {
         StringBuilder result = new StringBuilder();
         result.append("Artifacts of main component " + name + "\n");
@@ -1283,6 +1305,9 @@ public class CsarUtils {
     }
 
     private ArtifactsInfo collectComponentArtifacts(Component component) {
+        if (component.getComponentInstances() != null) {
+            checkForASDTypeComponent(component, component.getComponentInstances()); //check for ASD Package
+        }
         Map<String, ArtifactDefinition> informationalArtifacts = component.getArtifacts();
         Map<String, List<ArtifactDefinition>> informationalArtifactsByType = collectGroupArtifacts(informationalArtifacts);
         Map<String, ArtifactDefinition> deploymentArtifacts = component.getDeploymentArtifacts();
