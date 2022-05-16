@@ -60,7 +60,8 @@ import java.util.Optional;
 public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTemplateProcessHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrchestrationTemplateProcessCsarHandler.class);
-    private static final String SDC_ONBOARDED_PACKAGE_DIR = "Deployment/" + ArtifactTypeEnum.ETSI_PACKAGE.getType() + "/";
+    private static final String SDC_ONBOARDED_PACKAGE_DIR_ETSI = "Deployment/" + ArtifactTypeEnum.ETSI_PACKAGE.getType() + "/";
+    private static final String SDC_ONBOARDED_PACKAGE_DIR_ASD = "Deployment/" + ArtifactTypeEnum.ASD_PACKAGE.getType() + "/";
     private static final String EXT_SEPARATOR = ".";
     private final CandidateService candidateService = CandidateServiceFactory.getInstance().createInterface();
     private final ToscaTreeManager toscaTreeManager = new ToscaTreeManager();
@@ -152,11 +153,17 @@ public class OrchestrationTemplateProcessCsarHandler implements OrchestrationTem
 
     private void addOriginalOnboardedPackage(final FileContentHandler fileContentHandler, final OrchestrationTemplateCandidateData candidateData) {
         if (OnboardingTypesEnum.CSAR.getType().equalsIgnoreCase(candidateData.getFileSuffix())) {
-            fileContentHandler
-                .addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getOriginalFileName() + EXT_SEPARATOR + candidateData.getOriginalFileSuffix(),
-                    candidateData.getOriginalFileContentData().array());
+            if (asdPackageHelper.isAsdPackage(fileContentHandler)) {
+                fileContentHandler
+                    .addFile(SDC_ONBOARDED_PACKAGE_DIR_ASD + candidateData.getOriginalFileName() + EXT_SEPARATOR + candidateData.getOriginalFileSuffix(),
+                        candidateData.getOriginalFileContentData().array());
+            } else {
+                fileContentHandler
+                    .addFile(SDC_ONBOARDED_PACKAGE_DIR_ETSI + candidateData.getOriginalFileName() + EXT_SEPARATOR + candidateData.getOriginalFileSuffix(),
+                        candidateData.getOriginalFileContentData().array());
+            }
         } else {
-            fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR + candidateData.getFileName() + EXT_SEPARATOR + candidateData.getFileSuffix(),
+            fileContentHandler.addFile(SDC_ONBOARDED_PACKAGE_DIR_ETSI + candidateData.getFileName() + EXT_SEPARATOR + candidateData.getFileSuffix(),
                 candidateData.getContentData().array());
         }
     }
