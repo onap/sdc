@@ -32,7 +32,7 @@ limitations under the License.
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>sdc-main</artifactId>
-        <version>1.11.2-SNAPSHOT</version>
+        <version>1.11.3-SNAPSHOT</version>
     </parent>
 
     <properties>

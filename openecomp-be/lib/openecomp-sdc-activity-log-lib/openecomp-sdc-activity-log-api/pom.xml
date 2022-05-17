@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.openecomp.sdc</groupId>
     <artifactId>openecomp-sdc-activity-log-lib</artifactId>
-    <version>1.11.2-SNAPSHOT</version>
+    <version>1.11.3-SNAPSHOT</version>
   </parent>
 
   <dependencies>
