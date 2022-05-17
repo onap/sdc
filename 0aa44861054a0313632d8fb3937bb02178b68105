@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af01a098_db01d4b1",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-17T10:23:20Z",
+      "side": 1,
+      "message": "This checkbox appears very close to the bottom of the artifact file uri text box. I think would be better visually if a bit more room between the two",
+      "range": {
+        "startLine": 77,
+        "startChar": 15,
+        "endLine": 83,
+        "endChar": 22
+      },
+      "revId": "0aa44861054a0313632d8fb3937bb02178b68105",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e5153bb_809afada",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-17T10:23:20Z",
+      "side": 1,
+      "message": "When I select the artifact type the artifact file URI and artifact version values get removed",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 68
+      },
+      "revId": "0aa44861054a0313632d8fb3937bb02178b68105",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e54a9f7_f3d292b6",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.html",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-17T10:23:20Z",
+      "side": 1,
+      "message": "No need for these fields to appear to the right of the checkbox, should be below it",
+      "range": {
+        "startLine": 84,
+        "startChar": 15,
+        "endLine": 95,
+        "endChar": 22
+      },
+      "revId": "0aa44861054a0313632d8fb3937bb02178b68105",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
