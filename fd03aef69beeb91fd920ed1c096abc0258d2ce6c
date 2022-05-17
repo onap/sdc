@@ -22,6 +22,30 @@
       "revId": "fd03aef69beeb91fd920ed1c096abc0258d2ce6c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8fab65f5_27a33b88",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1149,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-17T14:53:57Z",
+      "side": 1,
+      "message": "Yes, i was doubtful too. Making changes in sdc-onboarding now and adding ASD_PACKAGE to artifact list is doing the needful. without making any changes to sdc-be. Let me know what you think of these changes. Thanks for the pointers with sdc-onboarding.",
+      "parentUuid": "b6a528a3_a78be5f9",
+      "range": {
+        "startLine": 1131,
+        "startChar": 0,
+        "endLine": 1149,
+        "endChar": 0
+      },
+      "revId": "fd03aef69beeb91fd920ed1c096abc0258d2ce6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
