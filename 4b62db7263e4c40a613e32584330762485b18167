@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "02b19e4a_52bfddcf",
+        "filename": "catalog-ui/src/app/ng2/components/logic/properties-table/dynamic-property/dynamic-property.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-17T10:14:51Z",
+      "side": 1,
+      "message": "wouldn\u0027t \"\u0026\u0026 !item.mapInlist\" work?",
+      "range": {
+        "startLine": 213,
+        "startChar": 63,
+        "endLine": 213,
+        "endChar": 89
+      },
+      "revId": "4b62db7263e4c40a613e32584330762485b18167",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
