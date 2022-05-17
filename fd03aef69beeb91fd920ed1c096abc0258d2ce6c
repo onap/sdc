@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6a528a3_a78be5f9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1149,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-17T09:28:46Z",
+      "side": 1,
+      "message": "If im reading this correctly, the package will still be stored in sdc-onboarding in ETSI_PACKAGE folder but in sdc-be we will move it to ASD_PACKAGE? \nMight be better to store it in correct loaction in onboarding as well (see class OrchestrationTemplateProcessCsarHandler)",
+      "range": {
+        "startLine": 1131,
+        "startChar": 0,
+        "endLine": 1149,
+        "endChar": 0
+      },
+      "revId": "fd03aef69beeb91fd920ed1c096abc0258d2ce6c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
