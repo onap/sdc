@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.openecomp.sdc.onboarding</groupId>
     <artifactId>validation-rest</artifactId>
-    <version>1.11.2-SNAPSHOT</version>
+    <version>1.11.3-SNAPSHOT</version>
   </parent>
 
   <dependencies>

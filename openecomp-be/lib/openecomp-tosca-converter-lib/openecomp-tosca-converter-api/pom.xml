@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-tosca-converter-lib</artifactId>
-        <version>1.11.2-SNAPSHOT</version>
+        <version>1.11.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>openecomp-tosca-converter-api</artifactId>

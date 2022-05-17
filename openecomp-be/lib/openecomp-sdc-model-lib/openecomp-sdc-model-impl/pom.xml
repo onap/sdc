@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-sdc-model-lib</artifactId>
-        <version>1.11.2-SNAPSHOT</version>
+        <version>1.11.3-SNAPSHOT</version>
     </parent>
 
     <dependencies>
