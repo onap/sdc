@@ -5,6 +5,88 @@
 Release Notes
 =============
 
+Version: 1.11.3
+==============
+
+:Release Date: 2022-05-17
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+
+    N/A
+
+**Stories**
+
+*  `SDC-3999 <https://jira.onap.org/browse/SDC-3999>`_ - Import VFC with interface operation implementation extended notataion
+*  `SDC-4001 <https://jira.onap.org/browse/SDC-4001>`_ - Support list<map<string, string>> properties in composition screen dialog
+*  `SDC-3996 <https://jira.onap.org/browse/SDC-3996>`_ - Generalise Select Input button in Properties Assignment view
+*  `SDC-4003 <https://jira.onap.org/browse/SDC-4003>`_ - Onboarded ASD csar included in VF csar
+
+**Bug Fixes**
+
+*  `SDC-3989 <https://jira.onap.org/browse/SDC-3989>`_ - additional_type_definition file missing in the csar package
+*  `SDC-3990 <https://jira.onap.org/browse/SDC-3990>`_ - Custom datatype error when creating new property/input
+*  `SDC-3983 <https://jira.onap.org/browse/SDC-3983>`_ - Fix inputs/policy tabs view for self and instances
+*  `SDC-3991 <https://jira.onap.org/browse/SDC-3991>`_ - VLM duplicate name gives generic error
+*  `SDC-4000 <https://jira.onap.org/browse/SDC-4000>`_ - Edit Operation modal does not offer correct artifact types and data types
+*  `SDC-3997 <https://jira.onap.org/browse/SDC-3997>`_ - Interface panel is blank when switch to a different version of a VFC
+*  `SDC-3998 <https://jira.onap.org/browse/SDC-3998>`_ - Datatypes for a property are not specific to the VFC model
+*  `SDC-4007 <https://jira.onap.org/browse/SDC-4007>`_ - Unable to delete Map from List<Maps> property type
+
+
+**Tasks**
+
+    N/A
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.2
 ==============
 
