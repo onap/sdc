@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f729b5dc_63ac8bed",
+        "filename": "openecomp-be/backend/openecomp-sdc-vendor-software-product-manager/src/main/java/org/openecomp/sdc/vendorsoftwareproduct/impl/orchestration/process/OrchestrationTemplateProcessCsarHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-17T16:33:09Z",
+      "side": 1,
+      "message": "Instead of the if/else could have:\nfinal String dirPrefix \u003d asdPackageHelper.isAsdPackage(fileContentHandler) ? SDC_ONBOARDED_PACKAGE_DIR_ASD : SDC_ONBOARDED_PACKAGE_DIR_ETSI;\nfileContentHandler.addFile(dirPrefix + ...\nwould be a bit tider and reduce duplication",
+      "range": {
+        "startLine": 156,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 68
+      },
+      "revId": "f2c0bd7fd748778e0bc8efbe2feaa0603ce1f5f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
