@@ -210,7 +210,7 @@ export class DynamicPropertyComponent {
                 return;
             }
 
-            if (item.derivedDataType == DerivedPropertyType.MAP) {
+            if (item.derivedDataType == DerivedPropertyType.MAP && item.mapInlist != true) {
                 const oldKey = item.getActualMapKey();
                 delete itemParent.valueObj[oldKey];
                 if (itemParent instanceof PropertyFEModel) {
