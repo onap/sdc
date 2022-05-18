@@ -19,7 +19,7 @@
  */
 
 import * as _ from "lodash";
-import {Component, Inject, ViewChild, ComponentRef} from "@angular/core";
+import {Component, Inject, ViewChild} from "@angular/core";
 import {PropertiesService} from "../../services/properties.service";
 import {
     ButtonModel,
@@ -37,7 +37,6 @@ import {
     PolicyInstance,
     PropertyBEModel,
     PropertyFEModel,
-    PropertyInputDetail,
     Service,
     SimpleFlatProperty
 } from "app/models";
@@ -62,13 +61,15 @@ import {UnsavedChangesComponent} from "app/ng2/components/ui/forms/unsaved-chang
 import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
 import {ModalService} from "../../services/modal.service";
 import {DeclareListComponent} from "./declare-list/declare-list.component";
-import {ToscaFunctionComponent} from "./tosca-function/tosca-function.component";
+import {PropertyDropdownValue, ToscaFunctionComponent} from "./tosca-function/tosca-function.component";
 import {CapabilitiesGroup, Capability} from "../../../models/capability";
 import {ToscaPresentationData} from "../../../models/tosca-presentation";
 import {Observable} from "rxjs";
-import {ToscaGetFunctionType} from "../../../models/tosca-get-function-type.enum";
+import {ToscaGetFunctionType} from "../../../models/tosca-get-function-type";
 import {TranslateService} from "../../shared/translator/translate.service";
-import {ModalComponent} from "../../components/ui/modal/modal.component";
+import {ToscaGetFunctionDtoBuilder} from '../../../models/tosca-get-function-dto';
+import {PropertySource} from '../../../models/property-source';
+import {ToscaGetFunctionTypeConverter} from '../../../models/tosca-get-function-type-converter';
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -134,11 +135,11 @@ export class PropertiesAssignmentComponent {
                 @Inject("$stateParams") _stateParams,
                 @Inject("$scope") private $scope: ng.IScope,
                 @Inject("$state") private $state: ng.ui.IStateService,
-                @Inject("Notification") private Notification: any,
+                @Inject("Notification") private notification: any,
                 private componentModeService: ComponentModeService,
-                private EventListenerService: EventListenerService,
+                private eventListenerService: EventListenerService,
                 private ModalServiceSdcUI: SdcUiServices.ModalService,
-                private ModalService: ModalService,
+                private modalService: ModalService,
                 private keysPipe: KeysPipe,
                 private topologyTemplateService: TopologyTemplateService,
                 private translateService: TranslateService) {
@@ -147,7 +148,7 @@ export class PropertiesAssignmentComponent {
         /* This is the way you can access the component data, please do not use any data except metadata, all other data should be received from the new api calls on the first time
         than if the data is already exist, no need to call the api again - Ask orit if you have any questions*/
         this.component = _stateParams.component;
-        this.EventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.onCheckout);
+        this.eventListenerService.registerObserverCallback(EVENTS.ON_LIFECYCLE_CHANGE, this.onCheckout);
         this.updateViewMode();
         this.changedData = [];
         this.updateHasChangedData();
@@ -155,7 +156,7 @@ export class PropertiesAssignmentComponent {
     }
 
     ngOnInit() {
-        console.log("==>" + this.constructor.name + ": ngOnInit");
+        console.debug("==>" + this.constructor.name + ": ngOnInit");
         this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
         this.loadingInputs = true;
         this.loadingPolicies = true;
@@ -223,10 +224,10 @@ export class PropertiesAssignmentComponent {
         });
 
       this.loadDataTypesByComponentModel(this.component.model);
-    };
+    }
 
     ngOnDestroy() {
-        this.EventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
+        this.eventListenerService.unRegisterObserver(EVENTS.ON_LIFECYCLE_CHANGE);
         this.stateChangeStartUnregister();
     }
 
@@ -434,7 +435,7 @@ export class PropertiesAssignmentComponent {
      * Handle select node in navigation area, and select the row in table
      */
     onPropertySelectedUpdate = ($event) => {
-        console.log("==>" + this.constructor.name + ": onPropertySelectedUpdate");
+        console.debug("==>" + this.constructor.name + ": onPropertySelectedUpdate");
         this.selectedFlatProperty = $event;
         let parentProperty: PropertyFEModel = this.propertiesService.getParentPropertyFEModelFromPath(this.instanceFePropertiesMap[this.selectedFlatProperty.instanceName], this.selectedFlatProperty.path);
         parentProperty.expandedChildPropertyId = this.selectedFlatProperty.path;
@@ -444,7 +445,7 @@ export class PropertiesAssignmentComponent {
      * When user select row in table, this will prepare the hirarchy object for the tree.
      */
     selectPropertyRow = (propertyRowSelectedEvent: PropertyRowSelectedEvent) => {
-        console.log("==>" + this.constructor.name + ": selectPropertyRow " + propertyRowSelectedEvent.propertyModel.name);
+        console.debug("==>" + this.constructor.name + ": selectPropertyRow " + propertyRowSelectedEvent.propertyModel.name);
         let property = propertyRowSelectedEvent.propertyModel;
         let instanceName = propertyRowSelectedEvent.instanceName;
         this.propertyStructureHeader = null;
@@ -491,7 +492,7 @@ export class PropertiesAssignmentComponent {
             return;
         }
 
-        console.log("==>" + this.constructor.name + ": tabChanged " + event);
+        console.debug("==>" + this.constructor.name + ": tabChanged " + event);
         this.currentMainTab = this.propertyInputTabs.tabs.find((tab) => tab.title === event.title);
         this.isPropertiesTabSelected = this.currentMainTab.title === "Properties";
         this.isInputsTabSelected = this.currentMainTab.title === "Inputs";
@@ -500,78 +501,107 @@ export class PropertiesAssignmentComponent {
         this.searchQuery = '';
     };
 
-    /**Select Tosca function value from defined values**/
+    /**
+     * Select Tosca function value from defined values
+     */
     selectToscaFunctionAndValues = (): void => {
-        let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
-        angular.forEach(instancesIds, (instanceId: string): void => {
-            let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId
-                && instance instanceof ComponentInstance);
-            if (selectedInstanceData) {
-                let checkedProperties: PropertyBEModel[] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
-                angular.forEach(checkedProperties, (property: PropertyBEModel) => {
-                    this.propertiesService.setCheckedPropertyType(property.type);
-                    if (property.toscaGetFunctionType != null) {
-                        this.loadingProperties = true;
-                        property.getInputValues = null;
-                        property.value = null;
-                        property.toscaGetFunctionType = null;
-                        this.updateInstancePropertiesWithInput(checkedProperties, selectedInstanceData);
-                    } else {
-                        const modalTitle = 'Set value using TOSCA functions';
-                        const modal = this.ModalService.createCustomModal(new ModalModel(
-                            'sm',
-                            modalTitle,
-                            null,
-                            [
-                                new ButtonModel('Save', 'blue',
-                                    () => {
-                                        const selectedToscaFunction: string = modal.instance.dynamicContent.instance.selectToscaFunction;
-                                        if (selectedToscaFunction === ToscaGetFunctionType.GET_INPUT.toLowerCase()) {
-                                            this.updateSelectInputValues(modal, property, checkedProperties, selectedInstanceData);
-                                        }
-                                        modal.instance.close();
-                                    }
-                                ),
-                                new ButtonModel('Cancel', 'outline grey', () => {
-                                    modal.instance.close();
-                                }),
-                            ],
-                            null /* type */
-                        )); //modal
-                        this.ModalService.addDynamicContentToModal(modal, ToscaFunctionComponent);
-                        modal.instance.open();
-                    }
-                });
-            }
-        });
-    };
-
-    private updateSelectInputValues(modal:ComponentRef<ModalComponent>, property:PropertyBEModel, checkedProperties:PropertyBEModel[], selectedInstanceData:any) {
-        this.loadingProperties = true;
-        let selectInputValue: InputFEModel = modal.instance.dynamicContent.instance.selectValue;
-        property.getInputValues = [];
-        const propertyInputDetail = new PropertyInputDetail();
-        propertyInputDetail.inputId = selectInputValue.uniqueId;
-        propertyInputDetail.inputName = selectInputValue.name;
-        propertyInputDetail.inputType = selectInputValue.type;
-        property.getInputValues.push(propertyInputDetail);
-        property.value = selectInputValue.name.indexOf("->") !== -1
-            ? '{"get_input":[' + selectInputValue.name.replace("->", ", ") + ']}'
-            : '{"get_input":"' + selectInputValue.name+ '"}' ;
-        property.toscaGetFunctionType = ToscaGetFunctionType.GET_INPUT;
-        this.updateInstancePropertiesWithInput(checkedProperties, selectedInstanceData);
+        const selectedInstanceData: ComponentInstance = this.getSelectedComponentInstance();
+        if (!selectedInstanceData) {
+            return;
+        }
+        const property: PropertyBEModel = this.buildCheckedInstanceProperty();
+        if (property.isToscaGetFunction()) {
+            this.clearCheckedInstancePropertyValue();
+            return;
+        }
+        this.openToscaGetFunctionModal();
     }
 
-    updateInstancePropertiesWithInput(checkedProperties: PropertyBEModel[], selectedInstanceData: any) {
+    private getSelectedComponentInstance(): ComponentInstance {
+        const instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
+        const instanceId: string = instancesIds[0];
+        return <ComponentInstance> this.instances.find(instance => instance.uniqueId == instanceId && instance instanceof ComponentInstance);
+    }
+
+    private buildCheckedInstanceProperty(): PropertyBEModel {
+        return this.buildCheckedInstanceProperties()[0];
+    }
+
+    private buildCheckedInstanceProperties(): PropertyBEModel[] {
+        const instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
+        const instanceId: string = instancesIds[0];
+        return this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
+    }
+
+    private openToscaGetFunctionModal() {
+        const modalTitle = 'Set value using TOSCA functions';
+        const modal = this.modalService.createCustomModal(new ModalModel(
+            'sm',
+            modalTitle,
+            null,
+            [
+                new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
+                    () => {
+                        const selectedToscaFunction = modal.instance.dynamicContent.instance.selectToscaFunction;
+                        const selectedPropertyFromModal:PropertyDropdownValue = modal.instance.dynamicContent.instance.selectedProperty;
+                        const toscaFunctionType: ToscaGetFunctionType = ToscaGetFunctionTypeConverter.convertFromString(selectedToscaFunction);
+                        this.updateCheckedInstancePropertyGetFunctionValue(selectedPropertyFromModal, toscaFunctionType);
+                        modal.instance.close();
+                    }
+                ),
+                new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
+                    modal.instance.close();
+                }),
+            ],
+            null /* type */
+        ));
+        const checkedInstanceProperty = this.buildCheckedInstanceProperty();
+        this.modalService.addDynamicContentToModalAndBindInputs(modal, ToscaFunctionComponent, {
+            'property': checkedInstanceProperty,
+        });
+        modal.instance.open();
+    }
+
+    private clearCheckedInstancePropertyValue() {
+        const checkedInstanceProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
+        checkedInstanceProperty.getInputValues = null;
+        checkedInstanceProperty.value = null;
+        checkedInstanceProperty.toscaGetFunction = null;
+        this.updateInstanceProperty(checkedInstanceProperty);
+    }
+
+    private updateCheckedInstancePropertyGetFunctionValue(propertyToGet: PropertyDropdownValue, toscaGetFunctionType: ToscaGetFunctionType) {
+        const toscaGetFunctionBuilder: ToscaGetFunctionDtoBuilder =
+            new ToscaGetFunctionDtoBuilder()
+                .withPropertyUniqueId(propertyToGet.propertyId)
+                .withFunctionType(toscaGetFunctionType)
+                .withPropertySource(PropertySource.SELF)
+                .withPropertyName(propertyToGet.propertyName)
+                .withSourceName(this.component.name)
+                .withSourceUniqueId(this.component.uniqueId);
+
+        const checkedProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
+        if (propertyToGet.propertyPath && propertyToGet.propertyPath.length) {
+            toscaGetFunctionBuilder.withPropertyPathFromSource(propertyToGet.propertyPath);
+        }
+        checkedProperty.toscaGetFunction = toscaGetFunctionBuilder.build();
+        this.updateInstanceProperty(checkedProperty);
+    }
+
+    updateInstanceProperty(instanceProperty: PropertyBEModel) {
+        this.loadingProperties = true;
         this.componentInstanceServiceNg2.updateInstanceProperties(this.component.componentType, this.component.uniqueId,
-            this.selectedInstanceData.uniqueId, checkedProperties)
+            this.selectedInstanceData.uniqueId, [instanceProperty])
         .subscribe(() => {
-            this.changeSelectedInstance(selectedInstanceData);
+            this.changeSelectedInstance(this.getSelectedComponentInstance());
         }, (error) => {
-            this.Notification.error({
-                message: 'Failed to select/deselect get_input call: ' + error,
-                title: 'Failure'
+            const errorMsg =
+                this.translateService.translate('TOSCA_FUNCTION_SELECT_ERROR', {'propertyName': instanceProperty.name, 'error': error});
+            this.notification.error({
+                title: this.translateService.translate('FAILURE_LABEL'),
+                message: errorMsg
             });
+            console.error(errorMsg, error);
         }, () => {
             this.loadingProperties = false;
             this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
@@ -584,10 +614,10 @@ export class PropertiesAssignmentComponent {
             let checkedProperties: PropertyBEModel[] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
             angular.forEach(checkedProperties, (property: PropertyBEModel) => {
                 if(this.checkedPropertiesCount == 1) {
-                    if (property.toscaGetFunctionType == null) {
-                        this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
+                    if (property.isToscaGetFunction()) {
+                        this.btnToscaFunctionText = this.translateService.translate('CLEAR_VALUE_LABEL');
                     } else {
-                        this.btnToscaFunctionText = this.translateService.translate('DESELECT_INPUT_LABEL');
+                        this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
                     }
                 } else {
                     this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
@@ -598,7 +628,7 @@ export class PropertiesAssignmentComponent {
 
     /*** DECLARE PROPERTIES/INPUTS ***/
     declareProperties = (): void => {
-        console.log("==>" + this.constructor.name + ": declareProperties");
+        console.debug("==>" + this.constructor.name + ": declareProperties");
 
         let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let selectedGroupInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
@@ -671,8 +701,6 @@ export class PropertiesAssignmentComponent {
     };
 
     declareListProperties = (): void => {
-        console.log('declareListProperties() - enter');
-
         // get selected properties
         let selectedComponentInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
         let selectedGroupInstancesProperties: InstanceBePropertiesMap = new InstanceBePropertiesMap();
@@ -683,7 +711,6 @@ export class PropertiesAssignmentComponent {
         let insId :string;
 
         angular.forEach(instancesIds, (instanceId: string): void => {
-            console.log("instanceId="+instanceId);
             insId = instanceId;
             let selectedInstanceData: any = this.instances.find(instance => instance.uniqueId == instanceId);
             let checkedProperties: PropertyBEModel[] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
@@ -709,7 +736,7 @@ export class PropertiesAssignmentComponent {
         let inputsToCreate: InstancePropertiesAPIMap = new InstancePropertiesAPIMap(selectedComponentInstancesInputs, selectedComponentInstancesProperties, selectedGroupInstancesProperties, selectedPolicyInstancesProperties);
 
         let modalTitle = 'Declare Properties as List Input';
-        const modal = this.ModalService.createCustomModal(new ModalModel(
+        const modal = this.modalService.createCustomModal(new ModalModel(
             'sm', /* size */
             modalTitle, /* title */
             null, /* content */
@@ -752,7 +779,6 @@ export class PropertiesAssignmentComponent {
                             componentInstInputsMap: content.inputsToCreate,
                             listInput: reglistInput
                         };
-                        console.log("save button clicked. input=", input);
 
                         this.topologyTemplateService
                         .createListInput(this.component, input, this.isSelf())
@@ -783,9 +809,8 @@ export class PropertiesAssignmentComponent {
             null /* type */
         ));
         // 3rd arg is passed to DeclareListComponent instance
-        this.ModalService.addDynamicContentToModal(modal, DeclareListComponent, {properties: inputsToCreate, propertyNameList: propertyNameList});
+        this.modalService.addDynamicContentToModal(modal, DeclareListComponent, {properties: inputsToCreate, propertyNameList: propertyNameList});
         modal.instance.open();
-        console.log('declareListProperties() - leave');
     };
 
      /*** DECLARE PROPERTIES/POLICIES ***/
@@ -879,11 +904,9 @@ export class PropertiesAssignmentComponent {
                                 const changedProp = <PropertyFEModel>this.changedData.shift();
                                 this.propertiesUtils.resetPropertyValue(changedProp, resInput.value);
                             });
-                            console.log('updated instance inputs:', response);
                         };
                     } else {
                         if (this.isSelf()) {
-                            console.log("changedProperties", changedProperties);
                             request = this.topologyTemplateService.updateServiceProperties(this.component.uniqueId,  _.map(changedProperties, cp => {
                                 delete cp.constraints;
                                 return cp;
@@ -899,7 +922,6 @@ export class PropertiesAssignmentComponent {
                                 this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
                             });
                             resolve(response);
-                            console.log("updated instance properties: ", response);
                         };
                     }
                 } else if (this.selectedInstanceData instanceof GroupInstance) {
@@ -912,7 +934,6 @@ export class PropertiesAssignmentComponent {
                             this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
                         });
                         resolve(response);
-                        console.log("updated group instance properties: ", response);
                     };
                 } else if (this.selectedInstanceData instanceof PolicyInstance) {
                     request = this.componentInstanceServiceNg2
@@ -924,7 +945,6 @@ export class PropertiesAssignmentComponent {
                             this.propertiesUtils.resetPropertyValue(changedProp, resProp.value);
                         });
                         resolve(response);
-                        console.log("updated policy instance properties: ", response);
                     };
                 }
             } else if (this.isInputsTabSelected) {
@@ -945,7 +965,6 @@ export class PropertiesAssignmentComponent {
                         changedInput.required = resInput.required;
                         changedInput.requiredOrig = resInput.required;
                     });
-                    console.log("updated the component inputs and got this response: ", response);
                 }
             }
 
@@ -1010,9 +1029,9 @@ export class PropertiesAssignmentComponent {
         if (curHasChangedData !== this.hasChangedData) {
             this.hasChangedData = curHasChangedData;
             if(this.hasChangedData) {
-                this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.hasChangedData, this.showUnsavedChangesAlert);
+                this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, this.hasChangedData, this.showUnsavedChangesAlert);
             } else {
-                this.EventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, false);
+                this.eventListenerService.notifyObservers(EVENTS.ON_WORKSPACE_UNSAVED_CHANGES, false);
             }
         } 
         return this.hasChangedData;
@@ -1021,14 +1040,14 @@ export class PropertiesAssignmentComponent {
     doSaveChangedData = (onSuccessFunction?:Function, onError?:Function):void => {
         this.saveChangedData().then(
             () => {
-                this.Notification.success({
+                this.notification.success({
                     message: 'Successfully saved changes',
                     title: 'Saved'
                 });
                 if(onSuccessFunction) onSuccessFunction();
             },
             () => {
-                this.Notification.error({
+                this.notification.error({
                     message: 'Failed to save changes!',
                     title: 'Failure'
                 });
@@ -1080,7 +1099,7 @@ export class PropertiesAssignmentComponent {
     //used for declare button, to keep count of newly checked properties (and ignore declared properties)
     updateCheckedPropertyCount = (increment: boolean): void => {
         this.checkedPropertiesCount += (increment) ? 1 : -1;
-        console.log("CheckedProperties count is now.... " + this.checkedPropertiesCount);
+        console.debug("CheckedProperties count is now.... " + this.checkedPropertiesCount);
         this.selectInputBtnLabel();
     };
 
@@ -1106,7 +1125,7 @@ export class PropertiesAssignmentComponent {
         //reset any unsaved changes to the input before deleting it
         this.resetUnsavedChangesForInput(input);
 
-        console.log("==>" + this.constructor.name + ": deleteInput");
+        console.debug("==>" + this.constructor.name + ": deleteInput");
         let inputToDelete = new InputBEModel(input);
 
         this.componentServiceNg2
@@ -1139,7 +1158,6 @@ export class PropertiesAssignmentComponent {
             .deletePolicy(this.component, policy)
             .subscribe((response) => {
                 this.policies = this.policies.filter(policy => policy.uniqueId !== response.uniqueId);
-                //Reload the whole instance for now - TODO: CHANGE THIS after the BE starts returning properties within the response, use commented code below instead!
                 this.changeSelectedInstance(this.selectedInstanceData);
                 this.loadingPolicies = false;
             });
@@ -1165,7 +1183,7 @@ export class PropertiesAssignmentComponent {
     addProperty = (model: string) => {
         this.loadDataTypesByComponentModel(model)
         let modalTitle = 'Add Property';
-        let modal = this.ModalService.createCustomModal(new ModalModel(
+        let modal = this.modalService.createCustomModal(new ModalModel(
             'sm',
             modalTitle,
             null,
@@ -1181,7 +1199,7 @@ export class PropertiesAssignmentComponent {
                             modal.instance.close();
                         }, (error) => {
                             modal.instance.dynamicContent.instance.isLoading = false;
-                            this.Notification.error({
+                            this.notification.error({
                                 message: 'Failed to add property:' + error,
                                 title: 'Failure'
                             });
@@ -1194,13 +1212,13 @@ export class PropertiesAssignmentComponent {
             null
         ));
         modal.instance.open();
-        this.ModalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
+        this.modalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
     }
 
     /*** addInput ***/
     addInput = () => {
         let modalTitle = 'Add Input';
-        let modal = this.ModalService.createCustomModal(new ModalModel(
+        let modal = this.modalService.createCustomModal(new ModalModel(
             'sm',
             modalTitle,
             null,
@@ -1216,7 +1234,7 @@ export class PropertiesAssignmentComponent {
                             modal.instance.close();
                         }, (error) => {
                             modal.instance.dynamicContent.instance.isLoading = false;
-                            this.Notification.error({
+                            this.notification.error({
                                 message: 'Failed to add input:' + error,
                                 title: 'Failure'
                             });
@@ -1228,7 +1246,7 @@ export class PropertiesAssignmentComponent {
             ],
             null
         ));
-        this.ModalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
+        this.modalService.addDynamicContentToModal(modal, PropertyCreatorComponent, {});
         modal.instance.open();
     }
 
