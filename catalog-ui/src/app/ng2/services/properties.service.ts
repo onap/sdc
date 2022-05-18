@@ -25,8 +25,6 @@ import { PropertyFEModel, PropertyBEModel, PropertyDeclareAPIModel, DerivedFEPro
 @Injectable()
 export class PropertiesService {
 
-    checkedPropertyType: string;
-
     constructor() {
     }
 
@@ -81,14 +79,6 @@ export class PropertiesService {
             }
         });
         return selectedProps;
-    }
-
-    setCheckedPropertyType(type: string){
-        this.checkedPropertyType = type;
-    }
-
-    getCheckedPropertyType(){
-        return this.checkedPropertyType;
     }
 
 

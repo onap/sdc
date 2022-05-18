@@ -17,18 +17,29 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.datatypes.tosca;
+import {ToscaGetFunctionType} from './tosca-get-function-type';
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+export class ToscaGetFunctionTypeConverter {
 
-@AllArgsConstructor
-@Getter
-public enum ToscaGetFunctionType {
-    GET_INPUT("get_input", "input"),
-    GET_PROPERTY("get_property", "property"),
-    GET_ATTRIBUTE("get_attribute", "attribute");
+  static convertFromString(toscaGetFunction: string): ToscaGetFunctionType {
+    if (!toscaGetFunction) {
+      return;
+    }
 
-    private final String functionName;
-    private final String propertyType;
+    if (ToscaGetFunctionType.GET_INPUT === toscaGetFunction.toUpperCase()) {
+      return ToscaGetFunctionType.GET_INPUT;
+    }
+
+    if (ToscaGetFunctionType.GET_PROPERTY === toscaGetFunction.toUpperCase()) {
+      return ToscaGetFunctionType.GET_PROPERTY;
+    }
+
+    if (ToscaGetFunctionType.GET_ATTRIBUTE === toscaGetFunction.toUpperCase()) {
+      return ToscaGetFunctionType.GET_ATTRIBUTE;
+    }
+
+    return undefined;
+
+  }
+
 }

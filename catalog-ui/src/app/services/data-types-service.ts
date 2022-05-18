@@ -71,13 +71,13 @@ export class DataTypesService implements IDataTypesService {
     selectedInstance:ComponentInstance;
     selectedComponentInputs:Array<InputModel>;
 
-    public loadDataTypesCache = (modelName: string): void => {
+    public loadDataTypesCache = async (modelName: string): Promise<void> => {
         let model;
         if (modelName) {
             model = {'model': modelName}
         }
-        this.$http.get(this.baseUrl+"dataTypes", {params: model})
-        .then((response:any) => {
+        await this.$http.get(this.baseUrl + "dataTypes", {params: model})
+        .then((response: any) => {
             this.dataTypes = response.data;
             delete this.dataTypes['tosca.datatypes.Root'];
         });

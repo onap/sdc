@@ -110,6 +110,18 @@ export class ModalService {
         return modalInstance;
     }
 
+    public addDynamicContentToModalAndBindInputs = (modalInstance: ComponentRef<ModalComponent>, dynamicComponentType: Type<any>,
+                                                    dynamicComponentInput?: Object) => {
+
+        const dynamicContent = this.dynamicComponentService
+            .createDynamicComponent(dynamicComponentType, modalInstance.instance.dynamicContentContainer);
+        for (const key of Object.keys(dynamicComponentInput)) {
+            dynamicContent.instance[key] = dynamicComponentInput[key];
+        }
+        modalInstance.instance.dynamicContent = dynamicContent;
+        return modalInstance;
+    }
+
     public addDynamicTemplateToModal = (modalInstance: ComponentRef<ModalComponent>, templateRef: TemplateRef<void>) => {
         modalInstance.instance.dynamicContentContainer.clear();
         modalInstance.instance.dynamicContentContainer.createEmbeddedView(templateRef);
