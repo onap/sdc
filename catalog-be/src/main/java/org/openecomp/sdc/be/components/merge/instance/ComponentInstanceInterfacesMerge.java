@@ -19,7 +19,9 @@
  */
 package org.openecomp.sdc.be.components.merge.instance;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -30,6 +32,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -69,34 +72,41 @@ public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeI
         if (CollectionUtils.isEmpty(currentComponent.getComponentInstancesInterfaces().get(instanceId))) {
             return ActionStatus.OK;
         }
-        currentComponent.getComponentInstancesInterfaces().get(instanceId).stream().forEach(
-            newInterfaceDef -> newInterfaceDef.getOperationsMap().values().forEach(
-                newOperationDef -> prevInstanceInterfaces.stream().filter(in -> in.getUniqueId().equals(newInterfaceDef.getUniqueId())).forEach(
-                    prevInterfaceDef -> prevInterfaceDef.getOperationsMap().values().stream()
-                        .filter(in1 -> in1.getUniqueId().equals(newOperationDef.getUniqueId()))
-                        .forEach(oldOperationDef -> {
-                            if(oldOperationDef.getInputs() != null) {
-                                if(newOperationDef.getInputs() == null) {
-                                    newOperationDef.setInputs(new ListDataDefinition<>());
+        currentComponent.getComponentInstancesInterfaces().get(instanceId).forEach(
+            newInterfaceDef -> {
+                Map<String, Operation> newInterfaceDefOperationMap = new HashMap<>();
+                newInterfaceDef.getOperationsMap().forEach(
+                    (newOperationDefKey, newOperationDefKeyValue) -> prevInstanceInterfaces.stream().filter(in -> in.getUniqueId().equals(newInterfaceDef.getUniqueId())).forEach(
+                        prevInterfaceDef -> prevInterfaceDef.getOperationsMap().values().stream()
+                            .filter(in1 -> in1.getUniqueId().equals(newOperationDefKeyValue.getUniqueId()))
+                            .forEach(oldOperationDef -> {
+                                if (oldOperationDef.getInputs() != null) {
+                                    if (newOperationDefKeyValue.getInputs() == null) {
+                                        newOperationDefKeyValue.setInputs(new ListDataDefinition<>());
+                                    }
+                                    mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDefKeyValue.getInputs());
                                 }
-                                mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDef.getInputs());
-                            }
-                        }))));
+                                newOperationDefKeyValue.setImplementation(oldOperationDef.getImplementation());
+                                newOperationDefKeyValue.setDescription(oldOperationDef.getDescription());
+                                newInterfaceDefOperationMap.put(newOperationDefKey, newOperationDefKeyValue);
+                            })));
+                newInterfaceDef.setOperationsMap(newInterfaceDefOperationMap);
+            });
         StorageOperationStatus updateStatus = toscaOperationFacade.updateComponentInstanceInterfaces(currentComponent, instanceId);
         return componentsUtils.convertFromStorageResponse(updateStatus);
     }
 
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> origInputs,
                                                 ListDataDefinition<OperationInputDefinition> newInputs) {
-            newInputs.getListToscaDataDefinition().
-                forEach(inp -> origInputs.getListToscaDataDefinition().stream().filter(in -> in.getInputId().equals(inp.getInputId())).
-                    forEach(in -> {
-                        inp.setSourceProperty(in.getSourceProperty());
-                        inp.setSource(in.getSource());
-                        inp.setValue(in.getValue());
-                    }));
-            origInputs.getListToscaDataDefinition().stream().
-                    filter(inp -> newInputs.getListToscaDataDefinition().stream().noneMatch(in -> in.getInputId().equals(inp.getInputId()))).
-                    forEach(inp -> newInputs.getListToscaDataDefinition().add(inp));
+        newInputs.getListToscaDataDefinition()
+            .forEach(inp -> origInputs.getListToscaDataDefinition().stream().filter(in -> in.getInputId().equals(inp.getInputId()))
+                .forEach(in -> {
+                    inp.setSourceProperty(in.getSourceProperty());
+                    inp.setSource(in.getSource());
+                    inp.setValue(in.getValue());
+                }));
+        origInputs.getListToscaDataDefinition().stream()
+        .filter(inp -> newInputs.getListToscaDataDefinition().stream().noneMatch(in -> in.getInputId().equals(inp.getInputId())))
+        .forEach(inp -> newInputs.getListToscaDataDefinition().add(inp));
     }
 }
