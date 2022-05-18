@@ -33,6 +33,7 @@ import { TopologyTemplateService } from '../../../services/component-services/to
 import {CapabilitiesFilterPropertiesEditorComponent} from "../../../pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.component";
 import { CapabilitiesConstraintObjectUI} from "../capabilities-constraint/capabilities-constraint.component";
 import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
+import {CompositionService} from "../../../pages/composition/composition.service";
 
 export class ConstraintObject {
     servicePropertyName: string;
@@ -159,7 +160,10 @@ export class ServiceDependenciesComponent {
 
     @Input() componentInstanceCapabilitiesMap: Map<string, PropertyModel[]>;
 
-    constructor(private topologyTemplateService: TopologyTemplateService, private modalServiceNg2: ModalService, private translateService: TranslateService) {
+    constructor(private topologyTemplateService: TopologyTemplateService,
+                private modalServiceNg2: ModalService,
+                private translateService: TranslateService,
+                private compositionService: CompositionService) {
     }
 
     ngOnInit() {
@@ -270,6 +274,9 @@ export class ServiceDependenciesComponent {
                                                              this.compositeService.componentType,
                                                              this.currentServiceInstance)
                                                              .subscribe((updatedServiceIns: ComponentInstance) => {
+            const selectedComponentInstance = this.compositionService.getComponentInstances()
+            .find(componentInstance => componentInstance.uniqueId == this.currentServiceInstance.uniqueId);
+            selectedComponentInstance.directives = updatedServiceIns.directives;
             this.currentServiceInstance = new ComponentInstance(updatedServiceIns);
             this.isDependent = this.currentServiceInstance.isDependent();
             this.dependencyStatus.emit(this.isDependent);
