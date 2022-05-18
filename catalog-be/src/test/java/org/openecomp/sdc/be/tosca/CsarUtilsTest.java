@@ -160,13 +160,15 @@ class CsarUtilsTest extends BaseConfDependent {
 	@Test
 	void testCreateCsar() {
 		Component component = new Resource();
-		Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+		Map<String, ArtifactDefinition> artifactDefinitionHashMap = new HashMap<>();
 		ArtifactDefinition artifact = new ArtifactDefinition();
 		artifact.setArtifactName("artifactName");
 		artifact.setEsId("esId");
-		toscaArtifacts.put("assettoscatemplate", artifact);
+		artifactDefinitionHashMap.put("assettoscatemplate", artifact);
 
-		component.setToscaArtifacts(toscaArtifacts);
+		component.setToscaArtifacts(artifactDefinitionHashMap);
+		component.setArtifacts(artifactDefinitionHashMap);
+		component.setDeploymentArtifacts(artifactDefinitionHashMap);
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
 				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
