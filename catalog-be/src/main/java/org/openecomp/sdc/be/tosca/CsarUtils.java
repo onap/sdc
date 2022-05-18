@@ -368,24 +368,42 @@ public class CsarUtils {
      * @param isInCertificationRequest
      * @return
      */
-    public Either<byte[], ResponseFormat> createCsar(Component component, boolean getFromCS, boolean isInCertificationRequest) {
+    public Either<byte[], ResponseFormat> createCsar(final Component component, final boolean getFromCS, final boolean isInCertificationRequest) {
         loggerSupportability
             .log(LoggerSupportabilityActions.GENERATE_CSAR, StatusCode.STARTED, "Starting to create Csar for component {} ", component.getName());
         final String createdBy = component.getCreatorFullName();
-        String fileName;
-        Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
-        ArtifactDefinition artifactDefinition = toscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
-        fileName = artifactDefinition.getArtifactName();
-        String toscaConformanceLevel = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
-        String csarBlock0 = createCsarBlock0(CSAR_META_VERSION, toscaConformanceLevel);
-        byte[] csarBlock0Byte = csarBlock0.getBytes();
-        final String toscaBlock0 = createToscaBlock0(TOSCA_META_VERSION, CSAR_VERSION, createdBy, fileName);
-        byte[] toscaBlock0Byte = toscaBlock0.getBytes();
+        final Map<String, ArtifactDefinition> toscaArtifacts = component.getToscaArtifacts();
+        final ArtifactDefinition artifactDefinition = toscaArtifacts.get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
+        final String fileName = artifactDefinition.getArtifactName();
+        final String toscaConformanceLevel = ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel();
+        final byte[] csarBlock0Byte = createCsarBlock0(CSAR_META_VERSION, toscaConformanceLevel).getBytes();
+        final byte[] toscaBlock0Byte = createToscaBlock0(TOSCA_META_VERSION, CSAR_VERSION, createdBy, fileName, isAsdPackage(component)).getBytes();
+
         return generateCsarZip(csarBlock0Byte, toscaBlock0Byte, component, getFromCS, isInCertificationRequest).left().map(responseFormat -> {
             loggerSupportability
                 .log(LoggerSupportabilityActions.GENERATE_CSAR, StatusCode.COMPLETE, "Ended create Csar for component {} ", component.getName());
             return responseFormat;
         });
+    }
+
+    private boolean isAsdPackage(final Component component) {
+        final Either<CsarDefinition, ResponseFormat> collectedComponentCsarDefinition = collectComponentCsarDefinition(component);
+        if (collectedComponentCsarDefinition.isLeft()) {
+            final ComponentArtifacts componentArtifacts = collectedComponentCsarDefinition.left().value().getComponentArtifacts();
+            if (componentArtifacts != null) {
+                final ComponentTypeArtifacts mainTypeAndCIArtifacts = componentArtifacts.getMainTypeAndCIArtifacts();
+                if (mainTypeAndCIArtifacts != null) {
+                    final ArtifactsInfo artifactsInfo = mainTypeAndCIArtifacts.getComponentArtifacts();
+                    if (artifactsInfo != null) {
+                        final Map<ArtifactGroupTypeEnum, Map<String, List<ArtifactDefinition>>> artifactsInfosMap = artifactsInfo.getArtifactsInfo();
+                        if (MapUtils.isNotEmpty(artifactsInfosMap) && artifactsInfosMap.containsKey(ArtifactGroupTypeEnum.DEPLOYMENT)) {
+                            return artifactsInfosMap.get(ArtifactGroupTypeEnum.DEPLOYMENT).containsKey(ArtifactTypeEnum.ASD_PACKAGE.getType());
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private Either<byte[], ResponseFormat> generateCsarZip(byte[] csarBlock0Byte, byte[] toscaBlock0Byte, Component component, boolean getFromCS,
@@ -793,7 +811,7 @@ public class CsarUtils {
     }
 
     private Try<Void> writeComponentInterface(
-            Either<ToscaRepresentation,ToscaError> interfaceRepresentation, String fileName, ZipWriter zw) {
+        Either<ToscaRepresentation, ToscaError> interfaceRepresentation, String fileName, ZipWriter zw) {
         Either<byte[], ToscaError> yml = interfaceRepresentation.left()
             .map(ToscaRepresentation::getMainYaml);
         return fromEither(yml, ToscaErrorException::new).flatMap(zw.write(DEFINITIONS_PATH + ToscaExportHandler.getInterfaceFilename(fileName)));
@@ -873,9 +891,9 @@ public class CsarUtils {
         return String.format(BLOCK_0_TEMPLATE, metaFileVersion, toscaConformanceLevel);
     }
 
-    private String createToscaBlock0(String metaFileVersion, String csarVersion, String createdBy, String entryDef) {
-        final String block0template = "TOSCA-Meta-File-Version: %s\nCSAR-Version: %s\nCreated-By: %s\nEntry-Definitions: Definitions/%s\n\nName: csar.meta\nContent-Type: text/plain\n";
-        return String.format(block0template, metaFileVersion, csarVersion, createdBy, entryDef);
+    private String createToscaBlock0(String metaFileVersion, String csarVersion, String createdBy, String entryDef, boolean isAsdPackage) {
+        final String block0template = "TOSCA-Meta-File-Version: %s\nCSAR-Version: %s\nCreated-By: %s\nEntry-Definitions: Definitions/%s\n%s\nName: csar.meta\nContent-Type: text/plain\n";
+        return String.format(block0template, metaFileVersion, csarVersion, createdBy, entryDef, isAsdPackage ? "entry_definition_type: asd" : "");
     }
 
     private String createNsMfBlock0(String serviceName, String createdBy, String serviceVersion, String releaseTime, String serviceType,
