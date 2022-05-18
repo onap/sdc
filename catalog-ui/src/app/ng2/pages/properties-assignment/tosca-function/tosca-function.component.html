@@ -27,12 +27,13 @@
                 [ngValue]="toscaFunction">{{toscaFunction}}</option>
       </select>
     </div>
-    <div *ngIf="selectToscaFunction" class="i-sdc-form-item">
+    <div *ngIf="showDropdown()" class="i-sdc-form-item">
       <label class="i-sdc-form-label required">{{dropdownValuesLabel}}</label>
-        <select [(ngModel)]="selectValue" name="selectValue">
-          <option *ngFor="let value of dropdownValues"
-                  [ngValue]="value">{{value.name}}</option>
-        </select>
+      <select [(ngModel)]="selectedProperty" name="selectedProperty">
+        <option *ngFor="let value of propertyDropdownList" [ngValue]="value">{{value.propertyLabel}}</option>
+      </select>
     </div>
+    <div *ngIf="dropDownErrorMsg">{{dropDownErrorMsg}}</div>
   </form>
+  <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
 </div>

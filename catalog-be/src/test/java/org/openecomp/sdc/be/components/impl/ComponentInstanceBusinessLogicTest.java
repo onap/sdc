@@ -35,6 +35,7 @@ import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,32 +49,32 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import mockit.Deencapsulation;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ToscaGetFunctionExceptionSupplier;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -82,11 +83,15 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.exception.BusinessException;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -103,6 +108,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -129,9 +135,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 /**
  * The test suite designed for test functionality of ComponentInstanceBusinessLogic class
  */
-
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class ComponentInstanceBusinessLogicTest {
 
     private final static String USER_ID = "jh0003";
@@ -161,13 +164,7 @@ class ComponentInstanceBusinessLogicTest {
     private final static String INPUT_ID = "inputId";
     private final static String ICON_NAME = "icon";
 
-    private static ConfigurationSource configurationSource = new FSConfigurationSource(
-        ExternalConfiguration.getChangeListener(),
-        "src/test/resources/config/catalog-be");
-    private static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
-    @InjectMocks
-    private static ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     @Mock
     private ComponentInstancePropInput componentInstancePropInput;
     @Mock
@@ -203,9 +200,34 @@ class ComponentInstanceBusinessLogicTest {
     private List<ComponentInstanceProperty> ciPropertyList;
     private List<ComponentInstanceInput> ciInputList;
 
+    @BeforeAll
+    static void beforeAll() {
+        initConfig();
+    }
+
+    private static void initConfig() {
+        final ConfigurationSource configurationSource = new FSConfigurationSource(
+            ExternalConfiguration.getChangeListener(),
+            "src/test/resources/config/catalog-be"
+        );
+        new ConfigurationManager(configurationSource);
+    }
+
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
+        componentInstanceBusinessLogic = new ComponentInstanceBusinessLogic(null, null, null, null, null, null, null, artifactsBusinessLogic, null,
+            null, forwardingPathOperation, null, null);
+        componentInstanceBusinessLogic.setComponentsUtils(componentsUtils);
+        componentInstanceBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+        componentInstanceBusinessLogic.setUserValidations(userValidations);
+        componentInstanceBusinessLogic.setGraphLockOperation(graphLockOperation);
+        componentInstanceBusinessLogic.setJanusGraphDao(janusGraphDao);
+        componentInstanceBusinessLogic.setApplicationDataTypeCache(applicationDataTypeCache);
+        componentInstanceBusinessLogic.setPropertyOperation(propertyOperation);
+        componentInstanceBusinessLogic.setContainerInstanceTypesData(containerInstanceTypeData);
+        componentInstanceBusinessLogic.setCompositionBusinessLogic(compositionBusinessLogic);
+
         stubMethods();
         createComponents();
     }
@@ -273,7 +295,7 @@ class ComponentInstanceBusinessLogicTest {
         when(toscaOperationFacade.getToscaElement(eq(containerComponentID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(component));
         when(toscaOperationFacade.validateComponentExists(any(String.class))).thenReturn(Either.left(Boolean.TRUE));
-        when(toscaOperationFacade.getToscaFullElement(eq(new_Comp_UID))).thenReturn(Either.left(component2));
+        when(toscaOperationFacade.getToscaFullElement(new_Comp_UID)).thenReturn(Either.left(component2));
 
         Either<Set<String>, ResponseFormat> resultOp = componentInstanceBusinessLogic
             .forwardingPathOnVersionChange(containerComponentParam,
@@ -340,6 +362,357 @@ class ComponentInstanceBusinessLogicTest {
             .createOrUpdatePropertiesValues(
                 ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentID, resourceInstanceId, properties, "userId");
         assertThat(responseFormatEither.left().value()).isEqualTo(properties);
+    }
+
+    @Test
+    void testToscaGetFunctionValidation() {
+        final String userId = "userId";
+        final String containerComponentId = "containerComponentId";
+        final String containerComponentName = "containerComponentName";
+        final String resourceInstanceId = "resourceInstanceId";
+        final String inputName = "myInputToGet";
+        final String inputId = String.format("%s.%s", containerComponentId, inputName);
+        final String schemaType = "string";
+        //creating instance list of string property with get_input value
+        final ComponentInstanceProperty propertyGetInput = new ComponentInstanceProperty();
+        propertyGetInput.setName("getInputProperty");
+        propertyGetInput.setPropertyId(String.format("%s.%s", containerComponentId, "getInputProperty"));
+        propertyGetInput.setValue(String.format("get_input: [\"%s\"]", inputName));
+        propertyGetInput.setType("list");
+        final SchemaDefinition listStringPropertySchema = createSchema(schemaType);
+        propertyGetInput.setSchema(listStringPropertySchema);
+        propertyGetInput.setToscaGetFunction(
+            createGetToscaFunction(inputName, inputId, List.of(propertyGetInput.getName()), PropertySource.SELF, ToscaGetFunctionType.GET_INPUT,
+                containerComponentId, containerComponentName)
+        );
+        //creating instance map of string property with get_input value to a second level property:
+        // get_input: ["property1", "subProperty1", "subProperty2"]
+        final String getPropertyPropertyName = "getPropertyProperty";
+        final List<String> containerPropertyPath = List.of("property1", "subProperty1", "subProperty2");
+        final String containerPropertyId = String.format("%s.%s", containerComponentId, containerPropertyPath.get(0));
+        final String mapToscaType = "map";
+        final ComponentInstanceProperty propertyGetProperty = createComponentInstanceProperty(
+            String.format("%s.%s", containerComponentId, getPropertyPropertyName),
+            getPropertyPropertyName,
+            mapToscaType,
+            "string",
+            String.format("get_property: [\"%s\"]", String.join(",", containerPropertyPath)),
+            createGetToscaFunction(containerPropertyPath.get(containerPropertyPath.size() - 1), containerPropertyId,
+                containerPropertyPath, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, containerComponentId, containerComponentName)
+        );
+
+        //creating component that has the instance properties
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setName(containerComponentName);
+        component.setLastUpdaterUserId(userId);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        //adding instance properties to the component
+        final List<ComponentInstanceProperty> resourceInstanceProperties = List.of(propertyGetInput, propertyGetProperty);
+        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
+        componentInstanceProps.put(resourceInstanceId, resourceInstanceProperties);
+        component.setComponentInstancesProperties(componentInstanceProps);
+
+        //creating component input that will be gotten by the get_input instance property
+        final var inputDefinition = new InputDefinition();
+        inputDefinition.setName(inputName);
+        inputDefinition.setUniqueId(inputId);
+        inputDefinition.setType(propertyGetInput.getType());
+        inputDefinition.setSchema(listStringPropertySchema);
+        component.setInputs(List.of(inputDefinition));
+
+        //creating component property that contains the sub property that will be gotten by the get_property instance property
+        final var propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setName(containerPropertyPath.get(0));
+        propertyDefinition.setUniqueId(containerPropertyId);
+        final String property1Type = "property1.datatype";
+        propertyDefinition.setType(property1Type);
+        component.setProperties(List.of(propertyDefinition));
+        //creating resource instance to be added to the component
+        final ComponentInstance resourceInstance = createComponentInstance("resourceInstance");
+        resourceInstance.setUniqueId(resourceInstanceId);
+        component.setComponentInstances(List.of(resourceInstance));
+
+        mockComponentForToscaGetFunctionValidation(component);
+
+        //creating data types for "map", and sub properties
+        final Map<String, DataTypeDefinition> allDataTypesMap = new HashMap<>();
+        allDataTypesMap.put(mapToscaType, new DataTypeDefinition());
+
+        final String subProperty1Type = "subProperty1.datatype";
+        allDataTypesMap.put(property1Type, createDataType(property1Type, Map.of(containerPropertyPath.get(1), subProperty1Type)));
+
+        final var subProperty2Property = new PropertyDefinition();
+        subProperty2Property.setName(containerPropertyPath.get(2));
+        subProperty2Property.setType(propertyGetProperty.getType());
+        subProperty2Property.setSchema(propertyGetProperty.getSchema());
+        allDataTypesMap.put(subProperty1Type, createDataType(subProperty1Type, List.of(subProperty2Property)));
+
+        when(applicationDataTypeCache.getAll(component.getModel())).thenReturn(Either.left(allDataTypesMap));
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> actualResponseFormat = componentInstanceBusinessLogic
+            .createOrUpdatePropertiesValues(
+                ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, resourceInstanceProperties, userId);
+        //then
+        assertTrue(actualResponseFormat.isLeft());
+        assertThat(actualResponseFormat.left().value()).isEqualTo(resourceInstanceProperties);
+    }
+
+    private DataTypeDefinition createDataType(final String name, final Map<String, String> propertyNameAndTypeMap) {
+        final var dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setName(name);
+        if (MapUtils.isNotEmpty(propertyNameAndTypeMap)) {
+            for (final Entry<String, String> propertyEntry : propertyNameAndTypeMap.entrySet()) {
+                final var propertyDefinition = new PropertyDefinition();
+                propertyDefinition.setName(propertyEntry.getKey());
+                propertyDefinition.setType(propertyEntry.getValue());
+                dataTypeDefinition.setProperties(List.of(propertyDefinition));
+            }
+        }
+        return dataTypeDefinition;
+    }
+
+    private DataTypeDefinition createDataType(final String name, final List<PropertyDefinition> propertyList) {
+        final var dataTypeDefinition = new DataTypeDefinition();
+        dataTypeDefinition.setName(name);
+        if (CollectionUtils.isNotEmpty(propertyList)) {
+            dataTypeDefinition.setProperties(propertyList);
+        }
+        return dataTypeDefinition;
+    }
+
+    private ComponentInstanceProperty createComponentInstanceProperty(final String uniqueId, final String name, final String type,
+                                                                      final String schemaType, final String value,
+                                                                      final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        final var componentInstanceProperty = new ComponentInstanceProperty();
+        componentInstanceProperty.setName(name);
+        componentInstanceProperty.setUniqueId(uniqueId);
+        componentInstanceProperty.setType(type);
+        componentInstanceProperty.setValue(value);
+        if (schemaType != null) {
+            final SchemaDefinition schemaDefinition = createSchema(schemaType);
+            componentInstanceProperty.setSchema(schemaDefinition);
+        }
+        if (toscaGetFunction != null) {
+            componentInstanceProperty.setToscaGetFunction(toscaGetFunction);
+        }
+
+        return componentInstanceProperty;
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_schemaDivergeTest() {
+        final String userId = "userId";
+        final String containerComponentId = "containerComponentId";
+        final String containerComponentName = "containerComponentName";
+        final String resourceInstanceId = "resourceInstanceId";
+        final String inputName = "myInputToGet";
+        final String inputId = String.format("%s.%s", containerComponentId, inputName);
+        final String propertyName = "getInputProperty";
+        final String propertyId = String.format("%s.%s", containerComponentId, propertyName);
+        final String propertyType = "list";
+        final List<ComponentInstanceProperty> properties = new ArrayList<>();
+        final ComponentInstanceProperty propertyGetInput = createComponentInstanceProperty(
+            propertyId,
+            "getInputProperty",
+            propertyType,
+            "string",
+            String.format("get_input: [\"%s\"]", inputName),
+            createGetToscaFunction(inputName, inputId, List.of(propertyName), PropertySource.SELF, ToscaGetFunctionType.GET_INPUT,
+                containerComponentId, containerComponentName)
+        );
+        properties.add(propertyGetInput);
+
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setName(containerComponentName);
+        component.setLastUpdaterUserId(userId);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        var inputDefinition = new InputDefinition();
+        inputDefinition.setName(inputName);
+        inputDefinition.setUniqueId(inputId);
+        inputDefinition.setType(propertyType);
+        inputDefinition.setSchema(createSchema("integer"));
+        component.setInputs(List.of(inputDefinition));
+
+        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
+        componentInstanceProps.put(resourceInstanceId, properties);
+        component.setComponentInstancesProperties(componentInstanceProps);
+
+        final ComponentInstance resourceInstance = createComponentInstance("componentInstance1");
+        resourceInstance.setUniqueId(resourceInstanceId);
+        component.setComponentInstances(List.of(resourceInstance));
+
+        mockComponentForToscaGetFunctionValidation(component);
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither =
+            componentInstanceBusinessLogic
+                .createOrUpdatePropertiesValues(ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, properties, userId);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse =
+            ToscaGetFunctionExceptionSupplier
+                .propertySchemaDiverge(propertyGetInput.getToscaGetFunction().getFunctionType(), inputDefinition.getSchemaType(),
+                    propertyGetInput.getSchemaType())
+                .get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_propertyTypeDivergeTest() {
+        final String userId = "userId";
+        final String containerComponentId = "containerComponentId";
+        final String containerComponentName = "containerComponentName";
+        final String resourceInstanceId = "resourceInstanceId";
+        final String inputName = "myInputToGet";
+        final String inputId = String.format("%s.%s", containerComponentId, inputName);
+        final String propertyName = "getInputProperty";
+        final String propertyId = String.format("%s.%s", containerComponentId, propertyName);
+        final String propertyType = "string";
+        final List<ComponentInstanceProperty> properties = new ArrayList<>();
+        final ComponentInstanceProperty propertyGetInput = createComponentInstanceProperty(
+            propertyId,
+            "getInputProperty",
+            propertyType,
+            "string",
+            String.format("get_input: [\"%s\"]", inputName),
+            createGetToscaFunction(inputName, inputId, List.of(propertyName), PropertySource.SELF, ToscaGetFunctionType.GET_INPUT,
+                containerComponentId, containerComponentName)
+        );
+        properties.add(propertyGetInput);
+
+        final Component component = new Service();
+        component.setName(containerComponentName);
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(userId);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        var inputDefinition = new InputDefinition();
+        inputDefinition.setName(inputName);
+        inputDefinition.setUniqueId(inputId);
+        inputDefinition.setType("integer");
+        component.setInputs(List.of(inputDefinition));
+
+        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
+        componentInstanceProps.put(resourceInstanceId, properties);
+        component.setComponentInstancesProperties(componentInstanceProps);
+
+        final ComponentInstance resourceInstance = createComponentInstance("componentInstance1");
+        resourceInstance.setUniqueId(resourceInstanceId);
+        component.setComponentInstances(List.of(resourceInstance));
+
+        mockComponentForToscaGetFunctionValidation(component);
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither =
+            componentInstanceBusinessLogic
+                .createOrUpdatePropertiesValues(ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, properties, userId);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse =
+            ToscaGetFunctionExceptionSupplier
+                .propertyTypeDiverge(propertyGetInput.getToscaGetFunction().getFunctionType(), inputDefinition.getType(), propertyGetInput.getType())
+                .get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_toscaFunctionNotSupportedTest() {
+        final String userId = "userId";
+        final String containerComponentId = "containerComponentId";
+        final String containerComponentName = "containerComponentName";
+        final String resourceInstanceId = "resourceInstanceId";
+        final List<ComponentInstanceProperty> properties = new ArrayList<>();
+        final ComponentInstanceProperty propertyGetInput = new ComponentInstanceProperty();
+        propertyGetInput.setName("anyName");
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_ATTRIBUTE);
+        propertyGetInput.setToscaGetFunction(toscaGetFunction);
+        properties.add(propertyGetInput);
+
+        final Component component = new Service();
+        component.setName(containerComponentName);
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(userId);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
+        componentInstanceProps.put(resourceInstanceId, properties);
+        component.setComponentInstancesProperties(componentInstanceProps);
+
+        final ComponentInstance resourceInstance = createComponentInstance("componentInstance1");
+        resourceInstance.setUniqueId(resourceInstanceId);
+        component.setComponentInstances(List.of(resourceInstance));
+
+        mockComponentForToscaGetFunctionValidation(component);
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither =
+            componentInstanceBusinessLogic
+                .createOrUpdatePropertiesValues(ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, properties, userId);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse =
+            ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_propertyNotFoundTest() {
+        final String userId = "userId";
+        final String containerComponentId = "containerComponentId";
+        final String containerComponentName = "containerComponentName";
+        final String resourceInstanceId = "resourceInstanceId";
+        final String inputName = "myInputToGet";
+        final String inputId = String.format("%s.%s", containerComponentId, inputName);
+        final String propertyName = "getInputProperty";
+        final String propertyId = String.format("%s.%s", containerComponentId, propertyName);
+        final String propertyType = "string";
+        final List<ComponentInstanceProperty> properties = new ArrayList<>();
+        final ComponentInstanceProperty propertyGetInput = createComponentInstanceProperty(
+            propertyId,
+            "getInputProperty",
+            propertyType,
+            "string",
+            String.format("get_input: [\"%s\"]", inputName),
+            createGetToscaFunction(inputName, inputId, List.of(propertyName), PropertySource.SELF, ToscaGetFunctionType.GET_INPUT,
+                containerComponentId, containerComponentName)
+        );
+        properties.add(propertyGetInput);
+
+        final Component component = new Service();
+        component.setName(containerComponentName);
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(userId);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
+        componentInstanceProps.put(resourceInstanceId, properties);
+        component.setComponentInstancesProperties(componentInstanceProps);
+
+        final ComponentInstance resourceInstance = createComponentInstance("componentInstance1");
+        resourceInstance.setUniqueId(resourceInstanceId);
+        component.setComponentInstances(List.of(resourceInstance));
+
+        mockComponentForToscaGetFunctionValidation(component);
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither =
+            componentInstanceBusinessLogic
+                .createOrUpdatePropertiesValues(ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, properties, userId);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse =
+            ToscaGetFunctionExceptionSupplier
+                .propertyNotFoundOnTarget(inputName, PropertySource.SELF, ToscaGetFunctionType.GET_INPUT)
+                .get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
     }
 
     @Test
@@ -492,7 +865,7 @@ class ComponentInstanceBusinessLogicTest {
         component.addForwardingPath(createPath("Path2", "NodeA2", "NodeB2", "2"));
         when(toscaOperationFacade.getToscaElement(eq(containerComponentID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(component));
-        when(toscaOperationFacade.getToscaElement(eq(containerComponentID))).thenReturn(Either.left(component));
+        when(toscaOperationFacade.getToscaElement(containerComponentID)).thenReturn(Either.left(component));
         when(forwardingPathOperation.deleteForwardingPath(any(Service.class), anySet()))
             .thenReturn(Either.left(new HashSet<>()));
         final ComponentInstance ci = new ComponentInstance();
@@ -532,7 +905,6 @@ class ComponentInstanceBusinessLogicTest {
         finalDeploymentArtifacts.put(deploymentArtifact3.getArtifactLabel(), deploymentArtifact3);
         finalDeploymentArtifacts.put(heatEnvPlaceHolder.getArtifactLabel(), heatEnvPlaceHolder);
         finalDeploymentArtifacts.put(heatEnvPlaceHolder2.getArtifactLabel(), heatEnvPlaceHolder2);
-
         when(artifactsBusinessLogic.getArtifacts(componentInstance.getComponentUid(), NodeTypeEnum.Resource,
             ArtifactGroupTypeEnum.DEPLOYMENT, null)).thenReturn(getResourceDeploymentArtifacts);
         when(artifactsBusinessLogic.createHeatEnvPlaceHolder(new ArrayList<>(),
@@ -631,8 +1003,7 @@ class ComponentInstanceBusinessLogicTest {
     }
 
     private void getServiceRelationByIdUserValidationFailure(Component component) {
-        when(userValidations.validateUserExists(eq(USER_ID)))
-            .thenThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND));
+        doThrow(new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND)).when(userValidations).validateUserExists(USER_ID);
         try {
             componentInstanceBusinessLogic
                 .getRelationById(COMPONENT_ID, RELATION_ID, USER_ID, component.getComponentType());
@@ -1150,7 +1521,7 @@ class ComponentInstanceBusinessLogicTest {
             componentInstanceUniqueId, capabilityType, capabilityName, properties, userId);
         assertNotNull(result);
     }
-    
+
     @Test
     void testUpdateInstanceRequirement() {
         ComponentInstanceBusinessLogic testSubject;
@@ -1163,7 +1534,7 @@ class ComponentInstanceBusinessLogicTest {
         String capabilityType = "";
         String capabilityName = "";
         RequirementDefinition requirementDef = new RequirementDefinition();
-        
+
         Either<RequirementDefinition, ResponseFormat> result;
 
         when(toscaOperationFacade.getToscaFullElement(containerComponentId)).thenReturn(Either.left(resource));
@@ -1174,7 +1545,7 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(StorageOperationStatus.OK);
         when(graphLockOperation.lockComponent(Mockito.anyString(), eq(NodeTypeEnum.Resource)))
             .thenReturn(StorageOperationStatus.OK);
-        
+
         result = testSubject.updateInstanceRequirement(componentTypeEnum, containerComponentId,
             componentInstanceUniqueId, requirementDef, userId);
         assertEquals(requirementDef, result.left().value());
@@ -1368,7 +1739,7 @@ class ComponentInstanceBusinessLogicTest {
         deleteErrorIds.add(componentInstanceId);
         deleteErrorMap.put("deleteFailedIds", deleteErrorIds);
         Either<Component, StorageOperationStatus> cont = Either.left(service);
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND), eq(null)))
+        when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND, null))
             .thenReturn(ActionStatus.GENERAL_ERROR);
         when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class)))
             .thenReturn(cont);
@@ -1481,7 +1852,7 @@ class ComponentInstanceBusinessLogicTest {
             .thenReturn(StorageOperationStatus.OK);
         Either<RequirementCapabilityRelDef, StorageOperationStatus> resultEither;
         resultEither = Either.right(StorageOperationStatus.OK);
-        when(componentsUtils.convertFromStorageResponseForResourceInstance(eq(StorageOperationStatus.OK), eq(true)))
+        when(componentsUtils.convertFromStorageResponseForResourceInstance(StorageOperationStatus.OK, true))
             .thenReturn(ActionStatus.GENERAL_ERROR);
         when(toscaOperationFacade.dissociateResourceInstances(componentId, ref)).thenReturn(resultEither);
 
@@ -1591,8 +1962,9 @@ class ComponentInstanceBusinessLogicTest {
         componentInst.setDeploymentArtifacts(component.getDeploymentArtifacts());
         return componentInst;
     }
-    
+
     // Prepare ComponentInstance & Resource objects used in createComponentInstance() tests
+
     private Pair<ComponentInstance, Resource> prepareResourcesForCreateComponentInstanceTest() {
         ComponentInstance instanceToBeCreated = new ComponentInstance();
         instanceToBeCreated.setName(COMPONENT_INSTANCE_NAME);
@@ -1608,8 +1980,8 @@ class ComponentInstanceBusinessLogicTest {
 
         return Pair.of(instanceToBeCreated, originComponent);
     }
-
     // Common part for testing component instance name validation
+
     private void testCreateComponentInstanceNameValidationFailure(String ciName) {
         ComponentInstance ci = new ComponentInstance();
         ci.setName(ciName);
@@ -1624,7 +1996,6 @@ class ComponentInstanceBusinessLogicTest {
         });
         assertEquals(ActionStatus.INVALID_COMPONENT_NAME, e.getActionStatus());
     }
-
     @TestFactory
     Iterable<DynamicTest> testCreateComponentInstanceNameValidationFailureFactory() {
         String longName = String.join("", Collections.nCopies(ValidationUtils.COMPONENT_NAME_MAX_LENGTH + 1, "x"));
@@ -1646,7 +2017,7 @@ class ComponentInstanceBusinessLogicTest {
         // Stub for getting component
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(componentsUtils.convertFromStorageResponse(StorageOperationStatus.NOT_FOUND, ComponentTypeEnum.RESOURCE))
             .thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
@@ -1667,7 +2038,7 @@ class ComponentInstanceBusinessLogicTest {
         // Stub for getting component
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.left(originComponent));
 
         ByActionStatusComponentException e = assertThrows(ByActionStatusComponentException.class, () -> {
@@ -1686,7 +2057,7 @@ class ComponentInstanceBusinessLogicTest {
         // Stub for getting component
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.left(originComponent));
 
         ByActionStatusComponentException e = assertThrows(ByActionStatusComponentException.class, () -> {
@@ -1705,7 +2076,7 @@ class ComponentInstanceBusinessLogicTest {
         // Stub for getting component
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.left(originComponent));
 
         final ByActionStatusComponentException e = assertThrows(ByActionStatusComponentException.class, () -> {
@@ -1723,17 +2094,17 @@ class ComponentInstanceBusinessLogicTest {
         // Stub for getting component
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.left(originComponent));
         // Assume services cannot contain VF resource
-        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null)))
+        when(containerInstanceTypeData.isAllowedForServiceComponent(ResourceTypeEnum.VF, null))
             .thenReturn(false);
 
         ByActionStatusComponentException actualException = assertThrows(ByActionStatusComponentException.class, () -> {
             componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
         });
         assertThat(actualException.getActionStatus()).isEqualTo(ActionStatus.CONTAINER_CANNOT_CONTAIN_INSTANCE);
-        verify(containerInstanceTypeData, times(1)).isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null));
+        verify(containerInstanceTypeData, times(1)).isAllowedForServiceComponent(ResourceTypeEnum.VF, null);
 
         //given
         final Resource resource = createResource();
@@ -1742,9 +2113,9 @@ class ComponentInstanceBusinessLogicTest {
         //when
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(resource));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.left(originComponent));
-        when(containerInstanceTypeData.isAllowedForResourceComponent(eq(ResourceTypeEnum.VF), eq(ResourceTypeEnum.VF)))
+        when(containerInstanceTypeData.isAllowedForResourceComponent(ResourceTypeEnum.VF, ResourceTypeEnum.VF))
             .thenReturn(false);
         actualException = assertThrows(ByActionStatusComponentException.class, () -> {
             componentInstanceBusinessLogic.createComponentInstance(RESOURCE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
@@ -1763,9 +2134,9 @@ class ComponentInstanceBusinessLogicTest {
         //      not to target the internal details too much
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.left(originComponent));
-        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null)))
+        when(containerInstanceTypeData.isAllowedForServiceComponent(ResourceTypeEnum.VF, null))
             .thenReturn(true);
         Mockito.doNothing().when(compositionBusinessLogic).validateAndSetDefaultCoordinates(ci);
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
@@ -1784,7 +2155,7 @@ class ComponentInstanceBusinessLogicTest {
             componentInstanceBusinessLogic.createComponentInstance(ComponentTypeEnum.SERVICE_PARAM_NAME, COMPONENT_ID, USER_ID, ci);
         });
         verify(containerInstanceTypeData, times(1))
-            .isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null));
+            .isAllowedForServiceComponent(ResourceTypeEnum.VF, null);
         verify(compositionBusinessLogic, times(1)).validateAndSetDefaultCoordinates(ci);
         verify(toscaOperationFacade, times(1))
             .addComponentInstanceToTopologyTemplate(service, originComponent, ci, false, user);
@@ -1805,9 +2176,9 @@ class ComponentInstanceBusinessLogicTest {
         //      not to target the internal details too much
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.left(originComponent));
-        when(containerInstanceTypeData.isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null)))
+        when(containerInstanceTypeData.isAllowedForServiceComponent(ResourceTypeEnum.VF, null))
             .thenReturn(true);
         Mockito.doNothing().when(compositionBusinessLogic).validateAndSetDefaultCoordinates(instanceToBeCreated);
         when(graphLockOperation.lockComponent(COMPONENT_ID, NodeTypeEnum.Service))
@@ -1830,7 +2201,7 @@ class ComponentInstanceBusinessLogicTest {
         assertThat(instanceToBeCreated.getComponentVersion()).isEqualTo(originComponent.getVersion());
         assertThat(instanceToBeCreated.getIcon()).isEqualTo(originComponent.getIcon());
         verify(containerInstanceTypeData, times(1))
-            .isAllowedForServiceComponent(eq(ResourceTypeEnum.VF), eq(null));
+            .isAllowedForServiceComponent(ResourceTypeEnum.VF, null);
         verify(compositionBusinessLogic, times(1)).validateAndSetDefaultCoordinates(instanceToBeCreated);
         verify(toscaOperationFacade, times(1))
             .addComponentInstanceToTopologyTemplate(service, originComponent, instanceToBeCreated, false, user);
@@ -1850,7 +2221,7 @@ class ComponentInstanceBusinessLogicTest {
         
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class)))
             .thenReturn(Either.left(service));
-        when(toscaOperationFacade.getToscaFullElement(eq(ORIGIN_COMPONENT_ID)))
+        when(toscaOperationFacade.getToscaFullElement(ORIGIN_COMPONENT_ID))
             .thenReturn(Either.left(originService));
         when(toscaOperationFacade.getLatestByToscaResourceName(eq(originService.getDerivedFromGenericType()), isNull()))
             .thenReturn(Either.left(serviceBaseComponent));
@@ -2193,4 +2564,42 @@ class ComponentInstanceBusinessLogicTest {
         component.setUniqueId("baseComponentId");
         return component;
     }
+
+    private void mockComponentForToscaGetFunctionValidation(final Component component) {
+        when(toscaOperationFacade.getToscaElement(component.getUniqueId(), JsonParseFlagEnum.ParseAll))
+            .thenReturn(Either.left(component));
+        when(graphLockOperation.lockComponent(component.getUniqueId(), NodeTypeEnum.ResourceInstance))
+            .thenReturn(StorageOperationStatus.OK);
+        when(toscaOperationFacade.updateComponentInstanceMetadataOfTopologyTemplate(component))
+            .thenReturn(Either.left(component));
+        when(janusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
+        when(graphLockOperation.unlockComponent(component.getUniqueId(), NodeTypeEnum.ResourceInstance))
+            .thenReturn(StorageOperationStatus.OK);
+    }
+
+    private ToscaGetFunctionDataDefinition createGetToscaFunction(final String propertyName, final String propertyUniqueId,
+                                                                  final List<String> propertyPathFromSource,
+                                                                  final PropertySource propertySource, final ToscaGetFunctionType functionType,
+                                                                  final String sourceUniqueId,
+                                                                  final String sourceName) {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(functionType);
+        toscaGetFunction.setPropertyUniqueId(propertyUniqueId);
+        toscaGetFunction.setPropertyName(propertyName);
+        toscaGetFunction.setPropertyPathFromSource(propertyPathFromSource);
+        toscaGetFunction.setPropertySource(propertySource);
+        toscaGetFunction.setSourceName(sourceName);
+        toscaGetFunction.setSourceUniqueId(sourceUniqueId);
+        return toscaGetFunction;
+    }
+
+    private SchemaDefinition createSchema(final String schemaType) {
+        final var schemaDefinition = new SchemaDefinition();
+        final var schemaProperty = new PropertyDefinition();
+        schemaProperty.setType(schemaType);
+        schemaDefinition.setProperty(schemaProperty);
+        return schemaDefinition;
+    }
+
 }
+
