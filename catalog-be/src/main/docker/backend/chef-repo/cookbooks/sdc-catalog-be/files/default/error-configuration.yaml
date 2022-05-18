@@ -2543,7 +2543,7 @@ errors:
     # %1 - "Model name"
     DATA_TYPES_NOT_LOADED: {
         code: 500,
-        message: "Error: Could not fetch data types from data base with model %1",
+        message: "Could not fetch data types from data base with model %1",
         messageId: "SVC4153"
     }
     
@@ -2658,5 +2658,62 @@ errors:
         code: 409,
         message: "System deployed '%1' cannot be deleted '%2'",
         messageId: "SVC4164"
+    }
+
+    #---------SVC4165-----------------------------
+    # %1 - input origin
+    TOSCA_GET_FUNCTION_INPUTS_ONLY_SELF_ERROR: {
+        code: 400,
+        message: "Invalid get_input definition. Inputs can only be get from SELF, the given origin was '%1'",
+        messageId: "SVC4165"
+    }
+
+    #---------SVC4166-----------------------------
+    # %1 - input name
+    # %2 - input origin
+    TOSCA_GET_FUNCTION_INPUTS_NOT_FOUND: {
+        code: 404,
+        message: "The given input '%1' was not found on '%2'.",
+        messageId: "SVC4166"
+    }
+
+    #---------SVC4167-----------------------------
+    # %1 - Tosca function
+    # %2 - Referred input type
+    # %3 - Selected property type
+    TOSCA_GET_FUNCTION_TYPE_DIVERGE: {
+        code: 400,
+        message: "Could not set %1. Referred input type '%2' diverges from the selected property type '%3'.",
+        messageId: "SVC4167"
+    }
+
+    #---------SVC4168-----------------------------
+    # %1 - Tosca function
+    # %2 - Referred input schema
+    # %3 - Selected property schema
+    TOSCA_GET_FUNCTION_SCHEMA_DIVERGE: {
+        code: 400,
+        message: "Could not set %1. Referred input schema '%2' diverges from the selected property schema '%3'.",
+        messageId: "SVC4168"
+    }
+
+    #---------SVC4169-----------------------------
+    # %1 - Property type (property|input|attribute)
+    # %1 - Property name
+    # %2 - Property origin
+    TOSCA_GET_FUNCTION_PROPERTY_NOT_FOUND: {
+        code: 404,
+        message: "The given %1 '%2' was not found on '%3'.",
+        messageId: "SVC4169"
+    }
+
+    #---------SVC4170-----------------------------
+    # %1 - Property type (property|input|attribute)
+    # %2 - Property name/path
+    # %3 - Property data type
+    TOSCA_GET_FUNCTION_PROPERTY_DATA_TYPE_NOT_FOUND: {
+        code: 404,
+        message: "The %1 '%2' type '%3' was not found.",
+        messageId: "SVC4170"
     }
 

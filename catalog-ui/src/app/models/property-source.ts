@@ -17,18 +17,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.datatypes.tosca;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
-public enum ToscaGetFunctionType {
-    GET_INPUT("get_input", "input"),
-    GET_PROPERTY("get_property", "property"),
-    GET_ATTRIBUTE("get_attribute", "attribute");
-
-    private final String functionName;
-    private final String propertyType;
+export enum PropertySource {
+  SELF = 'SELF',
+  INSTANCE = 'INSTANCE'
 }

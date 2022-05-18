@@ -43,10 +43,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.onap.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ToscaGetFunctionExceptionSupplier;
 import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOperationOrchestrator;
 import org.openecomp.sdc.be.components.impl.utils.DirectivesUtil;
 import org.openecomp.sdc.be.components.merge.instance.ComponentInstanceMergeDataBusinessLogic;
@@ -69,9 +71,11 @@ import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.exception.BusinessException;
@@ -167,14 +171,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private static final String RESTRICTED_OPERATION_ON_COMPONENT = "Restricted operation for user: {} on component {}";
     private static final String RESOURCE_INSTANCE = "resource instance";
     private static final String SERVICE = "service";
-    private static final String UPDATE_PROPERTY_CONTEXT = "UpdatePropertyValueOnComponentInstance";
 
-    private ComponentInstanceOperation componentInstanceOperation;
-    private ArtifactsBusinessLogic artifactBusinessLogic;
-    private ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
-    private ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator;
-    private ForwardingPathOperation forwardingPathOperation;
-    private NodeFilterOperation nodeFilterOperation;
+    private final ComponentInstanceOperation componentInstanceOperation;
+    private final ArtifactsBusinessLogic artifactBusinessLogic;
+    private final ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL;
+    private final ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator;
+    private final ForwardingPathOperation forwardingPathOperation;
+    private final NodeFilterOperation nodeFilterOperation;
     @Autowired
     private CompositionBusinessLogic compositionBusinessLogic;
     @Autowired
@@ -1957,7 +1960,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 ComponentInstanceProperty componentInstanceProperty = validatePropertyExistsOnComponent(property, containerComponent,
                     foundResourceInstance);
                 String propertyParentUniqueId = property.getParentUniqueId();
-                Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, false, containerComponent.getModel());
+                if (property.isGetFunction()) {
+                    validateToscaGetFunction(property, containerComponent);
+                }
+                Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, containerComponent.getModel());
                 if (updatedPropertyValue.isRight()) {
                     log.error("Failed to update property object value of property: {}",
                         property);
@@ -2268,7 +2274,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return false;
     }
 
-    private <T extends PropertyDefinition> Either<String, ResponseFormat> updatePropertyObjectValue(T property, boolean isInput, final String model) {
+    private <T extends PropertyDefinition> Either<String, ResponseFormat> updatePropertyObjectValue(T property, final String model) {
         final Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, model);
         String innerType = null;
         String propertyType = property.getType();
@@ -2276,13 +2282,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         log.debug("The type of the property {} is {}", property.getUniqueId(), propertyType);
 
         if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
-            SchemaDefinition def = property.getSchema();
-            if (def == null) {
+            SchemaDefinition schema = property.getSchema();
+            if (schema == null) {
                 log.debug("Schema doesn't exists for property of type {}", type);
                 return Either
                     .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(StorageOperationStatus.INVALID_VALUE)));
             }
-            PropertyDataDefinition propDef = def.getProperty();
+            PropertyDataDefinition propDef = schema.getProperty();
             if (propDef == null) {
                 log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
                 return Either
@@ -2294,8 +2300,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // Specific Update Logic
         String newValue = property.getValue();
 
-        if (property.getToscaGetFunctionType() != null) {
-            validateToscaGetFunction(property);
+        if (property.hasGetFunction()) {
             return Either.left(newValue);
         }
 
@@ -2313,14 +2318,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 newValue = object.toString();
             }
         }
-        if (!isInput) {
-            ImmutablePair<String, Boolean> pair = propertyOperation
-                .validateAndUpdateRules(propertyType, ((ComponentInstanceProperty) property).getRules(), innerType, allDataTypes, true);
-            if (pair.getRight() != null && Boolean.FALSE.equals(pair.getRight())) {
-                BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), property.getName(), propertyType);
-                return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
-                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT))));
-            }
+        ImmutablePair<String, Boolean> pair = propertyOperation
+            .validateAndUpdateRules(propertyType, ((ComponentInstanceProperty) property).getRules(), innerType, allDataTypes, true);
+        if (pair.getRight() != null && Boolean.FALSE.equals(pair.getRight())) {
+            BeEcompErrorManager.getInstance().logBeInvalidValueError("Add property value", pair.getLeft(), property.getName(), propertyType);
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
+                DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT))));
         }
         return Either.left(newValue);
     }
@@ -2368,29 +2371,83 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         return Either.left(newValue);
     }
 
-    private <T extends PropertyDefinition> void validateToscaGetFunction(T property) {
-        if (property.getToscaGetFunctionType() == ToscaGetFunctionType.GET_INPUT) {
-            final List<GetInputValueDataDefinition> getInputValues = property.getGetInputValues();
-            if (CollectionUtils.isEmpty(getInputValues)) {
-                log.debug("No input information provided. Cannot set get_input.");
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
-            }
-            if (getInputValues.size() > 1) {
-                log.debug("More than one input provided. Cannot set get_input.");
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
-            }
-            final GetInputValueDataDefinition getInputValueDataDefinition = getInputValues.get(0);
-
-            if (!property.getType().equals(getInputValueDataDefinition.getInputType())) {
-                log.debug("Input type '{}' diverges from the property type '{}'. Cannot set get_input.",
-                    getInputValueDataDefinition.getInputType(), property.getType());
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
-            }
+    private <T extends PropertyDefinition> void validateToscaGetFunction(T property, Component parentComponent) {
+        final ToscaGetFunctionDataDefinition toscaGetFunction = property.getToscaGetFunction();
+        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT) {
+            validateGetFunction(property, parentComponent.getInputs(), parentComponent.getModel());
+            return;
+        }
+        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_PROPERTY) {
+            validateGetFunction(property, parentComponent.getProperties(), parentComponent.getModel());
             return;
         }
 
-        throw new ByActionStatusComponentException(ActionStatus.NOT_SUPPORTED,
-            "Tosca function " + property.getToscaGetFunctionType().getToscaGetFunctionName());
+        throw ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get();
+    }
+
+    private <T extends PropertyDefinition, U extends PropertyDefinition> void validateGetFunction(final T property,
+                                                                                                  final List<U> parentProperties,
+                                                                                                  final String model) {
+        final ToscaGetFunctionDataDefinition toscaGetFunction = property.getToscaGetFunction();
+        validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
+        final String getFunctionPropertyUniqueId = toscaGetFunction.getPropertyUniqueId();
+        T referredProperty = (T) parentProperties.stream()
+            .filter(property1 -> getFunctionPropertyUniqueId.equals(property1.getUniqueId()))
+            .findFirst()
+            .orElseThrow(ToscaGetFunctionExceptionSupplier
+                .propertyNotFoundOnTarget(toscaGetFunction.getPropertyName(), toscaGetFunction.getPropertySource()
+                    , toscaGetFunction.getFunctionType())
+            );
+        if (toscaGetFunction.isSubProperty()) {
+            final Map<String, DataTypeDefinition> dataTypeMap = loadDataTypes(model);
+            final List<String> propertyPathFromSource = toscaGetFunction.getPropertyPathFromSource();
+            DataTypeDefinition dataType = dataTypeMap.get(referredProperty.getType());
+            if (dataType == null) {
+                throw ToscaGetFunctionExceptionSupplier
+                    .propertyDataTypeNotFound(propertyPathFromSource.get(0), referredProperty.getType(), toscaGetFunction.getFunctionType()).get();
+            }
+            for (int i = 1; i < propertyPathFromSource.size(); i++) {
+                final String currentProperty = propertyPathFromSource.get(i);
+                referredProperty = (T) dataType.getProperties().stream()
+                    .filter(propertyDefinition -> currentProperty.equals(propertyDefinition.getName())).findFirst()
+                    .orElseThrow(
+                        ToscaGetFunctionExceptionSupplier
+                            .propertyNotFoundOnTarget(propertyPathFromSource.subList(0, i), toscaGetFunction.getPropertySource(),
+                                toscaGetFunction.getFunctionType())
+                    );
+                dataType = dataTypeMap.get(referredProperty.getType());
+                if (dataType == null) {
+                    throw ToscaGetFunctionExceptionSupplier
+                        .propertyDataTypeNotFound(propertyPathFromSource.subList(0, i), referredProperty.getType(),
+                            toscaGetFunction.getFunctionType()).get();
+                }
+            }
+        }
+
+        if (!property.getType().equals(referredProperty.getType())) {
+            throw ToscaGetFunctionExceptionSupplier
+                .propertyTypeDiverge(toscaGetFunction.getFunctionType(), referredProperty.getType(), property.getType()).get();
+        }
+        if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
+            throw ToscaGetFunctionExceptionSupplier
+                .propertySchemaDiverge(toscaGetFunction.getFunctionType(), referredProperty.getSchemaType(), property.getSchemaType()).get();
+        }
+    }
+
+    private Map<String, DataTypeDefinition> loadDataTypes(String model) {
+        final Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> dataTypeEither =
+            applicationDataTypeCache.getAll(model);
+        if (dataTypeEither.isRight()) {
+            throw ToscaGetFunctionExceptionSupplier.couldNotLoadDataTypes(model).get();
+        }
+        return dataTypeEither.left().value();
+    }
+
+    private void validateGetPropertySource(final ToscaGetFunctionType functionType, final PropertySource propertySource) {
+        if (propertySource != PropertySource.SELF) {
+            throw ToscaGetFunctionExceptionSupplier
+                .targetSourceNotSupported(functionType, propertySource).get();
+        }
     }
 
     private ResponseFormat updateInputOnContainerComponent(ComponentInstanceInput input, String newValue, Component containerComponent,
@@ -3723,4 +3780,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         final User user = userValidations.validateUserExists(userId);
         userValidations.validateUserRole(user, Arrays.asList(Role.DESIGNER, Role.ADMIN));
     }
+
+    public void setCompositionBusinessLogic(CompositionBusinessLogic compositionBusinessLogic) {
+        this.compositionBusinessLogic = compositionBusinessLogic;
+    }
+
+    public void setContainerInstanceTypesData(ContainerInstanceTypesData containerInstanceTypesData) {
+        this.containerInstanceTypesData = containerInstanceTypesData;
+    }
+
 }

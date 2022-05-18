@@ -162,7 +162,11 @@ export class TopologyTemplateService {
     }
 
     getComponentProperties(component: Component): Observable<ComponentGenericResponse> {
-        return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
+        return this.findAllComponentProperties(component.componentType, component.uniqueId);
+    }
+
+    findAllComponentProperties(componentType: string, componentUniqueId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentUniqueId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
     }
 
     getCapabilitiesAndRequirements(componentType: string, componentId: string): Observable<ComponentGenericResponse> {

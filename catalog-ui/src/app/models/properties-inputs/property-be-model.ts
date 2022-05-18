@@ -23,7 +23,9 @@ import {SchemaProperty, SchemaPropertyGroupModel} from '../schema-property';
 import {ToscaPresentationData} from '../tosca-presentation';
 import {PropertyInputDetail} from './property-input-detail';
 import {Metadata} from '../metadata';
-import {ToscaGetFunctionType} from "../tosca-get-function-type.enum";
+import {ToscaGetFunctionType} from "../tosca-get-function-type";
+import {ToscaGetFunctionDto} from '../tosca-get-function-dto';
+import {PropertySource} from '../property-source';
 
 export enum DerivedPropertyType {
     SIMPLE,
@@ -66,7 +68,9 @@ export class PropertyBEModel {
     inputPath: string;
     toscaPresentation: ToscaPresentationData;
     metadata: Metadata;
+    //deprecated
     toscaGetFunctionType: ToscaGetFunctionType;
+    toscaGetFunction: ToscaGetFunctionDto;
 
     constructor(property?: PropertyBEModel) {
         if (property) {
@@ -92,7 +96,13 @@ export class PropertyBEModel {
             this.getPolicyValues = property.getPolicyValues;
             this.inputPath = property.inputPath;
             this.metadata = property.metadata;
-            this.toscaGetFunctionType = property.toscaGetFunctionType;
+            if (property.toscaGetFunction) {
+                this.toscaGetFunction = property.toscaGetFunction;
+            } else if (property.toscaGetFunctionType) {
+                this.toscaGetFunction = new ToscaGetFunctionDto();
+                this.toscaGetFunction.functionType = property.toscaGetFunctionType;
+                this.toscaGetFunction.propertySource = PropertySource.SELF;
+            }
         }
 
         if (!this.schema || !this.schema.property) {
@@ -171,7 +181,7 @@ export class PropertyBEModel {
      * Checks whether the property value is a tosca get function (e.g. get_input, get_property, get_attribute)
      */
     public isToscaGetFunction(): boolean {
-        return this.toscaGetFunctionType != null;
+        return this.toscaGetFunction != null;
     }
 }
 

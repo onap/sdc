@@ -42,7 +42,7 @@ public enum PropertyType {
 
     private static final Map<String, PropertyType> M_MAP = Collections.unmodifiableMap(initializeMapping());
     private static final Set<String> SIMPLE_PROPERTY_TYPES = Collections.unmodifiableSet(initializeSimplePropertyTypes());
-    private String displayName;
+    private final String displayName;
 
     /**
      * Initilize property type display name mapping.
@@ -84,5 +84,9 @@ public enum PropertyType {
 
     public static Set<String> getSimplePropertyTypes() {
         return SIMPLE_PROPERTY_TYPES;
+    }
+
+    public static boolean typeHasSchema(final String type) {
+        return LIST.getDisplayName().equals(type) || MAP.getDisplayName().equals(type);
     }
 }

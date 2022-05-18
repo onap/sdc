@@ -93,12 +93,12 @@ class ModalTranslation {
     CLOSE_BUTTON: string;
     SAVE_BUTTON: string;
 
-    constructor(private TranslateService: TranslateService) {
-        this.TranslateService.languageChangedObservable.subscribe(lang => {
-            this.EDIT_TITLE = this.TranslateService.translate('INTERFACE_EDIT_TITLE');
-            this.CANCEL_BUTTON = this.TranslateService.translate("INTERFACE_CANCEL_BUTTON");
-            this.CLOSE_BUTTON = this.TranslateService.translate("INTERFACE_CLOSE_BUTTON");
-            this.SAVE_BUTTON = this.TranslateService.translate("INTERFACE_SAVE_BUTTON");
+    constructor(private translateService: TranslateService) {
+        this.translateService.languageChangedObservable.subscribe(lang => {
+            this.EDIT_TITLE = this.translateService.translate('INTERFACE_EDIT_TITLE');
+            this.CANCEL_BUTTON = this.translateService.translate("INTERFACE_CANCEL_BUTTON");
+            this.CLOSE_BUTTON = this.translateService.translate("INTERFACE_CLOSE_BUTTON");
+            this.SAVE_BUTTON = this.translateService.translate("INTERFACE_SAVE_BUTTON");
         });
     }
 }
@@ -148,15 +148,15 @@ export class InterfaceOperationsComponent {
 
 
     constructor(
-        private TranslateService: TranslateService,
-        private PluginsService: PluginsService,
+        private translateService: TranslateService,
+        private pluginsService: PluginsService,
         private topologyTemplateService: TopologyTemplateService,
         private toscaArtifactService: ToscaArtifactService,
         private modalServiceNg2: ModalService,
         private workspaceService: WorkspaceService,
         @Inject("Notification") private Notification: any,
     ) {
-        this.modalTranslation = new ModalTranslation(TranslateService);
+        this.modalTranslation = new ModalTranslation(translateService);
     }
 
     ngOnInit(): void {
@@ -214,8 +214,8 @@ export class InterfaceOperationsComponent {
         ).length === 0;
     }
 
-    private enableOrDisableSaveButton = (): boolean => {
-        return this.isViewOnly;
+    private enableOrDisableSaveButton = (isValid): boolean => {
+        return isValid;
     }
 
     onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {

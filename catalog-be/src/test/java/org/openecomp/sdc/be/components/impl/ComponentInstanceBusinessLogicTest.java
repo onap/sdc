@@ -54,26 +54,22 @@ import mockit.Deencapsulation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ForwardingPathDataDefinition;
@@ -129,9 +125,6 @@ import org.openecomp.sdc.exception.ResponseFormat;
 /**
  * The test suite designed for test functionality of ComponentInstanceBusinessLogic class
  */
-
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class ComponentInstanceBusinessLogicTest {
 
     private final static String USER_ID = "jh0003";
@@ -161,13 +154,7 @@ class ComponentInstanceBusinessLogicTest {
     private final static String INPUT_ID = "inputId";
     private final static String ICON_NAME = "icon";
 
-    private static ConfigurationSource configurationSource = new FSConfigurationSource(
-        ExternalConfiguration.getChangeListener(),
-        "src/test/resources/config/catalog-be");
-    private static ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
-
-    @InjectMocks
-    private static ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     @Mock
     private ComponentInstancePropInput componentInstancePropInput;
     @Mock
@@ -203,9 +190,34 @@ class ComponentInstanceBusinessLogicTest {
     private List<ComponentInstanceProperty> ciPropertyList;
     private List<ComponentInstanceInput> ciInputList;
 
+    @BeforeAll
+    static void beforeAll() {
+        initConfig();
+    }
+
+    private static void initConfig() {
+        final ConfigurationSource configurationSource = new FSConfigurationSource(
+            ExternalConfiguration.getChangeListener(),
+            "src/test/resources/config/catalog-be"
+        );
+        new ConfigurationManager(configurationSource);
+    }
+
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
+        componentInstanceBusinessLogic = new ComponentInstanceBusinessLogic(null, null, null, null, null, null, null, artifactsBusinessLogic, null,
+            null, forwardingPathOperation, null, null);
+        componentInstanceBusinessLogic.setComponentsUtils(componentsUtils);
+        componentInstanceBusinessLogic.setToscaOperationFacade(toscaOperationFacade);
+        componentInstanceBusinessLogic.setUserValidations(userValidations);
+        componentInstanceBusinessLogic.setGraphLockOperation(graphLockOperation);
+        componentInstanceBusinessLogic.setJanusGraphDao(janusGraphDao);
+        componentInstanceBusinessLogic.setApplicationDataTypeCache(applicationDataTypeCache);
+        componentInstanceBusinessLogic.setPropertyOperation(propertyOperation);
+        componentInstanceBusinessLogic.setContainerInstanceTypesData(containerInstanceTypeData);
+        componentInstanceBusinessLogic.setCompositionBusinessLogic(compositionBusinessLogic);
+
         stubMethods();
         createComponents();
     }
@@ -532,7 +544,6 @@ class ComponentInstanceBusinessLogicTest {
         finalDeploymentArtifacts.put(deploymentArtifact3.getArtifactLabel(), deploymentArtifact3);
         finalDeploymentArtifacts.put(heatEnvPlaceHolder.getArtifactLabel(), heatEnvPlaceHolder);
         finalDeploymentArtifacts.put(heatEnvPlaceHolder2.getArtifactLabel(), heatEnvPlaceHolder2);
-
         when(artifactsBusinessLogic.getArtifacts(componentInstance.getComponentUid(), NodeTypeEnum.Resource,
             ArtifactGroupTypeEnum.DEPLOYMENT, null)).thenReturn(getResourceDeploymentArtifacts);
         when(artifactsBusinessLogic.createHeatEnvPlaceHolder(new ArrayList<>(),
