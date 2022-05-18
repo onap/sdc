@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "980ba9c5_b7bd268c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/datamodel/utils/UiComponentDataConverter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 430,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-18T13:54:43Z",
+      "side": 1,
+      "message": "Instead of trying to set the type here when reading the node filter, can we instead set the type when the node filter is created, i.e. in ComponentNodeFilterBusinessLigic::addNodeFilter. There we will have the componentInstanceId that will enable to make sure getting the correct property definition",
+      "range": {
+        "startLine": 415,
+        "startChar": 1,
+        "endLine": 430,
+        "endChar": 0
+      },
+      "revId": "50b68f4911b86769c338a56779d45b890775b610",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
