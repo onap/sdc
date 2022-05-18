@@ -55,7 +55,12 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private String label;
     private Boolean immutable = Boolean.FALSE;
     private Boolean mappedToComponentProperty = Boolean.TRUE;
+    /**
+     * @deprecated use {@link #toscaGetFunction#functionType} instead
+     */
+    @Deprecated
     private ToscaGetFunctionType toscaGetFunctionType;
+    private ToscaGetFunctionDataDefinition toscaGetFunction;
 
     private String inputPath;
     private String status;
@@ -114,6 +119,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setModel(propertyDataDefinition.getModel());
         this.setPropertyId(propertyDataDefinition.getPropertyId());
         this.setToscaGetFunctionType(propertyDataDefinition.getToscaGetFunctionType());
+        this.setToscaGetFunction(propertyDataDefinition.getToscaGetFunction());
         this.parentPropertyType = propertyDataDefinition.getParentPropertyType();
         this.subPropertyInputPath = propertyDataDefinition.getSubPropertyInputPath();
         if (isNotEmpty(propertyDataDefinition.annotations)) {
@@ -159,6 +165,13 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
             return schema.getProperty();
         }
         return null;
+    }
+
+    public ToscaGetFunctionType getToscaGetFunctionType() {
+        if (toscaGetFunction != null) {
+            return toscaGetFunction.getFunctionType();
+        }
+        return toscaGetFunctionType;
     }
 
     public Boolean isHidden() {
@@ -303,4 +316,13 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     public List<Annotation> getAnnotations() {
         return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
     }
+
+    public boolean isGetFunction() {
+        return this.toscaGetFunctionType != null || this.toscaGetFunction != null;
+    }
+
+    public boolean hasGetFunction() {
+        return this.toscaGetFunction != null;
+    }
+
 }

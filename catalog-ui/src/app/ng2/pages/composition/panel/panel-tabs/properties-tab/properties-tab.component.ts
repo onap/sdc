@@ -12,7 +12,7 @@ import {
     InputsGroup,
     InputModel
 } from 'app/models';
-import {ToscaGetFunctionType} from "app/models/tosca-get-function-type.enum";
+import {ToscaGetFunctionType} from "app/models/tosca-get-function-type";
 import { CompositionService } from 'app/ng2/pages/composition/composition.service';
 import { WorkspaceService } from 'app/ng2/pages/workspace/workspace.service';
 import { GroupByPipe } from 'app/ng2/pipes/groupBy.pipe';
