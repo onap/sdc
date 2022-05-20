@@ -216,7 +216,9 @@ export class GeneralViewModel {
                 if(this.$stateParams.componentCsar && this.$scope.component.lifecycleState === 'NOT_CERTIFIED_CHECKIN' && !this.$scope.isCreateMode()) {
                     this.$scope.importedToscaBrowseFileText = this.$scope.originComponent.name + ' (' + (this.$scope.originComponent as Resource).csarVersion + ')';
                 } else {
-                    this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[csarUUID][csarVersion];
+                    if (onboardCsarFilesMap && onboardCsarFilesMap[csarUUID]) {
+                        this.$scope.importedToscaBrowseFileText = onboardCsarFilesMap[csarUUID][csarVersion];
+                    }
                 }
             }
         }
