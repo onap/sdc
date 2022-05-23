@@ -140,4 +140,26 @@ public class AttributeDataDefinition extends ToscaDataDefinition {
     public String getParentUniqueId() {
         return getOwnerId();
     }
+
+    public boolean isGetOutputAttribute() {
+        return this.getGetOutputValues() != null && !this.getGetOutputValues().isEmpty();
+    }
+
+    public boolean typeEquals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        AttributeDataDefinition other = (AttributeDataDefinition) obj;
+        if (this.getType() == null) {
+            return other.getType() == null;
+        }
+        return false;
+    }
+
 }

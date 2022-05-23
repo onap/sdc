@@ -2853,13 +2853,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 } else {
                     origComponent = getOriginComponentFromComponentInstance(newComponentInstance);
                     newComponentInstance.setName(resResourceInfo.getName());
-                    final Either<Component, StorageOperationStatus> getComponentRes = toscaOperationFacade
-                            .getToscaFullElement(newComponentInstance.getComponentUid());
-                    if (getComponentRes.isRight()) {
-                        throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(getComponentRes.right().value()));
-                    }
-                    final Component component = getComponentRes.left().value();
-                    final Map<String, InterfaceDefinition> componentInterfaces = component.getInterfaces();
+                    final Map<String, InterfaceDefinition> componentInterfaces = origComponent.getInterfaces();
                     if (MapUtils.isNotEmpty(componentInterfaces)) {
                         componentInterfaces.forEach(newComponentInstance::addInterface);
                     }

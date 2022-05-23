@@ -103,6 +103,8 @@ public class ComponentInstanceMergeDataBusinessLogic {
         filter.setIgnoreArtifacts(false);
         filter.setIgnoreServicePath(false);
         filter.setIgnoreComponentInstancesInterfaces(false);
+        filter.setIgnoreComponentInstancesAttributes(false);
+        filter.setIgnoreOutputs(false);
         return toscaOperationFacade.getToscaElement(containerComponentId, filter);
     }
 }
