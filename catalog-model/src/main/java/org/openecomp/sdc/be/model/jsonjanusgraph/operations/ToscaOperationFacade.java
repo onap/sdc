@@ -1517,6 +1517,27 @@ public class ToscaOperationFacade {
         return Either.right(status);
     }
 
+    public Either<List<OutputDefinition>, StorageOperationStatus> updateOutputsToComponent(List<OutputDefinition> outputs, String componentId) {
+        Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        if (getVertexEither.isRight()) {
+            log.debug(COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR, componentId, getVertexEither.right().value());
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVertexEither.right().value()));
+        }
+        GraphVertex vertex = getVertexEither.left().value();
+        List<AttributeDataDefinition> outputsAsDataDef = outputs.stream().map(AttributeDataDefinition::new).collect(Collectors.toList());
+        StorageOperationStatus status = topologyTemplateOperation
+                .updateToscaDataOfToscaElement(vertex, EdgeLabelEnum.OUTPUTS, VertexTypeEnum.OUTPUTS, outputsAsDataDef, JsonPresentationFields.NAME);
+        if (StorageOperationStatus.OK == status) {
+            log.debug(COMPONENT_CREATED_SUCCESSFULLY);
+            List<OutputDefinition> outputsResList = null;
+            if (!outputsAsDataDef.isEmpty()) {
+                outputsResList = outputsAsDataDef.stream().map(OutputDefinition::new).collect(Collectors.toList());
+            }
+            return Either.left(outputsResList);
+        }
+        return Either.right(status);
+    }
+
     // region - ComponentInstance
     public Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> associateComponentInstancePropertiesToComponent(
         Map<String, List<ComponentInstanceProperty>> instProperties, String componentId) {
