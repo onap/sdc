@@ -2869,6 +2869,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 newComponentInstance.setPosX(resResourceInfo.getPosX());
                 newComponentInstance.setPosY(resResourceInfo.getPosY());
                 newComponentInstance.setDescription(resResourceInfo.getDescription());
+                if (resResourceInfo.getOriginType() == OriginTypeEnum.VFC) {
+                    newComponentInstance.setInstanceCount(resResourceInfo.getInstanceCount());
+                    newComponentInstance.setMaxOccurrences(resResourceInfo.getMaxOccurrences());
+                    newComponentInstance.setMinOccurrences(resResourceInfo.getMinOccurrences());
+                }
 
                 ComponentInstance updatedComponentInstance =
                     createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
