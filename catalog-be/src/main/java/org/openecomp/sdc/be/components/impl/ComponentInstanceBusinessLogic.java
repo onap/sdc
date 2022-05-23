@@ -2869,9 +2869,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 newComponentInstance.setPosX(resResourceInfo.getPosX());
                 newComponentInstance.setPosY(resResourceInfo.getPosY());
                 newComponentInstance.setDescription(resResourceInfo.getDescription());
-                newComponentInstance.setInstanceCount(resResourceInfo.getInstanceCount());
-                newComponentInstance.setMaxOccurrences(resResourceInfo.getMaxOccurrences());
-                newComponentInstance.setMinOccurrences(resResourceInfo.getMinOccurrences());
+                    newComponentInstance.setInstanceCount(resResourceInfo.getInstanceCount());
+                    newComponentInstance.setMaxOccurrences(resResourceInfo.getMaxOccurrences());
+                    newComponentInstance.setMinOccurrences(resResourceInfo.getMinOccurrences());
+                    newComponentInstance.setRequirements(resResourceInfo.getRequirements());
+                    newComponentInstance.setCapabilities(resResourceInfo.getCapabilities());
+
 
                 ComponentInstance updatedComponentInstance =
                     createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
