@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4e8c52b8_37fa98aa",
+        "filename": "catalog-ui/src/app/models/property-source.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-05-23T21:41:32Z",
+      "side": 1,
+      "message": "2022",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "6667d98811ce88730c699bd3b7d416709b377632",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "57c66a71_66aae7e7",
+        "filename": "catalog-ui/src/app/models/tosca-get-function-dto.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-05-23T21:41:32Z",
+      "side": 1,
+      "message": "missing header",
+      "revId": "6667d98811ce88730c699bd3b7d416709b377632",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "80b25801_4ff577dd",
+        "filename": "catalog-ui/src/app/models/tosca-get-function-type-converter.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-05-23T21:41:32Z",
+      "side": 1,
+      "message": "2022",
+      "range": {
+        "startLine": 3,
+        "startChar": 18,
+        "endLine": 3,
+        "endChar": 22
+      },
+      "revId": "6667d98811ce88730c699bd3b7d416709b377632",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df359dcf_6c6c3ebd",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaGetFunctionDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-05-23T21:41:32Z",
+      "side": 1,
+      "message": "wrong header",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 70
+      },
+      "revId": "6667d98811ce88730c699bd3b7d416709b377632",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
