@@ -1536,7 +1536,7 @@ public class ResourceBusinessLogicTest {
         when(toscaOperationFacade
         .validateComponentNameAndModelExists("myVnf", "testModel_myVnf1.0", ResourceTypeEnum.VF, ComponentTypeEnum.RESOURCE)).thenReturn(Either.left(false));
 
-        when(toscaOperationFacade.addPropertyToComponent(any(), any(), any())).thenReturn(Either.left(new PropertyDefinition()));
+        when(toscaOperationFacade.addPropertyToComponent(any(), any())).thenReturn(Either.left(new PropertyDefinition()));
         when(toscaOperationFacade.associateComponentInstancePropertiesToComponent(any(), any())).thenReturn(Either.left(Collections.emptyMap()));
         when(toscaOperationFacade.associateArtifactsToInstances(any(), any())).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.associateDeploymentArtifactsToInstances(any(), any(), any())).thenReturn(StorageOperationStatus.OK);

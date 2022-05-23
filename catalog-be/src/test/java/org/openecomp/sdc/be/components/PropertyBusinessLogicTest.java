@@ -466,10 +466,10 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         expectedResource.addProperty(copiedProperty2);
 
         Mockito.when(toscaOperationFacade
-            .addPropertyToComponent(eq(property1.getName()), Mockito.any(PropertyDefinition.class), eq(expectedResource)))
+            .addPropertyToComponent(Mockito.any(PropertyDefinition.class), eq(expectedResource)))
             .thenReturn(Either.left(copiedProperty1));
         Mockito.when(toscaOperationFacade
-            .addPropertyToComponent(eq(property2.getName()), Mockito.any(PropertyDefinition.class), eq(expectedResource)))
+            .addPropertyToComponent(Mockito.any(PropertyDefinition.class), eq(expectedResource)))
             .thenReturn(Either.left(copiedProperty2));
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(expectedResource));
         //when
@@ -505,7 +505,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         final PropertyDefinition property1 = createPropertyObject("property1", resourceId);
         propertiesToCopyList.add(property1);
         Mockito.when(toscaOperationFacade
-            .addPropertyToComponent(eq(property1.getName()), Mockito.any(PropertyDefinition.class), eq(expectedResource)))
+            .addPropertyToComponent(Mockito.any(PropertyDefinition.class), eq(expectedResource)))
             .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(expectedResource));
         //when

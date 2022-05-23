@@ -275,9 +275,9 @@ public class ComponentPropertyServlet extends BeGenericServlet {
             Map.Entry<String, PropertyDefinition> entry = properties.entrySet().iterator().next();
             PropertyDefinition newPropertyDefinition = entry.getValue();
             newPropertyDefinition.setParentUniqueId(componentId);
-            String propertyName = newPropertyDefinition.getName();
+            newPropertyDefinition.setUserCreated(true);
             Either<EntryData<String, PropertyDefinition>, ResponseFormat> addPropertyEither = propertyBusinessLogic
-                .addPropertyToComponent(componentId, propertyName, newPropertyDefinition, userId);
+                .addPropertyToComponent(componentId, newPropertyDefinition, userId);
             if (addPropertyEither.isRight()) {
                 return buildErrorResponse(addPropertyEither.right().value());
             }
