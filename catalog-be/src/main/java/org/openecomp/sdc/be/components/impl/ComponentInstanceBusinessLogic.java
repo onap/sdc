@@ -2943,6 +2943,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 newComponentInstance.setInstanceCount(resResourceInfo.getInstanceCount());
                 newComponentInstance.setMaxOccurrences(resResourceInfo.getMaxOccurrences());
                 newComponentInstance.setMinOccurrences(resResourceInfo.getMinOccurrences());
+                checkForExternalReqAndCapabilities(origComponent, resResourceInfo);
 
                 ComponentInstance updatedComponentInstance =
                     createComponentInstanceOnGraph(containerComponent, origComponent, newComponentInstance, user);
@@ -2980,6 +2981,42 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         } finally {
             unlockComponent(failed, containerComponent);
         }
+    }
+
+    private void checkForExternalReqAndCapabilities(Component component, ComponentInstance resResourceInfo) {
+        Map<String, List<RequirementDefinition>> requirementsMap = resResourceInfo.getRequirements();
+        Map<String, List<RequirementDefinition>> externalRequirementsMap = new HashMap<>();
+        List<RequirementDefinition> externalRequirementList = new ArrayList<>();
+        if (requirementsMap != null && !requirementsMap.isEmpty()) {
+            requirementsMap.forEach((type, requirementDefinitions) -> {
+                if (requirementDefinitions != null && !requirementDefinitions.isEmpty()) {
+                    for (final RequirementDefinition requirementDefinition : requirementDefinitions) {
+                        if (requirementDefinition.isExternal()) {
+                            externalRequirementList.add(requirementDefinition);
+                            externalRequirementsMap.put(type, externalRequirementList);
+                        }
+                    }
+                }
+            });
+        }
+
+        Map<String, List<CapabilityDefinition>> capabilitiesMap = resResourceInfo.getCapabilities();
+        Map<String, List<CapabilityDefinition>> externalCapabilitiesMap = new HashMap<>();
+        List<CapabilityDefinition> externalCapabilitiesList = new ArrayList<>();
+        if (capabilitiesMap != null && !capabilitiesMap.isEmpty()) {
+            capabilitiesMap.forEach((type, capabilityDefinitions) -> {
+                if (capabilityDefinitions != null && !capabilityDefinitions.isEmpty()) {
+                    for (final CapabilityDefinition capabilityDefinition : capabilityDefinitions) {
+                        if (capabilityDefinition.isExternal()) {
+                            externalCapabilitiesList.add(capabilityDefinition);
+                            externalCapabilitiesMap.put(type, externalCapabilitiesList);
+                        }
+                    }
+                }
+            });
+        }
+        component.setCapabilities(externalCapabilitiesMap);
+        component.setRequirements(externalRequirementsMap);
     }
 
     private boolean isFillProxyRes(StorageOperationStatus fillProxyRes) {
