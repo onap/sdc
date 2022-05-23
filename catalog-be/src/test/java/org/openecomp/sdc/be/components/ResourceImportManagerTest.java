@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.anyBoolean;
@@ -41,6 +42,7 @@ import static org.mockito.Mockito.when;
 import fj.data.Either;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +67,10 @@ import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
+import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -85,7 +90,6 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.CapabilityTypeOperation;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
-import org.openecomp.sdc.be.tosca.utils.InterfaceTypesNameUtil;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ConfigurationSource;
@@ -94,7 +98,7 @@ import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-public class ResourceImportManagerTest {
+class ResourceImportManagerTest {
 
     private ResourceImportManager importManager;
 
@@ -105,9 +109,11 @@ public class ResourceImportManagerTest {
     private final InterfaceDefinitionHandler interfaceDefinitionHandler = new InterfaceDefinitionHandler(interfaceOperationBusinessLogic);
     private final JanusGraphDao janusGraphDao = mock(JanusGraphDao.class);
     private final UserBusinessLogic userAdmin = mock(UserBusinessLogic.class);
-    private final ToscaOperationFacade toscaOperationFacade =  mock(ToscaOperationFacade.class);
+    private final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
     private final ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
     private final CapabilityTypeOperation capabilityTypeOperation = mock(CapabilityTypeOperation.class);
+    private UploadResourceInfo resourceMD;
+    private User user;
 
     @BeforeAll
     public static void beforeClass() {
@@ -132,13 +138,14 @@ public class ResourceImportManagerTest {
         Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
         when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
             any(JsonParseFlagEnum.class), any())).thenReturn(notFound);
+        when(janusGraphDao.getByCriteria(any(VertexTypeEnum.class), anyMap(), any(JsonParseFlagEnum.class)))
+            .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        resourceMD = createDummyResourceMD();
+        user = new User();
     }
 
     @Test
     void testBasicResourceCreation() throws IOException {
-        UploadResourceInfo resourceMD = createDummyResourceMD();
-
-        User user = new User();
         user.setUserId(resourceMD.getContactId());
         user.setRole("ADMIN");
         user.setFirstName("Jhon");
@@ -155,11 +162,45 @@ public class ResourceImportManagerTest {
 
         testSetConstantMetaData(resource);
         testSetMetaDataFromJson(resource, resourceMD);
-        
+
         testSetDerivedFrom(resource);
         testSetProperties(resource);
 
-        verify(resourceBusinessLogic).propagateStateToCertified(eq(user), eq(resource), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
+        verify(resourceBusinessLogic).propagateStateToCertified(eq(user), eq(resource), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true),
+            eq(false));
+    }
+
+    @Test
+    void testReimportVfcToExistedResource() throws IOException {
+        user.setUserId(resourceMD.getContactId());
+        user.setRole("ADMIN");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
+
+        setResourceBusinessLogicMock();
+
+        final String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-blockStorage.yml");
+
+        ImmutablePair<Resource, ActionStatus> createResource =
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+        assertNotNull(createResource);
+        Resource resource = createResource.left;
+        assertNotNull(resource);
+
+        final GraphVertex graphVertex = new GraphVertex();
+        graphVertex.setUniqueId("1-2-3-4-5-6-7");
+        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.NODE_TYPE), anyMap(), eq(JsonParseFlagEnum.NoParse)))
+            .thenReturn(Either.left(Arrays.asList(graphVertex)));
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(resource));
+        createResource = reimportVfc(resource, jsonContent);
+        assertNotNull(createResource);
+        resource = createResource.left;
+        assertNotNull(resource);
+        testPropertiesAfterReimport(resource);
+
+        verify(resourceBusinessLogic, times(2))
+            .propagateStateToCertified(eq(user), eq(resource), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
     }
 
     @Test
@@ -167,13 +208,13 @@ public class ResourceImportManagerTest {
         final List<NodeTypeMetadata> nodeMetadataList = new ArrayList<>();
         var nodeTypeMetadata1 = new NodeTypeMetadata();
         nodeTypeMetadata1.setToscaName("my.tosca.Type");
+        nodeTypeMetadata1.setName("Type");
         nodeMetadataList.add(nodeTypeMetadata1);
         var nodeTypeMetadata2 = new NodeTypeMetadata();
         nodeTypeMetadata2.setToscaName("my.tosca.not.in.the.Yaml");
         nodeMetadataList.add(nodeTypeMetadata2);
         var nodeTypesMetadataList = new NodeTypesMetadataList();
         nodeTypesMetadataList.setNodeMetadataList(nodeMetadataList);
-        var user = new User();
         var yaml = "node_types:\n"
             + "  my.tosca.Type:\n"
             + "    description: a description";
@@ -197,7 +238,7 @@ public class ResourceImportManagerTest {
     }
 
     @Test
-    void importAllNormativeResourceTest_exceptionDuringImportShouldTriggerRolback() {
+    void importAllNormativeResourceTest_exceptionDuringImportShouldTriggerRollback() {
         when(responseFormatManager.getResponseFormat(ActionStatus.GENERAL_ERROR)).thenReturn(mock(ResponseFormat.class));
         when(toscaOperationFacade.getLatestByName(any(), any())).thenThrow(new RuntimeException());
 
@@ -210,7 +251,6 @@ public class ResourceImportManagerTest {
         nodeMetadataList.add(nodeTypeMetadata2);
         var nodeTypesMetadataList = new NodeTypesMetadataList();
         nodeTypesMetadataList.setNodeMetadataList(nodeMetadataList);
-        var user = new User();
         var yaml = "node_types:\n"
             + "  my.tosca.Type:\n"
             + "    description: a description";
@@ -220,11 +260,8 @@ public class ResourceImportManagerTest {
         verify(janusGraphDao).rollback();
     }
 
-
-    @Test()
+    @Test
     void testResourceCreationFailed() {
-        UploadResourceInfo resourceMD = createDummyResourceMD();
-        User user = new User();
         user.setUserId(resourceMD.getContactId());
         when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
         ResponseFormat dummyResponseFormat = createGeneralErrorInfo();
@@ -236,7 +273,7 @@ public class ResourceImportManagerTest {
         ComponentException errorInfoFromTest = null;
         try {
             importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
-        }catch (ComponentException e){
+        } catch (ComponentException e) {
             errorInfoFromTest = e;
         }
         assertNotNull(errorInfoFromTest);
@@ -250,8 +287,6 @@ public class ResourceImportManagerTest {
 
     @Test
     void testResourceCreationWithCapabilities() throws IOException {
-        UploadResourceInfo resourceMD = createDummyResourceMD();
-        User user = new User();
         user.setUserId(resourceMD.getContactId());
         when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
@@ -272,8 +307,6 @@ public class ResourceImportManagerTest {
 
     @Test
     void testResourceCreationWithRequirements() throws IOException {
-        UploadResourceInfo resourceMD = createDummyResourceMD();
-        User user = new User();
         user.setUserId(resourceMD.getContactId());
         when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
@@ -289,8 +322,6 @@ public class ResourceImportManagerTest {
 
     @Test
     void testResourceCreationWithInterfaceImplementation() throws IOException {
-        UploadResourceInfo resourceMD = createDummyResourceMD();
-        User user = new User();
         user.setUserId(resourceMD.getContactId());
         when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
@@ -303,9 +334,9 @@ public class ResourceImportManagerTest {
         interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
         Map<String, OperationDataDefinition> operations = new HashMap<>();
         operations.put("configure", new OperationDataDefinition());
-		interfaceDefinition.setOperations(operations );
+        interfaceDefinition.setOperations(operations);
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
-		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
+        when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
         final ImmutablePair<Resource, ActionStatus> createResource =
             importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
@@ -314,8 +345,6 @@ public class ResourceImportManagerTest {
 
     @Test
     void testResourceCreationWithInterfaceImplementation_UnknownInterface() throws IOException {
-        UploadResourceInfo resourceMD = createDummyResourceMD();
-        User user = new User();
         user.setUserId(resourceMD.getContactId());
         when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
@@ -328,9 +357,9 @@ public class ResourceImportManagerTest {
         interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
         Map<String, OperationDataDefinition> operations = new HashMap<>();
         operations.put("configure", new OperationDataDefinition());
-		interfaceDefinition.setOperations(operations );
+        interfaceDefinition.setOperations(operations);
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
-		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
+        when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
 
         ImmutablePair<Resource, ActionStatus> createResource =
             importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
@@ -339,8 +368,6 @@ public class ResourceImportManagerTest {
 
     @Test
     void testResourceCreationWitInterfaceImplementation_UnknownOperation() throws IOException {
-        UploadResourceInfo resourceMD = createDummyResourceMD();
-        User user = new User();
         user.setUserId(resourceMD.getContactId());
         when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
 
@@ -353,20 +380,17 @@ public class ResourceImportManagerTest {
         interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
         Map<String, OperationDataDefinition> operations = new HashMap<>();
         operations.put("configure", new OperationDataDefinition());
-		interfaceDefinition.setOperations(operations );
+        interfaceDefinition.setOperations(operations);
         interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
-		when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
-		
+        when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
+
         ImmutablePair<Resource, ActionStatus> createResource =
             importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
         assertNull(createResource.left.getInterfaces());
     }
-    
+
     @Test
     void testResourceCreationFailedVendorReleaseAlreadyExists() throws IOException {
-        UploadResourceInfo resourceMD = createDummyResourceMD();
-
-        User user = new User();
         user.setUserId(resourceMD.getContactId());
         user.setRole("ADMIN");
         user.setFirstName("Jhon");
@@ -388,30 +412,35 @@ public class ResourceImportManagerTest {
 
     private void setResourceBusinessLogicMock() {
         when(resourceBusinessLogic.getUserAdmin()).thenReturn(userAdmin);
-        when(resourceBusinessLogic.createOrUpdateResourceByImport(any(Resource.class), any(User.class), anyBoolean(), anyBoolean(), anyBoolean(), eq(null), eq(null), eq(false)))
-                .thenAnswer((Answer<ImmutablePair<Resource, ActionStatus>>) invocation -> {
-                    Object[] args = invocation.getArguments();
-                    return new ImmutablePair<>((Resource) args[0], ActionStatus.CREATED);
+        when(resourceBusinessLogic.createOrUpdateResourceByImport(any(Resource.class), any(User.class), anyBoolean(), anyBoolean(), anyBoolean(),
+            eq(null), eq(null), eq(false)))
+            .thenAnswer((Answer<ImmutablePair<Resource, ActionStatus>>) invocation -> {
+                Object[] args = invocation.getArguments();
+                return new ImmutablePair<>((Resource) args[0], ActionStatus.CREATED);
 
-                });
-        when(resourceBusinessLogic.propagateStateToCertified(any(User.class), any(Resource.class), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false)))
-                .thenAnswer((Answer<Resource>) invocation -> {
-                    Object[] args = invocation.getArguments();
-                    return (Resource) args[1];
+            });
+        when(
+            resourceBusinessLogic.propagateStateToCertified(any(User.class), any(Resource.class), any(LifecycleChangeInfoWithAction.class), eq(false),
+                eq(true), eq(false)))
+            .thenAnswer((Answer<Resource>) invocation -> {
+                Object[] args = invocation.getArguments();
+                return (Resource) args[1];
 
-                });
+            });
         when(resourceBusinessLogic.createResourceByDao(
-            any(Resource.class), any(User.class), any(AuditingActionEnum.class), anyBoolean(), anyBoolean())).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
-            Object[] args = invocation.getArguments();
-            return Either.left((Resource) args[0]);
+            any(Resource.class), any(User.class), any(AuditingActionEnum.class), anyBoolean(), anyBoolean())).thenAnswer(
+            (Answer<Either<Resource, ResponseFormat>>) invocation -> {
+                Object[] args = invocation.getArguments();
+                return Either.left((Resource) args[0]);
 
-        });
+            });
         when(resourceBusinessLogic.validateResourceBeforeCreate(
-            any(Resource.class), any(User.class), any(AuditingActionEnum.class), eq(false), eq(null))).thenAnswer((Answer<Either<Resource, ResponseFormat>>) invocation -> {
-            Object[] args = invocation.getArguments();
-            return Either.left((Resource) args[0]);
+            any(Resource.class), any(User.class), any(AuditingActionEnum.class), eq(false), eq(null))).thenAnswer(
+            (Answer<Either<Resource, ResponseFormat>>) invocation -> {
+                Object[] args = invocation.getArguments();
+                return Either.left((Resource) args[0]);
 
-        });
+            });
 
         when(resourceBusinessLogic.validatePropertiesDefaultValues(any(Resource.class))).thenReturn(true);
     }
@@ -430,7 +459,8 @@ public class ResourceImportManagerTest {
         resourceMD.setContactId("ya107f");
         resourceMD.setResourceIconPath("defaulticon");
         resourceMD.setTags(Collections.singletonList("BlockStorage"));
-        resourceMD.setDescription("Represents a server-local block storage device (i.e., not shared) offering evenly sized blocks of data from which raw storage volumes can be created.");
+        resourceMD.setDescription(
+            "Represents a server-local block storage device (i.e., not shared) offering evenly sized blocks of data from which raw storage volumes can be created.");
         resourceMD.setResourceVendorModelNumber("vendorReleaseNumber");
         resourceMD.setNormative(true);
         return resourceMD;
@@ -462,6 +492,54 @@ public class ResourceImportManagerTest {
         assertEquals("string", propertyDefinition.getType());
         assertFalse(propertyDefinition.isRequired());
 
+    }
+
+    private ImmutablePair<Resource, ActionStatus> reimportVfc(Resource resource, String jsonContent) {
+        List<PropertyDefinition> propertiesList = resource.getProperties();
+        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setName("oneMore");
+        propertyDefinition.setUserCreated(true);
+        propertyDefinition.setType("boolean");
+        propertiesList.add(propertyDefinition);
+        resource.setProperties(propertiesList);
+        return importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+
+    }
+
+    private void testPropertiesAfterReimport(Resource resource) {
+        List<PropertyDefinition> propertiesList = resource.getProperties();
+
+        Map<String, PropertyDefinition> properties = new HashMap<>();
+        for (PropertyDefinition propertyDefinition : propertiesList) {
+            properties.put(propertyDefinition.getName(), propertyDefinition);
+        }
+
+        assertEquals(4, properties.size());
+
+        assertTrue(properties.containsKey("size"));
+        PropertyDefinition propertyDefinition = properties.get("size");
+        assertEquals("scalar-unit.size", propertyDefinition.getType());
+        assertEquals(1, propertyDefinition.getConstraints().size());
+        PropertyConstraint propertyConstraint = propertyDefinition.getConstraints().get(0);
+        assertTrue(propertyConstraint instanceof GreaterOrEqualConstraint);
+
+        assertTrue(properties.containsKey("volume_id"));
+        propertyDefinition = properties.get("volume_id");
+        assertEquals("string", propertyDefinition.getType());
+        assertFalse(propertyDefinition.isRequired());
+        assertFalse(propertyDefinition.isUserCreated());
+
+        assertTrue(properties.containsKey("snapshot_id"));
+        propertyDefinition = properties.get("snapshot_id");
+        assertEquals("string", propertyDefinition.getType());
+        assertFalse(propertyDefinition.isRequired());
+        assertFalse(propertyDefinition.isUserCreated());
+
+        assertTrue(properties.containsKey("oneMore"));
+        propertyDefinition = properties.get("oneMore");
+        assertEquals("boolean", propertyDefinition.getType());
+        assertFalse(propertyDefinition.isRequired());
+        assertTrue(propertyDefinition.isUserCreated());
     }
 
     private void testSetCapabilities(Resource resource) {
