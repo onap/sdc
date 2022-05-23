@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.openecomp.sdc.core</groupId>
     <artifactId>openecomp-zusammen-lib</artifactId>
-    <version>1.11.3-SNAPSHOT</version>
+    <version>1.11.4-SNAPSHOT</version>
   </parent>
 
   <dependencies>
