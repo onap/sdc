@@ -40,8 +40,8 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 @Data
 public class PropertyDataDefinition extends ToscaDataDefinition {
 
-    protected boolean definition = false;
-    protected Boolean hidden = Boolean.FALSE;
+    private boolean definition = false;
+    private Boolean hidden = Boolean.FALSE;
     private String uniqueId;
     // "boolean", "string", "float", "integer", "version" })
     private String type;
@@ -75,6 +75,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private List<GetPolicyValueDataDefinition> getPolicyValues;
     private List<String> propertyConstraints;
     private Map<String, String> metadata;
+    private boolean userCreated;
 
     public PropertyDataDefinition() {
         super();
@@ -126,6 +127,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
             setPropertyConstraints(new ArrayList<>(propertyDataDefinition.getPropertyConstraints()));
         }
         this.setIsDeclaredListInput(propertyDataDefinition.getIsDeclaredListInput());
+        this.setUserCreated(propertyDataDefinition.isUserCreated());
     }
 
     // @Override
