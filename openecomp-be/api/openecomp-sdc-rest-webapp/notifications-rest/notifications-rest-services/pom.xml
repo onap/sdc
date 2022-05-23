@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.openecomp.sdc</groupId>
     <artifactId>notifications-rest</artifactId>
-    <version>1.11.3-SNAPSHOT</version>
+    <version>1.11.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>notifications-rest-services</artifactId>
