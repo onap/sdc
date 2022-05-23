@@ -28,10 +28,12 @@ import java.util.Optional;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 
 /**
  * Created by chaya on 9/7/2017.
@@ -52,10 +54,14 @@ public class DataForMergeHolder {
     private String origComponentInstId;
     private List<ComponentInstanceInterface> origComponentInstanceInterfaces;
     private Map<String, Integer> componentInstanceDeploymentArtifactsTimeOut;
+    private final List<ComponentInstanceAttribute> origComponentInstanceAttributes;
+    private final List<OutputDefinition> origComponentOutputs;
 
     public DataForMergeHolder() {
         origComponentInstanceInputs = new ArrayList<>();
         origComponentInstanceProperties = new ArrayList<>();
+        origComponentInstanceAttributes = new ArrayList<>();
+        origComponentOutputs = new ArrayList<>();
         origComponentInputs = new ArrayList<>();
         origCompInstDeploymentArtifactsCreatedOnTheInstance = new HashMap<>();
         origCompInstDeploymentArtifactsCreatedOnTheInstance = new HashMap<>();
@@ -77,7 +83,7 @@ public class DataForMergeHolder {
     }
 
     void setOrigComponentInstanceInputs(List<ComponentInstanceInput> origComponentInstanceInputs) {
-        Optional.ofNullable(origComponentInstanceInputs).orElse(Collections.emptyList()).stream().forEach(input -> {
+        Optional.ofNullable(origComponentInstanceInputs).orElse(Collections.emptyList()).forEach(input -> {
             ComponentInstanceInput copyInput = new ComponentInstanceInput();
             copyInput.setType(input.getType());
             copyInput.setPath(input.getPath());
@@ -107,7 +113,7 @@ public class DataForMergeHolder {
     }
 
     void setOrigComponentInstanceProperties(List<ComponentInstanceProperty> origComponentInstanceProperties) {
-        Optional.ofNullable(origComponentInstanceProperties).orElse(Collections.emptyList()).stream().forEach(property -> {
+        Optional.ofNullable(origComponentInstanceProperties).orElse(Collections.emptyList()).forEach(property -> {
             ComponentInstanceProperty propertyCopy = new ComponentInstanceProperty();
             propertyCopy.setType(property.getType());
             propertyCopy.setName(property.getName());
@@ -206,5 +212,43 @@ public class DataForMergeHolder {
 
     public void setOrigComponentInstanceInterfaces(List<ComponentInstanceInterface> origComponentInstanceInterfaces) {
         this.origComponentInstanceInterfaces = origComponentInstanceInterfaces;
+    }
+
+    List<ComponentInstanceAttribute> getOrigComponentInstanceAttributes() {
+        return origComponentInstanceAttributes;
+    }
+
+    void setOrigComponentInstanceAttributes(List<ComponentInstanceAttribute> origComponentInstanceAttributes) {
+        Optional.ofNullable(origComponentInstanceAttributes).orElse(Collections.emptyList()).forEach(attribute -> {
+            ComponentInstanceAttribute attributeCopy = new ComponentInstanceAttribute();
+            attributeCopy.setType(attribute.getType());
+            attributeCopy.setName(attribute.getName());
+            attributeCopy.setValue(attribute.getValue());
+            attributeCopy.setUniqueId(attribute.getUniqueId());
+            attributeCopy.setDefaultValue(attribute.getDefaultValue());
+            attributeCopy.setOutputId(attribute.getOutputId());
+            attributeCopy.setGetOutputValues(attribute.getGetOutputValues());
+            attributeCopy.setOutputPath(attribute.getOutputPath());
+            this.origComponentInstanceAttributes.add(attributeCopy);
+        });
+    }
+
+    List<OutputDefinition> getOrigComponentOutputs() {
+        return origComponentOutputs;
+    }
+
+    void setOrigComponentOutputs(List<OutputDefinition> origComponentOutputs) {
+        Optional.ofNullable(origComponentOutputs).orElse(Collections.emptyList()).forEach(output -> {
+            OutputDefinition outputCopy = new OutputDefinition();
+            outputCopy.setType(output.getType());
+            outputCopy.setName(output.getName());
+            outputCopy.setValue(output.getValue());
+            outputCopy.setUniqueId(output.getUniqueId());
+            outputCopy.setDefaultValue(output.getDefaultValue());
+            outputCopy.setOutputId(output.getOutputId());
+            outputCopy.setGetOutputValues(output.getGetOutputValues());
+            outputCopy.setOutputPath(output.getOutputPath());
+            this.origComponentOutputs.add(outputCopy);
+        });
     }
 }

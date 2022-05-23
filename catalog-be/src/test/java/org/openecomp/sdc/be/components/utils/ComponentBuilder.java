@@ -25,7 +25,9 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -37,6 +39,7 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class ComponentBuilder<T extends Component, B extends ComponentBuilder<T, B>> {
 
@@ -189,6 +192,33 @@ public abstract class ComponentBuilder<T extends Component, B extends ComponentB
         this.addInstanceInput(instanceId, componentInstanceInput);
         return self();
     }
+
+    public void addInstanceAttribute(String instanceId, ComponentInstanceAttribute attribute) {
+        Map<String, List<ComponentInstanceAttribute>> compInstAttribute = component.safeGetComponentInstancesAttributes();
+        if (compInstAttribute == null || compInstAttribute.isEmpty()) {
+            component.setComponentInstancesAttributes(new HashMap<>());
+        }
+        Map<String, List<ComponentInstanceAttribute>> instAttribute = component.safeGetComponentInstancesAttributes();
+        instAttribute.computeIfAbsent(instanceId, key -> new ArrayList<>()).add(attribute);
+        self();
+    }
+
+    public ComponentBuilder<T, B> addInstanceAttribute(String instanceId, String AttributeName) {
+        ComponentInstanceAttribute componentInstanceAttribute = new ComponentInstanceAttribute();
+        componentInstanceAttribute.setName(AttributeName);
+        componentInstanceAttribute.setUniqueId(AttributeName);
+        this.addInstanceAttribute(instanceId, componentInstanceAttribute);
+        return self();
+    }
+
+    public void addInstanceOutput(String instanceId, ComponentInstanceOutput attribute) {
+        if (component.getComponentInstancesOutputs() == null) {
+            component.setComponentInstancesOutputs(new HashMap<>());
+        }
+        component.getComponentInstancesOutputs().computeIfAbsent(instanceId, key -> new ArrayList<>()).add(attribute);
+        self();
+    }
+
 
     public ComponentBuilder<T, B> addRelationship(RequirementCapabilityRelDef requirementCapabilityRelDef) {
         if (component.getComponentInstancesRelations() == null) {

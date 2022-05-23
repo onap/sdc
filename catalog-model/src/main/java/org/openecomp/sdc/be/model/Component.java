@@ -387,8 +387,16 @@ public abstract class Component implements PropertiesOwner {
         return this.safeGetComponentInstanceEntity(cmptInstacneId, this.componentInstancesProperties);
     }
 
+    public List<ComponentInstanceAttribute> safeGetComponentInstanceAttributes(String cmptInstacneId) {
+        return this.safeGetComponentInstanceEntity(cmptInstacneId, this.componentInstancesAttributes);
+    }
+
     public List<ComponentInstanceInput> safeGetComponentInstanceInput(String comptInstanceId) {
         return this.safeGetComponentInstanceEntity(comptInstanceId, this.componentInstancesInputs);
+    }
+
+    public List<ComponentInstanceOutput> safeGetComponentInstanceOutput(String comptInstanceId) {
+        return this.safeGetComponentInstanceEntity(comptInstanceId, this.componentInstancesOutputs);
     }
 
     public List<ComponentInstanceInterface> safeGetComponentInstanceInterfaces(String cmptInstacneId) {

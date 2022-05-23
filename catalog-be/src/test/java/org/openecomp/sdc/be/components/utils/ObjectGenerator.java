@@ -21,11 +21,15 @@
 package org.openecomp.sdc.be.components.utils;
 
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.Resource;
 
@@ -78,6 +82,25 @@ public class ObjectGenerator {
             inputs.add(inputDefinition);
         }
         return inputs;
+    }
+
+    public static List<ComponentInstanceAttribute> buildInstanceAttributes(String ... attributesNames) {
+        return Stream.of(attributesNames).map(name ->  {
+            ComponentInstanceAttribute instAttribute = new ComponentInstanceAttribute();
+            instAttribute.setName(name);
+            //instAttribute.setDescription("Desc of " + name);
+            return instAttribute;
+        }).collect(Collectors.toList());
+    }
+
+    public static List<OutputDefinition> buildOutputs(String ... outputNames) {
+        List<OutputDefinition> outputs = new ArrayList<>();
+        for (String outputName : outputNames) {
+            OutputDefinition outputDefinition = new OutputDefinition();
+            outputDefinition.setName(outputName);
+            outputs.add(outputDefinition);
+        }
+        return outputs;
     }
 
     public static Resource buildResourceWithComponentInstance(String ... instanceNames) {
