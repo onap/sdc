@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "664ecaf3_9f5a3fcd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-24T14:38:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7fde7a46_1b3bbccf",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 67
+      },
+      "revId": "a499ddeb7ae2deb4c05a0e3e72f96ee08db829b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7bb08dd4_ec7f753a",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "a499ddeb7ae2deb4c05a0e3e72f96ee08db829b7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a0cd539_1a96b9ed",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2872,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-05-24T14:38:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7bb08dd4_ec7f753a",
+      "range": {
+        "startLine": 2872,
+        "startChar": 16,
+        "endLine": 2872,
+        "endChar": 76
+      },
+      "revId": "a499ddeb7ae2deb4c05a0e3e72f96ee08db829b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
