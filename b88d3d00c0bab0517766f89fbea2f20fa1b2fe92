@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "669b88c6_b3c19d93",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-24T14:20:50Z",
+      "side": 1,
+      "message": "please, follow the commit message guide lines:\nhttps://wiki.onap.org/display/DW/Commit+Messages",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 78
+      },
+      "revId": "b88d3d00c0bab0517766f89fbea2f20fa1b2fe92",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
