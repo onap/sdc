@@ -43,8 +43,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private boolean definition = false;
     private Boolean hidden = Boolean.FALSE;
     private String uniqueId;
-    // "boolean", "string", "float", "integer", "version" })
-    private String type;
+    private String type; // "boolean", "string", "float", "integer", "version"
     private Boolean required = Boolean.FALSE;
     private String defaultValue;
     private String description;

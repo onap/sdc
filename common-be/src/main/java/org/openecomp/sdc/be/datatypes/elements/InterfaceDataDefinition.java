@@ -20,6 +20,8 @@
 package org.openecomp.sdc.be.datatypes.elements;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
@@ -30,6 +32,9 @@ import java.util.Map;
 import static org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields.TOSCA_RESOURCE_NAME;
 
 public class InterfaceDataDefinition extends ToscaDataDefinition implements Serializable {
+    @Getter
+    @Setter
+    private boolean userCreated;
 
     public InterfaceDataDefinition(String type, String description) {
         this();
@@ -50,6 +55,7 @@ public class InterfaceDataDefinition extends ToscaDataDefinition implements Seri
         setToscaResourceName(interfaceDataDefinition.getToscaResourceName());
         setOperations(interfaceDataDefinition.getOperations());
         setInputs(interfaceDataDefinition.getInputs());
+        setUserCreated(interfaceDataDefinition.isUserCreated());
     }
 
     public String getUniqueId() {
