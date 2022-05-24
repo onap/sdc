@@ -249,6 +249,7 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
 
         interfaceDefinition.setUniqueId(componentInterfaceUpdatedKey);
         interfaceDefinition.setToscaResourceName(componentInterfaceUpdatedKey);
+        interfaceDefinition.setUserCreated(true);
 
         final Optional<OperationDataDefinition> optionalOperationDataDefinition = interfaceDefinition.getOperations().values().stream().findFirst();
         if (optionalOperationDataDefinition.isEmpty()) {

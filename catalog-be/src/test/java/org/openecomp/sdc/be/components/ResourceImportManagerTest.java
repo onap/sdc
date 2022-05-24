@@ -47,6 +47,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,6 +75,7 @@ import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -138,7 +141,7 @@ class ResourceImportManagerTest {
         Either<Component, StorageOperationStatus> notFound = Either.right(StorageOperationStatus.NOT_FOUND);
         when(toscaOperationFacade.getComponentByNameAndVendorRelease(any(ComponentTypeEnum.class), anyString(), anyString(),
             any(JsonParseFlagEnum.class), any())).thenReturn(notFound);
-        when(janusGraphDao.getByCriteria(any(VertexTypeEnum.class), anyMap(), any(JsonParseFlagEnum.class)))
+        when(janusGraphDao.getByCriteria(any(VertexTypeEnum.class), anyMap(), anyMap(), any(JsonParseFlagEnum.class)))
             .thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         resourceMD = createDummyResourceMD();
         user = new User();
@@ -188,10 +191,11 @@ class ResourceImportManagerTest {
         Resource resource = createResource.left;
         assertNotNull(resource);
 
-        final GraphVertex graphVertex = new GraphVertex();
-        graphVertex.setUniqueId("1-2-3-4-5-6-7");
-        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.NODE_TYPE), anyMap(), eq(JsonParseFlagEnum.NoParse)))
-            .thenReturn(Either.left(Arrays.asList(graphVertex)));
+        final GraphVertex graphVertex_1 = new GraphVertex();
+        graphVertex_1.setUniqueId("1-2-3-4-5-6-7");
+        graphVertex_1.addMetadataProperty(GraphPropertyEnum.VERSION, "1.1");
+        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.NODE_TYPE), anyMap(), anyMap(), eq(JsonParseFlagEnum.ParseAll)))
+            .thenReturn(Either.left(Arrays.asList(graphVertex_1)));
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(resource));
         createResource = reimportVfc(resource, jsonContent);
         assertNotNull(createResource);
@@ -199,7 +203,19 @@ class ResourceImportManagerTest {
         assertNotNull(resource);
         testPropertiesAfterReimport(resource);
 
-        verify(resourceBusinessLogic, times(2))
+        final GraphVertex graphVertex_2 = new GraphVertex();
+        graphVertex_2.setUniqueId("11-22-33-44-55-66-77");
+        graphVertex_2.addMetadataProperty(GraphPropertyEnum.VERSION, "2.2");
+        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.NODE_TYPE), anyMap(), anyMap(), eq(JsonParseFlagEnum.ParseAll)))
+            .thenReturn(Either.left(Arrays.asList(graphVertex_1, graphVertex_2)));
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(resource));
+        createResource = reimportVfc(resource, jsonContent);
+        assertNotNull(createResource);
+        resource = createResource.left;
+        assertNotNull(resource);
+        testPropertiesAfterReimport(resource);
+
+        verify(resourceBusinessLogic, times(3))
             .propagateStateToCertified(eq(user), eq(resource), any(LifecycleChangeInfoWithAction.class), eq(false), eq(true), eq(false));
     }
 
@@ -341,6 +357,43 @@ class ResourceImportManagerTest {
         final ImmutablePair<Resource, ActionStatus> createResource =
             importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
         assertSetInterfaceImplementation(createResource.left);
+    }
+
+    @Test
+    void testReimportVfcWithInterfaceImplementation() throws IOException {
+        user.setUserId(resourceMD.getContactId());
+        when(userAdmin.getUser(anyString(), anyBoolean())).thenReturn(user);
+
+        setResourceBusinessLogicMock();
+
+        String jsonContent = ImportUtilsTest.loadCustomTypeFileNameToJsonString("custom-types-node-type-with-interface-impl.yml");
+
+        Map<String, InterfaceDefinition> interfaceTypes = new HashMap<>();
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setType("tosca.interfaces.node.lifecycle.Standard");
+        Map<String, OperationDataDefinition> operations = new HashMap<>();
+        operations.put("configure", new OperationDataDefinition());
+        interfaceDefinition.setOperations(operations);
+        interfaceTypes.put("tosca.interfaces.node.lifecycle.standard", interfaceDefinition);
+        when(interfaceOperationBusinessLogic.getAllInterfaceLifecycleTypes(any())).thenReturn(Either.left(interfaceTypes));
+
+        ImmutablePair<Resource, ActionStatus> createResource =
+            importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
+        assertNotNull(createResource);
+        Resource resource = createResource.getLeft();
+        assertNotNull(resource);
+        assertSetInterfaceImplementation(resource);
+
+        final GraphVertex graphVertex = new GraphVertex();
+        graphVertex.setUniqueId("1-2-3-4-5-6-7");
+        when(janusGraphDao.getByCriteria(eq(VertexTypeEnum.NODE_TYPE), anyMap(), anyMap(), eq(JsonParseFlagEnum.ParseAll)))
+            .thenReturn(Either.left(Arrays.asList(graphVertex)));
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(resource));
+        createResource = reimportVfc(resource, jsonContent);
+        assertNotNull(createResource);
+        resource = createResource.getLeft();
+        assertNotNull(resource);
+        assertSetInterfaceImplementationAfterReimport(resource);
     }
 
     @Test
@@ -494,14 +547,33 @@ class ResourceImportManagerTest {
 
     }
 
-    private ImmutablePair<Resource, ActionStatus> reimportVfc(Resource resource, String jsonContent) {
+    private ImmutablePair<Resource, ActionStatus> reimportVfc(final Resource resource, final String jsonContent) {
         List<PropertyDefinition> propertiesList = resource.getProperties();
-        PropertyDefinition propertyDefinition = new PropertyDefinition();
+        if (CollectionUtils.isEmpty(propertiesList)) {
+            propertiesList = new ArrayList<>();
+        }
+        final PropertyDefinition propertyDefinition = new PropertyDefinition();
         propertyDefinition.setName("oneMore");
         propertyDefinition.setUserCreated(true);
         propertyDefinition.setType("boolean");
         propertiesList.add(propertyDefinition);
         resource.setProperties(propertiesList);
+
+        Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
+        if (MapUtils.isEmpty(interfaces)) {
+            interfaces = new HashMap<>();
+        }
+        final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
+        interfaceDefinition.setType("tosca.interfaces.relationship.Configure");
+        interfaceDefinition.setUserCreated(true);
+        final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
+        operationDataDefinition.setName("add_source");
+        final Map<String, OperationDataDefinition> operationDataDefinitionMap = new HashMap<>();
+        operationDataDefinitionMap.put(operationDataDefinition.getName(), operationDataDefinition);
+        interfaceDefinition.setOperations(operationDataDefinitionMap);
+        interfaces.put(interfaceDefinition.getType(), interfaceDefinition);
+        resource.setInterfaces(interfaces);
+
         return importManager.importNormativeResource(jsonContent, resourceMD, user, true, true, false);
 
     }
@@ -598,6 +670,24 @@ class ResourceImportManagerTest {
         Map<String, OperationDataDefinition> operations = interfaceDefinition.getOperations();
         operations.values().forEach(operationDataDefinition ->
             assertTrue(operations.containsKey(operationDataDefinition.getName())));
+    }
+
+    private void assertSetInterfaceImplementationAfterReimport(final Resource resource) {
+        final Map<String, InterfaceDefinition> interfaces = resource.getInterfaces();
+        assertNotNull(interfaces);
+        assertEquals(2, interfaces.size());
+
+        InterfaceDefinition interfaceDefinition = interfaces.get("tosca.interfaces.node.lifecycle.Standard");
+        assertTrue(interfaces.containsKey(interfaceDefinition.getType()));
+        assertFalse(interfaceDefinition.isUserCreated());
+        final Map<String, OperationDataDefinition> operations_1 = interfaceDefinition.getOperations();
+        operations_1.values().forEach(operationDataDefinition -> assertTrue(operations_1.containsKey(operationDataDefinition.getName())));
+
+        interfaceDefinition = interfaces.get("tosca.interfaces.relationship.Configure");
+        assertTrue(interfaces.containsKey(interfaceDefinition.getType()));
+        assertTrue(interfaceDefinition.isUserCreated());
+        final Map<String, OperationDataDefinition> operations_2 = interfaceDefinition.getOperations();
+        operations_2.values().forEach(operationDataDefinition -> assertTrue(operations_2.containsKey(operationDataDefinition.getName())));
     }
 
     private void testSetDerivedFrom(Resource resource) {
