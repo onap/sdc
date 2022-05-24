@@ -21,6 +21,7 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.dao.api.ActionStatus.INTERFACE_OPERATION_NAME_ALREADY_IN_USE;
 import static org.openecomp.sdc.be.dao.api.ActionStatus.PROPERTY_ALREADY_EXIST;
 import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataType;
 import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataTypeDefinitionWithName;
@@ -64,6 +65,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -110,7 +112,7 @@ import org.yaml.snakeyaml.Yaml;
 @org.springframework.stereotype.Component("resourceImportManager")
 public class ResourceImportManager {
 
-    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("['\\w\\s\\-\\_\\d\\:]+");
+    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("['\\w\\s\\-\\:]+");
     private static final Logger log = Logger.getLogger(ResourceImportManager.class);
     private final InterfaceDefinitionHandler interfaceDefinitionHandler;
     private final ComponentsUtils componentsUtils;
@@ -177,7 +179,7 @@ public class ResourceImportManager {
                 final Map<String, Object> nodeTypeMap = (Map<String, Object>) nodeTypesMap.get(nodeTypeToscaName);
                 if (nodeTypeMap == null) {
                     log.warn(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceImportManager.class.getName(),
-                        "Could not find given node type '{}'. The node will not be created.", new Object[]{nodeTypeToscaName});
+                        "Could not find given node type '{}'. The node will not be created.", nodeTypeToscaName);
                 } else {
                     final Map<String, Map<String, Map<String, Object>>> nodeTypeDefinitionMap =
                         Map.of(ToscaTagNamesEnum.NODE_TYPES.getElementName(),
@@ -340,7 +342,7 @@ public class ResourceImportManager {
                 throw new ByActionStatusComponentException(ActionStatus.RESTRICTED_OPERATION);
             }
             resourceBusinessLogic.validateDerivedFromNotEmpty(creator, resource, AuditingActionEnum.CREATE_RESOURCE);
-            Boolean validatePropertiesTypes = resourceBusinessLogic.validatePropertiesDefaultValues(resource);
+            resourceBusinessLogic.validatePropertiesDefaultValues(resource);
             responsePair = resourceBusinessLogic.createOrUpdateResourceByImport(resource, creator, false, isInTransaction, true, null, null, false);
         } catch (RuntimeException e) {
             handleImportResourceException(resourceMetaData, creator, false, e);
@@ -377,7 +379,7 @@ public class ResourceImportManager {
             setProperties(toscaJson, resource, foundResource);
             setAttributes(toscaJson, resource);
             setRequirements(toscaJson, resource, parentResource);
-            setInterfaceLifecycle(toscaJson, resource);
+            setInterfaceLifecycle(toscaJson, resource, foundResource);
         } else {
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
@@ -408,30 +410,56 @@ public class ResourceImportManager {
     }
 
     private void setToscaResourceName(Map<String, Object> toscaJson, Resource resource) {
-        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils
-            .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.NODE_TYPES);
+        Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils.findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.NODE_TYPES);
         if (toscaElement.isLeft() && toscaElement.left().value().size() == 1) {
             String toscaResourceName = toscaElement.left().value().keySet().iterator().next();
             resource.setToscaResourceName(toscaResourceName);
         }
     }
 
-    private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource) {
-        Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
-            .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.INTERFACES);
+    private void setInterfaceLifecycle(final Map<String, Object> toscaJson,
+                                       final Resource resource,
+                                       final Either<Resource, StorageOperationStatus> foundResource) {
+        Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils.findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.INTERFACES);
         if (toscaInterfaces.isLeft()) {
-            Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
-            for (final Entry<String, Object> interfaceNameValue : toscaInterfaces.left().value().entrySet()) {
-                final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(),
-                    resource.getModel());
-                if (eitherInterface.isRight()) {
-                    log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(), resource.getName());
-                } else {
-                    final InterfaceDefinition interfaceDefinition = eitherInterface.left().value();
-                    moduleInterfaces.put(interfaceDefinition.getType(), interfaceDefinition);
+            final Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
+            if (foundResource.isRight()) {
+                for (final Entry<String, Object> interfaceNameValue : toscaInterfaces.left().value().entrySet()) {
+                    final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(),
+                        resource.getModel());
+                    if (eitherInterface.isRight()) {
+                        log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(), resource.getName());
+                    } else {
+                        final InterfaceDefinition interfaceDefinition = eitherInterface.left().value();
+                        moduleInterfaces.put(interfaceDefinition.getType(), interfaceDefinition);
+                    }
+                }
+            } else {
+                final Map<String, InterfaceDefinition> userCreatedInterfaceDefinitions = foundResource.left().value().getInterfaces().entrySet()
+                    .stream().filter(i -> i.getValue().isUserCreated()).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                final List<String> userCreatedInterfaceDefinitionsNameList = new ArrayList<>();
+                if (MapUtils.isNotEmpty(userCreatedInterfaceDefinitions)) {
+                    userCreatedInterfaceDefinitionsNameList.addAll(userCreatedInterfaceDefinitions.keySet().stream().collect(Collectors.toList()));
+                }
+                for (final Entry<String, Object> interfaceNameValue : toscaInterfaces.left().value().entrySet()) {
+                    if (userCreatedInterfaceDefinitionsNameList.contains(interfaceNameValue.getKey())) {
+                        throw new ByActionStatusComponentException(INTERFACE_OPERATION_NAME_ALREADY_IN_USE, interfaceNameValue.getKey());
+                    } else {
+                        final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(),
+                            resource.getModel());
+                        if (eitherInterface.isRight()) {
+                            log.info("error when creating interface:{}, for resource:{}", interfaceNameValue.getKey(), resource.getName());
+                        } else {
+                            final InterfaceDefinition interfaceDefinition = eitherInterface.left().value();
+                            moduleInterfaces.put(interfaceDefinition.getType(), interfaceDefinition);
+                        }
+                    }
+                }
+                if (MapUtils.isNotEmpty(userCreatedInterfaceDefinitions)) {
+                    moduleInterfaces.putAll(userCreatedInterfaceDefinitions);
                 }
             }
-            if (!moduleInterfaces.isEmpty()) {
+            if (MapUtils.isNotEmpty(moduleInterfaces)) {
                 resource.setInterfaces(moduleInterfaces);
             }
         }
@@ -546,8 +574,8 @@ public class ResourceImportManager {
                         addPropertyToList(resource.getName(), propertiesList, entry);
                     }
                 } else {
-                    final List<PropertyDefinition> userCreatedResourceProperties =
-                        foundResource.left().value().getProperties().stream().filter(p -> p.isUserCreated()).collect(Collectors.toList());
+                    final List<PropertyDefinition> userCreatedResourceProperties = foundResource.left().value().getProperties()
+                        .stream().filter(PropertyDataDefinition::isUserCreated).collect(Collectors.toList());
                     final List<String> userCreatedResourcePropertiesNamesList = new ArrayList<>();
                     if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
                         userCreatedResourcePropertiesNamesList.addAll(
