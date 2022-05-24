@@ -78,7 +78,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <jetty-distribution.version>9.4.45.v20220203</jetty-distribution.version>
         <cxf.version>3.4.4</cxf.version>
 
-        <org.owasp.esapi.version>2.2.3.1</org.owasp.esapi.version>
+        <org.owasp.esapi.version>2.4.0.0</org.owasp.esapi.version>
         <org.dom4j.version>2.1.3</org.dom4j.version>
 
         <!-- JSON and YAML Parsing -->
