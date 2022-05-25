@@ -21,6 +21,7 @@ import { EventListenerService } from "app/services";
 import * as _ from 'lodash';
 import {SelectedComponentType, TogglePanelLoadingAction} from "../../../common/store/graph.actions";
 import Dictionary = _.Dictionary;
+import {TopologyTemplateService} from "../../../../../services/component-services/topology-template.service";
 
 
 @Component({
@@ -47,6 +48,7 @@ export class InfoTabComponent implements OnInit, OnDestroy {
                 private componentInstanceService: ComponentInstanceServiceNg2,
                 private serviceService: ServiceServiceNg2,
                 private eventListenerService: EventListenerService,
+                private topologyTemplateService: TopologyTemplateService,
                 @Inject(SdcMenuToken) public sdcMenu:IAppMenu) {
     }
 
@@ -150,34 +152,37 @@ export class InfoTabComponent implements OnInit, OnDestroy {
     };
 
 
-    private initEditResourceVersion = (component, leftPaletteComponents): void => {
-        if(this.component instanceof ComponentInstance) {
-
+    initEditResourceVersion = (component, leftPaletteComponents): void => {
+        if (this.component instanceof ComponentInstance) {
             this.versions = [];
-            let sorted:any = _.sortBy(_.toPairs(component.allVersions), (item) => {
-                return item[0] !== "undefined" && this.versioning(item[0]);
-            });
-            _.forEach(sorted, (item) => {
-                this.versions.push({label: item[0], value: item[1]});
-            });
+            this.topologyTemplateService.getComponentMetadata(component.getComponentUid(), component.originType)
+            .subscribe((response) => {
+                const allVersions = response.metadata.allVersions;
+                let sorted: any = _.sortBy(_.toPairs(allVersions), (item) => {
+                    return item[0] !== "undefined" && this.versioning(item[0]);
+                });
+                _.forEach(sorted, (item) => {
+                    this.versions.push({label: item[0], value: item[1]});
+                });
 
-            let highestVersion = _.last(sorted)[0];
+                let highestVersion = _.last(sorted)[0];
 
-            if (parseFloat(highestVersion) % 1) { //if highest is minor, make sure it is the latest checked in -
-                let latestVersionComponent: LeftPaletteComponent = _.maxBy(
-                    _.filter(leftPaletteComponents, (leftPaletteComponent: LeftPaletteComponent) => { //latest checked in
-                        return (leftPaletteComponent.systemName === component.systemName || leftPaletteComponent.uuid === component.uuid);
-                    })
-                    , (component) => {
-                        return component.version
-                    });
+                if (parseFloat(highestVersion) % 1) { //if highest is minor, make sure it is the latest checked in -
+                    let latestVersionComponent: LeftPaletteComponent = _.maxBy(
+                        _.filter(leftPaletteComponents, (leftPaletteComponent: LeftPaletteComponent) => { //latest checked in
+                            return (leftPaletteComponent.systemName === component.systemName || leftPaletteComponent.uuid === component.uuid);
+                        })
+                        , (component) => {
+                            return component.version
+                        });
 
-                let latestVersion: string = latestVersionComponent ? latestVersionComponent.version : highestVersion;
+                    let latestVersion: string = latestVersionComponent ? latestVersionComponent.version : highestVersion;
 
-                if (latestVersion && highestVersion != latestVersion) { //highest is checked out - remove from options
-                    this.versions = this.versions.filter(version => version.label != highestVersion);
+                    if (latestVersion && highestVersion != latestVersion) { //highest is checked out - remove from options
+                        this.versions = this.versions.filter(version => version.label != highestVersion);
+                    }
                 }
-            }
+            });
         }
     }
 

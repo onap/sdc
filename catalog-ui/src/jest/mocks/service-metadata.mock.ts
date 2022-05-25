@@ -15,7 +15,7 @@ export const serviceMetadata = {
     "systemName": "Fsdsfdsfd",
     "contactId": "cs0008",
     "allVersions": {
-        "0.1": "3e39c1d2-8afb-4249-9950-110ec6e6f595"
+        "1.0": "3e39c1d2-8afb-4249-9950-110ec6e6f595"
     },
     "isDeleted": null,
     "serviceFunction": "vassavsva",
