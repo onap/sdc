@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "658b6cef_44d92f8a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-25T08:40:13Z",
+      "side": 1,
+      "message": "Rather than copying the data from the old definitition blindly to the new definition we should check if the old data was set on the instance or on the previous version of the interface definition, for example assume we have two versions of an interface type with description as follows:\nvfc_type v1: desc \u003d \"desc 1\"\nvfc_type v2: desc \u003d \"desc 2\"\n\nIf we change version of an instance from v1 -\u003e v2 the desc should be updated as follows:\n1. If the user has set a different value on the instance, e.g. \"my desc\", then the value should remain \"my desc\"\n2. If the user has not set a different value on the instance, the the desc shuold change from \"desc 1\" to \"desc 2\"\n\nCan check the definition of the type to see what identify if a values comes from the type def or the instance def",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 78
+      },
+      "revId": "7fcdd599337984dfdd9be5331a8ddf4bb428772d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
