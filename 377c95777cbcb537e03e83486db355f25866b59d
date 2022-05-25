@@ -22,6 +22,30 @@
       "revId": "377c95777cbcb537e03e83486db355f25866b59d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2bd35fa_3cb7bd02",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2874,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-25T08:49:49Z",
+      "side": 1,
+      "message": "Actaully ignore that comment, cant set occurrences on node type definition, it has to come from the instance",
+      "parentUuid": "361cf0a3_8e21feb8",
+      "range": {
+        "startLine": 2872,
+        "startChar": 13,
+        "endLine": 2874,
+        "endChar": 92
+      },
+      "revId": "377c95777cbcb537e03e83486db355f25866b59d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
