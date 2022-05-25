@@ -14,6 +14,7 @@ exports[`InfoTabComponent can load instance 1`] = `
   sdcMenu={[Function Object]}
   serviceService={[Function Object]}
   store={[Function Object]}
+  topologyTemplateService={[Function Object]}
   versioning={[Function Function]}
   workspaceService={[Function Object]}
 >
