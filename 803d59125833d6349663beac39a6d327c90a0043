@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cde470df_5752c27a",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/panel/panel-tabs/info-tab/info-tab.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-25T16:18:55Z",
+      "side": 1,
+      "message": "this variable is only useful inside the subscribe, please, move to the line 160, also declare it as a constant (const) as its value is never changed.",
+      "range": {
+        "startLine": 157,
+        "startChar": 12,
+        "endLine": 157,
+        "endChar": 33
+      },
+      "revId": "803d59125833d6349663beac39a6d327c90a0043",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb08ae4d_efacd387",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/panel/panel-tabs/info-tab/info-tab.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-25T16:18:55Z",
+      "side": 1,
+      "message": "maybe it is better to move this initialize to outside the subscribe, to line 157",
+      "range": {
+        "startLine": 161,
+        "startChar": 16,
+        "endLine": 161,
+        "endChar": 35
+      },
+      "revId": "803d59125833d6349663beac39a6d327c90a0043",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
