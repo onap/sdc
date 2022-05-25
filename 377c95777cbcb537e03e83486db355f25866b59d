@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "361cf0a3_8e21feb8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2874,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-25T08:46:25Z",
+      "side": 1,
+      "message": "only set to the value from the old version if those values are different from the values in the vfc old version definition, i.e. if the old values were set on the VFC instance rather than the VFC definition.\nIf the user hasnt set any value on the instance then the value (which is therefore coming from the old vfc definition) should be changed to the value from the new VFC definition",
+      "range": {
+        "startLine": 2872,
+        "startChar": 13,
+        "endLine": 2874,
+        "endChar": 92
+      },
+      "revId": "377c95777cbcb537e03e83486db355f25866b59d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
