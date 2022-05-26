@@ -82,7 +82,7 @@ public class PermissionsManagerImpl implements PermissionsManager {
                 new ErrorCode.ErrorCodeBuilder().withMessage(Messages.PERMISSIONS_ERROR.getErrorMessage()).withId(Messages.PERMISSIONS_ERROR.name())
                     .withCategory(ErrorCategory.SECURITY).build());
         }
-        if (permission.equals(PermissionTypes.Owner.name())) {
+        if (permission.equals(PermissionTypes.Owner.name()) && !addedUsersIds.isEmpty()) {
             if (addedUsersIds.size() == 1) {
                 asdcItemManager.updateOwner(itemId, addedUsersIds.iterator().next());
             } else {
@@ -96,12 +96,13 @@ public class PermissionsManagerImpl implements PermissionsManager {
 
     private void sendNotifications(String itemId, String permission, Set<String> addedUsersIds, Set<String> removedUsersIds, String userName) {
         Item item = asdcItemManager.get(itemId);
+        String itemName = null != item ? item.getName() : "";
         addedUsersIds.forEach(affectedUser -> {
-            notifyUser(userName, true, item.getName(), itemId, affectedUser, permission);
+            notifyUser(userName, true, itemName, itemId, affectedUser, permission);
             subscriptionService.subscribe(affectedUser, itemId);
         });
         removedUsersIds.forEach(affectedUser -> {
-            notifyUser(userName, false, item.getName(), itemId, affectedUser, permission);
+            notifyUser(userName, false, itemName, itemId, affectedUser, permission);
             subscriptionService.unsubscribe(affectedUser, itemId);
         });
     }
