@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.tosca;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import fj.data.Either;
@@ -48,6 +49,8 @@ import org.openecomp.sdc.be.tosca.model.ToscaSchemaDefinition;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 @Service
 public class PropertyConvertor {
@@ -140,42 +143,48 @@ public class PropertyConvertor {
                     return innerConverter.convertToToscaValue(value, innerType, dataTypes);
                 }
             }
-            JsonElement jsonElement = null;
-            StringReader reader = new StringReader(value);
-            JsonReader jsonReader = new JsonReader(reader);
-            jsonReader.setLenient(true);
-            jsonElement = JsonParser.parseReader(jsonReader);
-            if (value.equals("")) {
-                return value;
-            }
-            if (jsonElement.isJsonPrimitive() && isScalar) {
-                log.trace("It's well defined type. convert it");
-                ToscaValueConverter converter = type.getValueConverter();
-                return converter.convertToToscaValue(value, innerType, dataTypes);
-            }
-            log.trace("It's data type or inputs in primitive type. convert as map");
-            if (jsonElement.isJsonObject()) {
-                JsonObject jsonObj = jsonElement.getAsJsonObject();
-                // check if value is a get_input function
-                if (jsonObj.entrySet().size() == 1 && jsonObj.has(ToscaFunctions.GET_INPUT.getFunctionName())) {
-                    Object obj = mapConverterInst.handleComplexJsonValue(jsonElement);
-                    log.debug("It's get_input function. obj={}", obj);
-                    return obj;
+            try {
+                JsonElement jsonElement = null;
+                StringReader reader = new StringReader(value);
+                JsonReader jsonReader = new JsonReader(reader);
+                jsonReader.setLenient(true);
+                jsonElement = JsonParser.parseReader(jsonReader);
+                if (value.equals("")) {
+                    return value;
                 }
-            }
-            Object convertedValue;
-            if (innerConverter != null && (ToscaPropertyType.MAP == type || ToscaPropertyType.LIST == type)) {
-                convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
-            } else if (isScalar) {
-                // complex json for scalar type
-                convertedValue = mapConverterInst.handleComplexJsonValue(jsonElement);
-            } else if (innerConverter != null) {
-                convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
-            } else {
-                convertedValue = mapConverterInst
-                    .convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement, preserveEmptyValue);
-            }
-            return convertedValue;
+                if (jsonElement.isJsonPrimitive() && isScalar) {
+                    log.trace("It's well defined type. convert it");
+                    ToscaValueConverter converter = type.getValueConverter();
+                    return converter.convertToToscaValue(value, innerType, dataTypes);
+                }
+                log.trace("It's data type or inputs in primitive type. convert as map");
+                if (jsonElement.isJsonObject()) {
+                    JsonObject jsonObj = jsonElement.getAsJsonObject();
+                    // check if value is a get_input function
+                    if (jsonObj.entrySet().size() == 1 && jsonObj.has(ToscaFunctions.GET_INPUT.getFunctionName())) {
+                        Object obj = mapConverterInst.handleComplexJsonValue(jsonElement);
+                        log.debug("It's get_input function. obj={}", obj);
+                        return obj;
+                    }
+                }
+                Object convertedValue;
+                if (innerConverter != null && (ToscaPropertyType.MAP == type || ToscaPropertyType.LIST == type)) {
+                    convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
+                } else if (isScalar) {
+                    // complex json for scalar type
+                    convertedValue = mapConverterInst.handleComplexJsonValue(jsonElement);
+                } else if (innerConverter != null) {
+                    convertedValue = innerConverter.convertToToscaValue(value, innerType, dataTypes);
+                } else {
+                    convertedValue = mapConverterInst
+                        .convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement, preserveEmptyValue);
+                }
+                return convertedValue;
+            
+             } catch (JsonParseException e) {
+                 log.trace("{} not parsable as JSON. Convert as YAML instead", value);
+                 return  new Yaml().load(value);
+             }
         } catch (Exception e) {
             log.debug("convertToToscaValue failed to parse json value :", e);
             return null;
