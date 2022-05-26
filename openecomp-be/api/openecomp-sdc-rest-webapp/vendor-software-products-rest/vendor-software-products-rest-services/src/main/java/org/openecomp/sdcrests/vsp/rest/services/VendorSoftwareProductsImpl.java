@@ -27,14 +27,8 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERS
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.nio.ByteBuffer;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.inject.Named;
@@ -305,6 +299,14 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
         return Response.ok().build();
     }
 
+    private void deleteUserPermissions(String vspId) {
+        permissionsManager.listItemPermissions(vspId).forEach(itemPermissionsEntity -> {
+            Set<String> usersToDelete = new HashSet<>();
+            usersToDelete.add(itemPermissionsEntity.getUserId());
+            permissionsManager.updateItemPermissions(vspId, itemPermissionsEntity.getPermission(), new HashSet<>(), usersToDelete);
+        });
+    }
+
     private void checkIfCanDeleteVsp(final Item vsp, final String user) {
         final String vspId = vsp.getId();
 
@@ -370,11 +372,29 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     private void deleteVsp(final String vspId, final String user, final Item vsp) {
+        updatePackageDetails(vspId);
+        deleteUserPermissions(vspId);
         versioningManager.list(vspId).forEach(version -> vendorSoftwareProductManager.deleteVsp(vspId, version));
         itemManager.delete(vsp);
         permissionsManager.deleteItemPermissions(vspId);
         uniqueValueUtil.deleteUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, vsp.getName());
         notifyUsers(vspId, vsp.getName(), null, null, user, NotificationEventTypes.DELETE);
+    }
+
+    private void updatePackageDetails(String vspId) {
+        List<VspDetails> listVsp = new ArrayList<>();
+        versioningManager.list(vspId).forEach(version -> listVsp.add(vendorSoftwareProductManager.getVsp(vspId, version)));
+        List<String> vspIds = List.of(vspId);
+        listVsp.forEach(vspDetail -> {
+            List<PackageInfo> packageInfoList = vendorSoftwareProductManager.listPackages(vspDetail.getCategory(), vspDetail.getSubCategory());
+            packageInfoList = packageInfoList.stream().filter(packageInfo -> vspIds.contains(packageInfo.getVspId())).collect(Collectors.toList());
+            packageInfoList.forEach(packInfo -> {
+                byte[] bytes = new byte[0];
+                ByteBuffer buffer = ByteBuffer.wrap(bytes);
+                packInfo.setTranslatedFile(buffer);
+                vendorSoftwareProductManager.updatePackage(packInfo);
+            });
+        });
     }
 
     @Override
