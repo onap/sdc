@@ -58,6 +58,8 @@ public interface VendorSoftwareProductManager {
 
     PackageInfo createPackage(String vspId, Version version) throws IOException;
 
+    void updatePackage(PackageInfo packageInfo);
+
     List<PackageInfo> listPackages(String category, String subCategory);
 
     File getTranslatedFile(String vspId, Version version);

@@ -539,6 +539,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
     }
 
     @Override
+    public void updatePackage(PackageInfo packageInfo) {
+        packageInfoDao.update(packageInfo);
+    }
+
+    @Override
     public PackageInfo createPackage(final String vspId, final Version version) throws IOException {
         final ToscaServiceModel toscaServiceModel = enrichedServiceModelDao.getServiceModel(vspId, version);
         final VspDetails vspDetails = vspInfoDao.get(new VspDetails(vspId, version));

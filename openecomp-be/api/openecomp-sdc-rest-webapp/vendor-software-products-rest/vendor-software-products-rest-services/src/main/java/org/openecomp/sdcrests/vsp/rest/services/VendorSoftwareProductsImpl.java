@@ -27,12 +27,16 @@ import static org.openecomp.sdc.versioning.VersioningNotificationConstansts.VERS
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -370,11 +374,34 @@ public class VendorSoftwareProductsImpl implements VendorSoftwareProducts {
     }
 
     private void deleteVsp(final String vspId, final String user, final Item vsp) {
+        updatePackageDetails(vspId);
         versioningManager.list(vspId).forEach(version -> vendorSoftwareProductManager.deleteVsp(vspId, version));
         itemManager.delete(vsp);
+        deleteUserPermissions(vspId);
         permissionsManager.deleteItemPermissions(vspId);
         uniqueValueUtil.deleteUniqueValue(VENDOR_SOFTWARE_PRODUCT_NAME, vsp.getName());
         notifyUsers(vspId, vsp.getName(), null, null, user, NotificationEventTypes.DELETE);
+    }
+
+    private void updatePackageDetails(final String vspId) {
+        final List<VspDetails> listVsp = new ArrayList<>();
+        versioningManager.list(vspId).forEach(version -> listVsp.add(vendorSoftwareProductManager.getVsp(vspId, version)));
+        listVsp.forEach(vspDetail ->
+                vendorSoftwareProductManager.listPackages(vspDetail.getCategory(), vspDetail.getSubCategory())
+                        .stream().filter(packageInfo -> packageInfo.getVspId().equals(vspId)).collect(Collectors.toList())
+                        .forEach(packInfo -> {
+                            packInfo.setTranslatedFile(ByteBuffer.wrap(new byte[0]));
+                            vendorSoftwareProductManager.updatePackage(packInfo);
+                        })
+        );
+    }
+
+    private void deleteUserPermissions(String vspId) {
+        permissionsManager.listItemPermissions(vspId).forEach(itemPermissionsEntity -> {
+            Set<String> usersToDelete = new HashSet<>();
+            usersToDelete.add(itemPermissionsEntity.getUserId());
+            permissionsManager.updateItemPermissions(vspId, itemPermissionsEntity.getPermission(), new HashSet<>(), usersToDelete);
+        });
     }
 
     @Override
