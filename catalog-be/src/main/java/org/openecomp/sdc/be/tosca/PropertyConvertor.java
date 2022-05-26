@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.tosca;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import fj.data.Either;
@@ -48,6 +49,7 @@ import org.openecomp.sdc.be.tosca.model.ToscaSchemaDefinition;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.Yaml;
 
 @Service
 public class PropertyConvertor {
@@ -176,6 +178,10 @@ public class PropertyConvertor {
                     .convertDataTypeToToscaObject(innerType, dataTypes, innerConverter, isScalar, jsonElement, preserveEmptyValue);
             }
             return convertedValue;
+        
+        } catch (JsonParseException e) {
+            log.trace("{} not parsable as JSON. Convert as YAML instead", value);
+            return  new Yaml().load(value);
         } catch (Exception e) {
             log.debug("convertToToscaValue failed to parse json value :", e);
             return null;

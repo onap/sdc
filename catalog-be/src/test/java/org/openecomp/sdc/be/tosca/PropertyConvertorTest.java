@@ -183,5 +183,18 @@ class PropertyConvertorTest {
             propertyConvertor.convertProperty(Collections.emptyMap(), property, PropertyConvertor.PropertyType.PROPERTY);
         assertEquals("/", toscaProperty.getDefaultp());
     }
+    
+    @Test
+    void convertPropertyWithYamlValue() {
+        final PropertyDefinition property = new PropertyDataDefinitionBuilder()
+            .setDefaultValue("{concat: [ get_input: service_name, '--', 'WirelessService']}")
+            .setType(ToscaPropertyType.STRING.getType())
+            .build();
+        final ToscaProperty toscaProperty =
+            propertyConvertor.convertProperty(Collections.emptyMap(), property, PropertyConvertor.PropertyType.PROPERTY);
+        assertTrue(toscaProperty.getDefaultp() instanceof Map);
+        assertTrue(((Map)toscaProperty.getDefaultp()).get("concat") instanceof List);
+        assertEquals(3, ((List)((Map)toscaProperty.getDefaultp()).get("concat")).size());
+    }
 
 }
