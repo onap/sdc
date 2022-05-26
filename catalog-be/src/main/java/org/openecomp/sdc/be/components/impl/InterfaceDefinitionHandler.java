@@ -231,7 +231,8 @@ public class InterfaceDefinitionHandler {
             Map<String, Object> implDetails = (Map) ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("primary");
             
             if (implDetails.get("file") != null) {
-                artifactDataDefinition.setArtifactName(implDetails.get("file").toString());
+                final String file = implDetails.get("file").toString();
+                artifactDataDefinition.setArtifactName(generateArtifactName(file));
             }
             if (implDetails.get("type") != null) {
                 artifactDataDefinition.setArtifactType(implDetails.get("type").toString());
@@ -256,14 +257,18 @@ public class InterfaceDefinitionHandler {
             }
         }
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof String) {
-            final String artifactName = (String) operationDefinitionMap.get(IMPLEMENTATION.getElementName());
-            if (OperationArtifactUtil.artifactNameIsALiteralValue(artifactName)) {
-                artifactDataDefinition.setArtifactName(artifactName);
-            } else {
-                artifactDataDefinition.setArtifactName(QUOTE + artifactName + QUOTE);
-            }
+            final String implementation = (String) operationDefinitionMap.get(IMPLEMENTATION.getElementName());
+            artifactDataDefinition.setArtifactName(generateArtifactName(implementation));
         }
         return Optional.of(artifactDataDefinition);
+    }
+    
+    private String generateArtifactName(final String name) {
+        if (OperationArtifactUtil.artifactNameIsALiteralValue(name)) {
+           return name;
+        } else {
+            return QUOTE + name + QUOTE;
+        }
     }
     
     private ToscaPropertyType getTypeFromObject(final Object value) {
