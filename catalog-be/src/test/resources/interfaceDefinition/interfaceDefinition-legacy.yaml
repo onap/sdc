@@ -9,7 +9,13 @@ inputs:
     type: org.openecomp.resource.datatypes.Action
 type: tosca.interfaces.node.lifecycle.Standard
 create:
-  implementation: "camunda/serviceSelect"
+  implementation:
+    primary:
+      type: tosca.artifacts.asd.deploymentItem
+      file: camunda/serviceSelect
+      artifact_version: '1'
+      properties:
+        artifact_type: typeA
 start:
   implementation: "camunda/executeAction"
   inputs:
