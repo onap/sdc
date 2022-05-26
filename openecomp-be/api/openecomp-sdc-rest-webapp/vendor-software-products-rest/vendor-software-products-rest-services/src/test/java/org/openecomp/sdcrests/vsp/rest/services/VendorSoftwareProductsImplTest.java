@@ -63,6 +63,7 @@ import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.itempermissions.PermissionsManager;
 import org.openecomp.sdc.notification.services.NotificationPropagationManager;
 import org.openecomp.sdc.vendorsoftwareproduct.VendorSoftwareProductManager;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.VspDetails;
 import org.openecomp.sdc.versioning.AsdcItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -199,7 +200,10 @@ class VendorSoftwareProductsImplTest {
         final Version version2 = new Version("version2Id");
         final List<Version> versionList = List.of(version1, version2);
         when(versioningManager.list(vspId)).thenReturn(versionList);
-
+        VspDetails vspDetails = new VspDetails();
+        vspDetails.setCategory("cat");
+        vspDetails.setSubCategory("sub");
+        when(vendorSoftwareProductManager.getVsp(vspId, version1)).thenReturn(vspDetails);
         when(itemManager.list(any())).thenReturn(List.of(item));
         Response rsp = vendorSoftwareProducts.deleteVsp(vspId, user);
         assertEquals(HttpStatus.SC_OK, rsp.getStatus());

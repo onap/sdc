@@ -82,7 +82,7 @@ public class PermissionsManagerImpl implements PermissionsManager {
                 new ErrorCode.ErrorCodeBuilder().withMessage(Messages.PERMISSIONS_ERROR.getErrorMessage()).withId(Messages.PERMISSIONS_ERROR.name())
                     .withCategory(ErrorCategory.SECURITY).build());
         }
-        if (permission.equals(PermissionTypes.Owner.name())) {
+        if (permission.equals(PermissionTypes.Owner.name()) && !addedUsersIds.isEmpty()) {
             if (addedUsersIds.size() == 1) {
                 asdcItemManager.updateOwner(itemId, addedUsersIds.iterator().next());
             } else {
