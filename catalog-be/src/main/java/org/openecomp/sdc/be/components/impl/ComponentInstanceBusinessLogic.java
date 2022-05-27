@@ -2374,12 +2374,21 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private <T extends PropertyDefinition> void validateToscaGetFunction(T property, Component parentComponent) {
         final ToscaGetFunctionDataDefinition toscaGetFunction = property.getToscaGetFunction();
+        validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
         if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT) {
             validateGetFunction(property, parentComponent.getInputs(), parentComponent.getModel());
             return;
         }
         if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_PROPERTY) {
-            validateGetFunction(property, parentComponent.getProperties(), parentComponent.getModel());
+            if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
+                validateGetFunction(property, parentComponent.getProperties(), parentComponent.getModel());
+            } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
+                final ComponentInstance componentInstance =
+                    parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
+                        .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
+                validateGetFunction(property, componentInstance.getProperties(), parentComponent.getModel());
+            }
+
             return;
         }
 
@@ -2396,7 +2405,6 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     toscaGetFunction.getFunctionType()
                 ).get();
         }
-        validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
         final String getFunctionPropertyUniqueId = toscaGetFunction.getPropertyUniqueId();
         T referredProperty = (T) parentProperties.stream()
             .filter(property1 -> getFunctionPropertyUniqueId.equals(property1.getUniqueId()))
@@ -2458,7 +2466,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private void validateGetPropertySource(final ToscaGetFunctionType functionType, final PropertySource propertySource) {
-        if (propertySource != PropertySource.SELF) {
+        if (functionType == ToscaGetFunctionType.GET_INPUT && propertySource != PropertySource.SELF) {
+            throw ToscaGetFunctionExceptionSupplier
+                .targetSourceNotSupported(functionType, propertySource).get();
+        }
+        if (functionType == ToscaGetFunctionType.GET_PROPERTY && !List.of(PropertySource.SELF, PropertySource.INSTANCE).contains(propertySource)) {
             throw ToscaGetFunctionExceptionSupplier
                 .targetSourceNotSupported(functionType, propertySource).get();
         }
