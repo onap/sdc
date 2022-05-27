@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eff37dde_69bb85d4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-27T08:59:03Z",
+      "side": 1,
+      "message": "existingResource \u003d getExistingResource() i think would be clearer",
+      "range": {
+        "startLine": 354,
+        "startChar": 59,
+        "endLine": 354,
+        "endChar": 87
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da14d595_ad7dfd39",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-27T08:59:03Z",
+      "side": 1,
+      "message": "Name and type are not enough to uniquely identify a component. There can be component of the same name in different models so need to consider the model as well",
+      "range": {
+        "startLine": 390,
+        "startChar": 63,
+        "endLine": 390,
+        "endChar": 105
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "092a637b_ba22daf4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-27T08:59:03Z",
+      "side": 1,
+      "message": "I guess there will be multiple entries in the list where multiple versions already exist - we need to make sure we get the latest existing version",
+      "range": {
+        "startLine": 392,
+        "startChar": 82,
+        "endLine": 392,
+        "endChar": 88
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1073d63_c19fd9a6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-27T08:59:03Z",
+      "side": 1,
+      "message": "I know we discussed this already and this was the agreed behaviour in this scenario, but following wider discussions we should go for behaviour as follows: property def from the version being imported should overwrite any existing user created property in order that upgrade does not fail",
+      "range": {
+        "startLine": 558,
+        "startChar": 0,
+        "endLine": 558,
+        "endChar": 111
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f24629a_ae55c48a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/ResourceImportManagerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-27T08:59:03Z",
+      "side": 1,
+      "message": "this tests importing the second version works but do we test anywhere that the user created properties sill exist after the second import",
+      "range": {
+        "startLine": 174,
+        "startChar": 0,
+        "endLine": 174,
+        "endChar": 64
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
