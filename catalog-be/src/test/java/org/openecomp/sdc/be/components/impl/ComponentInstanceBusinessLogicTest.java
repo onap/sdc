@@ -396,9 +396,19 @@ class ComponentInstanceBusinessLogicTest {
             getPropertyPropertyName,
             mapToscaType,
             "string",
-            String.format("get_property: [\"%s\"]", String.join(",", containerPropertyPath)),
+            String.format("\"get_property\": [\"%s\", \"%s\"]", PropertySource.SELF, String.join("\", \"", containerPropertyPath)),
             createGetToscaFunction(containerPropertyPath.get(containerPropertyPath.size() - 1), containerPropertyId,
                 containerPropertyPath, PropertySource.SELF, ToscaGetFunctionType.GET_PROPERTY, containerComponentId, containerComponentName)
+        );
+
+        final ComponentInstanceProperty getPropertyOnInstanceProperty = createComponentInstanceProperty(
+            String.format("%s.%s", containerComponentId, "getPropertyOnInstanceProperty"),
+            "getPropertyOnInstanceProperty",
+            "string",
+            null,
+            String.format("\"get_property\": [\"%s\", \"%s\"]", PropertySource.INSTANCE, String.join("\", \"", containerPropertyPath)),
+            createGetToscaFunction(containerPropertyPath.get(containerPropertyPath.size() - 1), containerPropertyId,
+                containerPropertyPath, PropertySource.INSTANCE, ToscaGetFunctionType.GET_PROPERTY, containerComponentId, containerComponentName)
         );
 
         //creating component that has the instance properties
@@ -453,6 +463,60 @@ class ComponentInstanceBusinessLogicTest {
         final Either<List<ComponentInstanceProperty>, ResponseFormat> actualResponseFormat = componentInstanceBusinessLogic
             .createOrUpdatePropertiesValues(
                 ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, resourceInstanceProperties, userId);
+        //then
+        assertTrue(actualResponseFormat.isLeft());
+        assertThat(actualResponseFormat.left().value()).isEqualTo(resourceInstanceProperties);
+    }
+
+    @Test
+    void testToscaGetPropertyOnInstanceValidation() {
+        final String userId = "userId";
+        final String containerComponentId = "containerComponentId";
+        final String containerComponentName = "containerComponentName";
+        final String instanceUniqueId = String.format("%s.%s", containerComponentId, "instanceId");
+
+        final List<String> parentPropertyPath = List.of("property1");
+        final String containerPropertyId = String.format("%s.%s", containerComponentId, parentPropertyPath.get(0));
+        final ComponentInstanceProperty getPropertyOnInstanceProperty = createComponentInstanceProperty(
+            String.format("%s.%s", containerComponentId, "getPropertyOnInstanceProperty"),
+            "getPropertyOnInstanceProperty",
+            "string",
+            null,
+            String.format("\"get_property\": [\"%s\", \"%s\"]", PropertySource.INSTANCE, parentPropertyPath.get(0)),
+            createGetToscaFunction(parentPropertyPath.get(0), containerPropertyId, parentPropertyPath, PropertySource.INSTANCE,
+                ToscaGetFunctionType.GET_PROPERTY, instanceUniqueId, containerComponentName)
+        );
+
+        //creating component that has the instance properties
+        final Component component = new Service();
+        component.setUniqueId(containerComponentId);
+        component.setName(containerComponentName);
+        component.setLastUpdaterUserId(userId);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        //adding instance properties to the component
+        final List<ComponentInstanceProperty> resourceInstanceProperties = List.of(getPropertyOnInstanceProperty);
+        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
+        componentInstanceProps.put(instanceUniqueId, resourceInstanceProperties);
+        component.setComponentInstancesProperties(componentInstanceProps);
+
+        //creating resource property that will be get
+        final var propertyDefinition = new PropertyDefinition();
+        propertyDefinition.setName(parentPropertyPath.get(0));
+        propertyDefinition.setUniqueId(containerPropertyId);
+        final String property1Type = "string";
+        propertyDefinition.setType(property1Type);
+        //creating resource instance to be added to the component
+        final ComponentInstance resourceInstance = createComponentInstance("resourceInstance");
+        resourceInstance.setUniqueId(instanceUniqueId);
+        resourceInstance.setProperties(List.of(propertyDefinition));
+        component.setComponentInstances(List.of(resourceInstance));
+
+        mockComponentForToscaGetFunctionValidation(component);
+
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> actualResponseFormat = componentInstanceBusinessLogic
+            .createOrUpdatePropertiesValues(
+                ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, instanceUniqueId, resourceInstanceProperties, userId);
         //then
         assertTrue(actualResponseFormat.isLeft());
         assertThat(actualResponseFormat.left().value()).isEqualTo(resourceInstanceProperties);

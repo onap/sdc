@@ -512,6 +512,7 @@
   "DELETE_POLICY_MSG": "Are you sure you want to delete policy '{{policyName}}'?",
   "=========== PROPERTIES ASSIGNMENT TOSCA FUNCTION BUTTON ===========": "",
   "TOSCA_FUNCTION_LABEL": "TOSCA function",
+  "TOSCA_FUNCTION_PROPERTY_SOURCE_LABEL": "Property Source",
   "CLEAR_VALUE_LABEL": "Clear Value",
   "INPUT_DROPDOWN_LABEL": "Input",
   "TOSCA_FUNCTION_PROPERTY_DROPDOWN_LABEL": "Property",
