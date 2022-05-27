@@ -53,6 +53,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.activitylog.ActivityLogManager;
 import org.openecomp.sdc.common.CommonConfigurationManager;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
+import org.openecomp.sdc.datatypes.model.ItemType;
 import org.openecomp.sdc.versioning.ItemManager;
 import org.openecomp.sdc.versioning.VersioningManager;
 import org.openecomp.sdc.versioning.dao.types.Version;
@@ -147,6 +148,7 @@ class ItemsImplTest {
         items.initActionSideAffectsMap();
         items.setManagersProvider(managersProvider);
         when(itemManager.get(any())).thenReturn(item);
+        when(item.getType()).thenReturn(ItemType.vsp.getName());
         when(request.getAction()).thenReturn(RESTORE);
         when(managersProvider.getItemManager()).thenReturn(itemManager);
         try (MockedStatic<CommonConfigurationManager> utilities = Mockito.mockStatic(CommonConfigurationManager.class)) {
