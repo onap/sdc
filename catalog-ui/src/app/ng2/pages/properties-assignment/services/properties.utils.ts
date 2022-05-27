@@ -47,7 +47,9 @@ export class PropertiesUtils {
                 if (this.dataTypeService.getDataTypeByModelAndTypeName(model, property.type)) { // if type not exist in data types remove property from list
 
                     let newFEProp: PropertyFEModel = new PropertyFEModel(property); //Convert property to FE
-
+                    if (!newFEProp.parentUniqueId) {
+                        newFEProp.parentUniqueId = instanceId;
+                    }
                     this.initValueObjectRef(newFEProp); //initialize valueObj AND creates flattened children
                     propertyFeArray.push(newFEProp);
                     newFEProp.updateExpandedChildPropertyId(newFEProp.name); //display only the first level of children

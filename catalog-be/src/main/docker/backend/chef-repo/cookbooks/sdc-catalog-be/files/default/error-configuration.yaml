@@ -2717,3 +2717,11 @@ errors:
         messageId: "SVC4170"
     }
 
+    #---------SVC4171-----------------------------
+    # %1 - Instance name
+    TOSCA_GET_FUNCTION_INSTANCE_NOT_FOUND: {
+        code: 404,
+        message: "The instance '%1' was not found.",
+        messageId: "SVC4171"
+    }
+
