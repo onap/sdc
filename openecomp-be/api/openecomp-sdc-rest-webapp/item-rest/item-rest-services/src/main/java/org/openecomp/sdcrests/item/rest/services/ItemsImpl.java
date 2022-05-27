@@ -38,7 +38,6 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import org.openecomp.sdc.activitylog.dao.type.ActivityLogEntity;
 import org.openecomp.sdc.activitylog.dao.type.ActivityType;
-import org.openecomp.sdc.be.csar.storage.ArtifactStorageManager;
 import org.openecomp.sdc.be.csar.storage.StorageFactory;
 import org.openecomp.sdc.common.errors.ErrorCode.ErrorCodeBuilder;
 import org.openecomp.sdc.common.errors.ErrorCodeAndMessage;
@@ -55,7 +54,6 @@ import org.openecomp.sdc.versioning.types.NotificationEventTypes;
 import org.openecomp.sdcrests.item.rest.Items;
 import org.openecomp.sdcrests.item.rest.mapping.MapItemToDto;
 import org.openecomp.sdcrests.item.rest.models.SyncEvent;
-import org.openecomp.sdcrests.item.rest.services.catalog.notification.Notifier;
 import org.openecomp.sdcrests.item.rest.services.catalog.notification.NotifierFactory;
 import org.openecomp.sdcrests.item.types.ItemAction;
 import org.openecomp.sdcrests.item.types.ItemActionRequestDto;
@@ -83,31 +81,33 @@ public class ItemsImpl implements Items {
     }
 
     @Override
-    public Response actOn(ItemActionRequestDto request, String itemId, String user) {
-        Item item = getManagersProvider().getItemManager().get(itemId);
+    public Response actOn(final ItemActionRequestDto request, final String itemId, final String user) {
+        final var item = getManagersProvider().getItemManager().get(itemId);
         if (item == null) {
             return Response.status(NOT_FOUND).entity(new Exception("Item does not exist.")).build();
         }
-        switch (request.getAction()) {
+        final var action = request.getAction();
+        switch (action) {
             case ARCHIVE:
                 getManagersProvider().getItemManager().archive(item);
                 break;
             case RESTORE:
-                final var artifactStorageManager = new StorageFactory().createArtifactStorageManager();
-                if (artifactStorageManager.isEnabled() && !artifactStorageManager.exists(itemId)) {
-                    LOGGER.error("Unable to restore partially deleted item '{}'", itemId);
-                    final var errorCode =
-                        new ErrorCodeBuilder().withId(INTERNAL_SERVER_ERROR.name()).withMessage("Unable to restore partially deleted VSP, re-try VSP deletion").build();
-                    return Response.status(INTERNAL_SERVER_ERROR).entity(new ErrorCodeAndMessage(INTERNAL_SERVER_ERROR, errorCode)).build();
+                if (ItemType.vsp.getName().equalsIgnoreCase(item.getType())) {
+                    final var artifactStorageManager = new StorageFactory().createArtifactStorageManager();
+                    if (artifactStorageManager.isEnabled() && !artifactStorageManager.exists(itemId)) {
+                        LOGGER.error("Unable to restore partially deleted item '{}'", itemId);
+                        final var errorCode =
+                            new ErrorCodeBuilder().withId(INTERNAL_SERVER_ERROR.name()).withMessage("Unable to restore partially deleted VSP, re-try VSP deletion").build();
+                        return Response.status(INTERNAL_SERVER_ERROR).entity(new ErrorCodeAndMessage(INTERNAL_SERVER_ERROR, errorCode)).build();
+                    }
                 }
                 getManagersProvider().getItemManager().restore(item);
                 break;
             default:
         }
-        actionSideAffectsMap.get(request.getAction()).execute(item, user);
+        actionSideAffectsMap.get(action).execute(item, user);
         try {
-            Notifier catalogNotifier = NotifierFactory.getInstance();
-            catalogNotifier.execute(Collections.singleton(itemId), request.getAction());
+            NotifierFactory.getInstance().execute(Collections.singleton(itemId), action);
         } catch (Exception e) {
             LOGGER.error("Failed to send catalog notification on item {}", itemId, e);
         }
