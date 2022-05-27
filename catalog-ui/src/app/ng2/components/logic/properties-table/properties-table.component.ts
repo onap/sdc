@@ -33,7 +33,7 @@ import { ModalService } from '../../../services/modal.service';
 export class PropertiesTableComponent implements OnChanges {
 
     @Input() fePropertiesMap: InstanceFePropertiesMap;
-    @Input() feInstanceNamesMap: Map<string, InstanceFeDetails>;
+    @Input() feInstanceNamesMap: { [key: string]: InstanceFeDetails };
     @Input() selectedPropertyId: string;
     @Input() propertyNameSearchText: string;
     @Input() searchTerm: string;
