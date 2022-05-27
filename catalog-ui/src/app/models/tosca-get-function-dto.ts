@@ -30,45 +30,6 @@ export class ToscaGetFunctionDto {
     sourceName: string;
     functionType: ToscaGetFunctionType;
     propertyPathFromSource: Array<string>;
-
-    /**
-     * Builds the value of a property based on the TOSCA get function information.
-     */
-    buildGetFunctionValue(): string {
-        if (this.functionType == ToscaGetFunctionType.GET_PROPERTY) {
-            return JSON.stringify(this.buildGetPropertyFunctionValue());
-        }
-        if (this.functionType == ToscaGetFunctionType.GET_INPUT) {
-            return JSON.stringify(this.buildGetInputFunctionValue());
-        }
-        return undefined;
-    }
-
-    private buildGetPropertyFunctionValue(): Object {
-        if (this.propertySource === PropertySource.SELF) {
-            return {
-                [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource]
-            };
-        }
-        if (this.propertySource === PropertySource.INSTANCE) {
-            return {
-                [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource]
-            };
-        }
-        return undefined;
-    }
-
-    private buildGetInputFunctionValue() {
-        if (this.propertyPathFromSource && this.propertyPathFromSource.length) {
-            return {
-                [this.functionType.toLowerCase()]: this.propertyPathFromSource
-            };
-        } else {
-            return {
-                [this.functionType.toLowerCase()]: this.propertyName
-            };
-        }
-    }
 }
 
 export class ToscaGetFunctionDtoBuilder {
