@@ -61,15 +61,13 @@ import {UnsavedChangesComponent} from "app/ng2/components/ui/forms/unsaved-chang
 import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
 import {ModalService} from "../../services/modal.service";
 import {DeclareListComponent} from "./declare-list/declare-list.component";
-import {PropertyDropdownValue, ToscaFunctionComponent} from "./tosca-function/tosca-function.component";
+import {ToscaFunctionComponent} from "./tosca-function/tosca-function.component";
 import {CapabilitiesGroup, Capability} from "../../../models/capability";
 import {ToscaPresentationData} from "../../../models/tosca-presentation";
 import {Observable} from "rxjs";
-import {ToscaGetFunctionType} from "../../../models/tosca-get-function-type";
 import {TranslateService} from "../../shared/translator/translate.service";
 import {ToscaGetFunctionDtoBuilder} from '../../../models/tosca-get-function-dto';
-import {PropertySource} from '../../../models/property-source';
-import {ToscaGetFunctionTypeConverter} from '../../../models/tosca-get-function-type-converter';
+import {ToscaGetFunction} from "../../../models/tosca-get-function";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -80,7 +78,8 @@ export class PropertiesAssignmentComponent {
     title = "Properties & Inputs";
 
     component: ComponentData;
-    componentInstanceNamesMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();//instanceUniqueId, {name, iconClass}
+    componentInstanceNamesMap: { [key: string]: InstanceFeDetails } = {}; //key is the instance uniqueId
+    componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>(); //key is the instance uniqueId
 
     propertiesNavigationData = [];
     instancesNavigationData = [];
@@ -182,6 +181,16 @@ export class PropertiesAssignmentComponent {
             this.instances.push(...response.componentInstances);
             this.instances.push(...response.groupInstances);
             this.instances.push(...response.policies);
+
+            if (response.componentInstances) {
+                response.componentInstances.forEach(instance => {
+                    this.componentInstanceMap.set(instance.uniqueId, <InstanceFeDetails>{
+                        name: instance.name,
+                        iconClass: instance.iconClass,
+                        originArchived: instance.originArchived
+                    });
+                });
+            }
 
             _.forEach(response.policies, (policy: any) => {
                 const newPolicy: InputFEModel = new InputFEModel(policy);
@@ -542,10 +551,8 @@ export class PropertiesAssignmentComponent {
             [
                 new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
                     () => {
-                        const selectedToscaFunction = modal.instance.dynamicContent.instance.selectToscaFunction;
-                        const selectedPropertyFromModal:PropertyDropdownValue = modal.instance.dynamicContent.instance.selectedProperty;
-                        const toscaFunctionType: ToscaGetFunctionType = ToscaGetFunctionTypeConverter.convertFromString(selectedToscaFunction);
-                        this.updateCheckedInstancePropertyGetFunctionValue(selectedPropertyFromModal, toscaFunctionType);
+                        const toscaGetFunction: ToscaGetFunction = modal.instance.dynamicContent.instance.toscaGetFunction;
+                        this.updateCheckedInstancePropertyGetFunctionValue(toscaGetFunction);
                         modal.instance.close();
                     }
                 ),
@@ -558,6 +565,7 @@ export class PropertiesAssignmentComponent {
         const checkedInstanceProperty = this.buildCheckedInstanceProperty();
         this.modalService.addDynamicContentToModalAndBindInputs(modal, ToscaFunctionComponent, {
             'property': checkedInstanceProperty,
+            'componentInstanceMap': this.componentInstanceMap
         });
         modal.instance.open();
     }
@@ -570,20 +578,18 @@ export class PropertiesAssignmentComponent {
         this.updateInstanceProperty(checkedInstanceProperty);
     }
 
-    private updateCheckedInstancePropertyGetFunctionValue(propertyToGet: PropertyDropdownValue, toscaGetFunctionType: ToscaGetFunctionType) {
+    private updateCheckedInstancePropertyGetFunctionValue(toscaGetFunction: ToscaGetFunction) {
         const toscaGetFunctionBuilder: ToscaGetFunctionDtoBuilder =
             new ToscaGetFunctionDtoBuilder()
-                .withPropertyUniqueId(propertyToGet.propertyId)
-                .withFunctionType(toscaGetFunctionType)
-                .withPropertySource(PropertySource.SELF)
-                .withPropertyName(propertyToGet.propertyName)
-                .withSourceName(this.component.name)
-                .withSourceUniqueId(this.component.uniqueId);
+                .withPropertyUniqueId(toscaGetFunction.propertyUniqueId)
+                .withFunctionType(toscaGetFunction.functionType)
+                .withPropertySource(toscaGetFunction.propertySource)
+                .withPropertyName(toscaGetFunction.propertyName)
+                .withSourceName(toscaGetFunction.sourceName)
+                .withSourceUniqueId(toscaGetFunction.sourceUniqueId)
+                .withPropertyPathFromSource(toscaGetFunction.propertyPathFromSource);
 
         const checkedProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
-        if (propertyToGet.propertyPath && propertyToGet.propertyPath.length) {
-            toscaGetFunctionBuilder.withPropertyPathFromSource(propertyToGet.propertyPath);
-        }
         checkedProperty.toscaGetFunction = toscaGetFunctionBuilder.build();
         this.updateInstanceProperty(checkedProperty);
     }

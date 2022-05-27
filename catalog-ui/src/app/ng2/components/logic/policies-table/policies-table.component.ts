@@ -28,7 +28,7 @@ import { ModalService } from '../../../services/modal.service';
 export class PoliciesTableComponent {
 
     @Input() policies: PolicyInstance[];
-    @Input() instanceNamesMap: Map<string, InstanceFeDetails>;
+    @Input() instanceNamesMap: { [key: string]: InstanceFeDetails };
     @Input() readonly: boolean;
     @Input() isLoading: boolean;
     @Output() deletePolicy: EventEmitter<any> = new EventEmitter<any>();

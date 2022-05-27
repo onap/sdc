@@ -39,7 +39,7 @@ import { DynamicElementComponent } from "../../ui/dynamic-element/dynamic-elemen
 export class InputsTableComponent {
 
     @Input() inputs: Array<InputFEModel>;
-    @Input() instanceNamesMap: Map<string, InstanceFeDetails>;
+    @Input() instanceNamesMap: { [key: string]: InstanceFeDetails };
     @Input() readonly: boolean;
     @Input() isLoading: boolean;
     @Input() componentType: string;
