@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f53c27b1_738ecd4b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2304,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-27T14:37:15Z",
+      "side": 1,
+      "message": "The info in the ToscaGetFunctionDataDefinition instance in the property is not being used, though this is in the info that has been validated. Consider using that info instead of the value field",
+      "range": {
+        "startLine": 2304,
+        "startChar": 12,
+        "endLine": 2304,
+        "endChar": 41
+      },
+      "revId": "73bd604b455c7308b9fa0ca5081988ab76e213ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
