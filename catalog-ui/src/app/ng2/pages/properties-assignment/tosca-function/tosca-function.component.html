@@ -21,15 +21,22 @@
   <loader [display]="isLoading" [loaderDelay]="500" [relative]="true" [size]="'large'"></loader>
   <form class="w-sdc-form">
     <div class="i-sdc-form-item">
-      <label class="i-sdc-form-label required">TOSCA function</label>
-      <select [(ngModel)]="selectToscaFunction" (change)="onToscaFunctionChange()" name="selectToscaFunction">
+      <label class="i-sdc-form-label required">{{'TOSCA_FUNCTION_LABEL' | translate}}</label>
+      <select [(ngModel)]="toscaGetFunction.functionType" (change)="onToscaFunctionChange()" name="toscaFunctionType">
         <option *ngFor="let toscaFunction of toscaFunctions"
-                [ngValue]="toscaFunction">{{toscaFunction}}</option>
+                [ngValue]="toscaFunction">{{toscaFunction | lowercase}}</option>
+      </select>
+    </div>
+    <div class="i-sdc-form-item" *ngIf="toscaGetFunction.functionType === TOSCA_FUNCTION_GET_PROPERTY">
+      <label class="i-sdc-form-label required">{{'TOSCA_FUNCTION_PROPERTY_SOURCE_LABEL' | translate}}</label>
+      <select name="propertySource" [(ngModel)]="propertySource" (change)="onPropertySourceChange()">
+        <option *ngFor="let propertySource of propertySourceList"
+                [ngValue]="propertySource">{{propertySource}}</option>
       </select>
     </div>
     <div *ngIf="showDropdown()" class="i-sdc-form-item">
       <label class="i-sdc-form-label required">{{dropdownValuesLabel}}</label>
-      <select [(ngModel)]="selectedProperty" name="selectedProperty">
+      <select [(ngModel)]="selectedProperty" name="selectedProperty" (change)="onPropertyChange()">
         <option *ngFor="let value of propertyDropdownList" [ngValue]="value">{{value.propertyLabel}}</option>
       </select>
     </div>

@@ -91,4 +91,12 @@ public class ToscaGetFunctionExceptionSupplier {
             functionType.getFunctionName(), referredPropertySchemaType, propertySchemaType
         );
     }
+
+    public static Supplier<ByActionStatusComponentException> instanceNotFound(final String instanceName) {
+        return () -> new ByActionStatusComponentException(
+            ActionStatus.TOSCA_GET_FUNCTION_INSTANCE_NOT_FOUND,
+            instanceName
+        );
+    }
+
 }
