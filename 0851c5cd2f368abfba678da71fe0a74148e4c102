@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dd1d089a_11c67bf0",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-27T09:08:22Z",
+      "side": 1,
+      "message": "For better readability I would put this method after where it is used, i.e. after updatePackageDetails",
+      "range": {
+        "startLine": 312,
+        "startChar": 0,
+        "endLine": 319,
+        "endChar": 0
+      },
+      "revId": "0851c5cd2f368abfba678da71fe0a74148e4c102",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "954e1ccb_a1aa0a88",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-27T09:08:22Z",
+      "side": 1,
+      "message": "Might be better to do these after itemManager.delete() in case something goes wrong during the delete",
+      "range": {
+        "startLine": 385,
+        "startChar": 8,
+        "endLine": 386,
+        "endChar": 37
+      },
+      "revId": "0851c5cd2f368abfba678da71fe0a74148e4c102",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
