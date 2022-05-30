@@ -19,25 +19,14 @@
 
 @import '../../../../../assets/styles/variables.less';
 
-.input-list {
-    font-family: @font-opensans-regular;
-    user-select: none;
-    padding-top: 12px;
-    padding-bottom: 20px;
-
-    .i-sdc-form-label {
-        font-size: 12px;
-    }
-
-    .w-sdc-form .i-sdc-form-item {
-        margin-bottom: 15px;
-    }
-
-    .side-by-side {
-        display: flex;
-
-        .i-sdc-form-item {
-            flex-basis: 100%;
-        }
+.button-container {
+    display: flex;
+    padding: 5px 5px;
+    flex-grow: 1;
+    clear: both;
+    justify-content: flex-end;
+    border-radius: 4px;
+    button {
+        margin: 0 12px 0 6px;
     }
 }

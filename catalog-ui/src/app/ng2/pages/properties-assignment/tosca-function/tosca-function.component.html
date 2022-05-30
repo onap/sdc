@@ -21,7 +21,7 @@
   <loader [display]="isLoading" [loaderDelay]="500" [relative]="true" [size]="'large'"></loader>
   <form class="w-sdc-form">
     <div class="i-sdc-form-item">
-      <label class="i-sdc-form-label required">{{'TOSCA_FUNCTION_LABEL' | translate}}</label>
+      <label class="i-sdc-form-label">{{'TOSCA_FUNCTION_LABEL' | translate}}</label>
       <select [(ngModel)]="toscaGetFunction.functionType" (change)="onToscaFunctionChange()" name="toscaFunctionType">
         <option *ngFor="let toscaFunction of toscaFunctions"
                 [ngValue]="toscaFunction">{{toscaFunction | lowercase}}</option>
@@ -41,6 +41,9 @@
       </select>
     </div>
     <div *ngIf="dropDownErrorMsg">{{dropDownErrorMsg}}</div>
+    <div *ngIf="showClearButton()" class="button-container">
+      <button (click)="onClearValues()" class="tlv-btn red ng-star-inserted">{{'TOSCA_FUNCTION_CLEAR_VALUE_BUTTON' | translate}}</button>
+    </div>
   </form>
   <loader [display]="isLoading" [size]="'medium'" [relative]="true"></loader>
 </div>
