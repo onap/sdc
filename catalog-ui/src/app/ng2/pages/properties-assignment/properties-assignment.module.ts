@@ -37,6 +37,7 @@ import {SdcUiComponentsModule} from "onap-ui-angular";
 import {ModalFormsModule} from "app/ng2/components/ui/forms/modal-forms.module";
 import {HierarchyNavigationModule} from "../../components/logic/hierarchy-navigtion/hierarchy-navigation.module";
 import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
+import {TranslateModule} from '../../shared/translator/translate.module';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import {PropertyCreatorComponent} from "./property-creator/property-creator.comp
     HierarchyNavigationModule,
     UiElementsModule,
     SdcUiComponentsModule,
-    ModalFormsModule
+    ModalFormsModule,
+    TranslateModule
   ],
 
   entryComponents: [PropertiesAssignmentComponent],

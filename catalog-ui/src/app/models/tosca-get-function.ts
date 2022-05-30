@@ -30,4 +30,19 @@ export class ToscaGetFunction {
     sourceName: string;
     functionType: ToscaGetFunctionType;
     propertyPathFromSource: Array<string>;
+
+    constructor(toscaGetFunction: ToscaGetFunction) {
+        if (!toscaGetFunction) {
+            return;
+        }
+        this.propertyUniqueId = toscaGetFunction.propertyUniqueId;
+        this.propertyName = toscaGetFunction.propertyName;
+        this.propertySource = toscaGetFunction.propertySource;
+        this.sourceUniqueId = toscaGetFunction.sourceUniqueId;
+        this.sourceName = toscaGetFunction.sourceName;
+        this.functionType = toscaGetFunction.functionType;
+        if (toscaGetFunction.propertyPathFromSource) {
+            this.propertyPathFromSource = [...toscaGetFunction.propertyPathFromSource];
+        }
+    }
 }
