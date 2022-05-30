@@ -513,7 +513,7 @@
   "=========== PROPERTIES ASSIGNMENT TOSCA FUNCTION BUTTON ===========": "",
   "TOSCA_FUNCTION_LABEL": "TOSCA function",
   "TOSCA_FUNCTION_PROPERTY_SOURCE_LABEL": "Property Source",
-  "CLEAR_VALUE_LABEL": "Clear Value",
+  "TOSCA_FUNCTION_CLEAR_VALUE_BUTTON": "Clear Value",
   "INPUT_DROPDOWN_LABEL": "Input",
   "TOSCA_FUNCTION_PROPERTY_DROPDOWN_LABEL": "Property",
   "TOSCA_FUNCTION_NO_INPUT_FOUND": "No input found with type {{type}}",

@@ -79,7 +79,7 @@
                         *ngIf="isPropertiesTabSelected && !isSelf()"
                         [disabled]="checkedPropertiesCount != 1 || isReadonly || hasChangedData"
                         class="tlv-btn blue declare-button"
-                        data-tests-id="declare-button select-tosca-function">{{btnToscaFunctionText}}</button>
+                        data-tests-id="declare-button select-tosca-function">{{'TOSCA_FUNCTION_LABEL' | translate}}</button>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData" (click)="declareProperties()" data-tests-id="declare-button declare-input">Declare Input</button>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || isReadonly || hasChangedData || isSelf()" (click)="declarePropertiesToPolicies()" data-tests-id="declare-button declare-policy">Declare Policy</button>
                 <button class="tlv-btn blue declare-button" [disabled]="!checkedPropertiesCount || checkedChildPropertiesCount || isReadonly || hasChangedData" (click)="declareListProperties()" data-tests-id="declare-but($event)ton declare-list-input">Create List Input</button>

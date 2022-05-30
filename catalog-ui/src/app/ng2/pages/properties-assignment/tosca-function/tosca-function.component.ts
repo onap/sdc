@@ -17,7 +17,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ComponentMetadata, DataTypeModel, PropertyBEModel} from 'app/models';
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
@@ -37,7 +37,7 @@ import {ToscaGetFunction} from "../../../../models/tosca-get-function";
     templateUrl: './tosca-function.component.html',
     styleUrls: ['./tosca-function.component.less'],
 })
-export class ToscaFunctionComponent {
+export class ToscaFunctionComponent implements OnInit {
 
     @Input() property: PropertyBEModel;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
@@ -53,7 +53,7 @@ export class ToscaFunctionComponent {
     dropdownValuesLabel: string;
     dropDownErrorMsg: string;
     propertySource: string
-    toscaGetFunction: ToscaGetFunction = new ToscaGetFunction();
+    toscaGetFunction: ToscaGetFunction = new ToscaGetFunction(undefined);
 
     private componentMetadata: ComponentMetadata;
 
@@ -64,10 +64,31 @@ export class ToscaFunctionComponent {
                 private translateService: TranslateService) {
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.componentMetadata = this.workspaceService.metadata;
         this.loadToscaFunctions();
         this.loadPropertySourceDropdown();
+        this.initToscaGetFunction();
+    }
+
+    private initToscaGetFunction(): void {
+        if (!this.property.isToscaGetFunction()) {
+            return;
+        }
+        this.toscaGetFunction = new ToscaGetFunction(this.property.toscaGetFunction);
+        if (this.toscaGetFunction.functionType === ToscaGetFunctionType.GET_PROPERTY) {
+            if (this.toscaGetFunction.propertySource === PropertySource.SELF) {
+                this.propertySource = PropertySource.SELF;
+            } else {
+                this.propertySource = this.toscaGetFunction.sourceName;
+            }
+        }
+        if (this.toscaGetFunction.propertyName) {
+            this.loadPropertyDropdown(() => {
+                this.selectedProperty = this.propertyDropdownList.find(property => property.propertyName === this.toscaGetFunction.propertyName)
+            });
+        }
+
     }
 
     private loadToscaFunctions(): void {
@@ -75,7 +96,7 @@ export class ToscaFunctionComponent {
         this.toscaFunctions.push(ToscaGetFunctionType.GET_PROPERTY);
     }
 
-    private loadPropertySourceDropdown() {
+    private loadPropertySourceDropdown(): void {
         this.propertySourceList.push(PropertySource.SELF);
         this.componentInstanceMap.forEach((value, key) => {
             const instanceName = value.name;
@@ -86,7 +107,7 @@ export class ToscaFunctionComponent {
         });
     }
 
-    private addToPropertySource(source: string) {
+    private addToPropertySource(source: string): void {
         this.propertySourceList.push(source);
         this.propertySourceList.sort((a, b) => {
             if (a === PropertySource.SELF) {
@@ -100,6 +121,19 @@ export class ToscaFunctionComponent {
     }
 
     onToscaFunctionChange(): void {
+        this.resetForm();
+        if (this.isGetInputSelected()) {
+            this.setSelfPropertySource();
+            this.loadPropertyDropdown();
+        }
+    }
+
+    private loadPropertyDropdown(onComplete: () => any = () => {}): void  {
+        this.loadPropertyDropdownLabel();
+        this.loadPropertyDropdownValues(onComplete);
+    }
+
+    private resetForm(): void {
         this.toscaGetFunction.propertyUniqueId = undefined;
         this.toscaGetFunction.propertyName = undefined;
         this.toscaGetFunction.propertySource = undefined;
@@ -107,14 +141,10 @@ export class ToscaFunctionComponent {
         this.toscaGetFunction.sourceName = undefined;
         this.toscaGetFunction.propertyPathFromSource = undefined;
         this.propertySource = undefined;
-        if (this.isGetInputSelected()) {
-            this.setSelfPropertySource();
-            this.loadDropdownValueLabel();
-            this.loadDropdownValues();
-        }
+        this.selectedProperty = undefined;
     }
 
-    private loadDropdownValueLabel(): void {
+    private loadPropertyDropdownLabel(): void {
         if (!this.toscaGetFunction.functionType) {
             return;
         }
@@ -125,20 +155,21 @@ export class ToscaFunctionComponent {
         }
     }
 
-    private loadDropdownValues(): void {
+    private loadPropertyDropdownValues(onComplete: () => any = () => {}): void {
         if (!this.toscaGetFunction.functionType) {
             return;
         }
-        this.resetDropDown();
-        this.loadPropertiesInDropdown();
+        this.resetPropertyDropdown();
+        this.fillPropertyDropdownValues(onComplete);
     }
 
-    private resetDropDown() {
+    private resetPropertyDropdown(): void {
         this.dropDownErrorMsg = undefined;
+        this.selectedProperty = undefined;
         this.propertyDropdownList = [];
     }
 
-    private loadPropertiesInDropdown() {
+    private fillPropertyDropdownValues(onComplete: () => any = () => {}): void {
         this.startLoading();
         const propertiesObservable: Observable<ComponentGenericResponse> = this.getPropertyObservable();
         propertiesObservable.subscribe( (response: ComponentGenericResponse) => {
@@ -156,6 +187,7 @@ export class ToscaFunctionComponent {
         }, (error) => {
             console.error('An error occurred while loading properties.', error);
         }, () => {
+            onComplete();
             this.stopLoading();
         });
     }
@@ -192,12 +224,12 @@ export class ToscaFunctionComponent {
         return componentInstanceProperties.filter(property => property.uniqueId !== this.property.uniqueId);
     }
 
-    private addPropertyToDropdown(propertyDropdownValue: PropertyDropdownValue) {
+    private addPropertyToDropdown(propertyDropdownValue: PropertyDropdownValue): void {
         this.propertyDropdownList.push(propertyDropdownValue);
         this.propertyDropdownList.sort((a, b) => a.propertyLabel.localeCompare(b.propertyLabel));
     }
 
-    private addPropertiesToDropdown(properties: PropertyBEModel[]) {
+    private addPropertiesToDropdown(properties: PropertyBEModel[]): void {
         for (const property of properties) {
             if (this.property.type === property.type) {
                 this.addPropertyToDropdown({
@@ -212,7 +244,7 @@ export class ToscaFunctionComponent {
         }
     }
 
-    private fillPropertyDropdownWithMatchingChildProperties(inputProperty: PropertyBEModel, parentPropertyList: Array<PropertyBEModel> = []) {
+    private fillPropertyDropdownWithMatchingChildProperties(inputProperty: PropertyBEModel, parentPropertyList: Array<PropertyBEModel> = []): void {
         const dataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, inputProperty.type);
         if (!dataTypeFound || !dataTypeFound.properties) {
             return;
@@ -232,23 +264,23 @@ export class ToscaFunctionComponent {
         });
     }
 
-    private isGetPropertySelected() {
+    private isGetPropertySelected(): boolean {
         return this.toscaGetFunction.functionType === ToscaGetFunctionType.GET_PROPERTY;
     }
 
-    private isGetInputSelected() {
+    private isGetInputSelected(): boolean {
         return this.toscaGetFunction.functionType === ToscaGetFunctionType.GET_INPUT;
     }
 
-    private isComplexType(propertyType: string) {
+    private isComplexType(propertyType: string): boolean {
         return PROPERTY_DATA.SIMPLE_TYPES.indexOf(propertyType) === -1;
     }
 
-    private stopLoading() {
+    private stopLoading(): void {
         this.isLoading = false;
     }
 
-    private startLoading() {
+    private startLoading(): void {
         this.isLoading = true;
     }
 
@@ -260,7 +292,7 @@ export class ToscaFunctionComponent {
         return this.toscaGetFunction.functionType && !this.isLoading && !this.dropDownErrorMsg;
     }
 
-    onPropertySourceChange() {
+    onPropertySourceChange(): void {
         if (!this.toscaGetFunction.functionType || !this.propertySource) {
             return;
         }
@@ -274,18 +306,16 @@ export class ToscaFunctionComponent {
             this.toscaGetFunction.sourceName = this.propertySource;
             this.toscaGetFunction.sourceUniqueId = this.instanceNameAndIdMap.get(this.propertySource);
         }
-        this.loadDropdownValueLabel();
-        this.resetDropDown();
-        this.loadPropertiesInDropdown();
+        this.loadPropertyDropdown();
     }
 
-    private setSelfPropertySource() {
+    private setSelfPropertySource(): void {
         this.toscaGetFunction.propertySource = PropertySource.SELF;
         this.toscaGetFunction.sourceName = this.componentMetadata.name;
         this.toscaGetFunction.sourceUniqueId = this.componentMetadata.uniqueId;
     }
 
-    onPropertyChange() {
+    onPropertyChange(): void {
         this.toscaGetFunction.propertyUniqueId = this.selectedProperty.propertyId;
         this.toscaGetFunction.propertyName = this.selectedProperty.propertyName;
         this.toscaGetFunction.propertyPathFromSource = this.selectedProperty.propertyPath;

@@ -118,7 +118,6 @@ export class PropertiesAssignmentComponent {
     serviceBePropertiesMap: InstanceBePropertiesMap;
     serviceBeCapabilitiesPropertiesMap: InstanceBePropertiesMap;
     selectedInstance_FlattenCapabilitiesList: Capability[];
-    btnToscaFunctionText: string;
 
     @ViewChild('hierarchyNavTabs') hierarchyNavTabs: Tabs;
     @ViewChild('propertyInputTabs') propertyInputTabs: Tabs;
@@ -156,7 +155,6 @@ export class PropertiesAssignmentComponent {
 
     ngOnInit() {
         console.debug("==>" + this.constructor.name + ": ngOnInit");
-        this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
         this.loadingInputs = true;
         this.loadingPolicies = true;
         this.loadingInstances = true;
@@ -518,11 +516,6 @@ export class PropertiesAssignmentComponent {
         if (!selectedInstanceData) {
             return;
         }
-        const property: PropertyBEModel = this.buildCheckedInstanceProperty();
-        if (property.isToscaGetFunction()) {
-            this.clearCheckedInstancePropertyValue();
-            return;
-        }
         this.openToscaGetFunctionModal();
     }
 
@@ -544,25 +537,32 @@ export class PropertiesAssignmentComponent {
 
     private openToscaGetFunctionModal() {
         const modalTitle = 'Set value using TOSCA functions';
+        const modalButtons = [];
+        modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
+            () => {
+                const toscaGetFunction: ToscaGetFunction = modal.instance.dynamicContent.instance.toscaGetFunction;
+                this.updateCheckedInstancePropertyGetFunctionValue(toscaGetFunction);
+                modal.instance.close();
+            }
+        ));
+        const checkedInstanceProperty = this.buildCheckedInstanceProperty();
+        if (checkedInstanceProperty.isToscaGetFunction()) {
+            modalButtons.push(new ButtonModel(this.translateService.translate('TOSCA_FUNCTION_CLEAR_VALUE_BUTTON'), 'red', () => {
+                modal.instance.close();
+                this.clearCheckedInstancePropertyValue();
+            }));
+        }
+        modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
+            modal.instance.close();
+        }));
         const modal = this.modalService.createCustomModal(new ModalModel(
             'sm',
             modalTitle,
             null,
-            [
-                new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
-                    () => {
-                        const toscaGetFunction: ToscaGetFunction = modal.instance.dynamicContent.instance.toscaGetFunction;
-                        this.updateCheckedInstancePropertyGetFunctionValue(toscaGetFunction);
-                        modal.instance.close();
-                    }
-                ),
-                new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
-                    modal.instance.close();
-                }),
-            ],
+            modalButtons,
             null /* type */
         ));
-        const checkedInstanceProperty = this.buildCheckedInstanceProperty();
+
         this.modalService.addDynamicContentToModalAndBindInputs(modal, ToscaFunctionComponent, {
             'property': checkedInstanceProperty,
             'componentInstanceMap': this.componentInstanceMap
@@ -610,25 +610,6 @@ export class PropertiesAssignmentComponent {
             console.error(errorMsg, error);
         }, () => {
             this.loadingProperties = false;
-            this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
-        });
-    }
-
-    selectInputBtnLabel = () => {
-        let instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
-        angular.forEach(instancesIds, (instanceId: string): void => {
-            let checkedProperties: PropertyBEModel[] = this.propertiesService.getCheckedProperties(this.instanceFePropertiesMap[instanceId]);
-            angular.forEach(checkedProperties, (property: PropertyBEModel) => {
-                if(this.checkedPropertiesCount == 1) {
-                    if (property.isToscaGetFunction()) {
-                        this.btnToscaFunctionText = this.translateService.translate('CLEAR_VALUE_LABEL');
-                    } else {
-                        this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
-                    }
-                } else {
-                    this.btnToscaFunctionText = this.translateService.translate('TOSCA_FUNCTION_LABEL');
-                }
-            });
         });
     }
 
@@ -1106,7 +1087,6 @@ export class PropertiesAssignmentComponent {
     updateCheckedPropertyCount = (increment: boolean): void => {
         this.checkedPropertiesCount += (increment) ? 1 : -1;
         console.debug("CheckedProperties count is now.... " + this.checkedPropertiesCount);
-        this.selectInputBtnLabel();
     };
 
     updateCheckedChildPropertyCount = (increment: boolean): void => {
