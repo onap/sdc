@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "46eec95a_b5241a47",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-30T09:57:08Z",
+      "side": 1,
+      "message": "please, remove this unnecessary variable. Set the value direct on the line 266.",
+      "range": {
+        "startLine": 264,
+        "startChar": 12,
+        "endLine": 264,
+        "endChar": 37
+      },
+      "revId": "2de25180351d150e9e765b6d2739b8b58ee14591",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e6504af_ea089fd5",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-30T09:57:08Z",
+      "side": 1,
+      "message": "please, remove the comma",
+      "range": {
+        "startLine": 266,
+        "startChar": 146,
+        "endLine": 266,
+        "endChar": 148
+      },
+      "revId": "2de25180351d150e9e765b6d2739b8b58ee14591",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8cd885a3_6fbf2e34",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/interface-operations.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-30T09:57:08Z",
+      "side": 1,
+      "message": "add space",
+      "range": {
+        "startLine": 266,
+        "startChar": 112,
+        "endLine": 266,
+        "endChar": 113
+      },
+      "revId": "2de25180351d150e9e765b6d2739b8b58ee14591",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d69693e6_37f2c628",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
         "patchSetId": 5
