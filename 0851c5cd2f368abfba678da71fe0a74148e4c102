@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c80e8f7f_ebb1a9ca",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-05-30T13:17:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dd1d089a_11c67bf0",
+      "range": {
+        "startLine": 312,
+        "startChar": 0,
+        "endLine": 319,
+        "endChar": 0
+      },
+      "revId": "0851c5cd2f368abfba678da71fe0a74148e4c102",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "954e1ccb_a1aa0a88",
         "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "0851c5cd2f368abfba678da71fe0a74148e4c102",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27087a88_fcb94750",
+        "filename": "openecomp-be/api/openecomp-sdc-rest-webapp/vendor-software-products-rest/vendor-software-products-rest-services/src/main/java/org/openecomp/sdcrests/vsp/rest/services/VendorSoftwareProductsImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-05-30T13:17:25Z",
+      "side": 1,
+      "message": "at the begining, they were after de itemManager.delete(), but got Nullpointers in that case, thats why i moved before...\nupdatePackageDetails cannot be moved after itemManager.delete() as it will fail not finding the (deleted) item.\nmodified deleteUserPermissions, but cannot pass the item name to sendNotifications method without breaking current api contracts. Right now name will be empty in notification but as this notification is redundant, could be skipped",
+      "parentUuid": "954e1ccb_a1aa0a88",
+      "range": {
+        "startLine": 385,
+        "startChar": 8,
+        "endLine": 386,
+        "endChar": 37
+      },
+      "revId": "0851c5cd2f368abfba678da71fe0a74148e4c102",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
