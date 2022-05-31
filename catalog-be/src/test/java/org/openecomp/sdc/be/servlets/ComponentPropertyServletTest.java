@@ -91,8 +91,7 @@ class ComponentPropertyServletTest extends JerseySpringBaseTest {
         property.setType(STRING_TYPE);
 
         EntryData<String, PropertyDefinition> propertyEntry = new EntryData<>(VALID_PROPERTY_NAME, property);
-        when(propertyBl.addPropertyToComponent(eq(SERVICE_ID), any(), any(), any()))
-            .thenReturn(Either.left(propertyEntry));
+        when(propertyBl.addPropertyToComponent(eq(SERVICE_ID), any(), any())).thenReturn(Either.left(propertyEntry));
 
         Response propertyInService =
             componentPropertyServlet.createPropertyInService(SERVICE_ID, getValidProperty(), request, USER_ID);
