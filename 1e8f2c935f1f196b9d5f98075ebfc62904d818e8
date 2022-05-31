@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ed7f1042_3c8bffab",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceAttributesMergeBL.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T08:53:50Z",
+      "side": 1,
+      "message": "Can we just add the getGetOutputValues() value to newAttribute and add that to commonInstAttributes instead of adding the old attribute and copying across the new value/desc?",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 80
+      },
+      "revId": "1e8f2c935f1f196b9d5f98075ebfc62904d818e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd5cbfb9_647e3475",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceOutputsRedeclareHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T08:53:50Z",
+      "side": 1,
+      "message": "why pass in as a map when the map will only ever have a single entry, will simplify DeclareOutputsResolver if not a map",
+      "range": {
+        "startLine": 63,
+        "startChar": 72,
+        "endLine": 63,
+        "endChar": 96
+      },
+      "revId": "1e8f2c935f1f196b9d5f98075ebfc62904d818e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7259623_38c7f38d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceOutputsRedeclareHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T08:53:50Z",
+      "side": 1,
+      "message": "is this needed?",
+      "range": {
+        "startLine": 70,
+        "startChar": 77,
+        "endLine": 70,
+        "endChar": 132
+      },
+      "revId": "1e8f2c935f1f196b9d5f98075ebfc62904d818e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "110e15b4_4bc3e9fa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T08:53:50Z",
+      "side": 1,
+      "message": "rename getAttributesMappedToOutputs",
+      "range": {
+        "startLine": 40,
+        "startChar": 73,
+        "endLine": 40,
+        "endChar": 99
+      },
+      "revId": "1e8f2c935f1f196b9d5f98075ebfc62904d818e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3804d34c_ca0c6cd7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T08:53:50Z",
+      "side": 1,
+      "message": "rename to attributesMappedtoOutputsOnNewInstance, general comment to rename all similar variables",
+      "range": {
+        "startLine": 40,
+        "startChar": 51,
+        "endLine": 40,
+        "endChar": 70
+      },
+      "revId": "1e8f2c935f1f196b9d5f98075ebfc62904d818e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7c88c94_bf366088",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T08:53:50Z",
+      "side": 1,
+      "message": "Do we need this intermediatory step of creating RedeclareOutputData instances and then later creating  OutputDefinition instances, or can we just create the OutputDefinition instances straight away. It might simplify things a bit if we could do it in one operation rather than two",
+      "range": {
+        "startLine": 41,
+        "startChar": 59,
+        "endLine": 41,
+        "endChar": 83
+      },
+      "revId": "1e8f2c935f1f196b9d5f98075ebfc62904d818e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c039f715_b06b2801",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T08:53:50Z",
+      "side": 1,
+      "message": "rename createOutputs",
+      "range": {
+        "startLine": 42,
+        "startChar": 15,
+        "endLine": 42,
+        "endChar": 38
+      },
+      "revId": "1e8f2c935f1f196b9d5f98075ebfc62904d818e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2a32b56_c9106f1e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T08:53:50Z",
+      "side": 1,
+      "message": "this seems to be checking if there is not output already on the component for this component instance attribute - but is this scenario possible?",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 5
+      },
+      "revId": "1e8f2c935f1f196b9d5f98075ebfc62904d818e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
