@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c6de177_3f11dbea",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-function.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-05-31T11:52:00Z",
+      "side": 1,
+      "message": "If I add two instances of the same VFC then I am seeing that I cannot assign the value of VFC-A prop1 to the value of VFC-B prop1. Im guessing this check is removing the currently selected property from all instances of the VFC rather than just the current instance",
+      "range": {
+        "startLine": 192,
+        "startChar": 0,
+        "endLine": 192,
+        "endChar": 108
+      },
+      "revId": "3060ce3a43b8f3f87b98d2984e72386376c8c5ad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
