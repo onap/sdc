@@ -82,12 +82,11 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
      * Create new property on component in graph
      *
      * @param componentId
-     * @param propertyName
      * @param newPropertyDefinition
      * @param userId
      * @return either properties or response format
      */
-    public Either<EntryData<String, PropertyDefinition>, ResponseFormat> addPropertyToComponent(String componentId, String propertyName,
+    public Either<EntryData<String, PropertyDefinition>, ResponseFormat> addPropertyToComponent(String componentId,
                                                                                                 PropertyDefinition newPropertyDefinition,
                                                                                                 String userId) {
         Either<EntryData<String, PropertyDefinition>, ResponseFormat> result = null;
@@ -107,6 +106,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
             return result;
         }
         try {
+            final String propertyName = newPropertyDefinition.getName();
             if (!ComponentValidationUtils.canWorkOnComponent(component, userId)) {
                 result = Either.right(componentsUtils.getResponseFormat(ActionStatus.RESTRICTED_OPERATION));
                 return result;
@@ -139,14 +139,13 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
                             innerType = prop.getType();
                         }
                     }
-                    String convertedValue = null;
                     if (newPropertyDefinition.getDefaultValue() != null) {
-                        convertedValue = converter.convert(newPropertyDefinition.getDefaultValue(), innerType, allDataTypes);
+                        final String convertedValue = converter.convert(newPropertyDefinition.getDefaultValue(), innerType, allDataTypes);
                         newPropertyDefinition.setDefaultValue(convertedValue);
                     }
                 }
                 Either<PropertyDefinition, StorageOperationStatus> addPropertyEither = toscaOperationFacade
-                    .addPropertyToComponent(propertyName, newPropertyDefinition, component);
+                    .addPropertyToComponent(newPropertyDefinition, component);
                 if (addPropertyEither.isRight()) {
                     log.info("Failed to add new property {}. Error - {}", componentId, addPropertyEither.right().value());
                     result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -212,7 +211,7 @@ public class PropertyBusinessLogic extends BaseBusinessLogic {
         copiedPropertyDefinition.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(componentId, propertyName));
         copiedPropertyDefinition.setParentUniqueId(componentId);
         final Either<PropertyDefinition, StorageOperationStatus> operationResult = toscaOperationFacade
-            .addPropertyToComponent(propertyName, copiedPropertyDefinition, component);
+            .addPropertyToComponent(copiedPropertyDefinition, component);
         if (operationResult.isRight()) {
             final String error = String
                 .format("Failed to add copied property '%s' to component '%s'. Operation status: '%s'", propertyDefinition.getUniqueId(), componentId,
