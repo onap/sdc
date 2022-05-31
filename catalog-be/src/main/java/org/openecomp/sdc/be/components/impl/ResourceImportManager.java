@@ -112,7 +112,7 @@ import org.yaml.snakeyaml.Yaml;
 @org.springframework.stereotype.Component("resourceImportManager")
 public class ResourceImportManager {
 
-    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("['\\w\\s\\-\\_\\d\\:]+");
+    static final Pattern PROPERTY_NAME_PATTERN_IGNORE_LENGTH = Pattern.compile("['\\w\\s\\-\\:]+");
     private static final Logger log = Logger.getLogger(ResourceImportManager.class);
     private final InterfaceDefinitionHandler interfaceDefinitionHandler;
     private final ComponentsUtils componentsUtils;
@@ -380,7 +380,7 @@ public class ResourceImportManager {
             setProperties(toscaJson, resource, existingResource);
             setAttributes(toscaJson, resource);
             setRequirements(toscaJson, resource, parentResource);
-            setInterfaceLifecycle(toscaJson, resource);
+            setInterfaceLifecycle(toscaJson, resource, existingResource);
         } else {
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
@@ -388,7 +388,7 @@ public class ResourceImportManager {
 
     private Either<Resource, StorageOperationStatus> getExistingResource(final Resource resource) {
         final Either<List<GraphVertex>, JanusGraphOperationStatus> byCriteria = janusGraphDao.getByCriteria(
-            getVertexTypeEnum(resource.getResourceType()), propertiesToMatch(resource), propertiesToNotMatch(resource), JsonParseFlagEnum.ParseAll);
+            getVertexTypeEnum(resource.getResourceType()), propertiesToMatch(resource), propertiesToNotMatch(), JsonParseFlagEnum.ParseAll);
         if (byCriteria.isLeft() && CollectionUtils.isNotEmpty(byCriteria.left().value())) {
             final List<GraphVertex> graphVertexList = byCriteria.left().value();
             if (graphVertexList.size() == 1) {
@@ -420,7 +420,7 @@ public class ResourceImportManager {
         return graphProperties;
     }
 
-    private Map<GraphPropertyEnum, Object> propertiesToNotMatch(final Resource resource) {
+    private Map<GraphPropertyEnum, Object> propertiesToNotMatch() {
         final Map<GraphPropertyEnum, Object> graphProperties = new EnumMap<>(GraphPropertyEnum.class);
         graphProperties.put(GraphPropertyEnum.IS_DELETED, true);
         graphProperties.put(GraphPropertyEnum.IS_ARCHIVED, true);
@@ -436,12 +436,13 @@ public class ResourceImportManager {
         }
     }
 
-    private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource) {
-        Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
+    private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource, Either<Resource, StorageOperationStatus> existingResource) {
+        final Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
             .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.INTERFACES);
         if (toscaInterfaces.isLeft()) {
-            Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
-            for (final Entry<String, Object> interfaceNameValue : toscaInterfaces.left().value().entrySet()) {
+            final Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
+            final Map<String, Object> map = toscaInterfaces.left().value();
+            for (final Entry<String, Object> interfaceNameValue : map.entrySet()) {
                 final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(),
                     resource.getModel());
                 if (eitherInterface.isRight()) {
@@ -451,7 +452,18 @@ public class ResourceImportManager {
                     moduleInterfaces.put(interfaceDefinition.getType(), interfaceDefinition);
                 }
             }
-            if (!moduleInterfaces.isEmpty()) {
+            if (existingResource.isLeft()) {
+                final Map<String, InterfaceDefinition> userCreatedInterfaceDefinitions =
+                    existingResource.left().value().getInterfaces().entrySet().stream()
+                        .filter(i -> i.getValue().isUserCreated())
+                        .filter(i -> !map.containsKey(i.getValue().getType()))
+                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                if (MapUtils.isNotEmpty(userCreatedInterfaceDefinitions)) {
+                    moduleInterfaces.putAll(userCreatedInterfaceDefinitions);
+                }
+            }
+
+            if (MapUtils.isNotEmpty(moduleInterfaces)) {
                 resource.setInterfaces(moduleInterfaces);
             }
         }
