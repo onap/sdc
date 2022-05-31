@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3eff7123_d6777e18",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-05-31T16:31:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eff37dde_69bb85d4",
+      "range": {
+        "startLine": 354,
+        "startChar": 59,
+        "endLine": 354,
+        "endChar": 87
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da14d595_ad7dfd39",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95861b43_2fd1395a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 390,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-05-31T16:31:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da14d595_ad7dfd39",
+      "range": {
+        "startLine": 390,
+        "startChar": 63,
+        "endLine": 390,
+        "endChar": 105
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "d3c43d2d_b4833b3d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-05-31T16:31:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "092a637b_ba22daf4",
+      "range": {
+        "startLine": 392,
+        "startChar": 82,
+        "endLine": 392,
+        "endChar": 88
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c1073d63_c19fd9a6",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dada9e4_4eebcd26",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-05-31T16:31:40Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c1073d63_c19fd9a6",
+      "range": {
+        "startLine": 558,
+        "startChar": 0,
+        "endLine": 558,
+        "endChar": 111
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
