@@ -22,6 +22,30 @@
       "revId": "3060ce3a43b8f3f87b98d2984e72386376c8c5ad",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "256bb681_a6a8b234",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-function.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-05-31T14:51:47Z",
+      "side": 1,
+      "message": "Good catch. The property id in one instance is the same in the other, probably it has the original property id (from the type) instead of a specific instance property id.\nJust updated to compare also the parent of the property in case the ids are the same.",
+      "parentUuid": "0c6de177_3f11dbea",
+      "range": {
+        "startLine": 192,
+        "startChar": 0,
+        "endLine": 192,
+        "endChar": 108
+      },
+      "revId": "3060ce3a43b8f3f87b98d2984e72386376c8c5ad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
