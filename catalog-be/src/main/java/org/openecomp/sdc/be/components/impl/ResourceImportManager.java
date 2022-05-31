@@ -380,7 +380,7 @@ public class ResourceImportManager {
             setProperties(toscaJson, resource, existingResource);
             setAttributes(toscaJson, resource);
             setRequirements(toscaJson, resource, parentResource);
-            setInterfaceLifecycle(toscaJson, resource);
+            setInterfaceLifecycle(toscaJson, resource, existingResource);
         } else {
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }
@@ -434,12 +434,13 @@ public class ResourceImportManager {
         }
     }
 
-    private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource) {
-        Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
+    private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource, Either<Resource, StorageOperationStatus> existingResource) {
+        final Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = ImportUtils
             .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.INTERFACES);
         if (toscaInterfaces.isLeft()) {
-            Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
-            for (final Entry<String, Object> interfaceNameValue : toscaInterfaces.left().value().entrySet()) {
+            final Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
+            final Map<String, Object> map = toscaInterfaces.left().value();
+            for (final Entry<String, Object> interfaceNameValue : map.entrySet()) {
                 final Either<InterfaceDefinition, ResultStatusEnum> eitherInterface = createModuleInterface(interfaceNameValue.getValue(),
                     resource.getModel());
                 if (eitherInterface.isRight()) {
@@ -449,7 +450,18 @@ public class ResourceImportManager {
                     moduleInterfaces.put(interfaceDefinition.getType(), interfaceDefinition);
                 }
             }
-            if (!moduleInterfaces.isEmpty()) {
+            if (existingResource.isLeft()) {
+                final Map<String, InterfaceDefinition> userCreatedInterfaceDefinitions =
+                    existingResource.left().value().getInterfaces().entrySet().stream()
+                        .filter(i -> i.getValue().isUserCreated())
+                        .filter(i -> !map.containsKey(i.getValue().getType()))
+                        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                if (MapUtils.isNotEmpty(userCreatedInterfaceDefinitions)) {
+                    moduleInterfaces.putAll(userCreatedInterfaceDefinitions);
+                }
+            }
+
+            if (MapUtils.isNotEmpty(moduleInterfaces)) {
                 resource.setInterfaces(moduleInterfaces);
             }
         }
