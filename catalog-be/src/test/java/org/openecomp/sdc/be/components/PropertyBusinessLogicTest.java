@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,34 @@
 
 package org.openecomp.sdc.be.components;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
-import org.junit.Before;
-import org.junit.Test;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -60,32 +85,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.openecomp.sdc.test.utils.InterfaceOperationTestUtils;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-
-public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
+class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
 
     @Mock
     private ServletContext servletContext;
@@ -104,9 +104,9 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     @Mock
     private UserValidations userValidations;
     @Mock
-    IGraphLockOperation graphLockOperation;
+    private IGraphLockOperation graphLockOperation;
     @Mock
-    JanusGraphDao janusGraphDao;
+    private JanusGraphDao janusGraphDao;
 
     @InjectMocks
     private PropertyBusinessLogic propertyBusinessLogic = new PropertyBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
@@ -118,7 +118,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     private static final String operationType = "operationType";
     private static final String operationId = "operationId";
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
         ExternalConfiguration.setAppName("catalog-be");
@@ -131,18 +131,17 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         user.setRole(Role.ADMIN.name());
 
         when(mockUserAdmin.getUser("jh003", false)).thenReturn(user);
-        when(userValidations.validateUserExists(eq("jh003"))).thenReturn(user);
+        when(userValidations.validateUserExists("jh003")).thenReturn(user);
 
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
         when(servletContext.getAttribute(Constants.PROPERTY_OPERATION_MANAGER)).thenReturn(propertyOperation);
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
-//        when(servletContext.getAttribute(Constants.RESOURCE_OPERATION_MANAGER)).thenReturn(resourceOperation);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
     }
 
     @Test
-    public void getProperty_propertyNotFound() throws Exception {
+    void getProperty_propertyNotFound() throws Exception {
         Resource resource = new Resource();
         PropertyDefinition property1 = createPropertyObject("someProperty", "someResource");
         PropertyDefinition property2 = createPropertyObject("someProperty2", "myResource");
@@ -158,7 +157,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void getProperty_propertyNotBelongsToResource() throws Exception {
+    void getProperty_propertyNotBelongsToResource() throws Exception {
         Resource resource = new Resource();
         PropertyDefinition property1 = createPropertyObject("someProperty", "someResource");
         resource.setProperties(Arrays.asList(property1));
@@ -173,7 +172,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void getProperty() throws Exception {
+    void getProperty() throws Exception {
         Resource resource = new Resource();
         resource.setUniqueId(resourceId);
         PropertyDefinition property1 = createPropertyObject("someProperty", null);
@@ -187,7 +186,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void testGetPropertyFromService() {
+    void testGetPropertyFromService() {
         Service service = new Service();
         service.setUniqueId(serviceId);
 
@@ -203,7 +202,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void testPropertyNotFoundOnService() {
+    void testPropertyNotFoundOnService() {
         Service service = new Service();
         service.setUniqueId(serviceId);
 
@@ -218,7 +217,7 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void isPropertyUsedByComponentInterface(){
+    void isPropertyUsedByComponentInterface() {
         Service service = new Service();
         service.setUniqueId(serviceId);
         service.setInterfaces(InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceType, operationId, operationType));
@@ -234,9 +233,11 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void isPropertyUsedByComponentInstanceInterface(){
-        Map<String, InterfaceDefinition> newInterfaceDefinition = InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceType, operationId, operationType);
-        ComponentInstanceInterface componentInstanceInterface = new ComponentInstanceInterface(interfaceType, newInterfaceDefinition.get(interfaceType));
+    void isPropertyUsedByComponentInstanceInterface() {
+        Map<String, InterfaceDefinition> newInterfaceDefinition = InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceType,
+            operationId, operationType);
+        ComponentInstanceInterface componentInstanceInterface = new ComponentInstanceInterface(interfaceType,
+            newInterfaceDefinition.get(interfaceType));
 
         Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces = new HashMap<>();
         componentInstanceInterfaces.put("Test", Arrays.asList(componentInstanceInterface));
@@ -256,9 +257,11 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void isPropertyUsedByComponentParentComponentInstanceInterface(){
-        Map<String, InterfaceDefinition> newInterfaceDefinition = InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceType, operationId, operationType);
-        ComponentInstanceInterface componentInstanceInterface = new ComponentInstanceInterface(interfaceType, newInterfaceDefinition.get(interfaceType));
+    void isPropertyUsedByComponentParentComponentInstanceInterface() {
+        Map<String, InterfaceDefinition> newInterfaceDefinition = InterfaceOperationTestUtils.createMockInterfaceDefinitionMap(interfaceType,
+            operationId, operationType);
+        ComponentInstanceInterface componentInstanceInterface = new ComponentInstanceInterface(interfaceType,
+            newInterfaceDefinition.get(interfaceType));
 
         Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces = new HashMap<>();
         componentInstanceInterfaces.put("Test", Arrays.asList(componentInstanceInterface));
@@ -295,15 +298,15 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
     }
 
     @Test
-    public void deleteProperty_CONNECTION_FAILURE() {
+    void deleteProperty_CONNECTION_FAILURE() {
         StorageOperationStatus lockResult = StorageOperationStatus.CONNECTION_FAILURE;
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(new Resource()));
-        assertTrue(propertyBusinessLogic.deletePropertyFromComponent("resourceforproperty.0.1", "someProperty","i726").isRight());
+        assertTrue(propertyBusinessLogic.deletePropertyFromComponent("resourceforproperty.0.1", "someProperty", "i726").isRight());
     }
 
     @Test
-    public void deleteProperty_RESOURCE_NOT_FOUND() throws Exception {
+    void deleteProperty_RESOURCE_NOT_FOUND() throws Exception {
 
         Resource resource = new Resource();
         PropertyDefinition property1 = createPropertyObject("someProperty", "someResource");
@@ -322,19 +325,19 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         StorageOperationStatus lockResult = StorageOperationStatus.OK;
         when(graphLockOperation.lockComponent(any(), any())).thenReturn(lockResult);
 
-        Component resourcereturn= new Resource();
+        Component resourcereturn = new Resource();
         resourcereturn.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         resourcereturn.setIsDeleted(false);
         resourcereturn.setLastUpdaterUserId("USR01");
 
-        Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
+        Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
         when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
-        assertTrue(propertyBusinessLogic.deletePropertyFromComponent("RES01", "someProperty","i726").isRight());
+        assertTrue(propertyBusinessLogic.deletePropertyFromComponent("RES01", "someProperty", "i726").isRight());
     }
 
     @Test
-    public void deleteProperty_RESTRICTED_OPERATION() throws Exception {
+    void deleteProperty_RESTRICTED_OPERATION() throws Exception {
         Resource resource = new Resource();
         PropertyDefinition property1 = createPropertyObject("someProperty", "someResource");
 
@@ -356,15 +359,14 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         resource.setIsDeleted(false);
         resource.setLastUpdaterUserId("USR01");
 
-        Either<Component, StorageOperationStatus> toscastatus=Either.left(resource);
+        Either<Component, StorageOperationStatus> toscastatus = Either.left(resource);
         when(toscaOperationFacade.getToscaElement("RES01")).thenReturn(toscastatus);
 
-
-        assertTrue(propertyBusinessLogic.deletePropertyFromComponent("RES01", "someProperty","i726").isRight());
+        assertTrue(propertyBusinessLogic.deletePropertyFromComponent("RES01", "someProperty", "i726").isRight());
     }
 
     @Test
-    public void deleteProperty_RESTRICTED_() throws Exception {
+    void deleteProperty_RESTRICTED_() throws Exception {
         final PropertyDefinition property1 = createPropertyObject("PROP", "RES01");
         final Resource resource = new Resource();
         final String resourceId = "myResource";
@@ -388,11 +390,11 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         when(toscaOperationFacade.deletePropertyOfComponent(anyObject(), anyString())).thenReturn(StorageOperationStatus.OK);
         when(toscaOperationFacade.getParentComponents(anyString())).thenReturn(Either.left(new ArrayList<>()));
 
-        assertTrue(propertyBusinessLogic.deletePropertyFromComponent("RES01", "PROP","USR01").isRight());
+        assertTrue(propertyBusinessLogic.deletePropertyFromComponent("RES01", "PROP", "USR01").isRight());
     }
 
     @Test
-    public void findComponentByIdTest() throws BusinessLogicException {
+    void findComponentByIdTest() throws BusinessLogicException {
         //give
         final Resource resource = new Resource();
         resource.setUniqueId(resourceId);
@@ -405,17 +407,19 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
             actualResource.getUniqueId(), is(equalTo(resource.getUniqueId())));
     }
 
-    @Test(expected = BusinessLogicException.class)
-    public void findComponentById_resourceNotFoundTest() throws BusinessLogicException {
+    @Test
+    void findComponentById_resourceNotFoundTest() throws BusinessLogicException {
         //given
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.right(null));
         Mockito.when(componentsUtils.getResponseFormat(ActionStatus.RESOURCE_NOT_FOUND, "")).thenReturn(new ResponseFormat());
         //when
-        propertyBusinessLogic.findComponentById(resourceId);
+        assertThrows(BusinessLogicException.class, () -> {
+            propertyBusinessLogic.findComponentById(resourceId);
+        });
     }
 
     @Test
-    public void updateComponentPropertyTest() throws BusinessLogicException {
+    void updateComponentPropertyTest() throws BusinessLogicException {
         //given
         final Resource resource = new Resource();
         resource.setUniqueId(resourceId);
@@ -433,8 +437,8 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
             actualPropertyDefinition.getName(), is(equalTo(propertyDefinition.getName())));
     }
 
-    @Test(expected = BusinessLogicException.class)
-    public void updateComponentProperty_updateFailedTest() throws BusinessLogicException {
+    @Test
+    void updateComponentProperty_updateFailedTest() throws BusinessLogicException {
         //given
         final Resource resource = new Resource();
         resource.setUniqueId(resourceId);
@@ -444,11 +448,13 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         when(componentsUtils.getResponseFormatByResource(Mockito.any(), Mockito.anyString())).thenReturn(new ResponseFormat());
         when(componentsUtils.convertFromStorageResponse(Mockito.any())).thenReturn(null);
         //when
-        propertyBusinessLogic.updateComponentProperty(resourceId, propertyDefinition);
+        assertThrows(BusinessLogicException.class, () -> {
+            propertyBusinessLogic.updateComponentProperty(resourceId, propertyDefinition);
+        });
     }
 
     @Test
-    public void copyPropertyToComponentTest() throws ToscaOperationException {
+    void copyPropertyToComponentTest() throws ToscaOperationException {
         //given
         final Resource expectedResource = new Resource();
         expectedResource.setUniqueId(resourceId);
@@ -466,10 +472,10 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         expectedResource.addProperty(copiedProperty2);
 
         Mockito.when(toscaOperationFacade
-            .addPropertyToComponent(eq(property1.getName()), Mockito.any(PropertyDefinition.class), eq(expectedResource)))
+                .addPropertyToComponent(Mockito.any(PropertyDefinition.class), eq(expectedResource)))
             .thenReturn(Either.left(copiedProperty1));
         Mockito.when(toscaOperationFacade
-            .addPropertyToComponent(eq(property2.getName()), Mockito.any(PropertyDefinition.class), eq(expectedResource)))
+                .addPropertyToComponent(Mockito.any(PropertyDefinition.class), eq(expectedResource)))
             .thenReturn(Either.left(copiedProperty2));
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(expectedResource));
         //when
@@ -479,11 +485,12 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         assertThat("Actual component should be an instance of Resource", actualComponent, is(instanceOf(Resource.class)));
         assertThat("Actual component should have the expected id", actualComponent.getUniqueId(), is(equalTo(expectedResource.getUniqueId())));
         assertThat("Actual component should have 2 properties", actualComponent.getProperties(), hasSize(2));
-        assertThat("Actual component should have the expected properties", actualComponent.getProperties(), hasItems(copiedProperty1, copiedProperty2));
+        assertThat("Actual component should have the expected properties", actualComponent.getProperties(),
+            hasItems(copiedProperty1, copiedProperty2));
     }
 
     @Test
-    public void copyPropertyToComponent1() throws ToscaOperationException {
+    void copyPropertyToComponent1() throws ToscaOperationException {
         //given
         final Resource expectedResource = new Resource();
         expectedResource.setUniqueId(resourceId);
@@ -496,8 +503,8 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         assertThat("Actual component should have no properties", actualComponent.getProperties(), is(nullValue()));
     }
 
-    @Test(expected = ToscaOperationException.class)
-    public void copyPropertyToComponent_copyFailed() throws ToscaOperationException {
+    @Test
+    void copyPropertyToComponent_copyFailed() throws ToscaOperationException {
         //given
         final Resource expectedResource = new Resource();
         expectedResource.setUniqueId(resourceId);
@@ -505,10 +512,12 @@ public class PropertyBusinessLogicTest extends BaseBusinessLogicMock {
         final PropertyDefinition property1 = createPropertyObject("property1", resourceId);
         propertiesToCopyList.add(property1);
         Mockito.when(toscaOperationFacade
-            .addPropertyToComponent(eq(property1.getName()), Mockito.any(PropertyDefinition.class), eq(expectedResource)))
+                .addPropertyToComponent(Mockito.any(PropertyDefinition.class), eq(expectedResource)))
             .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
         Mockito.when(toscaOperationFacade.getToscaElement(resourceId)).thenReturn(Either.left(expectedResource));
         //when
-        propertyBusinessLogic.copyPropertyToComponent(expectedResource, propertiesToCopyList, true);
+        assertThrows(ToscaOperationException.class, () -> {
+            propertyBusinessLogic.copyPropertyToComponent(expectedResource, propertiesToCopyList, true);
+        });
     }
 }
