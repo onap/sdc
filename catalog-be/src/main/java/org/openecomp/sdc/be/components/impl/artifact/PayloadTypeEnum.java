@@ -76,12 +76,19 @@ public enum PayloadTypeEnum {
         }
     }, XML {
         @Override
-        public Either<Boolean, ActionStatus> isValid(byte[] payload) {
+        public Either<Boolean, ActionStatus> isValid(final byte[] payload) {
             try {
-                SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+                final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+                // to be compliant, completely disable DOCTYPE declaration:
+                saxParserFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                // completely disable external entities declarations:
+                saxParserFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                saxParserFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                final SAXParser saxParser = saxParserFactory.newSAXParser();
+                // prohibit the use of all protocols by external entities:
                 saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
                 saxParser.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-                XMLReader reader = saxParser.getXMLReader();
+                final XMLReader reader = saxParser.getXMLReader();
                 setFeatures(reader);
                 reader.parse(new InputSource(new ByteArrayInputStream(payload)));
             } catch (ParserConfigurationException | IOException | SAXException exception) {
