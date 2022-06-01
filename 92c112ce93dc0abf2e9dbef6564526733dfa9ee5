@@ -2,6 +2,121 @@
   "comments": [
     {
       "key": {
+        "uuid": "a25c4068_4a30ea41",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-01T15:14:18Z",
+      "side": 1,
+      "message": "Change map to list and add param for instanceId",
+      "range": {
+        "startLine": 36,
+        "startChar": 70,
+        "endLine": 36,
+        "endChar": 129
+      },
+      "revId": "92c112ce93dc0abf2e9dbef6564526733dfa9ee5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "453a8c5c_e4a6144d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-01T15:14:18Z",
+      "side": 1,
+      "message": "see comment in this class to change method signature",
+      "range": {
+        "startLine": 37,
+        "startChar": 98,
+        "endLine": 37,
+        "endChar": 139
+      },
+      "revId": "92c112ce93dc0abf2e9dbef6564526733dfa9ee5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ef057f3_05a487a2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-01T15:14:18Z",
+      "side": 1,
+      "message": "Change map to list and add param for instanceId",
+      "range": {
+        "startLine": 41,
+        "startChar": 84,
+        "endLine": 41,
+        "endChar": 171
+      },
+      "revId": "92c112ce93dc0abf2e9dbef6564526733dfa9ee5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42b59716_39743b84",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-01T15:14:18Z",
+      "side": 1,
+      "message": "change to \"attribute\"",
+      "range": {
+        "startLine": 44,
+        "startChar": 66,
+        "endLine": 44,
+        "endChar": 85
+      },
+      "revId": "92c112ce93dc0abf2e9dbef6564526733dfa9ee5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "118feb65_9cd6ea7c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/output/DeclaredOutputsResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-01T15:14:18Z",
+      "side": 1,
+      "message": "change to \"attributeToCreateOutputFor",
+      "range": {
+        "startLine": 51,
+        "startChar": 136,
+        "endLine": 51,
+        "endChar": 155
+      },
+      "revId": "92c112ce93dc0abf2e9dbef6564526733dfa9ee5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fef498c2_ede0ff6c",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceAttributesAndOutputsMergeTest.java",
         "patchSetId": 4
@@ -110,6 +225,29 @@
         "startChar": 1,
         "endLine": 28,
         "endChar": 18
+      },
+      "revId": "92c112ce93dc0abf2e9dbef6564526733dfa9ee5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e98bda53_1de218eb",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/AttributeDefinitionUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-01T15:14:18Z",
+      "side": 1,
+      "message": "the passing in and out of the key is pointless, change to:\npublic static List\u003cAttributeDataDefinition\u003e getAttributesMappedToOutputs(List\u003cAttributeDataDefinition\u003e\u003e attributes)",
+      "range": {
+        "startLine": 35,
+        "startChar": 25,
+        "endLine": 35,
+        "endChar": 44
       },
       "revId": "92c112ce93dc0abf2e9dbef6564526733dfa9ee5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
