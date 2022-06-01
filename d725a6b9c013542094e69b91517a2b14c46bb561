@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6a7ea9c_72cf49e9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-01T07:47:37Z",
+      "side": 1,
+      "message": "this is a component rather than a component instance, rename to clarify.\n\"prevInstanceOrigComponent\" maybe",
+      "range": {
+        "startLine": 71,
+        "startChar": 68,
+        "endLine": 71,
+        "endChar": 84
+      },
+      "revId": "d725a6b9c013542094e69b91517a2b14c46bb561",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
