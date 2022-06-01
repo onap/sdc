@@ -210,6 +210,30 @@
       "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a7260ae_80bac0a5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/ResourceImportManagerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-01T10:40:59Z",
+      "side": 1,
+      "message": "yes, testPropertiesAfterReimport()\n\n        assertTrue(properties.containsKey(\"oneMore\"));\n        propertyDefinition \u003d properties.get(\"oneMore\");\n        assertEquals(\"boolean\", propertyDefinition.getType());\n        assertFalse(propertyDefinition.isRequired());\n        assertTrue(propertyDefinition.isUserCreated());",
+      "parentUuid": "3f24629a_ae55c48a",
+      "range": {
+        "startLine": 174,
+        "startChar": 0,
+        "endLine": 174,
+        "endChar": 64
+      },
+      "revId": "5d000cce2da9876cf2c72fac517aec6c286eb978",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
