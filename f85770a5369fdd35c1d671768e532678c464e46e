@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08da40cf_04854314",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
+        "patchSetId": 6
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-06-01T09:43:43Z",
+      "side": 1,
+      "message": "Need more work",
+      "range": {
+        "startLine": 185,
+        "startChar": 4,
+        "endLine": 185,
+        "endChar": 15
+      },
+      "revId": "f85770a5369fdd35c1d671768e532678c464e46e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
