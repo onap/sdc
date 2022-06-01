@@ -144,6 +144,10 @@ export class ReqAndCapabilitiesTabComponent implements OnInit, OnDestroy {
 
         // if instance selected, we take the requirement and capabilities of the instance - always exist because we load them with the graph
         if (this.component instanceof FullComponentInstance) {
+            const selectedComponentInstance = this.compositionService.getComponentInstances()
+            .find(componentInstance => componentInstance.uniqueId == this.component.uniqueId);
+            this.component.capabilities = selectedComponentInstance.capabilities;
+            this.component.requirements = selectedComponentInstance.requirements;
             this.store.dispatch(new TogglePanelLoadingAction({isLoading: false}));
             this.setScopeCapabilitiesRequirements(this.component.capabilities, this.component.requirements);
             if (this.component.originType === 'VF') {
