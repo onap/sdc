@@ -23,6 +23,7 @@ import {ComponentInstanceFactory} from "../utils/component-instance-factory";
 import {ChangeLifecycleStateHandler} from "../utils/change-lifecycle-state-handler";
 import {ModalsHandler} from "../utils/modals-handler";
 import {MenuHandler} from "../utils/menu-handler";
+import {ServiceCsarReader} from "../utils/service-csar-reader";
 
 let moduleName:string = 'Sdc.Utils';
 let serviceModule:ng.IModule = angular.module(moduleName, []);
@@ -33,4 +34,5 @@ serviceModule.service('ComponentInstanceFactory', ComponentInstanceFactory);
 serviceModule.service('ChangeLifecycleStateHandler', ChangeLifecycleStateHandler);
 serviceModule.service('ModalsHandler', ModalsHandler);
 serviceModule.service('MenuHandler', MenuHandler);
+serviceModule.service('ServiceCsarReader', ServiceCsarReader);
 

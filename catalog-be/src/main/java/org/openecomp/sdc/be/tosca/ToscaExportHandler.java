@@ -510,6 +510,7 @@ public class ToscaExportHandler {
         toscaMetadata.put(JsonPresentationFields.DESCRIPTION.getPresentation(), component.getDescription());
         List<CategoryDefinition> categories = component.getCategories();
         CategoryDefinition categoryDefinition = categories.get(0);
+        toscaMetadata.put(JsonPresentationFields.MODEL.getPresentation(), component.getModel());
         toscaMetadata.put(JsonPresentationFields.CATEGORY.getPresentation(), categoryDefinition.getName());
         if (isInstance) {
             toscaMetadata.put(JsonPresentationFields.VERSION.getPresentation(), component.getVersion());

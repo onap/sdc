@@ -30,7 +30,9 @@ import {
     instantiationType,
     ModalsHandler,
     ResourceType,
-    ValidationUtils
+    ValidationUtils,
+    FileUtils,
+    ServiceCsarReader
 } from "app/utils";
 import {EventListenerService, ProgressService} from "app/services";
 import {CacheService, ElementService, ModelService, ImportVSPService, OnboardingService} from "app/services-ng2";
@@ -121,6 +123,7 @@ export class GeneralViewModel {
         'VendorModelNumberValidationPattern',
         'CommentValidationPattern',
         'ValidationUtils',
+        'FileUtils',
         'sdcConfig',
         '$state',
         'ModalsHandler',
@@ -148,6 +151,7 @@ export class GeneralViewModel {
                 private VendorModelNumberValidationPattern:RegExp,
                 private CommentValidationPattern:RegExp,
                 private ValidationUtils:ValidationUtils,
+                private FileUtils: FileUtils,
                 private sdcConfig:IAppConfigurtaion,
                 private $state:ng.ui.IStateService,
                 private ModalsHandler:ModalsHandler,
@@ -276,9 +280,25 @@ export class GeneralViewModel {
         } else if(this.$scope.component.isService()){
             let service: Service = <Service>this.$scope.component;
             console.log(service.name + ": " + service.csarUUID);
-            if (service.importedFile) { // Component has imported file.
+            if (service.importedFile) {
                 this.$scope.isShowFileBrowse = true;
-                (<Service>this.$scope.component).serviceType = 'Service';
+                (<Service>this.$scope.component).ecompGeneratedNaming = true;
+                let blob = this.FileUtils.base64toBlob(service.importedFile.base64, "zip");
+                new ServiceCsarReader().read(blob).then((serviceCsar) => {
+                    serviceCsar.serviceMetadata.contactId = this.cacheService.get("user").userId;
+                    (<Service>this.$scope.component).setComponentMetadata(serviceCsar.serviceMetadata);
+                    (<Service>this.$scope.component).model = serviceCsar.serviceMetadata.model;
+                    this.$scope.onModelChange();
+                    this.$scope.componentCategories.selectedCategory = serviceCsar.serviceMetadata.selectedCategory;
+                    this.$scope.onCategoryChange();
+                    serviceCsar.extraServiceMetadata.forEach((value: string, key: string) => {
+                        if(this.getMetadataKey(key)) {
+                            (<Service>this.$scope.component).categorySpecificMetadata[key] = value;
+                        }
+                    });
+                    (<Service>this.$scope.component).derivedFromGenericType = serviceCsar.substitutionNodeType;
+                    this.$scope.onBaseTypeChange();
+                });
             }
             if (this.$scope.isEditMode() && service.serviceType == 'Service' && !service.csarUUID) {
                 this.$scope.isShowFileBrowse = true;
@@ -878,7 +898,9 @@ export class GeneralViewModel {
         if (this.$scope.isBaseTypeRequired) {
             const baseType = baseTypeResponseList.baseTypes[0];
             baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-            this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+            if(!this.$scope.component.derivedFromGenericType) {
+                this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+            }
             this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
             this.$scope.showBaseTypeVersions = true;
             return
