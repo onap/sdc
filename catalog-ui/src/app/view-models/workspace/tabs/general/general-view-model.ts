@@ -30,7 +30,8 @@ import {
     instantiationType,
     ModalsHandler,
     ResourceType,
-    ValidationUtils
+    ValidationUtils,
+    FileUtils
 } from "app/utils";
 import {EventListenerService, ProgressService} from "app/services";
 import {CacheService, ElementService, ModelService, ImportVSPService, OnboardingService} from "app/services-ng2";
@@ -39,6 +40,7 @@ import {IWorkspaceViewModelScope} from "app/view-models/workspace/workspace-view
 import {CATEGORY_SERVICE_METADATA_KEYS, PREVIOUS_CSAR_COMPONENT, DEFAULT_MODEL_NAME} from "../../../../utils/constants";
 import {Observable} from "rxjs";
 import {Model} from "../../../../models/model";
+import {load} from 'js-yaml';
 
 export class Validation {
     componentNameValidationPattern:RegExp;
@@ -121,6 +123,7 @@ export class GeneralViewModel {
         'VendorModelNumberValidationPattern',
         'CommentValidationPattern',
         'ValidationUtils',
+        'FileUtils',
         'sdcConfig',
         '$state',
         'ModalsHandler',
@@ -148,6 +151,7 @@ export class GeneralViewModel {
                 private VendorModelNumberValidationPattern:RegExp,
                 private CommentValidationPattern:RegExp,
                 private ValidationUtils:ValidationUtils,
+                private FileUtils: FileUtils,
                 private sdcConfig:IAppConfigurtaion,
                 private $state:ng.ui.IStateService,
                 private ModalsHandler:ModalsHandler,
@@ -276,8 +280,12 @@ export class GeneralViewModel {
         } else if(this.$scope.component.isService()){
             let service: Service = <Service>this.$scope.component;
             console.log(service.name + ": " + service.csarUUID);
-            if (service.importedFile) { // Component has imported file.
+            if (service.importedFile) {
                 this.$scope.isShowFileBrowse = true;
+                (<Service>this.$scope.component).ecompGeneratedNaming = true;
+                let blob = this.FileUtils.base64toBlob(service.importedFile.base64, "zip");
+                this.setMetadataFromCsarBlob(blob);
+                this.setSubstitutionNodeFromCsarBlob(blob);
                 (<Service>this.$scope.component).serviceType = 'Service';
             }
             if (this.$scope.isEditMode() && service.serviceType == 'Service' && !service.csarUUID) {
@@ -878,7 +886,9 @@ export class GeneralViewModel {
         if (this.$scope.isBaseTypeRequired) {
             const baseType = baseTypeResponseList.baseTypes[0];
             baseType.versions.reverse().forEach(version => this.$scope.baseTypeVersions.push(version));
-            this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+            if(!this.$scope.component.derivedFromGenericType) {
+                this.$scope.component.derivedFromGenericType = baseType.toscaResourceName;
+            }
             this.$scope.component.derivedFromGenericVersion = this.$scope.baseTypeVersions[0];
             this.$scope.showBaseTypeVersions = true;
             return
@@ -928,6 +938,89 @@ export class GeneralViewModel {
 
     private isServiceMetadataKey(key: string) : boolean {
         return CATEGORY_SERVICE_METADATA_KEYS.indexOf(key) > -1;
+    }
+
+    private setMetadata = (metadata:object) : void => {
+        Object.keys(metadata).forEach(variable => {
+            switch(variable) {
+                case "description": {
+                    (<Service>this.$scope.component).description = metadata[variable];
+                    break;
+                }
+                case "name": {
+                    (<Service>this.$scope.component).name = metadata[variable];
+                    break;
+                }
+                case "model": {
+                    (<Service>this.$scope.component).model = metadata[variable];
+                    this.$scope.onModelChange();
+                    this.$scope.componentCategories.selectedCategory = metadata["category"];
+                    this.$scope.onCategoryChange();
+                    break;
+                }
+                case "serviceRole": {
+                    (<Service>this.$scope.component).serviceRole = metadata[variable];
+                    break;
+                }
+                case "serviceFunction": {
+                    (<Service>this.$scope.component).serviceFunction = metadata[variable];
+                    break;
+                }
+                case "environmentContext": {
+                    if (metadata[variable] != null) {
+                        (<Service>this.$scope.component).environmentContext = metadata[variable];
+                    }
+                    break;
+                }
+                case "instantiationType": {
+                    if (metadata[variable] != null) {
+                        (<Service>this.$scope.component).instantiationType = metadata[variable];
+                    }
+                    break;
+                }
+                case "ecompGeneratedNaming": {
+                    if (metadata[variable] != null) {
+                        (<Service>this.$scope.component).ecompGeneratedNaming = metadata[variable] == "false" ? false : true;
+                    }
+                    break;
+                }
+                case "namingPolicy": {
+                    if (metadata["ecompGeneratedNaming"] != "false") {
+                        (<Service>this.$scope.component).namingPolicy = metadata[variable];
+                    }
+                    break;
+                }
+            }
+        });
+    }
+
+    private setSubstitutionNodeFromCsarBlob = (blob:Blob) : void => {
+        this.FileUtils.getEntryDefinitionFileNameFromCsarBlob(blob).then((entryDefinitionFileName:string) => {
+            let fileNameArray:Array<string> = entryDefinitionFileName.split(".");
+            fileNameArray.splice(fileNameArray.length - 1, 0, "-interface.");
+            return fileNameArray.join("");
+        }).then((templateInterfaceFileName:string) => {
+            return this.FileUtils.getFileNameDataFromCsarBlob(blob, templateInterfaceFileName)
+        }).then(content => {
+            const nodeTypes = load(content).node_types;
+            let nodeType = Object.keys(nodeTypes).values().next().value;
+            (<Service>this.$scope.component).derivedFromGenericType = nodeTypes[nodeType]["derived_from"];
+            console.log((<Service>this.$scope.component).derivedFromGenericType);
+            this.$scope.onBaseTypeChange();
+        });
+    }
+
+    private setMetadataFromCsarBlob = (blob:Blob):void => {
+        this.FileUtils.getEntryDefinitionFileNameFromCsarBlob(blob).then((entryDefinitionFileName:string) => {
+            return this.FileUtils.getFileNameDataFromCsarBlob(blob, entryDefinitionFileName);
+        }).then( content => {
+            const metadata = load(content).metadata;
+            this.setMetadata(metadata);
+        });
+    }
+
+    private delay = (ms: number):Promise<any> => {
+        return new Promise( resolve => setTimeout(resolve, ms) );
     }
 
 }
