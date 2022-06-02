@@ -19,7 +19,7 @@
  */
 
 import { CapabilitiesGroup, RequirementsGroup } from 'app/models';
-import {ComponentState, ComponentType} from 'app/utils';
+import {ComponentState, ComponentType, ResourceType} from 'app/utils';
 import { IMainCategory } from './category';
 import { Metadata } from "app/models/metadata";
 /**
@@ -210,6 +210,10 @@ export class ComponentMetadata implements IComponentMetadata {
 
     public isService = (): boolean => {
         return this.componentType === ComponentType.SERVICE;
+    }
+
+    public isVfc(): boolean {
+        return this.resourceType === ResourceType.VFC;
     }
 
     public getTypeUrl(): string {

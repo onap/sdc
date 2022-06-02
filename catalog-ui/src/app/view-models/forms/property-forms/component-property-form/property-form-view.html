@@ -34,7 +34,7 @@
 
                         <!-- Name -->
                         <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.propertyName.$dirty && forms.editForm.propertyName.$invalid)}">
-                            <label class="i-sdc-form-label" ng-class="{'required': !isService}">Name</label>
+                            <label class="i-sdc-form-label" ng-class="{'required': !componentMetadata.isService}">Name</label>
                             <input class="i-sdc-form-input"
                                    data-tests-id="propertyName"
                                    data-ng-maxlength="50"
@@ -61,7 +61,7 @@
                             <div class="w-sdc-form-column">
                                 <!-- Type -->
                                 <div class="i-sdc-form-item"  data-ng-class="{error:(forms.editForm.type.$dirty && forms.editForm.type.$invalid)}">
-                                    <label class="i-sdc-form-label" ng-class="{'required': !isService}">Type</label>
+                                    <label class="i-sdc-form-label" ng-class="{'required': !componentMetadata.isService}">Type</label>
                                     <select class="i-sdc-form-select"
                                             data-tests-id="propertyType"
                                             data-required
@@ -141,94 +141,121 @@
 
                 <div class="default-value-section i-sdc-form-item">
                     <label class="i-sdc-form-label">Default Value</label>
-                    <div data-ng-if="isTypeDataType">
-                        <fields-structure value-obj-ref="myValue"
-                                          type-name="editPropertyModel.property.type"
+                    <ng-container ng-if="!componentMetadata.isVfc">
+                        <input type="hidden" ng-model="editPropertyModel.isGetFunctionValid" required="required"/>
+                        <input type="radio" name="hasGetFunctionValue"
+                               ng-model="editPropertyModel.hasGetFunctionValue"
+                               ng-value="false"
+                               ng-change="onValueTypeChange()"/> Value
+                        <input type="radio" name="hasGetFunctionValue"
+                               ng-model="editPropertyModel.hasGetFunctionValue"
+                               ng-value="true"
+                               ng-change="onValueTypeChange()"/> {{'TOSCA_FUNCTION_LABEL' | translate}}
+                        <div data-ng-if="editPropertyModel.hasGetFunctionValue">
+                            <tosca-function [property]="editPropertyModel.property"
+                                            [component-instance-map]="componentInstanceMap"
+                                            [allow-clear]="false"
+                                            (on-valid-function)="onGetFunctionValidFunction($event)"
+                                            (on-validity-change)="onGetFunctionValidityChange($event)"
+                            >
+                            </tosca-function>
+                        </div>
+                    </ng-container>
+                    <div data-ng-if="!editPropertyModel.hasGetFunctionValue">
+                        <div data-ng-if="isTypeDataType">
+                            <fields-structure value-obj-ref="myValue"
+                                              type-name="editPropertyModel.property.type"
+                                              parent-form-obj="forms.editForm"
+                                              fields-prefix-name="currentPropertyIndex"
+                                              read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
+                                              default-value="{{getDefaultValue()}}"
+                                              expand-by-default="true"></fields-structure>
+
+                        </div>
+                        <div data-ng-if="!isTypeDataType" ng-switch="editPropertyModel.property.type">
+                            <div ng-switch-when="map">
+                                <type-map value-obj-ref="myValue"
+                                          schema-property="editPropertyModel.property.schema.property"
                                           parent-form-obj="forms.editForm"
                                           fields-prefix-name="currentPropertyIndex"
-                                          read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
+                                          read-only="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isVnfConfiguration"
                                           default-value="{{getDefaultValue()}}"
-                                          expand-by-default="true"></fields-structure>
+                                          max-length="maxLength"
+                                          constraints="editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues">
+                                </type-map>
+                            </div>
 
-                    </div>
-                    <div data-ng-if="!isTypeDataType" ng-switch="editPropertyModel.property.type">
-                        <div ng-switch-when="map">
-                            <type-map value-obj-ref="myValue"
-                                 schema-property="editPropertyModel.property.schema.property"
-                                 parent-form-obj="forms.editForm"
-                                 fields-prefix-name="currentPropertyIndex"
-                                 read-only="(editPropertyModel.property.readonly && !isPropertyValueOwner) || isVnfConfiguration"
-                                 default-value="{{getDefaultValue()}}"
-                                 max-length="maxLength"
-                                 constraints = "editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues">
-                            </type-map>
-                        </div>
-                        
-                        <div ng-switch-when="list">
-                            <type-list value-obj-ref="myValue"
-                                  schema-property="editPropertyModel.property.schema.property"
-                                  parent-form-obj="forms.editForm"
-                                  fields-prefix-name="currentPropertyIndex"
-                                  read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
-                                  default-value="{{getDefaultValue()}}"
-                                  max-length="maxLength"
-                                  constraints = "editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues"></type-list>
-                        </div>
-                        
-                        <div ng-switch-default>
-                            <div class="i-sdc-form-item" data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid), 'input-group' : editPropertyModel.property.addOn}">
-                                <span ng-if="editPropertyModel.property.addOn" class="input-group-addon">{{editPropertyModel.property.addOn}}</span>
-                                <!-- Has Constraints -->
-                                <select class="i-sdc-form-select"
-                                        data-tests-id="constraints"
-                                        ng-if="(editPropertyModel.property.constraints)"
-                                        data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
-                                        
-                                        data-ng-change="onValueChange()"
-                                        data-ng-model="editPropertyModel.property.value">
-                                    <!-- Get the default value in case exist -->
-                                    <option value = "{{editPropertyModel.property.value}}" name = "{{editPropertyModel.property.value}}" hidden selected>
+                            <div ng-switch-when="list">
+                                <type-list value-obj-ref="myValue"
+                                           schema-property="editPropertyModel.property.schema.property"
+                                           parent-form-obj="forms.editForm"
+                                           fields-prefix-name="currentPropertyIndex"
+                                           read-only="editPropertyModel.property.readonly && !isPropertyValueOwner"
+                                           default-value="{{getDefaultValue()}}"
+                                           max-length="maxLength"
+                                           constraints="editPropertyModel.property.constraints && editPropertyModel.property.constraints[0].validValues"></type-list>
+                            </div>
+
+                            <div ng-switch-default>
+                                <div class="i-sdc-form-item"
+                                     data-ng-class="{error:(forms.editForm.value.$dirty && forms.editForm.value.$invalid), 'input-group' : editPropertyModel.property.addOn}">
+                                    <span ng-if="editPropertyModel.property.addOn"
+                                          class="input-group-addon">{{editPropertyModel.property.addOn}}</span>
+                                    <!-- Has Constraints -->
+                                    <select class="i-sdc-form-select"
+                                            data-tests-id="constraints"
+                                            ng-if="(editPropertyModel.property.constraints)"
+                                            data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
+
+                                            data-ng-change="onValueChange()"
+                                            data-ng-model="editPropertyModel.property.value">
+                                        <!-- Get the default value in case exist -->
+                                        <option value="{{editPropertyModel.property.value}}" name="{{editPropertyModel.property.value}}" hidden
+                                                selected>
                                             {{editPropertyModel.property.value}}
-                                    </option> 
-                                    <!-- add all constratint to Select list -->
-                                    <option ng-repeat='value in constraints' value="{{value}}" name="{{value}}">
-                                        {{value}}
-                                    </option> 
-                                </select>
-                               
-                                
-                                <!-- No Constraints -->
-                                <input class="i-sdc-form-input"
-                                       data-tests-id="defaultvalue"
-                                       ng-if="!(editPropertyModel.property.constraints) && !((editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean')"
-                                       data-ng-maxlength="maxLength"
-                                       data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
-                                       maxlength="{{maxLength}}"
-                                       data-ng-model="editPropertyModel.property.value"
-                                       type="text"
-                                       name="value"
-                                       data-ng-pattern="getValidationPattern((editPropertyModel.property.simpleType||editPropertyModel.property.type))"
-                                       data-ng-model-options="{ debounce: 200 }"
-                                       data-ng-change="('json'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateJson(editPropertyModel.property.value)))
-                                                        ||(!forms.editForm.value.$error.pattern && ('integer'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateIntRange(editPropertyModel.property.value)) || onValueChange()))"
-                                       data-ng-change=""
-                                       autofocus />
-                                <!-- Boolean -->
-                                <select class="i-sdc-form-select"
-                                        data-tests-id="booleantype"
-                                        ng-if="(editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean'"
-                                        data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
-                                        name="value"
-                                        data-ng-change="onValueChange()"
-                                        data-ng-model="editPropertyModel.property.value">
-                                    <option value="true">true</option>
-                                    <option value="false">false</option>
-                                </select>
+                                        </option>
+                                        <!-- add all constratint to Select list -->
+                                        <option ng-repeat='value in constraints' value="{{value}}" name="{{value}}">
+                                            {{value}}
+                                        </option>
+                                    </select>
 
-                                <div class="input-error" data-ng-show="forms.editForm.value.$dirty && forms.editForm.value.$invalid">
-                                    <span ng-show="forms.editForm.value.$error.required" translate="VALIDATION_ERROR_REQUIRED" translate-values="{'field': 'Property' }"></span>
-                                    <span ng-show="forms.editForm.value.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH" translate-values="{'max': '{{maxLength}}' }"></span>
-                                    <span ng-show="forms.editForm.value.$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
+
+                                    <!-- No Constraints -->
+                                    <input class="i-sdc-form-input"
+                                           data-tests-id="defaultvalue"
+                                           ng-if="!(editPropertyModel.property.constraints) && !((editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean')"
+                                           data-ng-maxlength="maxLength"
+                                           data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
+                                           maxlength="{{maxLength}}"
+                                           data-ng-model="editPropertyModel.property.value"
+                                           type="text"
+                                           name="value"
+                                           data-ng-pattern="getValidationPattern((editPropertyModel.property.simpleType||editPropertyModel.property.type))"
+                                           data-ng-model-options="{ debounce: 200 }"
+                                           data-ng-change="('json'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateJson(editPropertyModel.property.value)))
+                                                        ||(!forms.editForm.value.$error.pattern && ('integer'==editPropertyModel.property.type && forms.editForm.value.$setValidity('pattern', validateIntRange(editPropertyModel.property.value)) || onValueChange()))"
+                                           data-ng-change=""
+                                           autofocus/>
+                                    <!-- Boolean -->
+                                    <select class="i-sdc-form-select"
+                                            data-tests-id="booleantype"
+                                            ng-if="(editPropertyModel.property.simpleType||editPropertyModel.property.type) == 'boolean'"
+                                            data-ng-disabled="editPropertyModel.property.readonly && !isPropertyValueOwner"
+                                            name="value"
+                                            data-ng-change="onValueChange()"
+                                            data-ng-model="editPropertyModel.property.value">
+                                        <option value="true">true</option>
+                                        <option value="false">false</option>
+                                    </select>
+
+                                    <div class="input-error" data-ng-show="forms.editForm.value.$dirty && forms.editForm.value.$invalid">
+                                        <span ng-show="forms.editForm.value.$error.required" translate="VALIDATION_ERROR_REQUIRED"
+                                              translate-values="{'field': 'Property' }"></span>
+                                        <span ng-show="forms.editForm.value.$error.maxlength" translate="VALIDATION_ERROR_MAX_LENGTH"
+                                              translate-values="{'max': '{{maxLength}}' }"></span>
+                                        <span ng-show="forms.editForm.value.$error.pattern" translate="PROPERTY_EDIT_PATTERN"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
