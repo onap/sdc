@@ -71,7 +71,15 @@ public class ServiceImportManager {
             ServiceMetadataDataDefinition serviceMetadataDataDefinition = (ServiceMetadataDataDefinition) service.getComponentMetadataDefinition()
                 .getMetadataDataDefinition();
             serviceMetadataDataDefinition.getServiceVendorModelNumber();
-            service.setServiceType("");
+            service.setServiceType(serviceMetaData.getServiceType());
+            service.setServiceRole(serviceMetaData.getServiceRole());
+            service.setNamingPolicy(serviceMetaData.getNamingPolicy());
+            boolean ecompGeneratedNaming = serviceMetaData.getEcompGeneratedNaming() == null
+                || serviceMetaData.getEcompGeneratedNaming().equals("true");
+            service.setEcompGeneratedNaming(ecompGeneratedNaming);
+            service.setServiceFunction(serviceMetaData.getServiceFunction());
+            service.setInstantiationType(serviceMetaData.getInstantiationType());
+            service.setEnvironmentContext(serviceMetaData.getEnvironmentContext());
             service.setProjectCode(serviceMetaData.getProjectCode());
             service.setModel(serviceMetaData.getModel());
             if (serviceMetaData.getVendorName() != null) {
