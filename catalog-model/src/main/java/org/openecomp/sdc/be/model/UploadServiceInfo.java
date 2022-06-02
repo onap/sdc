@@ -48,63 +48,23 @@ public class UploadServiceInfo {
     private String serviceEcompNaming;
     private String ecompGeneratedNaming;
     private String namingPolicy;
+    private String serviceFunction;
+    private String environmentContext;
+    private String instantiationType;
     private String projectCode;
     private List<UploadArtifactInfo> artifactList;
-    private String contactId, name, serviceIconPath, icon, vendorName, vendorRelease, serviceVendorModelNumber;
+    private String contactId;
+    private String name;
+    private String serviceIconPath;
+    private String icon;
+    private String vendorName;
+    private String vendorRelease;
+    private String serviceVendorModelNumber;
     private String serviceType = "";
     private String model;
     private Map<String, String> categorySpecificMetadata;
     private String derivedFromGenericType;
     private String derivedFromGenericVersion;
-
-    public UploadServiceInfo(String payloadData, String payloadName, String description, List<String> tags, String invariantUUID, String UUID,
-                             String type, String category, String subcategory, String resourceVendor, String resourceVendorRelease,
-                             String serviceRole, String serviceEcompNaming, String ecompGeneratedNaming, String namingPolicy,
-                             List<UploadArtifactInfo> artifactList, String contactId, String name, String resourceIconPath, String icon,
-                             String vendorName, String vendorRelease, String serviceVendorModelNumber, String serviceType, String projectCode, String model, Map<String, String> categorySpecificMetadata,
-                             String derivedFromGenericType, String derivedFromGenericVersion) {
-        this.payloadData = payloadData;
-        this.payloadName = payloadName;
-        this.description = description;
-        this.tags = tags;
-        this.invariantUUID = invariantUUID;
-        this.UUID = UUID;
-        this.type = type;
-        this.category = category;
-        this.subcategory = subcategory;
-        this.resourceVendor = resourceVendor;
-        this.resourceVendorRelease = resourceVendorRelease;
-        this.serviceRole = serviceRole;
-        this.serviceEcompNaming = serviceEcompNaming;
-        this.ecompGeneratedNaming = ecompGeneratedNaming;
-        this.namingPolicy = namingPolicy;
-        this.artifactList = artifactList;
-        this.contactId = contactId;
-        this.name = name;
-        this.serviceIconPath = serviceIconPath;
-        this.icon = icon;
-        this.vendorName = vendorName;
-        this.vendorRelease = vendorRelease;
-        this.serviceVendorModelNumber = serviceVendorModelNumber;
-        this.serviceType = serviceType;
-        this.projectCode = projectCode;
-        this.model = model;
-        if (category != null) {
-            String[] arr = category.split("/");
-            if (arr.length >= 2) {
-                categories = new ArrayList<>();
-                CategoryDefinition catDef = new CategoryDefinition();
-                catDef.setName(arr[0]);
-                SubCategoryDefinition subCat = new SubCategoryDefinition();
-                subCat.setName(arr[1]);
-                catDef.addSubCategory(subCat);
-                categories.add(catDef);
-            }
-        }
-        this.categorySpecificMetadata = categorySpecificMetadata;
-        this.derivedFromGenericType = derivedFromGenericType;
-        this.derivedFromGenericVersion = derivedFromGenericVersion;
-    }
 
     public UploadServiceInfo() {
     }
