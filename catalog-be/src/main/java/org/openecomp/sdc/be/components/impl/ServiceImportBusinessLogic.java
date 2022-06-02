@@ -69,7 +69,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -211,9 +210,6 @@ public class ServiceImportBusinessLogic {
         service.setVersion(INITIAL_VERSION);
         service.setConformanceLevel(ConfigurationManager.getConfigurationManager().getConfiguration().getToscaConformanceLevel());
         service.setDistributionStatus(DistributionStatusEnum.DISTRIBUTION_NOT_APPROVED);
-        service.setInstantiationType("A-la-carte");
-        service.setEnvironmentContext("General_Revenue-Bearing");
-        service.setEcompGeneratedNaming(true);
         try {
             serviceBusinessLogic.validateServiceBeforeCreate(service, user, auditingAction);
             log.debug("enter createService,validateServiceBeforeCreate success");

@@ -66,6 +66,24 @@ export class FileUtils {
             "cancelable": true
         });
         downloadLink.dispatchEvent(clickEvent);
+    }
 
+    public getEntryDefinitionFileNameFromCsarBlob = (csarBlob:Blob):Promise<any> => {
+        let JSZip = require("jszip");
+        return JSZip.loadAsync(csarBlob).then(zip => {
+            return zip.file("TOSCA-Metadata/TOSCA.meta").async("string");
+        }).then((toscaMetaData: string) => {
+            let fileEntities:Array<string> = toscaMetaData.replace("\r", "").split("\n");
+            let entryDefinitionFilename:string = fileEntities.find(element => !element.search("Entry-Definitions"))
+                .replace("Entry-Definitions:", "").trim();
+            return entryDefinitionFilename;
+        });
+    }
+
+    public getFileNameDataFromCsarBlob = (csarBlob:Blob, fileName:string):Promise<any> => {
+        let JSZip = require("jszip");
+        return JSZip.loadAsync(csarBlob).then(zip => {
+            return zip.file(fileName).async("string");
+        });
     }
 }
