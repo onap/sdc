@@ -43,16 +43,15 @@ import {EditNamePopoverDirective} from "../directives/edit-name-popover/edit-nam
 import {DataTypeFieldsStructureDirective} from "../directives/property-types/data-type-fields-structure/data-type-fields-structure";
 import {TypeMapDirective} from "../directives/property-types/type-map/type-map-directive";
 import {TypeListDirective} from "../directives/property-types/type-list/type-list-directive";
-import {SelectDataTypeFieldsStructureDirective} from "../directives/select-property-types/select-data-type-fields-structure/select-data-type-fields-structure";
+import {
+  SelectDataTypeFieldsStructureDirective
+} from "../directives/select-property-types/select-data-type-fields-structure/select-data-type-fields-structure";
 import {SelectTypeMapDirective} from "../directives/select-property-types/select-type-map/select-type-map-directive";
 import {SelectTypeListDirective} from "../directives/select-property-types/select-type-list/select-type-list-directive";
 import {ValidationOnLoadDirective} from "../directives/utils/validation-on-load/validation-on-load";
 import {InfoTooltipDirective} from "../directives/info-tooltip/info-tooltip";
 import {SdcTabsDirective} from "../directives/sdc-tabs/sdc-tabs-directive";
-import {
-  InnerSdcSingleTabDirective,
-  SdcSingleTabDirective
-} from "../directives/sdc-tabs/sdc-single-tab/sdc-single-tab-directive";
+import {InnerSdcSingleTabDirective, SdcSingleTabDirective} from "../directives/sdc-tabs/sdc-single-tab/sdc-single-tab-directive";
 import {ExpandCollapseListHeaderDirective} from "../directives/utils/expand-collapse-list-header/expand-collapse-list-header";
 import {JsonExportExcelDirective} from "../directives/export-json-to-excel/export-json-to-excel";
 import {TopProgressDirective} from "../directives/layout/top-progress/top-progress";
@@ -96,6 +95,7 @@ import {ReqAndCapabilitiesComponent} from "../ng2/pages/workspace/req-and-capabi
 import {DistributionComponent} from '../ng2/pages/workspace/disribution/distribution.component';
 import {AttributesOutputsComponent} from "../ng2/pages/attributes-outputs/attributes-outputs.page.component";
 import {InterfaceDefinitionComponent} from "../ng2/pages/interface-definition/interface-definition.page.component";
+import {ToscaFunctionComponent} from '../ng2/pages/properties-assignment/tosca-function/tosca-function.component';
 
 let moduleName: string = 'Sdc.Directives';
 let directiveModule: ng.IModule = angular.module(moduleName, []);
@@ -313,5 +313,11 @@ directiveModule.directive('informationArtifactPage', downgradeComponent({
 directiveModule.directive('deploymentArtifactPage', downgradeComponent({
   component: DeploymentArtifactsPageComponent,
   inputs: [],
+  outputs: []
+}) as angular.IDirectiveFactory);
+
+directiveModule.directive('toscaFunction', downgradeComponent({
+  component: ToscaFunctionComponent,
+  inputs: ['componentInstanceMap', 'property'],
   outputs: []
 }) as angular.IDirectiveFactory);

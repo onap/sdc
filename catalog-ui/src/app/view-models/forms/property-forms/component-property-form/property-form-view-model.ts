@@ -20,21 +20,25 @@
 
 'use strict';
 import * as _ from "lodash";
-import { PROPERTY_TYPES, ValidationUtils, PROPERTY_VALUE_CONSTRAINTS, FormState, PROPERTY_DATA } from "app/utils";
-import { DataTypesService } from "app/services";
-import { PropertyModel, DataTypesMap, Component, GroupInstance, PolicyInstance, PropertyBEModel, ComponentMetadata } from "app/models";
-import { ComponentInstance } from "../../../../models/componentsInstances/componentInstance";
-import { ComponentInstanceServiceNg2 } from "app/ng2/services/component-instance-services/component-instance.service";
-import { SdcUiCommon, SdcUiServices, SdcUiComponents } from "onap-ui-angular";
-import { CompositionService } from "app/ng2/pages/composition/composition.service";
-import { WorkspaceService } from "app/ng2/pages/workspace/workspace.service";
-import { Observable } from "rxjs";
-import { TopologyTemplateService } from "app/ng2/services/component-services/topology-template.service";
+import {FormState, PROPERTY_DATA, PROPERTY_TYPES, PROPERTY_VALUE_CONSTRAINTS, ValidationUtils} from "app/utils";
+import {DataTypesService} from "app/services";
+import {DataTypesMap, PropertyModel} from "app/models";
+import {ComponentInstance} from "../../../../models/componentsInstances/componentInstance";
+import {ComponentInstanceServiceNg2} from "app/ng2/services/component-instance-services/component-instance.service";
+import {SdcUiCommon, SdcUiComponents, SdcUiServices} from "onap-ui-angular";
+import {CompositionService} from "app/ng2/pages/composition/composition.service";
+import {WorkspaceService} from "app/ng2/pages/workspace/workspace.service";
+import {Observable} from "rxjs";
+import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
+import {InstanceFeDetails} from "../../../../models/instance-fe-details";
+import {ToscaGetFunction} from "../../../../models/tosca-get-function";
 
 export interface IEditPropertyModel {
     property:PropertyModel;
     types:Array<string>;
     simpleTypes:Array<string>;
+    hasGetFunctionValue: boolean;
+    isGetFunctionValid: boolean;
 }
 
 interface IPropertyFormViewModelScope extends ng.IScope {
@@ -43,11 +47,12 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     footerButtons:Array<any>;
     isNew:boolean;
     isLoading:boolean;
-    isService:boolean;
+    componentMetadata: { isService: boolean, isVfc: boolean }
     validationPattern:RegExp;
     propertyNameValidationPattern:RegExp;
     commentValidationPattern:RegExp;
-    editPropertyModel:IEditPropertyModel;
+    editPropertyModel: IEditPropertyModel;
+    componentInstanceMap: Map<string, InstanceFeDetails>;
     modalInstanceProperty:ng.ui.bootstrap.IModalServiceInstance;
     currentPropertyIndex:number;
     isLastProperty:boolean;
@@ -60,6 +65,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     isVnfConfiguration:boolean;
     constraints:string[];
     modelNameFilter:string;
+    isGetFunctionValueType: boolean;
 
     validateJson(json:string):boolean;
     save(doNotCloseModal?:boolean):void;
@@ -75,6 +81,7 @@ interface IPropertyFormViewModelScope extends ng.IScope {
     getNext():void;
     isSimpleType(typeName:string):boolean;
     getDefaultValue():any;
+    onValueTypeChange(): void;
 }
 
 export class PropertyFormViewModel {
@@ -134,42 +141,76 @@ export class PropertyFormViewModel {
         this.$scope.editPropertyModel.property.type = this.property.type ? this.property.type : null;
         this.$scope.editPropertyModel.property.value = this.$scope.editPropertyModel.property.value || this.$scope.editPropertyModel.property.defaultValue;
         this.$scope.constraints = this.property.constraints && this.property.constraints[0] ? this.property.constraints[0]["validValues"]  : null;
+        this.initToscaGetFunction();
         this.setMaxLength();
     };
 
-    //init property add-ons labels that show up at the left side of the input.
-    private initAddOnLabels = () => {
-        if (this.$scope.editPropertyModel.property.name == 'network_role' && this.$scope.isService) {
-            //the server sends back the normalized name. Remove it (to prevent interference with validation) and set the addon label to the component name directly.
-            //Note: this cant be done in properties.ts because we dont have access to the component
-            if (this.$scope.editPropertyModel.property.value) {
-                let splitProp = this.$scope.editPropertyModel.property.value.split(new RegExp(this.workspaceService.metadata.normalizedName + '.', "gi"));
-                this.$scope.editPropertyModel.property.value = splitProp.pop();
-            }
-            this.$scope.editPropertyModel.property.addOn = this.workspaceService.metadata.name;
-        }
+    private initToscaGetFunction() {
+        this.$scope.editPropertyModel.hasGetFunctionValue = this.$scope.editPropertyModel.property.isToscaGetFunction();
+        this.$scope.editPropertyModel.isGetFunctionValid = true;
     }
 
     private initForNotSimpleType = ():void => {
-        let property = this.$scope.editPropertyModel.property;
+        const property = this.$scope.editPropertyModel.property;
         this.$scope.isTypeDataType = this.DataTypesService.isDataTypeForPropertyType(this.$scope.editPropertyModel.property);
-        if (property.type && this.$scope.editPropertyModel.simpleTypes.indexOf(property.type) == -1) {
-            if (!(property.value || property.defaultValue)) {
-                switch (property.type) {
-                    case PROPERTY_TYPES.MAP:
-                        this.$scope.myValue = {'': null};
-                        break;
-                    case PROPERTY_TYPES.LIST:
-                        this.$scope.myValue = [];
-                        break;
-                    default:
-                        this.$scope.myValue = {};
-                }
-            } else {
+        if (property.isToscaGetFunction()) {
+            this.initValueForGetFunction();
+            return;
+        }
+
+        if (this.isComplexType(property.type)) {
+            if (property.value || property.defaultValue) {
                 this.$scope.myValue = JSON.parse(property.value || property.defaultValue);
+            } else {
+                this.initEmptyComplexValue(property.type);
             }
         }
     };
+
+    private initValueForGetFunction(): void {
+        const property = this.$scope.editPropertyModel.property;
+        if (property.defaultValue) {
+            this.$scope.myValue = JSON.parse(property.defaultValue);
+            return;
+        }
+        if (this.isComplexType(property.type)) {
+            this.initEmptyComplexValue(property.type);
+            return;
+        }
+
+        this.$scope.myValue = undefined;
+    }
+
+    private initComponentInstanceMap() {
+        this.$scope.componentInstanceMap = new Map<string, InstanceFeDetails>();
+        if (this.compositionService.componentInstances) {
+            this.compositionService.componentInstances.forEach(value => {
+                this.$scope.componentInstanceMap.set(value.uniqueId, <InstanceFeDetails>{
+                    name: value.name
+                });
+            });
+        }
+    }
+
+    private initEmptyComplexValue(type: string): any {
+        switch (type) {
+            case PROPERTY_TYPES.MAP:
+                this.$scope.myValue = {'': null};
+                break;
+            case PROPERTY_TYPES.LIST:
+                this.$scope.myValue = [];
+                break;
+            default:
+                this.$scope.myValue = {};
+        }
+    }
+
+    private isComplexType(type: string): boolean {
+        if (!type) {
+            return false;
+        }
+        return PROPERTY_DATA.SIMPLE_TYPES.indexOf(type) == -1;
+    }
 
     private setMaxLength = ():void => {
         switch (this.$scope.editPropertyModel.property.type) {
@@ -197,21 +238,28 @@ export class PropertyFormViewModel {
         this.$scope.propertyNameValidationPattern = this.PropertyNameValidationPattern;
         this.$scope.commentValidationPattern = this.CommentValidationPattern;
         this.$scope.isNew = (this.formState === FormState.CREATE);
-        this.$scope.isService = this.workspaceService.metadata.isService();
+        this.$scope.componentMetadata = {
+            isService: this.workspaceService.metadata.isService(),
+            isVfc: this.workspaceService.metadata.isVfc()
+        }
         this.$scope.modalInstanceProperty = this.$uibModalInstance;
         this.$scope.currentPropertyIndex = _.findIndex(this.filteredProperties, i=> i.name == this.property.name);
         this.$scope.isLastProperty = this.$scope.currentPropertyIndex == (this.filteredProperties.length - 1);
+        const property = new PropertyModel(this.property);
         this.$scope.editPropertyModel = {
-            property : new PropertyModel(this.property),
-            types : PROPERTY_DATA.TYPES,
-            simpleTypes : PROPERTY_DATA.SIMPLE_TYPES}; //All simple types
+            'property': property,
+            types: PROPERTY_DATA.TYPES,
+            simpleTypes: PROPERTY_DATA.SIMPLE_TYPES,
+            hasGetFunctionValue: property.isToscaGetFunction(),
+            isGetFunctionValid: true,
+        };
         this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
         this.$scope.propertyOwnerType = this.propertyOwnerType;
         this.$scope.modelNameFilter = this.workspaceService.metadata.model;
         //check if property of VnfConfiguration
         this.$scope.isVnfConfiguration = false;
         if(this.propertyOwnerType == "component" && angular.isArray(this.compositionService.componentInstances)) {
-            var componentPropertyOwner:ComponentInstance = this.compositionService.componentInstances.find((ci:ComponentInstance) => {
+            const componentPropertyOwner:ComponentInstance = this.compositionService.componentInstances.find((ci:ComponentInstance) => {
                 return ci.uniqueId === this.property.resourceInstanceUniqueId;
             });
             if (componentPropertyOwner && componentPropertyOwner.componentName === 'vnfConfiguration') {
@@ -220,6 +268,7 @@ export class PropertyFormViewModel {
         }
         this.initResource();
         this.initForNotSimpleType();
+        this.initComponentInstanceMap();
 
         this.$scope.validateJson = (json:string):boolean => {
             if (!json) {
@@ -251,8 +300,8 @@ export class PropertyFormViewModel {
 
             this.$scope.isLoading = true;
 
-            let onPropertyFaild = (response):void => {
-                console.info('onFaild', response);
+            let onPropertyFailure = (response):void => {
+                console.error('Failed to update property', response);
                 this.$scope.isLoading = false;
             };
 
@@ -270,7 +319,7 @@ export class PropertyFormViewModel {
             //Not clean, but doing this as a temporary fix until we update the property right panel modals
             if (this.propertyOwnerType === "group"){
                 this.ComponentInstanceServiceNg2.updateComponentGroupInstanceProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.propertyOwnerId, [property])
-                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild(error));
+                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFailure(error));
             } else if (this.propertyOwnerType === "policy"){
                 if (!this.$scope.editPropertyModel.property.simpleType &&
                     !this.$scope.isSimpleType(this.$scope.editPropertyModel.property.type) &&
@@ -278,24 +327,22 @@ export class PropertyFormViewModel {
                     property.value = JSON.stringify(this.$scope.myValue);
                 }
                 this.ComponentInstanceServiceNg2.updateComponentPolicyInstanceProperties(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, this.propertyOwnerId, [property])
-                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFaild(error));
+                    .subscribe((propertiesFromBE) => { onPropertySuccess(<PropertyModel>propertiesFromBE[0])}, error => onPropertyFailure(error));
             } else {
                 //in case we have uniqueId we call update method
                 if (this.$scope.isPropertyValueOwner) {
                     if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
-                        let myValueString:string = JSON.stringify(this.$scope.myValue);
-                        property.value = myValueString;
+                        property.value = JSON.stringify(this.$scope.myValue);
                     }
                     this.updateInstanceProperties(property.resourceInstanceUniqueId, [property]).subscribe((propertiesFromBE) => onPropertySuccess(propertiesFromBE[0]),
-                        error => onPropertyFaild(error));
+                        error => onPropertyFailure(error));
                 } else {
                     if (!this.$scope.editPropertyModel.property.simpleType && !this.$scope.isSimpleType(property.type)) {
-                        let myValueString:string = JSON.stringify(this.$scope.myValue);
-                        property.defaultValue = myValueString;
+                        property.defaultValue = JSON.stringify(this.$scope.myValue);
                     } else {
                         this.$scope.editPropertyModel.property.defaultValue = this.$scope.editPropertyModel.property.value;
                     }
-                    this.addOrUpdateProperty(property).subscribe(onPropertySuccess, error => onPropertyFaild(error));
+                    this.addOrUpdateProperty(property).subscribe(onPropertySuccess, error => onPropertyFailure(error));
                 }
             }
         };
@@ -349,8 +396,20 @@ export class PropertyFormViewModel {
             {'name': 'Cancel', 'css': 'grey', 'callback': this.$scope.close}
         ];
 
-        this.$scope.$watch("forms.editForm.$invalid", (newVal, oldVal) => {
-            this.$scope.footerButtons[0].disabled = this.$scope.forms.editForm.$invalid;
+        this.$scope.$watch("forms.editForm.$invalid", (newVal) => {
+            if (this.$scope.editPropertyModel.hasGetFunctionValue) {
+                this.$scope.footerButtons[0].disabled = newVal || !this.$scope.editPropertyModel.property.toscaGetFunction;
+            } else {
+                this.$scope.footerButtons[0].disabled = newVal;
+            }
+        });
+
+        this.$scope.$watch("forms.editForm.$valid", (newVal) => {
+            if (this.$scope.editPropertyModel.hasGetFunctionValue) {
+                this.$scope.footerButtons[0].disabled = !newVal || !this.$scope.editPropertyModel.property.toscaGetFunction;
+            } else {
+                this.$scope.footerButtons[0].disabled = !newVal;
+            }
         });
 
         this.$scope.getDefaultValue = ():any => {
@@ -384,7 +443,40 @@ export class PropertyFormViewModel {
             const okButton = {testId: "OK", text: "OK", type: SdcUiCommon.ButtonType.info, callback: onOk, closeModal: true} as SdcUiComponents.ModalButtonComponent;
             this.modalService.openInfoModal(title, message, 'delete-modal', [okButton]);
         };
+
+        this.$scope.onValueTypeChange = (): void => {
+            this.setEmptyValue();
+            if (this.$scope.editPropertyModel.hasGetFunctionValue) {
+                this.$scope.editPropertyModel.isGetFunctionValid = undefined;
+            } else {
+                this.$scope.editPropertyModel.property.toscaGetFunction = undefined;
+                this.$scope.editPropertyModel.isGetFunctionValid = true;
+            }
+        }
+
+        this.$scope.onGetFunctionValidFunction = (toscaGetFunction: ToscaGetFunction): void => {
+            this.$scope.editPropertyModel.property.toscaGetFunction = toscaGetFunction;
+        }
+
+        this.$scope.onGetFunctionValidityChange = (isValid: boolean): void => {
+            if (isValid) {
+                this.$scope.editPropertyModel.isGetFunctionValid = true;
+                return;
+            }
+            this.$scope.editPropertyModel.isGetFunctionValid = undefined;
+        }
+
     };
+
+    private setEmptyValue() {
+        const property1 = this.$scope.editPropertyModel.property;
+        property1.value = undefined;
+        if (this.isComplexType(property1.type)) {
+            this.initEmptyComplexValue(property1.type);
+            return;
+        }
+        this.$scope.myValue = '';
+    }
 
     private updateInstanceProperties = (componentInstanceId:string, properties:PropertyModel[]):Observable<PropertyModel[]> => {
 
@@ -428,12 +520,13 @@ export class PropertyFormViewModel {
 
     public deleteProperty = (propertyId:string):Observable<void> => {
         let onSuccess = ():void => {
-            console.log("Property deleted");
+            console.debug("Property deleted");
             delete _.remove(this.filteredProperties, {uniqueId: propertyId})[0];
         };
         let onFailed = ():void => {
-            console.log("Failed to delete property");
+            console.debug("Failed to delete property");
         };
         return this.topologyTemplateService.deleteProperty(this.workspaceService.metadata.componentType, this.workspaceService.metadata.uniqueId, propertyId).map(onSuccess, onFailed);
     };
+
 }

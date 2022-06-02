@@ -1957,8 +1957,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         try {
             for (ComponentInstanceProperty property : properties) {
                 validateMandatoryFields(property);
-                ComponentInstanceProperty componentInstanceProperty = validatePropertyExistsOnComponent(property, containerComponent,
-                    foundResourceInstance);
+                validatePropertyExistsOnComponent(property, containerComponent, foundResourceInstance);
                 String propertyParentUniqueId = property.getParentUniqueId();
                 if (property.isGetFunction()) {
                     validateToscaGetFunction(property, containerComponent);
@@ -1979,12 +1978,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                             capPropDefinition.get().getName()), Either::right);
                 } else {
                     updatedPropertyValue.bimap(
-                        updatedValue -> {
-                            componentInstanceProperty.setValue(updatedValue);
-                            return updatePropertyOnContainerComponent(property, updatedValue,
-                                containerComponent, foundResourceInstance);
-                        }, Either::right);
-                    updatedProperties.add(componentInstanceProperty);
+                        updatedValue -> updatePropertyOnContainerComponent(property, updatedValue, containerComponent, foundResourceInstance),
+                        Either::right
+                    );
+                    updatedProperties.add(property);
                 }
             }
 
@@ -2107,16 +2104,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private ComponentInstanceProperty validatePropertyExistsOnComponent(ComponentInstanceProperty property, Component containerComponent,
+    private void validatePropertyExistsOnComponent(ComponentInstanceProperty property, Component containerComponent,
                                                                         ComponentInstance foundResourceInstance) {
         List<ComponentInstanceProperty> instanceProperties = containerComponent.getComponentInstancesProperties()
             .get(foundResourceInstance.getUniqueId());
-        Optional<ComponentInstanceProperty> instanceProperty = instanceProperties.stream().filter(p -> p.getName().equals(property.getName()))
-            .findAny();
-        if (instanceProperty.isEmpty()) {
+        final boolean hasProperty = instanceProperties.stream().anyMatch(p -> p.getName().equals(property.getName()));
+        if (!hasProperty) {
             throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, property.getName());
         }
-        return instanceProperty.get();
     }
 
     private ComponentInstanceAttribute validateAttributeExistsOnComponent(final ComponentInstanceAttribute attribute,
