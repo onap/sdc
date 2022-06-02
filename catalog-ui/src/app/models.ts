@@ -128,3 +128,4 @@ export * from './models/relationship-types';
 export * from './models/tosca-presentation';
 export * from './models/node-types';
 export * from './models/capability-types';
+export * from './models/service-csar';
