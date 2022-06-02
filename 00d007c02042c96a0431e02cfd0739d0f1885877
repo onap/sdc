@@ -22,6 +22,30 @@
       "revId": "00d007c02042c96a0431e02cfd0739d0f1885877",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7383e2a_20cbe57b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-02T08:51:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d00142e4_78162640",
+      "range": {
+        "startLine": 404,
+        "startChar": 40,
+        "endLine": 404,
+        "endChar": 69
+      },
+      "revId": "00d007c02042c96a0431e02cfd0739d0f1885877",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
