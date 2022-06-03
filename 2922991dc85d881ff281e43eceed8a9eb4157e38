@@ -94,6 +94,30 @@
       "revId": "2922991dc85d881ff281e43eceed8a9eb4157e38",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e46c4003_c4ca08d8",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-03T16:06:39Z",
+      "side": 1,
+      "message": "I\u0027ve tried to work my idea, but opening another modal with the modal service conflicts with the previous modal. It seems the current logic only allows one modal per time.\nTherefore, I\u0027ve implemented as you suggested, adding a clear button to the component which will clear the form and the user can then click on save to persist the clear.",
+      "parentUuid": "cc0afd79_cbc10e4b",
+      "range": {
+        "startLine": 551,
+        "startChar": 15,
+        "endLine": 552,
+        "endChar": 57
+      },
+      "revId": "2922991dc85d881ff281e43eceed8a9eb4157e38",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
