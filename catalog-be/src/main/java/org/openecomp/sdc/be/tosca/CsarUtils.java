@@ -432,6 +432,7 @@ public class CsarUtils {
                                                                 boolean isInCertificationRequest) throws IOException {
         ArtifactDefinition artifactDef = component.getToscaArtifacts().get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
         Either<ToscaRepresentation, ResponseFormat> toscaRepresentation = fetchToscaRepresentation(component, getFromCS, artifactDef);
+
         // This should not be done but in order to keep the refactoring small enough we stop here.
 
         // TODO: Refactor the rest of this function
@@ -879,10 +880,10 @@ public class CsarUtils {
         return Either.right(componentsUtils.getResponseFormat(ActionStatus.TOSCA_SCHEMA_FILES_NOT_FOUND, firstThreeOctets, CONFORMANCE_LEVEL));
     }
 
-    private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {
-        return artifactCassandraDao.getArtifact(cassandraId).right().map(cos -> {
-            log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId, cos);
-            StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(cos);
+    private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {        
+        return artifactCassandraDao.getArtifact(cassandraId).right().map(operationstatus -> {
+            log.info("Failed to fetch artifact from Cassandra by id {} error {}.", cassandraId, operationstatus);        
+            StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(operationstatus);
             return componentsUtils.convertFromStorageResponse(storageStatus);
         }).left().map(DAOArtifactData::getDataAsArray);
     }

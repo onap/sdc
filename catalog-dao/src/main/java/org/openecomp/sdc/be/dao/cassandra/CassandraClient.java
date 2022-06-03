@@ -20,6 +20,7 @@
 package org.openecomp.sdc.be.dao.cassandra;
 
 import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.policies.ConstantReconnectionPolicy;
@@ -28,6 +29,7 @@ import com.datastax.driver.core.policies.DefaultRetryPolicy;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.Mapper.Option;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
 import java.util.List;
@@ -167,9 +169,14 @@ public class CassandraClient {
             return Either.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
         }
         try {
-            Mapper<T> mapper = manager.mapper(clazz);
+            Mapper<T> mapper = manager.mapper(clazz);            
             T result = mapper.get(id);
             if (result == null) {
+                logger.info("Failed to get by Id [{}], trying again with consistency level ALL", id);
+                result = mapper.get(id, Option.consistencyLevel(ConsistencyLevel.ALL));
+            }
+            if (result == null) {
+                logger.info("Failed to get by Id [{}] with consistency level ALL", id);
                 return Either.right(CassandraOperationStatus.NOT_FOUND);
             }
             return Either.left(result);
