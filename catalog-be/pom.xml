@@ -584,8 +584,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20131018</version>
-            <scope>compile</scope>
+            <version>${org.json.version}</version>
         </dependency>
 
         <!-- CASSANDRA -->
@@ -952,6 +951,11 @@
             <version>${commons.collections.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.onap.sdc.sdc-be-common</groupId>
             <artifactId>security-util-lib</artifactId>
             <version>${security.util.lib.version}</version>
@@ -959,6 +963,10 @@
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

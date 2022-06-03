@@ -389,6 +389,11 @@ Modifications copyright (c) 2018 Nokia
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-common</artifactId>
+      <version>${netty.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.datastax.oss</groupId>
       <artifactId>java-driver-core</artifactId>
       <version>${java.driver.core.version}</version>
@@ -396,6 +401,10 @@ Modifications copyright (c) 2018 Nokia
         <exclusion>
           <groupId>org.apache.tinkerpop</groupId>
           <artifactId>gremlin-driver</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

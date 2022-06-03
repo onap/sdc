@@ -47,15 +47,16 @@ Modifications copyright (c) 2018-2019 Nokia
         <lang3.version>3.10</lang3.version>
         <guava.version>30.1-jre</guava.version>
         <janusgraph.version>0.3.3</janusgraph.version>
-        <spring.version>5.3.13</spring.version>
+        <spring.version>5.3.18</spring.version>
+        <spring.boot.version>2.2.13.RELEASE</spring.boot.version>
         <jersey-bom.version>2.34</jersey-bom.version>
-        <netty.version>4.1.68.Final</netty.version>
+        <netty.version>4.1.77.Final</netty.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <wire-mock.version>2.26.3</wire-mock.version>
         <ecomp.version>3.4.0</ecomp.version>
         <cassandra.unit.version>4.3.1.0</cassandra.unit.version>
         <cadi.version>2.1.8</cadi.version>
-        <lombok.version>1.18.20</lombok.version>
+        <lombok.version>1.18.24</lombok.version>
         <commons-beanutils>1.9.4</commons-beanutils>
         <commons.io.version>2.8.0</commons.io.version>
         <commons-configuration>2.7</commons-configuration>
@@ -68,6 +69,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <swagger-core-mvn-plugin.version>2.1.7</swagger-core-mvn-plugin.version>
         <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
         <hibernate.validator.version>6.1.6.Final</hibernate.validator.version>
+        <org.json.version>20220320</org.json.version>
 
         <commons.collections.version>4.1</commons.collections.version>
         <ws.rs.version>2.1.1</ws.rs.version>
@@ -82,7 +84,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <org.dom4j.version>2.1.3</org.dom4j.version>
 
         <!-- JSON and YAML Parsing -->
-        <jackson.version>2.12.4</jackson.version>
+        <jackson.version>2.12.7</jackson.version>
         <jackson-annotations.version>${jackson.version}</jackson-annotations.version>
 
         <clearspring.version>2.1.1</clearspring.version>
@@ -175,7 +177,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <!--jacoco-->
         <jacoco.version>0.8.7</jacoco.version>
 
-        <java.driver.core.version>4.5.1</java.driver.core.version>
+        <java.driver.core.version>4.14.1</java.driver.core.version>
 
         <!-- Surefire parameters  -->
         <surefire.forkCount>1C</surefire.forkCount>

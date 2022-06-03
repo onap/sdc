@@ -14,6 +14,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+      <version>${spring.boot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.onap.sdc.sdc-be-common</groupId>
       <artifactId>security-util-lib</artifactId>
       <version>${security.util.lib.version}</version>
@@ -21,6 +26,10 @@
         <exclusion>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.springframework</groupId>
