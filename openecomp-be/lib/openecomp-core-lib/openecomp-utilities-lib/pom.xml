@@ -84,9 +84,20 @@
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${org.json.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.everit.json</groupId>
       <artifactId>org.everit.json.schema</artifactId>
       <version>${org.everit.json.schema.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.openecomp.sdc</groupId>
