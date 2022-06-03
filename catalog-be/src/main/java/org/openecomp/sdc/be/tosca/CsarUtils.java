@@ -115,6 +115,7 @@ import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
+import com.datastax.driver.core.ConsistencyLevel;
 
 /**
  * @author tg851x
@@ -432,6 +433,7 @@ public class CsarUtils {
                                                                 boolean isInCertificationRequest) throws IOException {
         ArtifactDefinition artifactDef = component.getToscaArtifacts().get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE);
         Either<ToscaRepresentation, ResponseFormat> toscaRepresentation = fetchToscaRepresentation(component, getFromCS, artifactDef);
+
         // This should not be done but in order to keep the refactoring small enough we stop here.
 
         // TODO: Refactor the rest of this function
@@ -880,9 +882,17 @@ public class CsarUtils {
     }
 
     private Either<byte[], ActionStatus> getFromCassandra(String cassandraId) {
-        return artifactCassandraDao.getArtifact(cassandraId).right().map(cos -> {
-            log.debug("Failed to fetch artifact from Cassandra by id {} error {} ", cassandraId, cos);
-            StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(cos);
+        
+        Either<DAOArtifactData, CassandraOperationStatus> artifact = artifactCassandraDao.getArtifact(cassandraId);
+        
+        if (artifact.isRight()) {
+            log.info("Failed to fetch artifact from Cassandra by id {} error {}. Trying again with ConsistencyLevel ALL", cassandraId, artifact.right().value());        
+            artifact = artifactCassandraDao.getArtifact(cassandraId, com.datastax.driver.mapping.Mapper.Option.consistencyLevel(ConsistencyLevel.ALL));
+        } 
+        
+        return artifact.right().map(operationstatus -> {
+            log.info("Failed to fetch artifact from Cassandra by id {} error {}.", cassandraId, operationstatus);        
+            StorageOperationStatus storageStatus = DaoStatusConverter.convertCassandraStatusToStorageStatus(operationstatus);
             return componentsUtils.convertFromStorageResponse(storageStatus);
         }).left().map(DAOArtifactData::getDataAsArray);
     }

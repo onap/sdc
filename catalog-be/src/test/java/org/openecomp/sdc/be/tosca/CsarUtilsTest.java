@@ -96,6 +96,7 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.test.BaseConfDependent;
 import org.openecomp.sdc.exception.ResponseFormat;
+import com.datastax.driver.mapping.Mapper.Option;
 
 class CsarUtilsTest extends BaseConfDependent {
 
@@ -172,6 +173,9 @@ class CsarUtilsTest extends BaseConfDependent {
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
 				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
+		
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class), Mockito.any(Option.class)))
+                .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
 		Mockito.when(componentsUtils.convertFromStorageResponse(Mockito.any(StorageOperationStatus.class)))
 				.thenReturn(ActionStatus.GENERAL_ERROR);
@@ -603,6 +607,9 @@ class CsarUtilsTest extends BaseConfDependent {
 
 		Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class)))
 				.thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
+		
+        Mockito.when(artifactCassandraDao.getArtifact(Mockito.any(String.class), Mockito.any(Option.class)))
+                .thenReturn(Either.right(CassandraOperationStatus.GENERAL_ERROR));
 
 		Either<byte[], ActionStatus> output = Deencapsulation.invoke(testSubject, "getEntryData", cassandraId, childComponent);
 

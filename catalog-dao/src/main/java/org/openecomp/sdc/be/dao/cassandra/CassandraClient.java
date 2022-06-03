@@ -28,6 +28,7 @@ import com.datastax.driver.core.policies.DefaultRetryPolicy;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.datastax.driver.mapping.Mapper;
+import com.datastax.driver.mapping.Mapper.Option;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
 import java.util.List;
@@ -162,13 +163,13 @@ public class CassandraClient {
         return CassandraOperationStatus.OK;
     }
 
-    public <T> Either<T, CassandraOperationStatus> getById(String id, Class<T> clazz, MappingManager manager) {
+    public <T> Either<T, CassandraOperationStatus> getById(String id, Class<T> clazz, MappingManager manager, Option...options) {
         if (!isConnected) {
             return Either.right(CassandraOperationStatus.CLUSTER_NOT_CONNECTED);
         }
         try {
             Mapper<T> mapper = manager.mapper(clazz);
-            T result = mapper.get(id);
+            T result = mapper.get(id, options);
             if (result == null) {
                 return Either.right(CassandraOperationStatus.NOT_FOUND);
             }

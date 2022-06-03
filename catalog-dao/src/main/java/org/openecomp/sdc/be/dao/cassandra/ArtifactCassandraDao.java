@@ -23,6 +23,7 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.mapping.MappingManager;
 import fj.data.Either;
+import com.datastax.driver.mapping.Mapper.Option;
 import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.resources.data.DAOArtifactData;
@@ -66,8 +67,8 @@ public class ArtifactCassandraDao extends CassandraDao {
         return client.save(artifact, DAOArtifactData.class, manager);
     }
 
-    public Either<DAOArtifactData, CassandraOperationStatus> getArtifact(String artifactId) {
-        return client.getById(artifactId, DAOArtifactData.class, manager);
+    public Either<DAOArtifactData, CassandraOperationStatus> getArtifact(String artifactId, Option... options) {
+        return client.getById(artifactId, DAOArtifactData.class, manager, options);
     }
 
     public CassandraOperationStatus deleteArtifact(String artifactId) {
