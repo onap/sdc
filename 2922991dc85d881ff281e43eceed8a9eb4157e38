@@ -46,6 +46,30 @@
       "revId": "2922991dc85d881ff281e43eceed8a9eb4157e38",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb85cfe7_49685f10",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-03T12:12:36Z",
+      "side": 1,
+      "message": "thats fine either. Slight reservation about launching one pop up from another but its probably ok",
+      "parentUuid": "55a1fe03_4b2f8af4",
+      "range": {
+        "startLine": 551,
+        "startChar": 15,
+        "endLine": 552,
+        "endChar": 57
+      },
+      "revId": "2922991dc85d881ff281e43eceed8a9eb4157e38",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
