@@ -685,6 +685,12 @@ class ComponentInstanceBusinessLogicTest {
         propertyGetInput.setName("anyName");
         final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
         toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_ATTRIBUTE);
+        toscaGetFunction.setPropertySource(PropertySource.SELF);
+        toscaGetFunction.setPropertyPathFromSource(List.of("sourcePath"));
+        toscaGetFunction.setSourceName("sourceName");
+        toscaGetFunction.setSourceUniqueId("sourceUniqueId");
+        toscaGetFunction.setPropertyName("propertyName");
+        toscaGetFunction.setPropertyUniqueId("propertyId");
         propertyGetInput.setToscaGetFunction(toscaGetFunction);
         properties.add(propertyGetInput);
 
@@ -710,8 +716,134 @@ class ComponentInstanceBusinessLogicTest {
         //then
         assertTrue(responseFormatEither.isRight(), "Expecting an error");
         final ResponseFormat actualResponse = responseFormatEither.right().value();
-        final ResponseFormat expectedResponse =
-            ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get().getResponseFormat();
+        final ResponseFormat expectedResponse = ToscaGetFunctionExceptionSupplier
+            .functionNotSupported(toscaGetFunction.getFunctionType()).get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_functionTypeNotFoundTest() {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = createOrUpdatePropertiesValuesForToscaFunctionValidation
+            (toscaGetFunction);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse = ToscaGetFunctionExceptionSupplier
+            .targetFunctionTypeNotFound().get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_propertySourceNotFoundTest() {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_INPUT);
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = createOrUpdatePropertiesValuesForToscaFunctionValidation
+            (toscaGetFunction);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse = ToscaGetFunctionExceptionSupplier
+            .targetPropertySourceNotFound(toscaGetFunction.getFunctionType()).get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_propertySourcePathNotFoundTest() {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_INPUT);
+        toscaGetFunction.setPropertySource(PropertySource.SELF);
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = createOrUpdatePropertiesValuesForToscaFunctionValidation(
+            toscaGetFunction);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse = ToscaGetFunctionExceptionSupplier
+            .targetSourcePathNotFound(toscaGetFunction.getFunctionType()).get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_propertySourceNameNotFoundTest() {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_INPUT);
+        toscaGetFunction.setPropertySource(PropertySource.SELF);
+        toscaGetFunction.setPropertyPathFromSource(List.of("sourcePath"));
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = createOrUpdatePropertiesValuesForToscaFunctionValidation(
+            toscaGetFunction);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse = ToscaGetFunctionExceptionSupplier
+            .sourceNameNotFound(toscaGetFunction.getPropertySource()).get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_propertySourceIdNotFoundTest() {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_INPUT);
+        toscaGetFunction.setPropertySource(PropertySource.SELF);
+        toscaGetFunction.setPropertyPathFromSource(List.of("sourcePath"));
+        toscaGetFunction.setSourceName("sourceName");
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = createOrUpdatePropertiesValuesForToscaFunctionValidation(
+            toscaGetFunction);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse = ToscaGetFunctionExceptionSupplier
+            .sourceIdNotFound(toscaGetFunction.getPropertySource()).get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_PropertyNameNotFoundTest() {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_PROPERTY);
+        toscaGetFunction.setPropertySource(PropertySource.SELF);
+        toscaGetFunction.setPropertyPathFromSource(List.of("sourcePath"));
+        toscaGetFunction.setSourceName("sourceName");
+        toscaGetFunction.setSourceUniqueId("sourceUniqueId");
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = createOrUpdatePropertiesValuesForToscaFunctionValidation(
+            toscaGetFunction);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse = ToscaGetFunctionExceptionSupplier
+            .propertyNameNotFound(toscaGetFunction.getPropertySource()).get().getResponseFormat();
+        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testToscaGetFunctionValidation_PropertyIdNotFoundTest() {
+        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_PROPERTY);
+        toscaGetFunction.setPropertySource(PropertySource.SELF);
+        toscaGetFunction.setPropertyPathFromSource(List.of("sourcePath"));
+        toscaGetFunction.setSourceName("sourceName");
+        toscaGetFunction.setSourceUniqueId("sourceUniqueId");
+        toscaGetFunction.setPropertyName("propertyName");
+        //when
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither = createOrUpdatePropertiesValuesForToscaFunctionValidation(
+            toscaGetFunction);
+        //then
+        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+        final ResponseFormat actualResponse = responseFormatEither.right().value();
+        final ResponseFormat expectedResponse = ToscaGetFunctionExceptionSupplier
+            .propertyIdNotFound(toscaGetFunction.getPropertySource()).get().getResponseFormat();
         assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
     }
@@ -2653,6 +2785,39 @@ class ComponentInstanceBusinessLogicTest {
         schemaProperty.setType(schemaType);
         schemaDefinition.setProperty(schemaProperty);
         return schemaDefinition;
+    }
+
+    private Either<List<ComponentInstanceProperty>, ResponseFormat> createOrUpdatePropertiesValuesForToscaFunctionValidation(
+        ToscaGetFunctionDataDefinition toscaGetFunction) {
+        final String userId = "userId";
+        final String containerComponentId = "containerComponentId";
+        final String containerComponentName = "containerComponentName";
+        final String resourceInstanceId = "resourceInstanceId";
+        final List<ComponentInstanceProperty> properties = new ArrayList<>();
+        final ComponentInstanceProperty propertyGetInput = new ComponentInstanceProperty();
+        propertyGetInput.setName("anyName");
+        propertyGetInput.setToscaGetFunction(toscaGetFunction);
+        properties.add(propertyGetInput);
+
+        final Component component = new Service();
+        component.setName(containerComponentName);
+        component.setUniqueId(containerComponentId);
+        component.setLastUpdaterUserId(userId);
+        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+
+        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
+        componentInstanceProps.put(resourceInstanceId, properties);
+        component.setComponentInstancesProperties(componentInstanceProps);
+
+        final ComponentInstance resourceInstance = createComponentInstance("componentInstance1");
+        resourceInstance.setUniqueId(resourceInstanceId);
+        component.setComponentInstances(List.of(resourceInstance));
+
+        mockComponentForToscaGetFunctionValidation(component);
+        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither =
+            componentInstanceBusinessLogic
+                .createOrUpdatePropertiesValues(ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, properties, userId);
+        return responseFormatEither;
     }
 
 }
