@@ -93,6 +93,30 @@
       "revId": "0da09db5e400a14aff8e9d065f9acaafcc5689b5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9dcf9685_aa8b8701",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/CassandraClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-08T15:07:40Z",
+      "side": 1,
+      "message": "no new patch was uploaded",
+      "parentUuid": "563ece6e_2a9ab88b",
+      "range": {
+        "startLine": 166,
+        "startChar": 119,
+        "endLine": 166,
+        "endChar": 120
+      },
+      "revId": "0da09db5e400a14aff8e9d065f9acaafcc5689b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
