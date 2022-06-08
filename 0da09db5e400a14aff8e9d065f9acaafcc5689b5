@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a72786b2_80b31632",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-08T11:26:51Z",
+      "side": 1,
+      "message": "why not call like this in the first place?",
+      "range": {
+        "startLine": 890,
+        "startChar": 23,
+        "endLine": 890,
+        "endChar": 151
+      },
+      "revId": "0da09db5e400a14aff8e9d065f9acaafcc5689b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3fe0606_855e76c2",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/CassandraClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-08T11:26:51Z",
+      "side": 1,
+      "message": "please, add space after ...",
+      "range": {
+        "startLine": 166,
+        "startChar": 119,
+        "endLine": 166,
+        "endChar": 120
+      },
+      "revId": "0da09db5e400a14aff8e9d065f9acaafcc5689b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
