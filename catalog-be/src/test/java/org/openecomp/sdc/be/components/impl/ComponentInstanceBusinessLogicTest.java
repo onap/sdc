@@ -710,8 +710,7 @@ class ComponentInstanceBusinessLogicTest {
         //then
         assertTrue(responseFormatEither.isRight(), "Expecting an error");
         final ResponseFormat actualResponse = responseFormatEither.right().value();
-        final ResponseFormat expectedResponse =
-            ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get().getResponseFormat();
+        final ResponseFormat expectedResponse = new ByActionStatusComponentException(ActionStatus.MISSING_PROPERTY_VALUE).getResponseFormat();
         assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
     }
