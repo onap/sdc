@@ -2370,6 +2370,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private <T extends PropertyDefinition> void validateToscaGetFunction(T property, Component parentComponent) {
         final ToscaGetFunctionDataDefinition toscaGetFunction = property.getToscaGetFunction();
         validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
+        validateGetPropertySourceValue(toscaGetFunction);
         if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT) {
             validateGetFunction(property, parentComponent.getInputs(), parentComponent.getModel());
             return;
@@ -2468,6 +2469,12 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (functionType == ToscaGetFunctionType.GET_PROPERTY && !List.of(PropertySource.SELF, PropertySource.INSTANCE).contains(propertySource)) {
             throw ToscaGetFunctionExceptionSupplier
                 .targetSourceNotSupported(functionType, propertySource).get();
+        }
+    }
+
+    private void validateGetPropertySourceValue(final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        if (toscaGetFunction.getPropertyPathFromSource().isEmpty()) {
+            throw new ByActionStatusComponentException(ActionStatus.MISSING_PROPERTY_VALUE);
         }
     }
 
