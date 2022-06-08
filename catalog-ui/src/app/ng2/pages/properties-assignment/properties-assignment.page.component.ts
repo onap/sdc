@@ -598,14 +598,8 @@ export class PropertiesAssignmentComponent {
             this.selectedInstanceData.uniqueId, [instanceProperty])
         .subscribe(() => {
             this.changeSelectedInstance(this.getSelectedComponentInstance());
-        }, (error) => {
-            const errorMsg =
-                this.translateService.translate('TOSCA_FUNCTION_SELECT_ERROR', {'propertyName': instanceProperty.name, 'error': error});
-            this.notification.error({
-                title: this.translateService.translate('FAILURE_LABEL'),
-                message: errorMsg
-            });
-            console.error(errorMsg, error);
+        }, error => {
+            this.loadingProperties = false;
         }, () => {
             this.loadingProperties = false;
         });
