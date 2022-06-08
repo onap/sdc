@@ -2725,3 +2725,18 @@ errors:
         messageId: "SVC4171"
     }
 
+    #-----------SVC4172---------------------------
+    #%1 - property source
+    PROPERTY_VALUE_NOT_FOUND: {
+        code: 404,
+        message: "Error: Requested '%1' property value was not found.",
+        messageId: "SVC4172"
+    }
+
+    #-----------SVC4173---------------------------
+    #%1 - property source
+    TOSCA_FUNCTION_NOT_FOUND: {
+        code: 404,
+        message: "Error: Requested '%1' was not found.",
+        messageId: "SVC4173"
+    }

@@ -2369,6 +2369,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
     private <T extends PropertyDefinition> void validateToscaGetFunction(T property, Component parentComponent) {
         final ToscaGetFunctionDataDefinition toscaGetFunction = property.getToscaGetFunction();
+        validateGetToscaFunctionProperties(toscaGetFunction);
         validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
         if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT) {
             validateGetFunction(property, parentComponent.getInputs(), parentComponent.getModel());
@@ -2468,6 +2469,36 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         if (functionType == ToscaGetFunctionType.GET_PROPERTY && !List.of(PropertySource.SELF, PropertySource.INSTANCE).contains(propertySource)) {
             throw ToscaGetFunctionExceptionSupplier
                 .targetSourceNotSupported(functionType, propertySource).get();
+        }
+    }
+
+    private void validateGetToscaFunctionProperties(final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        if (toscaGetFunction.getFunctionType() == null) {
+            throw ToscaGetFunctionExceptionSupplier.targetFunctionTypeNotFound().get();
+        }
+        if (toscaGetFunction.getPropertySource() == null) {
+            throw ToscaGetFunctionExceptionSupplier.targetPropertySourceNotFound(toscaGetFunction.getFunctionType()).get();
+        }
+        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT
+            || toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_PROPERTY) {
+            if (CollectionUtils.isEmpty(toscaGetFunction.getPropertyPathFromSource())) {
+                throw ToscaGetFunctionExceptionSupplier
+                    .targetSourcePathNotFound(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource()).get();
+            }
+            if (StringUtils.isEmpty(toscaGetFunction.getSourceName()) || StringUtils.isBlank(toscaGetFunction.getSourceName())) {
+                throw ToscaGetFunctionExceptionSupplier.sourceNameNotFound(toscaGetFunction.getPropertySource()).get();
+            }
+            if (StringUtils.isEmpty(toscaGetFunction.getSourceUniqueId()) || StringUtils.isBlank(toscaGetFunction.getSourceUniqueId())) {
+                throw ToscaGetFunctionExceptionSupplier.sourceIdNotFound(toscaGetFunction.getPropertySource()).get();
+            }
+            if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_PROPERTY) {
+                if (StringUtils.isEmpty(toscaGetFunction.getPropertyName()) || StringUtils.isBlank(toscaGetFunction.getPropertyName())) {
+                    throw ToscaGetFunctionExceptionSupplier.propertyNameNotFound(toscaGetFunction.getPropertySource()).get();
+                }
+                if (StringUtils.isEmpty(toscaGetFunction.getPropertyUniqueId()) || StringUtils.isBlank(toscaGetFunction.getPropertyUniqueId())) {
+                    throw ToscaGetFunctionExceptionSupplier.propertyIdNotFound(toscaGetFunction.getPropertySource()).get();
+                }
+            }
         }
     }
 

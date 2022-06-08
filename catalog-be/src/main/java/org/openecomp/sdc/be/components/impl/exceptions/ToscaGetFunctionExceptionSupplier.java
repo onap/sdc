@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 
@@ -37,11 +38,44 @@ public class ToscaGetFunctionExceptionSupplier {
         final String errorMsg = String.format("%s on %s", toscaGetFunctionType.getFunctionName(), propertySource.getName());
         return () -> new ByActionStatusComponentException(ActionStatus.NOT_SUPPORTED, errorMsg);
     }
-
     public static Supplier<ByActionStatusComponentException> propertyNotFoundOnTarget(final String propertyName,
                                                                                       final PropertySource propertySource,
                                                                                       final ToscaGetFunctionType functionType) {
         return propertyNotFoundOnTarget(List.of(propertyName), propertySource, functionType);
+    }
+
+    public static Supplier<ByActionStatusComponentException> targetFunctionTypeNotFound() {
+        return () -> new ByActionStatusComponentException(ActionStatus.TOSCA_FUNCTION_NOT_FOUND, "Tosca function type");
+    }
+
+    public static Supplier<ByActionStatusComponentException> targetPropertySourceNotFound(final ToscaGetFunctionType toscaGetFunctionType) {
+        return () -> new ByActionStatusComponentException(ActionStatus.TOSCA_FUNCTION_NOT_FOUND, "Tosca property source for " + toscaGetFunctionType);
+    }
+
+    public static Supplier<ByActionStatusComponentException> targetSourcePathNotFound(final ToscaGetFunctionType toscaGetFunctionType,
+                                                                                       final PropertySource propertySource) {
+        final String errorMsg = String.format("%s on %s", toscaGetFunctionType.getFunctionName(), propertySource.getName());
+        return () -> new ByActionStatusComponentException(ActionStatus.PROPERTY_VALUE_NOT_FOUND, errorMsg);
+    }
+
+    public static Supplier<ByActionStatusComponentException> propertyNameNotFound(final PropertySource propertySource) {
+        return () -> new ByActionStatusComponentException(ActionStatus.TOSCA_FUNCTION_NOT_FOUND, "Tosca function property name of source "
+            + propertySource);
+    }
+
+    public static Supplier<ByActionStatusComponentException> propertyIdNotFound(final PropertySource propertySource) {
+        return () -> new ByActionStatusComponentException(ActionStatus.TOSCA_FUNCTION_NOT_FOUND, "Tosca function property id of source "
+            + propertySource);
+    }
+
+    public static Supplier<ByActionStatusComponentException> sourceNameNotFound(final PropertySource propertySource) {
+        return () -> new ByActionStatusComponentException(ActionStatus.TOSCA_FUNCTION_NOT_FOUND, "Tosca function source name of "
+            + propertySource);
+    }
+
+    public static Supplier<ByActionStatusComponentException> sourceIdNotFound(final PropertySource propertySource) {
+        return () -> new ByActionStatusComponentException(ActionStatus.TOSCA_FUNCTION_NOT_FOUND, "Tosca function source id of "
+            + propertySource);
     }
 
     public static Supplier<ByActionStatusComponentException> propertyNotFoundOnTarget(final List<String> propertyPathFromSource,
