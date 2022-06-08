@@ -5,6 +5,97 @@
 Release Notes
 =============
 
+Version: 1.11.4
+==============
+
+:Release Date: 2022-06-09
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+
+    N/A
+
+**Stories**
+
+*  `SDC-4031 <https://jira.onap.org/browse/SDC-4031>`_ - get_property support in Update Property modal from Composition page
+*  `SDC-4028 <https://jira.onap.org/browse/SDC-4028>`_ - Allow to edit a TOSCA get function value in the Properties Assignment
+*  `SDC-4025 <https://jira.onap.org/browse/SDC-4025>`_ - Maintain VFC instance attribute outputs on instance version change
+*  `SDC-4018 <https://jira.onap.org/browse/SDC-4018>`_ - Maintain VFC UI added interface operations after an upgrade
+*  `SDC-4012 <https://jira.onap.org/browse/SDC-4012>`_ - Maintain VFC UI added properties after an upgrade
+*  `SDC-4016 <https://jira.onap.org/browse/SDC-4016>`_ - Maintain VFC external capabilities and requirements on instance version change
+*  `SDC-4026 <https://jira.onap.org/browse/SDC-4026>`_ - Component Instance property selection in Property Assignment get property
+*  `SDC-4009 <https://jira.onap.org/browse/SDC-4009>`_ - Maintain VFC instance interface operation details on instance version change
+*  `SDC-4023 <https://jira.onap.org/browse/SDC-4023>`_ - Delete VSP - Ensure complete deletion of VSP from DB
+*  `SDC-4014 <https://jira.onap.org/browse/SDC-4014>`_ - Support get_property in Property Assignment TOSCA functions
+*  `SDC-4015 <https://jira.onap.org/browse/SDC-4015>`_ - Maintain VFC instance occurrences values on instance version change
+
+**Bug Fixes**
+
+*  `SDC-4032 <https://jira.onap.org/browse/SDC-4032>`_ - sdc-be-init fails intermittently
+*  `SDC-4030 <https://jira.onap.org/browse/SDC-4030>`_ - Fix Component Instance requirements and capabilities not updating
+*  `SDC-4024 <https://jira.onap.org/browse/SDC-4024>`_ - Interface Operation Implementation artifact file name incorrect for extended notation
+*  `SDC-4027 <https://jira.onap.org/browse/SDC-4027>`_ - Error when restoring VLM: Unable to restore partially deleted VSP, re-try VSP deletion
+*  `SDC-4022 <https://jira.onap.org/browse/SDC-4022>`_ - Inconsistent behavior adding a CONCAT string to VFC property and node filter property
+*  `SDC-4021 <https://jira.onap.org/browse/SDC-4021>`_ - Fix Component Instance versions not updating
+*  `SDC-4013 <https://jira.onap.org/browse/SDC-4013>`_ - Exception thrown when accessing a VF General page
+*  `SDC-3987 <https://jira.onap.org/browse/SDC-3987>`_ - Node Filter string property value displayed as object
+
+
+**Tasks**
+
+*  `SDC-4029 <https://jira.onap.org/browse/SDC-4029>`_ - Fix Blocker Vulnerability
+*  `SDC-4017 <https://jira.onap.org/browse/SDC-4017>`_ - Remove/update vulnerable dependency
+*  `SDC-4011 <https://jira.onap.org/browse/SDC-4011>`_ - Include ETSI metadata in VSP package metadata
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.3
 ==============
 
@@ -46,6 +137,7 @@ SDC Kohn early release
 *  `SDC-3997 <https://jira.onap.org/browse/SDC-3997>`_ - Interface panel is blank when switch to a different version of a VFC
 *  `SDC-3998 <https://jira.onap.org/browse/SDC-3998>`_ - Datatypes for a property are not specific to the VFC model
 *  `SDC-4007 <https://jira.onap.org/browse/SDC-4007>`_ - Unable to delete Map from List<Maps> property type
+*  `SDC-4010 <https://jira.onap.org/browse/SDC-4010>`_ - Fix UI not displaying directives list correctly
 
 
 **Tasks**
