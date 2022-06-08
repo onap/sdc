@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "0ccde4b0_32993dd0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/CsarUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-08T15:20:53Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a5d4addb_849adff7",
+      "range": {
+        "startLine": 890,
+        "startChar": 23,
+        "endLine": 890,
+        "endChar": 151
+      },
+      "revId": "0da09db5e400a14aff8e9d065f9acaafcc5689b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3fe0606_855e76c2",
         "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/CassandraClient.java",
         "patchSetId": 1
@@ -117,6 +141,30 @@
       "revId": "0da09db5e400a14aff8e9d065f9acaafcc5689b5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1cc6561_b2669ea0",
+        "filename": "catalog-dao/src/main/java/org/openecomp/sdc/be/dao/cassandra/CassandraClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-08T15:20:53Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "9dcf9685_aa8b8701",
+      "range": {
+        "startLine": 166,
+        "startChar": 119,
+        "endLine": 166,
+        "endChar": 120
+      },
+      "revId": "0da09db5e400a14aff8e9d065f9acaafcc5689b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
