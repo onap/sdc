@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0840cb64_d6056c87",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-09T13:27:54Z",
+      "side": 1,
+      "message": "maybe keep logging this error with console.error",
+      "range": {
+        "startLine": 601,
+        "startChar": 11,
+        "endLine": 601,
+        "endChar": 16
+      },
+      "revId": "f51f79f9ffd4acd1fc129fc4a8843a70ab204249",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
