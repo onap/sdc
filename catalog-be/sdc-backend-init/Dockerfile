@@ -22,6 +22,7 @@ RUN apk update && \
     python -m pip install --upgrade pip \
     pip install 'pycurl==7.44.1' &&  \
     set -ex && \
+    gem install multipart-post -v 2.2.0 && \
     gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 etc webrick --no-document && \
     apk del .build-dependencies && \
     gem cleanup
