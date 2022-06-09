@@ -22,6 +22,7 @@ RUN apt-get update --allow-releaseinfo-change && apt-get install -y python-pip &
     ruby-dev \
     libffi-dev \
     libxml2-dev && \
+    gem install multipart-post -v 2.2.0 --no-document && \
     gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 etc webrick --no-document && \
     apt-get update -y && apt-get remove bash -y --allow-remove-essential && \
     apt-get install -y binutils && apt-get clean && gem cleanup
