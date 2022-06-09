@@ -164,6 +164,7 @@ export class ToscaFunctionComponent implements OnInit {
 
     onToscaFunctionChange(): void {
         this.resetPropertySource();
+        this.resetPropertyDropdown();
         if (this.isGetInputSelected()) {
             this.setSelfPropertySource();
             this.loadPropertyDropdown();
