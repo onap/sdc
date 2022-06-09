@@ -230,13 +230,13 @@ export class ToscaFunctionComponent implements OnInit {
             const properties: PropertyBEModel[] = this.extractProperties(response);
             if (!properties || properties.length === 0) {
                 const msgCode = this.isGetInputSelected() ? 'TOSCA_FUNCTION_NO_INPUT_FOUND' : 'TOSCA_FUNCTION_NO_PROPERTY_FOUND';
-                this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.property.type});
+                this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.propertyTypeToString()});
                 return;
             }
             this.addPropertiesToDropdown(properties);
             if (this.propertyDropdownList.length == 0) {
                 const msgCode = this.isGetInputSelected() ? 'TOSCA_FUNCTION_NO_INPUT_FOUND' : 'TOSCA_FUNCTION_NO_PROPERTY_FOUND';
-                this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.property.type});
+                this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.propertyTypeToString()});
             }
         }, (error) => {
             console.error('An error occurred while loading properties.', error);
@@ -246,6 +246,13 @@ export class ToscaFunctionComponent implements OnInit {
             }
             this.stopLoading();
         });
+    }
+
+    private propertyTypeToString() {
+        if (this.property.schemaType) {
+            return `${this.property.type} of ${this.property.schemaType}`;
+        }
+        return this.property.type;
     }
 
     private extractProperties(componentGenericResponse: ComponentGenericResponse): PropertyBEModel[] {
@@ -290,7 +297,7 @@ export class ToscaFunctionComponent implements OnInit {
 
     private addPropertiesToDropdown(properties: PropertyBEModel[]): void {
         for (const property of properties) {
-            if (this.property.type === property.type) {
+            if (this.hasSameType(property)) {
                 this.addPropertyToDropdown({
                     propertyName: property.name,
                     propertyId: property.uniqueId,
@@ -310,17 +317,27 @@ export class ToscaFunctionComponent implements OnInit {
         }
         parentPropertyList.push(inputProperty);
         dataTypeFound.properties.forEach(dataTypeProperty => {
-            if (dataTypeProperty.type === this.property.type) {
+            if (this.hasSameType(dataTypeProperty)) {
                 this.addPropertyToDropdown({
                     propertyName: dataTypeProperty.name,
                     propertyId: parentPropertyList[0].uniqueId,
                     propertyLabel: parentPropertyList.map(property => property.name).join('->') + '->' + dataTypeProperty.name,
                     propertyPath: [...parentPropertyList.map(property => property.name), dataTypeProperty.name]
                 });
-            } else if (PROPERTY_DATA.SIMPLE_TYPES.indexOf(dataTypeProperty.type) === -1) {
+            } else if (this.isComplexType(dataTypeProperty.type)) {
                 this.fillPropertyDropdownWithMatchingChildProperties(dataTypeProperty, [...parentPropertyList])
             }
         });
+    }
+
+    private hasSameType(property: PropertyBEModel) {
+        if (this.property.schema && this.property.schema.property) {
+            if (!property.schema || !property.schema.property) {
+                return false;
+            }
+            return property.type === this.property.type && this.property.schema.property.type === property.schema.property.type;
+        }
+        return property.type === this.property.type;
     }
 
     private isGetPropertySelected(): boolean {
