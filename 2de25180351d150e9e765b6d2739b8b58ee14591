@@ -166,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "67e7549c_570262fb",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-06-09T12:48:40Z",
+      "side": 1,
+      "message": "The value must exit, or value must be empty string(it does not recognise empty string as existing value) or undefined. other cases should be ignored.",
+      "parentUuid": "d69693e6_37f2c628",
+      "range": {
+        "startLine": 182,
+        "startChar": 8,
+        "endLine": 182,
+        "endChar": 57
+      },
+      "revId": "2de25180351d150e9e765b6d2739b8b58ee14591",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ab1b2e96_ed20cb83",
         "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
         "patchSetId": 5
@@ -186,6 +210,30 @@
       "revId": "2de25180351d150e9e765b6d2739b8b58ee14591",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22ebc224_9278f405",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-06-09T12:48:40Z",
+      "side": 1,
+      "message": "The value must exit, or value must be empty string(it does not recognise empty string as existing value) or undefined. other cases should be ignored.",
+      "parentUuid": "ab1b2e96_ed20cb83",
+      "range": {
+        "startLine": 226,
+        "startChar": 11,
+        "endLine": 226,
+        "endChar": 56
+      },
+      "revId": "2de25180351d150e9e765b6d2739b8b58ee14591",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
