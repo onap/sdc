@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "361f6abb_1437e277",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-06-10T14:57:42Z",
+      "side": 1,
+      "message": "fixed",
+      "parentUuid": "fb0ee4eb_38c3585c",
+      "range": {
+        "startLine": 190,
+        "startChar": 12,
+        "endLine": 190,
+        "endChar": 25
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2dfb72ed_067e5fe7",
         "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
         "patchSetId": 10
@@ -45,6 +69,30 @@
       "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "daadeff3_f9a2669f",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-06-10T14:57:42Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "2dfb72ed_067e5fe7",
+      "range": {
+        "startLine": 271,
+        "startChar": 12,
+        "endLine": 272,
+        "endChar": 74
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "23e454d8_929c53e6",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-06-10T14:57:42Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "f8dfd83f_8dadf61b",
+      "range": {
+        "startLine": 284,
+        "startChar": 24,
+        "endLine": 284,
+        "endChar": 80
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "417e3319_6cfc797d",
         "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
         "patchSetId": 10
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "83ac87e0_0e6b8110",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-06-10T14:57:42Z",
+      "side": 1,
+      "message": "during error and complete it is set to false now",
+      "parentUuid": "417e3319_6cfc797d",
+      "range": {
+        "startLine": 292,
+        "startChar": 12,
+        "endLine": 292,
+        "endChar": 97
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9317287d_4ffa2845",
         "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
         "patchSetId": 10
@@ -114,6 +210,30 @@
       "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d902c49b_7678bad0",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 7829
+      },
+      "writtenOn": "2022-06-10T14:57:42Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "9317287d_4ffa2845",
+      "range": {
+        "startLine": 316,
+        "startChar": 12,
+        "endLine": 316,
+        "endChar": 97
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
