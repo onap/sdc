@@ -205,6 +205,9 @@ export abstract class Component implements IComponent {
             this.isArchived = component.isArchived;
             this.vspArchived = component.vspArchived;
 
+            if (component.componentMetadata) {
+                this.componentMetadata = component.componentMetadata;
+            }
             if (component.categorySpecificMetadata && component.categories && component.categories[0]){
                 this.copyCategoryMetadata(component);
                 this.copySubcategoryMetadata(component);
@@ -244,8 +247,10 @@ export abstract class Component implements IComponent {
 
     //------------------------------------------ API Calls ----------------------------------------------------------------//
     public changeLifecycleState = (state:string, commentObj:AsdcComment):ng.IPromise<Component> => {
+        console.log('changeLifecycleState called', state);
         let deferred = this.$q.defer<Component>();
         let onSuccess = (componentMetadata:ComponentMetadata):void => {
+            console.log('changeLifecycleState onSuccess', componentMetadata);
             this.setComponentMetadata(componentMetadata);
             // this.version = componentMetadata.version;
             this.lifecycleState = componentMetadata.lifecycleState;
