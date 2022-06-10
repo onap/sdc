@@ -538,6 +538,7 @@ export class PropertiesAssignmentComponent {
     private openToscaGetFunctionModal() {
         const modalTitle = this.translateService.translate('TOSCA_FUNCTION_MODAL_TITLE');
         const modalButtons = [];
+        let disableSaveButtonFlag = true;
         modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
             () => {
                 const toscaGetFunction: ToscaGetFunction = modal.instance.dynamicContent.instance.toscaGetFunction;
@@ -547,7 +548,8 @@ export class PropertiesAssignmentComponent {
                     this.clearCheckedInstancePropertyValue();
                 }
                 modal.instance.close();
-            }
+            },
+            (): boolean => { return disableSaveButtonFlag }
         ));
         const checkedInstanceProperty = this.buildCheckedInstanceProperty();
         modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
@@ -564,6 +566,9 @@ export class PropertiesAssignmentComponent {
         this.modalService.addDynamicContentToModalAndBindInputs(modal, ToscaFunctionComponent, {
             'property': checkedInstanceProperty,
             'componentInstanceMap': this.componentInstanceMap
+        });
+        modal.instance.dynamicContent.instance.onValidityChange.subscribe(isValid => {
+            disableSaveButtonFlag = !isValid;
         });
         modal.instance.open();
     }

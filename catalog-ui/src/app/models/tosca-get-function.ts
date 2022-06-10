@@ -31,7 +31,7 @@ export class ToscaGetFunction {
     functionType: ToscaGetFunctionType;
     propertyPathFromSource: Array<string>;
 
-    constructor(toscaGetFunction: ToscaGetFunction) {
+    constructor(toscaGetFunction?: ToscaGetFunction) {
         if (!toscaGetFunction) {
             return;
         }
