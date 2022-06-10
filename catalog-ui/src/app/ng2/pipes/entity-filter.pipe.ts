@@ -26,6 +26,8 @@ export interface ISearchFilter {
     [key:string]: string;
 }
 
+const angular = require('angular');
+
 export interface IEntityFilterObject {
     // Types
     selectedComponentTypes?:Array<string>;
