@@ -48,6 +48,10 @@ export class ToscaFunctionComponent implements OnInit {
 
     toscaGetFunctionValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
         const toscaGetFunction: ToscaGetFunction = control.value;
+        const hasAnyValue = Object.keys(toscaGetFunction).find(key => toscaGetFunction[key]);
+        if (!hasAnyValue) {
+            return null;
+        }
         const errors: ValidationErrors = {};
         if (!toscaGetFunction.sourceName) {
             errors.sourceName = { required: true };
@@ -105,15 +109,15 @@ export class ToscaFunctionComponent implements OnInit {
         this.loadToscaFunctions();
         this.loadPropertySourceDropdown();
         this.initToscaGetFunction();
+    }
+
+    private initToscaGetFunction(): void {
         this.toscaGetFunctionForm.valueChanges.subscribe(toscaGetFunction => {
             this.onValidityChange.emit(this.toscaGetFunctionForm.valid);
             if (this.toscaGetFunctionForm.valid) {
                 this.onValidFunction.emit(toscaGetFunction);
             }
-        })
-    }
-
-    private initToscaGetFunction(): void {
+        });
         if (!this.property.isToscaGetFunction()) {
             return;
         }
@@ -176,8 +180,8 @@ export class ToscaFunctionComponent implements OnInit {
     }
 
     private resetForm(): void {
-        this.toscaGetFunction = new ToscaGetFunction(undefined);
-        this.toscaGetFunctionForm.setValue(new ToscaGetFunction(undefined));
+        this.toscaGetFunction = new ToscaGetFunction();
+        this.toscaGetFunctionForm.setValue(new ToscaGetFunction());
         this.propertySource = undefined;
         this.selectedProperty = undefined;
     }
