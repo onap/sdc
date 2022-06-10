@@ -399,7 +399,6 @@ export class InterfaceDefinitionComponent {
     }
 
     onRemoveOperation = (event: Event, operation: OperationModel): void => {
-        event.stopPropagation();
 
         const deleteButton: IModalButtonComponent = {
             id: 'deleteButton',

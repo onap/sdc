@@ -41,12 +41,21 @@ public class InterfaceOperation extends BaseOperation {
 
     private Either<List<InterfaceDefinition>, StorageOperationStatus> addOrUpdateInterfaces(boolean isUpdateAction, String componentId,
                                                                                             List<InterfaceDefinition> interfaceDefinitions) {
-        List<ToscaDataDefinition> interfaceDataDefinitions = interfaceDefinitions.stream().map(InterfaceDataDefinition::new)
-            .collect(Collectors.toList());
-        StorageOperationStatus statusRes = performUpdateToscaAction(isUpdateAction, componentId, interfaceDataDefinitions, EdgeLabelEnum.INTERFACE,
-            VertexTypeEnum.INTERFACE);
-        if (!statusRes.equals(StorageOperationStatus.OK)) {
-            return Either.right(statusRes);
+        return addOrUpdateInterfaces(componentId, VertexTypeEnum.INTERFACE, EdgeLabelEnum.INTERFACE, interfaceDefinitions, isUpdateAction);
+    }
+
+    private Either<List<InterfaceDefinition>, StorageOperationStatus> addOrUpdateInterfaces(final String componentId,
+                                                                                            final VertexTypeEnum vertexTypeEnum,
+                                                                                            final EdgeLabelEnum edgeLabelEnum,
+                                                                                            final List<InterfaceDefinition> interfaceDefinitions,
+                                                                                            final boolean isUpdateAction) {
+        final List<ToscaDataDefinition> interfaceDataDefinitions = interfaceDefinitions.stream()
+                .map(InterfaceDataDefinition::new)
+                .collect(Collectors.toList());
+        final StorageOperationStatus status = performUpdateToscaAction(isUpdateAction, componentId, interfaceDataDefinitions, edgeLabelEnum,
+            vertexTypeEnum);
+        if (!status.equals(StorageOperationStatus.OK)) {
+            return Either.right(status);
         }
         return Either.left(interfaceDefinitions);
     }
@@ -65,20 +74,33 @@ public class InterfaceOperation extends BaseOperation {
         return addOrUpdateInterfaces(true, componentId, interfaceDefinitions);
     }
 
+    public Either<List<InterfaceDefinition>, StorageOperationStatus> updateVfcInterfaces(String componentId,
+                                                                                      List<InterfaceDefinition> interfaceDefinitions) {
+        return addOrUpdateInterfaces(componentId, VertexTypeEnum.INTERFACE_ARTIFACTS, EdgeLabelEnum.INTERFACE_ARTIFACTS,
+            interfaceDefinitions, true);
+    }
+
     public Either<String, StorageOperationStatus> deleteInterface(String componentId, String interfacesToDelete) {
-        StorageOperationStatus statusRes = deleteToscaDataElements(componentId, EdgeLabelEnum.INTERFACE,
-            Collections.singletonList(interfacesToDelete));
+        return deleteInterface(componentId, interfacesToDelete, EdgeLabelEnum.INTERFACE, VertexTypeEnum.INTERFACE);
+    }
+
+    public Either<String, StorageOperationStatus> deleteVfcInterface(String componentId, String interfacesToDelete) {
+        return deleteInterface(componentId, interfacesToDelete, EdgeLabelEnum.INTERFACE_ARTIFACTS, VertexTypeEnum.INTERFACE_ARTIFACTS);
+    }
+
+    private Either<String, StorageOperationStatus> deleteInterface(final String componentId, final String interfacesToDelete,
+                                                                  final EdgeLabelEnum edgeLabel, final VertexTypeEnum vertexType) {
+        StorageOperationStatus statusRes = deleteToscaDataElements(componentId, edgeLabel, Collections.singletonList(interfacesToDelete));
         if (!statusRes.equals(StorageOperationStatus.OK)) {
             return Either.right(statusRes);
         }
-        Either<Map<String, InterfaceDataDefinition>, JanusGraphOperationStatus> componentEither = getDataFromGraph(componentId,
-            EdgeLabelEnum.INTERFACE);
-        if (componentEither.isRight()) {
-            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(componentEither.right().value()));
+        Either<Map<String, InterfaceDataDefinition>, JanusGraphOperationStatus> interfaceEither = getDataFromGraph(componentId, edgeLabel);
+        if (interfaceEither.isRight()) {
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(interfaceEither.right().value()));
         }
-        Map<String, InterfaceDataDefinition> interfaceDataDefinitionMap = componentEither.left().value();
+        final Map<String, InterfaceDataDefinition> interfaceDataDefinitionMap = interfaceEither.left().value();
         if (MapUtils.isEmpty(interfaceDataDefinitionMap)) {
-            statusRes = removeToscaData(componentId, EdgeLabelEnum.INTERFACE, VertexTypeEnum.INTERFACE);
+            statusRes = removeToscaData(componentId, edgeLabel, vertexType);
             if (!statusRes.equals(StorageOperationStatus.OK)) {
                 return Either.right(statusRes);
             }

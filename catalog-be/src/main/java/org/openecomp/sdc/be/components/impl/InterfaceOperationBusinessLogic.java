@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,6 +55,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
@@ -61,6 +63,7 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
@@ -113,14 +116,14 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         lockComponentResult(lock, storedComponent, DELETE_INTERFACE_OPERATION);
         try {
             Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(storedComponent, interfaceId);
-            if (!optionalInterface.isPresent()) {
+            if (optionalInterface.isEmpty()) {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceId));
             }
             InterfaceDefinition interfaceDefinition = optionalInterface.get();
             Map<String, Operation> operationsCollection = new HashMap<>();
             for (String operationId : operationsToDelete) {
                 Optional<Map.Entry<String, Operation>> optionalOperation = getOperationFromInterfaceDefinition(interfaceDefinition, operationId);
-                if (!optionalOperation.isPresent()) {
+                if (optionalOperation.isEmpty()) {
                     return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
                 }
                 Operation storedOperation = optionalOperation.get().getValue();
@@ -130,7 +133,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                     return Either.right(validateDeleteOperationContainsNoMappedOutputResponse.right().value());
                 }
                 String artifactUniqueId = storedOperation.getImplementation().getUniqueId();
-                if (!InterfaceOperationUtils.isArtifactInUse(storedComponent, operationId, artifactUniqueId)) {
+                if (artifactUniqueId != null && !InterfaceOperationUtils.isArtifactInUse(storedComponent, operationId, artifactUniqueId)) {
                     Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither = artifactToscaOperation
                         .getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
                     if (getArtifactEither.isLeft()) {
@@ -155,18 +158,37 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                     }
                 }
                 operationsCollection.put(operationId, interfaceDefinition.getOperationsMap().get(operationId));
-                interfaceDefinition.getOperations().remove(operationId);
+                final Optional<String> operationKeyOptional = interfaceDefinition.getOperations().entrySet()
+                    .stream().filter(entry -> operationId.equals(entry.getValue().getUniqueId()))
+                    .map(Entry::getKey).findFirst();
+                if (operationKeyOptional.isEmpty()) {
+                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
+                }
+                interfaceDefinition.getOperations().remove(operationKeyOptional.get());
             }
-            Either<List<InterfaceDefinition>, StorageOperationStatus> deleteOperationEither = interfaceOperation
-                .updateInterfaces(storedComponent.getUniqueId(), Collections.singletonList(interfaceDefinition));
-            if (deleteOperationEither.isRight()) {
+            final Either<List<InterfaceDefinition>, StorageOperationStatus> updateInterfaceResultEither;
+            if (isVfc(storedComponent)) {
+                updateInterfaceResultEither = interfaceOperation
+                    .updateVfcInterfaces(storedComponent.getUniqueId(), Collections.singletonList(interfaceDefinition));
+            } else {
+                updateInterfaceResultEither = interfaceOperation
+                    .updateInterfaces(storedComponent.getUniqueId(), Collections.singletonList(interfaceDefinition));
+            }
+
+            if (updateInterfaceResultEither.isRight()) {
                 janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(deleteOperationEither.right().value(), storedComponent.getComponentType())));
+                    componentsUtils.convertFromStorageResponse(updateInterfaceResultEither.right().value(), storedComponent.getComponentType())));
             }
             if (interfaceDefinition.getOperations().isEmpty()) {
-                Either<String, StorageOperationStatus> deleteInterfaceEither = interfaceOperation
-                    .deleteInterface(storedComponent.getUniqueId(), interfaceDefinition.getUniqueId());
+                Either<String, StorageOperationStatus> deleteInterfaceEither;
+                if (isVfc(storedComponent)) {
+                    deleteInterfaceEither = interfaceOperation
+                        .deleteVfcInterface(storedComponent.getUniqueId(), interfaceDefinition.getUniqueId());
+                } else {
+                    deleteInterfaceEither = interfaceOperation
+                        .deleteInterface(storedComponent.getUniqueId(), interfaceDefinition.getUniqueId());
+                }
                 if (deleteInterfaceEither.isRight()) {
                     janusGraphDao.rollback();
                     return Either.right(componentsUtils.getResponseFormat(
@@ -185,6 +207,14 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
             graphLockOperation
                 .unlockComponent(storedComponent.getUniqueId(), NodeTypeEnum.getByNameIgnoreCase(storedComponent.getComponentType().getValue()));
         }
+    }
+
+    private boolean isVfc(org.openecomp.sdc.be.model.Component component) {
+        if (!(component instanceof Resource)) {
+            return false;
+        }
+
+        return ((Resource) component).getResourceType() == ResourceTypeEnum.VFC;
     }
 
     private Either<org.openecomp.sdc.be.model.Component, ResponseFormat> getComponentDetails(String componentId) {
