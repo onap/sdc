@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb0ee4eb_38c3585c",
+        "filename": "catalog-ui/src/app/ng2/pages/composition/interface-operatons/operation-creator/interface-operation-handler.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-10T11:02:26Z",
+      "side": 1,
+      "message": "I don\u0027t think this is consistent, if I\u0027m not wrong, null is not the same as undefined in Javascript.\nI understood that what you want is to have an empty string value when no value was provided. You could simplify with:\n\nthis.operationToUpdate.implementation.artifactName \u003d value ? value : \u0027\u0027;\n\nBut the question is, couldn\u0027t you just work with undefined values too? Is there any consequence of having undefined here?",
+      "range": {
+        "startLine": 190,
+        "startChar": 12,
+        "endLine": 190,
+        "endChar": 25
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2dfb72ed_067e5fe7",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-10T11:02:26Z",
+      "side": 1,
+      "message": "you could simplify and consider more \"empty\" values than undefined:\nconst artifactName \u003d interfaceOperationHandlerComponentInstance.artifactName ? interfaceOperationHandlerComponentInstance.artifactName : \u0027\u0027;",
+      "range": {
+        "startLine": 271,
+        "startChar": 12,
+        "endLine": 272,
+        "endChar": 74
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8dfd83f_8dadf61b",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-10T11:02:26Z",
+      "side": 1,
+      "message": "please, remove this log",
+      "range": {
+        "startLine": 284,
+        "startChar": 24,
+        "endLine": 284,
+        "endChar": 80
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "417e3319_6cfc797d",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-10T11:02:26Z",
+      "side": 1,
+      "message": "You should set this false also during the success",
+      "range": {
+        "startLine": 292,
+        "startChar": 12,
+        "endLine": 292,
+        "endChar": 97
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9317287d_4ffa2845",
+        "filename": "catalog-ui/src/app/ng2/pages/interface-definition/interface-definition.page.component.ts",
+        "patchSetId": 10
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-10T11:02:26Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 316,
+        "startChar": 12,
+        "endLine": 316,
+        "endChar": 97
+      },
+      "revId": "299eff5ab4ee9c58f45dd688fad1b0f7d44c2c62",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
