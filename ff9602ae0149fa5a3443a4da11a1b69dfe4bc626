@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a3806c5_cd254895",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-10T08:37:14Z",
+      "side": 1,
+      "message": "please, give more details, either in the title or the body, e.g.:\n\nFix broken images build due to multipart-post gem\n\nMaximum supported version of multipart-post, with the current images Ruby \u0026 RubyGems, is 2.2.0. Forcing the 2.2.0 version.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 16
+      },
+      "revId": "ff9602ae0149fa5a3443a4da11a1b69dfe4bc626",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
