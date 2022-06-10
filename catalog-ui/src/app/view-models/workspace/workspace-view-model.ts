@@ -568,7 +568,7 @@ export class WorkspaceViewModel {
                             this.initVersionObject();
                             this.$scope.isLoading = false;
                             this.EventListenerService.notifyObservers(EVENTS.ON_CHECKOUT, component);
-                            this.workspaceService.setComponentMetadata(component);
+                            this.workspaceService.setComponentMetadata(component.componentMetadata);
 
                             this.Notification.success({
                                 message: this.$filter('translate')("CHECKOUT_SUCCESS_MESSAGE_TEXT"),
