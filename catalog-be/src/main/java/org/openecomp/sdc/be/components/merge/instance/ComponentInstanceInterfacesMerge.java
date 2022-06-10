@@ -93,7 +93,9 @@ public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeI
                                     mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDefKeyValue.getInputs(),
                                         originalOperationDef.getInputs());
                                 }
-                                if (!originalOperationDef.getImplementation().equals(oldOperationDef.getImplementation())) {
+                                if (!originalOperationDef.getImplementation().equals(oldOperationDef.getImplementation())
+                                    || !originalOperationDef.getImplementation().getArtifactName()
+                                    .equals(oldOperationDef.getImplementation().getArtifactName())) {
                                     newOperationDefKeyValue.setImplementation(oldOperationDef.getImplementation());
                                 }
                                 if (!originalOperationDef.getDescription().equals(oldOperationDef.getDescription())) {
