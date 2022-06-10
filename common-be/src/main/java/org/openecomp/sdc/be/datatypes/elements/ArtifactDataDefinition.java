@@ -477,6 +477,13 @@ public class ArtifactDataDefinition extends ToscaDataDefinition {
         } else if (!getArtifactRepository().equals(other.getArtifactRepository())) {
             return false;
         }
+        if (getArtifactName() == null) {
+            if (other.getArtifactName() != null) {
+                return false;
+            }
+        } else if (!getArtifactName().equals(other.getArtifactName())) {
+            return false;
+        }
         if (getArtifactType() == null) {
             if (other.getArtifactType() != null) {
                 return false;
