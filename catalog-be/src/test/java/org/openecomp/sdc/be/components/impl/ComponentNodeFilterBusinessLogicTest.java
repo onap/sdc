@@ -570,6 +570,7 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
         nodeFilterMap.put(componentInstanceId, filter);
 
         when(nodeFilterOperation.createNodeFilter(componentId, componentInstanceId)).thenReturn(Either.left(ciNodeFilterDataDefinition));
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(resource));
         when(nodeFilterOperation.addNewProperty(anyString(), anyString(), any(CINodeFilterDataDefinition.class),
             any(RequirementNodeFilterPropertyDataDefinition.class))).thenReturn(Either.left(ciNodeFilterDataDefinition));
 
@@ -593,6 +594,7 @@ public class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock 
         nodeFilterMap.put(componentInstanceId, filter);
 
         when(nodeFilterOperation.createNodeFilter(componentId, componentInstanceId)).thenReturn(Either.left(ciNodeFilterDataDefinition));
+        when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(resource));
         when(nodeFilterOperation.addNewProperty(anyString(), anyString(), any(CINodeFilterDataDefinition.class),
             any(RequirementNodeFilterPropertyDataDefinition.class))).thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
 
