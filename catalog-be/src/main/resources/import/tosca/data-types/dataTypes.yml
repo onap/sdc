@@ -7,6 +7,9 @@ integer:
 string:
   derived_from: tosca.datatypes.Root
 
+timestamp:
+  derived_from: tosca.datatypes.Root
+
 boolean:
   derived_from: tosca.datatypes.Root
 
