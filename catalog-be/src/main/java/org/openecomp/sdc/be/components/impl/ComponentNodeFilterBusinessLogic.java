@@ -353,14 +353,22 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
                     filter.getKey());
                 return nodeFilter.right().value();
             }
+            final Component component;
+            try {
+                component = getComponent(componentId);
+            } catch (BusinessLogicException e) {
+                throw new RuntimeException(e);
+            }
 
             //associate node filter properties to component instance
             List<RequirementNodeFilterPropertyDataDefinition> properties = ciNodeFilterDataDefinition.getProperties()
                 .getListToscaDataDefinition();
             if (!properties.isEmpty()) {
                 properties.forEach(property -> {
+                    String propertyType = getComponentInstancePropertyType(component, componentInstanceId, property.getName());
                     RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition =
                         getRequirementNodeFilterPropertyDataDefinition(property);
+                    requirementNodeFilterPropertyDataDefinition.setType(propertyType);
                     Either<CINodeFilterDataDefinition, StorageOperationStatus> nodeFilterProperty = nodeFilterOperation
                         .addNewProperty(componentId, componentInstanceId, nodeFilter.left().value(), requirementNodeFilterPropertyDataDefinition);
                     if (nodeFilterProperty.isRight()) {
@@ -396,8 +404,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
 
     private List<String> getNodeFilterConstraints(String name, List<String> value) {
         List<String> constraints = new ArrayList<>();
-        String values = value.get(0).split("\n")[0];
-        constraints.add(name + ": {" + values + "}");
+        constraints.add(name + ":\n " + value.get(0));
         return constraints;
     }
 
