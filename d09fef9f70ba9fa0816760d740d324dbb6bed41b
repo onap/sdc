@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "51935e39_7c44e20d",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-13T12:15:01Z",
+      "side": 1,
+      "message": "remove unused code",
+      "range": {
+        "startLine": 1022,
+        "startChar": 4,
+        "endLine": 1025,
+        "endChar": 0
+      },
+      "revId": "d09fef9f70ba9fa0816760d740d324dbb6bed41b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
