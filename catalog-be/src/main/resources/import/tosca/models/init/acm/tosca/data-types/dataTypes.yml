@@ -4,6 +4,8 @@ integer:
   derived_from: tosca.datatypes.Root
 string:
   derived_from: tosca.datatypes.Root
+timestamp:
+  derived_from: tosca.datatypes.Root
 boolean:
   derived_from: tosca.datatypes.Root
 float:

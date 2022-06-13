@@ -74,6 +74,7 @@ public enum PropertyType {
         final Set<String> simplePropertyTypes = new HashSet<>();
         simplePropertyTypes.add(STRING.getDisplayName().toLowerCase());
         simplePropertyTypes.add(INTEGER.getDisplayName().toLowerCase());
+        simplePropertyTypes.add(TIMESTAMP.getDisplayName().toLowerCase());
         simplePropertyTypes.add(FLOAT.getDisplayName().toLowerCase());
         simplePropertyTypes.add(BOOLEAN.getDisplayName().toLowerCase());
         simplePropertyTypes.add(SCALAR_UNIT_SIZE.getDisplayName().toLowerCase());
