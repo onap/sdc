@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ded6252_ec6b8cfc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentNodeFilterBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-14T11:17:12Z",
+      "side": 1,
+      "message": "throw \u0027valid\u0027 exception, like we have in L375 or L395",
+      "range": {
+        "startLine": 360,
+        "startChar": 0,
+        "endLine": 360,
+        "endChar": 46
+      },
+      "revId": "984d68293bf33ed4396b24249cacacdb21ef9a67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc4dc28f_84b0186d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentNodeFilterBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-14T11:17:12Z",
+      "side": 1,
+      "message": "move it inside of \nif (!properties.isEmpty()) { // L366-367",
+      "range": {
+        "startLine": 356,
+        "startChar": 12,
+        "endLine": 361,
+        "endChar": 13
+      },
+      "revId": "984d68293bf33ed4396b24249cacacdb21ef9a67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
