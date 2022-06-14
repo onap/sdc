@@ -53,7 +53,6 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -61,9 +60,6 @@ class PropertyValueConstraintValidationUtilTest {
 
 	@Mock
 	ApplicationDataTypeCache applicationDataTypeCache;
-
-	@Mock
-	ToscaOperationFacade toscaOperationFacade;
 
 	@Spy
 	@InjectMocks

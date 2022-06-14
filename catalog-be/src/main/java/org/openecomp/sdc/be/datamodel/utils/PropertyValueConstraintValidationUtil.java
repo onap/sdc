@@ -33,6 +33,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -197,20 +198,32 @@ public class PropertyValueConstraintValidationUtil {
 
     private void evaluateListType(PropertyDefinition propertyDefinition) {
         try {
-            String schemaType = propertyDefinition.getSchemaType();
+            if (propertyDefinition.getSchemaType() == null) {
+                propertyDefinition.setSchema(createStringSchema());
+            }
             List<Object> list = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
-            evaluateCollectionType(propertyDefinition, list, schemaType);
+            evaluateCollectionType(propertyDefinition, list);
         } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
             logger.debug(e.getMessage(), e);
             errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, getCompletePropertyName(propertyDefinition)));
         }
     }
 
-    private void evaluateMapType(PropertyDefinition propertyDefinition) {
+    private SchemaDefinition createStringSchema() {
+        final SchemaDefinition schemaDefinition = new SchemaDefinition();
+        final PropertyDefinition schemaStringProperty = new PropertyDefinition();
+        schemaStringProperty.setType(ToscaType.STRING.getType());
+        schemaDefinition.setProperty(schemaStringProperty);
+        return schemaDefinition;
+    }
+
+    private void evaluateMapType(final PropertyDefinition propertyDefinition) {
         try {
-            String schemaType = propertyDefinition.getSchemaType();
-            Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
-            evaluateCollectionType(propertyDefinition, map.values(), schemaType);
+            if (propertyDefinition.getSchemaType() == null) {
+                propertyDefinition.setSchema(createStringSchema());
+            }
+            final Map<String, Object> map = ConstraintUtil.parseToCollection(propertyDefinition.getValue(), new TypeReference<>() {});
+            evaluateCollectionType(propertyDefinition, map.values());
         } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
             logger.debug(e.getMessage(), e);
             errorMessages.add(String.format(VALUE_PROVIDED_IN_INVALID_FORMAT_FOR_PROPERTY, getCompletePropertyName(propertyDefinition)));
@@ -227,21 +240,22 @@ public class PropertyValueConstraintValidationUtil {
         }
     }
 
-    private void evaluateCollectionType(final PropertyDefinition propertyDefinition, final Collection<Object> valueList, final String schemaType) {
+    private void evaluateCollectionType(final PropertyDefinition propertyDefinition, final Collection<Object> valueList) {
+        final String schemaType = propertyDefinition.getSchemaType();
         for (final Object value : valueList) {
             try {
-                final PropertyDefinition propertyDefinition1 = copyPropertyWithNewValue(propertyDefinition, objectMapper.writeValueAsString(value));
+                final PropertyDefinition propertyCopyWithNewValue = copyPropertyWithNewValue(propertyDefinition, objectMapper.writeValueAsString(value));
                 if (ToscaType.isPrimitiveType(schemaType)) {
-                    evaluateCollectionPrimitiveSchemaType(propertyDefinition1, schemaType);
+                    evaluateCollectionPrimitiveSchemaType(propertyCopyWithNewValue, schemaType);
                 } else if (ToscaType.isCollectionType(schemaType)) {
-                    propertyDefinition1.setType(schemaType);
-                    propertyDefinition1.setSchemaType(propertyDefinition.getSchemaProperty().getSchemaType());
-                    evaluateCollectionTypeProperties(propertyDefinition1);
+                    propertyCopyWithNewValue.setType(schemaType);
+                    propertyCopyWithNewValue.setSchemaType(propertyDefinition.getSchemaProperty().getSchemaType());
+                    evaluateCollectionTypeProperties(propertyCopyWithNewValue);
                 } else {
-                    propertyDefinition1.setType(schemaType);
+                    propertyCopyWithNewValue.setType(schemaType);
                     completePropertyName.append(UNDERSCORE);
-                    completePropertyName.append(propertyDefinition1.getName());
-                    evaluateComplexTypeProperties(propertyDefinition1);
+                    completePropertyName.append(propertyCopyWithNewValue.getName());
+                    evaluateComplexTypeProperties(propertyCopyWithNewValue);
                 }
             } catch (final Exception e) {
                 logger.debug(e.getMessage(), e);

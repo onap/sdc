@@ -73,14 +73,10 @@ export class PropertiesViewModel {
     }
 
     private openEditPropertyModal = (property:PropertyModel):void => {
-        this.ModalsHandler.openEditPropertyModal(property, this.$scope.component, this.$scope.filteredProperties, false, 'component', this.$scope.component.uniqueId).then((updatedProperty:PropertyModel) => {
-            //property = updatedProperty;
-        });
+        this.ModalsHandler.openEditPropertyModal(property, this.$scope.component, this.$scope.filteredProperties, false, 'component', this.$scope.component.uniqueId);
     };
 
     private initScope = ():void => {
-
-        //let self = this;
         this.$scope.filteredProperties = this.$scope.component.properties;
         this.$scope.sortBy = 'name';
         this.$scope.reverse = false;

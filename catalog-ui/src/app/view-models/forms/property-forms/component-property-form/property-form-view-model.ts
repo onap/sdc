@@ -139,8 +139,7 @@ export class PropertyFormViewModel {
     private initResource = ():void => {
         this.$scope.editPropertyModel.property = new PropertyModel(this.property);
         this.$scope.editPropertyModel.property.type = this.property.type ? this.property.type : null;
-        this.$scope.editPropertyModel.property.value = this.$scope.editPropertyModel.property.value || this.$scope.editPropertyModel.property.defaultValue;
-        this.$scope.constraints = this.property.constraints && this.property.constraints[0] ? this.property.constraints[0]["validValues"]  : null;
+        this.$scope.constraints = this.property.constraints && this.property.constraints[0] ? this.property.constraints[0]["validValues"] : null;
         this.initToscaGetFunction();
         this.setMaxLength();
     };

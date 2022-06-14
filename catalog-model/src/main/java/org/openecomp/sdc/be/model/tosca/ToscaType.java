@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 
@@ -35,6 +37,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoN
  *
  * @author mkv
  */
+@AllArgsConstructor
 public enum ToscaType {
     // @formatter:off
 	STRING("string"),
@@ -51,11 +54,8 @@ public enum ToscaType {
 	SCALAR_UNIT_FREQUENCY("scalar-unit.frequency");
     // @formatter:on
 
-    private String type;
-
-    ToscaType(String type) {
-        this.type = type;
-    }
+    @Getter
+    private final String type;
 
     public static ToscaType getToscaType(String typeName) {
         if (typeName == null) {
@@ -90,10 +90,6 @@ public enum ToscaType {
 
     public static boolean isCollectionType(String type) {
         return ToscaPropertyType.MAP.getType().equals(type) || ToscaPropertyType.LIST.getType().equals(type);
-    }
-
-    public String getType() {
-        return type;
     }
 
     public boolean isValidValue(String value) {
