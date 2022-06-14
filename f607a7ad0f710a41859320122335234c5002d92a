@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fdeacfe5_4155bccf",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 2730,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-14T20:54:57Z",
+      "side": 1,
+      "message": "the two introduced errors are not a \"not found\", it is a \"missing\", it was information that the user should provide and was not provided.\nPlease, change the names to MISSING instead not found and the error code to 400 bad request.\nAnd probably you don\u0027t need this error message, just the other.",
+      "range": {
+        "startLine": 2730,
+        "startChar": 4,
+        "endLine": 2730,
+        "endChar": 28
+      },
+      "revId": "f607a7ad0f710a41859320122335234c5002d92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59c882c3_8a7a936d",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 2737,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-14T20:54:57Z",
+      "side": 1,
+      "message": "TOSCA function attribute",
+      "range": {
+        "startLine": 2737,
+        "startChar": 10,
+        "endLine": 2737,
+        "endChar": 25
+      },
+      "revId": "f607a7ad0f710a41859320122335234c5002d92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3af43a23_d55007f1",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 2738,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-14T20:54:57Z",
+      "side": 1,
+      "message": "TOSCA_FUNCTION_MISSING_ATTRIBUTE",
+      "range": {
+        "startLine": 2738,
+        "startChar": 4,
+        "endLine": 2738,
+        "endChar": 28
+      },
+      "revId": "f607a7ad0f710a41859320122335234c5002d92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "560a29cd_d497c467",
+        "filename": "catalog-be/src/main/docker/backend/chef-repo/cookbooks/sdc-catalog-be/files/default/error-configuration.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 2740,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-14T20:54:57Z",
+      "side": 1,
+      "message": "I suggest to change this message to:\nMissing TOSCA function %1\ne.g.:\nMissing TOSCA function type (functionType)\nMissing TOSCA function target property (propertyName)\nMissing TOSCA function property source (propertySource)\n...",
+      "range": {
+        "startLine": 2740,
+        "startChar": 18,
+        "endLine": 2740,
+        "endChar": 54
+      },
+      "revId": "f607a7ad0f710a41859320122335234c5002d92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c370e04_c16bfe31",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2502,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-14T20:54:57Z",
+      "side": 1,
+      "message": "no need to do all this logic, just check if things are null, empty and/or blank.",
+      "range": {
+        "startLine": 2482,
+        "startChar": 8,
+        "endLine": 2502,
+        "endChar": 9
+      },
+      "revId": "f607a7ad0f710a41859320122335234c5002d92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d592b95_003252c2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 720,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-14T20:54:57Z",
+      "side": 1,
+      "message": "you are duplicating loads of code in the introduced tests, we should handle that in a better way.",
+      "range": {
+        "startLine": 720,
+        "startChar": 9,
+        "endLine": 720,
+        "endChar": 64
+      },
+      "revId": "f607a7ad0f710a41859320122335234c5002d92a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
