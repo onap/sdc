@@ -1372,6 +1372,28 @@ public class ToscaOperationFacade {
         return Either.right(status);
     }
 
+    public Either<List<OutputDefinition>, StorageOperationStatus> createAndAssociateOutputs(final Map<String, OutputDefinition> outputs,
+                                                                                            final String componentId) {
+        final Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
+        if (getVertexEither.isRight()) {
+            log.debug(COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR, componentId, getVertexEither.right().value());
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getVertexEither.right().value()));
+        }
+        final GraphVertex vertex = getVertexEither.left().value();
+        final Map<String, AttributeDataDefinition> outputsMap = outputs.entrySet().stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> new AttributeDataDefinition(e.getValue())));
+        final StorageOperationStatus status = topologyTemplateOperation.associateOutputsToComponent(vertex, outputsMap, componentId);
+        if (StorageOperationStatus.OK == status) {
+            log.debug(COMPONENT_CREATED_SUCCESSFULLY);
+            List<OutputDefinition> outputsResList = null;
+            if (MapUtils.isNotEmpty(outputsMap)) {
+                outputsResList = outputsMap.values().stream().map(OutputDefinition::new).collect(Collectors.toList());
+            }
+            return Either.left(outputsResList);
+        }
+        return Either.right(status);
+    }
+
     public Either<List<InputDefinition>, StorageOperationStatus> addInputsToComponent(Map<String, InputDefinition> inputs, String componentId) {
         Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse);
         if (getVertexEither.isRight()) {
@@ -1671,33 +1693,33 @@ public class ToscaOperationFacade {
     }
 
     public Either<Map<String, List<ComponentInstanceOutput>>, StorageOperationStatus> addComponentInstanceOutputsToComponent(
-        Component containerComponent, Map<String, List<ComponentInstanceOutput>> instProperties) {
-        requireNonNull(instProperties);
+        Component containerComponent, Map<String, List<ComponentInstanceOutput>> instOutputs) {
+        requireNonNull(instOutputs);
         StorageOperationStatus status;
-        for (final Entry<String, List<ComponentInstanceOutput>> entry : instProperties.entrySet()) {
-            final List<ComponentInstanceOutput> props = entry.getValue();
+        for (final Entry<String, List<ComponentInstanceOutput>> entry : instOutputs.entrySet()) {
+            final List<ComponentInstanceOutput> outputs = entry.getValue();
             final String componentInstanceId = entry.getKey();
-            if (!isEmpty(props)) {
-                for (final ComponentInstanceOutput property : props) {
-                    final List<ComponentInstanceOutput> componentInstancesInputs = containerComponent.getComponentInstancesOutputs()
+            if (!isEmpty(outputs)) {
+                for (final ComponentInstanceOutput output : outputs) {
+                    final List<ComponentInstanceOutput> componentInstanceOutputs = containerComponent.getComponentInstancesOutputs()
                         .get(componentInstanceId);
-                    final Optional<ComponentInstanceOutput> instanceProperty = componentInstancesInputs.stream()
-                        .filter(p -> p.getName().equals(property.getName())).findAny();
-                    if (instanceProperty.isPresent()) {
-                        status = updateComponentInstanceOutput(containerComponent, componentInstanceId, property);
+                    final Optional<ComponentInstanceOutput> componentInstanceOutput = componentInstanceOutputs.stream()
+                        .filter(p -> p.getName().equals(output.getName())).findAny();
+                    if (componentInstanceOutput.isPresent()) {
+                        status = updateComponentInstanceOutput(containerComponent, componentInstanceId, output);
                     } else {
-                        status = addComponentInstanceOutput(containerComponent, componentInstanceId, property);
+                        status = addComponentInstanceOutput(containerComponent, componentInstanceId, output);
                     }
                     if (status != StorageOperationStatus.OK) {
-                        log.debug("Failed to update instance input {} for instance {} error {} ", property, componentInstanceId, status);
+                        log.debug("Failed to update instance output {} for instance {} error {} ", output, componentInstanceId, status);
                         return Either.right(status);
                     } else {
-                        log.trace("instance input {} for instance {} updated", property, componentInstanceId);
+                        log.trace("instance output {} for instance {} updated", output, componentInstanceId);
                     }
                 }
             }
         }
-        return Either.left(instProperties);
+        return Either.left(instOutputs);
     }
 
     public Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> addComponentInstancePropertiesToComponent(

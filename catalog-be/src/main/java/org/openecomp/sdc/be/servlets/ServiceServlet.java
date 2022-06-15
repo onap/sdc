@@ -31,9 +31,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.Servers;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -52,8 +50,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -99,7 +97,7 @@ import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
 @Path("/v1/catalog")
-@Servers({@Server(url = "/sdc2/rest")})
+@Server(url = "/sdc2/rest")
 @Controller
 public class ServiceServlet extends AbstractValidationsServlet {
 
@@ -123,7 +121,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Create Service", method = "POST", summary = "Returns created service", responses = {
@@ -163,7 +161,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/services/validate-name/{serviceName}")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "validate service name", method = "GET", summary = "checks if the chosen service name is available ", responses = {
@@ -194,7 +192,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/audit-records/{componentType}/{componentUniqueId}")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "get component audit records", method = "GET", summary = "get audit records for a service or a resource", responses = {
@@ -265,7 +263,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/services/{serviceId}")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Operation(description = "Delete Service", method = "DELETE", summary = "Return no content", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Service.class)))),
         @ApiResponse(responseCode = "204", description = "Service deleted"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
@@ -315,7 +313,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @DELETE
     @Path("/services/{serviceName}/{version}")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Operation(description = "Delete Service By Name And Version", method = "DELETE", summary = "Returns no content", responses = {
         @ApiResponse(content = @Content(array = @ArraySchema(schema = @Schema(implementation = Resource.class)))),
         @ApiResponse(responseCode = "204", description = "Service deleted"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
@@ -352,7 +350,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @PUT
     @Path("/services/{serviceId}/metadata")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Service Metadata", method = "PUT", summary = "Returns updated service", responses = {
@@ -406,7 +404,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
      */
     @PUT
     @Path("/{containerComponentType}/{serviceId}/resourceInstance/{componentInstanceId}/groupInstance/{groupInstanceId}")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Update Group Instance Property Values", method = "PUT", summary = "Returns updated group instance", responses = {
@@ -459,7 +457,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/services/{serviceId}")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service", method = "GET", summary = "Returns service according to serviceId", responses = {
@@ -495,7 +493,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/services/serviceName/{serviceName}/serviceVersion/{serviceVersion}")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service", method = "GET", summary = "Returns service according to name and version", responses = {
@@ -527,7 +525,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services/{serviceId}/distribution/{env}/activate")
-    @Tags({@Tag(name = "SDCE-5 APIs")})
+    @Tag(name = "SDCE-5 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Activate distribution", method = "POST", summary = "activate distribution", responses = {
@@ -563,7 +561,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services/{serviceId}/distribution/{did}/markDeployed")
-    @Tags({@Tag(name = "SDCE-5 APIs")})
+    @Tag(name = "SDCE-5 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Mark distribution as deployed", method = "POST", summary = "relevant audit record will be created", responses = {
@@ -600,7 +598,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services/{serviceId}/tempUrlToBeDeleted")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(responses = {@ApiResponse(responseCode = "200", description = "OK"),
@@ -608,7 +606,6 @@ public class ServiceServlet extends AbstractValidationsServlet {
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
     public Response tempUrlToBeDeleted(@PathParam("serviceId") final String serviceId, @Context final HttpServletRequest request,
                                        @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
-        ServletContext context = request.getSession().getServletContext();
         String url = request.getMethod() + " " + request.getRequestURI();
         log.debug(START_HANDLE_REQUEST_OF, url);
         User modifier = new User();
@@ -631,7 +628,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @GET
     @Path("/services/{serviceId}/linksMap")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Retrieve Service component relations map", method = "GET", summary = "Returns service components relations", responses = {
@@ -667,7 +664,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
 
     @POST
     @Path("/services/importService")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Import Service", method = "POST", summary = "Returns imported service", responses = {
@@ -679,37 +676,34 @@ public class ServiceServlet extends AbstractValidationsServlet {
         userId = (userId != null) ? userId : request.getHeader(Constants.USER_ID_HEADER);
         initSpringFromContext();
         String url = request.getMethod() + " " + request.getRequestURI();
-        log.debug("Start handle request of {}", url);
+        log.debug(START_HANDLE_REQUEST_OF, url);
         // get modifier id
         User modifier = new User();
         modifier.setUserId(userId);
-        log.debug("modifier id is {}", userId);
-        Response response;
+        log.debug(MODIFIER_ID_IS, userId);
         try {
-            Wrapper<Response> responseWrapper = new Wrapper<>();
-            performUIImport(responseWrapper, data, request, userId, null);
-            return responseWrapper.getInnerElement();
+            return performUIImport(data, request, userId, null).getInnerElement();
         } catch (IOException | ZipException e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError("Import Service");
             log.debug("import service failed with exception", e);
-            response = buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            return response;
+            return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
 
-    private void performUIImport(Wrapper<Response> responseWrapper, String data, final HttpServletRequest request, String userId,
-                                 String ServiceUniqueId) throws FileNotFoundException, ZipException {
-        Wrapper<User> userWrapper = new Wrapper<>();
-        Wrapper<UploadServiceInfo> uploadServiceInfoWrapper = new Wrapper<>();
-        Wrapper<String> yamlStringWrapper = new Wrapper<>();
-        ServiceAuthorityTypeEnum ServiceAuthorityEnum = ServiceAuthorityTypeEnum.USER_TYPE_UI;
-        commonServiceGeneralValidations(responseWrapper, userWrapper, uploadServiceInfoWrapper, ServiceAuthorityEnum, userId, data);
+    private Wrapper<Response> performUIImport(final String data, final HttpServletRequest request, final String userId, final String ServiceUniqueId)
+        throws FileNotFoundException, ZipException {
+        final Wrapper<Response> responseWrapper = new Wrapper<>();
+        final Wrapper<User> userWrapper = new Wrapper<>();
+        final Wrapper<UploadServiceInfo> uploadServiceInfoWrapper = new Wrapper<>();
+        final Wrapper<String> yamlStringWrapper = new Wrapper<>();
+        final ServiceAuthorityTypeEnum serviceAuthorityTypeEnum = ServiceAuthorityTypeEnum.USER_TYPE_UI;
+        commonServiceGeneralValidations(responseWrapper, userWrapper, uploadServiceInfoWrapper, serviceAuthorityTypeEnum, userId, data);
         specificServiceAuthorityValidations(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request,
-            data, ServiceAuthorityEnum);
+            data, serviceAuthorityTypeEnum);
         if (responseWrapper.isEmpty()) {
-            handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(),
-                yamlStringWrapper.getInnerElement(), ServiceAuthorityEnum, true, ServiceUniqueId);
+            handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(), ServiceUniqueId);
         }
+        return responseWrapper;
     }
 
     /**
@@ -729,7 +723,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
      */
     @POST
     @Path("/services/serviceUUID/{uuid}/importReplaceService")
-    @Tags({@Tag(name = "SDCE-2 APIs")})
+    @Tag(name = "SDCE-2 APIs")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(description = "Import Service", method = "POST", summary = "Returns imported service", responses = {
         @ApiResponse(responseCode = "201", description = "Service created"), @ApiResponse(responseCode = "403", description = "Restricted operation"),
@@ -801,8 +795,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             uploadServiceInfoWrapper.getInnerElement().setProjectCode(oldService.getProjectCode());
             if (responseWrapper.isEmpty()) {
                 log.debug("importReplaceService:start handleImportService");
-                handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(),
-                    yamlStringWrapper.getInnerElement(), serviceAuthorityEnum, true, null);
+                handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(), null);
             }
             return responseWrapper.getInnerElement();
         } catch (IOException | ZipException e) {

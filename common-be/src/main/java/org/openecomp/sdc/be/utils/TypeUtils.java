@@ -64,14 +64,14 @@ public class TypeUtils {
         // Heat env Validation
         PARAMETERS("parameters"),
         // Import Validations
-        TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), OCCURRENCES("occurrences"), NODE_TEMPLATES(
-            "node_templates"), GROUPS("groups"), INPUTS("inputs"),
+        TOSCA_VERSION("tosca_definitions_version"), TOPOLOGY_TEMPLATE("topology_template"), OCCURRENCES("occurrences"), NODE_TEMPLATES("node_templates"),
+        GROUPS("groups"), INPUTS("inputs"), OUTPUTS("outputs"),
         SUBSTITUTION_MAPPINGS("substitution_mappings"), NODE_TYPE("node_type"), DIRECTIVES("directives"),
         // Attributes
         ATTRIBUTES("attributes"), LABEL("label"), HIDDEN("hidden"), IMMUTABLE("immutable"), ANNOTATIONS("annotations"),
         VERSION("version"), OPERATIONS("operations"), NOTIFICATIONS("notifications"),
         //functions
-        GET_INPUT("get_input"),
+        GET_INPUT("get_input"), GET_ATTRIBUTE("get_attribute"),
         // Definitions
         DATA_TYPES("data_types"), NODE_TYPES("node_types"), POLICY_TYPES("policy_types"),  IMPORTS("imports"),
         //Operations
