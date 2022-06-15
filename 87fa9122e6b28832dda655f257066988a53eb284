@@ -22,6 +22,30 @@
       "revId": "87fa9122e6b28832dda655f257066988a53eb284",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11595351_f30372ad",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogicTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-15T15:06:12Z",
+      "side": 1,
+      "message": "Sorry, missed that in my code review. I\u0027ve removed because it is not relevant anymore, all ToscaGetFunctionType are implemented and I don\u0027t know how to force a non-existent one so the exception can happen.\nI will remove the commented code.",
+      "parentUuid": "4cf0d739_fd3498d3",
+      "range": {
+        "startLine": 676,
+        "startChar": 0,
+        "endLine": 679,
+        "endChar": 11
+      },
+      "revId": "87fa9122e6b28832dda655f257066988a53eb284",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
