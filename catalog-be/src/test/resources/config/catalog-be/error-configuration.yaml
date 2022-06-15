@@ -2392,3 +2392,12 @@ errors:
         message: "The %1 '%2' type '%3' was not found.",
         messageId: "SVC4170"
     }
+
+    #-----------SVC4172---------------------------
+    #%1 - TOSCA function attribute
+    TOSCA_FUNCTION_MISSING_ATTRIBUTE: {
+        code: 400,
+        message: "Missing TOSCA function '%1'.",
+        messageId: "SVC4172"
+    }
+

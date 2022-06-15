@@ -107,6 +107,7 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.ToscaPropertyData;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.jsonjanusgraph.config.ContainerInstanceTypesData;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
@@ -2387,13 +2388,25 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
             return;
         }
+        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_ATTRIBUTE) {
+            if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
+                validateGetFunction(property, parentComponent.getAttributes(), parentComponent.getModel());
+            } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
+                final ComponentInstance componentInstance =
+                    parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
+                        .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
+                validateGetFunction(property, componentInstance.getAttributes(), parentComponent.getModel());
+            }
+
+            return;
+        }
 
         throw ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get();
     }
 
-    private <T extends PropertyDefinition, U extends PropertyDefinition> void validateGetFunction(final T property,
-                                                                                                  final List<U> parentProperties,
-                                                                                                  final String model) {
+    private <T extends PropertyDefinition> void validateGetFunction(final T property,
+                                                                    final List<? extends ToscaPropertyData> parentProperties,
+                                                                    final String model) {
         final ToscaGetFunctionDataDefinition toscaGetFunction = property.getToscaGetFunction();
         if (CollectionUtils.isEmpty(parentProperties)) {
             throw ToscaGetFunctionExceptionSupplier
@@ -2402,7 +2415,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 ).get();
         }
         final String getFunctionPropertyUniqueId = toscaGetFunction.getPropertyUniqueId();
-        T referredProperty = (T) parentProperties.stream()
+        ToscaPropertyData referredProperty = parentProperties.stream()
             .filter(property1 -> getFunctionPropertyUniqueId.equals(property1.getUniqueId()))
             .findFirst()
             .orElseThrow(ToscaGetFunctionExceptionSupplier
@@ -2423,8 +2436,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private <T extends PropertyDefinition> T findSubProperty(final T referredProperty, final ToscaGetFunctionDataDefinition toscaGetFunction,
-                                                             final String model) {
+    private ToscaPropertyData findSubProperty(final ToscaPropertyData referredProperty,
+                                              final ToscaGetFunctionDataDefinition toscaGetFunction,
+                                              final String model) {
         final Map<String, DataTypeDefinition> dataTypeMap = loadDataTypes(model);
         final List<String> propertyPathFromSource = toscaGetFunction.getPropertyPathFromSource();
         DataTypeDefinition dataType = dataTypeMap.get(referredProperty.getType());
@@ -2432,10 +2446,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw ToscaGetFunctionExceptionSupplier
                 .propertyDataTypeNotFound(propertyPathFromSource.get(0), referredProperty.getType(), toscaGetFunction.getFunctionType()).get();
         }
-        T foundProperty = referredProperty;
+        ToscaPropertyData foundProperty = referredProperty;
         for (int i = 1; i < propertyPathFromSource.size(); i++) {
             final String currentPropertyName = propertyPathFromSource.get(i);
-            foundProperty = (T) dataType.getProperties().stream()
+            foundProperty = dataType.getProperties().stream()
                 .filter(propertyDefinition -> currentPropertyName.equals(propertyDefinition.getName())).findFirst()
                 .orElseThrow(
                     ToscaGetFunctionExceptionSupplier

@@ -22,27 +22,28 @@
  */
 
 import * as _ from "lodash";
-import {Injectable, Inject} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 import {
+    ArtifactModel,
+    AttributeModel,
+    Capability,
     Component,
+    FilterPropertiesAssignmentData,
+    IFileDownload,
     InputBEModel,
     InstancePropertiesAPIMap,
-    FilterPropertiesAssignmentData,
-    ArtifactModel,
+    OperationModel,
     PropertyModel,
-    IFileDownload,
-    AttributeModel,
-    Capability, Requirement, BEOperationModel, InterfaceModel
+    Requirement
 } from "app/models";
-import {ArtifactGroupType, COMPONENT_FIELDS} from "app/utils";
+import {API_QUERY_PARAMS, ArtifactGroupType, COMPONENT_FIELDS} from "app/utils";
 import {ComponentGenericResponse} from "../responses/component-generic-response";
 import {InstanceBePropertiesMap} from "../../../models/properties-inputs/property-fe-map";
-import {API_QUERY_PARAMS} from "app/utils";
 import {ComponentType, ServerTypeUrl, SERVICE_FIELDS} from "../../../utils/constants";
-import {SdcConfigToken, ISdcConfig} from "../../config/sdc-config.config";
+import {ISdcConfig, SdcConfigToken} from "../../config/sdc-config.config";
 import {IDependenciesServerResponse} from "../responses/dependencies-server-response";
 import {AutomatedUpgradeGenericResponse} from "../responses/automated-upgrade-response";
 import {IAutomatedUpgradeRequestObj} from "../../pages/automated-upgrade/automated-upgrade.service";
@@ -50,26 +51,15 @@ import {ComponentInstance} from "../../../models/componentsInstances/componentIn
 import {CommonUtils} from "../../../utils/common-utils";
 import {RelationshipModel} from "../../../models/graph/relationship";
 import {ServiceGenericResponse} from "../responses/service-generic-response";
-import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
-import { HttpHelperService } from "../http-hepler.service";
-import {
-    Component as TopologyTemplate,
-    FullComponentInstance,
-    Service,
-    OperationModel,
-} from 'app/models';
-import { ConsumptionInput } from "../../components/logic/service-consumption/service-consumption.component";
-import { ConstraintObject } from "../../components/logic/service-dependencies/service-dependencies.component";
-import { ComponentMetadata } from "../../../models/component-metadata";
-import { PolicyInstance } from "../../../models/graph/zones/policy-instance";
-import { PropertyBEModel } from "../../../models/properties-inputs/property-be-model";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpHelperService} from "../http-hepler.service";
+import {ConsumptionInput} from "../../components/logic/service-consumption/service-consumption.component";
+import {ConstraintObject} from "../../components/logic/service-dependencies/service-dependencies.component";
+import {PolicyInstance} from "../../../models/graph/zones/policy-instance";
+import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import {map} from "rxjs/operators";
 import {CapabilitiesConstraintObject} from "../../components/logic/capabilities-constraint/capabilities-constraint.component";
-import {
-    BEInterfaceOperationModel,
-    ComponentInterfaceDefinitionModel,
-    InterfaceOperationModel
-} from "../../../models/interfaceOperation";
+import {BEInterfaceOperationModel, InterfaceOperationModel} from "../../../models/interfaceOperation";
 import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
 import {InstanceAttributesAPIMap} from "../../../models/attributes-outputs/attribute-fe-map";
 
@@ -167,6 +157,10 @@ export class TopologyTemplateService {
 
     findAllComponentProperties(componentType: string, componentUniqueId: string): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentUniqueId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
+    }
+
+    findAllComponentAttributes(componentType: string, componentUniqueId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentUniqueId, [COMPONENT_FIELDS.COMPONENT_ATTRIBUTES]);
     }
 
     getCapabilitiesAndRequirements(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
@@ -393,7 +387,7 @@ export class TopologyTemplateService {
     }
 
     updateProperty = (componentType: string, componentId: string, property: PropertyModel): Observable<PropertyModel> => {
-        var propertiesList:PropertyBEModel[]  = [property];
+        const propertiesList: PropertyBEModel[] = [property];
         return this.http.put<PropertyModel>(this.baseUrl + this.getServerTypeUrl(componentType) + componentId + '/properties', propertiesList)
         .map((response) => {
             return new PropertyModel(response[Object.keys(response)[0]]);
@@ -468,6 +462,10 @@ export class TopologyTemplateService {
 
     getComponentInstanceProperties(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_PROPERTIES]);
+    }
+
+    findAllComponentInstanceAttributes(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_INSTANCES_ATTRIBUTES]);
     }
 
     getComponentInstanceCapabilityProperties(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
