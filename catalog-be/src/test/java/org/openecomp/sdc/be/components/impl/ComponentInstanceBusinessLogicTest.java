@@ -674,47 +674,47 @@ class ComponentInstanceBusinessLogicTest {
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
     }
 
-    @Test
-    void testToscaGetFunctionValidation_toscaFunctionNotSupportedTest() {
-        final String userId = "userId";
-        final String containerComponentId = "containerComponentId";
-        final String containerComponentName = "containerComponentName";
-        final String resourceInstanceId = "resourceInstanceId";
-        final List<ComponentInstanceProperty> properties = new ArrayList<>();
-        final ComponentInstanceProperty propertyGetInput = new ComponentInstanceProperty();
-        propertyGetInput.setName("anyName");
-        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
-        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_ATTRIBUTE);
-        propertyGetInput.setToscaGetFunction(toscaGetFunction);
-        properties.add(propertyGetInput);
-
-        final Component component = new Service();
-        component.setName(containerComponentName);
-        component.setUniqueId(containerComponentId);
-        component.setLastUpdaterUserId(userId);
-        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-
-        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
-        componentInstanceProps.put(resourceInstanceId, properties);
-        component.setComponentInstancesProperties(componentInstanceProps);
-
-        final ComponentInstance resourceInstance = createComponentInstance("componentInstance1");
-        resourceInstance.setUniqueId(resourceInstanceId);
-        component.setComponentInstances(List.of(resourceInstance));
-
-        mockComponentForToscaGetFunctionValidation(component);
-        //when
-        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither =
-            componentInstanceBusinessLogic
-                .createOrUpdatePropertiesValues(ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, properties, userId);
-        //then
-        assertTrue(responseFormatEither.isRight(), "Expecting an error");
-        final ResponseFormat actualResponse = responseFormatEither.right().value();
-        final ResponseFormat expectedResponse =
-            ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get().getResponseFormat();
-        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
-        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
-    }
+//    @Test
+//    void testToscaGetFunctionValidation_toscaFunctionNotSupportedTest() {
+//        final String userId = "userId";
+//        final String containerComponentId = "containerComponentId";
+//        final String containerComponentName = "containerComponentName";
+//        final String resourceInstanceId = "resourceInstanceId";
+//        final List<ComponentInstanceProperty> properties = new ArrayList<>();
+//        final ComponentInstanceProperty propertyGetInput = new ComponentInstanceProperty();
+//        propertyGetInput.setName("anyName");
+//        final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
+//        toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_ATTRIBUTE);
+//        propertyGetInput.setToscaGetFunction(toscaGetFunction);
+//        properties.add(propertyGetInput);
+//
+//        final Component component = new Service();
+//        component.setName(containerComponentName);
+//        component.setUniqueId(containerComponentId);
+//        component.setLastUpdaterUserId(userId);
+//        component.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+//
+//        final Map<String, List<ComponentInstanceProperty>> componentInstanceProps = new HashMap<>();
+//        componentInstanceProps.put(resourceInstanceId, properties);
+//        component.setComponentInstancesProperties(componentInstanceProps);
+//
+//        final ComponentInstance resourceInstance = createComponentInstance("componentInstance1");
+//        resourceInstance.setUniqueId(resourceInstanceId);
+//        component.setComponentInstances(List.of(resourceInstance));
+//
+//        mockComponentForToscaGetFunctionValidation(component);
+//        //when
+//        final Either<List<ComponentInstanceProperty>, ResponseFormat> responseFormatEither =
+//            componentInstanceBusinessLogic
+//                .createOrUpdatePropertiesValues(ComponentTypeEnum.RESOURCE_INSTANCE, containerComponentId, resourceInstanceId, properties, userId);
+//        //then
+//        assertTrue(responseFormatEither.isRight(), "Expecting an error");
+//        final ResponseFormat actualResponse = responseFormatEither.right().value();
+//        final ResponseFormat expectedResponse =
+//            ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get().getResponseFormat();
+//        assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
+//        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+//    }
 
     @Test
     void testToscaGetFunctionValidation_propertyNotFoundTest() {

@@ -21,7 +21,10 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.Gson;
 import java.util.List;
@@ -29,6 +32,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 
@@ -78,10 +83,10 @@ class ToscaGetFunctionDataDefinitionTest {
         assertEquals(value, toscaGetFunction.getPropertyPathFromSource());
     }
 
-    @Test
-    void generateValueForGetPropertyFromSelfTest() {
+    @ParameterizedTest
+    @EnumSource(value =  ToscaGetFunctionType.class, names = {"GET_ATTRIBUTE", "GET_PROPERTY"})
+    void generateValueForGetFunctionWithSelfAsSourceTest(final ToscaGetFunctionType toscaFunction) {
         //given
-        final ToscaGetFunctionType toscaFunction = ToscaGetFunctionType.GET_PROPERTY;
         final var toscaGetFunction = createGetFunction(toscaFunction, PropertySource.SELF, List.of("property"), null);
         //when
         String actualValue = toscaGetFunction.generatePropertyValue();
@@ -110,10 +115,10 @@ class ToscaGetFunctionDataDefinitionTest {
         assertEquals(expectedGetPropertyValue, actualGetPropertyValue);
     }
 
-    @Test
-    void generateValueForGetPropertyFromInstanceTest() {
+    @ParameterizedTest
+    @EnumSource(value =  ToscaGetFunctionType.class, names = {"GET_ATTRIBUTE", "GET_PROPERTY"})
+    void generateValueForGetFunctionWithInstanceAsSourceTest(final ToscaGetFunctionType toscaFunction) {
         //given
-        final ToscaGetFunctionType toscaFunction = ToscaGetFunctionType.GET_PROPERTY;
         final var toscaGetFunction = createGetFunction(toscaFunction, PropertySource.INSTANCE, List.of("property"), "sourceName");
         //when
         String actualValue = toscaGetFunction.generatePropertyValue();
