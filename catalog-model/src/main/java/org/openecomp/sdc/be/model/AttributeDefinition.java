@@ -21,9 +21,10 @@ package org.openecomp.sdc.be.model;
 
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 
 @NoArgsConstructor
-public class AttributeDefinition extends AttributeDataDefinition implements IOperationParameter, IComplexDefaultValue {
+public class AttributeDefinition extends AttributeDataDefinition implements IOperationParameter, IComplexDefaultValue, ToscaPropertyData {
 
     public AttributeDefinition(final AttributeDataDefinition attributeDataDefinition) {
         super(attributeDataDefinition);
@@ -49,4 +50,14 @@ public class AttributeDefinition extends AttributeDataDefinition implements IOpe
         return "AttributeDefinition{" + "name=" + getName() + "uniqueId=" + getUniqueId() + "ownerId=" + getOwnerId() + "type=" + getType()
             + "description=" + getDescription() + "default=" + getDefaultValue() + '}';
     }
+
+    @Override
+    public String getSchemaType() {
+        final SchemaDefinition schema = getSchema();
+        if (schema == null || schema.getProperty() == null) {
+            return null;
+        }
+        return schema.getProperty().getType();
+    }
+
 }
