@@ -69,7 +69,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -97,6 +96,7 @@ import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
@@ -314,6 +314,10 @@ public class ServiceImportBusinessLogic {
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
             log.trace("************* Finish to add inputs from yaml {}", yamlName);
+            Map<String, OutputDefinition> outputs = parsedToscaYamlInfo.getOutputs();
+            service = serviceImportParseLogic.createOutputsOnService(service, outputs);
+            log.trace("************* Finish to add outputs from yaml {}", yamlName);
+
             ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
             service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
             log.trace("************* Added Substitution filter from interface yaml {}", yamlName);

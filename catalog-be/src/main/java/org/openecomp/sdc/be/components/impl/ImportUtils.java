@@ -41,7 +41,7 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
@@ -56,6 +56,7 @@ import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.heat.HeatParameterType;
@@ -92,8 +93,8 @@ public final class ImportUtils {
     }
 
     @Autowired
-    public static void setComponentsUtils(ComponentsUtils componentsUtils) {
-        componentsUtils = componentsUtils;
+    public static void setComponentsUtils(ComponentsUtils cu) {
+        componentsUtils = cu;
     }
 
     private static void buildMap(Map<String, Object> output, Map<String, Object> map) {
@@ -258,8 +259,8 @@ public final class ImportUtils {
      * @param toscaTagName
      * @return
      */
-    public static Either<String, ResultStatusEnum> findFirstToscaBooleanElement(Map<String, Object> toscaJson,
-                                                                                TypeUtils.ToscaTagNamesEnum toscaTagName) {
+    private static Either<String, ResultStatusEnum> findFirstToscaBooleanElement(Map<String, Object> toscaJson,
+                                                                                 TypeUtils.ToscaTagNamesEnum toscaTagName) {
         Either<String, ResultStatusEnum> returnedElement = Either.right(ResultStatusEnum.ELEMENT_NOT_FOUND);
         Either<Object, ResultStatusEnum> findFirstToscaElements = findToscaElement(toscaJson, toscaTagName, ToscaElementTypeEnum.BOOLEAN);
         if (findFirstToscaElements.isLeft()) {
@@ -311,7 +312,7 @@ public final class ImportUtils {
         } catch (ClassCastException | JsonParseException e) {
             throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_CONSTRAINTS_FORMAT, constraintJson.toString());
         }
-        if (propertyConstraint != null && propertyConstraint instanceof ValidValuesConstraint) {
+        if (propertyConstraint instanceof ValidValuesConstraint) {
             try {
                 ((ValidValuesConstraint) propertyConstraint).validateType(propertyType);
             } catch (ConstraintValueDoNotMatchPropertyTypeException e) {
@@ -324,7 +325,7 @@ public final class ImportUtils {
         return propertyConstraint;
     }
 
-    public static PropertyDefinition createModuleProperty(Map<String, Object> propertyValue) {
+    static PropertyDefinition createModuleProperty(Map<String, Object> propertyValue) {
         PropertyDefinition propertyDef = new PropertyDefinition();
         setField(propertyValue, TypeUtils.ToscaTagNamesEnum.TYPE, propertyDef::setType);
         setFieldBoolean(propertyValue, ToscaTagNamesEnum.REQUIRED, req -> propertyDef.setRequired(Boolean.parseBoolean(req)));
@@ -341,12 +342,11 @@ public final class ImportUtils {
     private static void setJsonStringField(Map<String, Object> propertyValue, ToscaTagNamesEnum elementName, String type, Consumer<String> setter) {
         Either<Object, ResultStatusEnum> eitherValue = findToscaElement(propertyValue, elementName, ToscaElementTypeEnum.ALL);
         if (eitherValue.isLeft()) {
-            String propertyJsonStringValue = getPropertyJsonStringValue(eitherValue.left().value(), type);
-            setter.accept(propertyJsonStringValue);
+            setter.accept(getPropertyJsonStringValue(eitherValue.left().value(), type));
         }
     }
 
-    public static Annotation createModuleAnnotation(Map<String, Object> annotationMap, AnnotationTypeOperations annotationTypeOperations) {
+    private static Annotation createModuleAnnotation(Map<String, Object> annotationMap, AnnotationTypeOperations annotationTypeOperations) {
         String parsedAnnotationType = findFirstToscaStringElement(annotationMap, TypeUtils.ToscaTagNamesEnum.TYPE).left().value();
         AnnotationTypeDefinition annotationTypeObject = annotationTypeOperations.getLatestType(parsedAnnotationType);
         if (annotationTypeObject != null) {
@@ -388,11 +388,11 @@ public final class ImportUtils {
         return result;
     }
 
-    public static InputDefinition createModuleInput(final Map<String, Object> inputValue, final AnnotationTypeOperations annotationTypeOperations) {
+    private static InputDefinition createModuleInput(final Map<String, Object> inputValue, final AnnotationTypeOperations annotationTypeOperations) {
         return parseAnnotationsAndAddItToInput(createModuleInput(inputValue), inputValue, annotationTypeOperations);
     }
 
-    public static InputDefinition createModuleInput(final Map<String, Object> inputValue) {
+    private static InputDefinition createModuleInput(final Map<String, Object> inputValue) {
         final InputDefinition inputDef = new InputDefinition();
         setField(inputValue, TypeUtils.ToscaTagNamesEnum.TYPE, inputDef::setType);
         setFieldBoolean(inputValue, ToscaTagNamesEnum.REQUIRED, req -> inputDef.setRequired(Boolean.parseBoolean(req)));
@@ -408,8 +408,17 @@ public final class ImportUtils {
         return inputDef;
     }
 
-    public static InputDefinition parseAnnotationsAndAddItToInput(InputDefinition inputDef, Map<String, Object> inputValue,
-                                                                  AnnotationTypeOperations annotationTypeOperations) {
+    private static OutputDefinition createModuleOutput(final Map<String, Object> outputValue) {
+        final OutputDefinition outputDef = new OutputDefinition();
+        setField(outputValue, TypeUtils.ToscaTagNamesEnum.TYPE, outputDef::setType);
+        setField(outputValue, TypeUtils.ToscaTagNamesEnum.DESCRIPTION, outputDef::setDescription);
+        setJsonStringField(outputValue, TypeUtils.ToscaTagNamesEnum.VALUE, outputDef.getType(), outputDef::setValue);
+        setField(outputValue, TypeUtils.ToscaTagNamesEnum.STATUS, outputDef::setStatus);
+        return outputDef;
+    }
+
+    private static InputDefinition parseAnnotationsAndAddItToInput(InputDefinition inputDef, Map<String, Object> inputValue,
+                                                                   AnnotationTypeOperations annotationTypeOperations) {
         Function<String, Annotation> elementGenByName = ImportUtils::createAnnotation;
         Function<Map<String, Object>, Annotation> func = annotation -> createModuleAnnotation(annotation, annotationTypeOperations);
         return getElements(inputValue, TypeUtils.ToscaTagNamesEnum.ANNOTATIONS, elementGenByName, func).left()
@@ -425,7 +434,7 @@ public final class ImportUtils {
         return inputDef;
     }
 
-    public static AttributeDefinition createModuleAttribute(Map<String, Object> attributeMap) {
+    static AttributeDefinition createModuleAttribute(Map<String, Object> attributeMap) {
         AttributeDefinition attributeDef = new AttributeDefinition();
         setField(attributeMap, TypeUtils.ToscaTagNamesEnum.TYPE, attributeDef::setType);
         setField(attributeMap, TypeUtils.ToscaTagNamesEnum.DESCRIPTION, attributeDef::setDescription);
@@ -486,7 +495,7 @@ public final class ImportUtils {
         }
     }
 
-    public static void setFieldBoolean(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum tagName, Consumer<String> setter) {
+    private static void setFieldBoolean(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum tagName, Consumer<String> setter) {
         Either<String, ResultStatusEnum> fieldStringValue = findFirstToscaBooleanElement(toscaJson, tagName);
         if (fieldStringValue.isLeft()) {
             setter.accept(fieldStringValue.left().value());
@@ -512,13 +521,19 @@ public final class ImportUtils {
         return getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS, elementGenByName, func);
     }
 
+    public static Either<Map<String, OutputDefinition>, ResultStatusEnum> getOutputs(Map<String, Object> toscaJson) {
+        final Function<String, OutputDefinition> elementGenByName = ImportUtils::createOutputs;
+        final Function<Map<String, Object>, OutputDefinition> func = object -> createModuleOutput(object);
+        return getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.OUTPUTS, elementGenByName, func);
+    }
+
     public static Either<Map<String, InputDefinition>, ResultStatusEnum> getInputs(final Map<String, Object> toscaJson) {
         return getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS, ImportUtils::createInputs, ImportUtils::createModuleInput);
     }
 
-    public static <T> Either<Map<String, T>, ResultStatusEnum> getElements(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum elementTagName,
-                                                                           Function<String, T> elementGenByName,
-                                                                           Function<Map<String, Object>, T> func) {
+    private static <T> Either<Map<String, T>, ResultStatusEnum> getElements(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum elementTagName,
+                                                                            Function<String, T> elementGenByName,
+                                                                            Function<Map<String, Object>, T> func) {
         Either<Map<String, T>, ResultStatusEnum> eitherResult = Either.right(ResultStatusEnum.ELEMENT_NOT_FOUND);
         Either<Map<String, Object>, ResultStatusEnum> toscaAttributes = findFirstToscaMapElement(toscaJson, elementTagName);
         if (toscaAttributes.isLeft()) {
@@ -563,13 +578,19 @@ public final class ImportUtils {
         return input;
     }
 
+    private static OutputDefinition createOutputs(final String name) {
+        final OutputDefinition output = new OutputDefinition();
+        output.setName(name);
+        return output;
+    }
+
     private static Annotation createAnnotation(String name) {
         Annotation annotation = new Annotation();
         annotation.setName(name);
         return annotation;
     }
 
-    public static Either<List<HeatParameterDefinition>, ResultStatusEnum> getHeatParameters(Map<String, Object> heatData, String artifactType) {
+    static Either<List<HeatParameterDefinition>, ResultStatusEnum> getHeatParameters(Map<String, Object> heatData, String artifactType) {
         Either<List<HeatParameterDefinition>, ResultStatusEnum> eitherResult = Either.right(ResultStatusEnum.ELEMENT_NOT_FOUND);
         Either<Map<String, Object>, ResultStatusEnum> toscaProperties = findFirstToscaMapElement(heatData, TypeUtils.ToscaTagNamesEnum.PARAMETERS);
         if (toscaProperties.isLeft()) {
@@ -649,13 +670,16 @@ public final class ImportUtils {
     }
 
     public static String getPropertyJsonStringValue(Object value, String type) {
-        Gson gson = new Gson();
         if (type == null) {
             return null;
         }
         ToscaPropertyType validType = ToscaPropertyType.isValidType(type);
-        if (validType == null || validType == ToscaPropertyType.JSON || validType == ToscaPropertyType.MAP || validType == ToscaPropertyType.LIST) {
-            return gson.toJson(value);
+        if (validType == null
+            || validType == ToscaPropertyType.JSON
+            || validType == ToscaPropertyType.MAP
+            || validType == ToscaPropertyType.LIST
+            || value instanceof Map) {
+            return (new Gson()).toJson(value);
         }
         return value.toString();
     }

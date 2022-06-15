@@ -57,13 +57,10 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -90,7 +87,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
-import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.User;
@@ -124,6 +120,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     private final IElementOperation elementDao = mock(IElementOperation.class);
     private final IInterfaceLifecycleOperation interfaceTypeOperation = mock(IInterfaceLifecycleOperation.class);
     private final InputsBusinessLogic inputsBusinessLogic = mock(InputsBusinessLogic.class);
+    private final OutputsBusinessLogic outputsBusinessLogic = mock(OutputsBusinessLogic.class);
     private final LifecycleBusinessLogic lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic = mock(ComponentNodeFilterBusinessLogic.class);
 
@@ -158,6 +155,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         testSubject.setCapabilityTypeOperation(capabilityTypeOperation);
         testSubject.setInterfaceTypeOperation(interfaceTypeOperation);
         testSubject.setInputsBusinessLogic(inputsBusinessLogic);
+        testSubject.setOutputsBusinessLogic(outputsBusinessLogic);
         testSubject.setLifecycleBusinessLogic(lifecycleBusinessLogic);
         testSubject.setComponentNodeFilterBusinessLogic(componentNodeFilterBusinessLogic);
     }
