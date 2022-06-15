@@ -403,6 +403,7 @@ public final class ImportUtils {
         setField(inputValue, TypeUtils.ToscaTagNamesEnum.LABEL, inputDef::setLabel);
         setFieldBoolean(inputValue, TypeUtils.ToscaTagNamesEnum.HIDDEN, hidden -> inputDef.setHidden(Boolean.parseBoolean(hidden)));
         setFieldBoolean(inputValue, TypeUtils.ToscaTagNamesEnum.IMMUTABLE, immutable -> inputDef.setImmutable(Boolean.parseBoolean(immutable)));
+        setFieldMap(inputValue, ToscaTagNamesEnum.METADATA, inputDef::setMetadata);
         setSchema(inputValue, inputDef);
         setPropertyConstraints(inputValue, inputDef);
         return inputDef;
@@ -490,6 +491,14 @@ public final class ImportUtils {
         Either<String, ResultStatusEnum> fieldStringValue = findFirstToscaBooleanElement(toscaJson, tagName);
         if (fieldStringValue.isLeft()) {
             setter.accept(fieldStringValue.left().value());
+        }
+    }
+
+    private static void setFieldMap(final Map<String, Object> toscaJson, final ToscaTagNamesEnum tagName,
+                                    final Consumer<Map<String, String>> setter) {
+        final Either<Map<String, String>, ResultStatusEnum> toscaMapElement = findFirstToscaMapElement(toscaJson, tagName);
+        if (toscaMapElement.isLeft()) {
+            setter.accept(toscaMapElement.left().value());
         }
     }
 
