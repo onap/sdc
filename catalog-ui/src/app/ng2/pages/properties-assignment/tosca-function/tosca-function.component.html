@@ -27,14 +27,14 @@
                 [ngValue]="toscaFunction">{{toscaFunction | lowercase}}</option>
       </select>
     </div>
-    <div class="i-sdc-form-item" *ngIf="toscaGetFunction.functionType === TOSCA_FUNCTION_GET_PROPERTY">
+    <div class="i-sdc-form-item" *ngIf="showPropertySourceDropdown()">
       <label class="i-sdc-form-label required">{{'TOSCA_FUNCTION_PROPERTY_SOURCE_LABEL' | translate}}</label>
       <select name="propertySource" [(ngModel)]="propertySource" (change)="onPropertySourceChange()">
         <option *ngFor="let propertySource of propertySourceList"
                 [ngValue]="propertySource">{{propertySource}}</option>
       </select>
     </div>
-    <div *ngIf="showDropdown()" class="i-sdc-form-item">
+    <div *ngIf="showPropertyDropdown()" class="i-sdc-form-item">
       <label class="i-sdc-form-label required">{{dropdownValuesLabel}}</label>
       <select [(ngModel)]="selectedProperty" name="selectedProperty" (change)="onPropertyChange()">
         <option *ngFor="let value of propertyDropdownList" [ngValue]="value">{{value.propertyLabel}}</option>
