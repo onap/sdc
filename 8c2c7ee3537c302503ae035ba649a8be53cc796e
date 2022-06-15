@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "97545eda_b75de3fc",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/acm/tosca/data-types/dataTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-15T09:51:09Z",
+      "side": 1,
+      "message": "we also should add this file to the upgrade path:\ncatalog-be/src/main/resources/import/tosca/models/upgrade",
+      "revId": "8c2c7ee3537c302503ae035ba649a8be53cc796e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d64e326_78271aef",
+        "filename": "catalog-be/src/main/resources/import/tosca/models/init/etsi-SOL001-v2.5.1/tosca/data-types/dataTypes.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-15T09:51:09Z",
+      "side": 1,
+      "message": "we also should add this file to the upgrade path:\ncatalog-be/src/main/resources/import/tosca/models/upgrade",
+      "revId": "8c2c7ee3537c302503ae035ba649a8be53cc796e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
