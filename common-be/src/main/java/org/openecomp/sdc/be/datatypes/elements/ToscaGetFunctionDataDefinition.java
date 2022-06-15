@@ -63,8 +63,8 @@ public class ToscaGetFunctionDataDefinition {
         }
 
         final var gson = new Gson();
-        if (functionType == ToscaGetFunctionType.GET_PROPERTY) {
-            return gson.toJson(buildGetPropertyFunctionValue());
+        if (functionType == ToscaGetFunctionType.GET_PROPERTY || functionType == ToscaGetFunctionType.GET_ATTRIBUTE) {
+            return gson.toJson(buildFunctionValueWithPropertySource());
         }
         if (functionType == ToscaGetFunctionType.GET_INPUT) {
             return gson.toJson(buildGetInputFunctionValue());
@@ -73,9 +73,11 @@ public class ToscaGetFunctionDataDefinition {
         throw new UnsupportedOperationException(String.format("ToscaGetFunctionType '%s' is not supported yet", functionType));
     }
 
-    private Map<String, Object> buildGetPropertyFunctionValue() {
+    private Map<String, Object> buildFunctionValueWithPropertySource() {
         if (propertySource == null) {
-            throw new IllegalStateException("propertySource is required in order to generate the get_property value");
+            throw new IllegalStateException(
+                String.format("propertySource is required in order to generate the %s value", functionType.getFunctionName())
+            );
         }
         if (propertySource == PropertySource.SELF) {
             return Map.of(functionType.getFunctionName(),
@@ -84,7 +86,9 @@ public class ToscaGetFunctionDataDefinition {
         }
         if (propertySource == PropertySource.INSTANCE) {
             if (sourceName == null) {
-                throw new IllegalStateException("sourceName is required in order to generate the get_property from INSTANCE value");
+                throw new IllegalStateException(
+                    String.format("sourceName is required in order to generate the %s from INSTANCE value", functionType.getFunctionName())
+                );
             }
             return Map.of(functionType.getFunctionName(),
                 Stream.concat(Stream.of(sourceName), propertyPathFromSource.stream()).collect(Collectors.toList())

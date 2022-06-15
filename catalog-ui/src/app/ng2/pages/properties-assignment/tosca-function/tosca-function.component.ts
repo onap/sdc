@@ -18,7 +18,7 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel} from 'app/models';
+import {AttributeModel, ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel} from 'app/models';
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {PropertiesService} from "../../../services/properties.service";
@@ -82,8 +82,6 @@ export class ToscaFunctionComponent implements OnInit {
         'toscaGetFunction': this.toscaGetFunctionForm
     });
 
-    TOSCA_FUNCTION_GET_PROPERTY = ToscaGetFunctionType.GET_PROPERTY;
-
     selectedProperty: PropertyDropdownValue;
     isLoading: boolean = false;
     propertyDropdownList: Array<PropertyDropdownValue> = [];
@@ -123,7 +121,7 @@ export class ToscaFunctionComponent implements OnInit {
         }
         this.toscaGetFunction = new ToscaGetFunction(this.property.toscaGetFunction);
         this.toscaGetFunctionForm.setValue(this.toscaGetFunction);
-        if (this.toscaGetFunction.functionType === ToscaGetFunctionType.GET_PROPERTY) {
+        if (this.isGetPropertySelected() || this.isGetAttributeSelected()) {
             if (this.toscaGetFunction.propertySource === PropertySource.SELF) {
                 this.propertySource = PropertySource.SELF;
             } else {
@@ -138,6 +136,7 @@ export class ToscaFunctionComponent implements OnInit {
     }
 
     private loadToscaFunctions(): void {
+        this.toscaFunctions.push(ToscaGetFunctionType.GET_ATTRIBUTE);
         this.toscaFunctions.push(ToscaGetFunctionType.GET_INPUT);
         this.toscaFunctions.push(ToscaGetFunctionType.GET_PROPERTY);
     }
@@ -210,6 +209,8 @@ export class ToscaFunctionComponent implements OnInit {
             this.dropdownValuesLabel = this.translateService.translate('INPUT_DROPDOWN_LABEL');
         } else if (this.isGetPropertySelected()) {
             this.dropdownValuesLabel = this.translateService.translate('TOSCA_FUNCTION_PROPERTY_DROPDOWN_LABEL');
+        } else if (this.isGetAttributeSelected()) {
+            this.dropdownValuesLabel = this.translateService.translate('TOSCA_FUNCTION_ATTRIBUTE_DROPDOWN_LABEL');
         }
     }
 
@@ -231,25 +232,40 @@ export class ToscaFunctionComponent implements OnInit {
         this.startLoading();
         const propertiesObservable: Observable<ComponentGenericResponse> = this.getPropertyObservable();
         propertiesObservable.subscribe( (response: ComponentGenericResponse) => {
-            const properties: PropertyBEModel[] = this.extractProperties(response);
+            const properties: Array<PropertyBEModel | AttributeModel> = this.extractProperties(response);
             if (!properties || properties.length === 0) {
-                const msgCode = this.isGetInputSelected() ? 'TOSCA_FUNCTION_NO_INPUT_FOUND' : 'TOSCA_FUNCTION_NO_PROPERTY_FOUND';
+                const msgCode = this.getNotFoundMsgCode();
                 this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.propertyTypeToString()});
                 return;
             }
             this.addPropertiesToDropdown(properties);
             if (this.propertyDropdownList.length == 0) {
-                const msgCode = this.isGetInputSelected() ? 'TOSCA_FUNCTION_NO_INPUT_FOUND' : 'TOSCA_FUNCTION_NO_PROPERTY_FOUND';
+                const msgCode = this.getNotFoundMsgCode();
                 this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.propertyTypeToString()});
             }
         }, (error) => {
             console.error('An error occurred while loading properties.', error);
+            this.stopLoading();
         }, () => {
             if (onComplete) {
                 onComplete();
             }
             this.stopLoading();
         });
+    }
+
+    private getNotFoundMsgCode(): string {
+        if (this.isGetInputSelected()) {
+            return 'TOSCA_FUNCTION_NO_INPUT_FOUND';
+        }
+        if (this.isGetAttributeSelected()) {
+            return 'TOSCA_FUNCTION_NO_ATTRIBUTE_FOUND';
+        }
+        if (this.isGetPropertySelected()) {
+            return 'TOSCA_FUNCTION_NO_PROPERTY_FOUND';
+        }
+
+        return undefined;
     }
 
     private propertyTypeToString() {
@@ -259,7 +275,7 @@ export class ToscaFunctionComponent implements OnInit {
         return this.property.type;
     }
 
-    private extractProperties(componentGenericResponse: ComponentGenericResponse): PropertyBEModel[] {
+    private extractProperties(componentGenericResponse: ComponentGenericResponse): Array<PropertyBEModel | AttributeModel> {
         if (this.isGetInputSelected()) {
             return componentGenericResponse.inputs;
         }
@@ -270,6 +286,10 @@ export class ToscaFunctionComponent implements OnInit {
             const componentInstanceProperties: PropertyModel[] = componentGenericResponse.componentInstancesProperties[this.instanceNameAndIdMap.get(this.propertySource)];
             return this.removeSelectedProperty(componentInstanceProperties);
         }
+        if (this.propertySource === PropertySource.SELF) {
+            return componentGenericResponse.attributes;
+        }
+        return componentGenericResponse.componentInstancesAttributes[this.instanceNameAndIdMap.get(this.propertySource)];
     }
 
     private getPropertyObservable(): Observable<ComponentGenericResponse> {
@@ -281,6 +301,12 @@ export class ToscaFunctionComponent implements OnInit {
                 return this.topologyTemplateService.findAllComponentProperties(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
             }
             return this.topologyTemplateService.getComponentInstanceProperties(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
+        }
+        if (this.isGetAttributeSelected()) {
+            if (this.propertySource === PropertySource.SELF) {
+                return this.topologyTemplateService.findAllComponentAttributes(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
+            }
+            return this.topologyTemplateService.findAllComponentInstanceAttributes(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
         }
     }
 
@@ -299,7 +325,7 @@ export class ToscaFunctionComponent implements OnInit {
         this.propertyDropdownList.sort((a, b) => a.propertyLabel.localeCompare(b.propertyLabel));
     }
 
-    private addPropertiesToDropdown(properties: PropertyBEModel[]): void {
+    private addPropertiesToDropdown(properties: Array<PropertyBEModel | AttributeModel>): void {
         for (const property of properties) {
             if (this.hasSameType(property)) {
                 this.addPropertyToDropdown({
@@ -314,7 +340,8 @@ export class ToscaFunctionComponent implements OnInit {
         }
     }
 
-    private fillPropertyDropdownWithMatchingChildProperties(inputProperty: PropertyBEModel, parentPropertyList: Array<PropertyBEModel> = []): void {
+    private fillPropertyDropdownWithMatchingChildProperties(inputProperty: PropertyBEModel | AttributeModel,
+                                                            parentPropertyList: Array<PropertyBEModel | AttributeModel> = []): void {
         const dataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, inputProperty.type);
         if (!dataTypeFound || !dataTypeFound.properties) {
             return;
@@ -334,7 +361,7 @@ export class ToscaFunctionComponent implements OnInit {
         });
     }
 
-    private hasSameType(property: PropertyBEModel) {
+    private hasSameType(property: PropertyBEModel | AttributeModel) {
         if (this.typeHasSchema(this.property.type)) {
             if (!property.schema || !property.schema.property) {
                 return false;
@@ -347,6 +374,10 @@ export class ToscaFunctionComponent implements OnInit {
 
     private isGetPropertySelected(): boolean {
         return this.toscaGetFunction.functionType === ToscaGetFunctionType.GET_PROPERTY;
+    }
+
+    private isGetAttributeSelected(): boolean {
+        return this.toscaGetFunction.functionType === ToscaGetFunctionType.GET_ATTRIBUTE;
     }
 
     private isGetInputSelected(): boolean {
@@ -369,8 +400,8 @@ export class ToscaFunctionComponent implements OnInit {
         this.isLoading = true;
     }
 
-    showDropdown(): boolean {
-        if (this.toscaGetFunction.functionType === ToscaGetFunctionType.GET_PROPERTY) {
+    showPropertyDropdown(): boolean {
+        if (this.isGetPropertySelected() || this.isGetAttributeSelected()) {
             return this.toscaGetFunction.propertySource && !this.isLoading && !this.dropDownErrorMsg;
         }
 
@@ -415,6 +446,10 @@ export class ToscaFunctionComponent implements OnInit {
 
     showClearButton(): boolean {
         return this.allowClear && this.toscaGetFunction.functionType !== undefined;
+    }
+
+    showPropertySourceDropdown(): boolean {
+        return this.isGetPropertySelected() || this.isGetAttributeSelected();
     }
 }
 

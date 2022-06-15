@@ -31,7 +31,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
-public class PropertyDefinition extends PropertyDataDefinition implements IOperationParameter, IComplexDefaultValue {
+public class PropertyDefinition extends PropertyDataDefinition implements IOperationParameter, IComplexDefaultValue, ToscaPropertyData {
 
     private List<PropertyConstraint> constraints;
 
