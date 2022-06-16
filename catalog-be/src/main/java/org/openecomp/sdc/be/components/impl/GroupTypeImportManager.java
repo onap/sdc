@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.impl.model.ToscaTypeImportData;
@@ -116,11 +119,9 @@ public class GroupTypeImportManager {
     }
 
     private Either<ActionStatus, ResponseFormat> validateGroupType(GroupTypeDefinition groupType) {
-        Either<ActionStatus, ResponseFormat> result = Either.left(ActionStatus.OK);
         if (groupType.getMembers() != null) {
             if (groupType.getMembers().isEmpty()) {
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GROUP_MEMBER_EMPTY, groupType.getType());
-                result = Either.right(responseFormat);
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.GROUP_MEMBER_EMPTY, groupType.getType()));
             } else {
                 for (String member : groupType.getMembers()) {
                     // Verify that such Resource exist
@@ -131,13 +132,12 @@ public class GroupTypeImportManager {
                         log.debug("Error when fetching parent resource {}, error: {}", member, operationStatus);
                         ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(operationStatus);
                         BeEcompErrorManager.getInstance().logBeComponentMissingError("Import GroupType", "resource", member);
-                        result = Either.right(componentsUtils.getResponseFormat(convertFromStorageResponse, member));
-                        break;
+                        return Either.right(componentsUtils.getResponseFormat(convertFromStorageResponse, member));
                     }
                 }
             }
         }
-        return result;
+        return Either.left(ActionStatus.OK);
     }
 
     private GroupTypeDefinition createGroupType(String groupTypeName, Map<String, Object> toscaJson) {
@@ -152,8 +152,7 @@ public class GroupTypeImportManager {
             // Metadata
             commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.METADATA.getElementName(), groupType::setMetadata);
             // Capabilities
-            Map<String, CapabilityDefinition> capabilities = createCapabilities(toscaJson);
-            groupType.setCapabilities(capabilities);
+            groupType.setCapabilities(createCapabilities(toscaJson));
             // Members
             commonImportManager.setField(toscaJson, TypeUtils.ToscaTagNamesEnum.MEMBERS.getElementName(), groupType::setMembers);
             groupType.setType(groupTypeName);
@@ -198,17 +197,12 @@ public class GroupTypeImportManager {
         return pl.stream().map(ComponentInstanceProperty::new).collect(Collectors.toList());
     }
 
+    @NoArgsConstructor
+    @Getter
+    @Setter
     private class CapabilityTypeToscaJsonHolder {
 
         private Map<String, Object> capabilityTypeToscaJson;
-
-        public Map<String, Object> getCapabilityTypeToscaJson() {
-            return capabilityTypeToscaJson;
-        }
-
-        public void setCapabilityTypeToscaJson(Map<String, Object> capabilityTypeToscaJson) {
-            this.capabilityTypeToscaJson = capabilityTypeToscaJson;
-        }
 
         public boolean isEmpty() {
             return capabilityTypeToscaJson == null;
