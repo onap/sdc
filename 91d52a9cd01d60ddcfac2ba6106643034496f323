@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9d471149_bd46e0d1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-16T14:31:02Z",
+      "side": 1,
+      "message": "this could cause a NullPointerException, maybe it would be good to check if the originalOperationDef.getImplementation().getArtifactName() is not null first",
+      "range": {
+        "startLine": 97,
+        "startChar": 40,
+        "endLine": 97,
+        "endChar": 98
+      },
+      "revId": "91d52a9cd01d60ddcfac2ba6106643034496f323",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
