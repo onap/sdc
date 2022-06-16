@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "72871b7a_01565cf5",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-16T17:42:58Z",
+      "side": 1,
+      "message": "Why not use here an instance of ServiceMetadataDataDefinition, as the Service class uses to hold the same metadata information that is going to be imported?\nthis is an improvement suggestion, no need to implement now.",
+      "range": {
+        "startLine": 51,
+        "startChar": 4,
+        "endLine": 53,
+        "endChar": 37
+      },
+      "revId": "83ad643f873fde8d45692f8bff36268eea19c390",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb42b141_b65ec948",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadServiceInfo.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-16T17:42:58Z",
+      "side": 1,
+      "message": "I could not find this constructor being used. I suggest to remove if not.",
+      "range": {
+        "startLine": 63,
+        "startChar": 11,
+        "endLine": 63,
+        "endChar": 28
+      },
+      "revId": "83ad643f873fde8d45692f8bff36268eea19c390",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb23adf0_571100a8",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/UploadServiceInfoTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-16T17:42:58Z",
+      "side": 1,
+      "message": "this is not a test, I suggest to remove it.",
+      "range": {
+        "startLine": 40,
+        "startChar": 16,
+        "endLine": 40,
+        "endChar": 24
+      },
+      "revId": "83ad643f873fde8d45692f8bff36268eea19c390",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96cb8bfd_7316e677",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-16T17:42:58Z",
+      "side": 1,
+      "message": "is there a specific reason to read the zip file in the front end instead of doing that in the backend?\nI believe it should all be extracted from that org.openecomp.sdc.be.servlets.ServiceServlet#performUIImport method.",
+      "range": {
+        "startLine": 286,
+        "startChar": 16,
+        "endLine": 288,
+        "endChar": 59
+      },
+      "revId": "83ad643f873fde8d45692f8bff36268eea19c390",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
