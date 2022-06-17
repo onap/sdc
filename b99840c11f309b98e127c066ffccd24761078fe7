@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "312d9704_a5f9f823",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "this is not used, I could not find a reason to keep this code",
+      "range": {
+        "startLine": 156,
+        "startChar": 8,
+        "endLine": 159,
+        "endChar": 143
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19372e40_7b345de8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ImportUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "please, add unit tests to this method",
+      "range": {
+        "startLine": 524,
+        "startChar": 74,
+        "endLine": 524,
+        "endChar": 84
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2333a9b7_dbe13f6a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ImportUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "could use method reference:\nImportUtils::createModuleOutput",
+      "range": {
+        "startLine": 526,
+        "startChar": 69,
+        "endLine": 526,
+        "endChar": 105
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "753125e1_ea241fde",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "please, add unit tests to this method",
+      "range": {
+        "startLine": 243,
+        "startChar": 58,
+        "endLine": 243,
+        "endChar": 78
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6830cffe_48f62383",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "we should have a message for output here",
+      "range": {
+        "startLine": 257,
+        "startChar": 83,
+        "endLine": 257,
+        "endChar": 105
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "739dedbf_bf229dd9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1385,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "please, add unit tests",
+      "range": {
+        "startLine": 1385,
+        "startChar": 19,
+        "endLine": 1385,
+        "endChar": 41
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "484e7dfe_20f4e3c5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/servlets/ServiceServlet.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 693,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "if possible, change to lower camel case",
+      "range": {
+        "startLine": 693,
+        "startChar": 133,
+        "endLine": 693,
+        "endChar": 148
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b51d6d88_9c86050c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "please, add unit tests to this method",
+      "range": {
+        "startLine": 586,
+        "startChar": 34,
+        "endLine": 586,
+        "endChar": 61
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b59b2d53_2abeb684",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1375,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "please, add unit tests to this method",
+      "range": {
+        "startLine": 1375,
+        "startChar": 66,
+        "endLine": 1375,
+        "endChar": 91
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9c37f610_6ad86016",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacade.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1387,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "non related message",
+      "range": {
+        "startLine": 1387,
+        "startChar": 12,
+        "endLine": 1387,
+        "endChar": 54
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "484ddc84_f070d62c",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/TypeUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T17:15:24Z",
+      "side": 1,
+      "message": "could not find usages in the current code, is it necessary?",
+      "range": {
+        "startLine": 74,
+        "startChar": 31,
+        "endLine": 74,
+        "endChar": 62
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
