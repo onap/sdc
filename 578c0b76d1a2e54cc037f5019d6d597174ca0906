@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4dd25f26_31bc2ca7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T14:44:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7577e226_28e016d3",
+      "range": {
+        "startLine": 115,
+        "startChar": 8,
+        "endLine": 115,
+        "endChar": 44
+      },
+      "revId": "578c0b76d1a2e54cc037f5019d6d597174ca0906",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9de2b8e_e6caadc7",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "2230809d_e0b33172",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T14:44:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9de2b8e_e6caadc7",
+      "range": {
+        "startLine": 170,
+        "startChar": 11,
+        "endLine": 176,
+        "endChar": 13
+      },
+      "revId": "578c0b76d1a2e54cc037f5019d6d597174ca0906",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "762fd821_7899cbad",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "578c0b76d1a2e54cc037f5019d6d597174ca0906",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1824bc0_b6cb3f6d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T14:44:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "762fd821_7899cbad",
+      "range": {
+        "startLine": 212,
+        "startChar": 74,
+        "endLine": 218,
+        "endChar": 5
+      },
+      "revId": "578c0b76d1a2e54cc037f5019d6d597174ca0906",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
