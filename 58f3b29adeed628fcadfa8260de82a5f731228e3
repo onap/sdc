@@ -93,6 +93,30 @@
       "revId": "58f3b29adeed628fcadfa8260de82a5f731228e3",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13a88295_c98f87ea",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/InterfaceOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-17T16:00:54Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "32d865c9_eb956784",
+      "range": {
+        "startLine": 46,
+        "startChar": 10,
+        "endLine": 46,
+        "endChar": 14
+      },
+      "revId": "58f3b29adeed628fcadfa8260de82a5f731228e3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
