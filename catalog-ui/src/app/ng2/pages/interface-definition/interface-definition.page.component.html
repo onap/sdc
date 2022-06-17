@@ -69,15 +69,20 @@
             <span class="cell header-cell field-description header-description">
               {{ 'INTERFACE_HEADER_DESCRIPTION' | translate }}
             </span>
+            <span class="cell field-delete"><span class="delete-col-header"></span></span>
           </div>
-          <div class="data-row" *ngFor="let operation of interface1.operations" (click)="onSelectInterfaceOperation(interface1, operation)">
-            <span class="cell field-name">{{operation.name}}</span>
-            <span class="cell field-description" [ngClass]="{'collapsed': operation.isCollapsed}">
-                {{operation.getDescriptionEllipsis()}}
+          <div class="data-row" *ngFor="let operation of interface1.operations">
+            <span class="cell field-name"
+                  (click)="onSelectInterfaceOperation(interface1, operation)">{{operation.name}}</span>
+            <span class="cell field-description" (click)="onSelectInterfaceOperation(interface1, operation)"
+                  [ngClass]="{'collapsed': operation.isCollapsed}">{{operation.getDescriptionEllipsis()}}
               <span class="more-or-less link" (click)="operation.toggleCollapsed($event)">
                   {{!operation.isEllipsis ? '' : operation.isCollapsed ? 'More' : 'Less'}}
-                </span>
               </span>
+            </span>
+            <span class="cell field-delete">
+              <button class="table-delete-btn" (click)="onRemoveOperation(interface1, operation)"></button>
+            </span>
           </div>
         </div>
       </div>

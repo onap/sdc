@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,6 +57,7 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -76,9 +78,8 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component("interfaceOperationBusinessLogic")
+@org.springframework.stereotype.Component("interfaceOperationBusinessLogic")
 public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceOperationBusinessLogic.class);
@@ -105,22 +106,22 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
     public Either<List<InterfaceDefinition>, ResponseFormat> deleteInterfaceOperation(String componentId, String interfaceId,
                                                                                       List<String> operationsToDelete, User user, boolean lock) {
         validateUserExists(user.getUserId());
-        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
+        Either<Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
         }
-        org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
+        Component storedComponent = componentEither.left().value();
         lockComponentResult(lock, storedComponent, DELETE_INTERFACE_OPERATION);
         try {
             Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(storedComponent, interfaceId);
-            if (!optionalInterface.isPresent()) {
+            if (optionalInterface.isEmpty()) {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceId));
             }
             InterfaceDefinition interfaceDefinition = optionalInterface.get();
             Map<String, Operation> operationsCollection = new HashMap<>();
             for (String operationId : operationsToDelete) {
                 Optional<Map.Entry<String, Operation>> optionalOperation = getOperationFromInterfaceDefinition(interfaceDefinition, operationId);
-                if (!optionalOperation.isPresent()) {
+                if (optionalOperation.isEmpty()) {
                     return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
                 }
                 Operation storedOperation = optionalOperation.get().getValue();
@@ -130,7 +131,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                     return Either.right(validateDeleteOperationContainsNoMappedOutputResponse.right().value());
                 }
                 String artifactUniqueId = storedOperation.getImplementation().getUniqueId();
-                if (!InterfaceOperationUtils.isArtifactInUse(storedComponent, operationId, artifactUniqueId)) {
+                if (artifactUniqueId != null && !InterfaceOperationUtils.isArtifactInUse(storedComponent, operationId, artifactUniqueId)) {
                     Either<ArtifactDefinition, StorageOperationStatus> getArtifactEither = artifactToscaOperation
                         .getArtifactById(storedComponent.getUniqueId(), artifactUniqueId);
                     if (getArtifactEither.isLeft()) {
@@ -155,18 +156,23 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                     }
                 }
                 operationsCollection.put(operationId, interfaceDefinition.getOperationsMap().get(operationId));
-                interfaceDefinition.getOperations().remove(operationId);
+                final Optional<String> operationKeyOptional = interfaceDefinition.getOperations().entrySet()
+                    .stream().filter(entry -> operationId.equals(entry.getValue().getUniqueId()))
+                    .map(Entry::getKey).findFirst();
+                if (operationKeyOptional.isEmpty()) {
+                    return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, storedComponent.getUniqueId()));
+                }
+                interfaceDefinition.getOperations().remove(operationKeyOptional.get());
             }
-            Either<List<InterfaceDefinition>, StorageOperationStatus> deleteOperationEither = interfaceOperation
-                .updateInterfaces(storedComponent.getUniqueId(), Collections.singletonList(interfaceDefinition));
-            if (deleteOperationEither.isRight()) {
+            final Either<List<InterfaceDefinition>, StorageOperationStatus> updateInterfaceResultEither;
+            updateInterfaceResultEither = interfaceOperation.updateInterfaces(storedComponent, Collections.singletonList(interfaceDefinition));
+            if (updateInterfaceResultEither.isRight()) {
                 janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
-                    componentsUtils.convertFromStorageResponse(deleteOperationEither.right().value(), storedComponent.getComponentType())));
+                    componentsUtils.convertFromStorageResponse(updateInterfaceResultEither.right().value(), storedComponent.getComponentType())));
             }
             if (interfaceDefinition.getOperations().isEmpty()) {
-                Either<String, StorageOperationStatus> deleteInterfaceEither = interfaceOperation
-                    .deleteInterface(storedComponent.getUniqueId(), interfaceDefinition.getUniqueId());
+                final var deleteInterfaceEither = interfaceOperation.deleteInterface(storedComponent, interfaceDefinition.getUniqueId());
                 if (deleteInterfaceEither.isRight()) {
                     janusGraphDao.rollback();
                     return Either.right(componentsUtils.getResponseFormat(
@@ -187,8 +193,8 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Either<org.openecomp.sdc.be.model.Component, ResponseFormat> getComponentDetails(String componentId) {
-        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentStorageOperationStatusEither = toscaOperationFacade
+    private Either<Component, ResponseFormat> getComponentDetails(String componentId) {
+        Either<Component, StorageOperationStatus> componentStorageOperationStatusEither = toscaOperationFacade
             .getToscaElement(componentId);
         if (componentStorageOperationStatusEither.isRight()) {
             return Either.right(
@@ -197,7 +203,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         return Either.left(componentStorageOperationStatusEither.left().value());
     }
 
-    private Either<Boolean, ResponseFormat> lockComponentResult(boolean lock, org.openecomp.sdc.be.model.Component component, String action) {
+    private Either<Boolean, ResponseFormat> lockComponentResult(boolean lock, Component component, String action) {
         if (lock) {
             try {
                 lockComponent(component.getUniqueId(), component, action);
@@ -212,11 +218,11 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
     public Either<List<InterfaceDefinition>, ResponseFormat> getInterfaceOperation(String componentId, String interfaceId,
                                                                                    List<String> operationsToGet, User user, boolean lock) {
         validateUserExists(user);
-        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
+        Either<Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
         }
-        org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
+        Component storedComponent = componentEither.left().value();
         lockComponentResult(lock, storedComponent, GET_INTERFACE_OPERATION);
         try {
             Optional<InterfaceDefinition> optionalInterface = getInterfaceDefinitionFromComponentByInterfaceId(storedComponent, interfaceId);
@@ -254,11 +260,11 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                                                                                                User user, boolean isUpdate, String errorContext,
                                                                                                boolean lock) {
         validateUserExists(user);
-        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
+        Either<Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
         }
-        org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
+        Component storedComponent = componentEither.left().value();
         lockComponentResult(lock, storedComponent, errorContext);
         Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceLifecycleTypes = getAllInterfaceLifecycleTypes(storedComponent.getModel());
         if (interfaceLifecycleTypes.isRight()) {
@@ -332,8 +338,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
                 }
                 interfacesCollection.add(interfaceDef);
             }
-            Either<List<InterfaceDefinition>, StorageOperationStatus> addCreateOperationEither = interfaceOperation
-                .updateInterfaces(storedComponent.getUniqueId(), interfacesCollection);
+            final var addCreateOperationEither = interfaceOperation.updateInterfaces(storedComponent, interfacesCollection);
             if (addCreateOperationEither.isRight()) {
                 janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(
@@ -365,7 +370,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         return Either.left(interfaceLifecycleTypes.left().value());
     }
 
-    private Either<InterfaceDefinition, ResponseFormat> getOrCreateInterfaceDefinition(org.openecomp.sdc.be.model.Component component,
+    private Either<InterfaceDefinition, ResponseFormat> getOrCreateInterfaceDefinition(Component component,
                                                                                        InterfaceDefinition interfaceDefinition,
                                                                                        InterfaceDefinition storedInterfaceDef) {
         if (storedInterfaceDef != null) {
@@ -373,8 +378,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         }
         interfaceDefinition.setUniqueId(UUID.randomUUID().toString());
         interfaceDefinition.setToscaResourceName(interfaceDefinition.getType());
-        Either<List<InterfaceDefinition>, StorageOperationStatus> interfaceCreateEither = interfaceOperation
-            .addInterfaces(component.getUniqueId(), Collections.singletonList(interfaceDefinition));
+        final var interfaceCreateEither = interfaceOperation.addInterfaces(component, Collections.singletonList(interfaceDefinition));
         if (interfaceCreateEither.isRight()) {
             janusGraphDao.rollback();
             return Either.right(componentsUtils
@@ -383,13 +387,13 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         return Either.left(interfaceCreateEither.left().value().get(0));
     }
 
-    private void updateOperationInputDefs(org.openecomp.sdc.be.model.Component component, Collection<Operation> interfaceOperations) {
+    private void updateOperationInputDefs(Component component, Collection<Operation> interfaceOperations) {
         interfaceOperations.stream().filter(operation -> Objects.nonNull(operation.getInputs())).forEach(
             operation -> operation.getInputs().getListToscaDataDefinition()
                 .forEach(inp -> component.getInputs().forEach(in -> updateOperationInputDefinition(component, inp, in))));
     }
 
-    private void updateOperationInputDefinition(org.openecomp.sdc.be.model.Component component, OperationInputDefinition operationInput,
+    private void updateOperationInputDefinition(Component component, OperationInputDefinition operationInput,
                                                 InputDefinition componentInput) {
         if (operationInput.getInputId().equals(componentInput.getUniqueId())) {
             //Set the default value, value and schema only for inputs mapped to component inputs
@@ -404,7 +408,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         operationInput.setToscaDefaultValue(getInputToscaDefaultValue(operationInput, component));
     }
 
-    private String getInputToscaDefaultValue(OperationInputDefinition input, org.openecomp.sdc.be.model.Component component) {
+    private String getInputToscaDefaultValue(OperationInputDefinition input, Component component) {
         Map<String, List<String>> defaultInputValue = null;
         if (isOperationInputMappedToComponentInput(input, component.getInputs())) {
             String propertyName = input.getInputId().substring(input.getInputId().indexOf('.') + 1);
@@ -433,7 +437,7 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
         return new Gson().toJson(defaultInputValue);
     }
 
-    private void setParentPropertyTypeAndInputPath(OperationInputDefinition input, org.openecomp.sdc.be.model.Component component) {
+    private void setParentPropertyTypeAndInputPath(OperationInputDefinition input, Component component) {
         if (CollectionUtils.isEmpty(component.getInputs())) {
             return;
         }
@@ -477,18 +481,18 @@ public class InterfaceOperationBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<OperationInputDefinition>, ResponseFormat> getInputsListForOperation(String componentId, String componentInstanceId,
                                                                                             String interfaceId, String operationId, User user) {
-        Either<org.openecomp.sdc.be.model.Component, ResponseFormat> componentEither = getComponentDetails(componentId);
+        Either<Component, ResponseFormat> componentEither = getComponentDetails(componentId);
         if (componentEither.isRight()) {
             return Either.right(componentEither.right().value());
         }
-        org.openecomp.sdc.be.model.Component storedComponent = componentEither.left().value();
+        Component storedComponent = componentEither.left().value();
         validateUserExists(user.getUserId());
         Either<Boolean, ResponseFormat> lockResult = lockComponentResult(true, storedComponent, GET_INTERFACE_OPERATION);
         if (lockResult.isRight()) {
             return Either.right(lockResult.right().value());
         }
         try {
-            org.openecomp.sdc.be.model.Component parentComponent = componentEither.left().value();
+            Component parentComponent = componentEither.left().value();
             Map<String, List<ComponentInstanceInterface>> componentInstanceInterfaces = parentComponent.getComponentInstancesInterfaces();
             if (MapUtils.isEmpty(componentInstanceInterfaces)) {
                 return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, componentInstanceId));
