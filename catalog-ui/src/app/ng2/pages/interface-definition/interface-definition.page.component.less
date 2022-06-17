@@ -20,9 +20,20 @@
 */
 @import '../../../../assets/styles/variables.less';
 @import '../../../../assets/styles/override.less';
-
+@import '../../../../assets/styles/sprite-old.less';
 .interface-definition {
     font-size: 14px;
+
+    .delete-col-header{
+        .sprite;
+        .sprite.e-sdc-small-icon-delete;
+    }
+
+    .field-delete{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
     .interface-empty-msg {
         .bold-message {
@@ -184,10 +195,18 @@
 
                 .data-row {
                     cursor: pointer;
+                    .table-delete-btn{
+                        .sprite;
+                        .sprite.e-sdc-small-icon-delete;
+                        border: none;
+                        display: none !important;
+                    }
 
                     &:hover {
                         background: @sdcui_color_light-silver;
-
+                        .table-delete-btn{
+                            display: inline-block !important;
+                        }
                         .cell {
                             &.field-name {
                                 color: @sdcui_color_dark-blue;
