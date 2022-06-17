@@ -357,10 +357,7 @@ public class InterfaceOperationTest extends ModelTestBase {
 
     private void testAddSingleInterface(Component component) {
         InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
-        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation
-            .addInterfaces(component.getUniqueId(),
-                Collections.singletonList(
-                    interfaceDefinition));
+        final var res = interfaceOperation.addInterfaces(component, Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isLeft());
         Assert.assertEquals("1", res.left().value().get(0).getUniqueId());
     }
@@ -398,8 +395,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         List<InterfaceDefinition> interfaceDefinitions = new ArrayList<>();
         interfaceDefinitions.add(interfaceDefinition1);
         interfaceDefinitions.add(interfaceDefinition2);
-        Either<List<InterfaceDefinition>, StorageOperationStatus> res =
-            interfaceOperation.addInterfaces(component.getUniqueId(), interfaceDefinitions);
+        final var res = interfaceOperation.addInterfaces(component, interfaceDefinitions);
         Assert.assertTrue(res.isLeft());
         Assert.assertEquals(2, res.left().value().size());
     }
@@ -411,17 +407,13 @@ public class InterfaceOperationTest extends ModelTestBase {
 
     private void testUpdateInterface(Component component) {
         InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
-        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation
-            .addInterfaces(component.getUniqueId(),
-                Collections.singletonList(
-                    interfaceDefinition));
+        var res = interfaceOperation.addInterfaces(component, Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isLeft());
         List<InterfaceDefinition> value = res.left().value();
         InterfaceDefinition createdInterfaceDef = value.get(0);
         String newDescription = "New Description";
         createdInterfaceDef.setDescription(newDescription);
-        res = interfaceOperation
-            .updateInterfaces(component.getUniqueId(), Collections.singletonList(createdInterfaceDef));
+        res = interfaceOperation.updateInterfaces(component, Collections.singletonList(createdInterfaceDef));
         assertTrue(res.isLeft());
         assertEquals(newDescription, res.left().value().get(0).getDescription());
     }
@@ -438,14 +430,10 @@ public class InterfaceOperationTest extends ModelTestBase {
 
     private void testDeleteInterface(Component component) {
         InterfaceDefinition interfaceDefinition = buildInterfaceDefinition("1");
-        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation
-            .addInterfaces(component.getUniqueId(),
-                Collections.singletonList(
-                    interfaceDefinition));
+        var res = interfaceOperation.addInterfaces(component, Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isLeft());
         List<InterfaceDefinition> value = res.left().value();
-        Either<String, StorageOperationStatus> deleteInterfaceOperationRes =
-            interfaceOperation.deleteInterface(component.getUniqueId(), value.get(0).getUniqueId());
+        final var deleteInterfaceOperationRes = interfaceOperation.deleteInterface(component, value.get(0).getUniqueId());
         assertTrue(deleteInterfaceOperationRes.isLeft());
     }
 
@@ -459,8 +447,7 @@ public class InterfaceOperationTest extends ModelTestBase {
         Component component = createResource();
         InterfaceDefinition interfaceDefinition = buildInterfaceDefinitionWithoutOperation();
         interfaceDefinition.setOperationsMap(createMockOperationMap());
-        Either<List<InterfaceDefinition>, StorageOperationStatus> res = interfaceOperation.updateInterfaces(
-            component.getUniqueId(), Collections.singletonList(interfaceDefinition));
+        final var res = interfaceOperation.updateInterfaces(component, Collections.singletonList(interfaceDefinition));
         Assert.assertTrue(res.isRight());
     }
 

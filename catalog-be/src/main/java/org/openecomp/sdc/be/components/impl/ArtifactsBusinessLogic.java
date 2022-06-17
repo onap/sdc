@@ -172,6 +172,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private static final String UPDATE_ARTIFACT = "Update Artifact";
     private static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
     private static final String VALID_ARTIFACT_LABEL_NAME = "'A-Z', 'a-z', '0-9', '-', '@', '+' and space.";
+    private final ArtifactTypeOperation artifactTypeOperation;
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
     @javax.annotation.Resource
     private IInterfaceLifecycleOperation interfaceLifecycleOperation;
@@ -181,7 +182,6 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private IElementOperation elementOperation;
     @javax.annotation.Resource
     private IHeatParametersOperation heatParametersOperation;
-    private final ArtifactTypeOperation artifactTypeOperation;
     private ArtifactCassandraDao artifactCassandraDao;
     private ToscaExportHandler toscaExportUtils;
     private CsarUtils csarUtils;
@@ -3131,7 +3131,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         json.put(Constants.ARTIFACT_GROUP_TYPE, artifactGroupType.getType());
         json.put(Constants.REQUIRED_ARTIFACTS, (updatedRequiredArtifacts == null || updatedRequiredArtifacts.isEmpty()) ? new ArrayList<>()
             : updatedRequiredArtifacts.stream().filter(
-                e -> e.getType().equals(ArtifactTypeEnum.HEAT_ARTIFACT.getType()) || e.getType().equals(ArtifactTypeEnum.HEAT_NESTED.getType()))
+                    e -> e.getType().equals(ArtifactTypeEnum.HEAT_ARTIFACT.getType()) || e.getType().equals(ArtifactTypeEnum.HEAT_NESTED.getType()))
                 .map(ArtifactTemplateInfo::getFileName).collect(Collectors.toList()));
         json.put(Constants.ARTIFACT_HEAT_PARAMS, (heatParameters == null || heatParameters.isEmpty()) ? new ArrayList<>() : heatParameters);
         return json;
@@ -3693,7 +3693,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         operation.setImplementation(implementationArtifact);
         gotInterface.setOperationsMap(operationsMap);
         Either<List<InterfaceDefinition>, StorageOperationStatus> interfaceDefinitionStorageOperationStatusEither = interfaceOperation
-            .updateInterfaces(storedComponent.getUniqueId(), Collections.singletonList(gotInterface));
+            .updateInterfaces(storedComponent, Collections.singletonList(gotInterface));
         if (interfaceDefinitionStorageOperationStatusEither.isRight()) {
             StorageOperationStatus storageOperationStatus = interfaceDefinitionStorageOperationStatusEither.right().value();
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponseForDataType(storageOperationStatus);
@@ -4261,18 +4261,18 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         return ConfigurationManager.getConfigurationManager().getConfiguration().getArtifacts();
     }
 
+    public Map<String, ArtifactTypeDefinition> getAllToscaArtifacts(final String modelName) {
+        if (StringUtils.isNotEmpty(modelName)) {
+            artifactTypeOperation.validateModel(modelName);
+        }
+        return artifactTypeOperation.getAllArtifactTypes(modelName);
+    }
+
     public enum ArtifactOperationEnum {
         CREATE, UPDATE, DELETE, DOWNLOAD, LINK;
 
         public static boolean isCreateOrLink(ArtifactOperationEnum operation) {
             return operation == CREATE || operation == LINK;
         }
-    }
-
-    public Map<String, ArtifactTypeDefinition> getAllToscaArtifacts(final String modelName) {
-        if (StringUtils.isNotEmpty(modelName)) {
-            artifactTypeOperation.validateModel(modelName);
-        }
-        return artifactTypeOperation.getAllArtifactTypes(modelName);
     }
 }
