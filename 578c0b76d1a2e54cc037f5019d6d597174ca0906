@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7577e226_28e016d3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-17T11:39:11Z",
+      "side": 1,
+      "message": "to improve visibility/readability I\u0027d suggest to replace with \nimport org.openecomp.sdc.be.model.Component;\nremove \nimport org.springframework.stereotype.Component;\nand use \n@org.springframework.stereotype.Component(\"interfaceOperationBusinessLogic\")\n\nsame comment applies to all \norg.openecomp.sdc.be.model.Component\n\nbut it\u0027s also OK if not",
+      "range": {
+        "startLine": 115,
+        "startChar": 8,
+        "endLine": 115,
+        "endChar": 44
+      },
+      "revId": "578c0b76d1a2e54cc037f5019d6d597174ca0906",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9de2b8e_e6caadc7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-17T11:39:11Z",
+      "side": 1,
+      "message": "move this logic to InterfaceOperation and instead of creating/calling to different methods, just call same deleteInterface(String, String, EdgeLabelEnum, VertexTypeEnum)",
+      "range": {
+        "startLine": 170,
+        "startChar": 11,
+        "endLine": 176,
+        "endChar": 13
+      },
+      "revId": "578c0b76d1a2e54cc037f5019d6d597174ca0906",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "762fd821_7899cbad",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InterfaceOperationBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-17T11:39:11Z",
+      "side": 1,
+      "message": "simplify\n\nreturn component instanceof Resource \u0026\u0026 ((Resource) component).getResourceType() \u003d\u003d ResourceTypeEnum.VFC;",
+      "range": {
+        "startLine": 212,
+        "startChar": 74,
+        "endLine": 218,
+        "endChar": 5
+      },
+      "revId": "578c0b76d1a2e54cc037f5019d6d597174ca0906",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
