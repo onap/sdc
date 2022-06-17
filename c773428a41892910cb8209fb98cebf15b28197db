@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a13c1e94_838bbee0",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/InterfaceOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-17T16:26:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "929a73ce_ccd2bd1f",
+      "range": {
+        "startLine": 76,
+        "startChar": 102,
+        "endLine": 76,
+        "endChar": 117
+      },
+      "revId": "c773428a41892910cb8209fb98cebf15b28197db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "870312fd_96bf9c6d",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/InterfaceOperation.java",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "c773428a41892910cb8209fb98cebf15b28197db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "148d2e01_b15659f8",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/InterfaceOperation.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-17T16:26:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "870312fd_96bf9c6d",
+      "range": {
+        "startLine": 87,
+        "startChar": 82,
+        "endLine": 87,
+        "endChar": 97
+      },
+      "revId": "c773428a41892910cb8209fb98cebf15b28197db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
