@@ -23,7 +23,6 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import fj.data.Either;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,7 +50,6 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
@@ -82,6 +80,7 @@ import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -147,6 +146,8 @@ public class ServiceImportParseLogic {
     private LifecycleBusinessLogic lifecycleBusinessLogic;
     @Autowired
     private InputsBusinessLogic inputsBusinessLogic;
+    @Autowired
+    private OutputsBusinessLogic outputsBusinessLogic;
     @Autowired
     private ResourceImportManager resourceImportManager;
     @Autowired
@@ -1376,6 +1377,24 @@ public class ServiceImportParseLogic {
         if (updatedResource.isRight()) {
             throw new ComponentException(componentsUtils
                 .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
+                    ComponentTypeEnum.SERVICE));
+        }
+        return updatedResource.left().value();
+    }
+
+    public Service createOutputsOnService(final Service service, final Map<String, OutputDefinition> outputs) {
+        if (MapUtils.isNotEmpty(outputs) || isNotEmpty(service.getOutputs())) {
+            final Either<List<OutputDefinition>, ResponseFormat> createOutputs = outputsBusinessLogic.createOutputsInGraph(outputs, service);
+            if (createOutputs.isRight()) {
+                throw new ComponentException(createOutputs.right().value());
+            }
+        } else {
+            return service;
+        }
+        final Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
+        if (updatedResource.isRight()) {
+            throw new ComponentException(
+                componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
                     ComponentTypeEnum.SERVICE));
         }
         return updatedResource.left().value();
