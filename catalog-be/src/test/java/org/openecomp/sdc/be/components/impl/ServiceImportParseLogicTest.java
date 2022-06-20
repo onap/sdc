@@ -57,13 +57,10 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -82,6 +79,7 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
@@ -90,7 +88,6 @@ import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
-import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.User;
@@ -124,6 +121,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     private final IElementOperation elementDao = mock(IElementOperation.class);
     private final IInterfaceLifecycleOperation interfaceTypeOperation = mock(IInterfaceLifecycleOperation.class);
     private final InputsBusinessLogic inputsBusinessLogic = mock(InputsBusinessLogic.class);
+    private final OutputsBusinessLogic outputsBusinessLogic = mock(OutputsBusinessLogic.class);
     private final LifecycleBusinessLogic lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic = mock(ComponentNodeFilterBusinessLogic.class);
 
@@ -158,6 +156,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         testSubject.setCapabilityTypeOperation(capabilityTypeOperation);
         testSubject.setInterfaceTypeOperation(interfaceTypeOperation);
         testSubject.setInputsBusinessLogic(inputsBusinessLogic);
+        testSubject.setOutputsBusinessLogic(outputsBusinessLogic);
         testSubject.setLifecycleBusinessLogic(lifecycleBusinessLogic);
         testSubject.setComponentNodeFilterBusinessLogic(componentNodeFilterBusinessLogic);
     }
@@ -1163,7 +1162,27 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     }
 
     @Test
-    public void testAssociateCINodeFilterToComponent() {
+    void testCreateOutputsOnService() {
+        Service service = createServiceObject(true);
+        List<OutputDefinition> resourceOutputs = new ArrayList<>();
+        OutputDefinition outputDefinition = new OutputDefinition();
+        outputDefinition.setName("outputDefinitionName");
+        service.setOutputs(resourceOutputs);
+        Map<String, OutputDefinition> outputs = new HashMap<>();
+        OutputDefinition outputDefinitionMap = new OutputDefinition();
+        outputDefinition.setName("outputDefinitionName");
+        outputs.put("outputsMap", outputDefinitionMap);
+        List<OutputDefinition> outputDefinitionList = new ArrayList<>();
+        Service newService = new Service();
+
+        when(outputsBusinessLogic.createOutputsInGraph(any(Map.class), any(Component.class))).thenReturn(Either.left(outputDefinitionList));
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(newService));
+        Service outputsOnService = testSubject.createOutputsOnService(service, outputs);
+        assertNotNull(outputsOnService);
+    }
+
+    @Test
+    void testAssociateCINodeFilterToComponent() {
         String yamlName = "yamlName.yml";
         Service service = createServiceObject(true);
         Map<String, UploadNodeFilterInfo> nodeFilterMap = new HashMap<>();
@@ -1178,7 +1197,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     }
 
     @Test
-    public void testAssociateCINodeFilterToComponentFail() {
+    void testAssociateCINodeFilterToComponentFail() {
         String yamlName = "yamlName.yml";
         Service service = createServiceObject(true);
         Map<String, UploadNodeFilterInfo> nodeFilterMap = new HashMap<>();

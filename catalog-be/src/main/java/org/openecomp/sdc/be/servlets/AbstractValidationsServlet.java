@@ -1061,16 +1061,16 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
         }
     }
 
-    protected void handleImportService(Wrapper<Response> responseWrapper, User user, UploadServiceInfo serviceInfoObject, String yamlAsString,
-                                       ServiceAuthorityTypeEnum authority, boolean createNewVersion, String serviceUniqueId) throws ZipException {
+    protected void handleImportService(Wrapper<Response> responseWrapper, User user, UploadServiceInfo serviceInfoObject, String serviceUniqueId)
+        throws ZipException {
         Response response = null;
-        Object representation = null;
         ImmutablePair<Service, ActionStatus> importedServiceStatus = null;
         if (CsarValidationUtils.isCsarPayloadName(serviceInfoObject.getPayloadName())) {
             log.debug("import service from csar");
             importedServiceStatus = importServiceFromUICsar(serviceInfoObject, user, serviceUniqueId);
         }
         if (importedServiceStatus != null) {
+            Object representation = null;
             try {
                 representation = RepresentationUtils.toRepresentation(importedServiceStatus.left);
             } catch (IOException e) {
@@ -1083,18 +1083,14 @@ public abstract class AbstractValidationsServlet extends BeGenericServlet {
 
     private ImmutablePair<Service, ActionStatus> importServiceFromUICsar(UploadServiceInfo serviceInfoObject, User user, String serviceUniqueId)
         throws ZipException {
-        Service newService;
-        ImmutablePair<Service, ActionStatus> result = null;
-        ActionStatus actionStatus;
         Service service = new Service();
         String payloadName = serviceInfoObject.getPayloadName();
         fillServiceFromServiceInfoObject(service, serviceInfoObject);
         Map<String, byte[]> csarUIPayloadRes = getCsarFromPayload(serviceInfoObject);
         getAndValidateCsarYaml(csarUIPayloadRes, service, user, payloadName);
-        newService = serviceImportManager.getServiceImportBusinessLogic()
+        final Service newService = serviceImportManager.getServiceImportBusinessLogic()
             .createService(service, AuditingActionEnum.CREATE_SERVICE, user, csarUIPayloadRes, payloadName);
-        actionStatus = ActionStatus.CREATED;
-        return new ImmutablePair<>(newService, actionStatus);
+        return new ImmutablePair<>(newService, ActionStatus.CREATED);
     }
 
     private void fillServiceFromServiceInfoObject(Service service, UploadServiceInfo serviceInfoObject) {

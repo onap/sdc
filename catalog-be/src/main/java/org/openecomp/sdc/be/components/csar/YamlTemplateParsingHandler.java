@@ -42,6 +42,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OUTPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.POLICIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.PROPERTIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIREMENTS;
@@ -92,6 +93,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
@@ -136,12 +138,18 @@ public class YamlTemplateParsingHandler {
                                                          Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName,
                                                          org.openecomp.sdc.be.model.Component component, String interfaceTemplateYaml) {
         log.debug("#parseResourceInfoFromYAML - Going to parse yaml {} ", fileName);
-        Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
-        ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
-        Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
-        Map<String, Object> mappedTopologyTemplateInputs  = mappedTopologyTemplate.entrySet().stream().filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        final Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
+        final ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
+        final Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE,
+            ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
+        final Map<String, Object> mappedTopologyTemplateInputs = mappedTopologyTemplate.entrySet().stream()
+            .filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        final Map<String, Object> mappedTopologyTemplateOutputs = mappedTopologyTemplate.entrySet().stream()
+            .filter(entry -> entry.getKey().equals(OUTPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
-        parsedToscaYamlInfo.setInstances(getInstances(fileName, mappedToscaTemplate, createdNodesToscaResourceNames));
+        parsedToscaYamlInfo.setOutputs(getOutputs(mappedTopologyTemplateOutputs));
+        parsedToscaYamlInfo.setInstances(getInstances(mappedToscaTemplate, createdNodesToscaResourceNames));
         parsedToscaYamlInfo.setGroups(getGroups(fileName, mappedToscaTemplate, component.getModel()));
         if (component instanceof Resource) {
             parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate, component.getModel()));
@@ -190,6 +198,10 @@ public class YamlTemplateParsingHandler {
         return inputs;
     }
 
+    private Map<String, OutputDefinition> getOutputs(Map<String, Object> toscaJson) {
+        return ImportUtils.getOutputs(toscaJson).left().on(err -> new HashMap<>());
+    }
+
     private Map<String, PropertyDefinition> getProperties(Map<String, Object> toscaJson) {
         return ImportUtils.getProperties(toscaJson).left().on(err -> new HashMap<>());
     }
@@ -231,7 +243,8 @@ public class YamlTemplateParsingHandler {
     private Map<String, PolicyDefinition> getPolicies(String fileName, Map<String, Object> toscaJson, String model) {
         Map<String, Object> foundPolicies = findFirstToscaMapElement(toscaJson, POLICIES).left().on(err -> logPoliciesNotFound(fileName));
         if (MapUtils.isNotEmpty(foundPolicies)) {
-            return foundPolicies.entrySet().stream().map(policyToCreate -> createPolicy(policyToCreate, model)).collect(Collectors.toMap(PolicyDefinition::getName, p -> p));
+            return foundPolicies.entrySet().stream().map(policyToCreate -> createPolicy(policyToCreate, model))
+                .collect(Collectors.toMap(PolicyDefinition::getName, p -> p));
         }
         return Collections.emptyMap();
     }
@@ -319,7 +332,7 @@ public class YamlTemplateParsingHandler {
         return targets;
     }
 
-    private Map<String, UploadComponentInstanceInfo> getInstances(String yamlName, Map<String, Object> toscaJson,
+    private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson,
                                                                   Map<String, String> createdNodesToscaResourceNames) {
         Map<String, Object> nodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES).left().on(err -> new HashMap<>());
         if (nodeTemplates.isEmpty()) {
@@ -592,7 +605,7 @@ public class YamlTemplateParsingHandler {
         if (CollectionUtils.isNotEmpty(missingProperties)) {
             if (log.isDebugEnabled()) {
                 log.debug("#validateProperties - Failed to validate properties. The properties {} are missing on {} of the type {}. ",
-                        missingProperties.toString(), name, type);
+                    missingProperties.toString(), name, type);
             }
             rollbackWithException(actionStatus, missingProperties.toString(), missingProperties.toString(), name, type);
         }
@@ -1044,7 +1057,7 @@ public class YamlTemplateParsingHandler {
 
     @SuppressWarnings("unchecked")
     private void findAndFillInputRecursively(Map<String, Object> propValue, UploadPropInfo propertyDef) {
-        for (Map.Entry<String,Object> entry : propValue.entrySet()) {
+        for (Map.Entry<String, Object> entry : propValue.entrySet()) {
             String propName = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof Map) {
@@ -1057,8 +1070,8 @@ public class YamlTemplateParsingHandler {
 
     private void fillInputsRecursively(UploadPropInfo propertyDef, String propName, List<Object> inputs) {
         inputs.stream()
-                .filter(Map.class::isInstance)
-                .forEach(o -> fillInputRecursively(propName, (Map<String, Object>) o, propertyDef));
+            .filter(Map.class::isInstance)
+            .forEach(o -> fillInputRecursively(propName, (Map<String, Object>) o, propertyDef));
     }
 
     @SuppressWarnings("unchecked")
@@ -1088,11 +1101,6 @@ public class YamlTemplateParsingHandler {
         return propValue == null || !pattern.matcher(propValue.toString()).find();
     }
 
-    private Map<String, Object> failIfNoNodeTemplates(String fileName) {
-        janusGraphDao.rollback();
-        throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, fileName);
-    }
-
     private Object failIfNotTopologyTemplate(String fileName) {
         janusGraphDao.rollback();
         throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, fileName);
@@ -1106,8 +1114,8 @@ public class YamlTemplateParsingHandler {
     private void failOnMissingCapabilityTypes(GroupDefinition groupDefinition, List<String> missingCapTypes) {
         if (log.isDebugEnabled()) {
             log.debug(
-                    "#failOnMissingCapabilityTypes - Failed to validate the capabilities of the group {}. The capability types {} are missing on the group type {}. ",
-                    groupDefinition.getName(), missingCapTypes.toString(), groupDefinition.getType());
+                "#failOnMissingCapabilityTypes - Failed to validate the capabilities of the group {}. The capability types {} are missing on the group type {}. ",
+                groupDefinition.getName(), missingCapTypes.toString(), groupDefinition.getType());
         }
         if (CollectionUtils.isNotEmpty(missingCapTypes)) {
             rollbackWithException(ActionStatus.MISSING_CAPABILITY_TYPE, missingCapTypes.toString());
@@ -1117,8 +1125,8 @@ public class YamlTemplateParsingHandler {
     private void failOnMissingCapabilityNames(GroupDefinition groupDefinition, List<String> missingCapNames) {
         if (log.isDebugEnabled()) {
             log.debug(
-                    "#failOnMissingCapabilityNames - Failed to validate the capabilities of the group {}. The capabilities with the names {} are missing on the group type {}. ",
-                    groupDefinition.getName(), missingCapNames.toString(), groupDefinition.getType());
+                "#failOnMissingCapabilityNames - Failed to validate the capabilities of the group {}. The capabilities with the names {} are missing on the group type {}. ",
+                groupDefinition.getName(), missingCapNames.toString(), groupDefinition.getType());
         }
         rollbackWithException(ActionStatus.MISSING_CAPABILITIES, missingCapNames.toString(), CapabilityDataDefinition.OwnerType.GROUP.getValue(),
             groupDefinition.getName());
