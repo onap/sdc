@@ -398,8 +398,10 @@ export class InterfaceDefinitionComponent {
         return this.interfaces.filter((interfaceData) => interfaceData.operations && interfaceData.operations.length > 0).length > 0;
     }
 
-    onRemoveOperation = (event: Event, operation: OperationModel): void => {
-        event.stopPropagation();
+    onRemoveOperation(operation: OperationModel): void {
+        if (this.readonly) {
+            return;
+        }
 
         const deleteButton: IModalButtonComponent = {
             id: 'deleteButton',
