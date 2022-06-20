@@ -22,7 +22,7 @@ import {ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel} from '
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {PropertiesService} from "../../../services/properties.service";
-import {PROPERTY_DATA} from "../../../../utils/constants";
+import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../utils/constants";
 import {DataTypeService} from "../../../services/data-type.service";
 import {ToscaGetFunctionType} from "../../../../models/tosca-get-function-type";
 import {TranslateService} from "../../../shared/translator/translate.service";
@@ -335,12 +335,13 @@ export class ToscaFunctionComponent implements OnInit {
     }
 
     private hasSameType(property: PropertyBEModel) {
-        if (this.property.schema && this.property.schema.property) {
+        if (this.typeHasSchema(this.property.type)) {
             if (!property.schema || !property.schema.property) {
                 return false;
             }
             return property.type === this.property.type && this.property.schema.property.type === property.schema.property.type;
         }
+
         return property.type === this.property.type;
     }
 
@@ -354,6 +355,10 @@ export class ToscaFunctionComponent implements OnInit {
 
     private isComplexType(propertyType: string): boolean {
         return PROPERTY_DATA.SIMPLE_TYPES.indexOf(propertyType) === -1;
+    }
+
+    private typeHasSchema(propertyType: string): boolean {
+        return PROPERTY_TYPES.MAP === propertyType || PROPERTY_TYPES.LIST === propertyType;
     }
 
     private stopLoading(): void {
