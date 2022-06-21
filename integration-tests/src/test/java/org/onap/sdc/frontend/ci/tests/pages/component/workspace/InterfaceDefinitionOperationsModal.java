@@ -19,8 +19,9 @@
 
 package org.onap.sdc.frontend.ci.tests.pages.component.workspace;
 
+import static org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils.waitForLoader;
+
 import com.aventstack.extentreports.Status;
-import java.time.Duration;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,9 +31,6 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinit
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-
-import static org.onap.sdc.frontend.ci.tests.utilities.GeneralUIUtils.waitForLoader;
 
 /**
  * Represents the Composition Interface Operations Modal.
@@ -55,7 +53,9 @@ public class InterfaceDefinitionOperationsModal extends AbstractPageObject {
         waitForElementVisibility(By.xpath(XpathSelector.TITLE_SPAN.getXPath()));
         waitForElementVisibility(By.xpath(XpathSelector.INTERFACE_NAME_LABEL.getXPath()));
         waitForElementVisibility(By.xpath(XpathSelector.OPERATION_NAME_LABEL.getXPath()));
-        waitForElementVisibility(By.xpath(XpathSelector.SAVE_BTN.getXPath()));
+        if (!isInViewMode) {
+            waitForElementVisibility(By.xpath(XpathSelector.SAVE_BTN.getXPath()));
+        }
         waitToBeClickable(By.xpath(XpathSelector.CANCEL_BTN.getXPath()));
         this.inputListComponent = new InterfaceOperationInputListComponent(webDriver);
         this.inputListComponent.isLoaded();

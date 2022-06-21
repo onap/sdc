@@ -28,19 +28,19 @@ import org.onap.sdc.frontend.ci.tests.pages.component.workspace.InterfaceDefinit
 import org.openqa.selenium.WebDriver;
 
 /**
- * UI Flow for managing an Interface Definition from a component
+ * UI Flow to go to the interfaces page of a VFC from the VFC Workspace
  */
-public class InterfaceDefinitionFlow extends AbstractUiTestFlow {
+public class GoToInterfaceDefinitionPageFlow extends AbstractUiTestFlow {
 
     private InterfaceDefinitionPage interfaceDefinitionPage;
 
-    public InterfaceDefinitionFlow(final WebDriver webDriver) {
+    public GoToInterfaceDefinitionPageFlow(final WebDriver webDriver) {
         super(webDriver);
     }
 
     @Override
     public Optional<PageObject> run(final PageObject... pageObjects) {
-        extendTest.log(Status.INFO, "Downloading Tosca CSAR generated");
+        extendTest.log(Status.INFO, "Going to access the Interfaces page from the resource Workspace");
         final ComponentPage componentPage = findParameter(pageObjects, ComponentPage.class);
         componentPage.isLoaded();
         interfaceDefinitionPage = componentPage.goToInterfaceDefinition();

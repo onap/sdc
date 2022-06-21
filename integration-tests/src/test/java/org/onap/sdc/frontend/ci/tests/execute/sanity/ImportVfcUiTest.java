@@ -48,7 +48,7 @@ import org.onap.sdc.frontend.ci.tests.flow.AddNodeToCompositionFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVfcFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
-import org.onap.sdc.frontend.ci.tests.flow.InterfaceDefinitionFlow;
+import org.onap.sdc.frontend.ci.tests.flow.GoToInterfaceDefinitionPageFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
 import org.onap.sdc.frontend.ci.tests.pages.AttributeModal;
 import org.onap.sdc.frontend.ci.tests.pages.AttributesPage;
@@ -144,14 +144,14 @@ public class ImportVfcUiTest extends SetupCDTest {
     }
 
     private ComponentPage viewInterfaceDefinitionFromVFC(final ComponentPage componentPage) {
-        final InterfaceDefinitionFlow interfaceDefinitionFlow = new InterfaceDefinitionFlow(webDriver);
-        interfaceDefinitionFlow.run(componentPage);
-        final InterfaceDefinitionPage interfaceDefinitionPage = interfaceDefinitionFlow.getLandedPage()
+        final GoToInterfaceDefinitionPageFlow goToInterfaceDefinitionPageFlow = new GoToInterfaceDefinitionPageFlow(webDriver);
+        goToInterfaceDefinitionPageFlow.run(componentPage);
+        final InterfaceDefinitionPage interfaceDefinitionPage = goToInterfaceDefinitionPageFlow.getLandedPage()
             .orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return InterfaceDefinitionPage"));
-        final var OPERATION_NAME = "create";
-        assertTrue(interfaceDefinitionPage.isInterfaceDefinitionOperationPresent(OPERATION_NAME));
-        final InterfaceDefinitionOperationsModal interfaceDefinitionOperationsModal = interfaceDefinitionPage.clickOnInterfaceDefinitionOperation(
-            OPERATION_NAME);
+        final var operationName = "create";
+        assertTrue(interfaceDefinitionPage.isInterfaceDefinitionOperationPresent(operationName));
+        final InterfaceDefinitionOperationsModal interfaceDefinitionOperationsModal =
+            interfaceDefinitionPage.clickOnInterfaceDefinitionOperation(operationName);
         interfaceDefinitionOperationsModal.isLoaded(true);
         ExtentTestActions
             .takeScreenshot(Status.INFO, "clickOnOInterfaceOperation", "Interface Definition Operation Modal opened");

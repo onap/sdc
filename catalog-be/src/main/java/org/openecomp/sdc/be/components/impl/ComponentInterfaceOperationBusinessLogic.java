@@ -166,11 +166,13 @@ public class ComponentInterfaceOperationBusinessLogic extends BaseBusinessLogic 
     }
 
     public Optional<Component> updateResourceInterfaceOperation(final String componentId,
+                                                                final String user,
                                                                 final InterfaceDefinition interfaceDefinition,
                                                                 final ComponentTypeEnum componentTypeEnum,
                                                                 final Wrapper<ResponseFormat> errorWrapper,
                                                                 final boolean shouldLock) throws BusinessLogicException {
         final var component = getComponent(componentId);
+        validateCanWorkOnComponent(component, user);
         ResponseFormat responseFormat;
 
         Map<String, InterfaceDefinition> componentInterfaceMap = component.getInterfaces();
