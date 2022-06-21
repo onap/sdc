@@ -19,6 +19,8 @@ package org.openecomp.sdc.be.components.impl;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -43,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,6 +80,7 @@ import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
@@ -118,6 +122,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     private final IElementOperation elementDao = mock(IElementOperation.class);
     private final IInterfaceLifecycleOperation interfaceTypeOperation = mock(IInterfaceLifecycleOperation.class);
     private final InputsBusinessLogic inputsBusinessLogic = mock(InputsBusinessLogic.class);
+    private final OutputsBusinessLogic outputsBusinessLogic = mock(OutputsBusinessLogic.class);
     private final LifecycleBusinessLogic lifecycleBusinessLogic = mock(LifecycleBusinessLogic.class);
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic = mock(ComponentNodeFilterBusinessLogic.class);
 
@@ -152,6 +157,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         testSubject.setCapabilityTypeOperation(capabilityTypeOperation);
         testSubject.setInterfaceTypeOperation(interfaceTypeOperation);
         testSubject.setInputsBusinessLogic(inputsBusinessLogic);
+        testSubject.setOutputsBusinessLogic(outputsBusinessLogic);
         testSubject.setLifecycleBusinessLogic(lifecycleBusinessLogic);
         testSubject.setComponentNodeFilterBusinessLogic(componentNodeFilterBusinessLogic);
     }
@@ -1133,6 +1139,71 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(newService));
         Service inputsOnService = testSubject.createInputsOnService(service, inputs);
         assertNotNull(inputsOnService);
+    }
+
+    @Test
+    void testCreateOutputsOnService_OK() {
+        Service service = createServiceObject(true);
+        List<OutputDefinition> resourceOutputs = new ArrayList<>();
+        OutputDefinition outputDefinition = new OutputDefinition();
+        resourceOutputs.add(outputDefinition);
+        outputDefinition.setName("outputDefinitionName");
+        service.setOutputs(resourceOutputs);
+        Map<String, OutputDefinition> outputs = new HashMap<>();
+        outputs.put("outputsMap", outputDefinition);
+
+        when(outputsBusinessLogic.createOutputsInGraph(outputs, service)).thenReturn(Either.left(resourceOutputs));
+        when(toscaOperationFacade.getToscaElement(service.getUniqueId())).thenReturn(Either.left(service));
+        Service outputsOnService = testSubject.createOutputsOnService(service, outputs);
+        assertNotNull(outputsOnService);
+        assertSame(service, outputsOnService);
+    }
+
+    @Test
+    void testCreateOutputsOnService_Fail_whenOutputsIsEmpty() {
+        Service service = createServiceObject(true);
+        Map<String, OutputDefinition> outputs = new HashMap<>();
+        Service outputsOnService = testSubject.createOutputsOnService(service, outputs);
+        assertNotNull(outputsOnService);
+        assertSame(service, outputsOnService);
+    }
+
+    @Test
+    void testCreateOutputsOnService_Fail_createOutputsInGraph() {
+        Service service = createServiceObject(true);
+        List<OutputDefinition> resourceOutputs = new ArrayList<>();
+        OutputDefinition outputDefinition = new OutputDefinition();
+        resourceOutputs.add(outputDefinition);
+        outputDefinition.setName("outputDefinitionName");
+        service.setOutputs(resourceOutputs);
+        Map<String, OutputDefinition> outputs = new HashMap<>();
+        outputs.put("outputsMap", outputDefinition);
+
+        when(outputsBusinessLogic.createOutputsInGraph(outputs, service))
+            .thenReturn(Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST_400.getStatusCode())));
+
+        assertThrows(ComponentException.class, () -> {
+            testSubject.createOutputsOnService(service, outputs);
+        });
+    }
+
+    @Test
+    void testCreateOutputsOnService_Fail_getToscaElement() {
+        Service service = createServiceObject(true);
+        List<OutputDefinition> resourceOutputs = new ArrayList<>();
+        OutputDefinition outputDefinition = new OutputDefinition();
+        resourceOutputs.add(outputDefinition);
+        outputDefinition.setName("outputDefinitionName");
+        service.setOutputs(resourceOutputs);
+        Map<String, OutputDefinition> outputs = new HashMap<>();
+        outputs.put("outputsMap", outputDefinition);
+
+        when(outputsBusinessLogic.createOutputsInGraph(outputs, service)).thenReturn(Either.left(resourceOutputs));
+        when(toscaOperationFacade.getToscaElement(service.getUniqueId())).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+
+        assertThrows(ComponentException.class, () -> {
+            testSubject.createOutputsOnService(service, outputs);
+        });
     }
 
     @Test

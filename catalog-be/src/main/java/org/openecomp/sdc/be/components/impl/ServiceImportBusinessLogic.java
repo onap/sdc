@@ -96,6 +96,7 @@ import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
@@ -174,8 +175,6 @@ public class ServiceImportBusinessLogic {
     private ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
     @Autowired
     private ServiceImportParseLogic serviceImportParseLogic;
-    @Autowired
-    private ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
 
     @Autowired
     public ServiceImportBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
@@ -192,14 +191,6 @@ public class ServiceImportBusinessLogic {
                                       ComponentDescriptionValidator componentDescriptionValidator) {
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
         this.uiComponentDataConverter = uiComponentDataConverter;
-    }
-
-    public ServiceBusinessLogic getServiceBusinessLogic() {
-        return serviceBusinessLogic;
-    }
-
-    public void setServiceBusinessLogic(ServiceBusinessLogic serviceBusinessLogic) {
-        this.serviceBusinessLogic = serviceBusinessLogic;
     }
 
     public Service createService(Service service, AuditingActionEnum auditingAction, User user, Map<String, byte[]> csarUIPayload,
@@ -310,6 +301,10 @@ public class ServiceImportBusinessLogic {
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
             log.trace("************* Finish to add inputs from yaml {}", yamlName);
+            Map<String, OutputDefinition> outputs = parsedToscaYamlInfo.getOutputs();
+            service = serviceImportParseLogic.createOutputsOnService(service, outputs);
+            log.trace("************* Finish to add outputs from yaml {}", yamlName);
+
             ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
             service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
             log.trace("************* Added Substitution filter from interface yaml {}", yamlName);
@@ -861,14 +856,6 @@ public class ServiceImportBusinessLogic {
             nodeTypeArtifactsToHandleRes = Either.right(responseWrapper.getInnerElement());
         }
         return nodeTypeArtifactsToHandleRes;
-    }
-
-    public ComponentsUtils getComponentsUtils() {
-        return this.componentsUtils;
-    }
-
-    public void setComponentsUtils(ComponentsUtils componentsUtils) {
-        this.componentsUtils = componentsUtils;
     }
 
     protected Either<List<CsarUtils.NonMetaArtifactInfo>, String> getValidArtifactNames(CsarInfo csarInfo,
