@@ -69,7 +69,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -917,10 +916,6 @@ public class ServiceImportBusinessLogic {
         List<GroupDefinition> result = new ArrayList<>();
         List<ComponentInstance> componentInstances = component.getComponentInstances();
         if (groups != null) {
-            Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies = serviceImportParseLogic.validateCyclicGroupsDependencies(groups);
-            if (validateCyclicGroupsDependencies.isRight()) {
-                throw new ComponentException(validateCyclicGroupsDependencies.right().value());
-            }
             for (Map.Entry<String, GroupDefinition> entry : groups.entrySet()) {
                 String groupName = entry.getKey();
                 GroupDefinition groupDefinition = entry.getValue();
@@ -1353,7 +1348,8 @@ public class ServiceImportBusinessLogic {
             uploadResInstancesMap.values().forEach(
                 i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
                     componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties,
-                    instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter, i));
+                    instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs,
+                    instNodeFilter, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
@@ -1698,7 +1694,7 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(capabilitiesNamesToUpdate)) {
             for (Map.Entry<String, List<CapabilityDefinition>> requirements : instance.getCapabilities().entrySet()) {
                 updatedCapabilities.put(requirements.getKey(), requirements.getValue().stream().filter(
-                    c -> capabilitiesNamesToUpdate.containsKey(c.getName()) && !updatedCapNames.contains(capabilitiesNamesToUpdate.get(c.getName())))
+                        c -> capabilitiesNamesToUpdate.containsKey(c.getName()) && !updatedCapNames.contains(capabilitiesNamesToUpdate.get(c.getName())))
                     .map(c -> {
                         c.setParentName(c.getName());
                         c.setName(capabilitiesNamesToUpdate.get(c.getName()));
@@ -1719,7 +1715,7 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(requirementsNamesToUpdate)) {
             for (Map.Entry<String, List<RequirementDefinition>> requirements : instance.getRequirements().entrySet()) {
                 updatedRequirements.put(requirements.getKey(), requirements.getValue().stream().filter(
-                    r -> requirementsNamesToUpdate.containsKey(r.getName()) && !updatedReqNames.contains(requirementsNamesToUpdate.get(r.getName())))
+                        r -> requirementsNamesToUpdate.containsKey(r.getName()) && !updatedReqNames.contains(requirementsNamesToUpdate.get(r.getName())))
                     .map(r -> {
                         r.setParentName(r.getName());
                         r.setName(requirementsNamesToUpdate.get(r.getName()));
@@ -1790,7 +1786,7 @@ public class ServiceImportBusinessLogic {
                     regCapRelDef.setFromNode(resourceInstanceId);
                     log.debug("try to find available requirement {} ", regName);
                     Either<RequirementDefinition, ResponseFormat> eitherReqStatus = serviceImportParseLogic
-                        .findAviableRequiremen(regName, yamlName, nodesInfoValue, currentCompInstance, uploadRegInfo.getCapabilityName());
+                        .findAvailableRequirement(regName, yamlName, nodesInfoValue, currentCompInstance, uploadRegInfo.getCapabilityName());
                     if (eitherReqStatus.isRight()) {
                         log.debug("failed to find available requirement {} status is {}", regName, eitherReqStatus.right().value());
                         return eitherReqStatus.right().value();
@@ -2316,10 +2312,6 @@ public class ServiceImportBusinessLogic {
         List<GroupDefinition> result = new ArrayList<>();
         List<ComponentInstance> componentInstances = component.getComponentInstances();
         if (groups != null) {
-            Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies = serviceImportParseLogic.validateCyclicGroupsDependencies(groups);
-            if (validateCyclicGroupsDependencies.isRight()) {
-                throw new ComponentException(validateCyclicGroupsDependencies.right().value());
-            }
             for (Map.Entry<String, GroupDefinition> entry : groups.entrySet()) {
                 String groupName = entry.getKey();
                 GroupDefinition groupDefinition = entry.getValue();
