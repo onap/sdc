@@ -42,17 +42,11 @@ import {
 import {ComponentServiceNg2} from 'app/ng2/services/component-services/component.service';
 import {TopologyTemplateService} from "../../services/component-services/topology-template.service";
 import {InterfaceOperationModel} from "../../../models/interfaceOperation";
-import {
-    InterfaceOperationHandlerComponent
-} from "../composition/interface-operatons/operation-creator/interface-operation-handler.component";
-import {
-    DropdownValue
-} from "../../components/ui/form-components/dropdown/ui-element-dropdown.component";
+import {InterfaceOperationHandlerComponent} from "../composition/interface-operatons/operation-creator/interface-operation-handler.component";
+import {DropdownValue} from "../../components/ui/form-components/dropdown/ui-element-dropdown.component";
 import {ToscaArtifactModel} from "../../../models/toscaArtifact";
 import {ToscaArtifactService} from "../../services/tosca-artifact.service";
-import {
-    InterfaceOperationComponent
-} from "../interface-operation/interface-operation.page.component";
+import {InterfaceOperationComponent} from "../interface-operation/interface-operation.page.component";
 import {Observable} from "rxjs/Observable";
 import {PluginsService} from 'app/ng2/services/plugins.service';
 
@@ -87,7 +81,6 @@ export class UIOperationModel extends OperationModel {
     }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class ModalTranslation {
     CREATE_TITLE: string;
     EDIT_TITLE: string;
@@ -127,7 +120,6 @@ export class UIInterfaceModel extends InterfaceModel {
     }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 @Component({
     selector: 'interface-definition',
     templateUrl: './interface-definition.page.component.html',
@@ -151,7 +143,6 @@ export class InterfaceDefinitionComponent {
     modalTranslation: ModalTranslation;
     workflows: any[];
     capabilities: CapabilitiesGroup;
-    isViewOnly: boolean;
 
     openOperation: OperationModel;
     enableWorkflowAssociation: boolean;
@@ -226,7 +217,7 @@ export class InterfaceDefinitionComponent {
     }
 
     private disableSaveButton = (): boolean => {
-        return this.isViewOnly ||
+        return this.readonly ||
             (this.isEnableAddArtifactImplementation()
                 && (!this.modalInstance.instance.dynamicContent.toscaArtifactTypeSelected ||
                     !this.modalInstance.instance.dynamicContent.artifactName)
@@ -235,13 +226,17 @@ export class InterfaceDefinitionComponent {
 
     onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
         const isEdit = operation !== undefined;
-        const cancelButton: ButtonModel = new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal);
-        const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue',
-            () => isEdit ? this.updateOperation() : this.createOperationCallback(),
-            this.disableSaveButton
-        );
+        const modalButtons = [];
+        if (!this.readonly) {
+            const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue',
+                () => isEdit ? this.updateOperation() : this.createOperationCallback(),
+                this.disableSaveButton
+            );
+            modalButtons.push(saveButton);
+        }
+        modalButtons.push(new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal));
         const interfaceDataModal: ModalModel =
-            new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', [saveButton, cancelButton], 'custom');
+            new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', modalButtons, 'custom');
         this.modalInstance = this.modalServiceNg2.createCustomModal(interfaceDataModal);
 
         this.modalServiceNg2.addDynamicContentToModal(
@@ -253,8 +248,8 @@ export class InterfaceDefinitionComponent {
                 selectedInterface: interfaceModel ? interfaceModel : new UIInterfaceModel(),
                 selectedInterfaceOperation: operation ? operation : new InterfaceOperationModel(),
                 validityChangedCallback: this.disableSaveButton,
-                isViewOnly: this.isViewOnly,
-                isEdit: isEdit,
+                isViewOnly: this.readonly,
+                'isEdit': isEdit,
                 interfaceTypesMap: this.interfaceTypesMap,
                 modelName: this.component.model
             }
