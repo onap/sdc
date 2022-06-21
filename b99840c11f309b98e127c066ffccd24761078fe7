@@ -190,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "81cda375_2eb6c315",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "no tests were added to this method in org.openecomp.sdc.be.components.impl.OutputsBusinessLogicTest",
+      "parentUuid": "b4940a82_1a92dee8",
+      "range": {
+        "startLine": 243,
+        "startChar": 58,
+        "endLine": 243,
+        "endChar": 78
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6830cffe_48f62383",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
         "patchSetId": 1
@@ -375,6 +399,30 @@
       "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0852fa54_92d14a63",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/TopologyTemplateOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "still not covered in org.openecomp.sdc.be.model.jsonjanusgraph.operations.TopologyTemplateOperationTest",
+      "parentUuid": "ea6af2af_a8c3e7a1",
+      "range": {
+        "startLine": 586,
+        "startChar": 34,
+        "endLine": 586,
+        "endChar": 61
+      },
+      "revId": "b99840c11f309b98e127c066ffccd24761078fe7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {

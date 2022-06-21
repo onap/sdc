@@ -1,0 +1,418 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6c67e289_9dc093de",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ImportUtilsTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "this mock is not used/necessary",
+      "range": {
+        "startLine": 370,
+        "startChar": 8,
+        "endLine": 371,
+        "endChar": 99
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec6b6643_d70d8846",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "not a proper test. As it is a getter test, you could just use lombok @Getter",
+      "range": {
+        "startLine": 158,
+        "startChar": 4,
+        "endLine": 161,
+        "endChar": 5
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aabd5552_fd72a51d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1165,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "you could introduce more tests to cover the negative paths",
+      "range": {
+        "startLine": 1165,
+        "startChar": 9,
+        "endLine": 1165,
+        "endChar": 35
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c356a872_a980ca3b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "same here, you have both objects to match",
+      "range": {
+        "startLine": 1178,
+        "startChar": 55,
+        "endLine": 1178,
+        "endChar": 91
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "909fa1a2_1793c3e8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "please, be specific when possible in the matching, you can pass the known service id here",
+      "range": {
+        "startLine": 1179,
+        "startChar": 50,
+        "endLine": 1179,
+        "endChar": 61
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2076fde6_0cfa3e46",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1181,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "at least assert that the object is equals to the one expected to return",
+      "range": {
+        "startLine": 1181,
+        "startChar": 8,
+        "endLine": 1181,
+        "endChar": 40
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da679a7d_397afd1a",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1331,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "NegativeCreateAndAssociateInputsStatus",
+      "range": {
+        "startLine": 1331,
+        "startChar": 38,
+        "endLine": 1331,
+        "endChar": 41
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2a63f71_e36fff81",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1337,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "assert also for the expected not found status",
+      "range": {
+        "startLine": 1337,
+        "startChar": 8,
+        "endLine": 1337,
+        "endChar": 37
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "478b94b2_3800ce23",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1341,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "componentNotFound",
+      "range": {
+        "startLine": 1341,
+        "startChar": 38,
+        "endLine": 1341,
+        "endChar": 43
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "810aae9e_96245261",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1342,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "COMPONENT_ID",
+      "range": {
+        "startLine": 1342,
+        "startChar": 45,
+        "endLine": 1342,
+        "endChar": 56
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5bff597_2fc512db",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1345,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "assert also for the expected not found status",
+      "range": {
+        "startLine": 1345,
+        "startChar": 8,
+        "endLine": 1345,
+        "endChar": 37
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "872bb648_7080d8b4",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1363,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "NegativeAssociateOutputsToComponentStatus",
+      "range": {
+        "startLine": 1363,
+        "startChar": 39,
+        "endLine": 1363,
+        "endChar": 42
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bea0728b_52efe6dd",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1365,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "COMPONENT_ID",
+      "range": {
+        "startLine": 1365,
+        "startChar": 45,
+        "endLine": 1365,
+        "endChar": 56
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1d519e3_12c68e14",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1366,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "COMPONENT_ID",
+      "range": {
+        "startLine": 1366,
+        "startChar": 93,
+        "endLine": 1366,
+        "endChar": 104
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49a5cc56_26ab8fb7",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1369,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "assert also for the expected not found status",
+      "range": {
+        "startLine": 1369,
+        "startChar": 8,
+        "endLine": 1369,
+        "endChar": 38
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da44ad84_2003debb",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1373,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "componentNotFound",
+      "range": {
+        "startLine": 1373,
+        "startChar": 39,
+        "endLine": 1373,
+        "endChar": 44
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e36e1a9_167d629a",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1374,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "COMPONENT_ID",
+      "range": {
+        "startLine": 1374,
+        "startChar": 45,
+        "endLine": 1374,
+        "endChar": 56
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0888576a_0a34c344",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/ToscaOperationFacadeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1377,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "assert also for the expected not found status",
+      "range": {
+        "startLine": 1377,
+        "startChar": 8,
+        "endLine": 1377,
+        "endChar": 38
+      },
+      "revId": "a0b0d17d70854372375f332b1a83f7a8e43b69d3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef8ff1f6_c6f77afd",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-21T11:31:29Z",
+      "side": 1,
+      "message": "please, match with the expected component id",
+      "range": {
+        "startLine": 1179,
+        "startChar": 50,
+        "endLine": 1179,
+        "endChar": 61
+      },
+      "revId": "6d29d1bed13fdee4acd14645680251413fdf84c7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
