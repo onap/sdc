@@ -69,7 +69,6 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -97,6 +96,7 @@ import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
@@ -175,8 +175,6 @@ public class ServiceImportBusinessLogic {
     private ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
     @Autowired
     private ServiceImportParseLogic serviceImportParseLogic;
-    @Autowired
-    private ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
 
     @Autowired
     public ServiceImportBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
@@ -193,14 +191,6 @@ public class ServiceImportBusinessLogic {
                                       ComponentDescriptionValidator componentDescriptionValidator) {
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
         this.uiComponentDataConverter = uiComponentDataConverter;
-    }
-
-    public ServiceBusinessLogic getServiceBusinessLogic() {
-        return serviceBusinessLogic;
-    }
-
-    public void setServiceBusinessLogic(ServiceBusinessLogic serviceBusinessLogic) {
-        this.serviceBusinessLogic = serviceBusinessLogic;
     }
 
     public Service createService(Service service, AuditingActionEnum auditingAction, User user, Map<String, byte[]> csarUIPayload,
@@ -314,6 +304,10 @@ public class ServiceImportBusinessLogic {
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
             log.trace("************* Finish to add inputs from yaml {}", yamlName);
+            Map<String, OutputDefinition> outputs = parsedToscaYamlInfo.getOutputs();
+            service = serviceImportParseLogic.createOutputsOnService(service, outputs);
+            log.trace("************* Finish to add outputs from yaml {}", yamlName);
+
             ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
             service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
             log.trace("************* Added Substitution filter from interface yaml {}", yamlName);
@@ -867,14 +861,6 @@ public class ServiceImportBusinessLogic {
         return nodeTypeArtifactsToHandleRes;
     }
 
-    public ComponentsUtils getComponentsUtils() {
-        return this.componentsUtils;
-    }
-
-    public void setComponentsUtils(ComponentsUtils componentsUtils) {
-        this.componentsUtils = componentsUtils;
-    }
-
     protected Either<List<CsarUtils.NonMetaArtifactInfo>, String> getValidArtifactNames(CsarInfo csarInfo,
                                                                                         Map<String, Set<List<String>>> collectedWarningMessages) {
         List<CsarUtils.NonMetaArtifactInfo> artifactPathAndNameList = csarInfo.getCsar().entrySet().stream()
@@ -1353,7 +1339,8 @@ public class ServiceImportBusinessLogic {
             uploadResInstancesMap.values().forEach(
                 i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
                     componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties,
-                    instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter, i));
+                    instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs,
+                    instNodeFilter, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
@@ -1698,7 +1685,7 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(capabilitiesNamesToUpdate)) {
             for (Map.Entry<String, List<CapabilityDefinition>> requirements : instance.getCapabilities().entrySet()) {
                 updatedCapabilities.put(requirements.getKey(), requirements.getValue().stream().filter(
-                    c -> capabilitiesNamesToUpdate.containsKey(c.getName()) && !updatedCapNames.contains(capabilitiesNamesToUpdate.get(c.getName())))
+                        c -> capabilitiesNamesToUpdate.containsKey(c.getName()) && !updatedCapNames.contains(capabilitiesNamesToUpdate.get(c.getName())))
                     .map(c -> {
                         c.setParentName(c.getName());
                         c.setName(capabilitiesNamesToUpdate.get(c.getName()));
@@ -1719,7 +1706,7 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(requirementsNamesToUpdate)) {
             for (Map.Entry<String, List<RequirementDefinition>> requirements : instance.getRequirements().entrySet()) {
                 updatedRequirements.put(requirements.getKey(), requirements.getValue().stream().filter(
-                    r -> requirementsNamesToUpdate.containsKey(r.getName()) && !updatedReqNames.contains(requirementsNamesToUpdate.get(r.getName())))
+                        r -> requirementsNamesToUpdate.containsKey(r.getName()) && !updatedReqNames.contains(requirementsNamesToUpdate.get(r.getName())))
                     .map(r -> {
                         r.setParentName(r.getName());
                         r.setName(requirementsNamesToUpdate.get(r.getName()));
