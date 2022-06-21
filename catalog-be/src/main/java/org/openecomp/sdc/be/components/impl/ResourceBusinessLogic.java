@@ -21,7 +21,6 @@ package org.openecomp.sdc.be.components.impl;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections.MapUtils.isEmpty;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
@@ -220,12 +219,11 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private final PropertyBusinessLogic propertyBusinessLogic;
     private final PolicyBusinessLogic policyBusinessLogic;
     private final ModelBusinessLogic modelBusinessLogic;
-    private IInterfaceLifecycleOperation interfaceTypeOperation;
-    private LifecycleBusinessLogic lifecycleBusinessLogic;
     private final DataTypeBusinessLogic dataTypeBusinessLogic;
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
     private final ModelOperation modelOperation;
-
+    private IInterfaceLifecycleOperation interfaceTypeOperation;
+    private LifecycleBusinessLogic lifecycleBusinessLogic;
     @Autowired
     private ICapabilityTypeOperation capabilityTypeOperation;
     @Autowired
@@ -1945,135 +1943,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         List<GroupDefinition> result = new ArrayList<>();
         List<ComponentInstance> componentInstances = component.getComponentInstances();
         if (groups != null) {
-            Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies = validateCyclicGroupsDependencies(groups);
-            if (validateCyclicGroupsDependencies.isRight()) {
-                throw new ByResponseFormatComponentException(validateCyclicGroupsDependencies.right().value());
-            }
             for (Entry<String, GroupDefinition> entry : groups.entrySet()) {
                 String groupName = entry.getKey();
                 GroupDefinition groupDefinition = entry.getValue();
                 GroupDefinition updatedGroupDefinition = new GroupDefinition(groupDefinition);
-                updatedGroupDefinition.setMembers(null);
-                Map<String, String> members = groupDefinition.getMembers();
-                if (members != null) {
-                    updateGroupMembers(groups, updatedGroupDefinition, component, componentInstances, groupName, members);
-                }
-                result.add(updatedGroupDefinition);
-            }
-        }
-        return result;
-    }
-
-    private void updateGroupMembers(Map<String, GroupDefinition> groups, GroupDefinition updatedGroupDefinition, Resource component,
-                                    List<ComponentInstance> componentInstances, String groupName, Map<String, String> members) {
-        Set<String> compInstancesNames = members.keySet();
-        if (CollectionUtils.isEmpty(componentInstances)) {
-            String membersAstString = String.join(",", compInstancesNames);
-            log.debug("The members: {}, in group: {}, cannot be found in component {}. There are no component instances.", membersAstString,
-                groupName, component.getNormalizedName());
-            throw new ByActionStatusComponentException(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
-                component.getNormalizedName(), getComponentTypeForResponse(component));
-        }
-        // Find all component instances with the member names
-        Map<String, String> memberNames = componentInstances.stream().collect(toMap(ComponentInstance::getName, ComponentInstance::getUniqueId));
-        memberNames.putAll(groups.keySet().stream().collect(toMap(g -> g, g -> "")));
-        Map<String, String> relevantInstances = memberNames.entrySet().stream().filter(n -> compInstancesNames.contains(n.getKey()))
-            .collect(toMap(Entry::getKey, Entry::getValue));
-        if (relevantInstances.size() != compInstancesNames.size()) {
-            List<String> foundMembers = new ArrayList<>(relevantInstances.keySet());
-            foundMembers.forEach(compInstancesNames::remove);
-            String membersAstString = String.join(",", compInstancesNames);
-            log.debug("The members: {}, in group: {}, cannot be found in component: {}", membersAstString, groupName, component.getNormalizedName());
-            throw new ByActionStatusComponentException(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName,
-                component.getNormalizedName(), getComponentTypeForResponse(component));
-        }
-        updatedGroupDefinition.setMembers(relevantInstances);
-    }
-
-    /**
-     * This Method validates that there is no cyclic group dependencies. meaning group A as member in group B which is member in group A
-     *
-     * @param allGroups
-     * @return
-     */
-    private Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies(Map<String, GroupDefinition> allGroups) {
-        Either<Boolean, ResponseFormat> result = Either.left(true);
-        try {
-            Iterator<Entry<String, GroupDefinition>> allGroupsItr = allGroups.entrySet().iterator();
-            while (allGroupsItr.hasNext() && result.isLeft()) {
-                Entry<String, GroupDefinition> groupAEntry = allGroupsItr.next();
-                // Fetches a group member A
-                String groupAName = groupAEntry.getKey();
-                // Finds all group members in group A
-                Set<String> allGroupAMembersNames = new HashSet<>();
-                fillAllGroupMemebersRecursivly(groupAEntry.getKey(), allGroups, allGroupAMembersNames);
-                // If A is a group member of itself found cyclic dependency
-                if (allGroupAMembersNames.contains(groupAName)) {
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GROUP_HAS_CYCLIC_DEPENDENCY, groupAName);
-                    result = Either.right(responseFormat);
-                }
-            }
-        } catch (Exception e) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-            result = Either.right(responseFormat);
-            log.debug("Exception occurred when validateCyclicGroupsDependencies, error is:{}", e.getMessage(), e);
-        }
-        return result;
-    }
-
-    /**
-     * This Method fills recursively the set groupMembers with all the members of the given group which are also of type group.
-     *
-     * @param groupName
-     * @param allGroups
-     * @param allGroupMembers
-     * @return
-     */
-    private void fillAllGroupMemebersRecursivly(String groupName, Map<String, GroupDefinition> allGroups, Set<String> allGroupMembers) {
-        // Found Cyclic dependency
-        if (isfillGroupMemebersRecursivlyStopCondition(groupName, allGroups, allGroupMembers)) {
-            return;
-        }
-        GroupDefinition groupDefinition = allGroups.get(groupName);
-        // All Members Of Current Group Resource Instances & Other Groups
-        Set<String> currGroupMembers = groupDefinition.getMembers().keySet();
-        // Filtered Members Of Current Group containing only members which
-
-        // are groups
-        List<String> currGroupFilteredMembers = currGroupMembers.stream().
-            // Keep Only Elements of type group and not Resource Instances
-                filter(allGroups::containsKey).
-            // Add Filtered Elements to main Set
-                peek(allGroupMembers::add).
-            // Collect results
-                collect(toList());
-        // Recursively call the method for all the filtered group members
-        for (String innerGroupName : currGroupFilteredMembers) {
-            fillAllGroupMemebersRecursivly(innerGroupName, allGroups, allGroupMembers);
-        }
-    }
-
-    private boolean isfillGroupMemebersRecursivlyStopCondition(String groupName, Map<String, GroupDefinition> allGroups,
-                                                               Set<String> allGroupMembers) {
-        boolean stop = !allGroups.containsKey(groupName);
-        // In Case Not Group Stop
-        // In Case Group Has no members stop
-        if (!stop) {
-            GroupDefinition groupDefinition = allGroups.get(groupName);
-            stop = isEmpty(groupDefinition.getMembers());
-        }
-        // In Case all group members already contained stop
-        if (!stop) {
-            final Set<String> allMembers = allGroups.get(groupName).getMembers().keySet();
-            Set<String> membersOfTypeGroup = allMembers.stream().
-                // Filter In Only Group members
-                    filter(allGroups::containsKey).
-                // Collect
-                    collect(toSet());
-            stop = allGroupMembers.containsAll(membersOfTypeGroup);
-        }
-        return stop;
-    }
 
     private Resource createRIAndRelationsFromYaml(String yamlName, Resource resource,
                                                   Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap,

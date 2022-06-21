@@ -18,15 +18,12 @@ package org.openecomp.sdc.be.components.impl;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import fj.data.Either;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -51,7 +48,6 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
@@ -449,31 +445,6 @@ public class ServiceImportParseLogic {
             componentTypeForResponse = ((Resource) component).getResourceType().name();
         }
         return componentTypeForResponse;
-    }
-
-    protected boolean isfillGroupMemebersRecursivlyStopCondition(String groupName, Map<String, GroupDefinition> allGroups,
-                                                                 Set<String> allGroupMembers) {
-        boolean stop = false;
-        // In Case Not Group Stop
-        if (!allGroups.containsKey(groupName)) {
-            stop = true;
-        }
-        // In Case Group Has no members stop
-        if (!stop) {
-            GroupDefinition groupDefinition = allGroups.get(groupName);
-            stop = MapUtils.isEmpty(groupDefinition.getMembers());
-        }
-        // In Case all group members already contained stop
-        if (!stop) {
-            final Set<String> allMembers = allGroups.get(groupName).getMembers().keySet();
-            Set<String> membersOfTypeGroup = allMembers.stream().
-                // Filter In Only Group members
-                    filter(allGroups::containsKey).
-                // Collect
-                    collect(toSet());
-            stop = allGroupMembers.containsAll(membersOfTypeGroup);
-        }
-        return stop;
     }
 
     public Resource buildValidComplexVfc(Resource resource, CsarInfo csarInfo, String nodeName, Map<String, NodeTypeInfo> nodesInfo) {
@@ -1028,9 +999,9 @@ public class ServiceImportParseLogic {
         }
     }
 
-    public Either<RequirementDefinition, ResponseFormat> findAviableRequiremen(String regName, String yamlName,
-                                                                               UploadComponentInstanceInfo uploadComponentInstanceInfo,
-                                                                               ComponentInstance currentCompInstance, String capName) {
+    public Either<RequirementDefinition, ResponseFormat> findAvailableRequirement(String regName, String yamlName,
+                                                                                  UploadComponentInstanceInfo uploadComponentInstanceInfo,
+                                                                                  ComponentInstance currentCompInstance, String capName) {
         Map<String, List<RequirementDefinition>> comInstRegDefMap = currentCompInstance.getRequirements();
         List<RequirementDefinition> list = comInstRegDefMap.get(capName);
         RequirementDefinition validRegDef = null;
@@ -1232,7 +1203,7 @@ public class ServiceImportParseLogic {
             String propertyName = property.getName().toLowerCase();
             String propertyType = property.getType();
             ComponentInstanceProperty validProperty;
-            if (defaultProperties.containsKey(propertyName) && propertTypeEqualsTo(defaultProperties, propertyName, propertyType)) {
+            if (defaultProperties.containsKey(propertyName) && propertyTypeEqualsTo(defaultProperties, propertyName, propertyType)) {
                 throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NAME_ALREADY_EXISTS, propertyName));
             }
             validProperty = new ComponentInstanceProperty();
@@ -1247,7 +1218,7 @@ public class ServiceImportParseLogic {
         defaultCapability.setProperties(validProperties);
     }
 
-    private boolean propertTypeEqualsTo(Map<String, PropertyDefinition> defaultProperties, String propertyName, String propertyType) {
+    private boolean propertyTypeEqualsTo(Map<String, PropertyDefinition> defaultProperties, String propertyName, String propertyType) {
         return propertyType != null && !defaultProperties.get(propertyName).getType().equals(propertyType);
     }
 
@@ -1710,10 +1681,6 @@ public class ServiceImportParseLogic {
         List<GroupDefinition> result = new ArrayList<>();
         List<ComponentInstance> componentInstances = component.getComponentInstances();
         if (groups != null) {
-            Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies = validateCyclicGroupsDependencies(groups);
-            if (validateCyclicGroupsDependencies.isRight()) {
-                throw new ComponentException(validateCyclicGroupsDependencies.right().value());
-            }
             for (Map.Entry<String, GroupDefinition> entry : groups.entrySet()) {
                 String groupName = entry.getKey();
                 GroupDefinition groupDefinition = entry.getValue();
@@ -1758,55 +1725,6 @@ public class ServiceImportParseLogic {
                     getComponentTypeForResponse(component)));
         }
         updatedGroupDefinition.setMembers(relevantInstances);
-    }
-
-    public Either<Boolean, ResponseFormat> validateCyclicGroupsDependencies(Map<String, GroupDefinition> allGroups) {
-        Either<Boolean, ResponseFormat> result = Either.left(true);
-        try {
-            Iterator<Map.Entry<String, GroupDefinition>> allGroupsItr = allGroups.entrySet().iterator();
-            while (allGroupsItr.hasNext() && result.isLeft()) {
-                Map.Entry<String, GroupDefinition> groupAEntry = allGroupsItr.next();
-                // Fetches a group member A
-                String groupAName = groupAEntry.getKey();
-                // Finds all group members in group A
-                Set<String> allGroupAMembersNames = new HashSet<>();
-                fillAllGroupMemebersRecursivly(groupAEntry.getKey(), allGroups, allGroupAMembersNames);
-                // If A is a group member of itself found cyclic dependency
-                if (allGroupAMembersNames.contains(groupAName)) {
-                    ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GROUP_HAS_CYCLIC_DEPENDENCY, groupAName);
-                    result = Either.right(responseFormat);
-                }
-            }
-        } catch (Exception e) {
-            ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
-            result = Either.right(responseFormat);
-            log.debug("Exception occured when validateCyclicGroupsDependencies, error is:{}", e.getMessage(), e);
-        }
-        return result;
-    }
-
-    protected void fillAllGroupMemebersRecursivly(String groupName, Map<String, GroupDefinition> allGroups, Set<String> allGroupMembers) {
-        // Found Cyclic dependency
-        if (isfillGroupMemebersRecursivlyStopCondition(groupName, allGroups, allGroupMembers)) {
-            return;
-        }
-        GroupDefinition groupDefinition = allGroups.get(groupName);
-        // All Members Of Current Group Resource Instances & Other Groups
-        Set<String> currGroupMembers = groupDefinition.getMembers().keySet();
-        // Filtered Members Of Current Group containing only members which
-
-        // are groups
-        List<String> currGroupFilteredMembers = currGroupMembers.stream().
-            // Keep Only Elements of type group and not Resource Instances
-                filter(allGroups::containsKey).
-            // Add Filtered Elements to main Set
-                peek(allGroupMembers::add).
-            // Collect results
-                collect(toList());
-        // Recursively call the method for all the filtered group members
-        for (String innerGroupName : currGroupFilteredMembers) {
-            fillAllGroupMemebersRecursivly(innerGroupName, allGroups, allGroupMembers);
-        }
     }
 
     public ImmutablePair<Resource, ActionStatus> createResourceFromNodeType(String nodeTypeYaml, UploadResourceInfo resourceMetaData, User creator,
@@ -2157,7 +2075,8 @@ public class ServiceImportParseLogic {
     public void associateCINodeFilterToComponent(String yamlName, Service service, Map<String, UploadNodeFilterInfo> nodeFilter) {
         log.trace("************* Going to associate all resource node filters {}", yamlName);
         if (MapUtils.isNotEmpty(nodeFilter)) {
-            StorageOperationStatus status = componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(service.getUniqueId(), nodeFilter);
+            StorageOperationStatus status = componentNodeFilterBusinessLogic.associateNodeFilterToComponentInstance(service.getUniqueId(),
+                nodeFilter);
             if (status != StorageOperationStatus.OK) {
                 throw new ComponentException(
                     componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(status), yamlName));
@@ -2342,7 +2261,7 @@ public class ServiceImportParseLogic {
                     RequirementCapabilityRelDef regCapRelDef = new RequirementCapabilityRelDef();
                     regCapRelDef.setFromNode(resourceInstanceId);
                     log.debug("try to find available requirement {} ", regName);
-                    Either<RequirementDefinition, ResponseFormat> eitherReqStatus = findAviableRequiremen(regName, yamlName, nodesInfoValue,
+                    Either<RequirementDefinition, ResponseFormat> eitherReqStatus = findAvailableRequirement(regName, yamlName, nodesInfoValue,
                         currentCompInstance, uploadRegInfo.getCapabilityName());
                     if (eitherReqStatus.isRight()) {
                         return eitherReqStatus.right().value();

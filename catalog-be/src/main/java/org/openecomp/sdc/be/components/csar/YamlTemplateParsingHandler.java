@@ -138,11 +138,13 @@ public class YamlTemplateParsingHandler {
         log.debug("#parseResourceInfoFromYAML - Going to parse yaml {} ", fileName);
         Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
         ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
-        Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
-        Map<String, Object> mappedTopologyTemplateInputs  = mappedTopologyTemplate.entrySet().stream().filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE,
+            ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
+        Map<String, Object> mappedTopologyTemplateInputs = mappedTopologyTemplate.entrySet().stream()
+            .filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
-        parsedToscaYamlInfo.setInstances(getInstances(fileName, mappedToscaTemplate, createdNodesToscaResourceNames));
-        parsedToscaYamlInfo.setGroups(getGroups(fileName, mappedToscaTemplate, component.getModel()));
+        parsedToscaYamlInfo.setInstances(getInstances(mappedToscaTemplate, createdNodesToscaResourceNames));
+        parsedToscaYamlInfo.setGroups(getGroups(mappedToscaTemplate, component.getModel()));
         if (component instanceof Resource) {
             parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate, component.getModel()));
         }
@@ -319,7 +321,7 @@ public class YamlTemplateParsingHandler {
         return targets;
     }
 
-    private Map<String, UploadComponentInstanceInfo> getInstances(String yamlName, Map<String, Object> toscaJson,
+    private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson,
                                                                   Map<String, String> createdNodesToscaResourceNames) {
         Map<String, Object> nodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES).left().on(err -> new HashMap<>());
         if (nodeTemplates.isEmpty()) {
@@ -330,27 +332,26 @@ public class YamlTemplateParsingHandler {
 
     private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames,
                                                                   Map<String, Object> nodeTemplates) {
-        Map<String, UploadComponentInstanceInfo> moduleComponentInstances;
         Map<String, Object> substitutionMappings = getSubstitutionMappings(toscaJson);
-        moduleComponentInstances = nodeTemplates.entrySet().stream()
+        return nodeTemplates.entrySet().stream()
             .map(node -> buildModuleComponentInstanceInfo(node, substitutionMappings, createdNodesToscaResourceNames))
             .collect(Collectors.toMap(UploadComponentInstanceInfo::getName, i -> i));
-        return moduleComponentInstances;
     }
 
     private Map<String, Object> getSubstitutionMappings(Map<String, Object> toscaJson) {
-        Map<String, Object> substitutionMappings = null;
         Either<Map<String, Object>, ResultStatusEnum> eitherSubstitutionMappings = findFirstToscaMapElement(toscaJson, SUBSTITUTION_MAPPINGS);
         if (eitherSubstitutionMappings.isLeft()) {
-            substitutionMappings = eitherSubstitutionMappings.left().value();
+            return eitherSubstitutionMappings.left().value();
         }
-        return substitutionMappings;
+        return null;
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, GroupDefinition> getGroups(String fileName, Map<String, Object> toscaJson, String model) {
-        Map<String, Object> foundGroups = findFirstToscaMapElement(toscaJson, GROUPS).left().on(err -> logGroupsNotFound(fileName));
-        if (MapUtils.isNotEmpty(foundGroups) && matcheKey(foundGroups)) {
+    private Map<String, GroupDefinition> getGroups(Map<String, Object> toscaJson, String model) {
+        Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(toscaJson, TOPOLOGY_TEMPLATE, ToscaElementTypeEnum.ALL)
+            .left().on(err -> new HashMap<>());
+        Map<String, Object> foundGroups = (Map<String, Object>) mappedTopologyTemplate.get(GROUPS.getElementName());
+        if (MapUtils.isNotEmpty(foundGroups)) {
             Map<String, GroupDefinition> groups = foundGroups.entrySet().stream().map(groupToCreate -> createGroup(groupToCreate, model))
                 .collect(Collectors.toMap(GroupDefinition::getName, g -> g));
             Map<String, Object> substitutionMappings = getSubstitutionMappings(toscaJson);
@@ -411,7 +412,7 @@ public class YamlTemplateParsingHandler {
                 rollbackWithException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE);
             }
         } catch (ClassCastException e) {
-            log.debug("#createGroup - Failed to create the group {}. The exception occure", groupNameValue.getKey(), e);
+            log.debug("#createGroup - Failed to create the group {}. The exception occurres", groupNameValue.getKey(), e);
             rollbackWithException(ActionStatus.INVALID_YAML);
         }
         return group;
@@ -1086,11 +1087,6 @@ public class YamlTemplateParsingHandler {
 
     private boolean valueNotContainsPattern(Pattern pattern, Object propValue) {
         return propValue == null || !pattern.matcher(propValue.toString()).find();
-    }
-
-    private Map<String, Object> failIfNoNodeTemplates(String fileName) {
-        janusGraphDao.rollback();
-        throw new ByActionStatusComponentException(ActionStatus.NOT_TOPOLOGY_TOSCA_TEMPLATE, fileName);
     }
 
     private Object failIfNotTopologyTemplate(String fileName) {

@@ -15,7 +15,27 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
@@ -30,8 +50,23 @@ import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
 import org.openecomp.sdc.be.components.validation.UserValidations;
-import org.openecomp.sdc.be.components.validation.component.*;
-import org.openecomp.sdc.be.components.validation.service.*;
+import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentFieldValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
+import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceCategoryValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceEnvironmentContextValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceFieldValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceFunctionValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceInstantiationTypeValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceNamingPolicyValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceRoleValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceTypeValidator;
+import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.AuditCassandraDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
@@ -39,11 +74,33 @@ import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.externalapi.servlet.representation.*;
+import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractResourceInfo;
+import org.openecomp.sdc.be.externalapi.servlet.representation.AbstractTemplateInfo;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ArtifactMetadata;
+import org.openecomp.sdc.be.externalapi.servlet.representation.CopyServiceInfo;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ReplaceVNFInfo;
+import org.openecomp.sdc.be.externalapi.servlet.representation.ResourceInstanceMetadata;
 import org.openecomp.sdc.be.facade.operations.CatalogOperation;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
-import org.openecomp.sdc.be.model.*;
+import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
+import org.openecomp.sdc.be.model.RequirementDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.UploadCapInfo;
+import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
+import org.openecomp.sdc.be.model.UploadReqInfo;
+import org.openecomp.sdc.be.model.UploadServiceInfo;
+import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
@@ -59,22 +116,24 @@ import org.openecomp.sdc.common.api.UploadArtifactInfo;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.ServletContext;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-
 public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicMock {
-    protected ServiceImportBusinessLogic sIB1;
+
     protected static final String SERVICE_CATEGORY = "Mobility";
     protected static final String INSTANTIATION_TYPE = "A-la-carte";
+    protected static final String CERTIFIED_VERSION = "1.0";
+    protected static final String UNCERTIFIED_VERSION = "0.2";
+    protected static final String COMPONNET_ID = "myUniqueId";
+    protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
+    protected static final String SERVICE_ROLE = JsonPresentationFields.SERVICE_ROLE.getPresentation();
+    protected static final String SERVICE_TYPE = JsonPresentationFields.SERVICE_TYPE.getPresentation();
+    protected static final String SERVICE_FUNCTION = JsonPresentationFields.SERVICE_FUNCTION.getPresentation();
+    private static final String RESOURCE_NAME = "My-Resource_Name with   space";
+    private static final String RESOURCE_TOSCA_NAME = "My-Resource_Tosca_Name";
+    private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
+    private static final String RESOURCE_SUBCATEGORY = "Router";
     protected final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
+    protected ServiceImportBusinessLogic sIB1;
     protected UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     protected WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     protected WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
@@ -93,16 +152,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     protected ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
     protected ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
     protected ServiceImportParseLogic serviceImportParseLogic = Mockito.mock(ServiceImportParseLogic.class);
-    IElementOperation mockElementDao = new ElementOperationMock();
-    DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
-    ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
-    ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
-    UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
-    NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
     protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator(componentsUtils);
-    protected ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
     protected ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
     protected ServiceFunctionValidator serviceFunctionValidator = new ServiceFunctionValidator(componentsUtils);
     protected ServiceInstantiationTypeValidator serviceInstantiationTypeValidator = new ServiceInstantiationTypeValidator(componentsUtils);
@@ -112,24 +162,18 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     protected ComponentContactIdValidator componentContactIdValidator = new ComponentContactIdValidator(componentsUtils);
     protected ComponentTagsValidator componentTagsValidator = new ComponentTagsValidator(componentsUtils);
     protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
-    protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
-    protected ServiceValidator serviceValidator = createServiceValidator();
-
     protected User user = null;
     protected Resource genericService = null;
-
-    private static final String RESOURCE_NAME = "My-Resource_Name with   space";
-    private static final String RESOURCE_TOSCA_NAME = "My-Resource_Tosca_Name";
-    private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
-    private static final String RESOURCE_SUBCATEGORY = "Router";
-    protected static final String CERTIFIED_VERSION = "1.0";
-    protected static final String UNCERTIFIED_VERSION = "0.2";
-    protected static final String COMPONNET_ID = "myUniqueId";
-    protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
-
-    protected static final String SERVICE_ROLE = JsonPresentationFields.SERVICE_ROLE.getPresentation();
-    protected static final String SERVICE_TYPE = JsonPresentationFields.SERVICE_TYPE.getPresentation();
-    protected static final String SERVICE_FUNCTION = JsonPresentationFields.SERVICE_FUNCTION.getPresentation();
+    IElementOperation mockElementDao = new ElementOperationMock();
+    protected ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
+    protected ServiceValidator serviceValidator = createServiceValidator();
+    DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
+    ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
+    ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
+    UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
+    NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
 
     public ServiceImportBussinessLogicBaseTestSetup() {
 
@@ -137,14 +181,14 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
 
     protected ServiceValidator createServiceValidator() {
         List<ComponentFieldValidator> componentFieldValidators = Arrays.asList(componentContactIdValidator,
-                componentDescriptionValidator,
-                componentIconValidator, componentNameValidator,
-                new ComponentProjectCodeValidator(componentsUtils),
-                componentTagsValidator);
+            componentDescriptionValidator,
+            componentIconValidator, componentNameValidator,
+            new ComponentProjectCodeValidator(componentsUtils),
+            componentTagsValidator);
 
         List<ServiceFieldValidator> serviceFieldValidators = Arrays.asList(serviceCategoryValidator, new ServiceEnvironmentContextValidator(),
-                serviceInstantiationTypeValidator, new ServiceNamingPolicyValidator(componentsUtils),
-                serviceRoleValidator, serviceTypeValidator);
+            serviceInstantiationTypeValidator, new ServiceNamingPolicyValidator(componentsUtils),
+            serviceRoleValidator, serviceTypeValidator);
         return new ServiceValidator(componentsUtils, componentFieldValidators, serviceFieldValidators);
     }
 
@@ -162,12 +206,10 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         user.setRole(Role.ADMIN.name());
 
         when(mockUserAdmin.getUser("jh0003", false)).thenReturn(user);
-        when(userValidations.validateUserExists(eq("jh0003"))).thenReturn(user);
+        when(userValidations.validateUserExists("jh0003")).thenReturn(user);
         when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(user);
-//        when(userValidations.validateUserRole(user))
         // Servlet Context attributes
         when(servletContext.getAttribute(Constants.CONFIGURATION_MANAGER_ATTR)).thenReturn(configurationManager);
-//        when(servletContext.getAttribute(Constants.SERVICE_OPERATION_MANAGER)).thenReturn(new ServiceOperation());
         when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR)).thenReturn(webAppContextWrapper);
         when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webAppContext);
         when(webAppContext.getBean(IElementOperation.class)).thenReturn(mockElementDao);
@@ -176,7 +218,8 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
         // artifact bussinesslogic
         ArtifactDefinition artifactDef = new ArtifactDefinition();
-        when(artifactBl.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class), Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
+        when(artifactBl.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class),
+            Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
 
         // createService
         Service serviceResponse = createServiceObject(true);
@@ -205,18 +248,15 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         Either<Resource, StorageOperationStatus> findLatestGeneric = Either.left(genericService);
         when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_SERVICE_NAME)).thenReturn(findLatestGeneric);
 
-        when(serviceImportParseLogic.isArtifactDeletionRequired(anyString(),any(),anyBoolean())).thenReturn(true);
-        Either<Boolean, ResponseFormat> validateCGD = Either.left(true);
-        when(serviceImportParseLogic.validateCyclicGroupsDependencies(any())).thenReturn(validateCGD);
+        when(serviceImportParseLogic.isArtifactDeletionRequired(anyString(), any(), anyBoolean())).thenReturn(true);
 
         sIB1 = new ServiceImportBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
-                groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
-                artifactBl, distributionEngine, componentInstanceBusinessLogic,
-                serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter, serviceFilterOperation,
-                serviceFilterValidator, artifactToscaOperation, componentContactIdValidator,
-                componentNameValidator, componentTagsValidator, componentValidator,
-                componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
-
+            groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
+            artifactBl, distributionEngine, componentInstanceBusinessLogic,
+            serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter, serviceFilterOperation,
+            serviceFilterValidator, artifactToscaOperation, componentContactIdValidator,
+            componentNameValidator, componentTagsValidator, componentValidator,
+            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
 
         mockAbstract();
 
@@ -239,10 +279,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         List<String> tgs = new ArrayList<>();
         tgs.add(service.getName());
         service.setTags(tgs);
-        // service.setVendorName("Motorola");
-        // service.setVendorRelease("1.0.0");
         service.setIcon("defaulticon");
-        // service.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         service.setContactId("aa1234");
         service.setProjectCode("12345");
         service.setEcompGeneratedNaming(true);
@@ -267,7 +304,6 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         categories.add(category);
         resource.setCategories(categories);
 
-
         resource.setDescription("description");
         List<String> tgs = new ArrayList<>();
         tgs.add(resource.getName());
@@ -275,7 +311,6 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         resource.setIcon("defaulticon");
         resource.setContactId("aa1234");
         resource.setProjectCode("12345");
-
 
         if (afterCreate) {
             resource.setVersion("0.1");
@@ -285,8 +320,8 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         }
         return resource;
     }
-	
-protected Resource createParseResourceObject(boolean afterCreate) {
+
+    protected Resource createParseResourceObject(boolean afterCreate) {
         Resource resource = new Resource();
         resource.setName(RESOURCE_NAME);
         resource.setToscaResourceName(RESOURCE_TOSCA_NAME);
@@ -304,7 +339,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         resource.setContactId("ya5467");
         resource.setIcon("defaulticon");
         Map<String, List<RequirementDefinition>> requirements = new HashMap<>();
-        List<RequirementDefinition> requirementDefinitionList= new ArrayList<>();
+        List<RequirementDefinition> requirementDefinitionList = new ArrayList<>();
         requirements.put("test", requirementDefinitionList);
         resource.setRequirements(requirements);
 
@@ -312,13 +347,14 @@ protected Resource createParseResourceObject(boolean afterCreate) {
             resource.setName(resource.getName());
             resource.setVersion("0.1");
             resource.setUniqueId(resource.getName()
-                    .toLowerCase() + ":" + resource.getVersion());
+                .toLowerCase() + ":" + resource.getVersion());
             resource.setCreatorUserId(user.getUserId());
             resource.setCreatorFullName(user.getFirstName() + " " + user.getLastName());
             resource.setLifecycleState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
         }
         return resource;
     }
+
     protected Resource setupGenericServiceMock() {
         Resource genericService = new Resource();
         genericService.setVersion("1.0");
@@ -331,11 +367,11 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         Map<String, GroupDefinition> groups = new HashMap<>();
         GroupDefinition groupDefinition = new GroupDefinition();
         groupDefinition.setName("groupDefinitionName");
-        groups.put("groupsMap",groupDefinition);
+        groups.put("groupsMap", groupDefinition);
         return groups;
     }
 
-    protected UploadComponentInstanceInfo getuploadComponentInstanceInfo(){
+    protected UploadComponentInstanceInfo getuploadComponentInstanceInfo() {
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
         uploadComponentInstanceInfo.setType("resources");
         Collection<String> directives = new Collection<String>() {
@@ -413,7 +449,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         uploadReqInfo.setNode("zxjTestImportServiceAb");
         uploadReqInfo.setCapabilityName("tosca.capabilities.Node");
         uploadReqInfoList.add(uploadReqInfo);
-        requirements.put("requirements",uploadReqInfoList);
+        requirements.put("requirements", uploadReqInfoList);
         uploadNodeFilterInfo.setName("mme_ipu_vdu.virtualbinding");
         uploadComponentInstanceInfo.setCapabilities(getCapabilities());
         uploadComponentInstanceInfo.setRequirements(requirements);
@@ -421,18 +457,18 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         return uploadComponentInstanceInfo;
     }
 
-    protected Map<String, List<UploadCapInfo>> getCapabilities(){
+    protected Map<String, List<UploadCapInfo>> getCapabilities() {
         List<UploadCapInfo> uploadCapInfoList = new ArrayList<>();
         UploadCapInfo uploadCapInfo = new UploadCapInfo();
         uploadCapInfo.setNode("tosca.nodes.Root");
         uploadCapInfo.setName("mme_ipu_vdu.dependency");
         uploadCapInfoList.add(uploadCapInfo);
         Map<String, List<UploadCapInfo>> uploadCapInfoMap = new HashMap<>();
-        uploadCapInfoMap.put("tosca.capabilities.Node",uploadCapInfoList);
+        uploadCapInfoMap.put("tosca.capabilities.Node", uploadCapInfoList);
         return uploadCapInfoMap;
     }
 
-    protected List<ComponentInstance> creatComponentInstances(){
+    protected List<ComponentInstance> creatComponentInstances() {
         List<ComponentInstance> componentInstances = new ArrayList<>();
         ComponentInstance componentInstance = new ComponentInstance();
         Map<String, List<CapabilityDefinition>> capabilities = new HashMap<>();
@@ -440,14 +476,14 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         CapabilityDefinition capabilityDefinition = new CapabilityDefinition();
         capabilityDefinition.setName("mme_ipu_vdu.feature");
         capabilityDefinitionList.add(capabilityDefinition);
-        capabilities.put("tosca.capabilities.Node",capabilityDefinitionList);
+        capabilities.put("tosca.capabilities.Node", capabilityDefinitionList);
 
         Map<String, List<RequirementDefinition>> requirements = new HashMap<>();
         List<RequirementDefinition> requirementDefinitionList = new ArrayList<>();
         RequirementDefinition requirementDefinition = new RequirementDefinition();
         requirementDefinition.setName("zxjtestimportserviceab0.mme_ipu_vdu.dependency.test");
         requirementDefinitionList.add(requirementDefinition);
-        requirements.put("tosca.capabilities.Node",requirementDefinitionList);
+        requirements.put("tosca.capabilities.Node", requirementDefinitionList);
         componentInstance.setRequirements(requirements);
         componentInstance.setCapabilities(capabilities);
         componentInstance.setUniqueId("uniqueId");
@@ -457,7 +493,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         return componentInstances;
     }
 
-    protected UploadComponentInstanceInfo createUploadComponentInstanceInfo(){
+    protected UploadComponentInstanceInfo createUploadComponentInstanceInfo() {
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
         uploadComponentInstanceInfo.setName("UploadComponentInstanceInfo");
         return uploadComponentInstanceInfo;
@@ -469,7 +505,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         checkCreateFile();
     }
 
-    private void checkCreateAbstract(){
+    private void checkCreateAbstract() {
         AbstractResourceInfo abstractResourceInfo = new AbstractResourceInfo();
         List<RequirementCapabilityRelDef> componentInstancesRelations = new ArrayList<>();
         abstractResourceInfo.setComponentInstancesRelations(componentInstancesRelations);
@@ -519,7 +555,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         getReplaceVNFInfo.getRealVNFComponentInstance();
     }
 
-    private void checkCreateOther(){
+    private void checkCreateOther() {
         ResourceInstanceMetadata resourceInstanceMetadata = new ResourceInstanceMetadata();
         List<ArtifactMetadata> artifacts = new ArrayList<>();
         resourceInstanceMetadata.setArtifacts(artifacts);
@@ -571,7 +607,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         uploadServiceInfo.setPayloadData("payloadData");
     }
 
-    protected void checkGetUploadServiceInfo(){
+    protected void checkGetUploadServiceInfo() {
         UploadServiceInfo uploadServiceInfo = new UploadServiceInfo();
         List<String> tags = new ArrayList<>();
         List<CategoryDefinition> categories = new ArrayList<>();
@@ -632,7 +668,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         getCsfy.getNodeName();
     }
 
-    protected CsarInfo getCsarInfo () throws IOException {
+    protected CsarInfo getCsarInfo() throws IOException {
         String csarUuid = "0010";
         User user = new User();
         Map<String, byte[]> csar = crateCsarFromPayload();
@@ -640,7 +676,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         String mainTemplateName = "mainTemplateName";
         String mainTemplateContent = getMainTemplateContent();
         final Service service = createServiceObject(false);
-        CsarInfo csarInfo = new CsarInfo(user, csarUuid,  csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+        CsarInfo csarInfo = new CsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
         return csarInfo;
     }
 
@@ -648,7 +684,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
         String payloadName = "valid_vf.csar";
         byte[] data = new byte[1024];
         Map<String, byte[]> returnValue = new HashMap<>();
-        returnValue.put(payloadName,data);
+        returnValue.put(payloadName, data);
 
         return returnValue;
     }
@@ -679,7 +715,7 @@ protected Resource createParseResourceObject(boolean afterCreate) {
 
     protected void assertComponentException(ComponentException e, ActionStatus expectedStatus, String... variables) {
         ResponseFormat actualResponse = e.getResponseFormat() != null ?
-                e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
         assertResponse(actualResponse, expectedStatus, variables);
     }
 
