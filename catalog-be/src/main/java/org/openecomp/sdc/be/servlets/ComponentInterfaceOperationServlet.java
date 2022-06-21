@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.components.impl.ComponentInterfaceOperationBusinessL
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -171,14 +172,14 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
         LOGGER.debug(START_HANDLE_REQUEST_OF, request.getMethod(), request.getRequestURI());
         LOGGER.debug(MODIFIER_ID_IS, userId);
         final User userModifier = componentInterfaceOperationBusinessLogic.validateUser(userId);
-        final ComponentTypeEnum componentTypeEnum = RESOURCE;
         final byte[] bytes = IOUtils.toByteArray(request.getInputStream());
         if (bytes == null || bytes.length == 0) {
             LOGGER.error(INTERFACE_OPERATION_CONTENT_INVALID);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
         }
+        final ComponentTypeEnum componentType = RESOURCE;
         final String data = new String(bytes);
-        final Optional<InterfaceDefinition> mappedInterfaceOperationData = getMappedInterfaceData(data, userModifier, componentTypeEnum);
+        final Optional<InterfaceDefinition> mappedInterfaceOperationData = getMappedInterfaceData(data, userModifier, componentType);
         if (mappedInterfaceOperationData.isEmpty()) {
             LOGGER.error(INTERFACE_OPERATION_CONTENT_INVALID, data);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT));
@@ -186,7 +187,7 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
         final Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
         try {
             final Optional<Component> actionResponse = componentInterfaceOperationBusinessLogic
-                .updateResourceInterfaceOperation(componentId, mappedInterfaceOperationData.get(), componentTypeEnum,
+                .updateResourceInterfaceOperation(componentId, userId, mappedInterfaceOperationData.get(), componentType,
                     errorWrapper, true);
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_UPDATE_INTERFACE_OPERATION, componentId);
@@ -195,6 +196,9 @@ public class ComponentInterfaceOperationServlet extends AbstractValidationsServl
                 LOGGER.debug(INTERFACE_OPERATION_SUCCESSFULLY_UPDATED, componentId);
                 return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.CREATED), actionResponse.get());
             }
+        } catch (final ComponentException e) {
+            //let it be handled by org.openecomp.sdc.be.servlets.exception.ComponentExceptionMapper
+            throw e;
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(UPDATE_INTERFACE_OPERATION);
             LOGGER.error(FAILED_TO_UPDATE_INTERFACE_OPERATION_WITH_ERROR, e);
