@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -31,7 +32,9 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
 import org.openecomp.sdc.be.model.ComponentInstanceOutput;
@@ -94,7 +97,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         if (!ComponentValidations.validateComponentInstanceExist(component, componentInstanceId)) {
             final ActionStatus actionStatus = ActionStatus.COMPONENT_INSTANCE_NOT_FOUND;
             log.debug(FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_ERROR, componentInstanceId, actionStatus);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, component.getComponentMetadataForSupportLog(), StatusCode.ERROR,
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_OUTPUTS, component.getComponentMetadataForSupportLog(), StatusCode.ERROR,
                 FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID, componentInstanceId);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
@@ -189,7 +192,6 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
      * @return
      */
     public OutputDefinition deleteOutput(final String componentId, final String userId, final String outputId) {
-        Either<OutputDefinition, ResponseFormat> deleteEither = null;
         if (log.isDebugEnabled()) {
             log.debug("Going to delete output id: {}", outputId);
         }
@@ -236,4 +238,33 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             unlockComponent(failed, component);
         }
     }
+
+    public Either<List<OutputDefinition>, ResponseFormat> createOutputsInGraph(Map<String, OutputDefinition> outputs,
+                                                                               Component component) {
+
+        List<OutputDefinition> resourceAttributes = component.getOutputs();
+
+        for (Map.Entry<String, OutputDefinition> outputDefinition : outputs.entrySet()) {
+            outputDefinition.getValue().setName(outputDefinition.getKey());
+        }
+        if (resourceAttributes != null) {
+            Map<String, OutputDefinition> generatedOutputs = resourceAttributes.stream()
+                .collect(Collectors.toMap(AttributeDataDefinition::getName, i -> i));
+            Either<Map<String, OutputDefinition>, String> mergeEither = ToscaDataDefinition.mergeDataMaps(generatedOutputs, outputs);
+            if (mergeEither.isRight()) {
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.OUTPUT_ALREADY_EXIST, mergeEither.right().value()));
+            }
+            outputs = mergeEither.left().value();
+        }
+
+        final var associateOutputsEither = toscaOperationFacade.createAndAssociateOutputs(outputs, component.getUniqueId());
+        if (associateOutputsEither.isRight()) {
+            log.debug("Failed to create outputs under component {}. Status is {}", component.getUniqueId(), associateOutputsEither.right().value());
+
+            return Either.right(
+                componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(associateOutputsEither.right().value())));
+        }
+        return Either.left(associateOutputsEither.left().value());
+    }
+
 }
