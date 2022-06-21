@@ -244,6 +244,7 @@ export class InterfaceOperationsComponent {
                 selectedInterfaceOperation: operation ? operation : new InterfaceOperationModel(),
                 validityChangedCallback: this.enableOrDisableSaveButton,
                 isViewOnly: this.isViewOnly,
+                isEdit: true,
                 modelName: this.componentMetaData.model
             }
         );
