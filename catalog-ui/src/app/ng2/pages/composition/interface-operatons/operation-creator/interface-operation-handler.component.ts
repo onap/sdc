@@ -18,7 +18,7 @@
 *  SPDX-License-Identifier: Apache-2.0
 *  ============LICENSE_END=========================================================
 */
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Output, ViewChild} from '@angular/core';
 import {UIInterfaceModel} from "../interface-operations.component";
 import {InputOperationParameter, InterfaceOperationModel, IOperationParamsList} from "../../../../../models/interfaceOperation";
 import {TranslateService} from "../../../../shared/translator/translate.service";
@@ -65,7 +65,6 @@ export class InterfaceOperationHandlerComponent {
     inputs: Array<InputOperationParameter> = [];
     properties: Array<PropertyParamRowComponent> = [];
     isLoading: boolean = false;
-    readonly: boolean;
     isViewOnly: boolean;
     isEdit: boolean;
     interfaceTypes: Array<DropdownValue> = [];
@@ -75,21 +74,15 @@ export class InterfaceOperationHandlerComponent {
     interfaceOperationOptions: Array<DropDownOption> = [];
     selectedInterfaceOperation: DropDownOption = undefined;
     modelName: string;
-
     toscaArtifactTypeSelected: string;
     toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
     artifactTypeProperties: Array<InputOperationParameter> = [];
-
     toscaArtifactTypes: Array<DropdownValue> = [];
-
     enableAddArtifactImplementation: boolean;
-
     propertyValueValid: boolean = true;
     inputTypeOptions: any[];
 
     constructor(private dataTypeService: DataTypeService, private componentServiceNg2: ComponentServiceNg2) {
-
-
     }
 
     ngOnInit() {
@@ -102,7 +95,6 @@ export class InterfaceOperationHandlerComponent {
         this.modelName = this.input.modelName;
         this.initInputs();
         this.removeImplementationQuote();
-        this.validityChanged();
         this.loadInterfaceOperationImplementation();
 
         this.dataTypeMap$ = new Observable<Map<string, DataTypeModel>>(subscriber => {
@@ -125,7 +117,6 @@ export class InterfaceOperationHandlerComponent {
 
         this.inputs = Array.from(this.operationToUpdate.inputs.listToscaDataDefinition);
         this.removeImplementationQuote();
-        this.validityChanged();
         this.loadInterfaceOperationImplementation();
         this.loadInterfaceType();
     }
@@ -208,7 +199,6 @@ export class InterfaceOperationHandlerComponent {
             this.getArtifactTypesSelected();
         }
         this.enableAddArtifactImplementation = event;
-        this.validateRequiredField();
     }
 
     onSelectToscaArtifactType(type: IDropDownOption) {
@@ -225,7 +215,6 @@ export class InterfaceOperationHandlerComponent {
             this.operationToUpdate.implementation = artifact;
             this.getArtifactTypesSelected();
         }
-        this.validateRequiredField();
     }
 
     onArtifactVersionChange(value: string | undefined) {
@@ -234,20 +223,16 @@ export class InterfaceOperationHandlerComponent {
 
     onAddInput(inputOperationParameter: InputOperationParameter) {
         this.addInput(inputOperationParameter);
-        this.validityChanged();
     }
 
     propertyValueValidation = (propertyValue): void => {
         this.onPropertyValueChange(propertyValue);
         this.propertyValueValid = propertyValue.isValid;
-        this.readonly = !this.propertyValueValid;
-        this.validateRequiredField();
     }
 
     onRemoveInput = (inputParam: InputOperationParameter): void => {
         let index = this.inputs.indexOf(inputParam);
         this.inputs.splice(index, 1);
-        this.validityChanged();
     }
 
     private removeImplementationQuote(): void {
@@ -265,14 +250,6 @@ export class InterfaceOperationHandlerComponent {
         }
     }
 
-    validityChanged = () => {
-        let validState = this.checkFormValidForSubmit();
-        this.input.validityChangedCallback(validState);
-        if (validState) {
-            this.readonly = false;
-        }
-    }
-
     private getArtifactTypesSelected() {
         if (this.operationToUpdate.implementation && this.operationToUpdate.implementation.artifactType) {
             this.artifactName =
@@ -284,33 +261,6 @@ export class InterfaceOperationHandlerComponent {
             this.artifactTypeProperties = this.convertArtifactsPropertiesToInput();
             this.enableAddArtifactImplementation = true;
         }
-        this.validateRequiredField();
-    }
-
-    validateRequiredField = () => {
-        this.readonly = true;
-        const isRequiredFieldSelected = this.isRequiredFieldsSelected();
-        this.input.validityChangedCallback(isRequiredFieldSelected);
-        if (isRequiredFieldSelected && this.propertyValueValid) {
-            this.readonly = false;
-        }
-    }
-
-    private isRequiredFieldsSelected() {
-        return this.toscaArtifactTypeSelected && this.artifactName;
-    }
-
-    private checkFormValidForSubmit = (): boolean => {
-        return this.operationToUpdate.name && this.artifactName && this.isParamsValid();
-    }
-
-    private isParamsValid = (): boolean => {
-        const isInputValid = (input) => input.name && input.inputId && input.type;
-        const isValid = this.inputs.every(isInputValid);
-        if (!isValid) {
-            this.readonly = true;
-        }
-        return isValid;
     }
 
     toDropDownOption(val: string) {
