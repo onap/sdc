@@ -22,6 +22,138 @@
       "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "626f7caa_d7e18283",
+        "filename": "catalog-ui/src/app/models/service-csar.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-22T14:18:55Z",
+      "side": 1,
+      "message": "my suggestion is to not store this files, just read what you need from them",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 32,
+        "endChar": 35
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76cbc646_11424094",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-22T14:18:55Z",
+      "side": 1,
+      "message": "you should declare as const whenever you are not resetting the value of a variable. This comment applies for the whole file.",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 11
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dca36ff_ec8b56e1",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-22T14:18:55Z",
+      "side": 1,
+      "message": "it is better to read this only once and process the needed files",
+      "range": {
+        "startLine": 45,
+        "startChar": 15,
+        "endLine": 45,
+        "endChar": 47
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8bb0ede_6c28ced4",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-22T14:18:55Z",
+      "side": 1,
+      "message": "you could start reading from here, instead of returning and storing the content in a variable and then reading it:\n\n.then((content: string) \u003d\u003e {\n    const metadata \u003d load(content).metadata;\n    this.setMetadata(metadata);\n})",
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b80f2d85_2ce9df74",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-22T14:18:55Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 85,
+        "startChar": 19,
+        "endLine": 85,
+        "endChar": 89
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce4517a5_5057d141",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-06-22T14:18:55Z",
+      "side": 1,
+      "message": "remove this debug log",
+      "range": {
+        "startLine": 296,
+        "startChar": 20,
+        "endLine": 296,
+        "endChar": 45
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
