@@ -16,7 +16,6 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -53,8 +52,8 @@ import org.openecomp.sdc.be.components.utils.ResourceBuilder;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -88,6 +87,34 @@ import org.openecomp.sdc.exception.ResponseFormat;
 @RunWith(MockitoJUnitRunner.class)
 public class PolicyBusinessLogicTest {
 
+    private final static String COMPONENT_ID = "componentId";
+    private final static String NON_EXIST_COMPONENT_ID = "nonExistComponentId";
+    private final static String COMPONENT_NAME = "componentName";
+    private final static String POLICY_TYPE_NAME = "policyTypeName";
+    private final static String POLICY_ID = "policyId";
+    private final static String INVALID_POLICY_ID = "invalidPolicyId";
+    private final static String POLICY_NAME = "policyName";
+    private final static String OTHER_POLICY_NAME = "otherPolicyName";
+    private final static String USER_ID = "jh0003";
+    private final static String UNIQUE_ID_EXSISTS = "uniqueIdExists";
+    private final static String UNIQUE_ID_DOESNT_EXSISTS = "uniqueIdDoesntExists";
+    private final static String CREATE_POLICY = "create Policy";
+    private final static String PROPERTY_NAME = "propDefinition";
+    private final static User user = buildUser();
+    private final static PolicyDefinition policy = buildPolicy(POLICY_NAME);
+    private final static Resource resource = buildResource();
+    private final static PolicyDefinition otherPolicy = buildPolicy(OTHER_POLICY_NAME);
+    private final static PolicyTypeDefinition policyType = buildPolicyType();
+    private static Either<Component, StorageOperationStatus> componentSuccessEither;
+    private static Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeSuccessEither;
+    private static Either<PolicyDefinition, StorageOperationStatus> policySuccessEither;
+    private static ResponseFormat notFoundResponse;
+    private static ResponseFormat invalidContentResponse;
+    private static ResponseFormat nameExistsResponse;
+    private final ConfigurationManager configurationManager = new ConfigurationManager(
+        new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
+    @Mock
+    private PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
     @InjectMocks
     private PolicyBusinessLogic businessLogic;
     @Mock
@@ -106,39 +133,60 @@ public class PolicyBusinessLogicTest {
     private ApplicationDataTypeCache applicationDataTypeCache;
     @Mock
     private PropertyOperation propertyOperation;
-    @Mock
-    PropertyDeclarationOrchestrator propertyDeclarationOrchestrator;
-
-    private final static String COMPONENT_ID = "componentId";
-    private final static String NON_EXIST_COMPONENT_ID = "nonExistComponentId";
-    private final static String COMPONENT_NAME = "componentName";
-    private final static String POLICY_TYPE_NAME = "policyTypeName";
-    private final static String POLICY_ID = "policyId";
-    private final static String INVALID_POLICY_ID = "invalidPolicyId";
-    private final static String POLICY_NAME = "policyName";
-    private final static String OTHER_POLICY_NAME = "otherPolicyName";
-    private final static String USER_ID = "jh0003";
-    private final static String UNIQUE_ID_EXSISTS = "uniqueIdExists";
-    private final static String UNIQUE_ID_DOESNT_EXSISTS = "uniqueIdDoesntExists";
-    private final static String CREATE_POLICY = "create Policy";
-    private final static String PROPERTY_NAME = "propDefinition";
-    private final static User user = buildUser();
-    private final static PolicyDefinition policy = buildPolicy(POLICY_NAME);
-    private final static PolicyDefinition otherPolicy = buildPolicy(OTHER_POLICY_NAME);
-    private final static Resource resource = buildResource();
-    private final static PolicyTypeDefinition policyType = buildPolicyType();
-
-    private static Either<Component, StorageOperationStatus> componentSuccessEither;
-    private static Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeSuccessEither;
-    private static Either<PolicyDefinition, StorageOperationStatus> policySuccessEither;
-    private static ResponseFormat notFoundResponse;
-    private static ResponseFormat invalidContentResponse;
-    private static ResponseFormat nameExistsResponse;
-    private final ConfigurationManager configurationManager = new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
 
     @BeforeClass
     public static void setup() {
         createResponses();
+    }
+
+    private static void createResponses() {
+        componentSuccessEither = Either.left(resource);
+        getPolicyTypeSuccessEither = Either.left(policyType);
+        policySuccessEither = Either.left(policy);
+        notFoundResponse = new ResponseFormat();
+        notFoundResponse.setStatus(404);
+        invalidContentResponse = new ResponseFormat();
+        invalidContentResponse.setStatus(400);
+        nameExistsResponse = new ResponseFormat();
+        nameExistsResponse.setStatus(409);
+    }
+
+    private static PolicyTypeDefinition buildPolicyType() {
+        PolicyTypeDefinition policyType = new PolicyTypeDefinition();
+        policyType.setType(POLICY_TYPE_NAME);
+        return policyType;
+    }
+
+    private static PolicyDefinition buildPolicy(String policyName) {
+        PolicyDefinition policy = new PolicyDefinition();
+        policy.setUniqueId(POLICY_ID);
+        policy.setPolicyTypeName(POLICY_TYPE_NAME);
+        policy.setComponentName(COMPONENT_NAME);
+        policy.setName(policyName);
+        return policy;
+    }
+
+    private static Resource buildResource() {
+        Resource resource = new Resource();
+        resource.setUniqueId(COMPONENT_ID);
+        resource.setName(COMPONENT_NAME);
+        resource.setCreatorUserId(USER_ID);
+        resource.setLastUpdaterUserId(USER_ID);
+        resource.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
+        resource.setIsDeleted(false);
+        resource.setResourceType(ResourceTypeEnum.VF);
+        resource.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
+        resource.setComponentType(ComponentTypeEnum.RESOURCE);
+        Map<String, PolicyDefinition> policies = new HashMap<>();
+        policies.put(POLICY_ID, policy);
+        resource.setPolicies(policies);
+        return resource;
+    }
+
+    private static User buildUser() {
+        User user = new User();
+        user.setUserId(USER_ID);
+        return user;
     }
 
     @Before
@@ -155,21 +203,8 @@ public class PolicyBusinessLogicTest {
         businessLogic.setPropertyDeclarationOrchestrator(propertyDeclarationOrchestrator);
     }
 
-
-    private static void createResponses() {
-        componentSuccessEither = Either.left(resource);
-        getPolicyTypeSuccessEither = Either.left(policyType);
-        policySuccessEither = Either.left(policy);
-        notFoundResponse = new ResponseFormat();
-        notFoundResponse.setStatus(404);
-        invalidContentResponse = new ResponseFormat();
-        invalidContentResponse.setStatus(400);
-        nameExistsResponse = new ResponseFormat();
-        nameExistsResponse.setStatus(409);
-    }
-
     @Test
-    public void createPolicySuccessTest(){
+    public void createPolicySuccessTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME), any())).thenReturn(getPolicyTypeSuccessEither);
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(policySuccessEither);
@@ -199,15 +234,16 @@ public class PolicyBusinessLogicTest {
         Resource newResource = buildResource();
         newResource.setPolicies(policies);
         newResource.setComponentInstances(instanceList);
-        
+
         when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME), any())).thenReturn(getPolicyTypeSuccessEither);
         when(toscaOperationFacade.associatePolicyToComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), eq(0))).thenReturn(Either.left(policy));
         when(toscaOperationFacade.getToscaFullElement(eq(COMPONENT_ID))).thenReturn(Either.left(newResource));
-        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(Either.left(policy));
+        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(
+            Either.left(policy));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop1), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop1));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop2), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop2));
 
-        Map<String, PolicyDefinition> createdPolicy = businessLogic.createPoliciesFromParsedCsar(newResource, policies);
+        Map<String, PolicyDefinition> createdPolicy = businessLogic.createPolicies(newResource, policies);
 
         assertThat(createdPolicy.isEmpty()).isFalse();
         PolicyDefinition newPolicy = createdPolicy.get(POLICY_NAME);
@@ -217,15 +253,15 @@ public class PolicyBusinessLogicTest {
         assertEquals(2, newPolicy.getProperties().size());
         assertEquals(1, newPolicy.getTargets().size());
     }
-    
+
     @Test
-    public void createPolicyUserFailureTest(){
+    public void createPolicyUserFailureTest() {
         ByActionStatusComponentException userNotFoundException = new ByActionStatusComponentException(ActionStatus.USER_NOT_FOUND);
         when(userValidations.validateUserExists(eq(USER_ID))).thenThrow(userNotFoundException);
         stubRollback();
-        try{
+        try {
             businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
-        } catch(ByActionStatusComponentException e){
+        } catch (ByActionStatusComponentException e) {
             assertEquals(e.getActionStatus(), userNotFoundException.getActionStatus());
         }
     }
@@ -235,16 +271,17 @@ public class PolicyBusinessLogicTest {
     }
 
     @Test(expected = ComponentException.class)
-    public void createPolicyComponentFailureTest(){
+    public void createPolicyComponentFailureTest() {
         when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
         Either<Component, StorageOperationStatus> componentNotFoundResponse = Either.right(StorageOperationStatus.NOT_FOUND);
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND), eq(ComponentTypeEnum.RESOURCE))).thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND), eq(ComponentTypeEnum.RESOURCE))).thenReturn(
+            ActionStatus.RESOURCE_NOT_FOUND);
         when(toscaOperationFacade.getToscaElement(eq(COMPONENT_ID), any(ComponentParametersView.class))).thenReturn(componentNotFoundResponse);
         businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
     }
-    
+
     @Test(expected = ComponentException.class)
-    public void createPolicyPolicyTypeFailureTest(){
+    public void createPolicyPolicyTypeFailureTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         Either<PolicyTypeDefinition, StorageOperationStatus> getPolicyTypeFailed = Either.right(StorageOperationStatus.NOT_FOUND);
         when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME), any())).thenReturn(getPolicyTypeFailed);
@@ -252,9 +289,9 @@ public class PolicyBusinessLogicTest {
         stubUnlockAndRollback();
         businessLogic.createPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_TYPE_NAME, USER_ID, true);
     }
-    
+
     @Test(expected = ComponentException.class)
-    public void createPolicyComponentTypeFailureTest(){
+    public void createPolicyComponentTypeFailureTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         when(policyTypeOperation.getLatestPolicyTypeByType(eq(POLICY_TYPE_NAME), any())).thenReturn(getPolicyTypeSuccessEither);
         Either<PolicyDefinition, StorageOperationStatus> addPolicyRes = Either.right(StorageOperationStatus.BAD_REQUEST);
@@ -266,83 +303,86 @@ public class PolicyBusinessLogicTest {
     }
 
     @Test
-    public void updatePolicySuccessTest(){
+    public void updatePolicySuccessTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
-        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(policySuccessEither);
+        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(
+            policySuccessEither);
         stubUnlockAndCommit();
-        PolicyDefinition  response = businessLogic.updatePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, otherPolicy, USER_ID, true);
+        PolicyDefinition response = businessLogic.updatePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, otherPolicy, USER_ID, true);
         assertThat(response.isEmpty()).isFalse();
     }
-    
+
     @Test(expected = ComponentException.class)
-    public void updatePolicyNameFailureTest(){
+    public void updatePolicyNameFailureTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         stubUnlockAndRollback();
         businessLogic.updatePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, policy, USER_ID, true);
     }
-    
+
     @Test
-    public void getPolicySuccessTest(){
+    public void getPolicySuccessTest() {
         stubValidationSuccess(CREATE_POLICY);
         stubCommit();
         PolicyDefinition response = businessLogic.getPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, USER_ID);
         assertThat(response.isEmpty()).isFalse();
     }
-    
+
     @Test(expected = ComponentException.class)
-    public void getPolicyFailureTest(){
+    public void getPolicyFailureTest() {
         stubValidationSuccess(CREATE_POLICY);
         stubRollback();
         businessLogic.getPolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, INVALID_POLICY_ID, USER_ID);
     }
-    
+
     @Test
-    public void deletePolicySuccessTest(){
+    public void deletePolicySuccessTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         stubCommit();
-        when(toscaOperationFacade.removePolicyFromComponent(eq(COMPONENT_ID),eq(POLICY_ID))).thenReturn(StorageOperationStatus.OK);
-        PolicyDefinition  response = businessLogic.deletePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, USER_ID, true);
+        when(toscaOperationFacade.removePolicyFromComponent(eq(COMPONENT_ID), eq(POLICY_ID))).thenReturn(StorageOperationStatus.OK);
+        PolicyDefinition response = businessLogic.deletePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, USER_ID, true);
         assertThat(response.isEmpty()).isFalse();
     }
-    
+
     @Test(expected = ComponentException.class)
-    public void deletePolicyFailureTest(){
+    public void deletePolicyFailureTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         stubCommit();
         businessLogic.deletePolicy(ComponentTypeEnum.RESOURCE, COMPONENT_ID, INVALID_POLICY_ID, USER_ID, true);
     }
 
-
     @Test
-    public void updatePolicyPropertiesSuccessTest(){
+    public void updatePolicyPropertiesSuccessTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         String prop1 = "Name";
         String prop2 = "Type";
         when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop1), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop1));
         when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop2), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop2));
-        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(policySuccessEither);
+        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(
+            policySuccessEither);
         stubUnlockAndCommit();
         PropertyDataDefinition[] properties = getProperties(prop1, prop2);
         policy.setProperties(Arrays.asList(properties));
-        List<PropertyDataDefinition>  response = businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, properties , USER_ID, true);
+        List<PropertyDataDefinition> response = businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, properties,
+            USER_ID, true);
         List<PropertyDataDefinition> updatedProperties = response;
         assertThat(updatedProperties.size()).isEqualTo(2);
     }
 
     @Test
-    public void updatePolicyTargetsSuccessTest(){
+    public void updatePolicyTargetsSuccessTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         stubGetToscaFullElementSuccess();
         stubUpdatePolicyOfComponentSuccess();
         stubGetToscaElementSuccess();
         PolicyDefinition policyResult = businessLogic.updatePolicyTargets(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, getTargets(), USER_ID);
         Map<PolicyTargetType, List<String>> targets = getTargets();
-        assertThat(policyResult.getTargets().values()).usingFieldByFieldElementComparator().containsExactlyInAnyOrder(targets.get(PolicyTargetType.GROUPS), targets.get(PolicyTargetType.COMPONENT_INSTANCES));
+        assertThat(policyResult.getTargets().values()).usingFieldByFieldElementComparator()
+            .containsExactlyInAnyOrder(targets.get(PolicyTargetType.GROUPS), targets.get(PolicyTargetType.COMPONENT_INSTANCES));
 
     }
 
     @Test(expected = ComponentException.class)
-    public void updatePolicyTargetsTargetIDFailureTest(){
+    public void updatePolicyTargetsTargetIDFailureTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         stubGetToscaFullElementSuccess();
         stubGetToscaElementSuccess();
@@ -352,9 +392,8 @@ public class PolicyBusinessLogicTest {
 
     }
 
-
     @Test(expected = ComponentException.class)
-    public void updatePolicyTargetsTypeFailureTest(){
+    public void updatePolicyTargetsTypeFailureTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         stubGetToscaFullElementSuccess();
         stubGetToscaElementSuccess();
@@ -365,16 +404,16 @@ public class PolicyBusinessLogicTest {
     }
 
     private void stubUpdatePolicyOfComponentSuccess() {
-        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), eq(policy), any(PromoteVersionEnum.class))).thenReturn(policySuccessEither);
+        when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), eq(policy), any(PromoteVersionEnum.class))).thenReturn(
+            policySuccessEither);
     }
 
-
     @Test(expected = ComponentException.class)
-    public void updatePolicyPropertiesFailureTest(){
+    public void updatePolicyPropertiesFailureTest() {
         stubValidateAndLockSuccess(CREATE_POLICY);
         stubUnlockAndRollback();
         policy.setProperties(null);
-        businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, getProperties("Name", "Type") , USER_ID, true);
+        businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, getProperties("Name", "Type"), USER_ID, true);
     }
 
     @Test
@@ -386,10 +425,10 @@ public class PolicyBusinessLogicTest {
         when(propertyDeclarationOrchestrator.declarePropertiesToPolicies(any(), any())).thenReturn(Either.left(getDeclaredPolicies()));
 
         Either<List<PolicyDefinition>, ResponseFormat> declaredPoliciesEither = businessLogic
-                                                                                          .declareProperties(USER_ID,
-                                                                                                  resource.getUniqueId(),
-                                                                                                  ComponentTypeEnum.RESOURCE,
-                                                                                                  getInputForPropertyToPolicyDeclaration());
+            .declareProperties(USER_ID,
+                resource.getUniqueId(),
+                ComponentTypeEnum.RESOURCE,
+                getInputForPropertyToPolicyDeclaration());
 
         assertThat(declaredPoliciesEither.isLeft()).isTrue();
 
@@ -400,14 +439,16 @@ public class PolicyBusinessLogicTest {
 
     @Test
     public void testDeclarePropertiesAsPoliciesFailure() {
-        when(toscaOperationFacade.getToscaElement(eq(NON_EXIST_COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
-        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND), eq(ComponentTypeEnum.RESOURCE))).thenReturn(ActionStatus.RESOURCE_NOT_FOUND);
+        when(toscaOperationFacade.getToscaElement(eq(NON_EXIST_COMPONENT_ID), Mockito.any(ComponentParametersView.class))).thenReturn(
+            Either.right(StorageOperationStatus.NOT_FOUND));
+        when(componentsUtils.convertFromStorageResponse(eq(StorageOperationStatus.NOT_FOUND), eq(ComponentTypeEnum.RESOURCE))).thenReturn(
+            ActionStatus.RESOURCE_NOT_FOUND);
         try {
             businessLogic
-                    .declareProperties(USER_ID,
-                            NON_EXIST_COMPONENT_ID,
-                            ComponentTypeEnum.RESOURCE,
-                            getInputForPropertyToPolicyDeclaration());
+                .declareProperties(USER_ID,
+                    NON_EXIST_COMPONENT_ID,
+                    ComponentTypeEnum.RESOURCE,
+                    getInputForPropertyToPolicyDeclaration());
         } catch (ComponentException e) {
             assertEquals(ActionStatus.RESOURCE_NOT_FOUND, e.getActionStatus());
             return;
@@ -450,8 +491,7 @@ public class PolicyBusinessLogicTest {
         property2.setValue(prop2);
         return new PropertyDataDefinition[]{property1, property2};
     }
-    
-    
+
     private void stubUnlockAndRollback() {
         when(graphLockOperation.unlockComponent(eq(COMPONENT_ID), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
         stubRollback();
@@ -469,11 +509,11 @@ public class PolicyBusinessLogicTest {
         when(graphLockOperation.unlockComponent(eq(COMPONENT_ID), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
         stubCommit();
     }
-    
+
     private void stubValidateAndLockSuccess(String methodName) {
         stubValidationSuccess(methodName);
         when(graphLockOperation.lockComponent(eq(COMPONENT_ID), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
-   }
+    }
 
     private void stubValidationSuccess(String methodName) {
         when(userValidations.validateUserExists(eq(USER_ID))).thenReturn(user);
@@ -501,46 +541,6 @@ public class PolicyBusinessLogicTest {
         targets.put(PolicyTargetType.COMPONENT_INSTANCES, Collections.singletonList(UNIQUE_ID_EXSISTS));
         targets.put(PolicyTargetType.GROUPS, Collections.singletonList(UNIQUE_ID_EXSISTS));
         return targets;
-    }
-
-
-
-    private static PolicyTypeDefinition buildPolicyType() {
-        PolicyTypeDefinition policyType = new PolicyTypeDefinition();
-        policyType.setType(POLICY_TYPE_NAME);
-        return policyType;
-    }
-
-    private static PolicyDefinition buildPolicy(String policyName) {
-        PolicyDefinition policy = new PolicyDefinition();
-        policy.setUniqueId(POLICY_ID);
-        policy.setPolicyTypeName(POLICY_TYPE_NAME);
-        policy.setComponentName(COMPONENT_NAME);
-        policy.setName(policyName);
-        return policy;
-    }
-
-    private static Resource buildResource() {
-        Resource resource = new Resource();
-        resource.setUniqueId(COMPONENT_ID);
-        resource.setName(COMPONENT_NAME);
-        resource.setCreatorUserId(USER_ID);
-        resource.setLastUpdaterUserId(USER_ID);
-        resource.setState(LifecycleStateEnum.NOT_CERTIFIED_CHECKOUT);
-        resource.setIsDeleted(false);
-        resource.setResourceType(ResourceTypeEnum.VF);
-        resource.setToscaType(ToscaElementTypeEnum.TOPOLOGY_TEMPLATE.getValue());
-        resource.setComponentType(ComponentTypeEnum.RESOURCE);
-        Map<String, PolicyDefinition> policies = new HashMap<>();
-        policies.put(POLICY_ID, policy);
-        resource.setPolicies(policies);
-        return resource;
-    }
-
-    private static User buildUser() {
-        User user = new User();
-        user.setUserId(USER_ID);
-        return user;
     }
 
     private Map<PolicyTargetType, List<String>> getTargetListFakeType() {

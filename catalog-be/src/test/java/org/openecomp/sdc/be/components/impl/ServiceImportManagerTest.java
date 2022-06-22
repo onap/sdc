@@ -17,6 +17,8 @@
 
 package org.openecomp.sdc.be.components.impl;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,16 +29,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadServiceInfo;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 @ExtendWith(MockitoExtension.class)
 class ServiceImportManagerTest {
 
+    public static final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
     @InjectMocks
     private ServiceImportManager serviceImportManager;
-
-    public static final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
 
     @BeforeEach
     public void setup() {
