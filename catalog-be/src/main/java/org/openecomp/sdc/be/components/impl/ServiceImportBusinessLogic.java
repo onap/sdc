@@ -97,6 +97,7 @@ import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -145,7 +146,7 @@ public class ServiceImportBusinessLogic {
 
     private static final String INITIAL_VERSION = "0.1";
     private static final String CREATE_RESOURCE = "Create Resource";
-    private static final String IN_RESOURCE = "  in resource {} ";
+    private static final String IN_RESOURCE = " in resource {} ";
     private static final String COMPONENT_INSTANCE_WITH_NAME = "component instance with name ";
     private static final String COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE = "component instance with name {}  in resource {} ";
     private static final String CERTIFICATION_ON_IMPORT = "certification on import";
@@ -337,6 +338,13 @@ public class ServiceImportBusinessLogic {
                 throw new ComponentException(createGroupsOnResource.right().value());
             }
             service = createGroupsOnResource.left().value();
+
+            Either<Service, ResponseFormat> createPoliciesOnResource = createPoliciesOnResource(service, parsedToscaYamlInfo.getPolicies());
+            if (createPoliciesOnResource.isRight()) {
+                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
+                throw new ComponentException(createPoliciesOnResource.right().value());
+            }
+            service = createPoliciesOnResource.left().value();
             log.trace("************* Going to add artifacts from yaml {}", yamlName);
             NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToCreate);
             Either<Service, ResponseFormat> createArtifactsEither = createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE,
@@ -777,12 +785,10 @@ public class ServiceImportBusinessLogic {
     }
 
     private boolean isValidArtifactType(ArtifactDefinition artifact) {
-        boolean result = true;
-        if (artifact.getArtifactType() == null || ArtifactTypeEnum.findType(artifact.getArtifactType()).equals(ArtifactTypeEnum.VENDOR_LICENSE)
-            || ArtifactTypeEnum.findType(artifact.getArtifactType()).equals(ArtifactTypeEnum.VF_LICENSE)) {
-            result = false;
-        }
-        return result;
+        final String artifactType = artifact.getArtifactType();
+        return artifactType != null
+            && !ArtifactTypeEnum.VENDOR_LICENSE.getType().equals(ArtifactTypeEnum.findType(artifactType))
+            && !ArtifactTypeEnum.VF_LICENSE.getType().equals(ArtifactTypeEnum.findType(artifactType));
     }
 
     protected Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat> organizeVfCsarArtifactsByArtifactOperation(
@@ -899,6 +905,20 @@ public class ServiceImportBusinessLogic {
         } else {
             return Either.left(service);
         }
+        return getServiceResponseFormatEither(service);
+    }
+
+    protected Either<Service, ResponseFormat> createPoliciesOnResource(Service service,
+                                                                       Map<String, PolicyDefinition> policies) {
+        if (MapUtils.isNotEmpty(policies)) {
+            serviceBusinessLogic.getPolicyBusinessLogic().createPolicies(service, policies);
+        } else {
+            return Either.left(service);
+        }
+        return getServiceResponseFormatEither(service);
+    }
+
+    private Either<Service, ResponseFormat> getServiceResponseFormatEither(Service service) {
         Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
         if (updatedResource.isRight()) {
             ResponseFormat responseFormat = componentsUtils

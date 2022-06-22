@@ -100,9 +100,9 @@ import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
@@ -119,12 +119,12 @@ import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
@@ -184,6 +184,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final ServiceDistributionValidation serviceDistributionValidation;
     private final ForwardingPathValidator forwardingPathValidator;
     private final UiComponentDataConverter uiComponentDataConverter;
+    private final ModelOperation modelOperation;
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
     private ServiceTypeValidator serviceTypeValidator;
@@ -197,7 +198,9 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private ServiceCategoryValidator serviceCategoryValidator;
     @Autowired
     private ServiceValidator serviceValidator;
-    private final ModelOperation modelOperation;
+    @Autowired
+    @Getter
+    private PolicyBusinessLogic policyBusinessLogic;
 
     @Autowired
     public ServiceBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
@@ -1702,31 +1705,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Either<ArtifactDefinition, ResponseFormat> generateVfModuleInstanceArtifact(User modifier, ComponentInstance currVFInstance,
-                                                                                        Service service, boolean shouldLock, boolean inTransaction) {
-        ArtifactDefinition vfModuleArtifact = null;
-        Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
-        Wrapper<String> payloadWrapper = new Wrapper<>();
-        List<GroupInstance> groupsForCurrVF = collectGroupsInstanceForCompInstance(currVFInstance);
-        if (responseWrapper.isEmpty()) {
-            fillVfModuleInstHeatEnvPayload(groupsForCurrVF, payloadWrapper);
-        }
-        if (responseWrapper.isEmpty() && payloadWrapper.getInnerElement() != null) {
-            vfModuleArtifact = getVfModuleInstArtifactForCompInstance(currVFInstance, service, payloadWrapper, responseWrapper);
-        }
-        if (responseWrapper.isEmpty() && vfModuleArtifact != null) {
-            vfModuleArtifact = fillVfModulePayload(modifier, currVFInstance, vfModuleArtifact, shouldLock, inTransaction, payloadWrapper,
-                responseWrapper, service);
-        }
-        Either<ArtifactDefinition, ResponseFormat> result;
-        if (responseWrapper.isEmpty()) {
-            result = Either.left(vfModuleArtifact);
-        } else {
-            result = Either.right(responseWrapper.getInnerElement());
-        }
-        return result;
-    }
-
     private ArtifactDefinition fillVfModulePayload(User modifier, ComponentInstance currVF, ArtifactDefinition vfModuleArtifact, boolean shouldLock,
                                                    boolean inTransaction, Wrapper<String> payloadWrapper, Wrapper<ResponseFormat> responseWrapper,
                                                    Service service) {
@@ -2249,12 +2227,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return latestByName.isLeft();
     }
 
-    abstract class ArtifactGenerator<CallVal> implements Callable<Either<CallVal, ResponseFormat>> {
+    interface ArtifactGenerator<CallVal> extends Callable<Either<CallVal, ResponseFormat>> {
 
     }
 
     @Getter
-    class HeatEnvArtifactGenerator extends ArtifactGenerator<ArtifactDefinition> {
+    class HeatEnvArtifactGenerator implements ArtifactGenerator<ArtifactDefinition> {
 
         private ArtifactDefinition artifactDefinition;
         private Service service;
@@ -2283,7 +2261,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    class VfModuleArtifactGenerator extends ArtifactGenerator<ArtifactDefinition> {
+    class VfModuleArtifactGenerator implements ArtifactGenerator<ArtifactDefinition> {
 
         boolean shouldLock;
         boolean inTransaction;
@@ -2299,6 +2277,32 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             this.service = service;
             this.shouldLock = shouldLock;
             this.inTransaction = inTransaction;
+        }
+
+        private Either<ArtifactDefinition, ResponseFormat> generateVfModuleInstanceArtifact(User modifier, ComponentInstance currVFInstance,
+                                                                                            Service service, boolean shouldLock,
+                                                                                            boolean inTransaction) {
+            ArtifactDefinition vfModuleArtifact = null;
+            Wrapper<ResponseFormat> responseWrapper = new Wrapper<>();
+            Wrapper<String> payloadWrapper = new Wrapper<>();
+            List<GroupInstance> groupsForCurrVF = collectGroupsInstanceForCompInstance(currVFInstance);
+            if (responseWrapper.isEmpty()) {
+                fillVfModuleInstHeatEnvPayload(groupsForCurrVF, payloadWrapper);
+            }
+            if (responseWrapper.isEmpty() && payloadWrapper.getInnerElement() != null) {
+                vfModuleArtifact = getVfModuleInstArtifactForCompInstance(currVFInstance, service, payloadWrapper, responseWrapper);
+            }
+            if (responseWrapper.isEmpty() && vfModuleArtifact != null) {
+                vfModuleArtifact = fillVfModulePayload(modifier, currVFInstance, vfModuleArtifact, shouldLock, inTransaction, payloadWrapper,
+                    responseWrapper, service);
+            }
+            Either<ArtifactDefinition, ResponseFormat> result;
+            if (responseWrapper.isEmpty()) {
+                result = Either.left(vfModuleArtifact);
+            } else {
+                result = Either.right(responseWrapper.getInnerElement());
+            }
+            return result;
         }
 
         @Override
