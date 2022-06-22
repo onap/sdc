@@ -214,8 +214,21 @@ export class InterfaceOperationsComponent {
         ).length === 0;
     }
 
-    private enableOrDisableSaveButton = (isValid): boolean => {
-        return isValid;
+    private disableSaveButton = (): boolean => {
+        let disable:boolean = true;
+        if(this.isViewOnly) {
+            return disable;
+        }
+
+        let enableAddArtifactImplementation = this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
+        if(enableAddArtifactImplementation) {
+            let toscaArtifactTypeSelected = this.modalInstance.instance.dynamicContent.instance.toscaArtifactTypeSelected;
+            let isToscaArtifactType:boolean = !(typeof toscaArtifactTypeSelected == 'undefined' || _.isEmpty(toscaArtifactTypeSelected));
+            disable = !isToscaArtifactType;
+            return disable;
+        }
+        disable = false;
+        return disable;
     }
 
     onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
@@ -226,7 +239,7 @@ export class InterfaceOperationsComponent {
             buttonList.push(closeButton);
         } else {
             const saveButton: ButtonModel = new ButtonModel(this.modalTranslation.SAVE_BUTTON, 'blue', () =>
-                this.updateInterfaceOperation(), this.enableOrDisableSaveButton);
+                this.updateInterfaceOperation(), this.disableSaveButton);
             const cancelButton: ButtonModel = new ButtonModel(this.modalTranslation.CANCEL_BUTTON, 'outline white', this.cancelAndCloseModal);
             buttonList.push(saveButton);
             buttonList.push(cancelButton);
@@ -242,7 +255,7 @@ export class InterfaceOperationsComponent {
                 toscaArtifactTypes: this.toscaArtifactTypes,
                 selectedInterface: interfaceModel ? interfaceModel : new UIInterfaceModel(),
                 selectedInterfaceOperation: operation ? operation : new InterfaceOperationModel(),
-                validityChangedCallback: this.enableOrDisableSaveButton,
+                validityChangedCallback: this.disableSaveButton,
                 isViewOnly: this.isViewOnly,
                 isEdit: true,
                 modelName: this.componentMetaData.model

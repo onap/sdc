@@ -217,11 +217,26 @@ export class InterfaceDefinitionComponent {
     }
 
     private disableSaveButton = (): boolean => {
-        return this.readonly ||
-            (this.isEnableAddArtifactImplementation()
-                && (!this.modalInstance.instance.dynamicContent.toscaArtifactTypeSelected ||
-                    !this.modalInstance.instance.dynamicContent.artifactName)
-            );
+        let disable:boolean = true;
+        if(this.readonly) {
+            return disable;
+        }
+    
+        let selectedInterfaceOperation = this.modalInstance.instance.dynamicContent.instance.selectedInterfaceOperation;
+        let isInterfaceOperation:boolean = !(typeof selectedInterfaceOperation == 'undefined' || _.isEmpty(selectedInterfaceOperation));
+        let selectedInterfaceType = this.modalInstance.instance.dynamicContent.instance.selectedInterfaceType;
+        let isInterfaceType:boolean = !(typeof selectedInterfaceType == 'undefined' || _.isEmpty(selectedInterfaceType));
+        let bothSet: boolean = isInterfaceOperation && isInterfaceType;
+    
+        let enableAddArtifactImplementation = this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
+        if(enableAddArtifactImplementation) {
+            let toscaArtifactTypeSelected = this.modalInstance.instance.dynamicContent.instance.toscaArtifactTypeSelected;
+            let isToscaArtifactType:boolean = !(typeof toscaArtifactTypeSelected == 'undefined' || _.isEmpty(toscaArtifactTypeSelected));
+            disable = !bothSet || !isToscaArtifactType;
+            return disable;
+        }
+        disable = !bothSet;
+        return disable;
     }
 
     onSelectInterfaceOperation(interfaceModel: UIInterfaceModel, operation: InterfaceOperationModel) {
