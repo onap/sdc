@@ -1762,7 +1762,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Resource createPoliciesOnResource(Resource resource, Map<String, PolicyDefinition> policies) {
-        policyBusinessLogic.createPoliciesFromParsedCsar(resource, policies);
+        policyBusinessLogic.createPolicies(resource, policies);
         return resource;
     }
 
@@ -1929,7 +1929,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 .addPropertyToComponent(propertyDefinition, resource);
 
             if (addPropertyEither.isRight()) {
-                final String error = String.format("failed to add properties from yaml: {}", addPropertyEither.right().value());
+                final String error = String.format("failed to add properties from yaml: %s", addPropertyEither.right().value());
                 loggerSupportability.log(LoggerSupportabilityActions.CREATE_PROPERTIES, resource.getComponentMetadataForSupportLog(),
                     StatusCode.ERROR,
                     error);
