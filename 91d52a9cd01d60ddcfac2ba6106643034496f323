@@ -22,6 +22,29 @@
       "revId": "91d52a9cd01d60ddcfac2ba6106643034496f323",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1584f12b_239dbc4b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/merge/instance/ComponentInstanceInterfacesMerge.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-22T13:51:53Z",
+      "side": 1,
+      "message": "It is checked in the first part of this if originalOperationDef.getImplementation() is equal to oldOperationDef.getImplementation()... if they are equal the condition will move on to check if originalOperationDef.getImplementation().getArtifactName() is equal to oldOperationDef.getImplementation().getArtifactName(), but surely if originalOperationDef.getImplementation() is equal to oldOperationDef.getImplementation() then the sub-elements  originalOperationDef.getImplementation().getArtifactName() and oldOperationDef.getImplementation().getArtifactName() have to be equal?",
+      "range": {
+        "startLine": 96,
+        "startChar": 32,
+        "endLine": 98,
+        "endChar": 101
+      },
+      "revId": "91d52a9cd01d60ddcfac2ba6106643034496f323",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
