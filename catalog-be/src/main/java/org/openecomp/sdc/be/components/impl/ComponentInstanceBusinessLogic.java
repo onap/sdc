@@ -2990,6 +2990,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 newComponentInstance.setInstanceCount(resResourceInfo.getInstanceCount());
                 newComponentInstance.setMaxOccurrences(resResourceInfo.getMaxOccurrences());
                 newComponentInstance.setMinOccurrences(resResourceInfo.getMinOccurrences());
+                newComponentInstance.setDirectives(resResourceInfo.getDirectives());
                 checkForExternalReqAndCapabilities(origComponent, resResourceInfo);
 
                 ComponentInstance updatedComponentInstance =
@@ -3014,6 +3015,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     log.debug("Component with id {} was not found", containerComponentId);
                     throw new ByActionStatusComponentException(actionStatus, Constants.EMPTY_STRING);
                 }
+
+                maintainNodeFilters(currentResourceInstance, newComponentInstance, containerComponentId);
+
                 resourceInstanceStatus = getResourceInstanceById(updatedComponentRes.left().value(),
                     updatedComponentInstance.getUniqueId());
                 if (resourceInstanceStatus.isRight()) {
@@ -3027,6 +3031,19 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw e;
         } finally {
             unlockComponent(failed, containerComponent);
+        }
+    }
+
+    private void maintainNodeFilters(
+            ComponentInstance currentResourceInstance,
+            ComponentInstance newComponentInstance,
+            String containerComponentId) {
+        CINodeFilterDataDefinition filterToMaintain = currentResourceInstance.getNodeFilter();
+        if (null != filterToMaintain) {
+            nodeFilterOperation.addNodeFilterData(
+                    containerComponentId.toLowerCase(),
+                    newComponentInstance.getUniqueId(),
+                    filterToMaintain);
         }
     }
 
