@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eeedc77c_3b0e8fe2",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-23T12:48:36Z",
+      "side": 1,
+      "message": "Is this not an add rather than update? If its an update, when does the add happen?",
+      "range": {
+        "startLine": 154,
+        "startChar": 37,
+        "endLine": 154,
+        "endChar": 41
+      },
+      "revId": "4e72eacfd11eb9d88ecbaaca5042dae68084b6ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa7a114c_ef91bae3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-23T12:48:36Z",
+      "side": 1,
+      "message": "Is this not identical to the above method updateNodeFilter?",
+      "range": {
+        "startLine": 150,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 0
+      },
+      "revId": "4e72eacfd11eb9d88ecbaaca5042dae68084b6ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
