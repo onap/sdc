@@ -2984,6 +2984,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 newComponentInstance.setInstanceCount(resResourceInfo.getInstanceCount());
                 newComponentInstance.setMaxOccurrences(resResourceInfo.getMaxOccurrences());
                 newComponentInstance.setMinOccurrences(resResourceInfo.getMinOccurrences());
+                newComponentInstance.setDirectives(resResourceInfo.getDirectives());
                 checkForExternalReqAndCapabilities(origComponent, resResourceInfo);
 
                 ComponentInstance updatedComponentInstance =
@@ -3008,6 +3009,9 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     log.debug("Component with id {} was not found", containerComponentId);
                     throw new ByActionStatusComponentException(actionStatus, Constants.EMPTY_STRING);
                 }
+
+                maintainNodeFilters(containerComponent, newComponentInstance, containerComponentId);
+
                 resourceInstanceStatus = getResourceInstanceById(updatedComponentRes.left().value(),
                     updatedComponentInstance.getUniqueId());
                 if (resourceInstanceStatus.isRight()) {
@@ -3021,6 +3025,21 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             throw e;
         } finally {
             unlockComponent(failed, containerComponent);
+        }
+    }
+
+    private void maintainNodeFilters(Component containerComponent, ComponentInstance newComponentInstance, String containerComponentId) {
+        Map<String, CINodeFilterDataDefinition> listNodeFilters =
+                containerComponent.getNodeFilterComponents();
+        if (null != listNodeFilters) {
+            listNodeFilters.forEach((keyMap, nodeFilter) -> {
+                if (null != nodeFilter) {
+                    nodeFilterOperation.copyNodeFilter(
+                            containerComponentId.toLowerCase(),
+                            newComponentInstance.getUniqueId(),
+                            nodeFilter);
+                }
+            });
         }
     }
 

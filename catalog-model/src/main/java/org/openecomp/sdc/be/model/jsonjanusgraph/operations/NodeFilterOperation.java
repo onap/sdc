@@ -147,6 +147,13 @@ public class NodeFilterOperation extends BaseOperation {
         return addOrUpdateNodeFilter(true, serviceId, componentInstanceId, ciNodeFilterDataDefinition);
     }
 
+    public Either<CINodeFilterDataDefinition, StorageOperationStatus> copyNodeFilter(
+            final String componentId,
+            final String componentInstanceId,
+            final CINodeFilterDataDefinition nodeFilterDataDefinition) {
+        return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
+    }
+
     private Either<CINodeFilterDataDefinition, StorageOperationStatus> addOrUpdateNodeFilter(final boolean isUpdateAction, final String componentId,
                                                                                              final String componentInstanceId,
                                                                                              final CINodeFilterDataDefinition ciNodeFilterDataDefinition) {
