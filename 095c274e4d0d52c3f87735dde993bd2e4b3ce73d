@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "2f433cde_0dba7275",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-06-23T12:07:58Z",
+      "side": 1,
+      "message": "ok, but I dont think it is being set from the UI side so line 91 doesnt do anything",
+      "parentUuid": "9f8b0686_01b066ce",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 83
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "626f7caa_d7e18283",
         "filename": "catalog-ui/src/app/models/service-csar.ts",
         "patchSetId": 7
