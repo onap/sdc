@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "9013804c_abbb9490",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-06-23T15:05:04Z",
+      "side": 1,
+      "message": "Ahh okay I see that now",
+      "parentUuid": "2f433cde_0dba7275",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 83
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "626f7caa_d7e18283",
         "filename": "catalog-ui/src/app/models/service-csar.ts",
         "patchSetId": 7
