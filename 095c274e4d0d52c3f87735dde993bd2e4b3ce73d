@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9f8b0686_01b066ce",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportManager.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-06-23T09:52:37Z",
+      "side": 1,
+      "message": "This already gets set on line 91 below",
+      "parentUuid": "22dbb3aa_cf1196dc",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 83
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "626f7caa_d7e18283",
         "filename": "catalog-ui/src/app/models/service-csar.ts",
         "patchSetId": 7
@@ -45,6 +69,30 @@
       "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ec801ba_88c60942",
+        "filename": "catalog-ui/src/app/models/service-csar.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-06-23T09:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "626f7caa_d7e18283",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 32,
+        "endChar": 35
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "14f67197_27840004",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-06-23T09:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "76cbc646_11424094",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 11
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1dca36ff_ec8b56e1",
         "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
         "patchSetId": 7
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "d5464350_ffb86e2b",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-06-23T09:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1dca36ff_ec8b56e1",
+      "range": {
+        "startLine": 45,
+        "startChar": 15,
+        "endLine": 45,
+        "endChar": 47
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e8bb0ede_6c28ced4",
         "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
         "patchSetId": 7
@@ -108,6 +204,24 @@
       "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2650ee67_1bc24cd9",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-06-23T09:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e8bb0ede_6c28ced4",
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -134,6 +248,30 @@
     },
     {
       "key": {
+        "uuid": "243fbae7_61757fe7",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-06-23T09:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b80f2d85_2ce9df74",
+      "range": {
+        "startLine": 85,
+        "startChar": 19,
+        "endLine": 85,
+        "endChar": 89
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ce4517a5_5057d141",
         "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
         "patchSetId": 7
@@ -154,6 +292,30 @@
       "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21b80eb1_95c7b768",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 7
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-06-23T09:52:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce4517a5_5057d141",
+      "range": {
+        "startLine": 296,
+        "startChar": 20,
+        "endLine": 296,
+        "endChar": 45
+      },
+      "revId": "095c274e4d0d52c3f87735dde993bd2e4b3ce73d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
