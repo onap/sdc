@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.openecomp.sdc.onboarding</groupId>
         <artifactId>action-library-rest</artifactId>
-        <version>1.11.4-SNAPSHOT</version>
+        <version>1.11.5-SNAPSHOT</version>
     </parent>
 
     <dependencies>
