@@ -22,6 +22,30 @@
       "revId": "fb9199c1b0b6afa42621f8acf98686c129cd10b5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de63dd46_67358445",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1946,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-24T08:25:38Z",
+      "side": 1,
+      "message": "according to https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/TOSCA-Simple-Profile-YAML-v1.3.html\ngroup members can only be nodes (3.8.5 Group definition).",
+      "parentUuid": "f676e307_0d32ca85",
+      "range": {
+        "startLine": 1946,
+        "startChar": 0,
+        "endLine": 1946,
+        "endChar": 76
+      },
+      "revId": "fb9199c1b0b6afa42621f8acf98686c129cd10b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
