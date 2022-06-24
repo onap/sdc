@@ -5,6 +5,96 @@
 Release Notes
 =============
 
+Version: 1.11.5
+==============
+
+:Release Date: 2022-06-24
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+
+    N/A
+
+**Stories**
+
+*  `SDC-3982 <https://jira.onap.org/browse/SDC-3982>`_ - Rearrange Interface Operation Implementation
+*  `SDC-4055 <https://jira.onap.org/browse/SDC-4055>`_ - Delete interface operation from VFC
+*  `SDC-4052 <https://jira.onap.org/browse/SDC-4052>`_ - Service Import - Input Metadata
+*  `SDC-4049 <https://jira.onap.org/browse/SDC-4049>`_ - Service Import - Node Template Node Filter
+*  `SDC-4053 <https://jira.onap.org/browse/SDC-4053>`_ - Support get_attribute in Property Assignment TOSCA functions
+*  `SDC-4054 <https://jira.onap.org/browse/SDC-4054>`_ - Service Import - Groups
+*  `SDC-4044 <https://jira.onap.org/browse/SDC-4044>`_ - Service Import - Read metadata from csar
+*  `SDC-4065 <https://jira.onap.org/browse/SDC-4065>`_ - Make instance count optional
+
+**Bug Fixes**
+
+*  `SDC-4041 <https://jira.onap.org/browse/SDC-4041>`_ - Fix broken build
+*  `SDC-4042 <https://jira.onap.org/browse/SDC-4042>`_ - TOSCA function modal input/property not found message does not disappear
+*  `SDC-4046 <https://jira.onap.org/browse/SDC-4046>`_ - After a checkout in the VFC Properties page, can't edit a property
+*  `SDC-4043 <https://jira.onap.org/browse/SDC-4043>`_ - Load inputs/properties in Tosca Get Function dialog considering the selected property schema
+*  `SDC-4047 <https://jira.onap.org/browse/SDC-4047>`_ - Disable the save button in Property assignment TOSCA Function Modal for invalid values
+*  `SDC-4039 <https://jira.onap.org/browse/SDC-4039>`_ - Fix getToscaFunction validation for property value
+*  `SDC-4038 <https://jira.onap.org/browse/SDC-4038>`_ - Fix loading issue and double errors in properties assignment
+*  `SDC-4050 <https://jira.onap.org/browse/SDC-4050>`_ - Update a list of map in VFC Properties - error while adding a new entry
+*  `SDC-4057 <https://jira.onap.org/browse/SDC-4057>`_ - get_input not working for complex properties
+*  `SDC-4059 <https://jira.onap.org/browse/SDC-4059>`_ - Fix interface name and operation not being disabled on edit
+*  `SDC-4058 <https://jira.onap.org/browse/SDC-4058>`_ - VFC interface operation can be edited even when checked in
+*  `SDC-4061 <https://jira.onap.org/browse/SDC-4061>`_ - Fix Interface Operation mandatory fields
+*  `SDC-4045 <https://jira.onap.org/browse/SDC-4045>`_ - Fix interface operation implementation not being updated on version change
+
+
+**Tasks**
+
+*  `SDC-4056 <https://jira.onap.org/browse/SDC-4056>`_ - Remove unused maven properties in main pom
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.4
 ==============
 
