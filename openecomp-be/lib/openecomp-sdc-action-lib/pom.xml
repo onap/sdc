@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.openecomp.sdc</groupId>
         <artifactId>openecomp-sdc-lib</artifactId>
-        <version>1.11.5-SNAPSHOT</version>
+        <version>1.11.6-SNAPSHOT</version>
     </parent>
 
 
