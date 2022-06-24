@@ -7,7 +7,8 @@
         [multiple]="true"
         [items]="directiveOptions"
         [(ngModel)]="selectedDirectiveOptions"
-        placeholder="Select Directives...">
+        placeholder="Select Directives..."
+        [appendTo]="'body'">
     </ng-select>
     <button id="multi-select-apply" class="apply-btn" (click)="onAddDirectives()">{{'Apply'}}</button>
     <button id="multi-select-cancel" class="clr-btn" (click)="onClearDirectives()">{{'Clear'}}</button>
