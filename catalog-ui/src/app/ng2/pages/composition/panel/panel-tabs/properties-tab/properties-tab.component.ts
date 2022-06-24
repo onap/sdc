@@ -286,8 +286,7 @@ export class PropertiesTabComponent implements OnInit {
         if(
             (component.minOccurrences === null && component.maxOccurrences === null && !component.instanceCount) ||
             (component.minOccurrences && parseInt(component.minOccurrences) >= 0 && component.maxOccurrences &&
-            (parseInt(component.maxOccurrences) >= parseInt(component.minOccurrences) || component.maxOccurrences === "UNBOUNDED") &&
-            component.instanceCount)
+            (parseInt(component.maxOccurrences) >= parseInt(component.minOccurrences) || component.maxOccurrences === "UNBOUNDED"))
         ) {
             return true;
         } else {
