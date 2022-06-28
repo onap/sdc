@@ -313,6 +313,8 @@ public class GroupsOperation extends BaseOperation {
                 Optional<PropertyDataDefinition> currentProp = properties.stream().filter(p -> p.getName().equals(np.getName())).findAny();
                 if (currentProp.isPresent()) {
                     currentProp.get().setValue(np.getValue());
+                    currentProp.get().setToscaGetFunction(np.getToscaGetFunction());
+                    currentProp.get().setToscaGetFunctionType(np.getToscaGetFunctionType());
                 }
             });
             updateVersion(promoteMinorVersion, group);
