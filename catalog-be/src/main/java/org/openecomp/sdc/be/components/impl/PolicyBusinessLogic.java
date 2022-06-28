@@ -56,6 +56,7 @@ import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
+import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -125,33 +126,32 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public Map<String, PolicyDefinition> createPoliciesFromParsedCsar(Component component,
-                                                                      final Map<String, PolicyDefinition> incomingPolicyDefinitions) {
+    public Map<String, PolicyDefinition> createPolicies(final Component component,
+                                                        final Map<String, PolicyDefinition> incomingPolicyDefinitions) {
         if (MapUtils.isEmpty(incomingPolicyDefinitions)) {
             return Collections.emptyMap();
         }
-        Map<String, PolicyDefinition> createdPolicies = new HashMap<>();
-        for (Map.Entry<String, PolicyDefinition> policyEntry : incomingPolicyDefinitions.entrySet()) {
-            PolicyDefinition incomingPolicyDefinition = policyEntry.getValue();
-            String policyName = incomingPolicyDefinition.getName();
+        final Map<String, PolicyDefinition> createdPolicies = new HashMap<>();
+        for (final PolicyDefinition incomingPolicyDefinition : incomingPolicyDefinitions.values()) {
+            final String policyName = incomingPolicyDefinition.getName();
             log.trace("Going to create policy {}", incomingPolicyDefinition);
             loggerSupportability
                 .log(LoggerSupportabilityActions.CREATE_GROUP_POLICY, component.getComponentMetadataForSupportLog(), StatusCode.STARTED,
                     "Start to create policy: {} for component {}", policyName, component.getName());
-            String policyType = incomingPolicyDefinition.getType();
+            final String policyType = incomingPolicyDefinition.getType();
             if (StringUtils.isEmpty(policyType)) {
                 log.debug("Policy type '{}' for policy '{}' not found.", policyType, policyName);
                 throw new ByActionStatusComponentException(ActionStatus.POLICY_MISSING_POLICY_TYPE, policyName);
             }
             // create policyDefinition
-            String policyTypeName = incomingPolicyDefinition.getPolicyTypeName();
+            final String policyTypeName = incomingPolicyDefinition.getPolicyTypeName();
             PolicyDefinition createdPolicyDefinition = createPolicy(policyTypeName, component);
             // set isFromCsar
             createdPolicyDefinition.setToscaPresentationValue(JsonPresentationFields.IS_FROM_CSAR, true);
             // link policy to component
             component.addPolicy(createdPolicyDefinition);
             // process targets
-            Map<PolicyTargetType, List<String>> policyTargets = incomingPolicyDefinition.getTargets();
+            final Map<PolicyTargetType, List<String>> policyTargets = incomingPolicyDefinition.getTargets();
             createdPolicyDefinition = setUpdatePolicyTargets(component, createdPolicyDefinition, policyTargets);
             // process policy properties
             List<PropertyDataDefinition> properties = incomingPolicyDefinition.getProperties();
@@ -179,36 +179,66 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         if (MapUtils.isEmpty(targets)) {
             return policyDefinition;
         }
-        List<String> targetsToUpdate = targets.get(PolicyTargetType.COMPONENT_INSTANCES);
-        if (CollectionUtils.isEmpty(targetsToUpdate)) {
+        final List<String> componentInstancesTargetsToUpdate = targets.get(PolicyTargetType.COMPONENT_INSTANCES);
+        final List<String> groupsTargetsToUpdate = targets.get(PolicyTargetType.GROUPS);
+        if (CollectionUtils.isEmpty(componentInstancesTargetsToUpdate) && CollectionUtils.isEmpty(groupsTargetsToUpdate)) {
             return policyDefinition;
         }
+
+        final List<String> allTargets = joinLists(componentInstancesTargetsToUpdate, groupsTargetsToUpdate);
+
         // update targets to uniqueIds of respective component instance
-        List<String> targetsUniqueIds = new ArrayList<>();
-        for (String targetName : targetsToUpdate) {
-            Optional<ComponentInstance> componentInstance = component.getComponentInstanceByName(targetName);
-            String componentUniqueId = componentInstance
-                .orElseThrow(() -> new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND)).getUniqueId();
-            targetsUniqueIds.add(componentUniqueId);
+        final List<String> targetsGroupsUniqueIds = new ArrayList<>();
+        final List<String> targetsInstanceUniqueIds = new ArrayList<>();
+        for (final String targetName : allTargets) {
+            final String groupsTargetUniqueIdForTargerName = getGroupsTargetUniqueIdForTargerName(component, targetName);
+            if (groupsTargetUniqueIdForTargerName != null) {
+                targetsGroupsUniqueIds.add(groupsTargetUniqueIdForTargerName);
+            }
+            final String instanceTargetUniqueIdForTargerName = getInstanceTargetUniqueIdForTargerName(component, targetName);
+            if (instanceTargetUniqueIdForTargerName != null) {
+                targetsInstanceUniqueIds.add(instanceTargetUniqueIdForTargerName);
+            }
         }
-        EnumMap<PolicyTargetType, List<String>> updatedTargets = new EnumMap<>(PolicyTargetType.class);
-        updatedTargets.put(PolicyTargetType.COMPONENT_INSTANCES, targetsUniqueIds);
+        if (targetsGroupsUniqueIds.isEmpty() && targetsInstanceUniqueIds.isEmpty()) {
+            throw new ByActionStatusComponentException(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND);
+        }
+        final EnumMap<PolicyTargetType, List<String>> updatedTargets = new EnumMap<>(PolicyTargetType.class);
+        if (!targetsGroupsUniqueIds.isEmpty()) {
+            updatedTargets.put(PolicyTargetType.GROUPS, targetsGroupsUniqueIds);
+        }
+        if (!targetsInstanceUniqueIds.isEmpty()) {
+            updatedTargets.put(PolicyTargetType.COMPONENT_INSTANCES, targetsInstanceUniqueIds);
+        }
         policyDefinition.setTargets(updatedTargets);
-        policyDefinition = validateAndUpdatePolicyTargets(component, policyDefinition.getUniqueId(), policyDefinition.getTargets());
-        return policyDefinition;
+        return validateAndUpdatePolicyTargets(component, policyDefinition.getUniqueId(), policyDefinition.getTargets());
     }
 
-    public Either<List<PolicyDefinition>, ResponseFormat> getPoliciesList(ComponentTypeEnum componentType, String componentId, String userId) {
-        Either<List<PolicyDefinition>, ResponseFormat> result;
-        log.trace("#getPolicies - starting to retrieve policies of component {}. ", componentId);
-        try {
-            Component component = validateContainerComponentAndUserBeforeReadOperation(componentType, componentId, userId);
-            result = Either.left(component.resolvePoliciesList());
-        } catch (Exception e) {
-            log.error("#getPolicy - the exception occurred upon retrieving policies list of component {}: ", componentId, e);
-            result = Either.right(componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR));
+    private List<String> joinLists(final List<String> a, final List<String> b) {
+        final List<String> result = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(a)) {
+            result.addAll(a);
+        }
+        if (CollectionUtils.isNotEmpty(b)) {
+            result.addAll(b);
         }
         return result;
+    }
+
+    private String getGroupsTargetUniqueIdForTargerName(final Component component, final String targetName) {
+        final Optional<GroupDefinition> groupByInvariantName = component.getGroupByInvariantName(targetName);
+        if (groupByInvariantName.isPresent()) {
+            return groupByInvariantName.get().getUniqueId();
+        }
+        return null;
+    }
+
+    private String getInstanceTargetUniqueIdForTargerName(final Component component, final String targetName) {
+        final Optional<ComponentInstance> componentInstance = component.getComponentInstanceByName(targetName);
+        if (componentInstance.isPresent()) {
+            return componentInstance.get().getUniqueId();
+        }
+        return null;
     }
 
     /**
@@ -266,7 +296,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
      * @return a policy or an error in a response format
      */
     public PolicyDefinition deletePolicy(ComponentTypeEnum componentType, String componentId, String policyId, String userId, boolean shouldLock) {
-        PolicyDefinition result = null;
         log.trace("#deletePolicy - starting to update the policy {} on the component {}. ", policyId, componentId);
         Component component = null;
         boolean failed = false;
@@ -358,7 +387,6 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
 
     public PolicyDefinition updatePolicyTargets(ComponentTypeEnum componentTypeEnum, String componentId, String policyId,
                                                 Map<PolicyTargetType, List<String>> targets, String userId) {
-        Either<PolicyDefinition, ResponseFormat> result = null;
         log.debug("updating the policy id {} targets with the components {}. ", policyId, componentId);
         boolean failed = false;
         try {
@@ -554,7 +582,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
     }
 
     private PolicyTypeDefinition validatePolicyTypeOnCreatePolicy(String policyTypeName, Component component) {
-        Either<PolicyTypeDefinition, StorageOperationStatus> latestPolicyTypeByType = policyTypeOperation.getLatestPolicyTypeByType(policyTypeName, component.getModel());
+        final var latestPolicyTypeByType = policyTypeOperation.getLatestPolicyTypeByType(policyTypeName, component.getModel());
         if (latestPolicyTypeByType.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(latestPolicyTypeByType.right().value()));
         }

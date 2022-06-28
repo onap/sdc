@@ -1865,7 +1865,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Resource resource = createResourceObject(false);
 
         Map<String, UploadComponentInstanceInfo> uploadResInstancesMap = new HashMap<>();
-        UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
+        UploadComponentInstanceInfo nodesInfoValue = getUploadComponentInstanceInfo();
         nodesInfoValue.getRequirements().get("requirements").get(0).setName("zxjtestimportserviceab0.mme_ipu_vdu.dependency.test");
         uploadResInstancesMap.put("uploadComponentInstanceInfo", nodesInfoValue);
         List<ComponentInstance> componentInstancesList = creatComponentInstances();
@@ -1897,7 +1897,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         String yamlName = "group.yml";
         Resource resource = createParseResourceObject(true);
         Map<String, UploadComponentInstanceInfo> uploadResInstancesMap = new HashMap<>();
-        UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
+        UploadComponentInstanceInfo nodesInfoValue = getUploadComponentInstanceInfo();
         uploadResInstancesMap.put("uploadComponentInstanceInfo", nodesInfoValue);
         List<ComponentInstance> componentInstancesList = new ArrayList<>();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
@@ -1912,7 +1912,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         String yamlName = "yamlName";
         Resource resource = createParseResourceObject(true);
         resource.setComponentInstances(creatComponentInstances());
-        UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
+        UploadComponentInstanceInfo nodesInfoValue = getUploadComponentInstanceInfo();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
 
         Assertions.assertNotNull(
@@ -1925,7 +1925,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Resource resource = createParseResourceObject(false);
         List<ComponentInstance> componentInstancesList = new ArrayList<>();
         resource.setComponentInstances(componentInstancesList);
-        UploadComponentInstanceInfo nodesInfoValue = getuploadComponentInstanceInfo();
+        UploadComponentInstanceInfo nodesInfoValue = getUploadComponentInstanceInfo();
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Assertions.assertNotNull(
             testSubject.addRelationToRI(yamlName, resource, nodesInfoValue, relations));

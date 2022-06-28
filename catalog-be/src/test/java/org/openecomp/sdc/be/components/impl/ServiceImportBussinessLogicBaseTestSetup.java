@@ -133,7 +133,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     private static final String RESOURCE_SUBCATEGORY = "Router";
     protected final ServletContext servletContext = Mockito.mock(ServletContext.class);
     protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
-    protected ServiceImportBusinessLogic sIB1;
+    protected ServiceImportBusinessLogic sIBL;
     protected UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     protected WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     protected WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
@@ -250,7 +250,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
 
         when(serviceImportParseLogic.isArtifactDeletionRequired(anyString(), any(), anyBoolean())).thenReturn(true);
 
-        sIB1 = new ServiceImportBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
+        sIBL = new ServiceImportBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
             groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactBl, distributionEngine, componentInstanceBusinessLogic,
             serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter, serviceFilterOperation,
@@ -267,6 +267,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         Service service = new Service();
         service.setUniqueId("sid");
         service.setName("Service");
+        service.setSystemName("SystemName");
         CategoryDefinition category = new CategoryDefinition();
         category.setName(SERVICE_CATEGORY);
         category.setIcons(Collections.singletonList("defaulticon"));
@@ -371,9 +372,9 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         return groups;
     }
 
-    protected UploadComponentInstanceInfo getuploadComponentInstanceInfo() {
+    protected UploadComponentInstanceInfo getUploadComponentInstanceInfo() {
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
-        uploadComponentInstanceInfo.setType("resources");
+        uploadComponentInstanceInfo.setType("My-Resource_Tosca_Name");
         Collection<String> directives = new Collection<String>() {
             @Override
             public int size() {
