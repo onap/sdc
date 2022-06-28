@@ -643,8 +643,17 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
                     policy.getName());
                 throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, newProperty.getName());
             }
+            if (newProperty.getToscaGetFunction() != null) {
+                newProperty.setValue(newProperty.getToscaGetFunction().generatePropertyValue());
+            }
             String newPropertyValueEither = updateInputPropertyObjectValue(newProperty);
             oldProperties.get(newProperty.getName()).setValue(newPropertyValueEither);
+            if (newProperty.hasGetFunction()) {
+                oldProperties.get(newProperty.getName()).setToscaGetFunction(newProperty.getToscaGetFunction());
+            } else {
+                oldProperties.get(newProperty.getName()).setToscaGetFunction(null);
+                oldProperties.get(newProperty.getName()).setToscaGetFunctionType(null);
+            }
         }
         return policy;
     }
