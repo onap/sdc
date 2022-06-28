@@ -19,6 +19,7 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import static org.openecomp.sdc.be.components.impl.BaseBusinessLogic.enumHasValueFilter;
@@ -139,6 +140,9 @@ public class GroupBusinessLogicNew {
             if (!isOnlyGroupPropertyValueChanged(gp, originalProperties.get(updatedPropertyName))) {
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY, updatedPropertyName);
             }
+            if (gp.isGetFunction()) {
+                gp.setValue(gp.getToscaGetFunction().generatePropertyValue());
+            }
             if (StringUtils.isEmpty(gp.getValue())) {
                 gp.setValue(originalProperties.get(updatedPropertyName).getDefaultValue());
             }
@@ -225,7 +229,7 @@ public class GroupBusinessLogicNew {
         } else {
             value = parentValues.get(propertyKey);
         }
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     private boolean isOnlyGroupPropertyValueChanged(GroupProperty groupProperty1, GroupProperty groupProperty2) {
@@ -233,10 +237,14 @@ public class GroupBusinessLogicNew {
         groupProperty1Duplicate.setValue(null);
         groupProperty1Duplicate.setSchema(null);
         groupProperty1Duplicate.setParentUniqueId(null);
+        groupProperty1Duplicate.setToscaGetFunction(null);
+        groupProperty1Duplicate.setToscaGetFunctionType(null);
         GroupProperty groupProperty2Duplicate = new GroupProperty(groupProperty2);
         groupProperty2Duplicate.setValue(null);
         groupProperty2Duplicate.setSchema(null);
         groupProperty2Duplicate.setParentUniqueId(null);
+        groupProperty2Duplicate.setToscaGetFunction(null);
+        groupProperty2Duplicate.setToscaGetFunctionType(null);
         return StringUtils.equals(groupProperty1Duplicate.getValueUniqueUid(), groupProperty2Duplicate.getValueUniqueUid()) && groupProperty1Duplicate
             .equals(groupProperty2Duplicate);
     }
