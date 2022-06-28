@@ -11,28 +11,28 @@ metadata:
   resourceVendorRelease: 1.0.0.wd03
   resourceVendorModelNumber: '666'
 imports:
-- nodes:
-    file: nodes.yml
-- datatypes:
-    file: data.yml
-- capabilities:
-    file: capabilities.yml
-- relationships:
-    file: relationships.yml
-- groups:
-    file: groups.yml
-- policies:
-    file: policies.yml
-- annotations:
-    file: annotations.yml
-- resource-ciResVFOnboarded-base_vfw-aa8dcbff-nodes.vpgCvfc-interface:
-    file: resource-CiresvfonboardedBaseVfwAa8dcbffNodesVpgcvfc-template-interface.yml
-- resource-CiresvfonboardedBaseVfwAa8dcbff.compute.nodes.heat.vpg:
-    file: resource-Ciresvfonboardedbasevfwaa8dcbffComputeNodesHeatVpg-template.yml
-- resource-NeutronPort:
-    file: resource-Neutronport-template.yml
-- resource-extNeutronCP:
-    file: resource-Extneutroncp-template.yml
+  - nodes:
+      file: nodes.yml
+  - datatypes:
+      file: data.yml
+  - capabilities:
+      file: capabilities.yml
+  - relationships:
+      file: relationships.yml
+  - groups:
+      file: groups.yml
+  - policies:
+      file: policies.yml
+  - annotations:
+      file: annotations.yml
+  - resource-ciResVFOnboarded-base_vfw-aa8dcbff-nodes.vpgCvfc-interface:
+      file: resource-CiresvfonboardedBaseVfwAa8dcbffNodesVpgcvfc-template-interface.yml
+  - resource-CiresvfonboardedBaseVfwAa8dcbff.compute.nodes.heat.vpg:
+      file: resource-Ciresvfonboardedbasevfwaa8dcbffComputeNodesHeatVpg-template.yml
+  - resource-NeutronPort:
+      file: resource-Neutronport-template.yml
+  - resource-extNeutronCP:
+      file: resource-Extneutroncp-template.yml
 topology_template:
   inputs:
     port_vpg_private_1_port_network:
@@ -201,6 +201,25 @@ topology_template:
     port_vpg_private_0_port_order:
       type: integer
       required: false
+  outputs:
+    vpg_state:
+      value:
+        get_attribute:
+          - vpg
+          - state
+      type: string
+    vpg_vpg_private_0_port_tosca_name:
+      value:
+        get_attribute:
+          - vpg_vpg_private_0_port_tosca
+          - tosca_name
+      type: string
+    vpg_vpg_private_1_port_tosca_id:
+      value:
+        get_attribute:
+          - vpg_vpg_private_1_port
+          - tosca_id
+      type: string
   node_templates:
     vpg_vpg_private_0_port:
       type: org.openecomp.resource.cp.nodes.heat.network.neutron.Port
@@ -225,8 +244,8 @@ topology_template:
           get_input: port_vpg_private_0_port_related_networks
         network:
           get_input:
-          - port_vpg_private_0_port_network
-          - index_value
+            - port_vpg_private_0_port_network
+            - index_value
         replacement_policy: AUTO
         ip_requirements:
           get_input: port_vpg_private_0_port_ip_requirements
@@ -234,8 +253,8 @@ topology_template:
           get_input: port_vpg_private_0_port_network_role
         fixed_ips:
           get_input:
-          - port_vpg_private_0_port_fixed_ips
-          - index_value
+            - port_vpg_private_0_port_fixed_ips
+            - index_value
         subinterface_indicator: false
         mac_requirements:
           get_input: port_vpg_private_0_port_mac_requirements
@@ -249,9 +268,9 @@ topology_template:
         order:
           get_input: port_vpg_private_0_port_order
       requirements:
-      - binding:
-          capability: binding
-          node: vpg
+        - binding:
+            capability: binding
+            node: vpg
       capabilities:
         network.outgoing.bytes.rate_vpg_vpg_private_0_port:
           properties:
@@ -301,6 +320,9 @@ topology_template:
             description: Number of incoming packets
             type: Cumulative
             category: network
+      attributes:
+        tosca_name:
+          type: string
     vpg_vpg_private_1_port:
       type: org.openecomp.resource.cp.v2.extNeutronCP
       metadata:
@@ -324,8 +346,8 @@ topology_template:
           get_input: port_vpg_private_1_port_related_networks
         network:
           get_input:
-          - port_vpg_private_1_port_network
-          - index_value
+            - port_vpg_private_1_port_network
+            - index_value
         replacement_policy: AUTO
         ip_requirements:
           get_input: port_vpg_private_1_port_ip_requirements
@@ -333,8 +355,8 @@ topology_template:
           get_input: port_vpg_private_1_port_network_role
         fixed_ips:
           get_input:
-          - port_vpg_private_1_port_fixed_ips
-          - index_value
+            - port_vpg_private_1_port_fixed_ips
+            - index_value
         subinterface_indicator: false
         mac_requirements:
           get_input: port_vpg_private_1_port_mac_requirements
@@ -348,9 +370,9 @@ topology_template:
         order:
           get_input: port_vpg_private_1_port_order
       requirements:
-      - binding:
-          capability: binding
-          node: vpg
+        - binding:
+            capability: binding
+            node: vpg
       capabilities:
         network.incoming.bytes.rate_vpg_vpg_private_1_port:
           properties:
@@ -406,6 +428,9 @@ topology_template:
             description: Number of incoming bytes
             type: Cumulative
             category: network
+      attributes:
+        tosca_id:
+          type: string
     vpg:
       type: org.openecomp.resource.vfc.CiresvfonboardedBaseVfwAa8dcbff.abstract.compute.nodes.heat.vpg
       metadata:
@@ -426,26 +451,26 @@ topology_template:
           get_input: vm_flavor_name
         key_name:
           get_input:
-          - compute_vpg_key_name
-          - index_value
+            - compute_vpg_key_name
+            - index_value
         image:
           get_input: vm_image_name
         image_update_policy: REBUILD
         metadata:
           get_input:
-          - compute_vpg_metadata
-          - index_value
+            - compute_vpg_metadata
+            - index_value
         software_config_transport: POLL_SERVER_CFN
         contrail_service_instance_ind: false
         user_data_format:
           get_input:
-          - compute_vpg_user_data_format
-          - index_value
+            - compute_vpg_user_data_format
+            - index_value
         user_data_update_policy: REPLACE
         name:
           get_input:
-          - compute_vpg_name
-          - index_value
+            - compute_vpg_name
+            - index_value
         flavor_update_policy: RESIZE
       capabilities:
         disk.read.bytes_vpg:
@@ -665,223 +690,226 @@ topology_template:
             description: Average disk latency
             type: Gauge
             category: disk
+      attributes:
+        state:
+          type: string
   substitution_mappings:
     node_type: org.openecomp.resource.vfc.CiresvfonboardedBaseVfwAa8dcbffcvfc.abstract.nodes.vpg
     capabilities:
       network.incoming.bytes.rate_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - network.incoming.bytes.rate
+        - vpg_vpg_private_1_port
+        - network.incoming.bytes.rate
       disk.read.bytes_vpg:
-      - vpg
-      - disk.read.bytes
+        - vpg
+        - disk.read.bytes
       binding_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - binding
+        - vpg_vpg_private_1_port
+        - binding
       network.outgoing.bytes.rate_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - network.outgoing.bytes.rate
+        - vpg_vpg_private_0_port
+        - network.outgoing.bytes.rate
       forwarder_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - forwarder
+        - vpg_vpg_private_0_port
+        - forwarder
       disk.allocation_vpg:
-      - vpg
-      - disk.allocation
+        - vpg
+        - disk.allocation
       network.incoming.bytes_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - network.incoming.bytes
+        - vpg_vpg_private_1_port
+        - network.incoming.bytes
       attachment_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - attachment
+        - vpg_vpg_private_0_port
+        - attachment
       endpoint_vpg:
-      - vpg
-      - endpoint
+        - vpg
+        - endpoint
       cpu_vpg:
-      - vpg
-      - cpu
+        - vpg
+        - cpu
       disk.device.read.bytes.rate_vpg:
-      - vpg
-      - disk.device.read.bytes.rate
+        - vpg
+        - disk.device.read.bytes.rate
       network.outgoing.bytes.rate_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - network.outgoing.bytes.rate
+        - vpg_vpg_private_1_port
+        - network.outgoing.bytes.rate
       feature_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - feature
+        - vpg_vpg_private_1_port
+        - feature
       disk.device.write.bytes.rate_vpg:
-      - vpg
-      - disk.device.write.bytes.rate
+        - vpg
+        - disk.device.write.bytes.rate
       attachment_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - attachment
+        - vpg_vpg_private_1_port
+        - attachment
       disk.iops_vpg:
-      - vpg
-      - disk.iops
+        - vpg
+        - disk.iops
       disk.usage_vpg:
-      - vpg
-      - disk.usage
+        - vpg
+        - disk.usage
       disk.device.usage_vpg:
-      - vpg
-      - disk.device.usage
+        - vpg
+        - disk.device.usage
       disk.device.read.bytes_vpg:
-      - vpg
-      - disk.device.read.bytes
+        - vpg
+        - disk.device.read.bytes
       disk.device.write.bytes_vpg:
-      - vpg
-      - disk.device.write.bytes
+        - vpg
+        - disk.device.write.bytes
       disk.write.requests_vpg:
-      - vpg
-      - disk.write.requests
+        - vpg
+        - disk.write.requests
       feature_vpg:
-      - vpg
-      - feature
+        - vpg
+        - feature
       disk.capacity_vpg:
-      - vpg
-      - disk.capacity
+        - vpg
+        - disk.capacity
       disk.device.latency_vpg:
-      - vpg
-      - disk.device.latency
+        - vpg
+        - disk.device.latency
       disk.device.write.requests.rate_vpg:
-      - vpg
-      - disk.device.write.requests.rate
+        - vpg
+        - disk.device.write.requests.rate
       feature_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - feature
+        - vpg_vpg_private_0_port
+        - feature
       forwarder_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - forwarder
+        - vpg_vpg_private_1_port
+        - forwarder
       network.outgoing.packets.rate_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - network.outgoing.packets.rate
+        - vpg_vpg_private_1_port
+        - network.outgoing.packets.rate
       network.incoming.packets.rate_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - network.incoming.packets.rate
+        - vpg_vpg_private_1_port
+        - network.incoming.packets.rate
       binding_vpg:
-      - vpg
-      - binding
+        - vpg
+        - binding
       disk.device.allocation_vpg:
-      - vpg
-      - disk.device.allocation
+        - vpg
+        - disk.device.allocation
       network.incoming.bytes_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - network.incoming.bytes
+        - vpg_vpg_private_0_port
+        - network.incoming.bytes
       disk.ephemeral.size_vpg:
-      - vpg
-      - disk.ephemeral.size
+        - vpg
+        - disk.ephemeral.size
       network.outgoing.bytes_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - network.outgoing.bytes
+        - vpg_vpg_private_1_port
+        - network.outgoing.bytes
       network.incoming.packets_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - network.incoming.packets
+        - vpg_vpg_private_1_port
+        - network.incoming.packets
       disk.write.requests.rate_vpg:
-      - vpg
-      - disk.write.requests.rate
+        - vpg
+        - disk.write.requests.rate
       disk.write.bytes.rate_vpg:
-      - vpg
-      - disk.write.bytes.rate
+        - vpg
+        - disk.write.bytes.rate
       disk.device.iops_vpg:
-      - vpg
-      - disk.device.iops
+        - vpg
+        - disk.device.iops
       host_vpg:
-      - vpg
-      - host
+        - vpg
+        - host
       network.outpoing.packets_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - network.outpoing.packets
+        - vpg_vpg_private_0_port
+        - network.outpoing.packets
       instance_vpg:
-      - vpg
-      - instance
+        - vpg
+        - instance
       disk.device.capacity_vpg:
-      - vpg
-      - disk.device.capacity
+        - vpg
+        - disk.device.capacity
       disk.device.read.requests_vpg:
-      - vpg
-      - disk.device.read.requests
+        - vpg
+        - disk.device.read.requests
       cpu_util_vpg:
-      - vpg
-      - cpu_util
+        - vpg
+        - cpu_util
       memory.usage_vpg:
-      - vpg
-      - memory.usage
+        - vpg
+        - memory.usage
       disk.device.read.requests.rate_vpg:
-      - vpg
-      - disk.device.read.requests.rate
+        - vpg
+        - disk.device.read.requests.rate
       disk.read.requests_vpg:
-      - vpg
-      - disk.read.requests
+        - vpg
+        - disk.read.requests
       cpu.delta_vpg:
-      - vpg
-      - cpu.delta
+        - vpg
+        - cpu.delta
       network.incoming.packets.rate_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - network.incoming.packets.rate
+        - vpg_vpg_private_0_port
+        - network.incoming.packets.rate
       network.incoming.bytes.rate_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - network.incoming.bytes.rate
+        - vpg_vpg_private_0_port
+        - network.incoming.bytes.rate
       disk.write.bytes_vpg:
-      - vpg
-      - disk.write.bytes
+        - vpg
+        - disk.write.bytes
       network.outgoing.packets.rate_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - network.outgoing.packets.rate
+        - vpg_vpg_private_0_port
+        - network.outgoing.packets.rate
       scalable_vpg:
-      - vpg
-      - scalable
+        - vpg
+        - scalable
       vcpus_vpg:
-      - vpg
-      - vcpus
+        - vpg
+        - vcpus
       port_mirroring_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - port_mirroring
+        - vpg_vpg_private_1_port
+        - port_mirroring
       disk.root.size_vpg:
-      - vpg
-      - disk.root.size
+        - vpg
+        - disk.root.size
       disk.device.write.requests_vpg:
-      - vpg
-      - disk.device.write.requests
+        - vpg
+        - disk.device.write.requests
       network.outgoing.bytes_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - network.outgoing.bytes
+        - vpg_vpg_private_0_port
+        - network.outgoing.bytes
       memory_vpg:
-      - vpg
-      - memory
+        - vpg
+        - memory
       network.outpoing.packets_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - network.outpoing.packets
+        - vpg_vpg_private_1_port
+        - network.outpoing.packets
       os_vpg:
-      - vpg
-      - os
+        - vpg
+        - os
       binding_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - binding
+        - vpg_vpg_private_0_port
+        - binding
       disk.read.bytes.rate_vpg:
-      - vpg
-      - disk.read.bytes.rate
+        - vpg
+        - disk.read.bytes.rate
       memory.resident_vpg:
-      - vpg
-      - memory.resident
+        - vpg
+        - memory.resident
       disk.latency_vpg:
-      - vpg
-      - disk.latency
+        - vpg
+        - disk.latency
       network.incoming.packets_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - network.incoming.packets
+        - vpg_vpg_private_0_port
+        - network.incoming.packets
     requirements:
       link_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - link
+        - vpg_vpg_private_0_port
+        - link
       dependency_vpg:
-      - vpg
-      - dependency
+        - vpg
+        - dependency
       dependency_vpg_vpg_private_0_port:
-      - vpg_vpg_private_0_port
-      - dependency
+        - vpg_vpg_private_0_port
+        - dependency
       local_storage_vpg:
-      - vpg
-      - local_storage
+        - vpg
+        - local_storage
       dependency_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - dependency
+        - vpg_vpg_private_1_port
+        - dependency
       link_vpg_vpg_private_1_port:
-      - vpg_vpg_private_1_port
-      - link
+        - vpg_vpg_private_1_port
+        - link
