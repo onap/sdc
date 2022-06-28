@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +50,7 @@ import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
@@ -63,6 +65,7 @@ import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.IPropertyInputCommon;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -340,9 +343,29 @@ public abstract class BaseBusinessLogic {
         String propertyType = property.getType();
         String innerType = getInnerType(property);
         // Specific Update Logic
-        Either<Object, Boolean> isValid = propertyOperation
-            .validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType,
-                componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel()));
+        Either<Object, Boolean> isValid = Either.right(false);
+        if (property.hasGetFunction()) {
+            ToscaGetFunctionDataDefinition propertyToscaFunctions = property.getToscaGetFunction();
+            Either<List<InputDefinition>, StorageOperationStatus> componentInputs = toscaOperationFacade
+                .getComponentInputs(propertyToscaFunctions.getSourceUniqueId());
+            if (componentInputs.isLeft()) {
+                Optional<InputDefinition> input = componentInputs.left().value().stream()
+                    .filter(inp -> inp.getUniqueId().equals(propertyToscaFunctions.getPropertyUniqueId())).findFirst();
+                if (input.isPresent()) {
+                    String inpType = input.get().getType();
+                    SchemaDefinition inpSchema = input.get().getSchema();
+                    String propType = property.getType();
+                    SchemaDefinition propSchema = property.getSchema();
+                    if (propType.equals(inpType) && (inpSchema == null || propSchema.equals(inpSchema))) {
+                        isValid = Either.left(property.getValue());
+                    }
+                }
+            }
+        } else {
+            isValid = propertyOperation
+                .validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType,
+                    componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel()));
+        }
         String newValue = property.getValue();
         if (isValid.isRight()) {
             Boolean res = isValid.right().value();
