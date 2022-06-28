@@ -20,10 +20,13 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -31,9 +34,16 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
+import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetOutputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.OutputDefinition;
@@ -94,7 +104,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         if (!ComponentValidations.validateComponentInstanceExist(component, componentInstanceId)) {
             final ActionStatus actionStatus = ActionStatus.COMPONENT_INSTANCE_NOT_FOUND;
             log.debug(FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_ERROR, componentInstanceId, actionStatus);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, component.getComponentMetadataForSupportLog(), StatusCode.ERROR,
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_OUTPUTS, component.getComponentMetadataForSupportLog(), StatusCode.ERROR,
                 FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID, componentInstanceId);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
@@ -110,10 +120,10 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         return createMultipleOutputs(userId, componentId, componentTypeEnum, componentInstOutputsMap, true, false);
     }
 
-    public Either<List<OutputDefinition>, ResponseFormat> createMultipleOutputs(final String userId, final String componentId,
-                                                                                final ComponentTypeEnum componentType,
-                                                                                final ComponentInstOutputsMap componentInstOutputsMapUi,
-                                                                                final boolean shouldLockComp, final boolean inTransaction) {
+    private Either<List<OutputDefinition>, ResponseFormat> createMultipleOutputs(final String userId, final String componentId,
+                                                                                 final ComponentTypeEnum componentType,
+                                                                                 final ComponentInstOutputsMap componentInstOutputsMapUi,
+                                                                                 final boolean shouldLockComp, final boolean inTransaction) {
         Either<List<OutputDefinition>, ResponseFormat> result = null;
         org.openecomp.sdc.be.model.Component component = null;
         try {
@@ -189,7 +199,6 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
      * @return
      */
     public OutputDefinition deleteOutput(final String componentId, final String userId, final String outputId) {
-        Either<OutputDefinition, ResponseFormat> deleteEither = null;
         if (log.isDebugEnabled()) {
             log.debug("Going to delete output id: {}", outputId);
         }
@@ -236,4 +245,69 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             unlockComponent(failed, component);
         }
     }
+
+    public Either<List<OutputDefinition>, ResponseFormat> createOutputsInGraph(Map<String, OutputDefinition> outputs,
+                                                                               final Component component,
+                                                                               final String userId) {
+
+        for (final Map.Entry<String, OutputDefinition> outputDefinition : outputs.entrySet()) {
+            final OutputDefinition outputDefinitionValue = outputDefinition.getValue();
+            outputDefinitionValue.setName(outputDefinition.getKey());
+
+            final String value = outputDefinitionValue.getValue();
+            if (value != null) {
+                final List<String> getAttribute = (List<String>) ImportUtils.loadYamlAsStrictMap(value)
+                    .get(ToscaGetFunctionType.GET_ATTRIBUTE.getFunctionName());
+                if (getAttribute.size() == 2) {
+                    final Optional<ComponentInstance> optionalComponentInstance = component.getComponentInstanceByName(getAttribute.get(0));
+                    if (optionalComponentInstance.isPresent()) {
+                        // From Instance
+                        final ComponentInstance componentInstance = optionalComponentInstance.get();
+                        outputDefinitionValue.setInstanceUniqueId(componentInstance.getUniqueId());
+                        outputDefinitionValue.setParentUniqueId(userId);
+                        outputDefinitionValue.setOwnerId(userId);
+                        final List<AttributeDefinition> componentInstanceAttributes = componentInstance.getAttributes();
+                        if (CollectionUtils.isNotEmpty(componentInstanceAttributes)) {
+                            final Optional<ComponentInstanceAttribute> componentInstanceAttributeOptional = componentInstanceAttributes.stream()
+                                .filter(ad -> ad.getName().equals(getAttribute.get(1))).map(ComponentInstanceAttribute::new).findFirst();
+                            if (componentInstanceAttributeOptional.isPresent()) {
+                                final ComponentInstanceAttribute componentInstanceAttribute = componentInstanceAttributeOptional.get();
+                                outputDefinitionValue.setAttribute(componentInstanceAttribute);
+                                outputDefinitionValue.setAttributeId(componentInstanceAttribute.getUniqueId());
+                                outputDefinitionValue.setSchema(componentInstanceAttribute.getSchema());
+                                outputDefinitionValue.setOutputPath(componentInstanceAttribute.getName());
+                                final GetOutputValueDataDefinition getOutputValueDataDefinition = new GetOutputValueDataDefinition();
+                                getOutputValueDataDefinition.setOutputName(outputDefinition.getKey());
+                                getOutputValueDataDefinition.setOutputId(outputDefinitionValue.getUniqueId());
+                                componentInstanceAttribute.setGetOutputValues(Collections.singletonList(getOutputValueDataDefinition));
+                            }
+                        }
+                    } else {
+                        // From SELF
+                        outputDefinitionValue.setInstanceUniqueId(component.getUniqueId());
+                    }
+                }
+            }
+        }
+        final List<OutputDefinition> resourceAttributes = component.getOutputs();
+        if (resourceAttributes != null) {
+            final Map<String, OutputDefinition> generatedOutputs = resourceAttributes.stream()
+                .collect(Collectors.toMap(AttributeDataDefinition::getName, i -> i));
+            final Either<Map<String, OutputDefinition>, String> mergeEither = ToscaDataDefinition.mergeDataMaps(generatedOutputs, outputs);
+            if (mergeEither.isRight()) {
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.OUTPUT_ALREADY_EXIST, mergeEither.right().value()));
+            }
+            outputs = mergeEither.left().value();
+        }
+
+        final var associateOutputsEither = toscaOperationFacade.createAndAssociateOutputs(outputs, component.getUniqueId());
+        if (associateOutputsEither.isRight()) {
+            log.debug("Failed to create outputs under component {}. Status is {}", component.getUniqueId(), associateOutputsEither.right().value());
+
+            return Either.right(
+                componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(associateOutputsEither.right().value())));
+        }
+        return Either.left(associateOutputsEither.left().value());
+    }
+
 }

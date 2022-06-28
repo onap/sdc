@@ -17,6 +17,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
       <version>${spring.boot.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onap.sdc.sdc-be-common</groupId>
@@ -308,9 +314,9 @@
     </dependency>
 
     <dependency>
-      <artifactId>commons-collections</artifactId>
-      <groupId>commons-collections</groupId>
-      <version>3.2.2</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>${commons.collections.version}</version>
     </dependency>
 
     <dependency>
