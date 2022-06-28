@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "80412cea_247edac7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/GroupBusinessLogicNew.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-06-28T14:53:50Z",
+      "side": 1,
+      "message": "@Deprecated, \nif possible, replace it",
+      "range": {
+        "startLine": 247,
+        "startChar": 32,
+        "endLine": 247,
+        "endChar": 55
+      },
+      "revId": "ed0aedad0bed02af0c5effc293f77b8dc3070cc1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
