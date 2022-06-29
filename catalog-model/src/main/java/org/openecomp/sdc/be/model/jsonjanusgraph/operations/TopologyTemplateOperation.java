@@ -583,6 +583,21 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return StorageOperationStatus.OK;
     }
 
+    public StorageOperationStatus associateOutputsToComponent(final GraphVertex nodeTypeVertex,
+                                                              final Map<String, ? extends AttributeDataDefinition> outputs,
+                                                              final String id) {
+        if (MapUtils.isNotEmpty(outputs)) {
+            outputs.values().stream().filter(e -> e.getUniqueId() == null)
+                .forEach(e -> e.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(id, e.getName())));
+            final Either<GraphVertex, StorageOperationStatus> associateElementToData
+                = associateElementToData(nodeTypeVertex, VertexTypeEnum.OUTPUTS, EdgeLabelEnum.OUTPUTS, outputs);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
+            }
+        }
+        return StorageOperationStatus.OK;
+    }
+
     private GraphVertex fillMetadata(GraphVertex nodeTypeVertex, TopologyTemplate topologyTemplate, JsonParseFlagEnum flag) {
         nodeTypeVertex.setLabel(VertexTypeEnum.TOPOLOGY_TEMPLATE);
         fillCommonMetadata(nodeTypeVertex, topologyTemplate);

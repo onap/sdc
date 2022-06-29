@@ -21,9 +21,12 @@ package org.openecomp.sdc.be.components.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,11 +34,13 @@ import static org.mockito.Mockito.when;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.ws.rs.core.Response.Status;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,18 +53,19 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentInstanceAttribOutput;
+import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
-import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
@@ -126,7 +132,7 @@ class OutputsBusinessLogicTest {
     private List<ComponentInstanceOutput> outputsList;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         service = new Service();
         service.setUniqueId(COMPONENT_ID);
@@ -145,6 +151,10 @@ class OutputsBusinessLogicTest {
         // add a ComponentInstance
         final ComponentInstance componentInstance = new ComponentInstance();
         componentInstance.setUniqueId(COMPONENT_INSTANCE_ID);
+        componentInstance.setName(COMPONENT_INSTANCE_ID);
+        final AttributeDefinition attributeDefinition = new AttributeDefinition();
+        attributeDefinition.setName("attribName");
+        componentInstance.setAttributes(Collections.singletonList(attributeDefinition));
         service.setComponentInstances(Collections.singletonList(componentInstance));
 
         instanceOutputMap = new HashMap<>();
@@ -402,4 +412,55 @@ class OutputsBusinessLogicTest {
         verify(attributeDeclarationOrchestrator, times(1)).unDeclareAttributesAsOutputs(service, listOutput);
     }
 
+    @Test
+    void testCreateOutputsInGraph_OK() {
+        final Map<String, OutputDefinition> outputs = new HashMap<>();
+        final var out_1 = new OutputDefinition();
+        out_1.setName("out-1");
+        out_1.setValue("{ get_attribute: [ instanceId, attribName ] }");
+        final var out_2 = new OutputDefinition();
+        out_2.setName("out-2");
+        out_2.setValue("{ get_attribute: [ SELF, oneMoreAttribute ] }");
+        outputs.put(out_1.getName(), out_1);
+        outputs.put(out_2.getName(), out_2);
+
+        final List<OutputDefinition> serviceOutputs = new ArrayList<>();
+        final var out_3 = new OutputDefinition();
+        out_3.setName("out-3");
+        serviceOutputs.add(out_3);
+        service.setOutputs(serviceOutputs);
+
+        final var list = Arrays.asList(out_1, out_2, out_3);
+        when(toscaOperationFacadeMock.createAndAssociateOutputs(anyMap(), anyString())).thenReturn(Either.left(list));
+
+        final var result = testInstance.createOutputsInGraph(outputs, service, USER_ID);
+        assertTrue(result.isLeft());
+        assertEquals(3, result.left().value().size());
+        assertSame(list, result.left().value());
+    }
+
+    @Test
+    void testCreateOutputsInGraph_NegativeCreateAndAssociateOutputsStatus() {
+        final Map<String, OutputDefinition> outputs = new HashMap<>();
+        final var out_1 = new OutputDefinition();
+        out_1.setName("out-1");
+        final var out_2 = new OutputDefinition();
+        out_2.setName("out-2");
+        outputs.put(out_1.getName(), out_1);
+        outputs.put(out_2.getName(), out_2);
+
+        final List<OutputDefinition> serviceOutputs = new ArrayList<>();
+        final var out_3 = new OutputDefinition();
+        out_3.setName("out-3");
+        serviceOutputs.add(out_3);
+        service.setOutputs(serviceOutputs);
+
+        final var list = Arrays.asList(out_1, out_2, out_3);
+        when(toscaOperationFacadeMock.createAndAssociateOutputs(anyMap(), anyString())).thenReturn(Either.right(StorageOperationStatus.BAD_REQUEST));
+        when(componentsUtilsMock.convertFromStorageResponse(StorageOperationStatus.BAD_REQUEST)).thenReturn(ActionStatus.INVALID_CONTENT);
+        when(componentsUtilsMock.getResponseFormat(ActionStatus.INVALID_CONTENT)).thenReturn(new ResponseFormat(Status.BAD_REQUEST.getStatusCode()));
+        final var result = testInstance.createOutputsInGraph(outputs, service, USER_ID);
+        assertTrue(result.isRight());
+        assertEquals(400, result.right().value().getStatus().intValue());
+    }
 }
