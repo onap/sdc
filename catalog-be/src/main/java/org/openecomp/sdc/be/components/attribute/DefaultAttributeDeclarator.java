@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -182,7 +181,7 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
         outputDefinition.setOutputPath(attributesName);
         outputDefinition.setInstanceUniqueId(propertiesOwner.getUniqueId());
         outputDefinition.setAttributeId(attributeOutput.getUniqueId());
-        outputDefinition.setAttributes(Arrays.asList(attributeOutput));
+        outputDefinition.setAttribute((attributeOutput));
         if (attribute instanceof IComponentInstanceConnectedElement) {
             ((IComponentInstanceConnectedElement) attribute).setComponentInstanceId(propertiesOwner.getUniqueId());
             ((IComponentInstanceConnectedElement) attribute).setComponentInstanceName(propertiesOwner.getName());
@@ -201,7 +200,7 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
                 attributeDataDefinition.setValue(jsonObject.toJSONString());
             } else {
                 jsonObject
-                    .put(GET_ATTRIBUTE, Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
+                    .put(GET_ATTRIBUTE, Arrays.asList(output.getAttribute().getComponentInstanceName(), attributeDataDefinition.getName()));
                 output.setValue(jsonObject.toJSONString());
             }
         } else {
@@ -209,7 +208,7 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
             if (objValue instanceof Map || objValue instanceof List) {
                 if (!complexProperty) {
                     jsonObject.put(GET_ATTRIBUTE,
-                        Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
+                        Arrays.asList(output.getAttribute().getComponentInstanceName(), attributeDataDefinition.getName()));
                     output.setValue(jsonObject.toJSONString());
                 } else {
                     final Map<String, Object> mappedToscaTemplate = (Map<String, Object>) objValue;
@@ -218,7 +217,7 @@ public abstract class DefaultAttributeDeclarator<PROPERTYOWNER extends Propertie
                 }
             } else {
                 jsonObject
-                    .put(GET_ATTRIBUTE, Arrays.asList(output.getAttributes().get(0).getComponentInstanceName(), attributeDataDefinition.getName()));
+                    .put(GET_ATTRIBUTE, Arrays.asList(output.getAttribute().getComponentInstanceName(), attributeDataDefinition.getName()));
                 output.setValue(jsonObject.toJSONString());
             }
         }
