@@ -296,11 +296,11 @@ public class ServiceImportBusinessLogic {
         try {
             log.trace("************* Adding properties to service from interface yaml {}", yamlName);
             Map<String, PropertyDefinition> properties = parsedToscaYamlInfo.getProperties();
-            if (properties != null && !properties.isEmpty()) {
+            if (MapUtils.isNotEmpty(properties)) {
                 final List<PropertyDefinition> propertiesList = new ArrayList<>();
-                properties.forEach((propertyName, propertyDefinition) -> {
-                    propertyDefinition.setName(propertyName);
-                    propertiesList.add(propertyDefinition);
+                properties.entrySet().stream().filter(entry -> !entry.getValue().getRequired()).forEach(entry -> {
+                    entry.getValue().setName(entry.getKey());
+                    propertiesList.add(entry.getValue());
                 });
                 service.setProperties(propertiesList);
             }
