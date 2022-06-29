@@ -32,6 +32,7 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterProp
 public class ParsedToscaYamlInfo {
 
     Map<String, InputDefinition> inputs;
+    Map<String, OutputDefinition> outputs;
     Map<String, UploadComponentInstanceInfo> instances;
     Map<String, GroupDefinition> groups;
     Map<String, PolicyDefinition> policies;
