@@ -24,10 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.model.tosca.version.Version;
@@ -68,7 +66,7 @@ public class ToscaTypeTest {
 		ToscaType toscaType = ToscaType.TIMESTAMP;;
 
 		assertTrue(!toscaType.isValidValue("timestamp"));
-		assertTrue(toscaType.isValidValue("Jun 30, 2009 7:03:47 AM"));
+		assertTrue(toscaType.isValidValue("2001-12-14t21:59:43.10-05:00"));
 		assertTrue(!toscaType.isValidValue("30 juin 2009 07:03:47"));
 	}
 
