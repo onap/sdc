@@ -28,7 +28,7 @@ import {UiElementInputComponent} from "../form-components/input/ui-element-input
 import {UiElementPopoverInputComponent} from "../form-components/popover-input/ui-element-popover-input.component";
 import {UiElementIntegerInputComponent} from "../form-components/integer-input/ui-element-integer-input.component";
 import {UiElementDropDownComponent, DropdownValue} from "../form-components/dropdown/ui-element-dropdown.component";
-import {PROPERTY_DATA} from "../../../../utils/constants";
+import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../utils/constants";
 
 enum DynamicElementComponentCreatorIdentifier {
     STRING,
@@ -38,7 +38,8 @@ enum DynamicElementComponentCreatorIdentifier {
     SUBNETPOOLID,
     ENUM,
     LIST,
-    DEFAULT
+    DEFAULT,
+    TIMESTAMP
 }
 
 @Component({
@@ -107,6 +108,9 @@ export class DynamicElementComponent {
             case this.type === 'string':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.STRING;
                 break;
+            case this.type === PROPERTY_TYPES.TIMESTAMP:
+                this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.TIMESTAMP;
+                break;
             case this.type === 'boolean':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
                 break;
@@ -145,6 +149,9 @@ export class DynamicElementComponent {
           break;
         case 'string':
           this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.STRING;
+          break;
+        case PROPERTY_TYPES.TIMESTAMP:
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.TIMESTAMP;
           break;
         case 'boolean':
           this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
@@ -190,6 +197,10 @@ export class DynamicElementComponent {
                     this.createComponent(UiElementInputComponent);
                     break;
 
+                case DynamicElementComponentCreatorIdentifier.TIMESTAMP:
+                    this.createComponent(UiElementInputComponent);
+                    break;
+
                 case DynamicElementComponentCreatorIdentifier.BOOLEAN:
                     this.createComponent(UiElementDropDownComponent);
 
@@ -210,7 +221,7 @@ export class DynamicElementComponent {
                 case DynamicElementComponentCreatorIdentifier.DEFAULT:
                 default:
                     this.createComponent(UiElementInputComponent);
-                    console.log("ERROR: No ui-models component to handle type: " + this.type);
+                    console.error("ERROR: No ui-models component to handle type: " + this.type);
             }
         // }
         // //There are consraints
