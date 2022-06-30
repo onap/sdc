@@ -38,7 +38,8 @@ enum DynamicElementComponentCreatorIdentifier {
     SUBNETPOOLID,
     ENUM,
     LIST,
-    DEFAULT
+    DEFAULT,
+    TIMESTAMP
 }
 
 @Component({
@@ -107,6 +108,9 @@ export class DynamicElementComponent {
             case this.type === 'string':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.STRING;
                 break;
+            case this.type === 'timestamp':
+                this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.TIMESTAMP;
+                break;
             case this.type === 'boolean':
                 this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
                 break;
@@ -145,6 +149,9 @@ export class DynamicElementComponent {
           break;
         case 'string':
           this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.STRING;
+          break;
+        case 'timestamp':
+          this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.TIMESTAMP;
           break;
         case 'boolean':
           this.elementCreatorIdentifier = DynamicElementComponentCreatorIdentifier.BOOLEAN;
@@ -190,6 +197,10 @@ export class DynamicElementComponent {
                     this.createComponent(UiElementInputComponent);
                     break;
 
+                case DynamicElementComponentCreatorIdentifier.TIMESTAMP:
+                    this.createComponent(UiElementInputComponent);
+                    break;
+
                 case DynamicElementComponentCreatorIdentifier.BOOLEAN:
                     this.createComponent(UiElementDropDownComponent);
 
@@ -210,7 +221,7 @@ export class DynamicElementComponent {
                 case DynamicElementComponentCreatorIdentifier.DEFAULT:
                 default:
                     this.createComponent(UiElementInputComponent);
-                    console.log("ERROR: No ui-models component to handle type: " + this.type);
+                    console.error("ERROR: No ui-models component to handle type: " + this.type);
             }
         // }
         // //There are consraints

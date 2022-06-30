@@ -68,7 +68,7 @@ public class ToscaTypeTest {
 		ToscaType toscaType = ToscaType.TIMESTAMP;;
 
 		assertTrue(!toscaType.isValidValue("timestamp"));
-		assertTrue(toscaType.isValidValue("Jun 30, 2009 7:03:47 AM"));
+		assertTrue(toscaType.isValidValue("2001-12-14t21:59:43.10-05:00"));
 		assertTrue(!toscaType.isValidValue("30 juin 2009 07:03:47"));
 	}
 

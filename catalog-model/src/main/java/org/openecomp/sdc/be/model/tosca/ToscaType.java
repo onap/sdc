@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintUtil;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
+import org.openecomp.sdc.be.model.tosca.validators.TimestampValidator;
 
 /**
  * The primitive type that TOSCA YAML supports.
@@ -111,12 +112,7 @@ public enum ToscaType {
             case SCALAR_UNIT_FREQUENCY:
                 return true;
             case TIMESTAMP:
-                try {
-                    new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.US).parse(value);
-                    return true;
-                } catch (ParseException e) {
-                    return false;
-                }
+                return TimestampValidator.getInstance().isValid(value, null);
             case VERSION:
                 return VersionUtil.isValid(value);
             case LIST:
