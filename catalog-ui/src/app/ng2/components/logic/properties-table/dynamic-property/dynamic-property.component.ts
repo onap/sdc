@@ -81,7 +81,7 @@ export class DynamicPropertyComponent {
     }
 
     initConsraintsValues(){
-        let primitiveProperties = ['string', 'integer', 'float', 'boolean'];
+        let primitiveProperties = ['string', 'integer', 'float', 'boolean', PROPERTY_TYPES.TIMESTAMP];
 
         //Property has constraints
         if(this.property.constraints && this.property.constraints[0]){

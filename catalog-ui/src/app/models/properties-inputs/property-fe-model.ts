@@ -284,6 +284,7 @@ export class PropertyFEModel extends PropertyBEModel {
             valueObj = value || defaultValue || null;  // use null for empty value object
             if (valueObj &&
                 propertyType !== PROPERTY_TYPES.STRING &&
+                propertyType !== PROPERTY_TYPES.TIMESTAMP &&
                 propertyType !== PROPERTY_TYPES.JSON &&
                 PROPERTY_DATA.SCALAR_TYPES.indexOf(<string>propertyType) == -1) {
                 valueObj = JSON.parse(value);  // the value object contains the real value ans not the value as string
