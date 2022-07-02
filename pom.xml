@@ -49,7 +49,12 @@ Modifications copyright (c) 2018-2019 Nokia
         <janusgraph.version>0.3.3</janusgraph.version>
         <spring.version>5.3.18</spring.version>
         <spring.boot.version>2.2.13.RELEASE</spring.boot.version>
+
+        <!-- update to 2.36 bring error-->
+        <!-- java.lang.NoClassDefFoundError: com/fasterxml/jackson/databind/AnnotationIntrospector$XmlExtensions-->
         <jersey-bom.version>2.34</jersey-bom.version>
+        <jakarta.el.version>3.0.4</jakarta.el.version>
+
         <netty.version>4.1.77.Final</netty.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <wire-mock.version>2.26.3</wire-mock.version>
@@ -191,6 +196,9 @@ Modifications copyright (c) 2018-2019 Nokia
         <docker.registry>nexus3.onap.org:10001</docker.registry>
 
         <micrometer.version>1.8.4</micrometer.version>
+
+        <minio.version>8.3.4</minio.version>
+        <okhttp.version>4.9.3</okhttp.version>
 
         <verbose>false</verbose>
     </properties>
