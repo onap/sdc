@@ -192,6 +192,9 @@ Modifications copyright (c) 2018-2019 Nokia
 
         <micrometer.version>1.8.4</micrometer.version>
 
+        <minio.version>8.3.4</minio.version>
+        <okhttp.version>4.9.3</okhttp.version>
+
         <verbose>false</verbose>
     </properties>
 
