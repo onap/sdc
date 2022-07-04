@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b1eef5c_61573537",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-04T13:50:47Z",
+      "side": 1,
+      "message": "I\u0027d suggest to replace with\n@NoArgsConstructor(access \u003d AccessLevel.PRIVATE)",
+      "range": {
+        "startLine": 37,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 5
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d50c51b8_f52f0e0e",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-04T13:50:47Z",
+      "side": 1,
+      "message": "avoid using wildcard in import",
+      "range": {
+        "startLine": 26,
+        "startChar": 44,
+        "endLine": 26,
+        "endChar": 49
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89653510_e357273c",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-04T13:50:47Z",
+      "side": 1,
+      "message": "add \u0027_Success\u0027\nand add \u0027negative\u0027 testing (ex 2022-22-22, 2022-01-01 25:61:61, etc)",
+      "range": {
+        "startLine": 33,
+        "startChar": 9,
+        "endLine": 33,
+        "endChar": 31
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
