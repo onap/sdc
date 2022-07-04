@@ -91,7 +91,6 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private static final String UPDATE_INPUT = "UpdateInput";
     private static final Logger log = Logger.getLogger(InputsBusinessLogic.class);
     private static final String FAILED_TO_FOUND_COMPONENT_ERROR = "Failed to found component {}, error: {}";
-    private static final String GET_PROPERTIES_BY_INPUT = "get Properties by input";
     private static final String FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR = "Failed to found input {} under component {}, error: {}";
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
     private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
@@ -264,8 +263,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<List<InputDefinition>, ResponseFormat> updateInputsValue(ComponentTypeEnum componentType, String componentId,
-                                                                           List<InputDefinition> inputs, String userId, boolean shouldLockComp,
-                                                                           boolean inTransaction) {
+                                                                           List<InputDefinition> inputs, String userId, boolean shouldLockComp) {
         List<InputDefinition> returnInputs = new ArrayList<>();
         Either<List<InputDefinition>, ResponseFormat> result = null;
         org.openecomp.sdc.be.model.Component component = null;
@@ -385,9 +383,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         return createMultipleInputs(userId, componentId, componentTypeEnum, componentInstInputsMap, true, false);
     }
 
-    public Either<List<InputDefinition>, ResponseFormat> createMultipleInputs(String userId, String componentId, ComponentTypeEnum componentType,
-                                                                              ComponentInstInputsMap componentInstInputsMapUi, boolean shouldLockComp,
-                                                                              boolean inTransaction) {
+    private Either<List<InputDefinition>, ResponseFormat> createMultipleInputs(String userId, String componentId, ComponentTypeEnum componentType,
+                                                                               ComponentInstInputsMap componentInstInputsMapUi,
+                                                                               boolean shouldLockComp,
+                                                                               boolean inTransaction) {
         Either<List<InputDefinition>, ResponseFormat> result = null;
         org.openecomp.sdc.be.model.Component component = null;
         try {

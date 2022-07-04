@@ -72,7 +72,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     private ComponentsUtils componentsUtils;
     private PropertyOperation propertyOperation;
 
-    public DefaultPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation) {
+    protected DefaultPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation) {
         this.componentsUtils = componentsUtils;
         this.propertyOperation = propertyOperation;
     }
@@ -241,7 +241,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
     private InputDefinition createInput(Component component, PROPERTYOWNER propertiesOwner, ComponentInstancePropInput propInput,
                                         PropertyDataDefinition prop) {
         String generatedInputPrefix = propertiesOwner.getNormalizedName();
-        if (propertiesOwner.getUniqueId().equals(propInput.getParentUniqueId())) {
+        if (component.getUniqueId().equals(propInput.getParentUniqueId())) {
             //Creating input from property create on self using add property..Do not add the prefix
             generatedInputPrefix = null;
         }
