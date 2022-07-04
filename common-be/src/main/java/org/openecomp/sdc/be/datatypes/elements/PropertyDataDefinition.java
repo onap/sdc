@@ -71,10 +71,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private String parentPropertyType;
     private String subPropertyInputPath;
     private List<Annotation> annotations;
-    /**
-     * The resource id which this property belongs to
-     */
-    private String parentUniqueId;
     private List<GetInputValueDataDefinition> getInputValues;
     private Boolean isDeclaredListInput = Boolean.FALSE;
     private List<GetPolicyValueDataDefinition> getPolicyValues;
@@ -188,6 +184,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return mappedToComponentProperty;
     }
 
+    /**
+     * The resource id which this property belongs to
+     */
     public String getParentUniqueId() {
         return getOwnerId();
     }

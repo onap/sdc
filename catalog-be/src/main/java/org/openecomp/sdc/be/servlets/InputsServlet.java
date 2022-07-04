@@ -140,7 +140,7 @@ public class InputsServlet extends AbstractValidationsServlet {
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR));
             }
             Either<List<InputDefinition>, ResponseFormat> actionResponse = inputsBusinessLogic
-                .updateInputsValue(componentType, componentId, inputsToUpdate, userId, true, false);
+                .updateInputsValue(componentType, componentId, inputsToUpdate, userId, true);
             if (actionResponse.isRight()) {
                 return buildErrorResponse(actionResponse.right().value());
             }
