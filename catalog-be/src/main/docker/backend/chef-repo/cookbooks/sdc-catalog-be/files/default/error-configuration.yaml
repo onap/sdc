@@ -2732,3 +2732,17 @@ errors:
         message: "Missing TOSCA function '%1'.",
         messageId: "SVC4172"
     }
+
+    #-----------SVC4173---------------------------
+    RELATIONSHIP_TEMPLATE_NOT_FOUND: {
+        code: 404,
+        message: "Relationship_templates entry not found in TOSCA CSAR.",
+        messageId: "SVC4173"
+    }
+
+    #-----------SVC4174---------------------------
+    RELATIONSHIP_TEMPLATE_DEFINITION_NOT_FOUND: {
+        code: 404,
+        message: "Relationship_templates definition not found in TOSCA CSAR.",
+        messageId: "SVC4174"
+    }
