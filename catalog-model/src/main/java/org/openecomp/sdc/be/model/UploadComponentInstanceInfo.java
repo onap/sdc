@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import org.openecomp.sdc.be.ui.model.OperationUi;
 
 @Getter
 @Setter
@@ -39,4 +40,5 @@ public class UploadComponentInstanceInfo {
     private Map<String, String> requirementsNamesToUpdate;
     private Collection<String> directives;
     private UploadNodeFilterInfo uploadNodeFilterInfo;
+    private List<OperationUi> operations;
 }
