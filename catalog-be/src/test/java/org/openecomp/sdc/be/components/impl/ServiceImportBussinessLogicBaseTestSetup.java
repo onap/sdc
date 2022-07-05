@@ -102,6 +102,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -433,13 +434,24 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         uploadReqInfo.setName("uploadReqInfo");
         uploadReqInfo.setNode("zxjTestImportServiceAb");
         uploadReqInfo.setCapabilityName("tosca.capabilities.Node");
+        uploadReqInfo.setRelationshipTemplate("ExtCP 0.dependency.1");
         uploadReqInfoList.add(uploadReqInfo);
         requirements.put("requirements", uploadReqInfoList);
         uploadNodeFilterInfo.setName("mme_ipu_vdu.virtualbinding");
         uploadComponentInstanceInfo.setCapabilities(getCapabilities());
         uploadComponentInstanceInfo.setRequirements(requirements);
         uploadComponentInstanceInfo.setName("zxjTestImportServiceAb");
+        uploadComponentInstanceInfo.setOperations(getOperations());
         return uploadComponentInstanceInfo;
+    }
+
+    protected Map<String, List<OperationUi>> getOperations() {
+        String relationshipTemplate = "ExtCP 0.dependency.1";
+        OperationUi operationUi = new OperationUi();
+        operationUi.setOperationType("change_external_connectivity_start");
+        operationUi.setInterfaceType("tosca.interfaces.nfv.Vnflcm");
+        operationUi.setImplementation("impl");
+        return Map.of(relationshipTemplate, List.of(operationUi));
     }
 
     protected Map<String, List<UploadCapInfo>> getCapabilities() {
