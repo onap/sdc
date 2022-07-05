@@ -1571,6 +1571,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
             any(ComponentInstance.class), any(UploadReqInfo.class))).thenReturn(capabilityDefinition);
         when(componentsUtils.getResponseFormat(any(ActionStatus.class), anyString())).thenReturn(responseFormat);
         Assertions.assertNotNull(sIBL.addRelationToRI(yamlName, service, nodesInfoValue, relations));
+        Assertions.assertNotNull(relations.get(0).getRelationships().get(0).getOperations());
     }
 
     @Test
@@ -1584,7 +1585,6 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         when(componentsUtils.getResponseFormat(any(ActionStatus.class), anyString())).thenReturn(responseFormat);
         Assertions.assertNotNull(sIBL.addRelationToRI(yamlName, service, nodesInfoValue, relations));
-
     }
 
     @Test
