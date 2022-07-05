@@ -29,7 +29,6 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.utils;
 
-
 import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
@@ -38,6 +37,7 @@ import org.mockito.InjectMocks;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
@@ -72,6 +72,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.openecomp.sdc.be.ui.model.OperationUi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -274,6 +275,43 @@ public class ModelConverterTest {
         assertEquals(true, result.get(0).isOriginUI());
         assertEquals("fromNode", result.get(0).getFromId());
         assertEquals("toNode", result.get(0).getToId());
+    }
+
+    @Test
+    public void testConvertRelationTemplateToToscaRelation()
+    {
+        RequirementCapabilityRelDef reqCap = new RequirementCapabilityRelDef();
+        reqCap.setOriginUI(true);
+        reqCap.setFromNode("fromNode");
+        reqCap.setToNode("toNode");
+        List<CapabilityRequirementRelationship> list = new LinkedList<>();
+        CapabilityRequirementRelationship relationship = new CapabilityRequirementRelationship();
+        RelationshipInfo info = new RelationshipInfo();
+        info.setCapabilityOwnerId("capOwnerId");
+        info.setId("id");
+        info.setCapabilityUid("capUid");
+        info.setRequirementOwnerId("reqOwnerId");
+        info.setRequirementUid("reqUid");
+        info.setRequirement("req");
+        info.setCapability("cap");
+        RelationshipImpl relationshipImpl = new RelationshipImpl();
+        relationshipImpl.setType("type");
+        info.setRelationships(relationshipImpl);
+        relationship.setRelation(info);
+        OperationUi operationUi = new OperationUi();
+        operationUi.setInterfaceType("tosca.interfaces.relationship.Configure");
+        operationUi.setOperationType("add_source");
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        artifactDataDefinition.setArtifactName("impl");
+        operationUi.setImplementation(artifactDataDefinition);
+        relationship.setOperations(List.of(operationUi));
+        list.add(relationship);
+        reqCap.setRelationships(list);
+
+        List<RelationshipInstDataDefinition> result = ModelConverter.convertRelationToToscaRelation(reqCap);
+        assertEquals(1, result.size());
+        assertEquals(false, result.get(0).getInterfaces().isEmpty());
+        assertEquals(false, result.get(0).getInterfaces().getListToscaDataDefinition().get(0).getOperations().isEmpty());
     }
 
     @Test

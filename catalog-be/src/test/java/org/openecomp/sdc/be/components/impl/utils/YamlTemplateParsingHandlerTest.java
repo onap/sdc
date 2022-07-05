@@ -21,6 +21,7 @@
 package org.openecomp.sdc.be.components.impl.utils;
 
 import mockit.Deencapsulation;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
@@ -175,6 +176,22 @@ public class YamlTemplateParsingHandlerTest {
         assertTrue(parsedYaml.getProperties().containsKey("cds_model_version"));
         assertTrue(parsedYaml.getProperties().containsKey("cds_model_name"));
         assertTrue(parsedYaml.getProperties().containsKey("default_software_version"));
+    }
+
+    @Test
+    public void parseRelationshipTemplateInfoFromYamlTest() {
+        String main_template_content = new String(csar.get(MAIN_TEMPLATE_NAME));
+        CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
+            MAIN_TEMPLATE_NAME, main_template_content, true);
+
+        Service service = new Service();
+        ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
+            csarInfo.extractTypesInfo(), NODE_NAME, service, getInterfaceTemplateYaml(csarInfo).get());
+
+        assertThat(parsedYaml.getInstances()).isNotNull();
+        for(Map.Entry<String, UploadComponentInstanceInfo> instance: parsedYaml.getInstances().entrySet()) {
+            assertThat(CollectionUtils.isNotEmpty(instance.getValue().getOperations()));
+        }
     }
 
     @Test

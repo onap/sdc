@@ -39,6 +39,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
@@ -1829,6 +1830,9 @@ public class ServiceImportBusinessLogic {
                     }
                     CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
                     capReqRel.setRelation(reqAndRelationshipPair);
+                    if (StringUtils.isNotEmpty(uploadRegInfo.getRelationshipTemplate())) {
+                        capReqRel.setOperations(nodesInfoValue.getOperations());
+                    }
                     reqAndRelationshipPairList.add(capReqRel);
                     regCapRelDef.setRelationships(reqAndRelationshipPairList);
                     relations.add(regCapRelDef);

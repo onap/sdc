@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
@@ -118,6 +119,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElementTypeEnum;
 import org.openecomp.sdc.be.model.jsonjanusgraph.enums.JsonConstantKeysEnum;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeTemplateOperation;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.ProductMetadataData;
@@ -481,9 +483,54 @@ public class ModelConverter {
             requirementCapabilityRelDef.setType(p.getRelation().getRelationship().getType());
             requirementCapabilityRelDef.setCapability(p.getRelation().getCapability());
             requirementCapabilityRelDef.setOriginUI(relation.isOriginUI());
+            createRelationshipInterfaces(p.getOperations()).ifPresent(requirementCapabilityRelDef::setInterfaces);
             relationsList.add(requirementCapabilityRelDef);
         });
         return relationsList;
+    }
+
+    private static Optional<ListDataDefinition<InterfaceDataDefinition>> createRelationshipInterfaces(final List<OperationUi> operationList) {
+        if (CollectionUtils.isEmpty(operationList)) {
+            return Optional.empty();
+        }
+        final ListDataDefinition<InterfaceDataDefinition> interfaceList = new ListDataDefinition<>();
+        final Map<String, List<OperationUi>> operationByInterfaceType = operationList.stream()
+            .collect(Collectors.groupingBy(OperationUi::getInterfaceType));
+        for (final Entry<String, List<OperationUi>> interfaceEntry : operationByInterfaceType.entrySet()) {
+            interfaceList.add(createInterface(interfaceEntry.getKey(), interfaceEntry.getValue()));
+        }
+        return Optional.of(interfaceList);
+    }
+
+    private static InterfaceDataDefinition createInterface(final String interfaceType, final List<OperationUi> operationList) {
+        final InterfaceDataDefinition interfaceDataDefinition = new InterfaceDataDefinition();
+        interfaceDataDefinition.setType(interfaceType);
+        if (CollectionUtils.isNotEmpty(operationList)) {
+            final Map<String, OperationDataDefinition> operationMap = operationList.stream()
+                .collect(Collectors.toMap(OperationUi::getOperationType, ModelConverter::createOperation));
+            interfaceDataDefinition.setOperations(operationMap);
+        }
+        return interfaceDataDefinition;
+    }
+
+    private static OperationDataDefinition createOperation(final OperationUi operation) {
+        final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
+        operationDataDefinition.setName(operation.getOperationType());
+        operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
+        final ArtifactDataDefinition artifactDataDefinition = (ArtifactDataDefinition) operation.getImplementation();
+        operationDataDefinition.setImplementation(artifactDataDefinition);
+        if (CollectionUtils.isNotEmpty(operation.getInputs())) {
+            final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
+            operation.getInputs().forEach(input -> {
+                final OperationInputDefinition operationInputDefinition = new OperationInputDefinition();
+                operationInputDefinition.setLabel(input.getName());
+                operationInputDefinition.setType(input.getType());
+                operationInputDefinition.setValue(input.getValue());
+                inputs.add(operationInputDefinition);
+            });
+            operationDataDefinition.setInputs(inputs);
+        }
+        return operationDataDefinition;
     }
 
     private static void convertCapabilities(Component component, TopologyTemplate topologyTemplate) {
