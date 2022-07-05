@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "55c62c6f_a3e790f7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "replace with StringUtils.isNotBlank",
+      "range": {
+        "startLine": 363,
+        "startChar": 91,
+        "endLine": 363,
+        "endChar": 112
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab131d82_4ecbe772",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "replace with StringUtils.isNotEmpty",
+      "range": {
+        "startLine": 363,
+        "startChar": 32,
+        "endLine": 363,
+        "endChar": 53
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a121a2d5_3309f9f5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "use enum (ex ToscaTagNamesEnum)",
+      "range": {
+        "startLine": 381,
+        "startChar": 56,
+        "endLine": 381,
+        "endChar": 66
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b1bb9af_e5811f4e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "use enum (ex ToscaTagNamesEnum)",
+      "range": {
+        "startLine": 397,
+        "startChar": 49,
+        "endLine": 397,
+        "endChar": 59
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6441a20_34864c75",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "use enum (ex ToscaTagNamesEnum)",
+      "range": {
+        "startLine": 417,
+        "startChar": 60,
+        "endLine": 417,
+        "endChar": 74
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "923feb57_d5cdcbfa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "use enum (ex MetadataKeyEnum)",
+      "range": {
+        "startLine": 422,
+        "startChar": 63,
+        "endLine": 422,
+        "endChar": 67
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f877043a_5882df82",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "use enum (ex ToscaTagNamesEnum)",
+      "range": {
+        "startLine": 428,
+        "startChar": 67,
+        "endLine": 428,
+        "endChar": 73
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3bc05a6_3f458e74",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 435,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "use enum ToscaType",
+      "range": {
+        "startLine": 435,
+        "startChar": 62,
+        "endLine": 435,
+        "endChar": 68
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1310abf_adf19deb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1832,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "replace with \nStringUtils.isNotEmpty",
+      "range": {
+        "startLine": 1832,
+        "startChar": 0,
+        "endLine": 1832,
+        "endChar": 129
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23a408f8_8f7d17bb",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/UploadReqInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-05T19:20:11Z",
+      "side": 1,
+      "message": "i\u0027d suggest to add @NoArgsConstructor too,\nand delete useless UploadReqInfoTest",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 6
+      },
+      "revId": "60fd136e7da8b1f19c3c316061dfb431036ee5f3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
