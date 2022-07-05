@@ -19,6 +19,13 @@
  */
 package org.openecomp.sdc.be.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class UploadReqInfo extends UploadInfo {
 
     /**
@@ -26,20 +33,6 @@ public class UploadReqInfo extends UploadInfo {
      */
     private String capabilityName;
     private String node;
+    private String relationshipTemplate;
 
-    public String getCapabilityName() {
-        return capabilityName;
-    }
-
-    public void setCapabilityName(String capabilityName) {
-        this.capabilityName = capabilityName;
-    }
-
-    public String getNode() {
-        return node;
-    }
-
-    public void setNode(String node) {
-        this.node = node;
-    }
 }
