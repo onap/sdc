@@ -40,6 +40,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
@@ -132,6 +133,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
@@ -1862,6 +1864,9 @@ public class ServiceImportBusinessLogic {
                     reqAndRelationshipPair.setCapabilityOwnerId(aviableCapForRel.getOwnerId());
                     CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
                     capReqRel.setRelation(reqAndRelationshipPair);
+                    if (StringUtils.isNotEmpty(uploadRegInfo.getRelationshipTemplate())) {
+                        capReqRel.setOperations(getOperations(nodesInfoValue.getOperations(), uploadRegInfo.getRelationshipTemplate()));
+                    }
                     reqAndRelationshipPairList.add(capReqRel);
                     regCapRelDef.setRelationships(reqAndRelationshipPairList);
                     relations.add(regCapRelDef);
@@ -1869,6 +1874,16 @@ public class ServiceImportBusinessLogic {
             }
         }
         return componentsUtils.getResponseFormat(ActionStatus.OK, yamlName);
+    }
+
+    private List<OperationUi> getOperations(final Map<String, List<OperationUi>> operations, final String relationshipTemplate) {
+        final List<OperationUi> operationUiList = new ArrayList<>();
+        operations.forEach((operationKey, operationValues) -> {
+            if (operationKey.equals(relationshipTemplate)) {
+                operationUiList.addAll(operationValues);
+            }
+        });
+        return operationUiList;
     }
 
     protected Service getResourceAfterCreateRelations(Service service) {
