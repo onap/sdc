@@ -29,6 +29,8 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaLis
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.loadYamlAsStrictMap;
+import static org.openecomp.sdc.be.datatypes.enums.MetadataKeyEnum.NAME;
+import static org.openecomp.sdc.be.model.tosca.ToscaType.STRING;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ATTRIBUTES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.CAPABILITIES;
@@ -38,15 +40,20 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.FILE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GET_INPUT;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GROUPS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IMPLEMENTATION;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INTERFACES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OUTPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.POLICIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.PROPERTIES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.RELATIONSHIP;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.RELATIONSHIP_TEMPLATES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIREMENTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_FILTERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS;
@@ -66,7 +73,9 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -108,6 +117,9 @@ import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
+import org.openecomp.sdc.be.ui.model.OperationUi;
+import org.openecomp.sdc.be.ui.model.PropertyAssignmentUi;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.yaml.snakeyaml.parser.ParserException;
@@ -140,9 +152,9 @@ public class YamlTemplateParsingHandler {
                                                          Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName,
                                                          Component component, String interfaceTemplateYaml) {
         log.debug("#parseResourceInfoFromYAML - Going to parse yaml {} ", fileName);
-        final Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
-        final ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
-        final Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE,
+        Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
+        ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
+        Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE,
             ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
         final Map<String, Object> mappedTopologyTemplateInputs = mappedTopologyTemplate.entrySet().stream()
             .filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -151,6 +163,7 @@ public class YamlTemplateParsingHandler {
         parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
         parsedToscaYamlInfo.setOutputs(getOutputs(mappedTopologyTemplateOutputs));
         parsedToscaYamlInfo.setInstances(getInstances(mappedToscaTemplate, createdNodesToscaResourceNames));
+        associateRelationshipTemplatesToInstances(parsedToscaYamlInfo.getInstances(), mappedTopologyTemplate);
         parsedToscaYamlInfo.setGroups(getGroups(mappedToscaTemplate, component.getModel()));
         parsedToscaYamlInfo.setPolicies(getPolicies(mappedToscaTemplate, component.getModel()));
         Map<String, Object> substitutionMappings = getSubstitutionMappings(mappedToscaTemplate);
@@ -352,6 +365,102 @@ public class YamlTemplateParsingHandler {
             return eitherSubstitutionMappings.left().value();
         }
         return null;
+    }
+
+    private void associateRelationshipTemplatesToInstances(final Map<String, UploadComponentInstanceInfo> instances,
+                                                           final Map<String, Object> toscaJson) {
+        if (MapUtils.isEmpty(instances)) {
+            return;
+        }
+        for (UploadComponentInstanceInfo instance : instances.values()) {
+            final Map<String, List<OperationUi>> operations = new HashMap<>();
+            final Map<String, List<UploadReqInfo>> requirements = instance.getRequirements();
+            if (MapUtils.isNotEmpty(requirements)) {
+                requirements.values()
+                    .forEach(requirementInfoList -> requirementInfoList.stream()
+                        .filter(requirement -> StringUtils.isNotEmpty(requirement.getRelationshipTemplate()))
+                        .forEach(requirement -> operations.put(requirement.getRelationshipTemplate(),
+                            getOperationsFromRelationshipTemplate(toscaJson, requirement.getRelationshipTemplate()))));
+            }
+            instance.setOperations(operations);
+        }
+    }
+
+    private Map<String, Object> getRelationshipTemplates(final Map<String, Object> toscaJson, final String relationshipTemplate) {
+        final Either<Map<String, Object>, ResultStatusEnum> eitherRelationshipTemplates = findFirstToscaMapElement(toscaJson, RELATIONSHIP_TEMPLATES);
+        if (eitherRelationshipTemplates.isRight()) {
+            throw new ByActionStatusComponentException(ActionStatus.RELATIONSHIP_TEMPLATE_NOT_FOUND);
+        }
+        final Map<String, Object> relationshipTemplateMap = eitherRelationshipTemplates.left().value();
+        final Map<String, Map<String, Object>> relationship = (Map<String, Map<String, Object>>) relationshipTemplateMap.get(relationshipTemplate);
+        if (relationship == null) {
+            throw new ByActionStatusComponentException(ActionStatus.RELATIONSHIP_TEMPLATE_DEFINITION_NOT_FOUND);
+        }
+        return relationship.get(INTERFACES.getElementName());
+    }
+
+    private List<ToscaInterfaceDefinition> buildToscaInterfacesFromRelationship(final Map<String, Object> interfaces) {
+        return interfaces.entrySet().stream()
+            .map(entry -> {
+                final var toscaInterfaceDefinition = new ToscaInterfaceDefinition();
+                toscaInterfaceDefinition.setType(entry.getKey());
+                final Map<String, Object> toscaInterfaceMap = (Map<String, Object>) entry.getValue();
+                toscaInterfaceDefinition.setOperations((Map<String, Object>) toscaInterfaceMap.get(OPERATIONS.getElementName()));
+                return toscaInterfaceDefinition;
+            })
+            .collect(toList());
+    }
+
+    private Optional<Object> getImplementation(final Map<String, Object> operationToscaMap) {
+        if (MapUtils.isEmpty(operationToscaMap) || !operationToscaMap.containsKey(IMPLEMENTATION.getElementName())) {
+            return Optional.empty();
+        }
+        final Map<String, Object> implementationToscaMap = (Map<String, Object>) operationToscaMap.get(IMPLEMENTATION.getElementName());
+        return Optional.ofNullable(
+            implementationToscaMap.computeIfPresent("toscaPresentation", (key, value) -> ((Map<String, Object>) value).get(NAME.getName()))
+        );
+    }
+
+    private List<PropertyAssignmentUi> getOperationsInputs(final Map<String, Object> operationToscaMap) {
+        if (MapUtils.isEmpty(operationToscaMap) || !operationToscaMap.containsKey(INPUTS.getElementName())) {
+            return Collections.emptyList();
+        }
+        final Map<String, Object> inputsMap = (Map<String, Object>) operationToscaMap.get(INPUTS.getElementName());
+        return inputsMap.entrySet().stream().map(this::buildInputAssignment).collect(toList());
+    }
+
+    private PropertyAssignmentUi buildInputAssignment(final Entry<String, Object> inputAssignmentMap) {
+        var propertyAssignmentUi = new PropertyAssignmentUi();
+        propertyAssignmentUi.setName(inputAssignmentMap.getKey());
+        propertyAssignmentUi.setValue(inputAssignmentMap.getValue().toString());
+        propertyAssignmentUi.setType(STRING.getType());
+        return propertyAssignmentUi;
+    }
+
+    private List<OperationUi> getOperationsFromRelationshipTemplate(final Map<String, Object> toscaJson, final String relationshipTemplate) {
+        final List<OperationUi> operationUiList = new ArrayList<>();
+        final List<ToscaInterfaceDefinition> interfaces =
+            buildToscaInterfacesFromRelationship(getRelationshipTemplates(toscaJson, relationshipTemplate));
+        interfaces.stream()
+            .filter(interfaceDefinition -> MapUtils.isNotEmpty(interfaceDefinition.getOperations()))
+            .forEach(interfaceDefinition ->
+                interfaceDefinition.getOperations()
+                    .forEach((operationType, operationValue) ->
+                        operationUiList.add(buildOperation(interfaceDefinition.getType(), operationType, (Map<String, Object>) operationValue))
+            ));
+        return operationUiList;
+    }
+
+    private OperationUi buildOperation(final String interfaceType, final String operationType, final Map<String, Object> operationToscaMap) {
+        var operationUi = new OperationUi();
+        operationUi.setInterfaceType(interfaceType);
+        operationUi.setOperationType(operationType);
+        getImplementation(operationToscaMap).ifPresent(operationUi::setImplementation);
+        final List<PropertyAssignmentUi> operationsInputs = getOperationsInputs(operationToscaMap);
+        if (CollectionUtils.isNotEmpty(operationsInputs)) {
+            operationUi.setInputs(operationsInputs);
+        }
+        return operationUi;
     }
 
     @SuppressWarnings("unchecked")
@@ -923,6 +1032,9 @@ public class YamlTemplateParsingHandler {
             }
             if (nodeTemplateJsonMap.containsKey(CAPABILITY.getElementName())) {
                 regTemplateInfo.setCapabilityName((String) nodeTemplateJsonMap.get(CAPABILITY.getElementName()));
+            }
+            if (nodeTemplateJsonMap.containsKey(RELATIONSHIP.getElementName())) {
+                regTemplateInfo.setRelationshipTemplate((String) nodeTemplateJsonMap.get(RELATIONSHIP.getElementName()));
             }
         }
         return regTemplateInfo;

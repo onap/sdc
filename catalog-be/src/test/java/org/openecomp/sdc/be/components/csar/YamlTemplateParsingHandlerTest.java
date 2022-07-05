@@ -32,6 +32,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import mockit.Deencapsulation;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +67,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.common.zip.ZipUtils;
@@ -172,6 +175,28 @@ public class YamlTemplateParsingHandlerTest {
         assertTrue(parsedYaml.getProperties().containsKey("cds_model_version"));
         assertTrue(parsedYaml.getProperties().containsKey("cds_model_name"));
         assertTrue(parsedYaml.getProperties().containsKey("default_software_version"));
+    }
+
+    @Test
+    void parseRelationshipTemplateInfoFromYamlTest() {
+        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(HEAT_GROUP_TYPE), any())).thenReturn(heatGroupType);
+        String main_template_content = new String(csar.get(MAIN_TEMPLATE_NAME));
+        CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
+            MAIN_TEMPLATE_NAME, main_template_content, true);
+
+        Service service = new Service();
+        ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
+            csarInfo.extractTypesInfo(), NODE_NAME, service, getInterfaceTemplateYaml(csarInfo).get());
+
+        assertThat(parsedYaml.getInstances()).isNotNull();
+        parsedYaml.getInstances().values().stream()
+            .filter(uploadComponentInstanceInfo -> MapUtils.isNotEmpty(uploadComponentInstanceInfo.getRequirements()))
+            .filter(uploadComponentInstanceInfo -> {
+                final Map<String, List<UploadReqInfo>> requirements = uploadComponentInstanceInfo.getRequirements();
+                return requirements.values().stream().flatMap(Collection::stream)
+                    .anyMatch(uploadReqInfo -> StringUtils.isNotBlank(uploadReqInfo.getRelationshipTemplate()));
+            })
+            .forEach(uploadComponentInstanceInfo -> assertTrue(MapUtils.isNotEmpty(uploadComponentInstanceInfo.getOperations())));
     }
 
     @Test
