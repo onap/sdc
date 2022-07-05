@@ -2058,6 +2058,7 @@ public class ToscaOperationFacade {
         Component updatedComponent = componentEither.left().value();
         component.setCapabilities(updatedComponent.getCapabilities());
         component.setRequirements(updatedComponent.getRequirements());
+        component.setComponentInstancesRelations(updatedComponent.getComponentInstancesRelations());
         component.setComponentInstances(updatedComponent.getComponentInstances());
     }
 

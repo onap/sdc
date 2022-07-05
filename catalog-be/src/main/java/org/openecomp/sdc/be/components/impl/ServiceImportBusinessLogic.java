@@ -1829,6 +1829,9 @@ public class ServiceImportBusinessLogic {
                     }
                     CapabilityRequirementRelationship capReqRel = new CapabilityRequirementRelationship();
                     capReqRel.setRelation(reqAndRelationshipPair);
+                    if (uploadRegInfo.getRelationshipTemplate() != null && !uploadRegInfo.getRelationshipTemplate().isEmpty() ) {
+                        capReqRel.setOperations(nodesInfoValue.getOperations());
+                    }
                     reqAndRelationshipPairList.add(capReqRel);
                     regCapRelDef.setRelationships(reqAndRelationshipPairList);
                     relations.add(regCapRelDef);

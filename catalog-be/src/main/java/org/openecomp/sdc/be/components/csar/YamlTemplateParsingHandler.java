@@ -44,6 +44,8 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLA
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.POLICIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.PROPERTIES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.RELATIONSHIP;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.RELATIONSHIP_TEMPLATES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIREMENTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_FILTERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS;
@@ -63,6 +65,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -103,6 +106,9 @@ import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
+import org.openecomp.sdc.be.ui.model.OperationUi;
+import org.openecomp.sdc.be.ui.model.PropertyAssignmentUi;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.stereotype.Component;
@@ -144,6 +150,7 @@ public class YamlTemplateParsingHandler {
             .filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
         parsedToscaYamlInfo.setInstances(getInstances(mappedToscaTemplate, createdNodesToscaResourceNames));
+        associateRelationshipTemplatesToInstances(parsedToscaYamlInfo.getInstances(), mappedTopologyTemplate);
         parsedToscaYamlInfo.setGroups(getGroups(mappedToscaTemplate, component.getModel()));
         if (component instanceof Resource) {
             parsedToscaYamlInfo.setPolicies(getPolicies(fileName, mappedToscaTemplate, component.getModel()));
@@ -344,6 +351,98 @@ public class YamlTemplateParsingHandler {
             return eitherSubstitutionMappings.left().value();
         }
         return null;
+    }
+
+    private void associateRelationshipTemplatesToInstances(Map<String, UploadComponentInstanceInfo> instances, Map<String, Object> toscaJson) {
+        if (MapUtils.isNotEmpty(instances)) {
+            for (Map.Entry<String, UploadComponentInstanceInfo> instance : instances.entrySet()) {
+                Map<String, List<UploadReqInfo>> requirements = instance.getValue().getRequirements();
+                if (MapUtils.isNotEmpty(requirements)) {
+                    for (Map.Entry<String, List<UploadReqInfo>> req : requirements.entrySet()) {
+                        for (UploadReqInfo reqInfo : req.getValue()) {
+                            if (!StringUtils.isEmpty(reqInfo.getRelationshipTemplate()) && !StringUtils.isBlank(reqInfo.getRelationshipTemplate())) {
+                                List<OperationUi> operations = getOperations(toscaJson);
+                                instance.getValue().setOperations(operations);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Map<String, Object> getRelationshipTemplates(Map<String, Object> toscaJson) {
+        Map<String, Object> interfaces = new HashMap<>();
+        Either<Map<String, Object>, ResultStatusEnum> eitherRelationshipTemplates = findFirstToscaMapElement(toscaJson, RELATIONSHIP_TEMPLATES);
+        if (eitherRelationshipTemplates.isLeft()) {
+            for (Entry<String, Object> template : eitherRelationshipTemplates.left().value().entrySet()) {
+                Map<String, Map<String, Object>> tempMap = (Map<String, Map<String, Object>>) template.getValue();
+                for (Entry<String, Map<String, Object>> interfaceMap : tempMap.entrySet()) {
+                    if (interfaceMap.getKey().contains("interfaces")) {
+                        interfaces = interfaceMap.getValue();
+                    }
+                }
+            }
+        }
+        return interfaces;
+    }
+
+    private List<ToscaInterfaceDefinition> getToscaRelionshipInterfaces(Map<String, Object> interfaces) {
+        List<ToscaInterfaceDefinition> toscaInterfaceDefinitionList = new ArrayList<>();
+        for (Entry<String, Object> toscaInterfaceDefinitionMap : interfaces.entrySet()) {
+            ToscaInterfaceDefinition toscaInterfaceDefinition = new ToscaInterfaceDefinition();
+            toscaInterfaceDefinition.setType(toscaInterfaceDefinitionMap.getKey());
+            Map<String, Object> operationsInputsMap = (Map<String, Object>) toscaInterfaceDefinitionMap.getValue();
+            for (Entry<String, Object> mapvalues : operationsInputsMap.entrySet()) {
+                if (mapvalues.getKey().contains("operations")) {
+                    toscaInterfaceDefinition.setOperations((Map<String, Object>) mapvalues.getValue());
+                }
+            }
+            toscaInterfaceDefinitionList.add(toscaInterfaceDefinition);
+        }
+        return toscaInterfaceDefinitionList;
+    }
+
+    private List<OperationUi> getOperations(Map<String, Object> toscaJson) {
+        List<OperationUi> operationUiList = new ArrayList<>();
+        List<ToscaInterfaceDefinition> interfaces = getToscaRelionshipInterfaces(getRelationshipTemplates(toscaJson));
+        for (ToscaInterfaceDefinition interfaceDefinition : interfaces) {
+            OperationUi operationUi = new OperationUi();
+            operationUi.setInterfaceType(interfaceDefinition.getType());
+            if (interfaceDefinition.getOperations() != null && !interfaceDefinition.getOperations().isEmpty()) {
+                for (Map.Entry<String, Object> operations : interfaceDefinition.getOperations().entrySet()) {
+                    operationUi.setOperationType(operations.getKey());
+                    Map<String, Object> operation = (Map<String, Object>) operations.getValue();
+                    for (Map.Entry<String, Object> operationMap : operation.entrySet()) {
+                        if (operationMap.getKey().contains("implementation")) {
+                            Map<String, Object> implMap = (Map<String, Object>) operationMap.getValue();
+                            for (Map.Entry<String, Object> toscapresentaion : implMap.entrySet()) {
+                                Map<String, Object> toscaPresentaionMap = (Map<String, Object>) toscapresentaion.getValue();
+                                for (Map.Entry<String, Object> tosca : toscaPresentaionMap.entrySet()) {
+                                    if (tosca.getKey().equals("name")) {
+                                        operationUi.setImplementation(tosca.getValue().toString());
+                                        break;
+                                    }
+                                }
+                            }
+                        } else if (operationMap.getKey().contains("inputs")) {
+                            List<PropertyAssignmentUi> inputs = new ArrayList<>();
+                            Map<String, Object> inputsMap = (Map<String, Object>) operationMap.getValue();
+                            for (Map.Entry<String, Object> input : inputsMap.entrySet()) {
+                                PropertyAssignmentUi propertyAssignmentUi = new PropertyAssignmentUi();
+                                propertyAssignmentUi.setName(input.getKey());
+                                propertyAssignmentUi.setValue(input.getValue().toString());
+                                propertyAssignmentUi.setType("string");
+                                inputs.add(propertyAssignmentUi);
+                            }
+                            operationUi.setInputs(inputs);
+                        }
+                    }
+                }
+            }
+            operationUiList.add(operationUi);
+        }
+        return operationUiList;
     }
 
     @SuppressWarnings("unchecked")
@@ -924,6 +1023,9 @@ public class YamlTemplateParsingHandler {
             }
             if (nodeTemplateJsonMap.containsKey(CAPABILITY.getElementName())) {
                 regTemplateInfo.setCapabilityName((String) nodeTemplateJsonMap.get(CAPABILITY.getElementName()));
+            }
+            if (nodeTemplateJsonMap.containsKey(RELATIONSHIP.getElementName())) {
+                regTemplateInfo.setRelationshipTemplate((String) nodeTemplateJsonMap.get(RELATIONSHIP.getElementName()));
             }
         }
         return regTemplateInfo;
