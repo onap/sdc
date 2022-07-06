@@ -22,6 +22,30 @@
       "revId": "73af0b84604670a871541c886e59376e6d36ea95",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ead3d63_a7b80f73",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1833,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-06T16:39:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d0da3f1_39df870d",
+      "range": {
+        "startLine": 1833,
+        "startChar": 87,
+        "endLine": 1833,
+        "endChar": 97
+      },
+      "revId": "73af0b84604670a871541c886e59376e6d36ea95",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
