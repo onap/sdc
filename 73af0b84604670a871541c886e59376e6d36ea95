@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d0da3f1_39df870d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1833,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-06T15:44:43Z",
+      "side": 1,
+      "message": "StringUtils.isNotEmpty already include check for \u0027not Null\u0027",
+      "range": {
+        "startLine": 1833,
+        "startChar": 87,
+        "endLine": 1833,
+        "endChar": 97
+      },
+      "revId": "73af0b84604670a871541c886e59376e6d36ea95",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
