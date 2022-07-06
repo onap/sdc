@@ -19,13 +19,13 @@
     <content>
         <ul>
             <li *ngFor="let property of component.properties; let i = index"
-                class="i-sdc-designer-sidebar-section-content-item-property-and-attribute" data-tests-id="propertyRow">
-                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label hand"
+                class="i-sdc-designer-sidebar-section-content-item-property-and-attribute group-policy-properties" data-tests-id="propertyRow">
+                <div class="i-sdc-designer-sidebar-section-content-item-property-and-attribute-label hand group-policy-properties"
                      [attr.data-tests-id]="'propertyName_'+property.name"
                      tooltip="{{property.name}}"
                      (click)="!isViewOnly && editProperty(property)">{{property.name}}
                 </div>
-                <div class="i-sdc-designer-sidebar-section-content-item-property-value"
+                <div class="i-sdc-designer-sidebar-section-content-item-property-value group-policy-properties"
                      [attr.data-tests-id]="'value_'+property.name"
                      tooltip="{{property.value || property.defaultValue}}">{{property.value || property.defaultValue}}
                 </div>

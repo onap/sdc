@@ -29,7 +29,8 @@ import { Component as TopologyTemplate, GroupInstance } from "app/models";
 @Component({
     selector: 'group-or-policy-properties-tab',
     templateUrl: './group-or-policy-properties-tab.component.html',
-    styleUrls: ['./../properties-tab/properties-tab.component.less'],
+    styleUrls: ['./../properties-tab/properties-tab.component.less',
+                './group-or-policy-properties-tab.component.less'],
 })
 export class GroupOrPolicyPropertiesTab {
  
