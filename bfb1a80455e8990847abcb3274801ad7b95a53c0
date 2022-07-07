@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f08925d_01b437a7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-07T10:50:31Z",
+      "side": 1,
+      "message": "Please, reduce this to 50 characters (https://wiki.onap.org/display/DW/Commit+Messages):\n\nMaintain VFC instance directives and node filters\n\nMaintain VFC directives and node filters on instance version change",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 23
+      },
+      "revId": "bfb1a80455e8990847abcb3274801ad7b95a53c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "420564d7_c2f7de2d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-07T10:50:31Z",
+      "side": 1,
+      "message": "if you are calling the same method as addOrUpdateNodeFilter, why not make it public already?\nIn fact, the first parameter is always false, so you could create a method:\npublic Either\u003cCINodeFilterDataDefinition, StorageOperationStatus\u003e addOrUpdateNodeFilterData(final String componentId, final String componentInstanceId,                                                                                               final CINodeFilterDataDefinition nodeFilterDataDefinition) {\n\nAlso, please, add unit tests for this method.",
+      "range": {
+        "startLine": 150,
+        "startChar": 70,
+        "endLine": 150,
+        "endChar": 95
+      },
+      "revId": "bfb1a80455e8990847abcb3274801ad7b95a53c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
