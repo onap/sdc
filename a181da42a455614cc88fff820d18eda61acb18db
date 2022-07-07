@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "807cb2b8_747d44d9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-07T11:12:38Z",
+      "side": 0,
+      "message": "in theory the properties owner should have the same id of the component if it is a property from the component, as per org.openecomp.sdc.be.components.property.DefaultPropertyDeclarator#resolvePropertiesOwner.\n\nHave you checked why the id is not as expected?",
+      "range": {
+        "startLine": 244,
+        "startChar": 12,
+        "endLine": 244,
+        "endChar": 27
+      },
+      "revId": "a181da42a455614cc88fff820d18eda61acb18db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
