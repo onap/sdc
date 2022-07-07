@@ -23,9 +23,10 @@ import {SchemaProperty, SchemaPropertyGroupModel} from '../schema-property';
 import {ToscaPresentationData} from '../tosca-presentation';
 import {PropertyInputDetail} from './property-input-detail';
 import {Metadata} from '../metadata';
-import {ToscaGetFunctionType} from "../tosca-get-function-type";
-import {ToscaGetFunctionDto} from '../tosca-get-function-dto';
-import {PropertySource} from '../property-source';
+import {ToscaFunction} from "../tosca-function";
+import {ToscaGetFunction} from "../tosca-get-function";
+import {ToscaGetFunctionTypeConverter} from "../tosca-get-function-type-converter";
+import {ToscaGetFunctionDto} from "../tosca-get-function-dto";
 
 export enum DerivedPropertyType {
     SIMPLE,
@@ -68,9 +69,11 @@ export class PropertyBEModel {
     inputPath: string;
     toscaPresentation: ToscaPresentationData;
     metadata: Metadata;
-    //deprecated
-    toscaGetFunctionType: ToscaGetFunctionType;
+    /**
+     * @deprecated Use toscaFunction instead
+     */
     toscaGetFunction: ToscaGetFunctionDto;
+    toscaFunction: ToscaFunction;
 
     constructor(property?: PropertyBEModel) {
         if (property) {
@@ -96,12 +99,20 @@ export class PropertyBEModel {
             this.getPolicyValues = property.getPolicyValues;
             this.inputPath = property.inputPath;
             this.metadata = property.metadata;
-            if (property.toscaGetFunction) {
-                this.toscaGetFunction = property.toscaGetFunction;
-            } else if (property.toscaGetFunctionType) {
-                this.toscaGetFunction = new ToscaGetFunctionDto();
-                this.toscaGetFunction.functionType = property.toscaGetFunctionType;
-                this.toscaGetFunction.propertySource = PropertySource.SELF;
+            if (property.toscaFunction) {
+                this.toscaFunction = property.toscaFunction;
+            } else if (property.toscaGetFunction) {
+                //support for legacy tosca function
+                const toscaGetFunction1 = new ToscaGetFunction();
+                toscaGetFunction1.type = ToscaGetFunctionTypeConverter.convertToToscaFunctionType(property.toscaGetFunction.functionType);
+                toscaGetFunction1.propertyUniqueId = property.toscaGetFunction.propertyUniqueId;
+                toscaGetFunction1.propertyName = property.toscaGetFunction.propertyName;
+                toscaGetFunction1.propertySource = property.toscaGetFunction.propertySource;
+                toscaGetFunction1.sourceUniqueId = property.toscaGetFunction.sourceUniqueId;
+                toscaGetFunction1.sourceName = property.toscaGetFunction.sourceName;
+                toscaGetFunction1.functionType = property.toscaGetFunction.functionType;
+                toscaGetFunction1.propertyPathFromSource = property.toscaGetFunction.propertyPathFromSource;
+                this.toscaFunction = toscaGetFunction1;
             }
         }
 
@@ -181,7 +192,7 @@ export class PropertyBEModel {
      * Checks whether the property value is a tosca get function (e.g. get_input, get_property, get_attribute)
      */
     public isToscaGetFunction(): boolean {
-        return this.toscaGetFunction != null;
+        return this.toscaFunction != null;
     }
 }
 

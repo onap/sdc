@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,11 +57,16 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     private Boolean immutable = Boolean.FALSE;
     private Boolean mappedToComponentProperty = Boolean.TRUE;
     /**
-     * @deprecated use {@link #toscaGetFunction#functionType} instead
+     * @deprecated use {@link #toscaFunction} instead
      */
     @Deprecated
     private ToscaGetFunctionType toscaGetFunctionType;
+    /**
+     * @deprecated use {@link #toscaFunction} instead
+     */
+    @Deprecated
     private ToscaGetFunctionDataDefinition toscaGetFunction;
+    private ToscaFunction toscaFunction;
 
     private String inputPath;
     private String status;
@@ -115,8 +121,9 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setInstanceUniqueId(propertyDataDefinition.getInstanceUniqueId());
         this.setModel(propertyDataDefinition.getModel());
         this.setPropertyId(propertyDataDefinition.getPropertyId());
-        this.setToscaGetFunctionType(propertyDataDefinition.getToscaGetFunctionType());
         this.setToscaGetFunction(propertyDataDefinition.getToscaGetFunction());
+        this.setToscaGetFunctionType(propertyDataDefinition.getToscaGetFunctionType());
+        this.setToscaFunction(propertyDataDefinition.getToscaFunction());
         this.parentPropertyType = propertyDataDefinition.getParentPropertyType();
         this.subPropertyInputPath = propertyDataDefinition.getSubPropertyInputPath();
         if (isNotEmpty(propertyDataDefinition.annotations)) {
@@ -166,10 +173,14 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     }
 
     public ToscaGetFunctionType getToscaGetFunctionType() {
-        if (toscaGetFunction != null) {
-            return toscaGetFunction.getFunctionType();
+        if (isToscaGetFunction()) {
+            if (toscaFunction != null) {
+                return ((ToscaGetFunctionDataDefinition) toscaFunction).getFunctionType();
+            }
+            return toscaGetFunctionType;
         }
-        return toscaGetFunctionType;
+
+        return null;
     }
 
     public Boolean isHidden() {
@@ -318,12 +329,23 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
     }
 
-    public boolean isGetFunction() {
-        return this.toscaGetFunctionType != null || this.toscaGetFunction != null;
+    @JsonIgnoreProperties
+    public boolean isToscaFunction() {
+        return this.toscaGetFunctionType != null || this.toscaFunction != null;
     }
 
-    public boolean hasGetFunction() {
-        return this.toscaGetFunction != null;
+
+    @JsonIgnoreProperties
+    public boolean isToscaGetFunction() {
+        return this.toscaGetFunctionType != null || (this.toscaFunction != null
+            && (this.toscaFunction.getType() == ToscaFunctionType.GET_ATTRIBUTE
+                || this.toscaFunction.getType() == ToscaFunctionType.GET_INPUT
+                || this.toscaFunction.getType() == ToscaFunctionType.GET_PROPERTY));
+    }
+
+    @JsonIgnoreProperties
+    public boolean hasToscaFunction() {
+        return this.toscaFunction != null;
     }
 
 }

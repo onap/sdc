@@ -22,6 +22,8 @@ package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fj.data.Either;
 import java.util.List;
@@ -33,9 +35,11 @@ import org.openecomp.sdc.be.dao.config.JanusGraphSpringConfig;
 import org.openecomp.sdc.be.dao.janusgraph.HealingJanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
+import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.model.ModelTestBase;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.config.ModelOperationsSpringConfig;
@@ -75,7 +79,7 @@ public class GroupsOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void addGroups_whenContainerHasNoGroups_associateContainerWithGroup() {
+    void addGroups_whenContainerHasNoGroups_associateContainerWithGroup() {
         GroupDefinition g1 = createGroupDefinition("g1");
         GroupDefinition g2 = createGroupDefinition("g2");
         Either<List<GroupDefinition>, StorageOperationStatus> createGroups = groupsOperation.addGroups(container, asList(g1, g2));
@@ -90,7 +94,7 @@ public class GroupsOperationTest extends ModelTestBase {
     }
 
     @Test
-    public void addGroups_whenContainerHasGroups_addTheGivenGroupsToTheGroupsList() {
+    void addGroups_whenContainerHasGroups_addTheGivenGroupsToTheGroupsList() {
         GroupDefinition g1 = createGroupDefinition("g1");
         GroupDefinition g2 = createGroupDefinition("g2");
         groupsOperation.addGroups(container, asList(g1, g2)).left().value();
@@ -107,6 +111,27 @@ public class GroupsOperationTest extends ModelTestBase {
             .usingElementComparatorOnFields("name", "uniqueId")
             .containsExactlyInAnyOrder(g1, g2, g3, g4);
 
+    }
+
+    @Test
+    void updateGroupPropertiesOnComponent() {
+        final GroupDefinition group = createGroupDefinition("groupId");
+        final GroupProperty groupProperty1 = new GroupProperty();
+        groupProperty1.setName("property1");
+
+        final GroupProperty groupProperty2 = new GroupProperty();
+        groupProperty1.setName("property2");
+        group.setProperties(List.of(groupProperty1, groupProperty2));
+
+        final GroupProperty newProperty1 = new GroupProperty();
+        newProperty1.setName("property2");
+        final List<GroupProperty> newGroupProperties = List.of(newProperty1);
+
+        final Either<List<GroupProperty>, StorageOperationStatus> resultEither =
+            groupsOperation.updateGroupPropertiesOnComponent(CONTAINER_ID, group, newGroupProperties, PromoteVersionEnum.MINOR);
+
+        assertTrue(resultEither.isLeft());
+        assertEquals(newGroupProperties, resultEither.left().value());
     }
 
     private GroupDefinition createGroupDefinition(String id) {

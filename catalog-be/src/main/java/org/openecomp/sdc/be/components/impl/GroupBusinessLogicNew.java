@@ -140,8 +140,8 @@ public class GroupBusinessLogicNew {
             if (!isOnlyGroupPropertyValueChanged(gp, originalProperties.get(updatedPropertyName))) {
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY, updatedPropertyName);
             }
-            if (gp.hasGetFunction()) {
-                gp.setValue(gp.getToscaGetFunction().generatePropertyValue());
+            if (gp.hasToscaFunction()) {
+                gp.setValue(gp.getToscaFunction().getValue());
             }
             if (StringUtils.isEmpty(gp.getValue())) {
                 gp.setValue(originalProperties.get(updatedPropertyName).getDefaultValue());
@@ -237,13 +237,13 @@ public class GroupBusinessLogicNew {
         groupProperty1Duplicate.setValue(null);
         groupProperty1Duplicate.setSchema(null);
         groupProperty1Duplicate.setParentUniqueId(null);
-        groupProperty1Duplicate.setToscaGetFunction(null);
+        groupProperty1Duplicate.setToscaFunction(null);
         groupProperty1Duplicate.setToscaGetFunctionType(null);
         GroupProperty groupProperty2Duplicate = new GroupProperty(groupProperty2);
         groupProperty2Duplicate.setValue(null);
         groupProperty2Duplicate.setSchema(null);
         groupProperty2Duplicate.setParentUniqueId(null);
-        groupProperty2Duplicate.setToscaGetFunction(null);
+        groupProperty2Duplicate.setToscaFunction(null);
         groupProperty2Duplicate.setToscaGetFunctionType(null);
         return StringUtils.equals(groupProperty1Duplicate.getValueUniqueUid(), groupProperty2Duplicate.getValueUniqueUid()) && groupProperty1Duplicate
             .equals(groupProperty2Duplicate);

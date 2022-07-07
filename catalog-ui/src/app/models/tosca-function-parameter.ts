@@ -19,17 +19,9 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaGetFunctionType} from './tosca-get-function-type';
-import {PropertySource} from './property-source';
 import {ToscaFunctionType} from "./tosca-function-type.enum";
 
-export class ToscaGetFunctionDto {
+export interface ToscaFunctionParameter {
     type: ToscaFunctionType;
-    propertyUniqueId: string;
-    propertyName: string;
-    propertySource: PropertySource;
-    sourceUniqueId: string;
-    sourceName: string;
-    functionType: ToscaGetFunctionType;
-    propertyPathFromSource: Array<string>;
+    value: any;
 }

@@ -19,20 +19,25 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { FormElementsModule } from 'app/ng2/components/ui/form-components/form-elements.module';
 import { UiElementsModule } from 'app/ng2/components/ui/ui-elements.module';
 import { TranslateModule } from '../../../shared/translator/translate.module';
 import { ToscaFunctionComponent } from './tosca-function.component';
 import { SdcUiComponentsModule } from 'onap-ui-angular';
+import { ToscaGetFunctionComponent } from './tosca-get-function/tosca-get-function.component';
+import { ToscaConcatFunctionComponent } from './tosca-concat-function/tosca-concat-function.component';
 
 @NgModule({
     declarations: [
         ToscaFunctionComponent,
+        ToscaGetFunctionComponent,
+        ToscaConcatFunctionComponent,
     ],
     imports: [
         CommonModule,
         FormsModule,
+        ReactiveFormsModule,
         FormElementsModule,
         UiElementsModule,
         TranslateModule,

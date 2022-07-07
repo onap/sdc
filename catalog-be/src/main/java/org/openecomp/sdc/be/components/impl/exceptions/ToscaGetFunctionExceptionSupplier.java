@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 
@@ -38,6 +38,7 @@ public class ToscaGetFunctionExceptionSupplier {
         final String errorMsg = String.format("%s on %s", toscaGetFunctionType.getFunctionName(), propertySource.getName());
         return () -> new ByActionStatusComponentException(ActionStatus.NOT_SUPPORTED, errorMsg);
     }
+
     public static Supplier<ByActionStatusComponentException> propertyNotFoundOnTarget(final String propertyName,
                                                                                       final PropertySource propertySource,
                                                                                       final ToscaGetFunctionType functionType) {
@@ -106,21 +107,21 @@ public class ToscaGetFunctionExceptionSupplier {
         return () -> new ByActionStatusComponentException(ActionStatus.NOT_SUPPORTED, "Tosca function " + functionType.getFunctionName());
     }
 
-    public static Supplier<ByActionStatusComponentException> propertyTypeDiverge(final ToscaGetFunctionType functionType,
+    public static Supplier<ByActionStatusComponentException> propertyTypeDiverge(final ToscaFunctionType functionType,
                                                                                  final String referredPropertyType,
                                                                                  final String propertyType) {
         return () -> new ByActionStatusComponentException(
             ActionStatus.TOSCA_GET_FUNCTION_TYPE_DIVERGE,
-            functionType.getFunctionName(), referredPropertyType, propertyType
+            functionType.getName(), referredPropertyType, propertyType
         );
     }
 
-    public static Supplier<ByActionStatusComponentException> propertySchemaDiverge(final ToscaGetFunctionType functionType,
+    public static Supplier<ByActionStatusComponentException> propertySchemaDiverge(final ToscaFunctionType functionType,
                                                                                    final String referredPropertySchemaType,
                                                                                    final String propertySchemaType) {
         return () -> new ByActionStatusComponentException(
             ActionStatus.TOSCA_GET_FUNCTION_SCHEMA_DIVERGE,
-            functionType.getFunctionName(), referredPropertySchemaType, propertySchemaType
+            functionType.getName(), referredPropertySchemaType, propertySchemaType
         );
     }
 
