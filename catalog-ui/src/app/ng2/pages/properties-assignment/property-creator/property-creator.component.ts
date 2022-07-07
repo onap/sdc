@@ -72,7 +72,7 @@ export class PropertyCreatorComponent {
         )
         .sort((a, b) => a.label.localeCompare(b.label));
         this.typesProperties = _.concat(this.typesProperties, nonPrimitiveTypesValues);
-        this.typesSchemaProperties = _.concat(typesSimpleProperties, nonPrimitiveTypesValues);
+        this.typesSchemaProperties = _.concat(this.typesProperties, nonPrimitiveTypesValues);
         this.typesProperties.unshift(new DropdownValue('', 'Select Type...'));
         this.typesSchemaProperties.unshift(new DropdownValue('', 'Select Schema Type...'));
     }
