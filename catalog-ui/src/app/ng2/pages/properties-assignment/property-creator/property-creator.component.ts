@@ -41,6 +41,21 @@ export class PropertyCreatorComponent {
         return [PROPERTY_TYPES.LIST, PROPERTY_TYPES.MAP].indexOf(this.propertyModel.type) > -1;
     }
 
+    onTypeChange(): void {
+        this.propertyModel.schema.property.type='';
+        const typeList =  this.typesProperties;
+        if(this.propertyModel.type === PROPERTY_TYPES.MAP){
+            this.typesSchemaProperties = _.filter(typeList,(dropdownList: DropdownValue) => {
+                return dropdownList.label != 'list' && dropdownList.label != 'map';
+            });
+        }
+        if(this.propertyModel.type === PROPERTY_TYPES.LIST){
+            this.typesSchemaProperties = _.filter(typeList,(dropdownList: DropdownValue) => {
+                return dropdownList.label != 'list';
+            });
+        }
+    }
+
     onSchemaTypeChange(): void {
         if (this.propertyModel.type === PROPERTY_TYPES.MAP) {
             this.propertyModel.value = JSON.stringify({'': null});
@@ -63,9 +78,10 @@ export class PropertyCreatorComponent {
         this.typesProperties = _.map(PROPERTY_DATA.TYPES,
             (type: string) => new DropdownValue(type, type)
         );
-        const typesSimpleProperties = _.map(PROPERTY_DATA.SIMPLE_TYPES,
-            (type: string) => new DropdownValue(type, type)
-        );
+        const typesSimpleProperties = _.filter(this.typesProperties,(dropdownList: DropdownValue) => {
+            return dropdownList.label != 'list';
+        });
+
         const nonPrimitiveTypesValues = _.map(nonPrimitiveTypes,
             (type: string) => new DropdownValue(type,
                 type.replace('org.openecomp.datatypes.heat.', ''))
