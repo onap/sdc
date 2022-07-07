@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -183,6 +184,18 @@ class ToscaGetFunctionDataDefinitionTest {
         final IllegalStateException actualException = assertThrows(IllegalStateException.class, toscaGetFunction::generatePropertyValue);
 
         assertEquals("sourceName is required in order to generate the get_property from INSTANCE value", actualException.getMessage());
+    }
+
+    @Test
+    void getTypeTest() {
+        final ToscaGetFunctionDataDefinition toscaGetFunctionDataDefinition = new ToscaGetFunctionDataDefinition();
+        assertNull(toscaGetFunctionDataDefinition.getType());
+        toscaGetFunctionDataDefinition.setFunctionType(ToscaGetFunctionType.GET_INPUT);
+        assertEquals(ToscaFunctionType.GET_INPUT, toscaGetFunctionDataDefinition.getType());
+        toscaGetFunctionDataDefinition.setFunctionType(ToscaGetFunctionType.GET_ATTRIBUTE);
+        assertEquals(ToscaFunctionType.GET_ATTRIBUTE, toscaGetFunctionDataDefinition.getType());
+        toscaGetFunctionDataDefinition.setFunctionType(ToscaGetFunctionType.GET_PROPERTY);
+        assertEquals(ToscaFunctionType.GET_PROPERTY, toscaGetFunctionDataDefinition.getType());
     }
 
     private ToscaGetFunctionDataDefinition createGetFunction(final ToscaGetFunctionType toscaGetFunctionType,

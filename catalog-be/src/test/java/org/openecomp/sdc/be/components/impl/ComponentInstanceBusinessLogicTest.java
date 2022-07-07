@@ -73,6 +73,7 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ToscaFunctionExceptionSupplier;
 import org.openecomp.sdc.be.components.impl.exceptions.ToscaGetFunctionExceptionSupplier;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
@@ -385,7 +386,7 @@ class ComponentInstanceBusinessLogicTest {
         propertyGetInput.setType("list");
         final SchemaDefinition listStringPropertySchema = createSchema(schemaType);
         propertyGetInput.setSchema(listStringPropertySchema);
-        propertyGetInput.setToscaGetFunction(
+        propertyGetInput.setToscaFunction(
             createGetToscaFunction(inputName, inputId, List.of(propertyGetInput.getName()), PropertySource.SELF, ToscaGetFunctionType.GET_INPUT,
                 containerComponentId, containerComponentName)
         );
@@ -552,7 +553,7 @@ class ComponentInstanceBusinessLogicTest {
             componentInstanceProperty.setSchema(schemaDefinition);
         }
         if (toscaGetFunction != null) {
-            componentInstanceProperty.setToscaGetFunction(toscaGetFunction);
+            componentInstanceProperty.setToscaFunction(toscaGetFunction);
         }
 
         return componentInstanceProperty;
@@ -612,7 +613,7 @@ class ComponentInstanceBusinessLogicTest {
         final ResponseFormat actualResponse = responseFormatEither.right().value();
         final ResponseFormat expectedResponse =
             ToscaGetFunctionExceptionSupplier
-                .propertySchemaDiverge(propertyGetInput.getToscaGetFunction().getFunctionType(), inputDefinition.getSchemaType(),
+                .propertySchemaDiverge(propertyGetInput.getToscaFunction().getType(), inputDefinition.getSchemaType(),
                     propertyGetInput.getSchemaType())
                 .get().getResponseFormat();
         assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
@@ -672,7 +673,7 @@ class ComponentInstanceBusinessLogicTest {
         final ResponseFormat actualResponse = responseFormatEither.right().value();
         final ResponseFormat expectedResponse =
             ToscaGetFunctionExceptionSupplier
-                .propertyTypeDiverge(propertyGetInput.getToscaGetFunction().getFunctionType(), inputDefinition.getType(), propertyGetInput.getType())
+                .propertyTypeDiverge(propertyGetInput.getToscaFunction().getType(), inputDefinition.getType(), propertyGetInput.getType())
                 .get().getResponseFormat();
         assertEquals(expectedResponse.getFormattedMessage(), actualResponse.getFormattedMessage());
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
@@ -689,7 +690,7 @@ class ComponentInstanceBusinessLogicTest {
         final List<ComponentInstanceProperty> properties = new ArrayList<>();
         final ComponentInstanceProperty propertyGetInput = new ComponentInstanceProperty();
         propertyGetInput.setName("anyName");
-        propertyGetInput.setToscaGetFunction(toscaGetFunction);
+        propertyGetInput.setToscaFunction(toscaGetFunction);
         properties.add(propertyGetInput);
 
         final Component component = new Service();
@@ -2659,8 +2660,8 @@ class ComponentInstanceBusinessLogicTest {
 
     private static Stream<Arguments> getToscaFunctionForValidation() {
         final var toscaGetFunction1 = new ToscaGetFunctionDataDefinition();
-        final ResponseFormat expectedResponse1 = ToscaGetFunctionExceptionSupplier
-            .targetFunctionTypeNotFound().get().getResponseFormat();
+        final ResponseFormat expectedResponse1 = ToscaFunctionExceptionSupplier
+            .missingFunctionType().get().getResponseFormat();
 
         final var toscaGetFunction2 = new ToscaGetFunctionDataDefinition();
         toscaGetFunction2.setFunctionType(ToscaGetFunctionType.GET_INPUT);

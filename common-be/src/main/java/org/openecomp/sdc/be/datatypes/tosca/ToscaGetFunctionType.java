@@ -19,8 +19,10 @@
 
 package org.openecomp.sdc.be.datatypes.tosca;
 
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 
 @AllArgsConstructor
 @Getter
@@ -31,4 +33,23 @@ public enum ToscaGetFunctionType {
 
     private final String functionName;
     private final String propertyType;
+
+    /**
+     * Converts a {@link ToscaFunctionType} to a {@link ToscaGetFunctionType}
+     * @param toscaFunctionType the tosca function type to convert
+     * @return the respective {@link ToscaGetFunctionType}
+     */
+    public static Optional<ToscaGetFunctionType> fromToscaFunctionType(final ToscaFunctionType toscaFunctionType) {
+        switch (toscaFunctionType) {
+            case GET_INPUT:
+                return Optional.of(GET_INPUT);
+            case GET_PROPERTY:
+                return Optional.of(GET_PROPERTY);
+            case GET_ATTRIBUTE:
+                return Optional.of(GET_ATTRIBUTE);
+            default:
+                return Optional.empty();
+        }
+    }
+
 }

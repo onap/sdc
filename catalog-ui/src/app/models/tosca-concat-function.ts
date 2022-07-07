@@ -19,35 +19,20 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {PropertySource} from "./property-source";
-import {ToscaGetFunctionType} from "./tosca-get-function-type";
 import {ToscaFunction} from "./tosca-function";
 import {ToscaFunctionType} from "./tosca-function-type.enum";
+import {ToscaFunctionParameter} from "./tosca-function-parameter";
 
-export class ToscaGetFunction implements ToscaFunction {
-    type: ToscaFunctionType;
-    propertyUniqueId: string;
-    propertyName: string;
-    propertySource: PropertySource;
-    sourceUniqueId: string;
-    sourceName: string;
-    functionType: ToscaGetFunctionType;
-    propertyPathFromSource: Array<string>;
-    value: any
+export class ToscaConcatFunction implements ToscaFunction, ToscaFunctionParameter {
+    type = ToscaFunctionType.CONCAT;
+    value: any;
+    parameters: Array<ToscaFunctionParameter> = [];
 
-    constructor(toscaGetFunction?: ToscaGetFunction) {
-        if (!toscaGetFunction) {
+    constructor(toscaConcatFunction?: ToscaConcatFunction) {
+        if (!toscaConcatFunction) {
             return;
         }
-        this.propertyUniqueId = toscaGetFunction.propertyUniqueId;
-        this.propertyName = toscaGetFunction.propertyName;
-        this.propertySource = toscaGetFunction.propertySource;
-        this.sourceUniqueId = toscaGetFunction.sourceUniqueId;
-        this.sourceName = toscaGetFunction.sourceName;
-        this.functionType = toscaGetFunction.functionType;
-        if (toscaGetFunction.propertyPathFromSource) {
-            this.propertyPathFromSource = [...toscaGetFunction.propertyPathFromSource];
-        }
+        this.value = toscaConcatFunction.value;
     }
 
 }

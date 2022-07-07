@@ -20,28 +20,47 @@
  */
 
 import {ToscaGetFunctionType} from './tosca-get-function-type';
+import {ToscaFunctionType} from "./tosca-function-type.enum";
 
 export class ToscaGetFunctionTypeConverter {
 
-  static convertFromString(toscaGetFunction: string): ToscaGetFunctionType {
-    if (!toscaGetFunction) {
-      return;
+    static convertFromString(toscaGetFunction: string): ToscaGetFunctionType {
+        if (!toscaGetFunction) {
+            return;
+        }
+
+        if (ToscaGetFunctionType.GET_INPUT === toscaGetFunction.toUpperCase()) {
+            return ToscaGetFunctionType.GET_INPUT;
+        }
+
+        if (ToscaGetFunctionType.GET_PROPERTY === toscaGetFunction.toUpperCase()) {
+            return ToscaGetFunctionType.GET_PROPERTY;
+        }
+
+        if (ToscaGetFunctionType.GET_ATTRIBUTE === toscaGetFunction.toUpperCase()) {
+            return ToscaGetFunctionType.GET_ATTRIBUTE;
+        }
+
+        return undefined;
+
     }
 
-    if (ToscaGetFunctionType.GET_INPUT === toscaGetFunction.toUpperCase()) {
-      return ToscaGetFunctionType.GET_INPUT;
+    /**
+     * Converts a ToscaGetFunctionType to a ToscaFunctionType
+     * @param toscaGetFunctionType
+     */
+    static convertToToscaFunctionType(toscaGetFunctionType: ToscaGetFunctionType): ToscaFunctionType {
+        switch (toscaGetFunctionType) {
+            case ToscaGetFunctionType.GET_INPUT:
+                return ToscaFunctionType.GET_INPUT;
+            case ToscaGetFunctionType.GET_ATTRIBUTE:
+                return ToscaFunctionType.GET_ATTRIBUTE;
+            case ToscaGetFunctionType.GET_PROPERTY:
+                return ToscaFunctionType.GET_PROPERTY;
+            default:
+                return undefined;
+        }
+
     }
-
-    if (ToscaGetFunctionType.GET_PROPERTY === toscaGetFunction.toUpperCase()) {
-      return ToscaGetFunctionType.GET_PROPERTY;
-    }
-
-    if (ToscaGetFunctionType.GET_ATTRIBUTE === toscaGetFunction.toUpperCase()) {
-      return ToscaGetFunctionType.GET_ATTRIBUTE;
-    }
-
-    return undefined;
-
-  }
 
 }
