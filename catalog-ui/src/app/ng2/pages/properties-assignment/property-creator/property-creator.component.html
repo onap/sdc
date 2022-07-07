@@ -19,6 +19,7 @@
                 <ui-element-dropdown [testId]="'property-type'"
                                      class="cell link-selector"
                                      [values]="typesProperties"
+                                     (change)="onTypeChange()"
                                      [(value)]="propertyModel.type"></ui-element-dropdown>
             </div>
             <div class="i-sdc-form-item propertySchemaType" *ngIf="showSchema()">
