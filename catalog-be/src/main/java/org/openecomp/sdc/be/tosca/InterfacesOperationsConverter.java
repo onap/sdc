@@ -86,7 +86,7 @@ public class InterfacesOperationsConverter {
      * @param component to work on
      * @return the added element
      */
-    public static Map<String, Object> addInterfaceTypeElement(Component component, List<String> allInterfaceTypes) {
+    public Map<String, Object> addInterfaceTypeElement(Component component, List<String> allInterfaceTypes) {
         if (component instanceof Product) {
             return null;
         }
