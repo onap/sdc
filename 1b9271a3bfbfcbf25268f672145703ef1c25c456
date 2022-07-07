@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "fcaf2950_18db49e8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-07T11:43:27Z",
+      "side": 1,
+      "message": "no need to add commit message body if there is nothing different from the title",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 48
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0b1eef5c_61573537",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidator.java",
         "patchSetId": 1
@@ -87,6 +110,75 @@
         "startChar": 9,
         "endLine": 33,
         "endChar": 31
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d72e3aa2_73a74424",
+        "filename": "catalog-ui/src/app/ng2/components/logic/properties-table/dynamic-property/dynamic-property.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-07T11:43:27Z",
+      "side": 1,
+      "message": "use the constant PROPERTY_TYPES.TIMESTAMP",
+      "range": {
+        "startLine": 84,
+        "startChar": 76,
+        "endLine": 84,
+        "endChar": 87
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "826df17e_0c96a7d2",
+        "filename": "catalog-ui/src/app/ng2/components/ui/dynamic-element/dynamic-element.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-07T11:43:27Z",
+      "side": 1,
+      "message": "use the constant PROPERTY_TYPES.TIMESTAMP",
+      "range": {
+        "startLine": 111,
+        "startChar": 31,
+        "endLine": 111,
+        "endChar": 42
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7306db9_fc8995f0",
+        "filename": "catalog-ui/src/app/ng2/components/ui/dynamic-element/dynamic-element.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-07T11:43:27Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 153,
+        "startChar": 13,
+        "endLine": 153,
+        "endChar": 24
       },
       "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
