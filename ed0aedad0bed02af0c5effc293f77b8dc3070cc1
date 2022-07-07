@@ -22,6 +22,30 @@
       "revId": "ed0aedad0bed02af0c5effc293f77b8dc3070cc1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c421449_b6ed74c4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/GroupBusinessLogicNew.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-07T09:30:34Z",
+      "side": 1,
+      "message": "let\u0027s leave this set for now as we haven\u0027t done a database refactor to fully remove this attribute. Some existing group could have this information.",
+      "parentUuid": "80412cea_247edac7",
+      "range": {
+        "startLine": 247,
+        "startChar": 32,
+        "endLine": 247,
+        "endChar": 55
+      },
+      "revId": "ed0aedad0bed02af0c5effc293f77b8dc3070cc1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
