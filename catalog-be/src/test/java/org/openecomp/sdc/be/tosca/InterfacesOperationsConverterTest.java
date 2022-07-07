@@ -20,19 +20,15 @@
 package org.openecomp.sdc.be.tosca;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.SELF;
-import static org.openecomp.sdc.be.tosca.InterfacesOperationsConverter.addInterfaceTypeElement;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
@@ -78,7 +74,6 @@ import org.openecomp.sdc.be.model.ServiceMetadataDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.tosca.model.ToscaNodeType;
-import org.openecomp.sdc.be.tosca.model.ToscaTemplate;
 import org.openecomp.sdc.common.util.YamlToObjectConverter;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
 import org.yaml.snakeyaml.Yaml;
@@ -105,8 +100,7 @@ class InterfacesOperationsConverterTest {
 
     @BeforeEach
     public void setUpBeforeTest() {
-        interfacesOperationsConverter =
-            new InterfacesOperationsConverter(new PropertyConvertor());
+        interfacesOperationsConverter = new InterfacesOperationsConverter(new PropertyConvertor());
     }
 
     @Test
@@ -122,19 +116,14 @@ class InterfacesOperationsConverterTest {
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
-        final Map<String, Object> interfaceTypeElement =
-            addInterfaceTypeElement(component, new ArrayList<>());
+        final Map<String, Object> interfaceTypeElement = interfacesOperationsConverter.addInterfaceTypeElement(component, new ArrayList<>());
+        assertNotNull(interfaceTypeElement);
+        assertTrue(interfaceTypeElement.containsKey("org.openecomp.interfaces.node.lifecycle.NodeTypeName"));
+        Object o = interfaceTypeElement.get("org.openecomp.interfaces.node.lifecycle.NodeTypeName");
+        assertNotNull(o);
+        assertTrue(o instanceof Map);
+        assertEquals(7, ((Map) o).size());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
-            interfacesOperationsConverter, null);
-        ToscaTemplate template = new ToscaTemplate("test");
-        template.setInterface_types(interfaceTypeElement);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-
-        assertTrue(all(
-            containsAll("NodeTypeName"),
-            containsNone("operations")
-        ).apply(new String(toscaRepresentation.getMainYaml())));
     }
 
     @Test
@@ -150,19 +139,14 @@ class InterfacesOperationsConverterTest {
         final String interfaceType = "normalizedServiceComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
-        final Map<String, Object> interfaceTypeElement =
-            addInterfaceTypeElement(component, new ArrayList<>());
+        final Map<String, Object> interfaceTypeElement = interfacesOperationsConverter.addInterfaceTypeElement(component, new ArrayList<>());
+        assertNotNull(interfaceTypeElement);
+        assertTrue(interfaceTypeElement.containsKey("org.openecomp.interfaces.node.lifecycle.NodeTypeName"));
+        Object o = interfaceTypeElement.get("org.openecomp.interfaces.node.lifecycle.NodeTypeName");
+        assertNotNull(o);
+        assertTrue(o instanceof Map);
+        assertEquals(7, ((Map) o).size());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
-            interfacesOperationsConverter, null);
-        ToscaTemplate template = new ToscaTemplate("testService");
-        template.setInterface_types(interfaceTypeElement);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-
-        assertTrue(all(
-            containsAll("NodeTypeName"),
-            containsNone("operations")
-        ).apply(new String(toscaRepresentation.getMainYaml())));
     }
 
     @Test
@@ -178,22 +162,15 @@ class InterfacesOperationsConverterTest {
         component.getInterfaces().put(interfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
+        Map<String, Object> interfaces = nodeType.getInterfaces();
+        assertNotNull(interfaces);
+        assertEquals(1, interfaces.size());
+        assertTrue(interfaces.containsKey("resourceName"));
+        Object resourceName = interfaces.get("resourceName");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(4, ((Map) resourceName).size());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
-            interfacesOperationsConverter, null);
-        ToscaTemplate template = new ToscaTemplate(NODE_TYPE_NAME);
-        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        nodeTypes.put(NODE_TYPE_NAME, nodeType);
-        template.setNode_types(nodeTypes);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-
-        String mainYaml = new String(toscaRepresentation.getMainYaml());
-        assertTrue(all(
-            containsAll("resourceName:", "inputs:", "has description", MAPPED_PROPERTY_NAME, "com.some.resource.or.other.resourceName"),
-            containsNone("operations", "defaultp")
-        ).apply(mainYaml));
-
-        validateOperationInputs(mainYaml, 2, null);
     }
 
     @Test
@@ -208,19 +185,15 @@ class InterfacesOperationsConverterTest {
         component.getInterfaces().put(interfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
+        Map<String, Object> interfaces = nodeType.getInterfaces();
+        assertNotNull(interfaces);
+        assertEquals(1, interfaces.size());
+        assertTrue(interfaces.containsKey("serviceName"));
+        Object resourceName = interfaces.get("serviceName");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(4, ((Map) resourceName).size());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null, null, null);
-        ToscaTemplate template = new ToscaTemplate("testService");
-        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        nodeTypes.put(NODE_TYPE_NAME, nodeType);
-        template.setNode_types(nodeTypes);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-        String mainYaml = new String(toscaRepresentation.getMainYaml());
-        assertTrue(all(
-            containsAll("serviceName", "inputs:", "has description", MAPPED_PROPERTY_NAME, "com.some.service.or.other.serviceName"),
-            containsNone("operations", "defaultp")
-        ).apply(mainYaml));
-        validateOperationInputs(mainYaml, 2, null);
     }
 
 
@@ -235,23 +208,15 @@ class InterfacesOperationsConverterTest {
         final String interfaceType = "normalizedComponentName-interface";
         component.setInterfaces(new HashMap<>());
         component.getInterfaces().put(interfaceType, addedInterface);
-        Map<String, Object> interfacesMap = interfacesOperationsConverter
-            .getInterfacesMap(component, null, component.getInterfaces(), null, false, true);
-        ToscaNodeType nodeType = new ToscaNodeType();
-        nodeType.setInterfaces(interfacesMap);
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null, null, null);
-        ToscaTemplate template = new ToscaTemplate(NODE_TYPE_NAME);
-        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        nodeTypes.put(NODE_TYPE_NAME, nodeType);
-        template.setNode_types(nodeTypes);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
+        final var interfacesMap = interfacesOperationsConverter.getInterfacesMap(component, null, component.getInterfaces(), null, false, true);
+        assertNotNull(interfacesMap);
+        assertEquals(1, interfacesMap.size());
+        assertTrue(interfacesMap.containsKey("resourceName"));
+        Object resourceName = interfacesMap.get("resourceName");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(4, ((Map) resourceName).size());
 
-        String mainYaml = new String(toscaRepresentation.getMainYaml());
-        assertTrue(all(
-            containsAll("resourceName:", "inputs:", "has description", MAPPED_PROPERTY_NAME, "com.some.resource.or.other.resourceName"),
-            containsNone("operations", "defaultp")
-        ).apply(mainYaml));
-        validateServiceProxyOperationInputs(mainYaml);
     }
 
     @Test
@@ -266,19 +231,15 @@ class InterfacesOperationsConverterTest {
         component.getInterfaces().put(interfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, nodeType, null, false);
+        Map<String, Object> interfaces = nodeType.getInterfaces();
+        assertNotNull(interfaces);
+        assertEquals(1, interfaces.size());
+        assertTrue(interfaces.containsKey("resourceNameNoInputs"));
+        Object resourceName = interfaces.get("resourceNameNoInputs");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(4, ((Map) resourceName).size());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
-            interfacesOperationsConverter, null);
-        ToscaTemplate template = new ToscaTemplate("test");
-        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        nodeTypes.put("test", nodeType);
-        template.setNode_types(nodeTypes);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-
-        assertTrue(all(
-            containsAll("resourceNameNoInputs", "has description", "com.some.resource.or.other.resourceName"),
-            containsNone("operations", INPUT_NAME_PREFIX, "defaultp")
-        ).apply(new String(toscaRepresentation.getMainYaml())));
     }
 
     @Test
@@ -300,20 +261,15 @@ class InterfacesOperationsConverterTest {
         component.getInterfaces().put(addedInterfaceType, addedInterface);
         ToscaNodeType nodeType = new ToscaNodeType();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
+        Map<String, Object> interfaces = nodeType.getInterfaces();
+        assertNotNull(interfaces);
+        assertEquals(1, interfaces.size());
+        assertTrue(interfaces.containsKey("resourceNameInputMappedToOutput"));
+        Object resourceName = interfaces.get("resourceNameInputMappedToOutput");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(3, ((Map) resourceName).size());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
-            interfacesOperationsConverter, null);
-        ToscaTemplate template = new ToscaTemplate("test");
-        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        nodeTypes.put("test", nodeType);
-        template.setNode_types(nodeTypes);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-        String mainYaml = new String(toscaRepresentation.getMainYaml());
-        assertTrue(all(
-            containsAll("resourceNameInputMappedToOutput:", "inputs:"),
-            containsNone("operations")
-        ).apply(mainYaml));
-        validateOperationInputs(mainYaml, 2, "name_for_op_1");
     }
 
     @Test
@@ -323,6 +279,7 @@ class InterfacesOperationsConverterTest {
         component.setNormalizedName("normalizedComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType(addedInterfaceType);
+        addedInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
         addOperationsToInterface(component, addedInterface, 2, 2, true, true);
         addedInterface.getOperationsMap().values().stream()
             .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
@@ -335,6 +292,7 @@ class InterfacesOperationsConverterTest {
         String secondInterfaceType = "org.test.lifecycle.standard.interfaceType.second";
         InterfaceDefinition secondInterface = new InterfaceDefinition();
         secondInterface.setType(secondInterfaceType);
+        secondInterface.setToscaResourceName("com.some.resource.or.other.resourceName");
         addOperationsToInterface(component, secondInterface, 2, 2, true, true);
         secondInterface.getOperationsMap().values().stream()
             .filter(operationInputDefinition -> operationInputDefinition.getName().equalsIgnoreCase(
@@ -349,21 +307,21 @@ class InterfacesOperationsConverterTest {
 
         ToscaNodeType nodeType = new ToscaNodeType();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
+        Map<String, Object> interfaces = nodeType.getInterfaces();
+        assertNotNull(interfaces);
+        assertEquals(2, interfaces.size());
+        assertTrue(interfaces.containsKey("resourceNameInputMappedToOutput"));
+        Object resourceName = interfaces.get("resourceNameInputMappedToOutput");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(3, ((Map) resourceName).size());
 
-        ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
-            interfacesOperationsConverter, null);
-        ToscaTemplate template = new ToscaTemplate("test");
-        Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        nodeTypes.put("test", nodeType);
-        template.setNode_types(nodeTypes);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
+        assertTrue(interfaces.containsKey("second"));
+        resourceName = interfaces.get("second");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(3, ((Map) resourceName).size());
 
-        String mainYaml = new String(toscaRepresentation.getMainYaml());
-        assertTrue(all(
-            containsAll("resourceNameInputMappedToOutput:", "inputs:"),
-            containsNone("operations")
-        ).apply(mainYaml));
-        validateOperationInputs(mainYaml, 2, "name_for_op_1");
     }
 
     @Test
@@ -385,17 +343,15 @@ class InterfacesOperationsConverterTest {
         component.getInterfaces().put(interfaceName, anInterfaceWithInput);
         final ToscaNodeType nodeType = new ToscaNodeType();
         interfacesOperationsConverter.addInterfaceDefinitionElement(component, nodeType, dataTypes, false);
-        final ToscaExportHandler handler = new ToscaExportHandler(null, null, null, null, null, null, null, null, null, null,
-            interfacesOperationsConverter, null);
-        final ToscaTemplate template = new ToscaTemplate("testService");
-        final Map<String, ToscaNodeType> nodeTypes = new HashMap<>();
-        nodeTypes.put(NODE_TYPE_NAME, nodeType);
-        template.setNode_types(nodeTypes);
-        final ToscaRepresentation toscaRepresentation = handler.createToscaRepresentation(template);
-        final String toscaTemplateYaml = new String(toscaRepresentation.getMainYaml());
-        assertThat(toscaTemplateYaml,
-            allOf(containsString(INPUTS.getElementName() + ":"), containsString(input1Name), containsString(interfaceName)));
-        validateInterfaceInputs(toscaTemplateYaml, interfaceName, inputMap);
+        Map<String, Object> interfaces = nodeType.getInterfaces();
+        assertNotNull(interfaces);
+        assertEquals(1, interfaces.size());
+        assertTrue(interfaces.containsKey("myInterfaceName"));
+        Object resourceName = interfaces.get("myInterfaceName");
+        assertNotNull(resourceName);
+        assertTrue(resourceName instanceof Map);
+        assertEquals(2, ((Map) resourceName).size());
+
     }
 
     @Test
@@ -442,12 +398,12 @@ class InterfacesOperationsConverterTest {
         final Map<String, Object> actualArtifactImplementationMap = (Map<String, Object>) actualImplementationMap.get("primary");
         assertTrue(actualArtifactImplementationMap.containsKey("properties"));
         final Map<String, Object> actualArtifactPropertiesMap = (Map<String, Object>) actualArtifactImplementationMap.get("properties");
-        assertEquals(actualArtifactPropertiesMap.keySet().size(), 1);
+        assertEquals(1, actualArtifactPropertiesMap.keySet().size());
         assertTrue(actualArtifactPropertiesMap.containsKey(listOfStringProperty.getName()));
         final Object expectedListObject = actualArtifactPropertiesMap.get(listOfStringProperty.getName());
         assertTrue(expectedListObject instanceof List);
         final List<String> expectedListOfStringPropValue = (List<String>) expectedListObject;
-        assertEquals(expectedListOfStringPropValue.size(), 3);
+        assertEquals(3, expectedListOfStringPropValue.size());
         assertTrue(expectedListOfStringPropValue.contains("value1"));
         assertTrue(expectedListOfStringPropValue.contains("value2"));
         assertTrue(expectedListOfStringPropValue.contains("value3"));
@@ -494,7 +450,9 @@ class InterfacesOperationsConverterTest {
     }
 
     @FunctionalInterface
-    interface MainYamlAssertion extends Function<String, Boolean> {}
+    interface MainYamlAssertion extends Function<String, Boolean> {
+
+    }
 
     private static Function<String, Boolean> all(MainYamlAssertion... fs) {
         return s -> io.vavr.collection.List.of(fs).map(f -> f.apply(s)).fold(true, (l, r) -> l && r);
@@ -706,7 +664,7 @@ class InterfacesOperationsConverterTest {
         service.getComponentMetadataDefinition().getMetadataDataDefinition().setSystemName("LocalInterface");
         service.setInterfaces(Collections.singletonMap("Local", new InterfaceDefinition("Local", null, new HashMap<>())));
 
-        Map<String, Object> resultMap = InterfacesOperationsConverter.addInterfaceTypeElement(service,
+        Map<String, Object> resultMap = interfacesOperationsConverter.addInterfaceTypeElement(service,
             Collections.singletonList("org.openecomp.interfaces.node.lifecycle.Standard"));
 
         assertTrue(MapUtils.isNotEmpty(resultMap)
@@ -732,14 +690,15 @@ class InterfacesOperationsConverterTest {
     void testRemoveInterfacesWithoutOperationsEmptyMap() {
         final Map<String, Object> interfaceMap = new HashMap<>();
         interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
-        assertThat(interfaceMap, is(anEmptyMap()));
+        assertNotNull(interfaceMap);
+        assertTrue(interfaceMap.isEmpty());
     }
 
     @Test
     void testRemoveInterfacesWithoutOperationsNullParameter() {
         final Map<String, Object> interfaceMap = null;
         interfacesOperationsConverter.removeInterfacesWithoutOperations(interfaceMap);
-        assertThat(interfaceMap, is(nullValue()));
+        assertNull(interfaceMap);
     }
 
     @Test

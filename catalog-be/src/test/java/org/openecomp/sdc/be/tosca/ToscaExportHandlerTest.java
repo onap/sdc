@@ -49,7 +49,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import mockit.Deencapsulation;
 import org.apache.commons.collections.MapUtils;
@@ -63,8 +62,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.utils.PropertyDataDefinitionBuilder;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
@@ -87,6 +84,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipInfo;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
@@ -117,7 +115,9 @@ class ToscaExportHandlerTest extends BaseConfDependent {
     private static final String COMPONENT_PROPERTY_NAME = "prop1";
     private static final String COMPONENT_PROPERTY_TYPE = "string";
     private static final String COMPONENT_INPUT_NAME = "input1";
+    private static final String COMPONENT_OUTPUT_NAME = "output1";
     private static final String COMPONENT_INPUT_TYPE = "integer";
+    private static final String COMPONENT_OUTPUT_TYPE = "integer";
     private static final String RESOURCE_NAME = "resource";
     private static final String TOSCA_VERSION = "tosca_simple_yaml_1_1";
     private static final Map<String, DataTypeDefinition> DATA_TYPES = new HashMap<>();
@@ -178,6 +178,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
 
     private Resource getNewResource() {
         Resource resource = new Resource();
+        resource.setUniqueId("resourceUniqueId");
         List<CategoryDefinition> categories = new ArrayList<>();
         CategoryDefinition category = new CategoryDefinition();
         List<SubCategoryDefinition> subcategories = new ArrayList<>();
@@ -202,6 +203,13 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         category.setName("name");
         category.setSubcategories(subcategories);
         categories.add(category);
+
+        final List<PropertyDefinition> properties = new ArrayList<>();
+        properties.add(new PropertyDefinition());
+        resource.setProperties(properties);
+        Map<String, InterfaceDefinition> proxyInterfaces = new HashMap<>();
+        proxyInterfaces.put("Local", new InterfaceDefinition("Local", "desc", new HashMap<>()));
+        resource.setInterfaces(proxyInterfaces);
 
         resource.setCategories(categories);
         resource.setVersion("version");
@@ -307,29 +315,21 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(capabilityRequirementConverter.convertRequirements(anyMap(), any(Resource.class),
             any(ToscaNodeType.class))).thenAnswer(i -> Either.left(i.getArgument(2)));
 
-        Either<ToscaTemplate, ToscaError> result = (Either<ToscaTemplate, ToscaError>) Deencapsulation
-            .invoke(testSubject, "convertInterfaceNodeType", new HashMap<String, Component>(), component,
-                new ToscaTemplate(TOSCA_VERSION), new HashMap<String, ToscaNodeType>(), false);
+        final var result = testSubject.convertInterfaceNodeType(new HashMap<String, Component>(), component,
+            new ToscaTemplate(TOSCA_VERSION), new HashMap<String, ToscaNodeType>(), false);
         assertNotNull(result);
         assertTrue(result.isLeft());
         Map<String, ToscaNodeType> nodeTypeMap = result.left().value().getNode_types();
-        assertEquals(1,nodeTypeMap.size());
+        assertNotNull(nodeTypeMap);
+        assertEquals(1, nodeTypeMap.size());
         ToscaNodeType toscaNodeType = nodeTypeMap.values().iterator().next();
+        assertNotNull(toscaNodeType);
         Map<String, ToscaProperty> propertyMap = toscaNodeType.getProperties();
         // Check if inputs and properties in component are merged properly
-        assertEquals(2, propertyMap.size());
-        assertTrue(propertyMap.containsKey(COMPONENT_INPUT_NAME));
+        assertNotNull(propertyMap);
+        assertEquals(1, propertyMap.size());
+        assertFalse(propertyMap.containsKey(COMPONENT_INPUT_NAME));
         assertTrue(propertyMap.containsKey(COMPONENT_PROPERTY_NAME));
-    }
-
-    @Test
-    void testCreateToscaRepresentation() {
-        ToscaTemplate toscaTemplate = new ToscaTemplate("");
-        ToscaRepresentation result;
-
-        // default test
-        result = testSubject.createToscaRepresentation(toscaTemplate);
-        assertNotNull(result);
     }
 
     @Test
@@ -411,7 +411,6 @@ class ToscaExportHandlerTest extends BaseConfDependent {
     void testConvertToscaTemplateWhenComponentContainsGroup() throws ToscaConversionException {
         Component component = getNewResource();
         ToscaTemplate toscaNode = new ToscaTemplate("");
-        Either<ToscaTemplate, ToscaError> result;
         component.setComponentInstances(new ArrayList<>());
 
         List<GroupDefinition> groups = new ArrayList<>();
@@ -422,6 +421,16 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         group.setArtifacts(artifacts);
         groups.add(group);
         component.setGroups(groups);
+
+        final var input = new InputDefinition();
+        input.setName(COMPONENT_INPUT_NAME);
+        input.setType(COMPONENT_INPUT_TYPE);
+        component.setInputs(Collections.singletonList(input));
+
+        final var output = new OutputDefinition();
+        output.setName(COMPONENT_OUTPUT_NAME);
+        output.setType(COMPONENT_OUTPUT_TYPE);
+        component.setOutputs(Collections.singletonList(output));
 
         Map<String, String[]> substitutionMappingMap = new HashMap<>();
         String[] array = {"value1", "value2"};
@@ -444,7 +453,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         doReturn(map).when(outputConverter).convert(any(), any());
 
         // test component contains group
-        result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
+        final var result = Deencapsulation.invoke(testSubject, "convertToscaTemplate", component, toscaNode);
         assertNotNull(result);
     }
 
@@ -738,7 +747,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getToscaFullElement("sourceModelUid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getLatestByName("serviceProxy", null)).thenReturn(Either.left(new Resource()));
-        when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(new Resource()));
+        when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(getNewResource()));
 
         final Map<String, String[]> substitutionMappingMap = new HashMap<>();
         final String[] array = {"value1", "value2"};
@@ -862,7 +871,14 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(toscaOperationFacade.getToscaFullElement("uid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getToscaFullElement("sourceModelUid")).thenReturn(Either.left(component));
         when(toscaOperationFacade.getLatestByName("serviceProxy", null)).thenReturn(Either.left(new Resource()));
-        when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(new Resource()));
+
+        Resource newResource = getNewResource();
+        InputDefinition input = new InputDefinition();
+        input.setName(COMPONENT_INPUT_NAME);
+        input.setType(COMPONENT_INPUT_TYPE);
+        newResource.setInputs(Collections.singletonList(input));
+
+        when(toscaOperationFacade.getToscaElement(any(String.class), any(ComponentParametersView.class))).thenReturn(Either.left(newResource));
 
         final Map<String, String[]> substitutionMappingMap = new HashMap<>();
         final String[] array = {"value1", "value2"};
@@ -875,7 +891,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
             .thenReturn(Either.left(Collections.emptyMap()));
 
         // default test
-        final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(component);
+        final Either<ToscaRepresentation, ToscaError> toscaRepresentationToscaErrorEither = testSubject.exportComponent(newResource);
         assertNotNull(toscaRepresentationToscaErrorEither);
 
     }
@@ -1562,7 +1578,7 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         when(capabilityRequirementConverter.buildSubstitutedName(anyMap(), eq(fromOriginComponent), anyList(), eq("cap"), any(), any()))
             .thenReturn(Either.left(builtCapabilityOrRequirementName));
         when(capabilityRequirementConverter.buildSubstitutedName(anyMap(), eq(toOriginComponent), anyList(), eq("req"), any(), any()))
-        .thenReturn(Either.left(builtCapabilityOrRequirementName));
+            .thenReturn(Either.left(builtCapabilityOrRequirementName));
 
         final Map<String, ToscaTemplateRequirement> requirementMap = Deencapsulation
             .invoke(testSubject, "buildRequirement", fromOriginComponent, toOriginComponent, capability, requirement,
@@ -1683,127 +1699,9 @@ class ToscaExportHandlerTest extends BaseConfDependent {
         assertEquals("test_type", result.get("test_art").getType());
     }
 
-    @Test
-    void testGetProxyNodeTypeInterfacesNoInterfaces() {
-        Component service = new Service();
-        Optional<Map<String, Object>> proxyNodeTypeInterfaces =
-            testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
-        assertFalse(proxyNodeTypeInterfaces.isPresent());
-    }
-
-    @Test
-    void testGetProxyNodeTypeInterfaces() {
-        Component service = getTestComponent();
-        Optional<Map<String, Object>> proxyNodeTypeInterfaces =
-            testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
-        assertTrue(proxyNodeTypeInterfaces.isPresent());
-        Map<String, Object> componentInterfaces = proxyNodeTypeInterfaces.get();
-        assertNotNull(componentInterfaces);
-    }
-
-
-    @Test
-    void testGetProxyNodeTypePropertiesComponentNull() {
-        Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
-            testSubject.getProxyNodeTypeProperties(null, DATA_TYPES);
-        assertFalse(proxyNodeTypeProperties.isPresent());
-    }
-
-    @Test
-    void testGetProxyNodeTypePropertiesNoProperties() {
-        Component service = new Service();
-        Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
-            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
-        assertFalse(proxyNodeTypeProperties.isPresent());
-    }
-
-    @Test
-    void testGetProxyNodeTypeProperties() {
-        Component service = getTestComponent();
-        service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
-            createMockProperty("componentPropInt", null)));
-        Optional<Map<String, ToscaProperty>> proxyNodeTypeProperties =
-            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
-        assertTrue(proxyNodeTypeProperties.isPresent());
-        Map<String, ToscaProperty> componentProperties = proxyNodeTypeProperties.get();
-        assertNotNull(componentProperties);
-        assertEquals(2, componentProperties.size());
-    }
-
-    @Test
-    void testAddInputsToPropertiesNoInputs() {
-        Component service = getTestComponent();
-        service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
-            createMockProperty("componentPropInt", null)));
-        Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
-            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
-
-        assertTrue(proxyNodeTypePropertiesResult.isPresent());
-        Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
-        testSubject.addInputsToProperties(DATA_TYPES, null, proxyNodeTypeProperties);
-        assertNotNull(proxyNodeTypeProperties);
-        assertEquals(2, proxyNodeTypeProperties.size());
-        testSubject.addInputsToProperties(DATA_TYPES, new ArrayList<>(), proxyNodeTypeProperties);
-        assertEquals(2, proxyNodeTypeProperties.size());
-    }
-
-    @Test
-    void testAddInputsToPropertiesWithInputs() {
-        Component service = getTestComponent();
-        service.setProperties(Arrays.asList(createMockProperty("componentPropStr", "Default String Prop"),
-            createMockProperty("componentPropInt", null)));
-        service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
-            "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
-        Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
-            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
-
-        assertTrue(proxyNodeTypePropertiesResult.isPresent());
-        Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
-        testSubject.addInputsToProperties(DATA_TYPES, service.getInputs(), proxyNodeTypeProperties);
-        assertNotNull(proxyNodeTypeProperties);
-        assertEquals(4, proxyNodeTypeProperties.size());
-    }
-
-    @Test
-    void testAddInputsToPropertiesOnlyInputs() {
-        Component service = getTestComponent();
-        service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
-            "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
-        Optional<Map<String, ToscaProperty>> proxyNodeTypePropertiesResult =
-            testSubject.getProxyNodeTypeProperties(service, DATA_TYPES);
-
-        assertTrue(proxyNodeTypePropertiesResult.isPresent());
-        Map<String, ToscaProperty> proxyNodeTypeProperties = proxyNodeTypePropertiesResult.get();
-        testSubject.addInputsToProperties(DATA_TYPES, service.getInputs(), proxyNodeTypeProperties);
-        assertNotNull(proxyNodeTypeProperties);
-        assertEquals(2, proxyNodeTypeProperties.size());
-    }
-
-    @Test
-    void testOperationImplementationInProxyNodeTypeNotPresent() {
-        Component service = getTestComponent();
-        InterfaceDefinition interfaceDefinition =
-            service.getInterfaces().get("normalizedServiceComponentName-interface");
-        interfaceDefinition.setOperations(new HashMap<>());
-        final OperationDataDefinition operation = new OperationDataDefinition();
-        operation.setName("start");
-        operation.setDescription("op description");
-        final ArtifactDataDefinition implementation = new ArtifactDataDefinition();
-        implementation.setArtifactName("createBPMN.bpmn");
-        operation.setImplementation(implementation);
-        interfaceDefinition.getOperations().put(operation.getName(), operation);
-        service.getInterfaces().put("normalizedServiceComponentName-interface", interfaceDefinition);
-        service.setInputs(Arrays.asList(createMockInput("componentInputStr1",
-            "Default String Input1"), createMockInput("componentInputStr2", "Default String Input2")));
-        Optional<Map<String, Object>> proxyNodeTypeInterfaces =
-            testSubject.getProxyNodeTypeInterfaces(service, DATA_TYPES);
-        assertTrue(proxyNodeTypeInterfaces.isPresent());
-        Map<String, Object> componentInterfaces = proxyNodeTypeInterfaces.get();
-        assertNotNull(componentInterfaces);
-    }
-
     private Component getTestComponent() {
         Component component = new Service();
+        component.setUniqueId("serviceUniqueId");
         component.setNormalizedName("normalizedServiceComponentName");
         InterfaceDefinition addedInterface = new InterfaceDefinition();
         addedInterface.setType("com.some.service.or.other.serviceName");
