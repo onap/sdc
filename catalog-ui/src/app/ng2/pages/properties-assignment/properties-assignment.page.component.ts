@@ -61,13 +61,12 @@ import {UnsavedChangesComponent} from "app/ng2/components/ui/forms/unsaved-chang
 import {PropertyCreatorComponent} from "./property-creator/property-creator.component";
 import {ModalService} from "../../services/modal.service";
 import {DeclareListComponent} from "./declare-list/declare-list.component";
-import {ToscaFunctionComponent} from "./tosca-function/tosca-function.component";
+import {ToscaFunctionComponent, ToscaFunctionValidationEvent} from "./tosca-function/tosca-function.component";
 import {CapabilitiesGroup, Capability} from "../../../models/capability";
 import {ToscaPresentationData} from "../../../models/tosca-presentation";
 import {Observable} from "rxjs";
 import {TranslateService} from "../../shared/translator/translate.service";
-import {ToscaGetFunctionDtoBuilder} from '../../../models/tosca-get-function-dto';
-import {ToscaGetFunction} from "../../../models/tosca-get-function";
+import {ToscaFunction} from "../../../models/tosca-function";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -539,22 +538,6 @@ export class PropertiesAssignmentComponent {
         const modalTitle = this.translateService.translate('TOSCA_FUNCTION_MODAL_TITLE');
         const modalButtons = [];
         let disableSaveButtonFlag = true;
-        modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
-            () => {
-                const toscaGetFunction: ToscaGetFunction = modal.instance.dynamicContent.instance.toscaGetFunction;
-                if (toscaGetFunction.functionType) {
-                    this.updateCheckedInstancePropertyGetFunctionValue(toscaGetFunction);
-                } else {
-                    this.clearCheckedInstancePropertyValue();
-                }
-                modal.instance.close();
-            },
-            (): boolean => { return disableSaveButtonFlag }
-        ));
-        const checkedInstanceProperty = this.buildCheckedInstanceProperty();
-        modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
-            modal.instance.close();
-        }));
         const modal = this.modalService.createCustomModal(new ModalModel(
             'sm',
             modalTitle,
@@ -562,13 +545,30 @@ export class PropertiesAssignmentComponent {
             modalButtons,
             null /* type */
         ));
+        modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_SAVE'), 'blue',
+            () => {
+                const toscaGetFunction: ToscaFunction = modal.instance.dynamicContent.instance.toscaFunctionForm.value;
+                if (toscaGetFunction) {
+                    this.updateCheckedInstancePropertyFunctionValue(toscaGetFunction);
+                } else {
+                    this.clearCheckedInstancePropertyValue();
+                }
+                this.modalService.closeCurrentModal();
+            },
+            (): boolean => { return disableSaveButtonFlag }
+        ));
+        const checkedInstanceProperty = this.buildCheckedInstanceProperty();
+        modalButtons.push(new ButtonModel(this.translateService.translate('MODAL_CANCEL'), 'outline grey', () => {
+            this.modalService.closeCurrentModal();
+        }));
+
 
         this.modalService.addDynamicContentToModalAndBindInputs(modal, ToscaFunctionComponent, {
             'property': checkedInstanceProperty,
             'componentInstanceMap': this.componentInstanceMap
         });
-        modal.instance.dynamicContent.instance.onValidityChange.subscribe(isValid => {
-            disableSaveButtonFlag = !isValid;
+        modal.instance.dynamicContent.instance.onValidityChange.subscribe((validationEvent: ToscaFunctionValidationEvent) => {
+            disableSaveButtonFlag = !validationEvent.isValid;
         });
         modal.instance.open();
     }
@@ -577,23 +577,13 @@ export class PropertiesAssignmentComponent {
         const checkedInstanceProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
         checkedInstanceProperty.getInputValues = null;
         checkedInstanceProperty.value = null;
-        checkedInstanceProperty.toscaGetFunction = null;
+        checkedInstanceProperty.toscaFunction = null;
         this.updateInstanceProperty(checkedInstanceProperty);
     }
 
-    private updateCheckedInstancePropertyGetFunctionValue(toscaGetFunction: ToscaGetFunction) {
-        const toscaGetFunctionBuilder: ToscaGetFunctionDtoBuilder =
-            new ToscaGetFunctionDtoBuilder()
-                .withPropertyUniqueId(toscaGetFunction.propertyUniqueId)
-                .withFunctionType(toscaGetFunction.functionType)
-                .withPropertySource(toscaGetFunction.propertySource)
-                .withPropertyName(toscaGetFunction.propertyName)
-                .withSourceName(toscaGetFunction.sourceName)
-                .withSourceUniqueId(toscaGetFunction.sourceUniqueId)
-                .withPropertyPathFromSource(toscaGetFunction.propertyPathFromSource);
-
+    private updateCheckedInstancePropertyFunctionValue(toscaFunction: ToscaFunction) {
         const checkedProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
-        checkedProperty.toscaGetFunction = toscaGetFunctionBuilder.build();
+        checkedProperty.toscaFunction = toscaFunction;
         this.updateInstanceProperty(checkedProperty);
     }
 

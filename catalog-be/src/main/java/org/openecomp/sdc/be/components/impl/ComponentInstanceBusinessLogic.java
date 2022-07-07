@@ -48,6 +48,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ToscaFunctionExceptionSupplier;
 import org.openecomp.sdc.be.components.impl.exceptions.ToscaGetFunctionExceptionSupplier;
 import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOperationOrchestrator;
 import org.openecomp.sdc.be.components.impl.utils.DirectivesUtil;
@@ -1960,9 +1961,14 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 validateMandatoryFields(property);
                 validatePropertyExistsOnComponent(property, containerComponent, foundResourceInstance);
                 String propertyParentUniqueId = property.getParentUniqueId();
-                if (property.isGetFunction()) {
-                    validateToscaGetFunction(property, containerComponent);
-                    property.setValue(property.getToscaGetFunction().generatePropertyValue());
+                if (property.isToscaFunction()) {
+                    if (property.getToscaFunction().getType() == null) {
+                        throw ToscaFunctionExceptionSupplier.missingFunctionType().get();
+                    }
+                    if (property.isToscaGetFunction()) {
+                        validateToscaGetFunction(property, containerComponent);
+                    }
+                    property.setValue(property.getToscaFunction().getValue());
                 }
                 Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, containerComponent.getModel());
                 if (updatedPropertyValue.isRight()) {
@@ -2297,7 +2303,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // Specific Update Logic
         String newValue = property.getValue();
 
-        if (property.hasGetFunction()) {
+        if (property.hasToscaFunction()) {
             return Either.left(newValue);
         }
 
@@ -2369,7 +2375,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     }
 
     private <T extends PropertyDefinition> void validateToscaGetFunction(T property, Component parentComponent) {
-        final ToscaGetFunctionDataDefinition toscaGetFunction = property.getToscaGetFunction();
+        final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) property.getToscaFunction();
         validateGetToscaFunctionAttributes(toscaGetFunction);
         validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
         if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT) {
@@ -2407,7 +2413,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private <T extends PropertyDefinition> void validateGetFunction(final T property,
                                                                     final List<? extends ToscaPropertyData> parentProperties,
                                                                     final String model) {
-        final ToscaGetFunctionDataDefinition toscaGetFunction = property.getToscaGetFunction();
+        final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) property.getToscaFunction();
         if (CollectionUtils.isEmpty(parentProperties)) {
             throw ToscaGetFunctionExceptionSupplier
                 .propertyNotFoundOnTarget(toscaGetFunction.getPropertyName(), toscaGetFunction.getPropertySource(),
@@ -2428,11 +2434,11 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
 
         if (!property.getType().equals(referredProperty.getType())) {
             throw ToscaGetFunctionExceptionSupplier
-                .propertyTypeDiverge(toscaGetFunction.getFunctionType(), referredProperty.getType(), property.getType()).get();
+                .propertyTypeDiverge(toscaGetFunction.getType(), referredProperty.getType(), property.getType()).get();
         }
         if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
             throw ToscaGetFunctionExceptionSupplier
-                .propertySchemaDiverge(toscaGetFunction.getFunctionType(), referredProperty.getSchemaType(), property.getSchemaType()).get();
+                .propertySchemaDiverge(toscaGetFunction.getType(), referredProperty.getSchemaType(), property.getSchemaType()).get();
         }
     }
 

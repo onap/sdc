@@ -19,17 +19,14 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaGetFunctionType} from './tosca-get-function-type';
-import {PropertySource} from './property-source';
-import {ToscaFunctionType} from "./tosca-function-type.enum";
+package org.openecomp.sdc.be.datatypes.elements;
 
-export class ToscaGetFunctionDto {
-    type: ToscaFunctionType;
-    propertyUniqueId: string;
-    propertyName: string;
-    propertySource: PropertySource;
-    sourceUniqueId: string;
-    sourceName: string;
-    functionType: ToscaGetFunctionType;
-    propertyPathFromSource: Array<string>;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(using = ToscaFunctionJsonDeserializer.class)
+public interface ToscaFunction {
+
+    ToscaFunctionType getType();
+    String getValue();
+
 }

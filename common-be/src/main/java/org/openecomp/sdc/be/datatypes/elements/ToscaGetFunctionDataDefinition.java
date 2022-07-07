@@ -33,7 +33,7 @@ import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 
 @Data
-public class ToscaGetFunctionDataDefinition {
+public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunctionParameter {
 
     private String propertyUniqueId;
     private String propertyName;
@@ -55,6 +55,11 @@ public class ToscaGetFunctionDataDefinition {
      * Builds the value of a property based on the TOSCA get function information.
      */
     public String generatePropertyValue() {
+        return new Gson().toJson(getJsonObjectValue());
+    }
+
+    @Override
+    public Object getJsonObjectValue() {
         if (functionType == null) {
             throw new IllegalStateException("functionType is required in order to generate the get function value");
         }
@@ -62,12 +67,11 @@ public class ToscaGetFunctionDataDefinition {
             throw new IllegalStateException("propertyPathFromSource is required in order to generate the get function value");
         }
 
-        final var gson = new Gson();
         if (functionType == ToscaGetFunctionType.GET_PROPERTY || functionType == ToscaGetFunctionType.GET_ATTRIBUTE) {
-            return gson.toJson(buildFunctionValueWithPropertySource());
+            return buildFunctionValueWithPropertySource();
         }
         if (functionType == ToscaGetFunctionType.GET_INPUT) {
-            return gson.toJson(buildGetInputFunctionValue());
+            return buildGetInputFunctionValue();
         }
 
         throw new UnsupportedOperationException(String.format("ToscaGetFunctionType '%s' is not supported yet", functionType));
@@ -103,6 +107,28 @@ public class ToscaGetFunctionDataDefinition {
             return Map.of(this.functionType.getFunctionName(), this.propertyPathFromSource.get(0));
         }
         return Map.of(this.functionType.getFunctionName(), this.propertyPathFromSource);
+    }
+
+    @Override
+    public ToscaFunctionType getType() {
+        if (functionType == null) {
+            return null;
+        }
+        switch (functionType) {
+            case GET_INPUT:
+                return ToscaFunctionType.GET_INPUT;
+            case GET_PROPERTY:
+                return ToscaFunctionType.GET_PROPERTY;
+            case GET_ATTRIBUTE:
+                return ToscaFunctionType.GET_ATTRIBUTE;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public String getValue() {
+        return this.generatePropertyValue();
     }
 
 }

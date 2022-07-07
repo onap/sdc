@@ -19,17 +19,18 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaGetFunctionType} from './tosca-get-function-type';
-import {PropertySource} from './property-source';
-import {ToscaFunctionType} from "./tosca-function-type.enum";
+package org.openecomp.sdc.be.components.impl.exceptions;
 
-export class ToscaGetFunctionDto {
-    type: ToscaFunctionType;
-    propertyUniqueId: string;
-    propertyName: string;
-    propertySource: PropertySource;
-    sourceUniqueId: string;
-    sourceName: string;
-    functionType: ToscaGetFunctionType;
-    propertyPathFromSource: Array<string>;
+import java.util.function.Supplier;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ToscaFunctionExceptionSupplier {
+
+    public static Supplier<ByActionStatusComponentException> missingFunctionType() {
+        return () -> new ByActionStatusComponentException(ActionStatus.TOSCA_FUNCTION_MISSING_ATTRIBUTE, "type");
+    }
+
 }

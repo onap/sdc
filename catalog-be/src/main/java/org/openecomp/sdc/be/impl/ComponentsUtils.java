@@ -83,6 +83,8 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionJsonDeserializer;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -228,6 +230,8 @@ public class ComponentsUtils {
             log.trace("convert json to object. json=\n{}", data);
             SimpleModule module = new SimpleModule("customDeserializationModule");
             module.addDeserializer(PropertyConstraint.class, new PropertyConstraintJacksonDeserializer());
+            module.addDeserializer(ToscaFunction.class, new ToscaFunctionJsonDeserializer());
+//
             mapper.registerModule(module);
             component = mapper.readValue(data, clazz);
             if (component == null) {

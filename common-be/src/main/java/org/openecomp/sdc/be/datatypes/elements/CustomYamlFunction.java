@@ -19,17 +19,28 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaGetFunctionType} from './tosca-get-function-type';
-import {PropertySource} from './property-source';
-import {ToscaFunctionType} from "./tosca-function-type.enum";
+package org.openecomp.sdc.be.datatypes.elements;
 
-export class ToscaGetFunctionDto {
-    type: ToscaFunctionType;
-    propertyUniqueId: string;
-    propertyName: string;
-    propertySource: PropertySource;
-    sourceUniqueId: string;
-    sourceName: string;
-    functionType: ToscaGetFunctionType;
-    propertyPathFromSource: Array<string>;
+import lombok.Setter;
+import org.yaml.snakeyaml.Yaml;
+
+@Setter
+public class CustomYamlFunction implements ToscaFunction, ToscaFunctionParameter {
+
+    private Object yamlValue;
+
+    @Override
+    public ToscaFunctionType getType() {
+        return ToscaFunctionType.YAML;
+    }
+
+    @Override
+    public String getValue() {
+        return new Yaml().dump(yamlValue);
+    }
+
+    @Override
+    public Object getJsonObjectValue() {
+        return yamlValue;
+    }
 }

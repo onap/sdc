@@ -397,7 +397,7 @@ export class PropertyFormViewModel {
 
         this.$scope.$watch("forms.editForm.$invalid", (newVal) => {
             if (this.$scope.editPropertyModel.hasGetFunctionValue) {
-                this.$scope.footerButtons[0].disabled = newVal || !this.$scope.editPropertyModel.property.toscaGetFunction;
+                this.$scope.footerButtons[0].disabled = newVal || !this.$scope.editPropertyModel.property.toscaFunction;
             } else {
                 this.$scope.footerButtons[0].disabled = newVal;
             }
@@ -405,7 +405,7 @@ export class PropertyFormViewModel {
 
         this.$scope.$watch("forms.editForm.$valid", (newVal) => {
             if (this.$scope.editPropertyModel.hasGetFunctionValue) {
-                this.$scope.footerButtons[0].disabled = !newVal || !this.$scope.editPropertyModel.property.toscaGetFunction;
+                this.$scope.footerButtons[0].disabled = !newVal || !this.$scope.editPropertyModel.property.toscaFunction;
             } else {
                 this.$scope.footerButtons[0].disabled = !newVal;
             }
@@ -448,13 +448,13 @@ export class PropertyFormViewModel {
             if (this.$scope.editPropertyModel.hasGetFunctionValue) {
                 this.$scope.editPropertyModel.isGetFunctionValid = undefined;
             } else {
-                this.$scope.editPropertyModel.property.toscaGetFunction = undefined;
+                this.$scope.editPropertyModel.property.toscaFunction = undefined;
                 this.$scope.editPropertyModel.isGetFunctionValid = true;
             }
         }
 
         this.$scope.onGetFunctionValidFunction = (toscaGetFunction: ToscaGetFunction): void => {
-            this.$scope.editPropertyModel.property.toscaGetFunction = toscaGetFunction;
+            this.$scope.editPropertyModel.property.toscaFunction = toscaGetFunction;
         }
 
         this.$scope.onGetFunctionValidityChange = (isValid: boolean): void => {

@@ -19,17 +19,27 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {ToscaGetFunctionType} from './tosca-get-function-type';
-import {PropertySource} from './property-source';
-import {ToscaFunctionType} from "./tosca-function-type.enum";
+package org.openecomp.sdc.be.datatypes.elements;
 
-export class ToscaGetFunctionDto {
-    type: ToscaFunctionType;
-    propertyUniqueId: string;
-    propertyName: string;
-    propertySource: PropertySource;
-    sourceUniqueId: string;
-    sourceName: string;
-    functionType: ToscaGetFunctionType;
-    propertyPathFromSource: Array<string>;
+import java.util.Arrays;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public enum ToscaFunctionType {
+
+    GET_INPUT("get_input"),
+    GET_PROPERTY("get_property"),
+    GET_ATTRIBUTE("get_attribute"),
+    CONCAT("concat"),
+    YAML("yaml"),
+    STRING("string");
+
+    private final String name;
+
+    public static Optional<ToscaFunctionType> findType(final String functionType) {
+        return Arrays.stream(values()).filter(toscaFunctionType -> toscaFunctionType.getName().equalsIgnoreCase(functionType)).findFirst();
+    }
 }

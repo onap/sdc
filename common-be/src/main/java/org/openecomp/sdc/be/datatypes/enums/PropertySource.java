@@ -21,6 +21,8 @@
 
 package org.openecomp.sdc.be.datatypes.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -30,5 +32,9 @@ public enum PropertySource {
     SELF("SELF"), INSTANCE("INSTANCE");
 
     private final String name;
+
+    public static Optional<PropertySource> findType(final String propertySource) {
+        return Arrays.stream(values()).filter(propertySource1 -> propertySource1.getName().equalsIgnoreCase(propertySource)).findFirst();
+    }
 
 }
