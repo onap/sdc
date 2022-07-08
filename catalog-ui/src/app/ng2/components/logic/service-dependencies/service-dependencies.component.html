@@ -25,9 +25,9 @@
                    tooltips
                    tooltip="{{capability.capabilityName + ' : ' +
                    capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator) + ' '
-                   + (capability.sourceName ? capability.sourceName + ':' : '') + capability.value}}">
-                {{capability.capabilityName + ' : ' + capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator)
-              + ' ' + (capability.sourceName ? capability.sourceName + ':' : '') + capability.value}}
+                   + (capability.value | json)}}">
+                   {{capability.capabilityName + ' : ' + capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator)
+                   + ' ' + (capability.value | json)}}
               </div>
               <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                     (click)="openDeleteModal(capabilities, i)"
@@ -57,10 +57,9 @@
               <div class="filter-desc" (click)="!readonly && onSelectNodeFilter(properties, i)"
                    tooltips
                    tooltip="{{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator) + ' '
-             + (property.sourceName ? property.sourceName + ':' : '') + property.value}}">
-                {{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator)
-              + ' '
-              + (property.sourceName ? property.sourceName + ':' : '') + property.value}}
+                   + (property.value | json)}}">
+                   {{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator)
+                   + ' ' + (property.value | json)}}
               </div>
               <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                     (click)="openDeleteModal(properties, i)"
