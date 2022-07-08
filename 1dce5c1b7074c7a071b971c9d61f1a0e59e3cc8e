@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3ff4058_dacf8655",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/property-creator/property-creator.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-08T16:07:16Z",
+      "side": 1,
+      "message": "not used anymore, please remove",
+      "range": {
+        "startLine": 66,
+        "startChar": 8,
+        "endLine": 68,
+        "endChar": 10
+      },
+      "revId": "1dce5c1b7074c7a071b971c9d61f1a0e59e3cc8e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
