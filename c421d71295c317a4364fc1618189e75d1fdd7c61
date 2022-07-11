@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4d06f1b4_7bfe6abc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T17:15:34Z",
+      "side": 1,
+      "message": "please, add tests for the introduced code",
+      "range": {
+        "startLine": 126,
+        "startChar": 13,
+        "endLine": 126,
+        "endChar": 39
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e73940c_03cef361",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T17:15:34Z",
+      "side": 1,
+      "message": "please, reduce complexity, suggestion:\n\nif (MapUtils.isEmpty(instances)) {\n            return;\n        }\n        final List\u003cOperationUi\u003e operations \u003d getOperations(toscaJson);\n        instances.values().stream()\n            .filter(uploadComponentInstanceInfo -\u003e MapUtils.isNotEmpty(uploadComponentInstanceInfo.getRequirements()))\n            .filter(uploadComponentInstanceInfo -\u003e {\n                final Map\u003cString, List\u003cUploadReqInfo\u003e\u003e requirements \u003d uploadComponentInstanceInfo.getRequirements();\n                return requirements.values().stream().flatMap(Collection::stream)\n                    .anyMatch(uploadReqInfo -\u003e StringUtils.isNotBlank(uploadReqInfo.getRelationshipTemplate()));\n            })\n            .forEach(uploadComponentInstanceInfo -\u003e uploadComponentInstanceInfo.setOperations(operations));\n\n\nAlso this code is confusing, why are you setting the same operations list to all component instances?",
+      "range": {
+        "startLine": 361,
+        "startChar": 17,
+        "endLine": 361,
+        "endChar": 58
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0008c763_1684658d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T17:15:34Z",
+      "side": 1,
+      "message": "is not blank already covers is not empty",
+      "range": {
+        "startLine": 368,
+        "startChar": 32,
+        "endLine": 369,
+        "endChar": 66
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27bd2ddf_0bc375bf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T17:15:34Z",
+      "side": 1,
+      "message": "this value will not change, move out from the iterations",
+      "range": {
+        "startLine": 370,
+        "startChar": 32,
+        "endLine": 370,
+        "endChar": 88
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "251b39ed_fa5bc6d3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T17:15:34Z",
+      "side": 1,
+      "message": "fix typo",
+      "range": {
+        "startLine": 396,
+        "startChar": 51,
+        "endLine": 396,
+        "endChar": 61
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ae9f2f3_8fda6b1d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T17:15:34Z",
+      "side": 1,
+      "message": "refactor this method to reduce complexity",
+      "range": {
+        "startLine": 412,
+        "startChar": 30,
+        "endLine": 412,
+        "endChar": 43
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e628249_7fc7dc1b",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T17:15:34Z",
+      "side": 1,
+      "message": "please add unit tests for the introduced code",
+      "range": {
+        "startLine": 132,
+        "startChar": 13,
+        "endLine": 132,
+        "endChar": 27
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
