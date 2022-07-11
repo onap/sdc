@@ -501,8 +501,10 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
             }
         }
         if (result == null) {
-            String validValue = String.valueOf(isValid.left().value());
-            property.setValue(validValue);
+            if (isValid.left().value() != null) {
+                String validValue = String.valueOf(isValid.left().value());
+                property.setValue(validValue);
+            }
             result = StorageOperationStatus.OK;
         }
         return result;
