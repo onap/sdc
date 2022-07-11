@@ -1,0 +1,650 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: AutomationComposition types definitions version 1.0.0
+
+data_types:
+  onap.datatypes.ToscaConceptIdentifier:
+    derived_from: tosca.datatypes.Root
+    properties:
+      name:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+  onap.datatype.acm.Target:
+    derived_from: tosca.datatypes.Root
+    description: Definition for a entity in A&AI to perform a acm operation on
+    properties:
+      targetType:
+        type: string
+        description: Category for the target type
+        required: true
+        constraints:
+          - valid_values:
+              - VNF
+              - VM
+              - VFMODULE
+              - PNF
+      entityIds:
+        type: map
+        description: Map of values that identify the resource. If none are provided, it is
+          assumed that the entity that generated the ONSET event will be the target.
+        required: false
+        metadata:
+          clamp_possible_values: 'ClampExecution:CSAR_RESOURCES'
+        entry_schema:
+          type: string
+  onap.datatype.acm.Actor:
+    derived_from: tosca.datatypes.Root
+    description: An actor/operation/target definition
+    properties:
+      actor:
+        type: string
+        description: The actor performing the operation.
+        required: true
+        metadata:
+          clamp_possible_values: 'Dictionary:DefaultActors,ClampExecution:CDS/actor'
+      operation:
+        type: string
+        description: The operation the actor is performing.
+        metadata:
+          clamp_possible_values: 'Dictionary:DefaultOperations,ClampExecution:CDS/operation'
+        required: true
+      target:
+        type: onap.datatype.acm.Target
+        description: The resource the operation should be performed on.
+        required: true
+      payload:
+        type: map
+        description: Name/value pairs of payload information passed by Policy to the actor
+        required: false
+        metadata:
+          clamp_possible_values: 'ClampExecution:CDS/payload'
+        entry_schema:
+          type: string
+  onap.datatype.acm.Operation:
+    derived_from: tosca.datatypes.Root
+    description: An operation supported by an actor
+    properties:
+      id:
+        type: string
+        description: Unique identifier for the operation
+        required: true
+      description:
+        type: string
+        description: A user-friendly description of the intent for the operation
+        required: false
+      operation:
+        type: onap.datatype.acm.Actor
+        description: The definition of the operation to be performed.
+        required: true
+      timeout:
+        type: integer
+        description: The amount of time for the actor to perform the operation.
+        required: true
+      retries:
+        type: integer
+        description: The number of retries the actor should attempt to perform the
+          operation.
+        required: true
+        default: 0
+      success:
+        type: string
+        description: Points to the operation to invoke on success. A value of
+          "final_success" indicates and end to the operation.
+        required: false
+        default: final_success
+      failure:
+        type: string
+        description: Points to the operation to invoke on Actor operation failure.
+        required: false
+        default: final_failure
+      failure_timeout:
+        type: string
+        description: Points to the operation to invoke when the time out for the operation
+          occurs.
+        required: false
+        default: final_failure_timeout
+      failure_retries:
+        type: string
+        description: Points to the operation to invoke when the current operation has
+          exceeded its max retries.
+        required: false
+        default: final_failure_retries
+      failure_exception:
+        type: string
+        description: Points to the operation to invoke when the current operation causes an
+          exception.
+        required: false
+        default: final_failure_exception
+      failure_guard:
+        type: string
+        description: Points to the operation to invoke when the current operation is
+          blocked due to guard policy enforcement.
+        required: false
+        default: final_failure_guard
+  onap.datatypes.monitoring.managedObjectDNsBasic:
+    constraints: []
+    properties:
+      DN:
+        name: DN
+        type: string
+        typeVersion: 0.0.0
+        description: Managed object distinguished name
+        required: true
+        constraints: []
+        metadata: {}
+    name: onap.datatypes.monitoring.managedObjectDNsBasic
+    version: 0.0.0
+    derived_from: tosca.datatypes.Root
+    metadata: {}
+  onap.datatypes.monitoring.managedObjectDNsBasics:
+    constraints: []
+    properties:
+      managedObjectDNsBasic:
+        name: managedObjectDNsBasic
+        type: map
+        typeVersion: 0.0.0
+        description: Managed object distinguished name object
+        required: true
+        constraints: []
+        entry_schema:
+          type: onap.datatypes.monitoring.managedObjectDNsBasic
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+    name: onap.datatypes.monitoring.managedObjectDNsBasics
+    version: 0.0.0
+    derived_from: tosca.datatypes.Root
+    metadata: {}
+  onap.datatypes.monitoring.measurementGroup:
+    constraints: []
+    properties:
+      measurementTypes:
+        name: measurementTypes
+        type: list
+        typeVersion: 0.0.0
+        description: List of measurement types
+        required: true
+        constraints: []
+        entry_schema:
+          type: onap.datatypes.monitoring.measurementTypes
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+      managedObjectDNsBasic:
+        name: managedObjectDNsBasic
+        type: list
+        typeVersion: 0.0.0
+        description: List of managed object distinguished names
+        required: true
+        constraints: []
+        entry_schema:
+          type: onap.datatypes.monitoring.managedObjectDNsBasics
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+    name: onap.datatypes.monitoring.measurementGroup
+    version: 0.0.0
+    derived_from: tosca.datatypes.Root
+    metadata: {}
+  onap.datatypes.monitoring.measurementGroups:
+    constraints: []
+    properties:
+      measurementGroup:
+        name: measurementGroup
+        type: map
+        typeVersion: 0.0.0
+        description: Measurement Group
+        required: true
+        constraints: []
+        entry_schema:
+          type: onap.datatypes.monitoring.measurementGroup
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+    name: onap.datatypes.monitoring.measurementGroups
+    version: 0.0.0
+    derived_from: tosca.datatypes.Root
+    metadata: {}
+  onap.datatypes.monitoring.measurementType:
+    constraints: []
+    properties:
+      measurementType:
+        name: measurementType
+        type: string
+        typeVersion: 0.0.0
+        description: Measurement type
+        required: true
+        constraints: []
+        metadata: {}
+    name: onap.datatypes.monitoring.measurementType
+    version: 0.0.0
+    derived_from: tosca.datatypes.Root
+    metadata: {}
+  onap.datatypes.monitoring.measurementTypes:
+    constraints: []
+    properties:
+      measurementType:
+        name: measurementType
+        type: map
+        typeVersion: 0.0.0
+        description: Measurement type object
+        required: true
+        constraints: []
+        entry_schema:
+          type: onap.datatypes.monitoring.measurementType
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+    name: onap.datatypes.monitoring.measurementTypes
+    version: 0.0.0
+    derived_from: tosca.datatypes.Root
+    metadata: {}
+  onap.datatypes.monitoring.nfFilter:
+    constraints: []
+    properties:
+      modelNames:
+        name: modelNames
+        type: list
+        typeVersion: 0.0.0
+        description: List of model names
+        required: true
+        constraints: []
+        entry_schema:
+          type: string
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+      modelInvariantIDs:
+        name: modelInvariantIDs
+        type: list
+        typeVersion: 0.0.0
+        description: List of model invariant IDs
+        required: true
+        constraints: []
+        entry_schema:
+          type: string
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+      modelVersionIDs:
+        name: modelVersionIDs
+        type: list
+        typeVersion: 0.0.0
+        description: List of model version IDs
+        required: true
+        constraints: []
+        entry_schema:
+          type: string
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+      nfNames:
+        name: nfNames
+        type: list
+        typeVersion: 0.0.0
+        description: List of network functions
+        required: true
+        constraints: []
+        entry_schema:
+          type: string
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+    name: onap.datatypes.monitoring.nfFilter
+    version: 0.0.0
+    derived_from: tosca.datatypes.Root
+    metadata: {}
+  onap.datatypes.monitoring.subscription:
+    constraints: []
+    properties:
+      measurementGroups:
+        name: measurementGroups
+        type: list
+        typeVersion: 0.0.0
+        description: Measurement Groups
+        required: true
+        constraints: []
+        entry_schema:
+          type: onap.datatypes.monitoring.measurementGroups
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+      fileBasedGP:
+        name: fileBasedGP
+        type: integer
+        typeVersion: 0.0.0
+        description: File based granularity period
+        required: true
+        constraints: []
+        metadata: {}
+      fileLocation:
+        name: fileLocation
+        type: string
+        typeVersion: 0.0.0
+        description: ROP file location
+        required: true
+        constraints: []
+        metadata: {}
+      subscriptionName:
+        name: subscriptionName
+        type: string
+        typeVersion: 0.0.0
+        description: Name of the subscription
+        required: true
+        constraints: []
+        metadata: {}
+      administrativeState:
+        name: administrativeState
+        type: string
+        typeVersion: 0.0.0
+        description: State of the subscription
+        required: true
+        constraints:
+          - valid_values:
+              - LOCKED
+              - UNLOCKED
+        metadata: {}
+      nfFilter:
+        name: nfFilter
+        type: map
+        typeVersion: 0.0.0
+        description: Network function filter
+        required: true
+        constraints: []
+        entry_schema:
+          type: onap.datatypes.monitoring.nfFilter
+          typeVersion: 0.0.0
+          constraints: []
+        metadata: {}
+    name: onap.datatypes.monitoring.subscription
+    version: 0.0.0
+    derived_from: tosca.datatypes.Root
+    metadata: {}
+  org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.RestRequest:
+    version: 1.0.0
+    derived_from: tosca.datatypes.Root
+    properties:
+      restRequestId:
+        type: onap.datatypes.ToscaConceptIdentifier
+        typeVersion: 1.0.0
+        required: true
+        description: The name and version of a REST request to be sent to a REST endpoint
+      httpMethod:
+        type: string
+        required: true
+        constraints:
+          - valid_values:
+              - POST
+              - PUT
+              - GET
+              - DELETE
+        description: The REST method to use
+      path:
+        type: string
+        required: true
+        description: The path of the REST request relative to the base URL
+      body:
+        type: string
+        required: false
+        description: The body of the REST request for PUT and POST requests
+      expectedResponse:
+        type: integer
+        required: true
+        constraints: []
+        description: THe expected HTTP status code for the REST request
+    org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.ConfigurationEntity:
+      version: 1.0.0
+      derived_from: tosca.datatypes.Root
+      properties:
+        configurationEntityId:
+          type: onap.datatypes.ToscaConceptIdentifier
+          typeVersion: 1.0.0
+          required: true
+          description: The name and version of a Configuration Entity to be handled by the
+            HTTP Automation Composition Element
+        restSequence:
+          type: list
+          entry_schema:
+            type: org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.RestRequest
+            typeVersion: 1.0.0
+          description: A sequence of REST commands to send to the REST endpoint
+policy_types:
+  onap.policies.Monitoring:
+    derived_from: tosca.policies.Root
+    description: a base policy type for all policies that govern monitoring provisioning
+    version: 1.0.0
+    name: onap.policies.Monitoring
+  onap.policies.monitoring.dcae-pm-subscription-handler:
+    properties:
+      pmsh_policy:
+        name: pmsh_policy
+        type: onap.datatypes.monitoring.subscription
+        typeVersion: 0.0.0
+        description: PMSH Policy JSON
+        required: false
+        constraints: []
+        metadata: {}
+    name: onap.policies.monitoring.dcae-pm-subscription-handler
+    version: 1.0.0
+    derived_from: onap.policies.Monitoring
+    metadata: {}
+  onap.policies.acm.operational.Common:
+    derived_from: tosca.policies.Root
+    version: 1.0.0
+    name: onap.policies.acm.operational.Common
+    description: Operational Policy for Automation Composition execution. Originated in Frankfurt to
+      support TOSCA Compliant Policy Types. This does NOT support the legacy Policy YAML policy type.
+    properties:
+      id:
+        type: string
+        description: The unique acm id.
+        required: true
+      timeout:
+        type: integer
+        description: Overall timeout for executing all the operations. This timeout should
+          equal or exceed the total timeout for each operation listed.
+        required: true
+      abatement:
+        type: boolean
+        description: Whether an abatement event message will be expected for the automation
+          composition from DCAE.
+        required: true
+        default: false
+      trigger:
+        type: string
+        description: Initial operation to execute upon receiving an Onset event message for
+          the Automation Composition.
+        required: true
+      operations:
+        type: list
+        description: List of operations to be performed when Automation Composition is triggered.
+        required: true
+        entry_schema:
+          type: onap.datatype.acm.Operation
+  onap.policies.acm.operational.common.Apex:
+    derived_from: onap.policies.acm.operational.Common
+    type_version: 1.0.0
+    version: 1.0.0
+    name: onap.policies.acm.operational.common.Apex
+    description: Operational policies for Apex PDP
+    properties:
+      engineServiceParameters:
+        type: string
+        description: The engine parameters like name, instanceCount, policy implementation,
+          parameters etc.
+        required: true
+      eventInputParameters:
+        type: string
+        description: The event input parameters.
+        required: true
+      eventOutputParameters:
+        type: string
+        description: The event output parameters.
+        required: true
+      javaProperties:
+        type: string
+        description: Name/value pairs of properties to be set for APEX if needed.
+        required: false
+node_types:
+  org.onap.policy.clamp.acm.Participant:
+    version: 1.0.1
+    derived_from: tosca.nodetypes.Root
+    properties:
+      provider:
+        type: string
+        required: false
+  org.onap.policy.clamp.acm.AutomationCompositionElement:
+    version: 1.0.1
+    derived_from: tosca.nodetypes.Root
+    properties:
+      provider:
+        type: string
+        required: false
+        metadata:
+          common: true
+        description: Specifies the organization that provides the acm element
+      participant_id:
+        type: onap.datatypes.ToscaConceptIdentifier
+        required: true
+        metadata:
+          common: true
+      participantType:
+        type: onap.datatypes.ToscaConceptIdentifier
+        required: true
+        metadata:
+          common: true
+        description: The identity of the participant type that hosts this type of Automation
+          Composition Element
+      startPhase:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        metadata:
+          common: true
+        description: A value indicating the start phase in which this acm element
+          will be started, the first start phase is zero. Automation Composition Elements
+          are started in their start_phase order and stopped in reverse start
+          phase order. Automation Composition Elements with the same start phase are
+          started and stopped simultaneously
+      uninitializedToPassiveTimeout:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        default: 60
+        metadata:
+          common: true
+        description: The maximum time in seconds to wait for a state chage from
+          uninitialized to passive
+      passiveToRunningTimeout:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        default: 60
+        metadata:
+          common: true
+        description: The maximum time in seconds to wait for a state chage from passive to
+          running
+      runningToPassiveTimeout:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        default: 60
+        metadata:
+          common: true
+        description: The maximum time in seconds to wait for a state chage from running to
+          passive
+      passiveToUninitializedTimeout:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 0
+        default: 60
+        metadata:
+          common: true
+        description: The maximum time in seconds to wait for a state chage from passive to
+          uninitialized
+  org.onap.policy.clamp.acm.AutomationComposition:
+    version: 1.0.1
+    derived_from: tosca.nodetypes.Root
+    properties:
+      provider:
+        type: string
+        required: false
+        metadata:
+          common: true
+        description: Specifies the organization that provides the acm element
+      elements:
+        type: list
+        required: true
+        metadata:
+          common: true
+        entry_schema:
+          type: onap.datatypes.ToscaConceptIdentifier
+        description: Specifies a list of acm element definitions that make up this
+          acm definition
+  org.onap.policy.clamp.acm.PolicyAutomationCompositionElement:
+    version: 1.0.1
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
+    properties:
+      policy_type_id:
+        type: onap.datatypes.ToscaConceptIdentifier
+        required: true
+      policy_id:
+        type: onap.datatypes.ToscaConceptIdentifier
+        required: false
+  org.onap.policy.clamp.acm.CDSAutomationCompositionElement:
+    version: 1.0.1
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
+    properties:
+      cds_blueprint_id:
+        type: onap.datatypes.ToscaConceptIdentifier
+        required: true
+  org.onap.policy.clamp.acm.K8SMicroserviceAutomationCompositionElement:
+    version: 1.0.1
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
+    properties:
+      chart:
+        type: string
+        required: true
+      configs:
+        type: list
+        required: false
+      requirements:
+        type: string
+        required: false
+      templates:
+        type: list
+        required: false
+        entry_schema: null
+      values:
+        type: string
+        required: true
+  org.onap.policy.clamp.acm.HttpAutomationCompositionElement:
+    version: 1.0.1
+    derived_from: org.onap.policy.clamp.acm.AutomationCompositionElement
+    properties:
+      baseUrl:
+        type: string
+        required: true
+        description: The base URL to be prepended to each path, identifies the host for the
+          REST endpoints.
+      httpHeaders:
+        type: map
+        required: false
+        entry_schema:
+          type: string
+        description: HTTP headers to send on REST requests
+      configurationEntities:
+        type: map
+        required: true
+        entry_schema:
+          type: org.onap.datatypes.policy.clamp.acm.httpAutomationCompositionElement.ConfigurationEntity
+          typeVersion: 1.0.0
+        description: The connfiguration entities the Automation Composition Element is managing and
+          their associated REST requests
