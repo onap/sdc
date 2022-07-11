@@ -51,6 +51,10 @@
                            (outputChanged)="dataChanged($event)">
             </outputs-table>
           </tab>
+          <div class="main-tabs-section-buttons">
+            <button class="tlv-btn outline blue" [disabled]="!hasChangedData || savingChangedData" (click)="reverseChangedData()" data-tests-id="attributes-reverse-button">Discard</button>
+            <button class="tlv-btn blue" [disabled]="!hasChangedData || !isValidChangedData || savingChangedData" (click)="doSaveChangedData()" data-tests-id="attributes-save-button">{{savingChangedData ? 'Saving' : 'Save'}}</button>
+          </div>
         </tabs>
         <div class="header">
           <button class="tlv-btn blue declare-button" [disabled]="!checkedAttributesCount || isReadonly || hasChangedData" (click)="declareAttributes()" data-tests-id="declare-button declare-output">Declare Output</button>
