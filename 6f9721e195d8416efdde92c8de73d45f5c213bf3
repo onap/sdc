@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce227121_f7d8f7bc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1367,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 0,
+      "message": "you\u0027ve removed this because a service will never be a VF, correct?",
+      "range": {
+        "startLine": 1367,
+        "startChar": 8,
+        "endLine": 1367,
+        "endChar": 67
+      },
+      "revId": "6f9721e195d8416efdde92c8de73d45f5c213bf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}

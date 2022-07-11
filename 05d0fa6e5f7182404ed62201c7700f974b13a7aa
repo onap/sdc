@@ -1,0 +1,481 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8703237_09cdb430",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/BaseBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "why add a general getter here? For many attributes I could not find a get call.\nFound two attributes calls in serviceBusinessLogic, serviceBusinessLogic.getJanusGraphDao() and serviceBusinessLogic.getGraphLockOperation(), which for me are a bad practice and don\u0027t justify exposing all other attributes.\nI suggest to remove the need of the get calls in this case.",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 7
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fce1ee6d_1cfd205f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "please, remove this getter and inject the component where it is needed",
+      "range": {
+        "startLine": 108,
+        "startChar": 4,
+        "endLine": 108,
+        "endChar": 11
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7aef681_6692783b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "fix typo: Target",
+      "range": {
+        "startLine": 195,
+        "startChar": 39,
+        "endLine": 195,
+        "endChar": 45
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70976a17_12b69565",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "fix typo: Target",
+      "range": {
+        "startLine": 198,
+        "startChar": 50,
+        "endLine": 198,
+        "endChar": 56
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c21d84f1_ead96164",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "I believe it should be component instance or group not found.\nOr something better like:\nPolicy x target y not found",
+      "range": {
+        "startLine": 204,
+        "startChar": 68,
+        "endLine": 204,
+        "endChar": 96
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33267eb3_b9673ff2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "fix typo: Target\n\nsuggest to replace for\ngetTargetGroupUniqueIdByTargetName",
+      "range": {
+        "startLine": 228,
+        "startChar": 45,
+        "endLine": 228,
+        "endChar": 51
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "389fd83e_81b76fd6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "just a suggestion, could replace with:\ngroupByInvariantName.map(GroupDataDefinition::getUniqueId).orElse(null)\nsame for getInstanceTargetUniqueIdForTargerName",
+      "range": {
+        "startLine": 230,
+        "startChar": 8,
+        "endLine": 233,
+        "endChar": 20
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d732adb_92bcc339",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "fix typo: Target\n\nsuggest to replace for\ngetTargetInstanceUniqueIdByTargetName",
+      "range": {
+        "startLine": 236,
+        "startChar": 47,
+        "endLine": 236,
+        "endChar": 53
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7ce13fa_a3fe5e38",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "avoid using @Autowired in a field, please, inject using the constructor.",
+      "range": {
+        "startLine": 201,
+        "startChar": 4,
+        "endLine": 203,
+        "endChar": 52
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8877c67_542ec478",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1489,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "shouldn\u0027t we compare with .equals here?",
+      "range": {
+        "startLine": 1489,
+        "startChar": 12,
+        "endLine": 1489,
+        "endChar": 28
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84dfb32c_2994892a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1562,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "shouldn\u0027t we compare with .equals here?",
+      "range": {
+        "startLine": 1562,
+        "startChar": 12,
+        "endLine": 1562,
+        "endChar": 28
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "721659b1_d79b6948",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1952,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "shouldn\u0027t we compare with .equals here?",
+      "range": {
+        "startLine": 1952,
+        "startChar": 61,
+        "endLine": 1952,
+        "endChar": 77
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0866152d_7cb8e5bb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "As ServiceImportBusinessLogic needs groupBusinessLogic, please, inject the groupBusinessLogic in ServiceImportBusinessLogic instead of using the one from other business logic.",
+      "range": {
+        "startLine": 317,
+        "startChar": 97,
+        "endLine": 317,
+        "endChar": 141
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "179226f4_308d7cfb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 359,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 359,
+        "startChar": 16,
+        "endLine": 359,
+        "endChar": 55
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6dce11d8_c3eeae5e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 362,
+        "startChar": 16,
+        "endLine": 362,
+        "endChar": 60
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "540dc9cd_5616d1de",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "to be more assertive, could check also for properties and targets names or ids",
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e6dd5c0_cd919d00",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 439,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "you should validate the expected exception ActionStatus and params",
+      "range": {
+        "startLine": 438,
+        "startChar": 8,
+        "endLine": 439,
+        "endChar": 133
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b01cee1_44cddf3d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "you should validate the expected exception ActionStatus and params",
+      "range": {
+        "startLine": 449,
+        "startChar": 8,
+        "endLine": 450,
+        "endChar": 135
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee22183f_366098ff",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/PolicyBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "you should validate the expected exception ActionStatus and params",
+      "range": {
+        "startLine": 464,
+        "startChar": 8,
+        "endLine": 465,
+        "endChar": 136
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23dd224d_9d0683f9",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "you probably can be more assertive in your mocks in this test. For example, you should replace all \"any(Service.class)\" parameters by \"eq(newService)\".",
+      "range": {
+        "startLine": 181,
+        "startChar": 62,
+        "endLine": 181,
+        "endChar": 80
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5fe3cbda_45fbc05b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T14:39:42Z",
+      "side": 1,
+      "message": "newService.getSystemName()",
+      "range": {
+        "startLine": 190,
+        "startChar": 54,
+        "endLine": 190,
+        "endChar": 66
+      },
+      "revId": "05d0fa6e5f7182404ed62201c7700f974b13a7aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
