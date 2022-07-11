@@ -46,6 +46,30 @@
       "revId": "ed0aedad0bed02af0c5effc293f77b8dc3070cc1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0973383_715ae7b4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/GroupBusinessLogicNew.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-11T16:15:06Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5c421449_b6ed74c4",
+      "range": {
+        "startLine": 247,
+        "startChar": 32,
+        "endLine": 247,
+        "endChar": 55
+      },
+      "revId": "ed0aedad0bed02af0c5effc293f77b8dc3070cc1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
