@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0c17ebd2_df694ad2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogic.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-12T10:43:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a66b13b_23124ccc",
+      "range": {
+        "startLine": 249,
+        "startChar": 58,
+        "endLine": 249,
+        "endChar": 78
+      },
+      "revId": "45332496065af5a33ce000f1263a16e0d1716aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9f027e52_ee59c212",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
         "patchSetId": 16
@@ -45,6 +69,30 @@
       "revId": "45332496065af5a33ce000f1263a16e0d1716aa0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98331324_c056723b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogic.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-12T10:43:33Z",
+      "side": 1,
+      "message": "yes, i agree, it should be removed \nit could be separate ticket to remove all @Autowired properties in @Component",
+      "parentUuid": "9f027e52_ee59c212",
+      "range": {
+        "startLine": 147,
+        "startChar": 4,
+        "endLine": 148,
+        "endChar": 54
+      },
+      "revId": "45332496065af5a33ce000f1263a16e0d1716aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "3676db59_02c20e1e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogicTest.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 455,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-12T10:43:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2bef1a8f_72753b56",
+      "range": {
+        "startLine": 455,
+        "startChar": 8,
+        "endLine": 455,
+        "endChar": 37
+      },
+      "revId": "45332496065af5a33ce000f1263a16e0d1716aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "56da81a9_1007b46f",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
         "patchSetId": 16
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "dbfba644_fef7b521",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 1187,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-12T10:43:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56da81a9_1007b46f",
+      "range": {
+        "startLine": 1185,
+        "startChar": 8,
+        "endLine": 1187,
+        "endChar": 11
+      },
+      "revId": "45332496065af5a33ce000f1263a16e0d1716aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5dbcd632_3cdfd16d",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
         "patchSetId": 16
@@ -114,6 +210,30 @@
       "revId": "45332496065af5a33ce000f1263a16e0d1716aa0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63818702_f6ba67ad",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 1206,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-12T10:43:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5dbcd632_3cdfd16d",
+      "range": {
+        "startLine": 1204,
+        "startChar": 8,
+        "endLine": 1206,
+        "endChar": 11
+      },
+      "revId": "45332496065af5a33ce000f1263a16e0d1716aa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
