@@ -22,6 +22,30 @@
       "revId": "6c9821f349c1fd03ab238041ca06e6200e3cab0f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1d86f7c_d0c3f9c4",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1775,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-12T10:59:46Z",
+      "side": 1,
+      "message": "to separate input from SELF and Instances, and only properties from SELF should be created/add to TOSCA",
+      "parentUuid": "50b177c8_0071e637",
+      "range": {
+        "startLine": 1775,
+        "startChar": 40,
+        "endLine": 1775,
+        "endChar": 109
+      },
+      "revId": "6c9821f349c1fd03ab238041ca06e6200e3cab0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
