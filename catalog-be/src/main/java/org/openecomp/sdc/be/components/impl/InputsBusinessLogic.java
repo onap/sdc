@@ -127,14 +127,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
         filters.setIgnoreInputs(false);
-        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
+        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
             .getToscaElement(componentId, filters);
         if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
-        org.openecomp.sdc.be.model.Component component = getComponentEither.left().value();
+        Component component = getComponentEither.left().value();
         List<InputDefinition> inputs = component.getInputs();
         return Either.left(inputs);
     }
@@ -147,14 +147,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         filters.setIgnoreInputs(false);
         filters.setIgnoreComponentInstances(false);
         filters.setIgnoreComponentInstancesInputs(false);
-        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
+        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
             .getToscaElement(componentId, filters);
         if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
-        org.openecomp.sdc.be.model.Component component = getComponentEither.left().value();
+        Component component = getComponentEither.left().value();
         if (!ComponentValidations.validateComponentInstanceExist(component, componentInstanceId)) {
             ActionStatus actionStatus = ActionStatus.COMPONENT_INSTANCE_NOT_FOUND;
             log.debug("Failed to found component instance inputs {}, error: {}", componentInstanceId, actionStatus);
@@ -182,12 +182,12 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                                                                                                            String instanceId, String inputId) {
         validateUserExists(userId);
         String parentId = componentId;
-        org.openecomp.sdc.be.model.Component component;
+        Component component;
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
         filters.setIgnoreComponentInstances(false);
         if (!instanceId.equals(inputId)) {
-            Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
+            Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
                 .getToscaElement(parentId, filters);
             if (getComponentEither.isRight()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
@@ -204,7 +204,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         filters.setIgnoreComponentInstancesProperties(false);
         filters.setIgnoreComponentInstancesInputs(false);
         filters.setIgnoreProperties(false);
-        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
+        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
             .getToscaElement(parentId, filters);
         if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
@@ -266,7 +266,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                                                                            List<InputDefinition> inputs, String userId, boolean shouldLockComp) {
         List<InputDefinition> returnInputs = new ArrayList<>();
         Either<List<InputDefinition>, ResponseFormat> result = null;
-        org.openecomp.sdc.be.model.Component component = null;
+        Component component = null;
         try {
             validateUserExists(userId);
             ComponentParametersView componentParametersView = new ComponentParametersView();
@@ -353,14 +353,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     public Either<List<ComponentInstanceInput>, ResponseFormat> getInputsForComponentInput(String userId, String componentId, String inputId) {
         validateUserExists(userId);
-        org.openecomp.sdc.be.model.Component component = null;
+        Component component = null;
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
         filters.setIgnoreComponentInstances(false);
         filters.setIgnoreInputs(false);
         filters.setIgnoreComponentInstancesInputs(false);
         filters.setIgnoreProperties(false);
-        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
+        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
             .getToscaElement(componentId, filters);
         if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
@@ -388,7 +388,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                                                                                boolean shouldLockComp,
                                                                                boolean inTransaction) {
         Either<List<InputDefinition>, ResponseFormat> result = null;
-        org.openecomp.sdc.be.model.Component component = null;
+        Component component = null;
         try {
             validateUserExists(userId);
             component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
@@ -431,7 +431,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                                                                          ComponentInstListInput componentListInput, boolean shouldLockComp,
                                                                          boolean inTransaction) {
         Either<List<InputDefinition>, ResponseFormat> result = null;
-        org.openecomp.sdc.be.model.Component component = null;
+        Component component = null;
         log.trace("#createListInput: enter");
         try {
             /* check if user exists */
@@ -513,11 +513,11 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         return componentParametersView;
     }
 
-    private org.openecomp.sdc.be.model.Component getAndValidateComponentForCreate(
+    private Component getAndValidateComponentForCreate(
         String userId, String componentId, ComponentTypeEnum componentType, boolean shouldLockComp
     ) {
         ComponentParametersView componentParametersView = getBaseComponentParametersView();
-        org.openecomp.sdc.be.model.Component component = validateComponentExists(componentId, componentType, componentParametersView);
+        Component component = validateComponentExists(componentId, componentType, componentParametersView);
         if (shouldLockComp) {
             // lock the component
             lockComponent(component, CREATE_INPUT);
@@ -566,7 +566,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     }
 
     public Either<List<InputDefinition>, ResponseFormat> createInputsInGraph(Map<String, InputDefinition> inputs,
-                                                                             org.openecomp.sdc.be.model.Component component) {
+                                                                             Component component) {
 
         List<InputDefinition> resourceProperties = component.getInputs();
 
@@ -604,7 +604,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
     private Either<List<InputDefinition>, ResponseFormat> createListInputsInGraph(Map<String, InputDefinition> inputs,
                                                                                   Map<String, DataTypeDefinition> privateDataTypes,
-                                                                                  org.openecomp.sdc.be.model.Component component) {
+                                                                                  Component component) {
 
         log.trace("#createListInputsInGraph: enter");
 
@@ -652,12 +652,12 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         componentParametersView.setIgnoreInterfaces(false);
         componentParametersView.setIgnoreDataType(false);
         componentParametersView.setIgnoreProperties(false);
-        Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> componentEither = toscaOperationFacade
+        Either<Component, StorageOperationStatus> componentEither = toscaOperationFacade
             .getToscaElement(componentId, componentParametersView);
         if (componentEither.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(componentEither.right().value()));
         }
-        org.openecomp.sdc.be.model.Component component = componentEither.left().value();
+        Component component = componentEither.left().value();
         // Validate inputId is child of the component
         Optional<InputDefinition> optionalInput = component.getInputs().stream().
             // filter by ID
@@ -700,10 +700,9 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     }
 
     private Either<InputDefinition, ResponseFormat> deleteListInput(String componentId, String inputId,
-                                                                    org.openecomp.sdc.be.model.Component component, InputDefinition inputForDelete,
+                                                                    Component component, InputDefinition inputForDelete,
                                                                     StorageOperationStatus status) {
         // the input is created by 'Declare List'.
-
         // need to 1. undeclare properties, 2. delete input, 3. delete private data type
         StorageOperationStatus storageOperationStatus = propertyDeclarationOrchestrator.unDeclarePropertiesAsListInputs(component, inputForDelete);
         if (storageOperationStatus != StorageOperationStatus.OK) {
@@ -762,14 +761,14 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             filters.setIgnoreComponentInstancesInputs(false);
             filters.setIgnoreComponentInstancesProperties(false);
             filters.setIgnoreProperties(false);
-            Either<org.openecomp.sdc.be.model.Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
+            Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
                 .getToscaElement(componentId, filters);
             if (getComponentEither.isRight()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
                 log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
                 return Either.right(componentsUtils.getResponseFormat(actionStatus));
             }
-            org.openecomp.sdc.be.model.Component component = getComponentEither.left().value();
+            Component component = getComponentEither.left().value();
             Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
             if (!op.isPresent()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());

@@ -34,7 +34,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 @NoArgsConstructor
 public class AttributeDataDefinition extends ToscaDataDefinition {
 
-    private transient List<GetOutputValueDataDefinition> getOutputValues;
+    private List<GetOutputValueDataDefinition> getOutputValues;
     private String outputId;
     private String value;
     private String outputPath;

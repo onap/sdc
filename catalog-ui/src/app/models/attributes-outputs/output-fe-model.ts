@@ -18,11 +18,11 @@
  * ============LICENSE_END=========================================================
  */
 
-import * as _ from "lodash";
-import {PROPERTY_DATA} from "../../utils/constants";
-import {OutputBEModel} from "./output-be-model";
-import {AttributeFEModel} from "./attribute-fe-model";
-import {DerivedAttributeType} from "./attribute-be-model";
+import * as _ from 'lodash';
+import { PROPERTY_DATA } from '../../utils/constants';
+import { DerivedAttributeType } from './attribute-be-model';
+import { AttributeFEModel } from './attribute-fe-model';
+import { OutputBEModel } from './output-be-model';
 
 export class OutputFEModel extends OutputBEModel {
   isSimpleType: boolean;
@@ -38,7 +38,7 @@ export class OutputFEModel extends OutputBEModel {
     super(output);
     if (output) {
       this.isSimpleType = PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1;
-      let relatedAttribute = output.attributes && output.attributes[0] || output.outputs && output.outputs[0];
+      const relatedAttribute = output.attribute;
       if (relatedAttribute) {
         this.relatedAttributeValue = relatedAttribute.value;
         this.relatedAttributeName = relatedAttribute.name;
@@ -71,6 +71,6 @@ export class OutputFEModel extends OutputBEModel {
   }
 
   hasChanged(): boolean {
-    return this.hasDefaultValueChanged() ;
+    return this.hasDefaultValueChanged();
   }
 }
