@@ -672,18 +672,17 @@ public class ServiceServlet extends AbstractValidationsServlet {
     }
 
     private Wrapper<Response> performUIImport(String data, final HttpServletRequest request, String userId,
-                                              String ServiceUniqueId) throws FileNotFoundException, ZipException {
+                                              String serviceUniqueId) throws FileNotFoundException, ZipException {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         Wrapper<UploadServiceInfo> uploadServiceInfoWrapper = new Wrapper<>();
         Wrapper<String> yamlStringWrapper = new Wrapper<>();
-        ServiceAuthorityTypeEnum ServiceAuthorityEnum = ServiceAuthorityTypeEnum.USER_TYPE_UI;
-        commonServiceGeneralValidations(responseWrapper, userWrapper, uploadServiceInfoWrapper, ServiceAuthorityEnum, userId, data);
+        ServiceAuthorityTypeEnum serviceAuthorityTypeEnum = ServiceAuthorityTypeEnum.USER_TYPE_UI;
+        commonServiceGeneralValidations(responseWrapper, userWrapper, uploadServiceInfoWrapper, serviceAuthorityTypeEnum, userId, data);
         specificServiceAuthorityValidations(responseWrapper, uploadServiceInfoWrapper, yamlStringWrapper, userWrapper.getInnerElement(), request,
-            data, ServiceAuthorityEnum);
+            data, serviceAuthorityTypeEnum);
         if (responseWrapper.isEmpty()) {
-            handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(),
-                yamlStringWrapper.getInnerElement(), ServiceAuthorityEnum, true, ServiceUniqueId);
+            handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(), serviceUniqueId);
         }
         return responseWrapper;
     }
@@ -775,8 +774,7 @@ public class ServiceServlet extends AbstractValidationsServlet {
             uploadServiceInfoWrapper.getInnerElement().setProjectCode(oldService.getProjectCode());
             if (responseWrapper.isEmpty()) {
                 log.debug("importReplaceService:start handleImportService");
-                handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(),
-                    yamlStringWrapper.getInnerElement(), serviceAuthorityEnum, true, null);
+                handleImportService(responseWrapper, userWrapper.getInnerElement(), uploadServiceInfoWrapper.getInnerElement(), null);
             }
             return responseWrapper.getInnerElement();
         } catch (IOException | ZipException e) {

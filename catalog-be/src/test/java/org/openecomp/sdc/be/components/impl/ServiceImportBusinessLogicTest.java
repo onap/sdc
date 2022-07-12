@@ -26,6 +26,7 @@ import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.ServiceImportBusinessLogic.CREATE_RESOURCE;
 
@@ -50,8 +51,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
@@ -64,6 +65,7 @@ import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.ArtifactExternalServlet;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -96,11 +98,13 @@ import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -108,18 +112,22 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
 
+    private static final String DEFAULT_ICON = "defaulticon";
+    private final ServiceBusinessLogic serviceBusinessLogic = mock(ServiceBusinessLogic.class);
+    private final CsarBusinessLogic csarBusinessLogic = mock(CsarBusinessLogic.class);
+    private final ToscaOperationFacade toscaOperationFacade = mock(ToscaOperationFacade.class);
+    private final ServiceImportParseLogic serviceImportParseLogic = mock(ServiceImportParseLogic.class);
+    private final ArtifactDefinition artifactDefinition = mock(ArtifactDefinition.class);
+    private final UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = mock(ComponentInstanceBusinessLogic.class);
+    private final ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
+    private final ServletUtils servletUtils = mock(ServletUtils.class);
+    private final ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
+    private final ArtifactsBusinessLogic artifactsBusinessLogic = mock(ArtifactsBusinessLogic.class);
+    private final AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
+        componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
-
-    @Mock
-    private ArtifactDefinition artifactDefinition;
-    @Mock
-    private ServletUtils servletUtils;
-    @Mock
-    private ResourceImportManager resourceImportManager;
-
-    private AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
-        componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
 
     public static String loadFileNameToJsonString(String fileName) throws IOException {
         String sourceDir = "src/test/resources/normativeTypes";
@@ -259,7 +267,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceFromYaml(oldService,
             topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo,
-            nodeTypesArtifactsToCreate, false, true, nodeName));
+            nodeTypesArtifactsToCreate, false, true, nodeName, user.getUserId()));
     }
 
     @Test
@@ -278,7 +286,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         csfyp.setParsedToscaYamlInfo(parsedToscaYamlInfo);
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(resource));
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceAndRIsFromYaml(oldService,
-            false, nodeTypesArtifactsToCreate, false, true, csfyp));
+            false, nodeTypesArtifactsToCreate, false, true, csfyp, user.getUserId()));
     }
 
     @Test
@@ -297,7 +305,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         csfyp.setParsedToscaYamlInfo(parsedToscaYamlInfo);
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(resource));
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceAndRIsFromYaml(oldService,
-            false, nodeTypesArtifactsToCreate, false, true, csfyp));
+            false, nodeTypesArtifactsToCreate, false, true, csfyp, user.getUserId()));
     }
 
     @Test
@@ -749,21 +757,26 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     void testCreateGroupsOnResourceNull() {
         Service service = createServiceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
-        Assertions.assertNotNull(sIBL.createGroupsOnResource(service, groups));
+        Assertions.assertNotNull(
+            sIBL.createGroupsOnResource(service, groups));
     }
 
     @Test
     void testUpdateGroupsMembersUsingResource() {
         Service service = createServiceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
-        Assertions.assertNotNull(sIBL.updateGroupsMembersUsingResource(groups, service));
+
+        Assertions.assertNotNull(
+            sIBL.updateGroupsMembersUsingResource(groups, service));
     }
 
     @Test
     void testUpdateGroupsMembersUsingResource_left() {
         Service service = createServiceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
-        Assertions.assertNotNull(sIBL.updateGroupsMembersUsingResource(groups, service));
+
+        Assertions.assertNotNull(
+            sIBL.updateGroupsMembersUsingResource(groups, service));
     }
 
     @Test
@@ -1881,7 +1894,9 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         groupDefinition.setUniqueId("groupDefinitionUniqueId");
         groupDefinition.setName("groupDefinition");
         groupDefinitionList.add(groupDefinition);
-        Assertions.assertNotNull(sIBL.createGroupsOnResource(resource, groups));
+
+        Assertions.assertNotNull(
+            sIBL.createGroupsOnResource(resource, groups));
     }
 
     @Test
@@ -1897,14 +1912,18 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     void testUpdateGroupsMembersUsingResource2() {
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
-        Assertions.assertNotNull(sIBL.updateGroupsMembersUsingResource(groups, resource));
+
+        Assertions.assertNotNull(
+            sIBL.updateGroupsMembersUsingResource(groups, resource));
     }
 
     @Test
     void testUpdateGroupsMembersUsingResource_left2() {
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
-        Assertions.assertNotNull(sIBL.updateGroupsMembersUsingResource(groups, resource));
+
+        Assertions.assertNotNull(
+            sIBL.updateGroupsMembersUsingResource(groups, resource));
     }
 
     @Test

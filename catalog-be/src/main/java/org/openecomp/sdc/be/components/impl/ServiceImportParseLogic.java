@@ -77,6 +77,7 @@ import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -152,6 +153,8 @@ public class ServiceImportParseLogic {
     @Autowired
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
     private final GroupBusinessLogic groupBusinessLogic;
+    @Autowired
+    private OutputsBusinessLogic outputsBusinessLogic;
 
     public ServiceImportParseLogic(final ServiceBusinessLogic serviceBusinessLogic, final ComponentsUtils componentsUtils,
                                    final ToscaOperationFacade toscaOperationFacade, final LifecycleBusinessLogic lifecycleBusinessLogic,
@@ -1366,6 +1369,24 @@ public class ServiceImportParseLogic {
         if (updatedResource.isRight()) {
             throw new ComponentException(componentsUtils
                 .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
+                    ComponentTypeEnum.SERVICE));
+        }
+        return updatedResource.left().value();
+    }
+
+    public Service createOutputsOnService(final Service service, final Map<String, OutputDefinition> outputs, final String userId) {
+        if (MapUtils.isNotEmpty(outputs) || isNotEmpty(service.getOutputs())) {
+            final Either<List<OutputDefinition>, ResponseFormat> createOutputs = outputsBusinessLogic.createOutputsInGraph(outputs, service, userId);
+            if (createOutputs.isRight()) {
+                throw new ComponentException(createOutputs.right().value());
+            }
+        } else {
+            return service;
+        }
+        final Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
+        if (updatedResource.isRight()) {
+            throw new ComponentException(
+                componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
                     ComponentTypeEnum.SERVICE));
         }
         return updatedResource.left().value();

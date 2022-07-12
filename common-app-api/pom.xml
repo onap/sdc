@@ -324,9 +324,9 @@
     </dependency>
 
     <dependency>
-      <artifactId>commons-collections</artifactId>
-      <groupId>commons-collections</groupId>
-      <version>3.2.2</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>${commons.collections.version}</version>
     </dependency>
 
     <dependency>

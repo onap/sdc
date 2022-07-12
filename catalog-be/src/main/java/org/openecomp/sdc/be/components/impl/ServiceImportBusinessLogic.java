@@ -97,6 +97,7 @@ import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -252,7 +253,7 @@ public class ServiceImportBusinessLogic {
                 throw new ComponentException(findNodeTypesArtifactsToHandleRes.right().value());
             }
             return createServiceFromYaml(service, csarInfo.getMainTemplateContent(), csarInfo.getMainTemplateName(), nodeTypesInfo, csarInfo,
-                findNodeTypesArtifactsToHandleRes.left().value(), true, false, null);
+                findNodeTypesArtifactsToHandleRes.left().value(), true, false, null, user.getUserId());
         } catch (Exception e) {
             log.debug("Exception occured when createServiceFromCsar,error is:{}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.GENERAL_ERROR);
@@ -262,7 +263,8 @@ public class ServiceImportBusinessLogic {
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
                                             CsarInfo csarInfo,
                                             Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                            boolean shouldLock, boolean inTransaction, String nodeName) throws BusinessLogicException {
+                                            boolean shouldLock, boolean inTransaction, String nodeName, final String userId)
+        throws BusinessLogicException {
         List<ArtifactDefinition> createdArtifacts = new ArrayList<>();
         Service createdService;
         CreateServiceFromYamlParameter csfyp = new CreateServiceFromYamlParameter();
@@ -277,7 +279,7 @@ public class ServiceImportBusinessLogic {
             csfyp.setNodeTypesInfo(nodeTypesInfo);
             csfyp.setCsarInfo(csarInfo);
             csfyp.setNodeName(nodeName);
-            createdService = createServiceAndRIsFromYaml(service, false, nodeTypesArtifactsToCreate, shouldLock, inTransaction, csfyp);
+            createdService = createServiceAndRIsFromYaml(service, false, nodeTypesArtifactsToCreate, shouldLock, inTransaction, csfyp, userId);
             log.debug("#createResourceFromYaml - The resource {} has been created ", service.getName());
         } catch (ComponentException | BusinessLogicException e) {
             log.debug("Create Service from yaml failed", e);
@@ -291,7 +293,8 @@ public class ServiceImportBusinessLogic {
 
     protected Service createServiceAndRIsFromYaml(Service service, boolean isNormative,
                                                   Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                                  boolean shouldLock, boolean inTransaction, CreateServiceFromYamlParameter csfyp)
+                                                  boolean shouldLock, boolean inTransaction, CreateServiceFromYamlParameter csfyp,
+                                                  final String userId)
         throws BusinessLogicException {
         List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
         String yamlName = csfyp.getYamlName();
@@ -325,7 +328,7 @@ public class ServiceImportBusinessLogic {
             log.trace("************* Going to add inputs from yaml {}", yamlName);
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
-            log.trace("************* Finish to add inputs from yaml {}", yamlName);
+            log.trace("************* Finished to add inputs from yaml {}", yamlName);
             ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
             service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
             log.trace("************* Added Substitution filter from interface yaml {}", yamlName);
@@ -334,6 +337,11 @@ public class ServiceImportBusinessLogic {
             service = createRIAndRelationsFromYaml(yamlName, service, uploadComponentInstanceInfoMap, topologyTemplateYaml,
                 nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName);
             log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
+            log.trace("************* Going to add outputs from yaml {}", yamlName);
+            Map<String, OutputDefinition> outputs = parsedToscaYamlInfo.getOutputs();
+            service = serviceImportParseLogic.createOutputsOnService(service, outputs, userId);
+            log.trace("************* Finished to add outputs from yaml {}", yamlName);
+
             Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes
                 = groupBusinessLogic.validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), service.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {

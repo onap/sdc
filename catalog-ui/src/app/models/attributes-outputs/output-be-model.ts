@@ -18,23 +18,21 @@
  * ============LICENSE_END=========================================================
  */
 
-import {AttributeBEModel} from "./attribute-be-model";
+import { AttributeBEModel } from './attribute-be-model';
 
 export class OutputBEModel extends AttributeBEModel {
 
   outputPath: string;
-  outputs: Array<OutputComponentInstanceModel>;
   instanceUniqueId: string;
   ownerId: string;
   attributeId: string;
-  attributes: Array<OutputComponentInstanceModel>;
+  attribute: OutputComponentInstanceModel;
 
   constructor(output?: OutputBEModel) {
     super(output);
     this.instanceUniqueId = output.instanceUniqueId;
     this.attributeId = output.attributeId;
-    this.attributes = output.attributes;
-    this.outputs = output.outputs;
+    this.attribute = output.attribute;
     this.ownerId = output.ownerId;
     this.outputPath = output.outputPath;
   }
