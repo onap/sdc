@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ff2d107_4ba2dce0",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-12T13:53:56Z",
+      "side": 1,
+      "message": "you don\u0027t need this mock.\nYou need to mock this:\nwhen(componentsUtilsMock.getResponseFormat(StorageOperationStatus.GENERAL_ERROR)).thenReturn(new ResponseFormat(Status.INTERNAL_SERVER_ERROR.getStatusCode()));",
+      "range": {
+        "startLine": 458,
+        "startChar": 8,
+        "endLine": 458,
+        "endChar": 149
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbd178c9_2088ac64",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/OutputsBusinessLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 462,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-12T13:53:56Z",
+      "side": 1,
+      "message": "and then check for the mocked status. The value should not be null.",
+      "range": {
+        "startLine": 462,
+        "startChar": 8,
+        "endLine": 462,
+        "endChar": 43
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45e11a21_dc1c182d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 1189,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-12T13:53:56Z",
+      "side": 1,
+      "message": "no need to assert null as assertThrows is being called",
+      "range": {
+        "startLine": 1189,
+        "startChar": 8,
+        "endLine": 1189,
+        "endChar": 42
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73b758bf_1645aaeb",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 1190,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-12T13:53:56Z",
+      "side": 1,
+      "message": "action status should not be OK if it was an error",
+      "range": {
+        "startLine": 1190,
+        "startChar": 8,
+        "endLine": 1190,
+        "endChar": 76
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f468a41b_1752899d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 1212,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-12T13:53:56Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1211,
+        "startChar": 8,
+        "endLine": 1212,
+        "endChar": 76
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
