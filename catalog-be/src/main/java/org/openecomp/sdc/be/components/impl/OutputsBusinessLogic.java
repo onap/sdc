@@ -20,10 +20,12 @@
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.be.components.attribute.AttributeDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
@@ -32,8 +34,12 @@ import org.openecomp.sdc.be.components.validation.ComponentValidations;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstOutputsMap;
+import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribOutput;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceOutput;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.OutputDefinition;
@@ -51,6 +57,7 @@ import org.openecomp.sdc.common.log.enums.StatusCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
 @org.springframework.stereotype.Component("outputsBusinessLogic")
 public class OutputsBusinessLogic extends BaseBusinessLogic {
@@ -58,8 +65,8 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
     private static final String CREATE_OUTPUT = "CreateOutput";
     private static final Logger log = Logger.getLogger(OutputsBusinessLogic.class);
     private static final String FAILED_TO_FOUND_COMPONENT_ERROR = "Failed to found component {}, error: {}";
-    private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
-    private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
+    private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_OUTPUTS = "Going to execute rollback on create outputs.";
+    private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_OUTPUTS = "Going to execute commit on create outputs.";
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(OutputsBusinessLogic.class);
     private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID = "Failed to found component instance outputs componentInstanceId: {}";
     private static final String FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_ERROR = "Failed to found component instance outputs {}, error: {}";
@@ -94,7 +101,7 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         if (!ComponentValidations.validateComponentInstanceExist(component, componentInstanceId)) {
             final ActionStatus actionStatus = ActionStatus.COMPONENT_INSTANCE_NOT_FOUND;
             log.debug(FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_ERROR, componentInstanceId, actionStatus);
-            loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, component.getComponentMetadataForSupportLog(), StatusCode.ERROR,
+            loggerSupportability.log(LoggerSupportabilityActions.CREATE_OUTPUTS, component.getComponentMetadataForSupportLog(), StatusCode.ERROR,
                 FAILED_TO_FOUND_COMPONENT_INSTANCE_OUTPUTS_COMPONENT_INSTANCE_ID, componentInstanceId);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
         }
@@ -110,11 +117,11 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         return createMultipleOutputs(userId, componentId, componentTypeEnum, componentInstOutputsMap, true, false);
     }
 
-    public Either<List<OutputDefinition>, ResponseFormat> createMultipleOutputs(final String userId, final String componentId,
-                                                                                final ComponentTypeEnum componentType,
-                                                                                final ComponentInstOutputsMap componentInstOutputsMapUi,
-                                                                                final boolean shouldLockComp, final boolean inTransaction) {
-        Either<List<OutputDefinition>, ResponseFormat> result = null;
+    private Either<List<OutputDefinition>, ResponseFormat> createMultipleOutputs(final String userId, final String componentId,
+                                                                                 final ComponentTypeEnum componentType,
+                                                                                 final ComponentInstOutputsMap componentInstOutputsMapUi,
+                                                                                 final boolean shouldLockComp, final boolean inTransaction) {
+        Either<List<OutputDefinition>, ResponseFormat> result = Either.right(new ResponseFormat(HttpStatus.BAD_REQUEST.value()));
         org.openecomp.sdc.be.model.Component component = null;
         try {
             validateUserExists(userId);
@@ -129,11 +136,11 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             return result;
         } finally {
             if (!inTransaction) {
-                if (result == null || result.isRight()) {
-                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+                if (result.isRight()) {
+                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_OUTPUTS);
                     janusGraphDao.rollback();
                 } else {
-                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_OUTPUTS);
                     janusGraphDao.commit();
                 }
             }
@@ -144,11 +151,11 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private org.openecomp.sdc.be.model.Component getAndValidateComponentForCreate(final String userId, final String componentId,
-                                                                                  final ComponentTypeEnum componentType,
-                                                                                  final boolean shouldLockComp) {
+    private Component getAndValidateComponentForCreate(final String userId, final String componentId,
+                                                       final ComponentTypeEnum componentType,
+                                                       final boolean shouldLockComp) {
         final ComponentParametersView componentParametersView = getBaseComponentParametersView();
-        final org.openecomp.sdc.be.model.Component component = validateComponentExists(componentId, componentType, componentParametersView);
+        final Component component = validateComponentExists(componentId, componentType, componentParametersView);
         if (shouldLockComp) {
             // lock the component
             lockComponent(component, CREATE_OUTPUT);
@@ -161,7 +168,11 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
                                                                                              final List<OutputDefinition> outputsToCreate) {
         final Map<String, OutputDefinition> outputsToPersist = MapUtil.toMap(outputsToCreate, OutputDefinition::getName);
         assignOwnerIdToOutputs(userId, outputsToPersist);
-        return toscaOperationFacade.addOutputsToComponent(outputsToPersist, cmptId).left().map(persistedOutputs -> outputsToCreate);
+        final var statusEither = toscaOperationFacade.addOutputsToComponent(outputsToPersist, cmptId);
+        if (statusEither.isRight()) {
+            return statusEither;
+        }
+        return statusEither.left().map(persistedOutputs -> outputsToCreate);
     }
 
     private void assignOwnerIdToOutputs(final String userId, final Map<String, OutputDefinition> outputsToCreate) {
@@ -189,7 +200,6 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
      * @return
      */
     public OutputDefinition deleteOutput(final String componentId, final String userId, final String outputId) {
-        Either<OutputDefinition, ResponseFormat> deleteEither = null;
         if (log.isDebugEnabled()) {
             log.debug("Going to delete output id: {}", outputId);
         }
@@ -236,4 +246,62 @@ public class OutputsBusinessLogic extends BaseBusinessLogic {
             unlockComponent(failed, component);
         }
     }
+
+    public Either<List<OutputDefinition>, ResponseFormat> createOutputsInGraph(final Map<String, OutputDefinition> outputs,
+                                                                               final Component component,
+                                                                               final String userId) {
+
+        final List<OutputDefinition> result = new ArrayList<>();
+        for (final Map.Entry<String, OutputDefinition> outputDefinition : outputs.entrySet()) {
+            final var outputDefinitionValue = outputDefinition.getValue();
+            outputDefinitionValue.setName(outputDefinition.getKey());
+
+            final String value = outputDefinitionValue.getValue();
+            if (value != null) {
+                final List<String> getAttribute = (List<String>) ImportUtils.loadYamlAsStrictMap(value)
+                    .get(ToscaGetFunctionType.GET_ATTRIBUTE.getFunctionName());
+                if (getAttribute.size() == 2) {
+                    final var optionalComponentInstance = component.getComponentInstanceByName(getAttribute.get(0));
+                    if (optionalComponentInstance.isPresent()) {
+                        final var createdOutputs
+                            = createOutputs(component.getUniqueId(), userId, getAttribute.get(1), optionalComponentInstance.get());
+                        if (createdOutputs.isRight()) {
+                            return Either.right((createdOutputs.right().value()));
+                        }
+                        result.addAll(createdOutputs.left().value());
+                    } else {
+                        // From SELF
+                        outputDefinitionValue.setInstanceUniqueId(component.getUniqueId());
+                    }
+                }
+            }
+        }
+        return Either.left(result);
+
+    }
+
+    private Either<List<OutputDefinition>, ResponseFormat> createOutputs(final String componentUniqueId, final String userId,
+                                                                         final String attributeName,
+                                                                         final ComponentInstance componentInstance) {
+        // From Instance
+        final List<OutputDefinition> result = new ArrayList<>();
+        final var componentInstanceAttributes = componentInstance.getAttributes();
+        if (CollectionUtils.isNotEmpty(componentInstanceAttributes)) {
+            final var componentInstanceAttributeOptional = componentInstanceAttributes.stream()
+                .filter(ad -> ad.getName().equals(attributeName)).map(ComponentInstanceAttribute::new).findFirst();
+            if (componentInstanceAttributeOptional.isPresent()) {
+                final var componentInstOutputsMap = new ComponentInstOutputsMap();
+                componentInstOutputsMap.setComponentInstanceAttributes(Collections.singletonMap(componentInstance.getUniqueId(),
+                    Collections.singletonList(new ComponentInstanceAttribOutput(componentInstanceAttributeOptional.get()))));
+                final var createdOutputs = createMultipleOutputs(userId, componentUniqueId, ComponentTypeEnum.SERVICE,
+                    componentInstOutputsMap, true, false);
+                if (createdOutputs.isRight()) {
+                    return Either.right((createdOutputs.right().value()));
+                }
+                result.addAll(createdOutputs.left().value());
+            }
+        }
+        return Either.left(result);
+    }
+
 }
