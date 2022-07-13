@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f5052a1_f9e8eb26",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-07-13T10:41:49Z",
+      "side": 1,
+      "message": "remove Component from the method name as this could now be either a component or group instance",
+      "range": {
+        "startLine": 522,
+        "startChar": 12,
+        "endLine": 522,
+        "endChar": 40
+      },
+      "revId": "96bc79826b26c1db4b9e5579dd8903bb83f1dea3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
