@@ -173,7 +173,12 @@ public class AttributeConverter {
 
     public void convertAndAddValue(final Map<String, Object> attribs,
                                    final AttributeDefinition attribute) {
-        final Object convertedValue = convertToToscaObject(attribute, attribute.getDefaultValue(), false);
+        final Object convertedValue;
+        if (attribute.getValue() != null) {
+            convertedValue = convertToToscaObject(attribute, attribute.getValue(), false);
+        } else {
+            convertedValue = convertToToscaObject(attribute, attribute.getDefaultValue(), false);
+        }
         if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue)) {
             attribs.put(attribute.getName(), convertedValue);
         }

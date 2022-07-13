@@ -1128,10 +1128,7 @@ public class ToscaExportHandler {
                                                   final Map<String, Object> attribs) {
 
         if (isNotEmpty(componentInstancesAttributes) && componentInstancesAttributes.containsKey(instanceUniqueId)) {
-            componentInstancesAttributes.get(instanceUniqueId).stream()
-                // Filters out Attributes with empty default values
-                .filter(attributeDefinition -> StringUtils.isNotEmpty(attributeDefinition.getDefaultValue()))
-                // Converts and adds each value to attribute map
+            componentInstancesAttributes.get(instanceUniqueId)
                 .forEach(attributeDefinition -> attributeConverter.convertAndAddValue(attribs, attributeDefinition));
         }
     }
