@@ -66,6 +66,7 @@ import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
@@ -630,6 +631,11 @@ public class ResourceImportManager {
             }
             final AttributeDefinition attributeDefinition = entry.getValue();
             attributeDefinition.setName(name);
+            if (attributeDefinition.getEntry_schema() != null && attributeDefinition.getEntry_schema().getType() != null) {
+                attributeDefinition.setSchema(new SchemaDefinition());
+                attributeDefinition.getSchema().setProperty(new PropertyDataDefinition());
+                attributeDefinition.getSchema().getProperty().setType(entry.getValue().getEntry_schema().getType());
+            }
             attributeDefinitionList.add(attributeDefinition);
         }
         resource.setAttributes(attributeDefinitionList);

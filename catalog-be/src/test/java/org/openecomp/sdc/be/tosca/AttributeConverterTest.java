@@ -33,12 +33,15 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.tosca.exception.ToscaConversionException;
 import org.openecomp.sdc.be.tosca.model.ToscaAttribute;
+import org.openecomp.sdc.be.tosca.model.ToscaSchemaDefinition;
 
 class AttributeConverterTest {
 
@@ -80,10 +83,10 @@ class AttributeConverterTest {
         attributeDefinition.setType(ToscaPropertyType.LIST.getType());
         attributeDefinition.setDescription("aDescription");
         attributeDefinition.setStatus("aStatus");
-        final EntrySchema entrySchema = new EntrySchema();
-        entrySchema.setDescription("anEntrySchemaDescription");
-        entrySchema.setType(ToscaPropertyType.LIST.getType());
-        attributeDefinition.setEntry_schema(entrySchema);
+        attributeDefinition.setSchema(new SchemaDefinition());
+        attributeDefinition.getSchema().setProperty(new PropertyDataDefinition());
+        attributeDefinition.getSchema().getProperty().setType(ToscaPropertyType.LIST.getType());
+        attributeDefinition.getSchema().getProperty().setDescription("anEntrySchemaDescription");
         final List<String> defaultValueList = new ArrayList<>();
         defaultValueList.add("entry1");
         defaultValueList.add("entry2");
@@ -143,15 +146,26 @@ class AttributeConverterTest {
     }
 
     @Test
-    void testConvertAndAddValue() throws ToscaConversionException {
+    void testConvertAndAddDefaultValue() throws ToscaConversionException {
         final AttributeConverter converter = createTestSubject();
         final AttributeDefinition attribute = new AttributeDefinition();
         attribute.setName("attrib");
         attribute.setDefaultValue("default");
         final Map<String, Object> attribs = new HashMap<>();
         converter.convertAndAddValue(attribs, attribute);
+        assertEquals(0, attribs.size());
+    }
+
+    @Test
+    void testConvertAndAddValue() throws ToscaConversionException {
+        final AttributeConverter converter = createTestSubject();
+        final AttributeDefinition attribute = new AttributeDefinition();
+        attribute.setName("attrib");
+        attribute.setValue("value");
+        final Map<String, Object> attribs = new HashMap<>();
+        converter.convertAndAddValue(attribs, attribute);
         assertEquals(1, attribs.size());
-        assertEquals("default", attribs.get("attrib"));
+        assertEquals("value", attribs.get("attrib"));
     }
 
     private AttributeConverter createTestSubject() {
@@ -167,13 +181,13 @@ class AttributeConverterTest {
         assertEquals(expectedAttributeDefinition.getType(), actualToscaAttribute.getType());
         assertEquals(expectedAttributeDefinition.getDescription(), actualToscaAttribute.getDescription());
         assertEquals(expectedAttributeDefinition.getStatus(), actualToscaAttribute.getStatus());
-        if (expectedAttributeDefinition.getEntry_schema() == null) {
+        if (expectedAttributeDefinition.getSchema() == null) {
             assertNull(actualToscaAttribute.getEntrySchema());
         } else {
-            assertEquals(expectedAttributeDefinition.getEntry_schema().getType(),
+            assertEquals(expectedAttributeDefinition.getSchema().getProperty().getType(),
                 actualToscaAttribute.getEntrySchema().getType());
             assertEquals(
-                expectedAttributeDefinition.getEntry_schema().getDescription(),
+                expectedAttributeDefinition.getSchema().getProperty().getDescription(),
                 actualToscaAttribute.getEntrySchema().getDescription());
         }
         assertEquals(expectedDefault, actualToscaAttribute.getDefault());

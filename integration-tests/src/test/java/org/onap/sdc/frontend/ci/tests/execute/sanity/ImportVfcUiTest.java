@@ -397,10 +397,7 @@ public class ImportVfcUiTest extends SetupCDTest {
         assertFalse(MapUtils.isEmpty(nodeTemplates));
 
         final Map<String, Object> attributes = getMapEntry((Map<String, Object>) nodeTemplates.get(createdComponentInstance.getName()), "attributes");
-        assertFalse(MapUtils.isEmpty(attributes));
-        assertEquals(4, attributes.keySet().stream()
-            .filter(s -> (s.contains("test_1") || s.contains("test_3") || s.contains("test_4") || s.contains("test_9")) && !s.contains("test_2"))
-            .count());
+        assertTrue(MapUtils.isEmpty(attributes));
 
         final Map<String, Object> substitutionMappings = getMapEntry(topologyTemplate, "substitution_mappings");
         assertFalse(MapUtils.isEmpty(substitutionMappings));

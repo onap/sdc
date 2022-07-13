@@ -27,6 +27,7 @@ import java.io.StringReader;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -73,7 +74,14 @@ public class AttributeConverter {
         final ToscaAttribute toscaAttribute = new ToscaAttribute();
         LOGGER.trace("Converting attribute '{}' from type '{}' with default value '{}'", attributeDefinition.getName(), attributeDefinition.getType(),
             attributeDefinition.getDefaultValue());
-        toscaAttribute.setEntrySchema(convert(attributeDefinition.getEntry_schema()));
+        SchemaDefinition schema = attributeDefinition.getSchema();
+        if (schema != null && schema.getProperty() != null && schema.getProperty().getType() != null
+            && StringUtils.isNotEmpty(schema.getProperty().getType())) {
+            final ToscaSchemaDefinition toscaSchemaDefinition = new ToscaSchemaDefinition();
+            toscaSchemaDefinition.setType(schema.getProperty().getType());
+            toscaSchemaDefinition.setDescription(schema.getProperty().getDescription());
+            toscaAttribute.setEntrySchema(toscaSchemaDefinition);
+        }
         toscaAttribute.setType(attributeDefinition.getType());
         toscaAttribute.setDescription(attributeDefinition.getDescription());
         toscaAttribute.setStatus(attributeDefinition.getStatus());
@@ -173,7 +181,7 @@ public class AttributeConverter {
 
     public void convertAndAddValue(final Map<String, Object> attribs,
                                    final AttributeDefinition attribute) {
-        final Object convertedValue = convertToToscaObject(attribute, attribute.getDefaultValue(), false);
+        final Object convertedValue = convertToToscaObject(attribute, attribute.getValue(), false);
         if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue)) {
             attribs.put(attribute.getName(), convertedValue);
         }
