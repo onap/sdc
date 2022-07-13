@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.openecomp.sdc.be.components.BeConfDependentTest;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -41,7 +40,6 @@ import org.openecomp.sdc.be.components.impl.ServiceBusinessLogic;
 import org.openecomp.sdc.be.components.path.beans.JanusGraphTestSetup;
 import org.openecomp.sdc.be.components.path.utils.GraphTestUtils;
 import org.openecomp.sdc.be.components.validation.service.ServiceValidator;
-import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphClient;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
@@ -65,8 +63,6 @@ import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.tosca.CapabilityRequirementConverter;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.datastructure.UserContext;
-import org.openecomp.sdc.common.impl.ExternalConfiguration;
-import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.common.util.ThreadLocalsHolder;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -123,7 +119,6 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
         userRole.add(user.getRole());
         UserContext userContext = new UserContext(user.getUserId(), userRole, user.getFirstName(), user.getLastName());
         ThreadLocalsHolder.setUserContext(userContext);
-        bl.setServiceValidator(serviceValidator);
     }
 
     private void initGraph() {
@@ -144,7 +139,6 @@ public abstract class BaseForwardingPathTest extends BeConfDependentTest impleme
     private Service createTestService() {
         when(catalogOperation.updateCatalog(any(), any())).thenReturn(ActionStatus.OK);
         bl.setCatalogOperations(catalogOperation);
-        bl.setServiceValidator(serviceValidator);
         createCategory();
         createServiceCategory(CATEGORY_NAME);
         initGraph();
