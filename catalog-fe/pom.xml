@@ -24,7 +24,7 @@
             <groupId>org.functionaljava</groupId>
             <artifactId>functionaljava</artifactId>
             <version>${functionaljava.version}</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.onap.sdc.common</groupId>
@@ -39,6 +39,10 @@
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpcore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.functionaljava</groupId>
+                    <artifactId>functionaljava</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

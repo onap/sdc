@@ -113,6 +113,10 @@
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpcore</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.functionaljava</groupId>
+                    <artifactId>functionaljava</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 

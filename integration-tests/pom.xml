@@ -342,6 +342,12 @@ limitations under the License.
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.functionaljava</groupId>
+            <artifactId>functionaljava</artifactId>
+            <version>${functionaljava.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
