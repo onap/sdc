@@ -23,6 +23,7 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStr
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
+import com.google.gson.Gson;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -107,6 +108,7 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.UploadAttributeInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
@@ -1447,6 +1449,7 @@ public class ServiceImportBusinessLogic {
         }
         if (originResource.getAttributes() != null && !originResource.getAttributes().isEmpty()) {
             instAttributes.put(resourceInstanceId, originResource.getAttributes());
+            addAttributeValueToResourceInstance(instAttributes, uploadComponentInstanceInfo.getAttributes());
         }
         if (uploadComponentInstanceInfo.getUploadNodeFilterInfo() != null) {
             instNodeFilter.put(resourceInstanceId, uploadComponentInstanceInfo.getUploadNodeFilterInfo());
@@ -1512,6 +1515,23 @@ public class ServiceImportBusinessLogic {
             getInputIndex.setInputId(inputIndex.getUniqueId());
             getInputValues.add(getInputIndex);
         }
+    }
+
+    private void addAttributeValueToResourceInstance(Map<String, List<AttributeDefinition>> instAttributes,
+                                                     Map<String, UploadAttributeInfo> attributeMap) {
+        if (attributeMap == null) {
+            return;
+        }
+        attributeMap.forEach((attributeName, attributeValue) -> instAttributes.values()
+            .forEach(value -> value.stream().filter(attr -> attr.getName().equals(attributeName)).forEach(attr -> {
+                if (attributeValue.getValue() instanceof Collection<?> || attributeValue.getValue() instanceof Map<?, ?>) {
+                    Gson gson = new Gson();
+                    String json = gson.toJson(attributeValue.getValue());
+                    attr.setValue(json);
+                } else {
+                    attr.setValue(String.valueOf(attributeValue.getValue()));
+                }
+            })));
     }
 
     protected ResponseFormat addPropertyValuesToRi(UploadComponentInstanceInfo uploadComponentInstanceInfo, Component component,

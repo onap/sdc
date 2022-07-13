@@ -19,6 +19,7 @@
  * Modifications copyright (c) 2019 Nokia
  * ================================================================================
  */
+
 package org.openecomp.sdc.be.components.csar;
 
 import static java.util.stream.Collectors.toList;
@@ -29,6 +30,7 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMap
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.loadYamlAsStrictMap;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ATTRIBUTES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.CAPABILITIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.CAPABILITY;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT_VALUE;
@@ -100,6 +102,7 @@ import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.UploadArtifactInfo;
+import org.openecomp.sdc.be.model.UploadAttributeInfo;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
@@ -645,6 +648,7 @@ public class YamlTemplateParsingHandler {
                 setCapabilities(nodeTemplateInfo, nodeTemplateJsonMap);
                 setArtifacts(nodeTemplateInfo, nodeTemplateJsonMap);
                 updateProperties(nodeTemplateInfo, nodeTemplateJsonMap);
+                updateAttributes(nodeTemplateInfo, nodeTemplateJsonMap);
                 setDirectives(nodeTemplateInfo, nodeTemplateJsonMap);
                 setNodeFilter(nodeTemplateInfo, nodeTemplateJsonMap);
                 setSubstitutions(substitutionMappings, nodeTemplateInfo);
@@ -678,6 +682,15 @@ public class YamlTemplateParsingHandler {
             Map<String, List<UploadPropInfo>> properties = buildPropModuleFromYaml(nodeTemplateJsonMap);
             if (!properties.isEmpty()) {
                 nodeTemplateInfo.setProperties(properties);
+            }
+        }
+    }
+
+    private void updateAttributes(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
+        if (nodeTemplateJsonMap.containsKey(ATTRIBUTES.getElementName())) {
+            Map<String, UploadAttributeInfo> attributes = buildAttributeModuleFromYaml(nodeTemplateJsonMap);
+            if (!attributes.isEmpty()) {
+                nodeTemplateInfo.setAttributes(attributes);
             }
         }
     }
@@ -913,6 +926,26 @@ public class YamlTemplateParsingHandler {
             }
         }
         return regTemplateInfo;
+    }
+
+    private Map<String, UploadAttributeInfo> buildAttributeModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
+        Map<String, UploadAttributeInfo> moduleAttribute = new HashMap<>();
+        Either<Map<String, Object>, ResultStatusEnum> toscaAttributes = findFirstToscaMapElement(nodeTemplateJsonMap, ATTRIBUTES);
+        if (toscaAttributes.isLeft()) {
+            Map<String, Object> jsonAttributes = toscaAttributes.left().value();
+            for (Map.Entry<String, Object> jsonAttributeObj : jsonAttributes.entrySet()) {
+                UploadAttributeInfo attributeDef = buildAttribute(jsonAttributeObj.getKey(), jsonAttributeObj.getValue());
+                moduleAttribute.put(attributeDef.getName(), attributeDef);
+            }
+        }
+        return moduleAttribute;
+    }
+
+    private UploadAttributeInfo buildAttribute(String attributeName, Object attributeValue) {
+        UploadAttributeInfo attributeDef = new UploadAttributeInfo();
+        attributeDef.setValue(attributeValue);
+        attributeDef.setName(attributeName);
+        return attributeDef;
     }
 
     private Map<String, List<UploadPropInfo>> buildPropModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
