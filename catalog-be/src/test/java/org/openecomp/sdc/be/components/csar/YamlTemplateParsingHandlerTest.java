@@ -31,6 +31,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -258,6 +259,42 @@ public class YamlTemplateParsingHandlerTest {
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
             new HashMap<>(), "", resource, "");
         validateParsedYamlWithPolicies(parsedYaml);
+    }
+
+    @Test
+    void parseResourceInstanceWithAttributesTest() {
+        stubGetGroupType();
+        stubGetPolicyType();
+        Resource resource = new Resource();
+        ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
+                new HashMap<>(), "", resource, null);
+        validateParsedYamlWithAttributes(parsedYaml);
+    }
+
+    private void validateParsedYamlWithAttributes(ParsedToscaYamlInfo parsedYaml) {
+        ArrayList<String> expectedSubnetsShowList = new ArrayList<>();
+        expectedSubnetsShowList.add("val1");
+        expectedSubnetsShowList.add("val2");
+
+        HashMap<String, String> expectedSubnetsNameMap = new HashMap<>();
+        expectedSubnetsNameMap.put("name1", "name_val1");
+        expectedSubnetsNameMap.put("name2", "name_val2");
+
+
+        assertThat(parsedYaml.getInstances().get("resource_instance_with_attributes")).isNotNull();
+        UploadComponentInstanceInfo resourceInstanceWithAttributes = parsedYaml.getInstances().get("resource_instance_with_attributes");
+        assertEquals(5, resourceInstanceWithAttributes.getAttributes().size());
+
+        assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("fq_name"));
+        assertEquals(resourceInstanceWithAttributes.getAttributes().get("fq_name").getValue(), "fq_name_value");
+        assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("tosca_name"));
+        assertEquals(resourceInstanceWithAttributes.getAttributes().get("tosca_name").getValue(), "tosca_name_value");
+        assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("subnets_show"));
+        assertEquals(resourceInstanceWithAttributes.getAttributes().get("subnets_show").getValue(), expectedSubnetsShowList);
+        assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("subnets_name"));
+        assertEquals(resourceInstanceWithAttributes.getAttributes().get("subnets_name").getValue(), expectedSubnetsNameMap);
+        assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("new_attribute"));
+        assertEquals(resourceInstanceWithAttributes.getAttributes().get("new_attribute").getValue(), "new_attribute_value");
     }
 
     private void validateParsedYaml(ParsedToscaYamlInfo parsedYaml, String group, List<String> expectedProp) {
