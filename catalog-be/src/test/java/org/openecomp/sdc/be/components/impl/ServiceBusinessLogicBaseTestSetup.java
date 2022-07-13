@@ -91,10 +91,18 @@ import org.springframework.web.context.WebApplicationContext;
 
 class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
 
-    protected ServiceBusinessLogic bl;
     protected static final String SERVICE_CATEGORY = "Mobility";
     protected static final String INSTANTIATION_TYPE = "A-la-carte";
+    protected static final String CERTIFIED_VERSION = "1.0";
+    protected static final String UNCERTIFIED_VERSION = "0.2";
+    protected static final String COMPONNET_ID = "myUniqueId";
+    protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
+    protected static final String SERVICE_ROLE = JsonPresentationFields.SERVICE_ROLE.getPresentation();
+    protected static final String SERVICE_TYPE = JsonPresentationFields.SERVICE_TYPE.getPresentation();
+    protected static final String SERVICE_FUNCTION = JsonPresentationFields.SERVICE_FUNCTION.getPresentation();
     protected final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
+    protected ServiceBusinessLogic bl;
     protected UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     protected WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     protected WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
@@ -112,37 +120,26 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
     protected ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
     protected ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
     protected ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
-    IElementOperation mockElementDao = new ElementOperationMock();
-    DistributionEngine distributionEngine =  Mockito.mock(DistributionEngine.class);
-    ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
-    ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
-    UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
     protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator(componentsUtils);
-    protected ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
     protected ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
     protected ServiceFunctionValidator serviceFunctionValidator = new ServiceFunctionValidator(componentsUtils);
     protected ServiceInstantiationTypeValidator serviceInstantiationTypeValidator = new ServiceInstantiationTypeValidator(componentsUtils);
-    protected ComponentDescriptionValidator componentDescriptionValidator =  new ComponentDescriptionValidator(componentsUtils);
-    protected ComponentProjectCodeValidator componentProjectCodeValidator =  new ComponentProjectCodeValidator(componentsUtils);
+    protected ComponentDescriptionValidator componentDescriptionValidator = new ComponentDescriptionValidator(componentsUtils);
+    protected ComponentProjectCodeValidator componentProjectCodeValidator = new ComponentProjectCodeValidator(componentsUtils);
     protected ComponentIconValidator componentIconValidator = new ComponentIconValidator(componentsUtils);
     protected ComponentContactIdValidator componentContactIdValidator = new ComponentContactIdValidator(componentsUtils);
     protected ComponentTagsValidator componentTagsValidator = new ComponentTagsValidator(componentsUtils);
     protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
-    protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
-    protected ServiceValidator serviceValidator = createServiceValidator();
-
     protected User user = null;
     protected Resource genericService = null;
-
-    protected static final String CERTIFIED_VERSION = "1.0";
-    protected static final String UNCERTIFIED_VERSION = "0.2";
-    protected static final String COMPONNET_ID = "myUniqueId";
-    protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
-
-    protected static final String SERVICE_ROLE = JsonPresentationFields.SERVICE_ROLE.getPresentation();
-    protected static final String SERVICE_TYPE = JsonPresentationFields.SERVICE_TYPE.getPresentation();
-    protected static final String SERVICE_FUNCTION = JsonPresentationFields.SERVICE_FUNCTION.getPresentation();
+    IElementOperation mockElementDao = new ElementOperationMock();
+    protected ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
+    protected ServiceValidator serviceValidator = createServiceValidator();
+    DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
+    ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
+    ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
+    UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
 
     public ServiceBusinessLogicBaseTestSetup() {
 
@@ -150,18 +147,16 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
 
     protected ServiceValidator createServiceValidator() {
         List<ComponentFieldValidator> componentFieldValidators = Arrays.asList(componentContactIdValidator,
-                componentDescriptionValidator,
-                componentIconValidator, componentNameValidator,
-                new ComponentProjectCodeValidator(componentsUtils),
-                componentTagsValidator);
+            componentDescriptionValidator,
+            componentIconValidator, componentNameValidator,
+            new ComponentProjectCodeValidator(componentsUtils),
+            componentTagsValidator);
 
         List<ServiceFieldValidator> serviceFieldValidators = Arrays.asList(serviceCategoryValidator, new ServiceEnvironmentContextValidator(),
-                serviceInstantiationTypeValidator, new ServiceNamingPolicyValidator(componentsUtils),
-                serviceRoleValidator, serviceTypeValidator);
+            serviceInstantiationTypeValidator, new ServiceNamingPolicyValidator(componentsUtils),
+            serviceRoleValidator, serviceTypeValidator);
         return new ServiceValidator(componentsUtils, componentFieldValidators, serviceFieldValidators);
     }
-
-
 
     @BeforeEach
     public void setup() {
@@ -188,7 +183,8 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
         when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
         // artifact bussinesslogic
         ArtifactDefinition artifactDef = new ArtifactDefinition();
-        when(artifactBl.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class), Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
+        when(artifactBl.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class),
+            Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
 
         // createService
         Service serviceResponse = createServiceObject(true);
@@ -204,27 +200,22 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
         Either<Resource, StorageOperationStatus> findLatestGeneric = Either.left(genericService);
         when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_SERVICE_NAME)).thenReturn(findLatestGeneric);
 
-
-        bl = new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
-                groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
-                artifactBl, distributionEngine, componentInstanceBusinessLogic,
-                serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
-                artifactToscaOperation, componentContactIdValidator,
-                componentNameValidator, componentTagsValidator, componentValidator,
-                componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator, modelOperation);
+        bl = new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
+            interfaceLifecycleTypeOperation, artifactBl, distributionEngine, componentInstanceBusinessLogic, serviceDistributionValidation,
+            forwardingPathValidator, uiComponentDataConverter, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
+            componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator,
+            modelOperation, serviceRoleValidator, serviceInstantiationTypeValidator, serviceCategoryValidator, serviceValidator, null);
         bl.setComponentContactIdValidator(componentContactIdValidator);
         bl.setComponentIconValidator(componentIconValidator);
         bl.setComponentTagsValidator(componentTagsValidator);
         bl.setComponentNameValidator(componentNameValidator);
         bl.setComponentDescriptionValidator(componentDescriptionValidator);
         bl.setComponentProjectCodeValidator(componentProjectCodeValidator);
-        bl.setServiceCategoryValidator(serviceCategoryValidator);
         bl.setServiceTypeValidator(serviceTypeValidator);
         bl.setServiceFunctionValidator(serviceFunctionValidator);
         bl.setElementDao(mockElementDao);
         bl.setUserAdmin(mockUserAdmin);
         bl.setArtifactBl(artifactBl);
-        bl.setServiceValidator(createServiceValidator());
         bl.setGraphLockOperation(graphLockOperation);
         bl.setJanusGraphDao(mockJanusGraphDao);
         bl.setToscaOperationFacade(toscaOperationFacade);
@@ -241,7 +232,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
 
     }
 
-    protected Resource setupGenericServiceMock(){
+    protected Resource setupGenericServiceMock() {
         Resource genericService = new Resource();
         genericService.setVersion("1.0");
         genericService.setToscaResourceName(GENERIC_SERVICE_NAME);
@@ -377,7 +368,8 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
         Mockito.when(toscaOperationFacade.getToscaElement(Mockito.anyString())).thenReturn(eitherService);
 
         Either<List<DistributionDeployEvent>, ActionStatus> emptyEventList = Either.left(Collections.emptyList());
-        Mockito.when(auditingDao.getDistributionDeployByStatus(Mockito.anyString(), Mockito.eq("DResult"), Mockito.anyString())).thenReturn(emptyEventList);
+        Mockito.when(auditingDao.getDistributionDeployByStatus(Mockito.anyString(), Mockito.eq("DResult"), Mockito.anyString()))
+            .thenReturn(emptyEventList);
     }
 
     private void assertResponse(Either<Service, ResponseFormat> createResponse, ActionStatus expectedStatus, String... variables) {
@@ -386,7 +378,7 @@ class ServiceBusinessLogicBaseTestSetup extends BaseBusinessLogicMock {
 
     protected void assertComponentException(ComponentException e, ActionStatus expectedStatus, String... variables) {
         ResponseFormat actualResponse = e.getResponseFormat() != null ?
-                e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
+            e.getResponseFormat() : componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams());
         assertResponse(actualResponse, expectedStatus, variables);
     }
 
