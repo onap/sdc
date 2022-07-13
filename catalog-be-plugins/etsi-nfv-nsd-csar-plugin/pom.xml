@@ -78,12 +78,21 @@
           <groupId>ch.qos.logback</groupId>
           <artifactId>logback-classic</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.functionaljava</groupId>
+          <artifactId>functionaljava</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
       <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.functionaljava</groupId>
+      <artifactId>functionaljava</artifactId>
+      <version>${functionaljava.version}</version>
     </dependency>
 
     <!--test dependencies-->
