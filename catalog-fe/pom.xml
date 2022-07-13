@@ -21,12 +21,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.functionaljava</groupId>
-            <artifactId>functionaljava</artifactId>
-            <version>${functionaljava.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.onap.sdc.common</groupId>
             <artifactId>onap-configuration-management-api</artifactId>
             <version>${project.version}</version>
