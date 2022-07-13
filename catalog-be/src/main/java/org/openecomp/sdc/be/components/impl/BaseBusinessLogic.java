@@ -42,9 +42,9 @@ import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
@@ -579,7 +579,7 @@ public abstract class BaseBusinessLogic {
                 DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
                 if (dataTypeDefinition == null) {
                     log.debug(INVALID_PROPERTY_TYPE, propertyType);
-                    return Either.right(false); 
+                    return Either.right(false);
                 }
                 ImmutablePair<JsonElement, Boolean> validateResult = dataTypeValidatorConverter
                     .validateAndUpdate(value, dataTypeDefinition, dataTypes);
