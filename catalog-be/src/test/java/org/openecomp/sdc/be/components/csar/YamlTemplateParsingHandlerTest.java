@@ -18,21 +18,35 @@
  * ============LICENSE_END=================================================
  */
 
-package org.openecomp.sdc.be.components.impl.utils;
+package org.openecomp.sdc.be.components.csar;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import mockit.Deencapsulation;
 import org.apache.commons.collections.MapUtils;
 import org.assertj.core.util.Lists;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.openecomp.sdc.be.components.csar.CsarInfo;
-import org.openecomp.sdc.be.components.csar.YamlTemplateParsingHandler;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
@@ -54,27 +68,9 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
-
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
-
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class YamlTemplateParsingHandlerTest {
 
     @Mock
@@ -117,9 +113,9 @@ public class YamlTemplateParsingHandlerTest {
     private static final String NESTED_GROUP_NAME = "nested_mg_vepdg_group";
 
     @InjectMocks
-    YamlTemplateParsingHandler testSubject;
+    private YamlTemplateParsingHandler testSubject;
 
-    @BeforeClass()
+    @BeforeAll
     public static void prepareData() throws URISyntaxException, ZipException {
         final File csarFile = new File(
             YamlTemplateParsingHandlerTest.class.getClassLoader().getResource(CSAR_FILE_PATH).toURI());
@@ -132,34 +128,34 @@ public class YamlTemplateParsingHandlerTest {
         resourceYml = new String(mainTemplateService);
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
 
         AnnotationBusinessLogic annotationBusinessLogic = new AnnotationBusinessLogic(annotationTypeOperations,
-                annotationValidator);
+            annotationValidator);
         handler = new YamlTemplateParsingHandler(janusGraphDao, groupTypeBusinessLogic, annotationBusinessLogic, policyTypeBusinessLogic);
         ReflectionTestUtils.setField(handler, "policyTypeBusinessLogic", policyTypeBusinessLogic);
-        stubGetGroupType();
-        stubGetPolicyType();
     }
 
     @Test
-    public void parseResourceInfoFromOneNodeTest() {
+    void parseResourceInfoFromOneNodeTest() {
+        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(HEAT_GROUP_TYPE), any())).thenReturn(heatGroupType);
 
         String main_template_content = new String(csar.get(MAIN_TEMPLATE_NAME));
         CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
-                MAIN_TEMPLATE_NAME, main_template_content, true);
+            MAIN_TEMPLATE_NAME, main_template_content, true);
 
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                csarInfo.extractTypesInfo(), NODE_NAME, resource, getInterfaceTemplateYaml(csarInfo).get());
+            csarInfo.extractTypesInfo(), NODE_NAME, resource, getInterfaceTemplateYaml(csarInfo).get());
 
         validateParsedYaml(parsedYaml, NESTED_GROUP_NAME,
-                Lists.newArrayList("heat_file", "description"));
+            Lists.newArrayList("heat_file", "description"));
     }
 
     @Test
-    public void parseServicePropertiesInfoFromYamlTest() {
+    void parseServicePropertiesInfoFromYamlTest() {
+        when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(HEAT_GROUP_TYPE), any())).thenReturn(heatGroupType);
         String main_template_content = new String(csar.get(MAIN_TEMPLATE_NAME));
         CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
             MAIN_TEMPLATE_NAME, main_template_content, true);
@@ -178,30 +174,32 @@ public class YamlTemplateParsingHandlerTest {
     }
 
     @Test
-    public void parseResourceInfoFromYAMLTest() {
+    void parseResourceInfoFromYAMLTest() {
+        stubGetGroupType();
+        stubGetPolicyType();
 
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                new HashMap<>(), "", resource, null);
+            new HashMap<>(), "", resource, null);
         validateParsedYamlWithCapability(parsedYaml);
     }
 
     @Test
-    public void testSetArtifacts() {
+    void testSetArtifacts() {
         UploadComponentInstanceInfo nodeTemplateInfo = new UploadComponentInstanceInfo();
         Map<String, Object> nodeTemplateJsonMap = new HashMap<>();
         Map<String, String> nodeMap = new HashMap<>();
-        nodeMap.put("name","test_name");
-        nodeMap.put("type","test_type");
+        nodeMap.put("name", "test_name");
+        nodeMap.put("type", "test_type");
         nodeTemplateJsonMap.put(ARTIFACTS.getElementName(), nodeMap);
         Deencapsulation.invoke(testSubject, "setArtifacts", nodeTemplateInfo, nodeTemplateJsonMap);
         assertNotNull(nodeTemplateInfo.getArtifacts());
     }
 
     @Test
-    public void testCreateArtifactsModuleFromYaml() {
+    void testCreateArtifactsModuleFromYaml() {
         Map<String, Map<String, Map<String, String>>> nodeTemplateJsonMap = new HashMap<>();
-        Map<String, Map<String,String>> map0 = new HashMap<>();
+        Map<String, Map<String, String>> map0 = new HashMap<>();
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
@@ -209,54 +207,56 @@ public class YamlTemplateParsingHandlerTest {
         nodeTemplateJsonMap.put(ARTIFACTS.getElementName(), map0);
         Map<String, Map<String, UploadArtifactInfo>> result;
         result = Deencapsulation.invoke(testSubject, "createArtifactsModuleFromYaml", nodeTemplateJsonMap);
-        Assert.assertTrue(MapUtils.isNotEmpty(result));
-        Assert.assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
-        Assert.assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
-        Assert.assertEquals("test_type", result.get(ARTIFACTS.getElementName()).get("test_art").getType());
+        assertTrue(MapUtils.isNotEmpty(result));
+        assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
+        assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
+        assertEquals("test_type", result.get(ARTIFACTS.getElementName()).get("test_art").getType());
     }
 
     @Test
-    public void testAddModuleNodeTemplateArtifacts() {
+    void testAddModuleNodeTemplateArtifacts() {
         Map<String, Map<String, UploadArtifactInfo>> result = new HashMap<>();
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         Deencapsulation.invoke(testSubject, "addModuleNodeTemplateArtifacts", result, map1, "test_art");
-        Assert.assertTrue(MapUtils.isNotEmpty(result));
-        Assert.assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
-        Assert.assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
-        Assert.assertEquals("test_type", result.get(ARTIFACTS.getElementName()).get("test_art").getType());
+        assertTrue(MapUtils.isNotEmpty(result));
+        assertTrue(MapUtils.isNotEmpty(result.get(ARTIFACTS.getElementName())));
+        assertEquals("test_file", result.get(ARTIFACTS.getElementName()).get("test_art").getFile());
+        assertEquals("test_type", result.get(ARTIFACTS.getElementName()).get("test_art").getType());
     }
 
     @Test
-    public void testBuildModuleNodeTemplateArtifact() {
+    void testBuildModuleNodeTemplateArtifact() {
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         UploadArtifactInfo result;
         result = Deencapsulation.invoke(testSubject, "buildModuleNodeTemplateArtifact", map1);
         assertNotNull(result);
-        Assert.assertEquals("test_file", result.getFile());
-        Assert.assertEquals("test_type", result.getType());
+        assertEquals("test_file", result.getFile());
+        assertEquals("test_type", result.getType());
     }
 
     @Test
-    public void testFillArtifact() {
+    void testFillArtifact() {
         Map<String, String> map1 = new HashMap<>();
         map1.put("file", "test_file");
         map1.put("type", "test_type");
         UploadArtifactInfo result = new UploadArtifactInfo();
         Deencapsulation.invoke(testSubject, "fillArtifact", result, map1);
         assertNotNull(result);
-        Assert.assertEquals("test_file", result.getFile());
-        Assert.assertEquals("test_type", result.getType());
+        assertEquals("test_file", result.getFile());
+        assertEquals("test_type", result.getType());
     }
 
     @Test
-    public void parseResourceWithPoliciesDefined() {
+    void parseResourceWithPoliciesDefined() {
+        stubGetGroupType();
+        stubGetPolicyType();
         Resource resource = new Resource();
         ParsedToscaYamlInfo parsedYaml = handler.parseResourceInfoFromYAML(FILE_NAME, resourceYml, new HashMap<>(),
-                new HashMap<>(), "", resource, "");
+            new HashMap<>(), "", resource, "");
         validateParsedYamlWithPolicies(parsedYaml);
     }
 
@@ -267,10 +267,10 @@ public class YamlTemplateParsingHandlerTest {
 
         assertThat(parsedYaml.getGroups().get(group).getProperties()).isNotNull();
         assertThat(parsedYaml.getGroups().get(group).getProperties()
-                           .stream()
-                           .map(PropertyDataDefinition::getName)
-                           .collect(Collectors.toList()))
-                .containsAll(expectedProp);
+            .stream()
+            .map(PropertyDataDefinition::getName)
+            .collect(Collectors.toList()))
+            .containsAll(expectedProp);
 
         assertThat(parsedYaml.getGroups().get(group).getMembers()).isNotNull();
     }
@@ -278,13 +278,13 @@ public class YamlTemplateParsingHandlerTest {
     private void validateParsedYamlWithCapability(ParsedToscaYamlInfo parsedYaml) {
 
         final List<String> expectedProp = Lists.newArrayList("vfc_parent_port_role",
-                "network_collection_function", "vfc_instance_group_function", "subinterface_role");
+            "network_collection_function", "vfc_instance_group_function", "subinterface_role");
 
         validateParsedYaml(parsedYaml, MAIN_GROUP_NAME, expectedProp);
 
         assertThat(parsedYaml.getGroups().get(MAIN_GROUP_NAME).getCapabilities()
-                           .get(CAPABILITY_TYPE)
-                           .get(0).getProperties().get(0).getValue()).isEqualTo("success");
+            .get(CAPABILITY_TYPE)
+            .get(0).getProperties().get(0).getValue()).isEqualTo("success");
         assertThat(parsedYaml.getGroups().get(MAIN_GROUP_NAME).getCapabilities()).isNotNull();
         assertThat(parsedYaml.getSubstitutionMappingNodeType()).isEqualTo("org.openecomp.resource.abstract.nodes.VF");
     }
@@ -297,18 +297,18 @@ public class YamlTemplateParsingHandlerTest {
 
     private static GroupTypeDefinition buildRootGroupType() {
         return createGroupTypeDefinition(ROOT_GROUP_TYPE, null,
-                "The TOSCA Group Type all other TOSCA Group Types derive from");
+            "The TOSCA Group Type all other TOSCA Group Types derive from");
     }
 
     private static GroupTypeDefinition buildHeatStackGroupType() {
         GroupTypeDefinition groupType = createGroupTypeDefinition(HEAT_GROUP_TYPE, "tosca.groups.Root",
-                "Grouped all heat resources which are in the same heat stack");
+            "Grouped all heat resources which are in the same heat stack");
 
         GroupProperty property1 = createGroupProperty("heat_file",
-                "Heat file which associate to this group/heat stack", "SUPPORTED");
+            "Heat file which associate to this group/heat stack", "SUPPORTED");
 
         GroupProperty property2 = createGroupProperty("description",
-                "Group description", "SUPPORTED");
+            "Group description", "SUPPORTED");
 
         groupType.setProperties(Lists.newArrayList(property1, property2));
         return groupType;
@@ -316,19 +316,19 @@ public class YamlTemplateParsingHandlerTest {
 
     private static GroupTypeDefinition buildVfcInstanceGroupType() {
         GroupTypeDefinition groupType = createGroupTypeDefinition(VFC_GROUP_TYPE, "tosca.groups.Root",
-                "Groups of VFCs with same parent port role");
+            "Groups of VFCs with same parent port role");
 
         GroupProperty property1 = createGroupProperty("vfc_instance_group_function",
-                "Function of this VFC group", null);
+            "Function of this VFC group", null);
 
         GroupProperty property2 = createGroupProperty("vfc_parent_port_role",
-                "Common role of parent ports of VFCs in this group", null);
+            "Common role of parent ports of VFCs in this group", null);
 
         GroupProperty property3 = createGroupProperty("network_collection_function",
-                "Network collection function assigned to this group", null);
+            "Network collection function assigned to this group", null);
 
         GroupProperty property4 = createGroupProperty("subinterface_role",
-                "Common role of subinterfaces of VFCs in this group, criteria the group is created", null);
+            "Common role of subinterfaces of VFCs in this group, criteria the group is created", null);
 
         groupType.setProperties(Lists.newArrayList(property1, property2, property3, property4));
 
@@ -346,11 +346,12 @@ public class YamlTemplateParsingHandlerTest {
         return groupType;
     }
 
-    private static GroupTypeDefinition createGroupTypeDefinition(String type, String derivedFrom, String description){
+    private static GroupTypeDefinition createGroupTypeDefinition(String type, String derivedFrom, String description) {
         GroupTypeDefinition property = new GroupTypeDefinition();
 
-        if (type != null)
+        if (type != null) {
             property.setType(type);
+        }
 
         if (derivedFrom != null) {
             property.setDerivedFrom(derivedFrom);
@@ -362,11 +363,13 @@ public class YamlTemplateParsingHandlerTest {
 
         return property;
     }
+
     private static GroupProperty createGroupProperty(String name, String description,
-            String status){
+                                                     String status) {
         GroupProperty property = new GroupProperty();
-        if (name != null)
+        if (name != null) {
             property.setName(name);
+        }
 
         if (description != null) {
             property.setDescription(description);
@@ -389,14 +392,14 @@ public class YamlTemplateParsingHandlerTest {
         assertThat(parsedYaml.getPolicies().get(OPENECOMP_POLICY_NAME)).isInstanceOf(PolicyDefinition.class);
     }
 
-    private void stubGetPolicyType () {
-        when(policyTypeBusinessLogic.getLatestPolicyTypeByType(eq(OPENECOMP_ANTILOCATE_POLICY_TYPE), any())).thenReturn(
-                OPENECOMP_POLICY_TYPE);
+    private void stubGetPolicyType() {
+        when(policyTypeBusinessLogic.getLatestPolicyTypeByType(eq(OPENECOMP_ANTILOCATE_POLICY_TYPE), any()))
+            .thenReturn(OPENECOMP_POLICY_TYPE);
     }
 
     private static PolicyTypeDefinition buildOpenecompPolicyType() {
         return createPolicyTypeDefinition(OPENECOMP_POLICY_NAME, OPENECOMP_ANTILOCATE_POLICY_TYPE, ROOT_POLICIES_TYPE,
-                "The Openecomp Antilocate policy");
+            "The Openecomp Antilocate policy");
     }
 
     private static PolicyTypeDefinition createPolicyTypeDefinition(String policyName, String policyType, String derivedFrom, String description) {

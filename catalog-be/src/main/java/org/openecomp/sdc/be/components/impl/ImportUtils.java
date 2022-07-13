@@ -177,10 +177,9 @@ public final class ImportUtils {
 
     public static Either<Object, ResultStatusEnum> findToscaElement(Map<String, Object> toscaJson, TypeUtils.ToscaTagNamesEnum elementName,
                                                                     ToscaElementTypeEnum elementType) {
-        List<Object> foundElements = new ArrayList<>();
-        findToscaElements(toscaJson, elementName.getElementName(), elementType, foundElements);
-        if (!isEmpty(foundElements)) {
-            return Either.left(foundElements.get(0));
+        final var toscaElements = findToscaElements(toscaJson, elementName.getElementName(), elementType, new ArrayList<>());
+        if (toscaElements.isLeft() && CollectionUtils.isNotEmpty(toscaElements.left().value())) {
+            return Either.left(toscaElements.left().value().get(0));
         }
         return Either.right(ResultStatusEnum.ELEMENT_NOT_FOUND);
     }

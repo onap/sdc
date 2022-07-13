@@ -32,7 +32,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -118,7 +117,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 @Getter
-@Setter
 @org.springframework.stereotype.Component
 public class ServiceImportParseLogic {
 
@@ -134,25 +132,46 @@ public class ServiceImportParseLogic {
     private static final String CATEGORY_IS_EMPTY = "Resource category is empty";
     private static final Logger log = Logger.getLogger(ServiceImportParseLogic.class);
     @Autowired
-    private ServiceBusinessLogic serviceBusinessLogic;
+    private final ServiceBusinessLogic serviceBusinessLogic;
     @Autowired
-    private ComponentsUtils componentsUtils;
+    private final ComponentsUtils componentsUtils;
     @Autowired
-    private ToscaOperationFacade toscaOperationFacade;
+    private final ToscaOperationFacade toscaOperationFacade;
     @Autowired
-    private LifecycleBusinessLogic lifecycleBusinessLogic;
+    private final LifecycleBusinessLogic lifecycleBusinessLogic;
     @Autowired
-    private InputsBusinessLogic inputsBusinessLogic;
+    private final InputsBusinessLogic inputsBusinessLogic;
     @Autowired
-    private ResourceImportManager resourceImportManager;
+    private final ResourceImportManager resourceImportManager;
     @Autowired
-    private ComponentSubstitutionFilterBusinessLogic substitutionFilterBusinessLogic;
+    private final ComponentSubstitutionFilterBusinessLogic substitutionFilterBusinessLogic;
     @Autowired
-    private IInterfaceLifecycleOperation interfaceTypeOperation = null;
+    private final IInterfaceLifecycleOperation interfaceTypeOperation;
     @Autowired
-    private ICapabilityTypeOperation capabilityTypeOperation = null;
+    private final ICapabilityTypeOperation capabilityTypeOperation;
     @Autowired
-    private ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
+    private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
+    private final GroupBusinessLogic groupBusinessLogic;
+
+    public ServiceImportParseLogic(final ServiceBusinessLogic serviceBusinessLogic, final ComponentsUtils componentsUtils,
+                                   final ToscaOperationFacade toscaOperationFacade, final LifecycleBusinessLogic lifecycleBusinessLogic,
+                                   final InputsBusinessLogic inputsBusinessLogic, final ResourceImportManager resourceImportManager,
+                                   final ComponentSubstitutionFilterBusinessLogic substitutionFilterBusinessLogic,
+                                   final IInterfaceLifecycleOperation interfaceTypeOperation, final ICapabilityTypeOperation capabilityTypeOperation,
+                                   final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic,
+                                   final GroupBusinessLogic groupBusinessLogic) {
+        this.serviceBusinessLogic = serviceBusinessLogic;
+        this.componentsUtils = componentsUtils;
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.lifecycleBusinessLogic = lifecycleBusinessLogic;
+        this.inputsBusinessLogic = inputsBusinessLogic;
+        this.resourceImportManager = resourceImportManager;
+        this.substitutionFilterBusinessLogic = substitutionFilterBusinessLogic;
+        this.interfaceTypeOperation = interfaceTypeOperation;
+        this.capabilityTypeOperation = capabilityTypeOperation;
+        this.componentNodeFilterBusinessLogic = componentNodeFilterBusinessLogic;
+        this.groupBusinessLogic = groupBusinessLogic;
+    }
 
     public Either<Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(
         Map<String, NodeTypeInfo> nodeTypesInfo, CsarInfo csarInfo, Service oldResource) {
@@ -1634,18 +1653,16 @@ public class ServiceImportParseLogic {
         if (isNotEmpty(groupsToCreate)) {
             fillGroupsFinalFields(groupsToCreate);
             if (isNotEmpty(groupsFromResource)) {
-                serviceBusinessLogic.groupBusinessLogic.addGroups(resource, groupsToCreate, true).left()
-                    .on(serviceBusinessLogic::throwComponentException);
+                groupBusinessLogic.addGroups(resource, groupsToCreate, true).left().on(serviceBusinessLogic::throwComponentException);
             } else {
-                serviceBusinessLogic.groupBusinessLogic.createGroups(resource, groupsToCreate, true).left()
-                    .on(serviceBusinessLogic::throwComponentException);
+                groupBusinessLogic.createGroups(resource, groupsToCreate, true).left().on(serviceBusinessLogic::throwComponentException);
             }
         }
         if (isNotEmpty(groupsToDelete)) {
-            serviceBusinessLogic.groupBusinessLogic.deleteGroups(resource, groupsToDelete).left().on(serviceBusinessLogic::throwComponentException);
+            groupBusinessLogic.deleteGroups(resource, groupsToDelete).left().on(serviceBusinessLogic::throwComponentException);
         }
         if (isNotEmpty(groupsToUpdate)) {
-            serviceBusinessLogic.groupBusinessLogic.updateGroups(resource, groupsToUpdate, true).left()
+            groupBusinessLogic.updateGroups(resource, groupsToUpdate, true).left()
                 .on(serviceBusinessLogic::throwComponentException);
         }
     }

@@ -37,15 +37,18 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openecomp.sdc.ElementOperationMock;
-import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
+import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.distribution.engine.DistributionEngine;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.generic.GenericTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.utils.CreateServiceFromYamlParameter;
+import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
+import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
 import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
@@ -107,7 +110,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade
 import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
-import org.openecomp.sdc.be.resources.data.auditing.ResourceAdminEvent;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -133,24 +135,33 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     private static final String RESOURCE_SUBCATEGORY = "Router";
     protected final ServletContext servletContext = Mockito.mock(ServletContext.class);
     protected final ComponentValidator componentValidator = Mockito.mock(ComponentValidator.class);
-    protected ServiceImportBusinessLogic sIB1;
-    protected UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
+    final DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
+    final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
+    final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
+    final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
+    final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    final NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
+    final NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
+    //    final ServiceBusinessLogic serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
+    final CsarBusinessLogic csarBusinessLogic = Mockito.mock(CsarBusinessLogic.class);
+    final LifecycleBusinessLogic lifecycleBusinessLogic = Mockito.mock(LifecycleBusinessLogic.class);
+    final CompositionBusinessLogic compositionBusinessLogic = Mockito.mock(CompositionBusinessLogic.class);
+    final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic = Mockito.mock(ResourceDataMergeBusinessLogic.class);
+    final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic = Mockito.mock(ComponentNodeFilterBusinessLogic.class);
+    protected UserBusinessLogic userBusinessLogic = Mockito.mock(UserBusinessLogic.class);
     protected WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     protected WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
     protected ResponseFormatManager responseManager = null;
-    protected ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
+    protected ComponentsUtils componentsUtils = Mockito.mock(ComponentsUtils.class);
     protected AuditCassandraDao auditingDao = Mockito.mock(AuditCassandraDao.class);
-    protected ArtifactsBusinessLogic artifactBl = Mockito.mock(ArtifactsBusinessLogic.class);
+    protected ArtifactsBusinessLogic artifactsBusinessLogic = Mockito.mock(ArtifactsBusinessLogic.class);
     protected GraphLockOperation graphLockOperation = Mockito.mock(GraphLockOperation.class);
     protected JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     protected ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     protected CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic = Mockito.mock(CsarArtifactsAndGroupsBusinessLogic.class);
     protected GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     protected UserValidations userValidations = Mockito.mock(UserValidations.class);
-    protected ResourceAdminEvent auditArchive1 = Mockito.mock(ResourceAdminEvent.class);
     protected CatalogOperation catalogOperation = Mockito.mock(CatalogOperation.class);
-    protected ResourceAdminEvent auditArchive2 = Mockito.mock(ResourceAdminEvent.class);
-    protected ResourceAdminEvent auditRestore = Mockito.mock(ResourceAdminEvent.class);
     protected ServiceImportParseLogic serviceImportParseLogic = Mockito.mock(ServiceImportParseLogic.class);
     protected ServiceTypeValidator serviceTypeValidator = new ServiceTypeValidator(componentsUtils);
     protected ServiceRoleValidator serviceRoleValidator = new ServiceRoleValidator(componentsUtils);
@@ -164,16 +175,11 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     protected ComponentNameValidator componentNameValidator = new ComponentNameValidator(componentsUtils, toscaOperationFacade);
     protected User user = null;
     protected Resource genericService = null;
+    @Mock
+    protected ServiceBusinessLogic serviceBusinessLogic;
     IElementOperation mockElementDao = new ElementOperationMock();
     protected ServiceCategoryValidator serviceCategoryValidator = new ServiceCategoryValidator(componentsUtils, mockElementDao);
     protected ServiceValidator serviceValidator = createServiceValidator();
-    DistributionEngine distributionEngine = Mockito.mock(DistributionEngine.class);
-    ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
-    ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
-    ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
-    UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
-    NodeFilterOperation serviceFilterOperation = Mockito.mock(NodeFilterOperation.class);
-    NodeFilterValidator serviceFilterValidator = Mockito.mock(NodeFilterValidator.class);
 
     public ServiceImportBussinessLogicBaseTestSetup() {
 
@@ -205,7 +211,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         user.setLastName("Hendrix");
         user.setRole(Role.ADMIN.name());
 
-        when(mockUserAdmin.getUser("jh0003", false)).thenReturn(user);
+        when(userBusinessLogic.getUser("jh0003", false)).thenReturn(user);
         when(userValidations.validateUserExists("jh0003")).thenReturn(user);
         when(userValidations.validateUserNotEmpty(eq(user), anyString())).thenReturn(user);
         // Servlet Context attributes
@@ -218,7 +224,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         when(catalogOperation.updateCatalog(Mockito.any(), Mockito.any())).thenReturn(ActionStatus.OK);
         // artifact bussinesslogic
         ArtifactDefinition artifactDef = new ArtifactDefinition();
-        when(artifactBl.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class),
+        when(artifactsBusinessLogic.createArtifactPlaceHolderInfo(Mockito.any(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class),
             Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
 
         // createService
@@ -250,14 +256,6 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
 
         when(serviceImportParseLogic.isArtifactDeletionRequired(anyString(), any(), anyBoolean())).thenReturn(true);
 
-        sIB1 = new ServiceImportBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
-            groupTypeOperation, groupBusinessLogic, interfaceOperation, interfaceLifecycleTypeOperation,
-            artifactBl, distributionEngine, componentInstanceBusinessLogic,
-            serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter, serviceFilterOperation,
-            serviceFilterValidator, artifactToscaOperation, componentContactIdValidator,
-            componentNameValidator, componentTagsValidator, componentValidator,
-            componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
-
         mockAbstract();
 
         responseManager = ResponseFormatManager.getInstance();
@@ -267,6 +265,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         Service service = new Service();
         service.setUniqueId("sid");
         service.setName("Service");
+        service.setSystemName("SystemName");
         CategoryDefinition category = new CategoryDefinition();
         category.setName(SERVICE_CATEGORY);
         category.setIcons(Collections.singletonList("defaulticon"));
@@ -323,6 +322,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
 
     protected Resource createParseResourceObject(boolean afterCreate) {
         Resource resource = new Resource();
+        resource.setUniqueId(COMPONNET_ID);
         resource.setName(RESOURCE_NAME);
         resource.setToscaResourceName(RESOURCE_TOSCA_NAME);
         resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
@@ -371,9 +371,9 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         return groups;
     }
 
-    protected UploadComponentInstanceInfo getuploadComponentInstanceInfo() {
+    protected UploadComponentInstanceInfo getUploadComponentInstanceInfo() {
         UploadComponentInstanceInfo uploadComponentInstanceInfo = new UploadComponentInstanceInfo();
-        uploadComponentInstanceInfo.setType("resources");
+        uploadComponentInstanceInfo.setType("My-Resource_Tosca_Name");
         Collection<String> directives = new Collection<String>() {
             @Override
             public int size() {
