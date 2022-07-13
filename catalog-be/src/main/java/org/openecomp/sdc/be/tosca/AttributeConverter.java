@@ -27,6 +27,7 @@ import java.io.StringReader;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.EntrySchema;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
@@ -73,7 +74,15 @@ public class AttributeConverter {
         final ToscaAttribute toscaAttribute = new ToscaAttribute();
         LOGGER.trace("Converting attribute '{}' from type '{}' with default value '{}'", attributeDefinition.getName(), attributeDefinition.getType(),
             attributeDefinition.getDefaultValue());
-        toscaAttribute.setEntrySchema(convert(attributeDefinition.getEntry_schema()));
+        //toscaAttribute.setEntrySchema(convert(attributeDefinition.getEntry_schema()));
+        EntrySchema schema = attributeDefinition.getEntry_schema();
+        if (schema != null && schema.getType() != null && !schema.getType().isEmpty()) {
+            final ToscaSchemaDefinition toscaSchemaDefinition = new ToscaSchemaDefinition();
+            toscaSchemaDefinition.setType(schema.getType());
+            toscaSchemaDefinition.setDescription(schema.getDescription());
+            toscaAttribute.setEntrySchema(toscaSchemaDefinition);
+
+        }
         toscaAttribute.setType(attributeDefinition.getType());
         toscaAttribute.setDescription(attributeDefinition.getDescription());
         toscaAttribute.setStatus(attributeDefinition.getStatus());
@@ -104,8 +113,10 @@ public class AttributeConverter {
         final String name = attributeDefinition.getName();
         final String attributeType = attributeDefinition.getType();
         final EntrySchema schemaDefinition = attributeDefinition.getEntry_schema();
+        final SchemaDefinition schema = attributeDefinition.getSchema();
 
         final String innerType = schemaDefinition == null ? attributeType : schemaDefinition.getType();
+        final String schemaType = schema == null ? attributeType : schema.getProperty().getType();
         LOGGER.trace("Converting attribute '{}' of type '{}', value '{}', innerType '{}'", name, attributeType, value, innerType);
         if (StringUtils.isEmpty(value)) {
             value = getTypeDefaultValue(attributeType);
@@ -173,7 +184,7 @@ public class AttributeConverter {
 
     public void convertAndAddValue(final Map<String, Object> attribs,
                                    final AttributeDefinition attribute) {
-        final Object convertedValue = convertToToscaObject(attribute, attribute.getDefaultValue(), false);
+        final Object convertedValue  = convertToToscaObject(attribute, attribute.getValue(), false);
         if (!ToscaValueBaseConverter.isEmptyObjectValue(convertedValue)) {
             attribs.put(attribute.getName(), convertedValue);
         }
