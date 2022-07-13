@@ -104,6 +104,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
 
     private static final Logger log = Logger.getLogger(ComponentBusinessLogic.class.getName());
+
     protected final GroupBusinessLogic groupBusinessLogic;
     protected ArtifactsBusinessLogic artifactsBusinessLogic;
     protected GenericTypeBusinessLogic genericTypeBusinessLogic;
@@ -432,8 +433,9 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         Either<List<Component>, StorageOperationStatus> nonCheckoutCompResponse = null;
         try {
             validateUserExists(userId);
-           nonCheckoutCompResponse = toscaOperationFacade
-                .getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType, modelName, includeNormativeExtensionModels);
+            nonCheckoutCompResponse = toscaOperationFacade
+                .getLatestVersionNotAbstractMetadataOnly(isAbstractAbstract, componentTypeEnum, internalComponentType, modelName,
+                    includeNormativeExtensionModels);
             if (nonCheckoutCompResponse.isLeft()) {
                 log.debug("Retrieved Resource successfully.");
                 return Either.left(nonCheckoutCompResponse.left().value());
@@ -441,7 +443,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
             return Either
                 .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(nonCheckoutCompResponse.right().value())));
         } finally {
-            if(nonCheckoutCompResponse != null && nonCheckoutCompResponse.isLeft() ) {
+            if (nonCheckoutCompResponse != null && nonCheckoutCompResponse.isLeft()) {
                 janusGraphDao.commit();
             }
         }
@@ -547,7 +549,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         final ArtifactDefinition csarArtifact = component.getToscaArtifacts().values().stream()
             .filter(p -> p.getArtifactType().equals(ArtifactTypeEnum.TOSCA_CSAR.getType())).findAny().orElseThrow(() -> {
                 throw new ByResponseFormatComponentException(
-                        componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ArtifactTypeEnum.TOSCA_CSAR.name()));
+                    componentsUtils.getResponseFormat(ActionStatus.ARTIFACT_NOT_FOUND, ArtifactTypeEnum.TOSCA_CSAR.name()));
             });
         return artifactsBusinessLogic.handleDownloadToscaModelRequest(component, csarArtifact);
     }
@@ -691,7 +693,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         });
         return componentNonGenericInputs;
     }
-    
+
     protected void generatePropertiesFromGenericType(final Component component, final Resource genericType) {
         if (CollectionUtils.isEmpty(genericType.getProperties())) {
             return;
@@ -708,6 +710,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         }
         component.getProperties().forEach(propertyDefinition -> propertyDefinition.setUniqueId(null));
     }
+
     protected <T extends Component> Resource fetchAndSetDerivedFromGenericType(final T component) {
         return fetchAndSetDerivedFromGenericType(component, null);
     }
@@ -916,7 +919,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         if (validPropertiesMerge.isRight()) {
             if (log.isDebugEnabled()) {
                 log.debug("property {} cannot be overriden, check out performed without upgrading to latest generic",
-                        validPropertiesMerge.right().value());
+                    validPropertiesMerge.right().value());
             }
             return false;
         }
@@ -926,7 +929,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
         if (validAttributesMerge.isRight()) {
             if (log.isDebugEnabled()) {
                 log.debug("attribute {} cannot be overriden, check out performed without upgrading to latest generic",
-                        validAttributesMerge.right().value());
+                    validAttributesMerge.right().value());
             }
             return false;
         }
@@ -998,7 +1001,7 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
     protected Either<Component, ResponseFormat> updateCatalog(Component component, ChangeTypeEnum changeStatus) {
         if (log.isDebugEnabled()) {
             log.debug("update Catalog start with Component Type {} And Componet Name {} with change status {}",
-                    component.getComponentType().name(),component.getName(), changeStatus.name());
+                component.getComponentType().name(), component.getName(), changeStatus.name());
         }
         ActionStatus status = catalogOperations.updateCatalog(changeStatus, component);
         if (status != ActionStatus.OK) {
