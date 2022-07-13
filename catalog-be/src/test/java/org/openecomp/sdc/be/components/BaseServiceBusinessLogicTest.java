@@ -78,16 +78,29 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
 public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogicMock {
+
+    protected static final String CERTIFIED_VERSION = "1.0";
+    protected static final String UNCERTIFIED_VERSION = "0.2";
+    protected static final String COMPONNET_ID = "myUniqueId";
+    protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
     private static final String SERVICE_CATEGORY = "Mobility";
-    private final ServletContext servletContext = Mockito.mock(ServletContext.class);
-    private UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
-    private WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
-    private WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
+    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_CERTIFIED_VERSION = new HashMap<>();
+    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_UNCERTIFIED_VERSION_CURR = new HashMap<>();
+    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_UNCERTIFIED_VERSION_PREV = new HashMap<>();
+    protected static ForwardingPathDataDefinition forwardingPathDataDefinition;
     protected final IDistributionEngine distributionEngine = Mockito.mock(IDistributionEngine.class);
     protected final ComponentInstanceBusinessLogic componentInstanceBusinessLogic = Mockito.mock(ComponentInstanceBusinessLogic.class);
     protected final ServiceDistributionValidation serviceDistributionValidation = Mockito.mock(ServiceDistributionValidation.class);
     protected final ForwardingPathValidator forwardingPathValidator = Mockito.mock(ForwardingPathValidator.class);
     protected final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
+    private final ServletContext servletContext = Mockito.mock(ServletContext.class);
+    private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
+    User user = null;
+    Service serviceResponse = null;
+    Resource genericService = null;
+    private UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
+    private WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
+    private WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
     private ServiceBusinessLogic bl;
     private ResponseFormatManager responseManager = null;
     private IElementOperation mockElementDao;
@@ -98,20 +111,25 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
     private JanusGraphDao mockJanusGraphDao = Mockito.mock(JanusGraphDao.class);
     private ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
-    private ForwardingPathOperation forwardingPathOperation  = Mockito.mock(ForwardingPathOperation.class);
-    private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
+    private ForwardingPathOperation forwardingPathOperation = Mockito.mock(ForwardingPathOperation.class);
 
-    User user = null;
-    Service serviceResponse = null;
-    Resource genericService = null;
+    protected static ForwardingPathDataDefinition createMockPath() {
+        if (forwardingPathDataDefinition != null) {
+            return forwardingPathDataDefinition;
+        }
+        forwardingPathDataDefinition = new ForwardingPathDataDefinition("Yoyo");
+        forwardingPathDataDefinition.setUniqueId(java.util.UUID.randomUUID().toString());
+        forwardingPathDataDefinition.setDestinationPortNumber("414155");
+        forwardingPathDataDefinition.setProtocol("http");
+        org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition> forwardingPathElementDataDefinitionListDataDefinition = new org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<>();
+        forwardingPathElementDataDefinitionListDataDefinition.add(
+            new ForwardingPathElementDataDefinition("fromNode", "toNode", "333", "444", "2222", "5555"));
+        forwardingPathElementDataDefinitionListDataDefinition.add(
+            new ForwardingPathElementDataDefinition("toNode", "toNode2", "4444", "44444", "4", "44"));
+        forwardingPathDataDefinition.setPathElements(forwardingPathElementDataDefinitionListDataDefinition);
+        return forwardingPathDataDefinition;
+    }
 
-    protected static final String CERTIFIED_VERSION = "1.0";
-    protected static final String UNCERTIFIED_VERSION = "0.2";
-    protected static final String COMPONNET_ID = "myUniqueId";
-    protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
-    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_CERTIFIED_VERSION = new HashMap<>();
-    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_UNCERTIFIED_VERSION_CURR = new HashMap<>();
-    protected static Map<AuditingFieldsKey, Object> FILTER_MAP_UNCERTIFIED_VERSION_PREV = new HashMap<>();
     @Before
     public void setup() {
 
@@ -141,7 +159,8 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
 
         // artifact bussinesslogic
         ArtifactDefinition artifactDef = new ArtifactDefinition();
-        when(artifactBl.createArtifactPlaceHolderInfo(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class), Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
+        when(artifactBl.createArtifactPlaceHolderInfo(Mockito.anyString(), Mockito.anyString(), Mockito.anyMap(), Mockito.any(User.class),
+            Mockito.any(ArtifactGroupTypeEnum.class))).thenReturn(artifactDef);
 
         // createService
         serviceResponse = createServiceObject(true);
@@ -157,9 +176,9 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         when(toscaOperationFacade.getLatestCertifiedNodeTypeByToscaResourceName(GENERIC_SERVICE_NAME)).thenReturn(findLatestGeneric);
 
         //forwardingPath
-        when(forwardingPathOperation.addForwardingPath(any(),any())).thenReturn(Either.left(createMockPath()));
-        when(forwardingPathOperation.updateForwardingPath(any(),any())).thenReturn(Either.left(createMockPath()));
-        when(forwardingPathOperation.deleteForwardingPath(any(),any())).thenReturn(Either.left(Sets.newHashSet("Wow-It-Works")));
+        when(forwardingPathOperation.addForwardingPath(any(), any())).thenReturn(Either.left(createMockPath()));
+        when(forwardingPathOperation.updateForwardingPath(any(), any())).thenReturn(Either.left(createMockPath()));
+        when(forwardingPathOperation.deleteForwardingPath(any(), any())).thenReturn(Either.left(Sets.newHashSet("Wow-It-Works")));
         when(toscaOperationFacade.getToscaElement("delete_forward_test")).thenReturn(Either.left(createServiceObject(true)));
 
         bl = new ServiceBusinessLogic(elementDao, groupOperation, groupInstanceOperation,
@@ -168,7 +187,7 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
             serviceDistributionValidation, forwardingPathValidator, uiComponentDataConverter,
             artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator,
-            modelOperation);
+            modelOperation, null, null, null, null, null);
         bl.setUserAdmin(mockUserAdmin);
         bl.setGraphLockOperation(graphLockOperation);
         bl.setJanusGraphDao(mockJanusGraphDao);
@@ -192,15 +211,15 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         service.setUniqueId("serviceUniqueId");
         List<ComponentInstance> componentInstances = new ArrayList<>();
         ComponentInstance ci;
-        for(int i= 0; i<listSize; ++i){
+        for (int i = 0; i < listSize; ++i) {
             ci = new ComponentInstance();
             ci.setName("ciName" + i);
             ci.setUniqueId("ciId" + i);
-            List<GroupInstance>  groupInstances= new ArrayList<>();
+            List<GroupInstance> groupInstances = new ArrayList<>();
             GroupInstance gi;
-            for(int j = 0; j<listSize; ++j){
+            for (int j = 0; j < listSize; ++j) {
                 gi = new GroupInstance();
-                gi.setName(ci.getName( )+ "giName" + j);
+                gi.setName(ci.getName() + "giName" + j);
                 gi.setUniqueId(ci.getName() + "giId" + j);
                 groupInstances.add(gi);
             }
@@ -321,27 +340,10 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         return service;
     }
 
-    protected Resource setupGenericServiceMock(){
+    protected Resource setupGenericServiceMock() {
         Resource genericService = new Resource();
         genericService.setVersion("1.0");
         genericService.setToscaResourceName(GENERIC_SERVICE_NAME);
         return genericService;
-    }
-
-    protected static ForwardingPathDataDefinition forwardingPathDataDefinition;
-
-    protected static ForwardingPathDataDefinition createMockPath() {
-        if (forwardingPathDataDefinition != null){
-            return forwardingPathDataDefinition ;
-        }
-        forwardingPathDataDefinition = new ForwardingPathDataDefinition("Yoyo");
-        forwardingPathDataDefinition.setUniqueId(java.util.UUID.randomUUID().toString());
-        forwardingPathDataDefinition.setDestinationPortNumber("414155");
-        forwardingPathDataDefinition.setProtocol("http");
-        org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition> forwardingPathElementDataDefinitionListDataDefinition = new org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<>();
-        forwardingPathElementDataDefinitionListDataDefinition.add(new ForwardingPathElementDataDefinition("fromNode","toNode", "333","444","2222","5555"));
-        forwardingPathElementDataDefinitionListDataDefinition.add(new ForwardingPathElementDataDefinition("toNode","toNode2", "4444","44444","4","44"));
-        forwardingPathDataDefinition.setPathElements(forwardingPathElementDataDefinitionListDataDefinition);
-        return forwardingPathDataDefinition;
     }
 }
