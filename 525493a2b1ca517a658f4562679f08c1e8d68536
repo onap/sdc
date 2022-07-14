@@ -166,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "4b9e6eda_0dad4f02",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 1190,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-14T11:19:26Z",
+      "side": 1,
+      "message": "What about this problem? Same in line 1212",
+      "parentUuid": "73b758bf_1645aaeb",
+      "range": {
+        "startLine": 1190,
+        "startChar": 8,
+        "endLine": 1190,
+        "endChar": 76
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f468a41b_1752899d",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
         "patchSetId": 18
