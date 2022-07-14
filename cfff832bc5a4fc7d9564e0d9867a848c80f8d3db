@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f28d4bc3_d88abac9",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-14T16:10:24Z",
+      "side": 1,
+      "message": "avoid using wildcard imports",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 45
+      },
+      "revId": "cfff832bc5a4fc7d9564e0d9867a848c80f8d3db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc4f9cbd_76b3310e",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-14T16:10:24Z",
+      "side": 1,
+      "message": "fix formatting, missing spaces between imports to class, class to field, and between methods.",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 38
+      },
+      "revId": "cfff832bc5a4fc7d9564e0d9867a848c80f8d3db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9fa996f_3a4af46e",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-14T16:10:24Z",
+      "side": 1,
+      "message": "no need to assert not equals after the assert equals on the same value",
+      "range": {
+        "startLine": 92,
+        "startChar": 8,
+        "endLine": 92,
+        "endChar": 85
+      },
+      "revId": "cfff832bc5a4fc7d9564e0d9867a848c80f8d3db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d415e1d7_ad7012e0",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperationTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-14T16:10:24Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 94,
+        "startChar": 8,
+        "endLine": 94,
+        "endChar": 66
+      },
+      "revId": "cfff832bc5a4fc7d9564e0d9867a848c80f8d3db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
