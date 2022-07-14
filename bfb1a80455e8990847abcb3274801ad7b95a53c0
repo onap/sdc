@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "72fe228d_3b897e7a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-14T15:31:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7f08925d_01b437a7",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 23
+      },
+      "revId": "bfb1a80455e8990847abcb3274801ad7b95a53c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "420564d7_c2f7de2d",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "bfb1a80455e8990847abcb3274801ad7b95a53c0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60337739_a6aac8d9",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeFilterOperation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-14T15:31:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "420564d7_c2f7de2d",
+      "range": {
+        "startLine": 150,
+        "startChar": 70,
+        "endLine": 150,
+        "endChar": 95
+      },
+      "revId": "bfb1a80455e8990847abcb3274801ad7b95a53c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
