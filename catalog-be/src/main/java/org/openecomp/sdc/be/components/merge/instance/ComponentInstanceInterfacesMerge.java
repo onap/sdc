@@ -93,10 +93,10 @@ public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeI
                                     mergeOperationInputDefinitions(oldOperationDef.getInputs(), newOperationDefKeyValue.getInputs(),
                                         originalOperationDef.getInputs());
                                 }
-                                if (!originalOperationDef.getImplementation().equals(oldOperationDef.getImplementation())) {
+                                if (originalValueOverwritten(originalOperationDef.getImplementation(), oldOperationDef.getImplementation()) ) {
                                     newOperationDefKeyValue.setImplementation(oldOperationDef.getImplementation());
                                 }
-                                if (!originalOperationDef.getDescription().equals(oldOperationDef.getDescription())) {
+                                if (originalValueOverwritten(originalOperationDef.getDescription(), oldOperationDef.getDescription())) {
                                     newOperationDefKeyValue.setDescription(oldOperationDef.getDescription());
                                 }
                                 newInterfaceDefOperationMap.put(newOperationDefKey, newOperationDefKeyValue);
@@ -105,6 +105,13 @@ public class ComponentInstanceInterfacesMerge implements ComponentInstanceMergeI
             });
         StorageOperationStatus updateStatus = toscaOperationFacade.updateComponentInstanceInterfaces(currentComponent, instanceId);
         return componentsUtils.convertFromStorageResponse(updateStatus);
+    }
+    
+    private <T> boolean originalValueOverwritten(final T originalValue, final T oldValue) {
+        if (originalValue == null) {
+            return oldValue != null;
+        }
+        return !originalValue.equals(oldValue);
     }
 
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> oldInputs,
