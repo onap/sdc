@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ace1aea4_446c7d16",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-14T06:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d06f1b4_7bfe6abc",
+      "range": {
+        "startLine": 126,
+        "startChar": 13,
+        "endLine": 126,
+        "endChar": 39
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e73940c_03cef361",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48890872_ed1c5ab8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-14T06:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e73940c_03cef361",
+      "range": {
+        "startLine": 361,
+        "startChar": 17,
+        "endLine": 361,
+        "endChar": 58
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "66b13f64_9b45f806",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-14T06:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0008c763_1684658d",
+      "range": {
+        "startLine": 368,
+        "startChar": 32,
+        "endLine": 369,
+        "endChar": 66
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "27bd2ddf_0bc375bf",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
         "patchSetId": 3
@@ -91,6 +163,30 @@
       "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1ccfea7_29bdcacc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-14T06:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27bd2ddf_0bc375bf",
+      "range": {
+        "startLine": 370,
+        "startChar": 32,
+        "endLine": 370,
+        "endChar": 88
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "897166c1_dc8be8b2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-14T06:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "251b39ed_fa5bc6d3",
+      "range": {
+        "startLine": 396,
+        "startChar": 51,
+        "endLine": 396,
+        "endChar": 61
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3ae9f2f3_8fda6b1d",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
         "patchSetId": 3
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "efa0a045_a08fa31a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-14T06:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ae9f2f3_8fda6b1d",
+      "range": {
+        "startLine": 412,
+        "startChar": 30,
+        "endLine": 412,
+        "endChar": 43
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6e628249_7fc7dc1b",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
         "patchSetId": 3
@@ -160,6 +304,30 @@
       "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "109e21e1_cd651e61",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-14T06:41:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e628249_7fc7dc1b",
+      "range": {
+        "startLine": 132,
+        "startChar": 13,
+        "endLine": 132,
+        "endChar": 27
+      },
+      "revId": "c421d71295c317a4364fc1618189e75d1fdd7c61",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
