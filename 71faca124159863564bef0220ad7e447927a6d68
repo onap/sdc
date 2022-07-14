@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e28ca1c_2e682fcf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/AttributeConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-14T11:18:00Z",
+      "side": 1,
+      "message": "do we need to show the default value? I believe that default values are not shown in the assignment, as they are the fallback when no value is provided.",
+      "range": {
+        "startLine": 177,
+        "startChar": 8,
+        "endLine": 181,
+        "endChar": 9
+      },
+      "revId": "71faca124159863564bef0220ad7e447927a6d68",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
