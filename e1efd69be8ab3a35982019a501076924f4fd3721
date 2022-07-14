@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e7d36bab_e419406a",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/property-creator/property-creator.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-07-14T13:11:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33bc6fdc_8fa7d72f",
+      "range": {
+        "startLine": 48,
+        "startChar": 41,
+        "endLine": 48,
+        "endChar": 49
+      },
+      "revId": "e1efd69be8ab3a35982019a501076924f4fd3721",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9dc1fea5_03cbf02d",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/property-creator/property-creator.component.ts",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "419552cb_ddbae17b",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/property-creator/property-creator.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-07-14T13:11:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9dc1fea5_03cbf02d",
+      "range": {
+        "startLine": 53,
+        "startChar": 41,
+        "endLine": 53,
+        "endChar": 49
+      },
+      "revId": "e1efd69be8ab3a35982019a501076924f4fd3721",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "17b920c4_6292cf0e",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/property-creator/property-creator.component.ts",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "e1efd69be8ab3a35982019a501076924f4fd3721",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "454a643e_a3320792",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/property-creator/property-creator.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-07-14T13:11:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17b920c4_6292cf0e",
+      "range": {
+        "startLine": 81,
+        "startChar": 38,
+        "endLine": 81,
+        "endChar": 46
+      },
+      "revId": "e1efd69be8ab3a35982019a501076924f4fd3721",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
