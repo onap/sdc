@@ -100,17 +100,19 @@ import org.openecomp.sdc.be.datatypes.elements.OperationOutputDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentFieldsEnum;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
-import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ServiceDistributionReqInfo;
 import org.openecomp.sdc.be.impl.ForwardingPathUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
@@ -119,12 +121,12 @@ import org.openecomp.sdc.be.model.GroupInstanceProperty;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
-import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ForwardingPathOperation;
@@ -184,6 +186,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final ServiceDistributionValidation serviceDistributionValidation;
     private final ForwardingPathValidator forwardingPathValidator;
     private final UiComponentDataConverter uiComponentDataConverter;
+    private final ModelOperation modelOperation;
+    private final InputsBusinessLogic inputsBusinessLogic;
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
     private ServiceTypeValidator serviceTypeValidator;
@@ -197,7 +201,6 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private ServiceCategoryValidator serviceCategoryValidator;
     @Autowired
     private ServiceValidator serviceValidator;
-    private final ModelOperation modelOperation;
 
     @Autowired
     public ServiceBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
@@ -209,7 +212,8 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 ComponentContactIdValidator componentContactIdValidator, ComponentNameValidator componentNameValidator,
                                 ComponentTagsValidator componentTagsValidator, ComponentValidator componentValidator,
                                 ComponentIconValidator componentIconValidator, ComponentProjectCodeValidator componentProjectCodeValidator,
-                                ComponentDescriptionValidator componentDescriptionValidator, ModelOperation modelOperation) {
+                                ComponentDescriptionValidator componentDescriptionValidator, ModelOperation modelOperation,
+                                InputsBusinessLogic inputsBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -219,6 +223,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         this.forwardingPathValidator = forwardingPathValidator;
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.modelOperation = modelOperation;
+        this.inputsBusinessLogic = inputsBusinessLogic;
     }
 
     @Autowired
@@ -695,7 +700,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private Either<Service, ResponseFormat> createServiceByDao(final Service service, final User user) {
         log.debug("send service {} to dao for create", service.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
-        Either<Boolean, ResponseFormat> lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
+        final var lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
         if (lockResult.isRight()) {
             ResponseFormat responseFormat = lockResult.right().value();
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
@@ -708,27 +713,55 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             setToscaArtifactsPlaceHolders(service, user);
 
             if (service.isSubstituteCandidate() || genericTypeBusinessLogic.hasMandatorySubstitutionType(service)) {
-                final Resource genericType = fetchAndSetDerivedFromGenericType(service);
+                final var genericType = fetchAndSetDerivedFromGenericType(service);
                 generatePropertiesFromGenericType(service, genericType);
-                generateAndAddInputsFromGenericTypeProperties(service, genericType);
             }
             beforeCreate(service);
-            Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
-            if (dataModelResponse.isLeft()) {
-                log.debug("Service '{}' created successfully", service.getName());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
+            final var dataModelResponse = toscaOperationFacade.createToscaComponent(service);
+            if (dataModelResponse.isRight()) {
+                final var responseFormat = componentsUtils.getResponseFormatByComponent(
+                    componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service, ComponentTypeEnum.SERVICE);
+                log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
                 componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
-                ASDCKpiApi.countCreatedServicesKPI();
-                return Either.left(dataModelResponse.left().value());
+                return Either.right(responseFormat);
             }
-            ResponseFormat responseFormat = componentsUtils
-                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service,
-                    ComponentTypeEnum.SERVICE);
-            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
+            log.debug("Service '{}' created successfully", service.getName());
+            final var createdService = dataModelResponse.left().value();
+            if (service.isSubstituteCandidate() || genericTypeBusinessLogic.hasMandatorySubstitutionType(service)) {
+                declareGenericTypePropertiesAsInputs(createdService);
+            }
+            final var responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
-            return Either.right(responseFormat);
+            ASDCKpiApi.countCreatedServicesKPI();
+            return Either.left(createdService);
         } finally {
             graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
+        }
+    }
+
+    private void declareGenericTypePropertiesAsInputs(final Service service) {
+        final var genericTypeProps = service.getProperties();
+        if (CollectionUtils.isNotEmpty(genericTypeProps)) {
+            // From SELF
+            final var componentInstInputsMap = new ComponentInstInputsMap();
+            final var componentInstancePropInputs = genericTypeProps.stream()
+                .map(prop -> {
+                        prop.setInstanceUniqueId(service.getUniqueId());
+                        prop.setParentUniqueId(service.getUniqueId());
+                        return new ComponentInstancePropInput(new ComponentInstanceProperty(prop));
+                    }
+                ).collect(Collectors.toList());
+            componentInstInputsMap.setServiceProperties(Collections.singletonMap(service.getUniqueId(), componentInstancePropInputs));
+
+            final var listResponseFormatEither = inputsBusinessLogic.declareProperties(
+                service.getCreatorUserId(), service.getUniqueId(), ComponentTypeEnum.SERVICE, componentInstInputsMap);
+            if (listResponseFormatEither.isRight()) {
+                log.warn("Failed to declare Generic Type Properties as Inputs");
+                service.setInputs(null);
+                return;
+            }
+            final var createdInputs = listResponseFormatEither.left().value();
+            service.setInputs(createdInputs);
         }
     }
 

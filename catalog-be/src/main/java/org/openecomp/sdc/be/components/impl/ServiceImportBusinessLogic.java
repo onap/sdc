@@ -769,20 +769,13 @@ public class ServiceImportBusinessLogic {
     }
 
     protected boolean isNonMetaArtifact(ArtifactDefinition artifact) {
-        boolean result = true;
-        if (artifact.getMandatory() || artifact.getArtifactName() == null || !isValidArtifactType(artifact)) {
-            result = false;
-        }
-        return result;
+        return !artifact.getMandatory() && artifact.getArtifactName() != null && isValidArtifactType(artifact);
     }
 
     private boolean isValidArtifactType(ArtifactDefinition artifact) {
-        boolean result = true;
-        if (artifact.getArtifactType() == null || ArtifactTypeEnum.findType(artifact.getArtifactType()).equals(ArtifactTypeEnum.VENDOR_LICENSE)
-            || ArtifactTypeEnum.findType(artifact.getArtifactType()).equals(ArtifactTypeEnum.VF_LICENSE)) {
-            result = false;
-        }
-        return result;
+        return artifact.getArtifactType() != null && !ArtifactTypeEnum.VENDOR_LICENSE.getType()
+            .equals(ArtifactTypeEnum.findType(artifact.getArtifactType()))
+            && !ArtifactTypeEnum.VF_LICENSE.getType().equals(ArtifactTypeEnum.findType(artifact.getArtifactType()));
     }
 
     protected Either<EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<CsarUtils.NonMetaArtifactInfo>>, ResponseFormat> organizeVfCsarArtifactsByArtifactOperation(
@@ -1017,7 +1010,7 @@ public class ServiceImportBusinessLogic {
 
     private void processProperty(Map<String, DataTypeDefinition> allDataTypes, Map<String, InputDefinition> currPropertiesMap,
                                  List<ComponentInstanceInput> instPropList, UploadPropInfo propertyInfo, String propName,
-                                 List<InputDefinition> inputs2) {
+                                 List<InputDefinition> inputs) {
         InputDefinition curPropertyDef = currPropertiesMap.get(propName);
         ComponentInstanceInput property = null;
         String value = null;
@@ -1038,12 +1031,11 @@ public class ServiceImportBusinessLogic {
         if (isNotEmpty(getInputs)) {
             List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
             for (GetInputValueDataDefinition getInput : getInputs) {
-                List<InputDefinition> inputs = inputs2;
                 if (CollectionUtils.isEmpty(inputs)) {
                     throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
                 }
                 Optional<InputDefinition> optional = inputs.stream().filter(p -> p.getName().equals(getInput.getInputName())).findAny();
-                if (!optional.isPresent()) {
+                if (optional.isEmpty()) {
                     throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
                 }
                 InputDefinition input = optional.get();
@@ -1390,7 +1382,7 @@ public class ServiceImportBusinessLogic {
         log.debug("enter ServiceImportBusinessLogic processComponentInstance");
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
             .filter(i -> i.getName().equals(uploadComponentInstanceInfo.getName())).findFirst();
-        if (!currentCompInstanceOpt.isPresent()) {
+        if (currentCompInstanceOpt.isEmpty()) {
             log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(), component.getUniqueId());
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, component.getUniqueId(),
@@ -1472,7 +1464,7 @@ public class ServiceImportBusinessLogic {
         Optional<InputDefinition> optional;
         if (getInputIndex != null) {
             optional = inputs.stream().filter(p -> p.getName().equals(getInputIndex.getInputName())).findAny();
-            if (!optional.isPresent()) {
+            if (optional.isEmpty()) {
                 log.debug("Failed to find input {} ", getInputIndex.getInputName());
                 throw new ComponentException(componentsUtils.getResponseFormat(ActionStatus.INVALID_CONTENT));
             }
@@ -1678,7 +1670,7 @@ public class ServiceImportBusinessLogic {
                                                            Map<String, UploadComponentInstanceInfo> uploadResInstancesMap,
                                                            Map<ComponentInstance, Map<String, List<CapabilityDefinition>>> updatedInstCapabilities,
                                                            Map<ComponentInstance, Map<String, List<RequirementDefinition>>> updatedInstRequirements) {
-        componentInstances.stream().forEach(i -> {
+        componentInstances.forEach(i -> {
             fillUpdatedInstCapabilities(updatedInstCapabilities, i, uploadResInstancesMap.get(i.getName()).getCapabilitiesNamesToUpdate());
             fillUpdatedInstRequirements(updatedInstRequirements, i, uploadResInstancesMap.get(i.getName()).getRequirementsNamesToUpdate());
         });
@@ -1772,9 +1764,7 @@ public class ServiceImportBusinessLogic {
         String resourceInstanceId = currentCompInstance.getUniqueId();
         Map<String, List<UploadReqInfo>> regMap = nodesInfoValue.getRequirements();
         if (regMap != null) {
-            Iterator<Map.Entry<String, List<UploadReqInfo>>> nodesRegValue = regMap.entrySet().iterator();
-            while (nodesRegValue.hasNext()) {
-                Map.Entry<String, List<UploadReqInfo>> nodesRegInfoEntry = nodesRegValue.next();
+            for (Map.Entry<String, List<UploadReqInfo>> nodesRegInfoEntry : regMap.entrySet()) {
                 List<UploadReqInfo> uploadRegInfoList = nodesRegInfoEntry.getValue();
                 for (UploadReqInfo uploadRegInfo : uploadRegInfoList) {
                     log.debug("Going to create  relation {}", uploadRegInfo.getName());
@@ -2342,9 +2332,9 @@ public class ServiceImportBusinessLogic {
         if (relevantInstances == null || relevantInstances.size() != compInstancesNames.size()) {
             List<String> foundMembers = new ArrayList<>();
             if (relevantInstances != null) {
-                foundMembers = relevantInstances.keySet().stream().collect(toList());
+                foundMembers = new ArrayList<>(relevantInstances.keySet());
             }
-            compInstancesNames.removeAll(foundMembers);
+            foundMembers.forEach(compInstancesNames::remove);
             String membersAstString = compInstancesNames.stream().collect(joining(","));
             throw new ComponentException(componentsUtils
                 .getResponseFormat(ActionStatus.GROUP_INVALID_COMPONENT_INSTANCE, membersAstString, groupName, component.getNormalizedName(),
