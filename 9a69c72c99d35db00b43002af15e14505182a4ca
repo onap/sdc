@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7a4d0e7_1c63dbc0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-14T11:13:46Z",
+      "side": 1,
+      "message": "I see you\u0027ve added those in the @Autowired constructor, so you don\u0027t need to put the @Autowired annotation here.",
+      "range": {
+        "startLine": 188,
+        "startChar": 4,
+        "endLine": 199,
+        "endChar": 56
+      },
+      "revId": "9a69c72c99d35db00b43002af15e14505182a4ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ec495a0_4263f764",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-14T11:13:46Z",
+      "side": 1,
+      "message": "same comment here, no need for the @Autowired in the attributes as they are being injected in the constructor",
+      "range": {
+        "startLine": 160,
+        "startChar": 4,
+        "endLine": 191,
+        "endChar": 57
+      },
+      "revId": "9a69c72c99d35db00b43002af15e14505182a4ca",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
