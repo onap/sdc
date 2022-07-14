@@ -77,6 +77,7 @@ import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.Operation;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RelationshipImpl;
 import org.openecomp.sdc.be.model.RelationshipInfo;
@@ -112,7 +113,6 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.GeneralUtility;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -131,27 +131,18 @@ public class ServiceImportParseLogic {
     private static final String CREATE_RESOURCE_VALIDATE_CAPABILITY_TYPES = "Create Resource - validateCapabilityTypesCreate";
     private static final String CATEGORY_IS_EMPTY = "Resource category is empty";
     private static final Logger log = Logger.getLogger(ServiceImportParseLogic.class);
-    @Autowired
     private final ServiceBusinessLogic serviceBusinessLogic;
-    @Autowired
     private final ComponentsUtils componentsUtils;
-    @Autowired
     private final ToscaOperationFacade toscaOperationFacade;
-    @Autowired
     private final LifecycleBusinessLogic lifecycleBusinessLogic;
-    @Autowired
     private final InputsBusinessLogic inputsBusinessLogic;
-    @Autowired
     private final ResourceImportManager resourceImportManager;
-    @Autowired
     private final ComponentSubstitutionFilterBusinessLogic substitutionFilterBusinessLogic;
-    @Autowired
     private final IInterfaceLifecycleOperation interfaceTypeOperation;
-    @Autowired
     private final ICapabilityTypeOperation capabilityTypeOperation;
-    @Autowired
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
     private final GroupBusinessLogic groupBusinessLogic;
+    private final OutputsBusinessLogic outputsBusinessLogic;
 
     public ServiceImportParseLogic(final ServiceBusinessLogic serviceBusinessLogic, final ComponentsUtils componentsUtils,
                                    final ToscaOperationFacade toscaOperationFacade, final LifecycleBusinessLogic lifecycleBusinessLogic,
@@ -159,7 +150,7 @@ public class ServiceImportParseLogic {
                                    final ComponentSubstitutionFilterBusinessLogic substitutionFilterBusinessLogic,
                                    final IInterfaceLifecycleOperation interfaceTypeOperation, final ICapabilityTypeOperation capabilityTypeOperation,
                                    final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic,
-                                   final GroupBusinessLogic groupBusinessLogic) {
+                                   final GroupBusinessLogic groupBusinessLogic, final OutputsBusinessLogic outputsBusinessLogic) {
         this.serviceBusinessLogic = serviceBusinessLogic;
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
@@ -171,6 +162,7 @@ public class ServiceImportParseLogic {
         this.capabilityTypeOperation = capabilityTypeOperation;
         this.componentNodeFilterBusinessLogic = componentNodeFilterBusinessLogic;
         this.groupBusinessLogic = groupBusinessLogic;
+        this.outputsBusinessLogic = outputsBusinessLogic;
     }
 
     public Either<Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandle(
@@ -1039,8 +1031,6 @@ public class ServiceImportParseLogic {
                                 reqDef.setLeftOccurrences(String.valueOf(left));
                                 validRegDef = reqDef;
                                 break;
-                            } else {
-                                continue;
                             }
                         } else {
                             validRegDef = reqDef;
@@ -1066,8 +1056,6 @@ public class ServiceImportParseLogic {
                             reqDef.setLeftOccurrences(String.valueOf(left));
                             validRegDef = reqDef;
                             break;
-                        } else {
-                            continue;
                         }
                     } else {
                         validRegDef = reqDef;
@@ -1366,6 +1354,24 @@ public class ServiceImportParseLogic {
         if (updatedResource.isRight()) {
             throw new ComponentException(componentsUtils
                 .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
+                    ComponentTypeEnum.SERVICE));
+        }
+        return updatedResource.left().value();
+    }
+
+    public Service createOutputsOnService(final Service service, final Map<String, OutputDefinition> outputs, final String userId) {
+        if (MapUtils.isNotEmpty(outputs) || isNotEmpty(service.getOutputs())) {
+            final Either<List<OutputDefinition>, ResponseFormat> createOutputs = outputsBusinessLogic.createOutputsInGraph(outputs, service, userId);
+            if (createOutputs.isRight()) {
+                throw new ComponentException(createOutputs.right().value());
+            }
+        } else {
+            return service;
+        }
+        final Either<Service, StorageOperationStatus> updatedResource = toscaOperationFacade.getToscaElement(service.getUniqueId());
+        if (updatedResource.isRight()) {
+            throw new ComponentException(
+                componentsUtils.getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(updatedResource.right().value()), service,
                     ComponentTypeEnum.SERVICE));
         }
         return updatedResource.left().value();

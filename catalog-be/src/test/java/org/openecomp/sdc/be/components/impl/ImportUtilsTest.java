@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,10 +20,10 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.Lists;
 import fj.data.Either;
@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
@@ -46,6 +46,7 @@ import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.HeatParameterDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.operations.impl.AnnotationTypeOperations;
@@ -56,10 +57,32 @@ import org.yaml.snakeyaml.Yaml;
 
 public class ImportUtilsTest {
 
+    public static String loadFileNameToJsonString(String fileName) throws IOException {
+        String sourceDir = "src/test/resources/normativeTypes";
+        return loadFileNameToJsonString(sourceDir, fileName);
+    }
+
+    public static String loadCustomTypeFileNameToJsonString(String fileName) throws IOException {
+        String sourceDir = "src/test/resources/customTypes";
+        return loadFileNameToJsonString(sourceDir, fileName);
+    }
+
+    private static String loadFileNameToJsonString(String sourceDir, String fileName) throws IOException {
+        java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir, fileName);
+        byte[] fileContent = Files.readAllBytes(filePath);
+        return new String(fileContent);
+    }
+
+    private static Object loadJsonFromFile(String fileName) throws IOException {
+        String content = loadFileNameToJsonString(fileName);
+        return new Yaml().load(content);
+    }
 
     @Test
-    public void testStringTypeFindToscaElements() throws IOException {
-        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-string-list-test.yml"), "stringTestTag", ToscaElementTypeEnum.STRING, new ArrayList<>());
+    void testStringTypeFindToscaElements() throws IOException {
+        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements(
+            (Map<String, Object>) loadJsonFromFile("normative-types-string-list-test.yml"), "stringTestTag", ToscaElementTypeEnum.STRING,
+            new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
         assertEquals(4, list.size());
@@ -73,8 +96,9 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testBooleanTypeFindToscaElements() throws IOException {
-        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "required", ToscaElementTypeEnum.BOOLEAN, new ArrayList<>());
+    void testBooleanTypeFindToscaElements() throws IOException {
+        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements(
+            (Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "required", ToscaElementTypeEnum.BOOLEAN, new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
         assertEquals(3, list.size());
@@ -93,8 +117,10 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testListTypeFindToscaElements() throws IOException {
-        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-string-list-test.yml"), "listTestTag", ToscaElementTypeEnum.LIST, new ArrayList<>());
+    void testListTypeFindToscaElements() throws IOException {
+        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements(
+            (Map<String, Object>) loadJsonFromFile("normative-types-string-list-test.yml"), "listTestTag", ToscaElementTypeEnum.LIST,
+            new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
         assertEquals(3, list.size());
@@ -106,9 +132,7 @@ public class ImportUtilsTest {
                 verifyListElement1(element);
             } else if (count == 2) {
                 verifyListElement2(element);
-            }
-
-            else if (count == 3) {
+            } else if (count == 3) {
                 verifyListElement3(element);
             }
             count++;
@@ -116,8 +140,9 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testAllTypeFindToscaElements() throws IOException {
-        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "allTestTag", ToscaElementTypeEnum.ALL, new ArrayList<>());
+    void testAllTypeFindToscaElements() throws IOException {
+        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements(
+            (Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "allTestTag", ToscaElementTypeEnum.ALL, new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
         assertEquals(5, list.size());
@@ -139,14 +164,10 @@ public class ImportUtilsTest {
                 assertEquals("required", elementEntry.getKey());
                 assertTrue(elementEntry.getValue() instanceof Boolean);
                 assertTrue((Boolean) elementEntry.getValue());
-            }
-
-            else if (count == 3) {
+            } else if (count == 3) {
                 assertTrue(element instanceof String);
                 assertEquals("1 MB", element);
-            }
-
-            else if (count == 4) {
+            } else if (count == 4) {
                 assertTrue(element instanceof List);
                 List<Object> listElement = (List<Object>) element;
                 assertEquals(2, listElement.size());
@@ -173,8 +194,9 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testMapTypeFindToscaElements() throws IOException {
-        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements((Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "mapTestTag", ToscaElementTypeEnum.MAP, new ArrayList<>());
+    void testMapTypeFindToscaElements() throws IOException {
+        Either<List<Object>, ResultStatusEnum> toscaElements = ImportUtils.findToscaElements(
+            (Map<String, Object>) loadJsonFromFile("normative-types-all-map-test.yml"), "mapTestTag", ToscaElementTypeEnum.MAP, new ArrayList<>());
         assertTrue(toscaElements.isLeft());
         List<Object> list = toscaElements.left().value();
         assertEquals(2, list.size());
@@ -214,14 +236,14 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testCreateFullHeatParameterModuleWithString() {
+    void testCreateFullHeatParameterModuleWithString() {
 
         testCreateFullHeatParameterModule("string", "default value");
 
     }
 
     @Test
-    public void testCreateFullHeatParameterModuleWithNumber() {
+    void testCreateFullHeatParameterModuleWithNumber() {
 
         testCreateFullHeatParameterModule("number", "777");
         testCreateFullHeatParameterModule("number", "777.23");
@@ -229,7 +251,7 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testCreateFullHeatParameterModuleWithBoolean() {
+    void testCreateFullHeatParameterModuleWithBoolean() {
 
         testCreateFullHeatParameterModule("boolean", "true");
         testCreateFullHeatParameterModule("boolean", "on");
@@ -238,34 +260,14 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testCreateFullHeatParameterModuleWithList() {
+    void testCreateFullHeatParameterModuleWithList() {
 
         testCreateFullHeatParameterModule("comma_delimited_list", "[one, two]");
 
     }
 
-    // @Test
-    // public void testCreateFullHeatParameterModuleWithInvalidType(){
-    //
-    // String name = "fullParameter";
-    // String description = "description_text";
-    //
-    // Map<String, Object> parametersMap = new HashMap<String, Object>();
-    // Map<String, Object> firstParam = createParameterMap("aaa", "aaa",
-    // name, description);
-    // parametersMap.put(ToscaTagNamesEnum.PARAMETERS.getElementName(),
-    // firstParam);
-    //
-    // Either<List<HeatParameterDefinition>,ResultStatusEnum> heatParameters =
-    // ImportUtils.getHeatParameters(parametersMap);
-    // assertTrue(heatParameters.isRight());
-    // assertEquals(ResultStatusEnum.INVALID_PROPERTY_TYPE,
-    // heatParameters.right().value());
-    //
-    // }
-
     @Test
-    public void testCreateFullHeatParameterModuleWithMissingType() {
+    void testCreateFullHeatParameterModuleWithMissingType() {
 
         String name = "fullParameter";
         String description = "description_text";
@@ -274,14 +276,15 @@ public class ImportUtilsTest {
         Map<String, Object> firstParam = createParameterMap(null, "aaa", name, description);
         parametersMap.put(TypeUtils.ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
 
-        Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap, ArtifactTypeEnum.HEAT.getType());
+        Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap,
+            ArtifactTypeEnum.HEAT.getType());
         assertTrue(heatParameters.isRight());
         assertEquals(ResultStatusEnum.INVALID_PROPERTY_TYPE, heatParameters.right().value());
 
     }
 
     @Test
-    public void testCreateFullHeatParameterModuleWithMissingFields() {
+    void testCreateFullHeatParameterModuleWithMissingFields() {
 
         String name = "fullParameter";
 
@@ -292,7 +295,8 @@ public class ImportUtilsTest {
         Map<String, Object> firstParam = createParameterMap(type, defValue, name, null);
         parametersMap.put(TypeUtils.ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
 
-        Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap, ArtifactTypeEnum.HEAT.getType());
+        Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap,
+            ArtifactTypeEnum.HEAT.getType());
         assertTrue(heatParameters.isLeft());
         List<HeatParameterDefinition> parameterDefList = heatParameters.left().value();
         assertFalse(parameterDefList.isEmpty());
@@ -303,7 +307,7 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testGetPropertiesFromYml() throws IOException {
+    void testGetPropertiesFromYml() throws IOException {
 
         Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaProperties.yml");
         Either<Map<String, PropertyDefinition>, ResultStatusEnum> actualProperties = ImportUtils.getProperties(toscaJson);
@@ -314,7 +318,7 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testGetPropertiesWithConstraintsFromYml() throws IOException {
+    void testGetPropertiesWithConstraintsFromYml() throws IOException {
 
         Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("propertyConstraintsTest.yml");
         Either<Map<String, PropertyDefinition>, ResultStatusEnum> actualProperties = ImportUtils.getProperties(toscaJson);
@@ -322,7 +326,7 @@ public class ImportUtilsTest {
         Map<String, PropertyDefinition> properties = actualProperties.left().value();
         assertTrue(properties.containsKey("service_type"));
         PropertyDefinition property = properties.get("service_type");
-        assertTrue(property.getConstraints()!= null && property.getConstraints().size() == 1);
+        assertTrue(property.getConstraints() != null && property.getConstraints().size() == 1);
         assertTrue(property.getConstraints().get(0) instanceof ValidValuesConstraint);
         assertNotNull(((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues());
         List<String> validValues = ((ValidValuesConstraint) property.getConstraints().get(0)).getValidValues();
@@ -330,7 +334,7 @@ public class ImportUtilsTest {
 
         assertTrue(properties.containsKey("service_interface_type_list"));
         property = properties.get("service_interface_type_list");
-        assertTrue(property.getSchema()!= null && property.getSchema().getProperty() != null);
+        assertTrue(property.getSchema() != null && property.getSchema().getProperty() != null);
         PropertyDefinition innerProperty = new PropertyDefinition(property.getSchema().getProperty());
         List<PropertyConstraint> innerConstraints = innerProperty.getConstraints();
         assertTrue(innerConstraints.get(0) instanceof ValidValuesConstraint);
@@ -340,14 +344,14 @@ public class ImportUtilsTest {
     }
 
     @Test
-    public void testGetInputsFromYml() throws IOException {
+    void testGetInputsFromYml() throws IOException {
 
-        Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaInputs.yml");
+        Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaInputsOutputs.yml");
 
-        AnnotationTypeOperations annotationTypeOperations= Mockito.mock(AnnotationTypeOperations.class);
+        AnnotationTypeOperations annotationTypeOperations = Mockito.mock(AnnotationTypeOperations.class);
         Mockito.when(annotationTypeOperations.getLatestType(Mockito.anyString())).thenReturn(null);
 
-        Either<Map<String, InputDefinition>, ResultStatusEnum> actualInputs = ImportUtils.getInputs(toscaJson,annotationTypeOperations);
+        Either<Map<String, InputDefinition>, ResultStatusEnum> actualInputs = ImportUtils.getInputs(toscaJson, annotationTypeOperations);
         assertTrue(actualInputs.isLeft());
         Map<String, Map<String, Object>> expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.INPUTS);
         compareProperties(expectedProperties, actualInputs.left().value());
@@ -358,7 +362,18 @@ public class ImportUtilsTest {
         compareProperties(expectedProperties, actualInputs.left().value());
     }
 
-    private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, AttributeDataDefinition> actual) {
+    @Test
+    void testGetOutputsFromYml() throws IOException {
+
+        Map<String, Object> toscaJson = (Map<String, Object>) loadJsonFromFile("importToscaInputsOutputs.yml");
+
+        Either<Map<String, OutputDefinition>, ResultStatusEnum> actualOutputs = ImportUtils.getOutputs(toscaJson);
+        assertTrue(actualOutputs.isLeft());
+        Map<String, Map<String, Object>> expectedProperties = getElements(toscaJson, TypeUtils.ToscaTagNamesEnum.OUTPUTS);
+        compareAttributes(expectedProperties, actualOutputs.left().value());
+    }
+
+    private void compareAttributes(Map<String, Map<String, Object>> expected, Map<String, OutputDefinition> actual) {
 
         Map<String, Object> singleExpectedAttribute;
         AttributeDataDefinition actualAttribute, expectedAttributeModel;
@@ -373,11 +388,11 @@ public class ImportUtilsTest {
             expectedAttributeModel = ImportUtils.createModuleAttribute(singleExpectedAttribute);
             expectedAttributeModel.setName(expectedAttribute.getKey().toString());
 
-            assertEquals(((AttributeDefinition)expectedAttributeModel).getDefaultValue(), ((AttributeDefinition)actualAttribute).getDefaultValue());
-            assertEquals(((AttributeDefinition)expectedAttributeModel).getDescription(), ((AttributeDefinition)actualAttribute).getDescription());
-            assertEquals(((AttributeDefinition)expectedAttributeModel).getName(), ((AttributeDefinition)actualAttribute).getName());
-            assertEquals(((AttributeDefinition)expectedAttributeModel).getStatus(), ((AttributeDefinition)actualAttribute).getStatus());
-            assertEquals(((AttributeDefinition)expectedAttributeModel).getType(), ((AttributeDefinition)actualAttribute).getType());
+            assertEquals(((AttributeDefinition) expectedAttributeModel).getDefaultValue(), ((AttributeDefinition) actualAttribute).getDefaultValue());
+            assertEquals(((AttributeDefinition) expectedAttributeModel).getDescription(), ((AttributeDefinition) actualAttribute).getDescription());
+            assertEquals(((AttributeDefinition) expectedAttributeModel).getName(), ((AttributeDefinition) actualAttribute).getName());
+            assertEquals(((AttributeDefinition) expectedAttributeModel).getStatus(), ((AttributeDefinition) actualAttribute).getStatus());
+            assertEquals(((AttributeDefinition) expectedAttributeModel).getType(), ((AttributeDefinition) actualAttribute).getType());
 
             compareSchemas(expectedAttributeModel.getSchema(), actualAttribute.getSchema());
 
@@ -385,7 +400,7 @@ public class ImportUtilsTest {
 
     }
 
-    private  void compareProperties(Map<String, Map<String, Object>> expected, Map<String, ? extends PropertyDefinition > actual) {
+    private void compareProperties(Map<String, Map<String, Object>> expected, Map<String, ? extends PropertyDefinition> actual) {
 
         Map<String, Object> singleExpectedProperty;
         PropertyDefinition actualProperty, expectedPropertyModel;
@@ -444,7 +459,8 @@ public class ImportUtilsTest {
         Map<String, Object> firstParam = createParameterMap(type, defaultVal, name, description);
         parametersMap.put(TypeUtils.ToscaTagNamesEnum.PARAMETERS.getElementName(), firstParam);
 
-        Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap, ArtifactTypeEnum.HEAT.getType());
+        Either<List<HeatParameterDefinition>, ResultStatusEnum> heatParameters = ImportUtils.getHeatParameters(parametersMap,
+            ArtifactTypeEnum.HEAT.getType());
         assertTrue(heatParameters.isLeft());
         List<HeatParameterDefinition> parameterDefList = heatParameters.left().value();
         assertFalse(parameterDefList.isEmpty());
@@ -530,28 +546,6 @@ public class ImportUtilsTest {
         innerEntry = innerElement.entrySet().iterator().next();
         assertEquals("stringTestTag", innerEntry.getKey());
         assertEquals("stringVal2", innerEntry.getValue());
-    }
-
-    public static String loadFileNameToJsonString(String fileName) throws IOException {
-        String sourceDir = "src/test/resources/normativeTypes";
-    	return loadFileNameToJsonString(sourceDir, fileName);
-    }
-    
-    public static String loadCustomTypeFileNameToJsonString(String fileName) throws IOException {
-        String sourceDir = "src/test/resources/customTypes";
-    	return loadFileNameToJsonString(sourceDir, fileName);
-    }
-    
-    private static String loadFileNameToJsonString(String sourceDir, String fileName) throws IOException {
-        java.nio.file.Path filePath = FileSystems.getDefault().getPath(sourceDir, fileName);
-        byte[] fileContent = Files.readAllBytes(filePath);
-        return new String(fileContent);
-    }
-
-
-    private static Object loadJsonFromFile(String fileName) throws IOException {
-        String content = loadFileNameToJsonString(fileName);
-        return new Yaml().load(content);
     }
 
 }

@@ -26,6 +26,7 @@ import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.ServiceImportBusinessLogic.CREATE_RESOURCE;
 
@@ -50,7 +51,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
@@ -108,18 +108,15 @@ import org.openecomp.sdc.exception.ResponseFormat;
 
 class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
 
+    private static final String DEFAULT_ICON = "defaulticon";
+
+    private final ArtifactDefinition artifactDefinition = mock(ArtifactDefinition.class);
+    private final ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
+    private final ServletUtils servletUtils = mock(ServletUtils.class);
+    private final AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
+        componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
-
-    @Mock
-    private ArtifactDefinition artifactDefinition;
-    @Mock
-    private ServletUtils servletUtils;
-    @Mock
-    private ResourceImportManager resourceImportManager;
-
-    private AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
-        componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
 
     public static String loadFileNameToJsonString(String fileName) throws IOException {
         String sourceDir = "src/test/resources/normativeTypes";
@@ -185,6 +182,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(serviceImportParseLogic.getServiceWithGroups(anyString())).thenReturn(newService);
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponentByName(anyString(), anyString(), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
+        when(serviceImportParseLogic.createOutputsOnService(any(Service.class), any(), anyString())).thenReturn(newService);
 
         Service result = sIBL.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
         assertNotNull(result);
@@ -259,7 +257,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceFromYaml(oldService,
             topologyTemplateYaml, yamlName, nodeTypesInfo, csarInfo,
-            nodeTypesArtifactsToCreate, false, true, nodeName));
+            nodeTypesArtifactsToCreate, false, true, nodeName, user.getUserId()));
     }
 
     @Test
@@ -278,7 +276,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         csfyp.setParsedToscaYamlInfo(parsedToscaYamlInfo);
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(resource));
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceAndRIsFromYaml(oldService,
-            false, nodeTypesArtifactsToCreate, false, true, csfyp));
+            false, nodeTypesArtifactsToCreate, false, true, csfyp, user.getUserId()));
     }
 
     @Test
@@ -297,7 +295,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         csfyp.setParsedToscaYamlInfo(parsedToscaYamlInfo);
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(resource));
         Assertions.assertThrows(ComponentException.class, () -> sIBL.createServiceAndRIsFromYaml(oldService,
-            false, nodeTypesArtifactsToCreate, false, true, csfyp));
+            false, nodeTypesArtifactsToCreate, false, true, csfyp, user.getUserId()));
     }
 
     @Test
@@ -749,21 +747,26 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     void testCreateGroupsOnResourceNull() {
         Service service = createServiceObject(true);
         Map<String, GroupDefinition> groups = new HashMap<>();
-        Assertions.assertNotNull(sIBL.createGroupsOnResource(service, groups));
+        Assertions.assertNotNull(
+            sIBL.createGroupsOnResource(service, groups));
     }
 
     @Test
     void testUpdateGroupsMembersUsingResource() {
         Service service = createServiceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
-        Assertions.assertNotNull(sIBL.updateGroupsMembersUsingResource(groups, service));
+
+        Assertions.assertNotNull(
+            sIBL.updateGroupsMembersUsingResource(groups, service));
     }
 
     @Test
     void testUpdateGroupsMembersUsingResource_left() {
         Service service = createServiceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
-        Assertions.assertNotNull(sIBL.updateGroupsMembersUsingResource(groups, service));
+
+        Assertions.assertNotNull(
+            sIBL.updateGroupsMembersUsingResource(groups, service));
     }
 
     @Test
@@ -1881,7 +1884,9 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         groupDefinition.setUniqueId("groupDefinitionUniqueId");
         groupDefinition.setName("groupDefinition");
         groupDefinitionList.add(groupDefinition);
-        Assertions.assertNotNull(sIBL.createGroupsOnResource(resource, groups));
+
+        Assertions.assertNotNull(
+            sIBL.createGroupsOnResource(resource, groups));
     }
 
     @Test
@@ -1897,14 +1902,18 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     void testUpdateGroupsMembersUsingResource2() {
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
-        Assertions.assertNotNull(sIBL.updateGroupsMembersUsingResource(groups, resource));
+
+        Assertions.assertNotNull(
+            sIBL.updateGroupsMembersUsingResource(groups, resource));
     }
 
     @Test
     void testUpdateGroupsMembersUsingResource_left2() {
         Resource resource = createParseResourceObject(true);
         Map<String, GroupDefinition> groups = getGroups();
-        Assertions.assertNotNull(sIBL.updateGroupsMembersUsingResource(groups, resource));
+
+        Assertions.assertNotNull(
+            sIBL.updateGroupsMembersUsingResource(groups, resource));
     }
 
     @Test
