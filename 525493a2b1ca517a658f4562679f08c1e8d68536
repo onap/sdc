@@ -190,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "3f3140eb_277b2cb7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 1190,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-14T13:53:40Z",
+      "side": 1,
+      "message": "sorry, I was sure that I answered this somewhere...\n\nanyway, according to org.openecomp.sdc.be.components.impl.exceptions.ComponentException#ComponentException(org.openecomp.sdc.exception.ResponseFormat)\n\n    public ComponentException(ResponseFormat responseFormat) {\n        this(responseFormat, ActionStatus.OK, null);\n    }",
+      "parentUuid": "4b9e6eda_0dad4f02",
+      "range": {
+        "startLine": 1190,
+        "startChar": 8,
+        "endLine": 1190,
+        "endChar": 76
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f468a41b_1752899d",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
         "patchSetId": 18
@@ -225,6 +249,30 @@
       "side": 1,
       "message": "same here",
       "parentUuid": "f468a41b_1752899d",
+      "range": {
+        "startLine": 1211,
+        "startChar": 8,
+        "endLine": 1212,
+        "endChar": 76
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e0cdb2b_03bd160a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 1212,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-14T13:53:40Z",
+      "side": 1,
+      "message": "same here",
+      "parentUuid": "ba9dc8cd_777914c0",
       "range": {
         "startLine": 1211,
         "startChar": 8,
