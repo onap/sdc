@@ -18,7 +18,6 @@
  */
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,17 +28,18 @@ import org.openecomp.sdc.be.datatypes.elements.AttributeDataDefinition;
 @NoArgsConstructor
 public class OutputDefinition extends AttributeDefinition {
 
-    private List<ComponentInstanceAttribute> attributes;
+    private ComponentInstanceAttribute attribute;
 
     public OutputDefinition(final AttributeDataDefinition attributeDataDefinition) {
         super(attributeDataDefinition);
     }
 
-    public OutputDefinition(AttributeDefinition propertyDefinition) {
-        super(propertyDefinition);
+    public OutputDefinition(AttributeDefinition attributeDefinition) {
+        super(attributeDefinition);
     }
 
     public OutputDefinition(final OutputDefinition outputDefinition) {
         super(outputDefinition);
+        this.attribute = outputDefinition.getAttribute();
     }
 }

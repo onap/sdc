@@ -42,6 +42,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OUTPUTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.POLICIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.PROPERTIES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIREMENTS;
@@ -93,6 +94,7 @@ import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupTypeDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
 import org.openecomp.sdc.be.model.PolicyDefinition;
 import org.openecomp.sdc.be.model.PolicyTypeDefinition;
@@ -135,13 +137,16 @@ public class YamlTemplateParsingHandler {
                                                          Map<String, NodeTypeInfo> nodeTypesInfo, String nodeName,
                                                          Component component, String interfaceTemplateYaml) {
         log.debug("#parseResourceInfoFromYAML - Going to parse yaml {} ", fileName);
-        Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
-        ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
-        Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE,
+        final Map<String, Object> mappedToscaTemplate = getMappedToscaTemplate(fileName, resourceYml, nodeTypesInfo, nodeName);
+        final ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
+        final Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE,
             ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
-        Map<String, Object> mappedTopologyTemplateInputs = mappedTopologyTemplate.entrySet().stream()
+        final Map<String, Object> mappedTopologyTemplateInputs = mappedTopologyTemplate.entrySet().stream()
             .filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        final Map<String, Object> mappedTopologyTemplateOutputs = mappedTopologyTemplate.entrySet().stream()
+            .filter(entry -> entry.getKey().equals(OUTPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
+        parsedToscaYamlInfo.setOutputs(getOutputs(mappedTopologyTemplateOutputs));
         parsedToscaYamlInfo.setInstances(getInstances(mappedToscaTemplate, createdNodesToscaResourceNames));
         parsedToscaYamlInfo.setGroups(getGroups(mappedToscaTemplate, component.getModel()));
         parsedToscaYamlInfo.setPolicies(getPolicies(mappedToscaTemplate, component.getModel()));
@@ -188,6 +193,10 @@ public class YamlTemplateParsingHandler {
             .on(err -> new HashMap<>());
         annotationBusinessLogic.validateAndMergeAnnotationsAndAssignToInput(inputs);
         return inputs;
+    }
+
+    private Map<String, OutputDefinition> getOutputs(Map<String, Object> toscaJson) {
+        return ImportUtils.getOutputs(toscaJson).left().on(err -> new HashMap<>());
     }
 
     private Map<String, PropertyDefinition> getProperties(Map<String, Object> toscaJson) {
