@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "685bb38d_5477a849",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fcaf2950_18db49e8",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 48
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0b1eef5c_61573537",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidator.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14dfe7ce_257c1434",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b1eef5c_61573537",
+      "range": {
+        "startLine": 37,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 5
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "b0506f61_7964ca89",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "https://yaml.org/type/timestamp.html , in order to admit \"no time zone (Z): 2001-12-15 2:59:43.10\" as a valid timestamp, I added this optional pattern",
+      "parentUuid": "c3d90b72_00478b06",
+      "range": {
+        "startLine": 52,
+        "startChar": 72,
+        "endLine": 52,
+        "endChar": 73
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e0d4dcdc_11f80c88",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidator.java",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68b587a3_9603818f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatterBuilder.html#appendOffset-java.lang.String-java.lang.String-\n\nIn order to admit \"space separated:  2001-12-14 21:59:43.10 -5\" as a valid timestamp, I added the optional Offset with whitespace literal plus pattern \"+H\" (the -5), \"+HH\" pattern wouldn be accepted here. The noOffsetText doesnt apply here, just must be not null. Moved to \"0000\" though",
+      "parentUuid": "e0d4dcdc_11f80c88",
+      "range": {
+        "startLine": 55,
+        "startChar": 18,
+        "endLine": 55,
+        "endChar": 43
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "ccc71637_be0f1a67",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/ToscaTypeTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "403c729a_10593578",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 21
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d50c51b8_f52f0e0e",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidatorTest.java",
         "patchSetId": 1
@@ -137,6 +257,30 @@
       "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87a05296_0cbfd84e",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d50c51b8_f52f0e0e",
+      "range": {
+        "startLine": 26,
+        "startChar": 44,
+        "endLine": 26,
+        "endChar": 49
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "4c8790d9_739a57ab",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidatorTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89653510_e357273c",
+      "range": {
+        "startLine": 33,
+        "startChar": 9,
+        "endLine": 33,
+        "endChar": 31
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d72e3aa2_73a74424",
         "filename": "catalog-ui/src/app/ng2/components/logic/properties-table/dynamic-property/dynamic-property.component.ts",
         "patchSetId": 1
@@ -183,6 +351,30 @@
       "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13530c8a_2994f604",
+        "filename": "catalog-ui/src/app/ng2/components/logic/properties-table/dynamic-property/dynamic-property.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d72e3aa2_73a74424",
+      "range": {
+        "startLine": 84,
+        "startChar": 76,
+        "endLine": 84,
+        "endChar": 87
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "ddf14f7d_29f781ad",
+        "filename": "catalog-ui/src/app/ng2/components/ui/dynamic-element/dynamic-element.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "826df17e_0c96a7d2",
+      "range": {
+        "startLine": 111,
+        "startChar": 31,
+        "endLine": 111,
+        "endChar": 42
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7306db9_fc8995f0",
         "filename": "catalog-ui/src/app/ng2/components/ui/dynamic-element/dynamic-element.component.ts",
         "patchSetId": 1
@@ -229,6 +445,30 @@
       "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8529ce92_c94d3a5e",
+        "filename": "catalog-ui/src/app/ng2/components/ui/dynamic-element/dynamic-element.component.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-07-15T08:03:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7306db9_fc8995f0",
+      "range": {
+        "startLine": 153,
+        "startChar": 13,
+        "endLine": 153,
+        "endChar": 24
+      },
+      "revId": "1b9271a3bfbfcbf25268f672145703ef1c25c456",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
