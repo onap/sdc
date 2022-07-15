@@ -167,7 +167,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
         }
         Map<String, MapPropertiesDataDefinition> propertiesMap = getCapabilitiesPropertiesDataDefinitionMap(capabilityDefinitions);
         if (MapUtils.isNotEmpty(propertiesMap)) {
-            StorageOperationStatus storageOperationStatus = capabilitiesOperation.createOrUpdateCapabilityProperties(componentId, propertiesMap);
+            StorageOperationStatus storageOperationStatus = capabilitiesOperation.createOrUpdateCapabilityProperties(componentId, storedComponent.isTopologyTemplate(), propertiesMap);
             if (storageOperationStatus != StorageOperationStatus.OK) {
                 janusGraphDao.rollback();
                 return Either.right(componentsUtils.getResponseFormat(storageOperationStatus));
@@ -251,7 +251,7 @@ public class CapabilitiesBusinessLogic extends BaseBusinessLogic {
             }
             Map<String, MapPropertiesDataDefinition> propertiesMap = getCapabilitiesPropertiesDataDefinitionMap(capabilityDefinitions);
             if (MapUtils.isNotEmpty(propertiesMap)) {
-                StorageOperationStatus storageOperationStatus = capabilitiesOperation.createOrUpdateCapabilityProperties(componentId, propertiesMap);
+                StorageOperationStatus storageOperationStatus = capabilitiesOperation.createOrUpdateCapabilityProperties(componentId, storedComponent.isTopologyTemplate(), propertiesMap);
                 if (storageOperationStatus != StorageOperationStatus.OK) {
                     janusGraphDao.rollback();
                     return Either.right(componentsUtils.getResponseFormat(storageOperationStatus));

@@ -79,7 +79,7 @@ public class CapabilitiesOperationTest {
         Map<String, MapPropertiesDataDefinition> propertiesMap = new HashMap<>();
         propertiesMap.put(propertyDataDefinition.getUniqueId(), mapPropertiesDataDefinition);
 
-        StorageOperationStatus operationStatus = operation.createOrUpdateCapabilityProperties("componentId",
+        StorageOperationStatus operationStatus = operation.createOrUpdateCapabilityProperties("componentId", true,
                 propertiesMap);
 
         Assert.assertEquals(StorageOperationStatus.OK, operationStatus);
