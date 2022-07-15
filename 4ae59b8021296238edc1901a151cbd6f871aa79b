@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1fd3628e_a16ff5cd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ComponentsUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-15T17:08:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9fe1b859_53122ca0",
+      "range": {
+        "startLine": 234,
+        "startChar": 0,
+        "endLine": 234,
+        "endChar": 2
+      },
+      "revId": "4ae59b8021296238edc1901a151cbd6f871aa79b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "018c1e30_1dc94d17",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/GroupsOperation.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "4ae59b8021296238edc1901a151cbd6f871aa79b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0552a092_06f305bc",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/GroupsOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-15T17:08:47Z",
+      "side": 1,
+      "message": "this method was already not covered, I simply refactored this basic get and set copy from ToscaGetFunction to the new ToscaFunction.\nAnyway, I manage to add a test that will call this part of the code.",
+      "parentUuid": "018c1e30_1dc94d17",
+      "range": {
+        "startLine": 314,
+        "startChar": 16,
+        "endLine": 317,
+        "endChar": 17
+      },
+      "revId": "4ae59b8021296238edc1901a151cbd6f871aa79b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "2a286359_9450a777",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-15T17:08:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f29b5bd3_fbe81e33",
+      "range": {
+        "startLine": 170,
+        "startChar": 12,
+        "endLine": 173,
+        "endChar": 40
+      },
+      "revId": "4ae59b8021296238edc1901a151cbd6f871aa79b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a747832a_4c9f4b20",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "678adc51_58ccf8fb",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-15T17:08:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a747832a_4c9f4b20",
+      "range": {
+        "startLine": 331,
+        "startChar": 11,
+        "endLine": 333,
+        "endChar": 83
+      },
+      "revId": "4ae59b8021296238edc1901a151cbd6f871aa79b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d560ba0a_563699c7",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaGetFunctionDataDefinition.java",
         "patchSetId": 1
@@ -114,6 +210,30 @@
       "revId": "4ae59b8021296238edc1901a151cbd6f871aa79b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aecb2a27_a07628ad",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/ToscaGetFunctionDataDefinition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-15T17:08:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d560ba0a_563699c7",
+      "range": {
+        "startLine": 119,
+        "startChar": 51,
+        "endLine": 123,
+        "endChar": 55
+      },
+      "revId": "4ae59b8021296238edc1901a151cbd6f871aa79b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
