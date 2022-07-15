@@ -262,6 +262,30 @@
     },
     {
       "key": {
+        "uuid": "3877a23e_bbcb921a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 1190,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-15T10:08:30Z",
+      "side": 1,
+      "message": "Ok, if it is not part of your code changes, that is fine.",
+      "parentUuid": "e43a3e76_ef6d1f85",
+      "range": {
+        "startLine": 1190,
+        "startChar": 8,
+        "endLine": 1190,
+        "endChar": 76
+      },
+      "revId": "525493a2b1ca517a658f4562679f08c1e8d68536",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f468a41b_1752899d",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportParseLogicTest.java",
         "patchSetId": 18
