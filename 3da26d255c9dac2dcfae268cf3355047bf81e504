@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2fade05b_e9a0ecba",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/tosca/validators/TimestampValidatorTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-15T10:32:01Z",
+      "side": 1,
+      "message": "please, use assertFalse",
+      "range": {
+        "startLine": 47,
+        "startChar": 8,
+        "endLine": 48,
+        "endChar": 69
+      },
+      "revId": "3da26d255c9dac2dcfae268cf3355047bf81e504",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
