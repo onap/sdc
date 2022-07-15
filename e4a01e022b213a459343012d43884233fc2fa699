@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30404c1a_1ef4a456",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 3040,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-07-15T14:27:53Z",
+      "side": 1,
+      "message": "listNodeFilters contains node filters for all instances not just the instance for which the version is being stepped. Whichever one is last in the list gets applied (as the earlier node fitlers are overwritten) regardless of whether that filter belongs to the correct instance.",
+      "range": {
+        "startLine": 3032,
+        "startChar": 48,
+        "endLine": 3040,
+        "endChar": 40
+      },
+      "revId": "e4a01e022b213a459343012d43884233fc2fa699",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
