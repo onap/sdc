@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ba0c1c0_1ff5417c",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/CapabilitiesOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-17T14:22:35Z",
+      "side": 1,
+      "message": "add TC to cover new code",
+      "range": {
+        "startLine": 132,
+        "startChar": 8,
+        "endLine": 133,
+        "endChar": 49
+      },
+      "revId": "6f1ba981a80441ff8f7a349a89d61604c034f9b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
