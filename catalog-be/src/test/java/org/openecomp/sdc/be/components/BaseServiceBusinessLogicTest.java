@@ -56,8 +56,6 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.GroupInstance;
 import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
@@ -95,9 +93,9 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
     protected final UiComponentDataConverter uiComponentDataConverter = Mockito.mock(UiComponentDataConverter.class);
     private final ServletContext servletContext = Mockito.mock(ServletContext.class);
     private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
-    User user = null;
-    Service serviceResponse = null;
-    Resource genericService = null;
+    protected User user = null;
+    private Service serviceResponse = null;
+    private Resource genericService = null;
     private UserBusinessLogic mockUserAdmin = Mockito.mock(UserBusinessLogic.class);
     private WebAppContextWrapper webAppContextWrapper = Mockito.mock(WebAppContextWrapper.class);
     private WebApplicationContext webAppContext = Mockito.mock(WebApplicationContext.class);
@@ -112,23 +110,6 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
     private ToscaOperationFacade toscaOperationFacade = Mockito.mock(ToscaOperationFacade.class);
     private GenericTypeBusinessLogic genericTypeBusinessLogic = Mockito.mock(GenericTypeBusinessLogic.class);
     private ForwardingPathOperation forwardingPathOperation = Mockito.mock(ForwardingPathOperation.class);
-
-    protected static ForwardingPathDataDefinition createMockPath() {
-        if (forwardingPathDataDefinition != null) {
-            return forwardingPathDataDefinition;
-        }
-        forwardingPathDataDefinition = new ForwardingPathDataDefinition("Yoyo");
-        forwardingPathDataDefinition.setUniqueId(java.util.UUID.randomUUID().toString());
-        forwardingPathDataDefinition.setDestinationPortNumber("414155");
-        forwardingPathDataDefinition.setProtocol("http");
-        org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition> forwardingPathElementDataDefinitionListDataDefinition = new org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<>();
-        forwardingPathElementDataDefinitionListDataDefinition.add(
-            new ForwardingPathElementDataDefinition("fromNode", "toNode", "333", "444", "2222", "5555"));
-        forwardingPathElementDataDefinitionListDataDefinition.add(
-            new ForwardingPathElementDataDefinition("toNode", "toNode2", "4444", "44444", "4", "44"));
-        forwardingPathDataDefinition.setPathElements(forwardingPathElementDataDefinitionListDataDefinition);
-        return forwardingPathDataDefinition;
-    }
 
     @Before
     public void setup() {
@@ -201,33 +182,6 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
 
         responseManager = ResponseFormatManager.getInstance();
 
-    }
-
-    protected Component createNewService() {
-
-        Service service = new Service();
-        int listSize = 3;
-        service.setName("serviceName");
-        service.setUniqueId("serviceUniqueId");
-        List<ComponentInstance> componentInstances = new ArrayList<>();
-        ComponentInstance ci;
-        for (int i = 0; i < listSize; ++i) {
-            ci = new ComponentInstance();
-            ci.setName("ciName" + i);
-            ci.setUniqueId("ciId" + i);
-            List<GroupInstance> groupInstances = new ArrayList<>();
-            GroupInstance gi;
-            for (int j = 0; j < listSize; ++j) {
-                gi = new GroupInstance();
-                gi.setName(ci.getName() + "giName" + j);
-                gi.setUniqueId(ci.getName() + "giId" + j);
-                groupInstances.add(gi);
-            }
-            ci.setGroupInstances(groupInstances);
-            componentInstances.add(ci);
-        }
-        service.setComponentInstances(componentInstances);
-        return service;
     }
 
     private void mockAuditingDaoLogic() {
@@ -340,10 +294,28 @@ public abstract class BaseServiceBusinessLogicTest extends ComponentBusinessLogi
         return service;
     }
 
-    protected Resource setupGenericServiceMock() {
+    private Resource setupGenericServiceMock() {
         Resource genericService = new Resource();
         genericService.setVersion("1.0");
         genericService.setToscaResourceName(GENERIC_SERVICE_NAME);
         return genericService;
     }
+
+    private ForwardingPathDataDefinition createMockPath() {
+        if (forwardingPathDataDefinition != null) {
+            return forwardingPathDataDefinition;
+        }
+        forwardingPathDataDefinition = new ForwardingPathDataDefinition("Yoyo");
+        forwardingPathDataDefinition.setUniqueId(java.util.UUID.randomUUID().toString());
+        forwardingPathDataDefinition.setDestinationPortNumber("414155");
+        forwardingPathDataDefinition.setProtocol("http");
+        org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<org.openecomp.sdc.be.datatypes.elements.ForwardingPathElementDataDefinition> forwardingPathElementDataDefinitionListDataDefinition = new org.openecomp.sdc.be.datatypes.elements.ListDataDefinition<>();
+        forwardingPathElementDataDefinitionListDataDefinition.add(
+            new ForwardingPathElementDataDefinition("fromNode", "toNode", "333", "444", "2222", "5555"));
+        forwardingPathElementDataDefinitionListDataDefinition.add(
+            new ForwardingPathElementDataDefinition("toNode", "toNode2", "4444", "44444", "4", "44"));
+        forwardingPathDataDefinition.setPathElements(forwardingPathElementDataDefinitionListDataDefinition);
+        return forwardingPathDataDefinition;
+    }
+
 }
