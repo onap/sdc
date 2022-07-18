@@ -43,7 +43,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
-import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
@@ -54,16 +53,6 @@ import org.openecomp.sdc.be.components.impl.utils.CreateServiceFromYamlParameter
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
-import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
-import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
-import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
-import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -111,23 +100,14 @@ import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
-import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -176,20 +156,11 @@ public class ServiceImportBusinessLogic {
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
     private final IGraphLockOperation graphLockOperation;
 
-    public ServiceImportBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
-                                      IGroupTypeOperation groupTypeOperation, GroupBusinessLogic groupBusinessLogic,
-                                      InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-                                      ArtifactsBusinessLogic artifactsBusinessLogic, IDistributionEngine distributionEngine,
-                                      ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
-                                      ServiceDistributionValidation serviceDistributionValidation, ForwardingPathValidator forwardingPathValidator,
-                                      UiComponentDataConverter uiComponentDataConverter, NodeFilterOperation serviceFilterOperation,
-                                      NodeFilterValidator serviceFilterValidator, ArtifactsOperations artifactToscaOperation,
-                                      ComponentContactIdValidator componentContactIdValidator, ComponentNameValidator componentNameValidator,
-                                      ComponentTagsValidator componentTagsValidator, ComponentValidator componentValidator,
-                                      ComponentIconValidator componentIconValidator, ComponentProjectCodeValidator componentProjectCodeValidator,
-                                      ComponentDescriptionValidator componentDescriptionValidator, final ComponentsUtils componentsUtils,
-                                      final ToscaOperationFacade toscaOperationFacade, final ServiceBusinessLogic serviceBusinessLogic,
-                                      final CsarBusinessLogic csarBusinessLogic,
+    public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
+                                      final ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
+                                      final UiComponentDataConverter uiComponentDataConverter,
+                                      final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
+                                      final ServiceBusinessLogic serviceBusinessLogic, final CsarBusinessLogic csarBusinessLogic,
                                       final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic,
                                       final LifecycleBusinessLogic lifecycleBusinessLogic, final CompositionBusinessLogic compositionBusinessLogic,
                                       final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic,
@@ -369,9 +340,8 @@ public class ServiceImportBusinessLogic {
             }
             service = createPoliciesOnResource.left().value();
             log.trace("************* Going to add artifacts from yaml {}", yamlName);
-            NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts = new NodeTypeInfoToUpdateArtifacts(nodeName, nodeTypesArtifactsToCreate);
             Either<Service, ResponseFormat> createArtifactsEither = createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE,
-                createdArtifacts, yamlName, csarInfo, service, nodeTypeInfoToUpdateArtifacts, inTransaction, shouldLock);
+                createdArtifacts, yamlName, csarInfo, service, inTransaction, shouldLock);
             if (createArtifactsEither.isRight()) {
                 serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(createArtifactsEither.right().value());
@@ -650,9 +620,7 @@ public class ServiceImportBusinessLogic {
                     handledNodeTypeArtifacts.addAll(handleNodeTypeArtifactsRequestRes);
                 }
             }
-            if (handleNodeTypeArtifactsRes == null) {
-                handleNodeTypeArtifactsRes = Either.left(handledNodeTypeArtifacts);
-            }
+            handleNodeTypeArtifactsRes = Either.left(handledNodeTypeArtifacts);
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             handleNodeTypeArtifactsRes = Either.right(responseFormat);
@@ -688,7 +656,6 @@ public class ServiceImportBusinessLogic {
 
     protected Either<Service, ResponseFormat> createOrUpdateArtifacts(ArtifactOperationEnum operation, List<ArtifactDefinition> createdArtifacts,
                                                                       String yamlFileName, CsarInfo csarInfo, Service preparedService,
-                                                                      NodeTypeInfoToUpdateArtifacts nodeTypeInfoToUpdateArtifacts,
                                                                       boolean inTransaction, boolean shouldLock) {
         Either<Service, ResponseFormat> createdCsarArtifactsEither = handleVfCsarArtifacts(preparedService, csarInfo, createdArtifacts,
             new ArtifactOperationInfo(false, false, operation), shouldLock, inTransaction);
@@ -1037,7 +1004,7 @@ public class ServiceImportBusinessLogic {
         return eitherGetResource.left().value();
     }
 
-    protected void processProperty(Resource resource, ComponentInstance currentCompInstance, Map<String, DataTypeDefinition> allDataTypes,
+    protected void processProperty(Resource resource, Map<String, DataTypeDefinition> allDataTypes,
                                    Map<String, InputDefinition> currPropertiesMap, List<ComponentInstanceInput> instPropList,
                                    List<UploadPropInfo> propertyList) {
         UploadPropInfo propertyInfo = propertyList.get(0);
@@ -1321,11 +1288,11 @@ public class ServiceImportBusinessLogic {
                                                                                    List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
                                                                                    boolean forceCertificationAllowed, CsarInfo csarInfo,
                                                                                    boolean isNested) {
-        UploadResourceInfo resourceMetaData = serviceImportParseLogic.fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(), user);
-        String singleVfcYaml = serviceImportParseLogic.buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.getResourceType(), csarInfo);
-        user = serviceBusinessLogic.validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE, true);
-        return serviceImportParseLogic.createResourceFromNodeType(singleVfcYaml, resourceMetaData, user, true, needLock, nodeTypeArtifactsToHandle,
-            nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeNameValue.getKey(), isNested);
+        final var resourceMetaData = serviceImportParseLogic.fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(), user);
+        final var singleVfcYaml = serviceImportParseLogic.buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.getResourceType(), csarInfo);
+        final var validatedUser = serviceBusinessLogic.validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE, true);
+        return serviceImportParseLogic.createResourceFromNodeType(singleVfcYaml, resourceMetaData, validatedUser, true, needLock,
+            nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeNameValue.getKey(), isNested);
     }
 
     protected Service createRIAndRelationsFromYaml(String yamlName, Service service,
@@ -1476,7 +1443,7 @@ public class ServiceImportBusinessLogic {
                 }
                 originResource.getInputs().forEach(p -> serviceImportParseLogic.addInput(currPropertiesMap, p));
                 for (List<UploadPropInfo> propertyList : propMap.values()) {
-                    processProperty(component, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
+                    processProperty(component, allDataTypes, currPropertiesMap, instPropList, propertyList);
                 }
                 currPropertiesMap.values().forEach(p -> instPropList.add(new ComponentInstanceInput(p)));
                 instInputs.put(currentCompInstance.getUniqueId(), instPropList);
@@ -1487,7 +1454,7 @@ public class ServiceImportBusinessLogic {
         }
     }
 
-    protected void processProperty(Component component, ComponentInstance currentCompInstance, Map<String, DataTypeDefinition> allDataTypes,
+    protected void processProperty(Component component, Map<String, DataTypeDefinition> allDataTypes,
                                    Map<String, InputDefinition> currPropertiesMap, List<ComponentInstanceInput> instPropList,
                                    List<UploadPropInfo> propertyList) {
         UploadPropInfo propertyInfo = propertyList.get(0);
