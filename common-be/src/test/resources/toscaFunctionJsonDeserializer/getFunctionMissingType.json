@@ -1,0 +1,11 @@
+{
+  "propertyUniqueId": "e57525d7-2115-4934-9ba4-9cebfa22bad2.nf_naming",
+  "propertySource": "SELF",
+  "propertyName": "instance_name",
+  "sourceName": "ciResVFc26a0b30ec20",
+  "sourceUniqueId": "aee643c9-6c8e-4a24-af7a-a9aff5c072c0",
+  "propertyPathFromSource": [
+    "nf_naming",
+    "instance_name"
+  ]
+}
