@@ -24,7 +24,7 @@ import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
-
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class CapabilityTestUtils {
 
-    public static Map<String, MapPropertiesDataDefinition> createCapPropsForTopologyTemplate(TopologyTemplate topologyTemplate) {
+    public static Map<String, MapPropertiesDataDefinition> createCapPropsForTopologyTemplate(ToscaElement topologyTemplate) {
         Map<String, ListCapabilityDataDefinition> capabilitiesMap = new HashMap<>();
 
         List<CapabilityDataDefinition> capabilityDefinitions = new ArrayList<>();

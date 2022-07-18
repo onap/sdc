@@ -92,7 +92,7 @@ public class CapabilitiesOperation extends BaseOperation {
         }
     }
 
-    private StorageOperationStatus createOrUpdateCapabilityProperties(String componentId, TopologyTemplate toscaElement,
+    private StorageOperationStatus createOrUpdateCapabilityProperties(String componentId, ToscaElement toscaElement,
                                                                       Map<String, MapPropertiesDataDefinition> propertiesMap) {
         GraphVertex toscaElementV = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.NoParse).left().on(this::throwStorageException);
         Map<String, MapPropertiesDataDefinition> capabilitiesProperties = toscaElement.getCapabilitiesProperties();
@@ -116,17 +116,21 @@ public class CapabilitiesOperation extends BaseOperation {
             .updateFullToscaData(toscaElementV, EdgeLabelEnum.CAPABILITIES_PROPERTIES, VertexTypeEnum.CAPABILITIES_PROPERTIES, propertiesMap);
     }
 
-    public StorageOperationStatus createOrUpdateCapabilityProperties(String componentId, Map<String, MapPropertiesDataDefinition> propertiesMap) {
+    public StorageOperationStatus createOrUpdateCapabilityProperties(String componentId, boolean isTopologyTemplate, Map<String, MapPropertiesDataDefinition> propertiesMap) {
         StorageOperationStatus propertiesStatusRes = null;
         if (MapUtils.isNotEmpty(propertiesMap)) {
-            propertiesStatusRes = createOrUpdateCapabilityProperties(componentId, getTopologyTemplate(componentId), propertiesMap);
+            propertiesStatusRes = createOrUpdateCapabilityProperties(componentId, getToscaElement(componentId, isTopologyTemplate), propertiesMap);
         }
         return propertiesStatusRes;
     }
 
-    private TopologyTemplate getTopologyTemplate(String componentId) {
-        return (TopologyTemplate) topologyTemplateOperation.getToscaElement(componentId, getFilterComponentWithCapProperties()).left()
-            .on(this::throwStorageException);
+    private ToscaElement getToscaElement(String componentId, boolean isTopologyTemplate) {
+        if (isTopologyTemplate){
+            return topologyTemplateOperation.getToscaElement(componentId, getFilterComponentWithCapProperties()).left()
+                .on(this::throwStorageException);
+        }
+        return nodeTypeOperation.getToscaElement(componentId, getFilterComponentWithCapProperties()).left()
+                .on(this::throwStorageException);
     }
 
     private ComponentParametersView getFilterComponentWithCapProperties() {

@@ -28,6 +28,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.MapPropertiesDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.NodeType;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.TopologyTemplate;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.CapabilityTestUtils;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -48,6 +49,9 @@ public class CapabilitiesOperationTest {
     private  JanusGraphDao mockJanusGraphDao;
     @Mock
     private TopologyTemplateOperation topologyTemplateOperation;
+    @Mock
+    private NodeTypeOperation nodeTypeOperation;
+
 
     @Before
     public void setUp() {
@@ -64,10 +68,17 @@ public class CapabilitiesOperationTest {
         topologyTemplate.setCapabilitiesProperties(capPropsForTopologyTemplate);
 
         when(topologyTemplateOperation.getToscaElement(anyString(), any())).thenReturn(Either.left(topologyTemplate));
+
+        NodeType nodeType = new NodeType();
+        Map<String, MapPropertiesDataDefinition> capPropsForNodeType = CapabilityTestUtils
+                .createCapPropsForTopologyTemplate(nodeType);
+        nodeType.setCapabilitiesProperties(capPropsForNodeType);
+
+        when(nodeTypeOperation.getToscaElement(anyString(), any())).thenReturn(Either.left(nodeType));
     }
 
     @Test
-    public void testCreateOrUpdateCapabilitiesProperties() {
+    public void testCreateOrUpdateCapabilitiesPropertiesTopologyTemplate() {
 
         Map<String, PropertyDataDefinition> mapToscaDataDefinition = new HashMap<>();
         PropertyDataDefinition propertyDataDefinition = new PropertyDataDefinition();
@@ -79,7 +90,26 @@ public class CapabilitiesOperationTest {
         Map<String, MapPropertiesDataDefinition> propertiesMap = new HashMap<>();
         propertiesMap.put(propertyDataDefinition.getUniqueId(), mapPropertiesDataDefinition);
 
-        StorageOperationStatus operationStatus = operation.createOrUpdateCapabilityProperties("componentId",
+        StorageOperationStatus operationStatus = operation.createOrUpdateCapabilityProperties("componentId", true,
+                propertiesMap);
+
+        Assert.assertEquals(StorageOperationStatus.OK, operationStatus);
+    }
+    
+    @Test
+    public void testCreateOrUpdateCapabilitiesPropertiesToscaTemplate() {
+
+        Map<String, PropertyDataDefinition> mapToscaDataDefinition = new HashMap<>();
+        PropertyDataDefinition propertyDataDefinition = new PropertyDataDefinition();
+        propertyDataDefinition.setUniqueId("ComponentInput1_uniqueId");
+        propertyDataDefinition.setName("propName");
+        mapToscaDataDefinition.put(propertyDataDefinition.getUniqueId(), propertyDataDefinition);
+        MapPropertiesDataDefinition  mapPropertiesDataDefinition = new MapPropertiesDataDefinition(mapToscaDataDefinition);
+
+        Map<String, MapPropertiesDataDefinition> propertiesMap = new HashMap<>();
+        propertiesMap.put(propertyDataDefinition.getUniqueId(), mapPropertiesDataDefinition);
+
+        StorageOperationStatus operationStatus = operation.createOrUpdateCapabilityProperties("componentId", false,
                 propertiesMap);
 
         Assert.assertEquals(StorageOperationStatus.OK, operationStatus);

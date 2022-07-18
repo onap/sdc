@@ -389,7 +389,7 @@ public class CapabilitiesBusinessLogicTest extends BaseBusinessLogicMock {
         validateUserRoles(Role.ADMIN, Role.DESIGNER);
         when(toscaOperationFacade.getToscaElement(anyString(), any(ComponentParametersView.class)))
                 .thenReturn(Either.left(resource));
-        when(capabilitiesOperation.createOrUpdateCapabilityProperties(anyString(), any())).thenReturn(StorageOperationStatus.OK);
+        when(capabilitiesOperation.createOrUpdateCapabilityProperties(anyString(), anyBoolean(), any())).thenReturn(StorageOperationStatus.OK);
         Either<List<CapabilityDefinition>, ResponseFormat> capabilities = capabilitiesBusinessLogicMock
                 .createCapabilities(componentId, capabilityDefinitions, user,
                         "createCapabilities", true);
