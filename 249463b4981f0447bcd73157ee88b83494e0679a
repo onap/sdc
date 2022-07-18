@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6dd4fab6_82a081fa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-18T09:29:05Z",
+      "side": 1,
+      "message": "please, add unit tests for the introduced code",
+      "range": {
+        "startLine": 119,
+        "startChar": 13,
+        "endLine": 119,
+        "endChar": 39
+      },
+      "revId": "249463b4981f0447bcd73157ee88b83494e0679a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6536a041_69b4ef58",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1522,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-18T09:29:05Z",
+      "side": 1,
+      "message": "just a suggestion for more clarity/reduce of complexity:\nevaluate the negative conditions first and exit:\n\nif (attributeMap \u003d\u003d null) {\n    return;\n}\n\n//Do what the method has do to now that the conditions are fullfilled",
+      "range": {
+        "startLine": 1522,
+        "startChar": 8,
+        "endLine": 1522,
+        "endChar": 35
+      },
+      "revId": "249463b4981f0447bcd73157ee88b83494e0679a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dff66b98_73fb878f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1524,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-18T09:29:05Z",
+      "side": 1,
+      "message": "Wouldn\u0027t instAttributes.get(attributeName) suffice or it is not indexed by the attribute name?",
+      "range": {
+        "startLine": 1523,
+        "startChar": 60,
+        "endLine": 1524,
+        "endChar": 101
+      },
+      "revId": "249463b4981f0447bcd73157ee88b83494e0679a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02d96f91_74a554e1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/AttributeConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-18T09:29:05Z",
+      "side": 1,
+      "message": "if you can, better use apache commons StringUtils.isNotEmpty",
+      "range": {
+        "startLine": 79,
+        "startChar": 30,
+        "endLine": 79,
+        "endChar": 85
+      },
+      "revId": "249463b4981f0447bcd73157ee88b83494e0679a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7744459e_16b95a4b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/AttributeConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-18T09:29:05Z",
+      "side": 1,
+      "message": "this is not being used, please remove, along with the \"schema\" variable",
+      "range": {
+        "startLine": 119,
+        "startChar": 8,
+        "endLine": 119,
+        "endChar": 98
+      },
+      "revId": "249463b4981f0447bcd73157ee88b83494e0679a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84feb5bc_c52acf5d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/AttributeConverter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-07-18T09:29:05Z",
+      "side": 1,
+      "message": "remove space",
+      "range": {
+        "startLine": 187,
+        "startChar": 36,
+        "endLine": 187,
+        "endChar": 37
+      },
+      "revId": "249463b4981f0447bcd73157ee88b83494e0679a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
