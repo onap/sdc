@@ -1,0 +1,37 @@
+{
+  "type": "CONCAT",
+  "parameters": [
+    {
+      "propertyUniqueId": "e57525d7-2115-4934-9ba4-9cebfa22bad2.nf_naming",
+      "type": "GET_INPUT",
+      "propertySource": "SELF",
+      "propertyName": "instance_name",
+      "sourceName": "ciResVFc26a0b30ec20",
+      "sourceUniqueId": "aee643c9-6c8e-4a24-af7a-a9aff5c072c0",
+      "propertyPathFromSource": [
+        "nf_naming",
+        "instance_name"
+      ]
+    }, {
+      "type": "STRING",
+      "value": "my string"
+    },
+    {
+      "type": "CONCAT",
+      "parameters": [
+        {
+          "type": "STRING",
+          "value": "string1"
+        },
+        {
+          "type": "STRING",
+          "value": "string2"
+        },
+        {
+          "type": "YAML",
+          "value": "myList: [1, two, three three]\nget_something: [SELF, something]\nstring: this is my string\n"
+        }
+      ]
+    }
+  ]
+}

@@ -189,9 +189,9 @@ export class PropertyBEModel {
     }
 
     /**
-     * Checks whether the property value is a tosca get function (e.g. get_input, get_property, get_attribute)
+     * Checks whether the property value is a TOSCA function (e.g. get_input, get_property, get_attribute, concat, etc.)
      */
-    public isToscaGetFunction(): boolean {
+    public isToscaFunction(): boolean {
         return this.toscaFunction != null;
     }
 }

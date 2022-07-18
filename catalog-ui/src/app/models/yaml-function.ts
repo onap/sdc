@@ -19,31 +19,19 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.datatypes.elements;
+import {ToscaFunction} from "./tosca-function";
+import {ToscaFunctionType} from "./tosca-function-type.enum";
+import {ToscaFunctionParameter} from "./tosca-function-parameter";
 
-import lombok.Setter;
-import org.yaml.snakeyaml.Yaml;
+export class YamlFunction implements ToscaFunction, ToscaFunctionParameter {
+    type = ToscaFunctionType.YAML;
+    value: any;
 
-@Setter
-public class CustomYamlFunction implements ToscaFunction, ToscaFunctionParameter {
-
-    private Object yamlValue;
-
-    @Override
-    public ToscaFunctionType getType() {
-        return ToscaFunctionType.YAML;
-    }
-
-    @Override
-    public String getValue() {
-        if (yamlValue == null) {
-            return null;
+    constructor(yamlFunction?: YamlFunction) {
+        if (!yamlFunction) {
+            return;
         }
-        return yamlValue instanceof String ? (String) yamlValue : new Yaml().dump(yamlValue);
+        this.value = yamlFunction.value;
     }
 
-    @Override
-    public Object getJsonObjectValue() {
-        return yamlValue;
-    }
 }

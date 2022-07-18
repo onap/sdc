@@ -145,14 +145,14 @@ export class PropertyFormViewModel {
     };
 
     private initToscaGetFunction() {
-        this.$scope.editPropertyModel.hasGetFunctionValue = this.$scope.editPropertyModel.property.isToscaGetFunction();
+        this.$scope.editPropertyModel.hasGetFunctionValue = this.$scope.editPropertyModel.property.isToscaFunction();
         this.$scope.editPropertyModel.isGetFunctionValid = true;
     }
 
     private initForNotSimpleType = ():void => {
         const property = this.$scope.editPropertyModel.property;
         this.$scope.isTypeDataType = this.DataTypesService.isDataTypeForPropertyType(this.$scope.editPropertyModel.property);
-        if (property.isToscaGetFunction()) {
+        if (property.isToscaFunction()) {
             this.initValueForGetFunction();
             return;
         }
@@ -249,7 +249,7 @@ export class PropertyFormViewModel {
             'property': property,
             types: PROPERTY_DATA.TYPES,
             simpleTypes: PROPERTY_DATA.SIMPLE_TYPES,
-            hasGetFunctionValue: property.isToscaGetFunction(),
+            hasGetFunctionValue: property.isToscaFunction(),
             isGetFunctionValid: true,
         };
         this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;

@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -114,6 +115,9 @@ public class PropertyConvertor {
             if (StringUtils.isEmpty(value)) {
                 return null;
             }
+        }
+        if (property.isToscaFunction() && property.getToscaFunction().getType() == ToscaFunctionType.YAML) {
+            return new Yaml().load(property.getValue());
         }
         try {
             ToscaMapValueConverter mapConverterInst = ToscaMapValueConverter.getInstance();

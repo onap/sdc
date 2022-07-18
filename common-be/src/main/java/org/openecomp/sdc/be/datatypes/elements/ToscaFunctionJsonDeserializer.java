@@ -32,9 +32,13 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ToscaFunctionJsonDeserializer.class);
 
     public ToscaFunctionJsonDeserializer() {
         this(null);
@@ -74,16 +78,26 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
         }
 
         if (toscaFunctionType == ToscaFunctionType.YAML) {
-            return this.deserializeYamlFunction(node);
+            return this.deserializeYamlFunction(node, context);
         }
 
         return null;
     }
 
-    private ToscaFunction deserializeYamlFunction(JsonNode node) {
+    private ToscaFunction deserializeYamlFunction(final JsonNode node, final DeserializationContext context) throws JsonMappingException {
         var yamlFunction = new CustomYamlFunction();
-        final Object value = new Yaml().load(node.get("value").asText());
-        yamlFunction.setYamlValue(value);
+        final JsonNode valueJsonNode = node.get("value");
+        if (valueJsonNode == null) {
+            return yamlFunction;
+        }
+        final String valueAsText = valueJsonNode.asText();
+        try {
+            yamlFunction.setYamlValue(new Yaml().load(valueAsText));
+        } catch (final Exception e) {
+            final String errorMsg = String.format("Could not parse YAML expression: '%s'", valueAsText);
+            LOGGER.debug(errorMsg, e);
+            throw context.instantiationException(ToscaFunction.class, errorMsg);
+        }
         return yamlFunction;
     }
 

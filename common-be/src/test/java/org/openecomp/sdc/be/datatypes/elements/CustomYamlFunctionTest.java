@@ -21,29 +21,30 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
-import lombok.Setter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.Yaml;
 
-@Setter
-public class CustomYamlFunction implements ToscaFunction, ToscaFunctionParameter {
+class CustomYamlFunctionTest {
 
-    private Object yamlValue;
-
-    @Override
-    public ToscaFunctionType getType() {
-        return ToscaFunctionType.YAML;
+    @Test
+    void getTypeTest() {
+        final var yamlFunction = new CustomYamlFunction();
+        assertEquals(ToscaFunctionType.YAML, yamlFunction.getType());
     }
 
-    @Override
-    public String getValue() {
-        if (yamlValue == null) {
-            return null;
-        }
-        return yamlValue instanceof String ? (String) yamlValue : new Yaml().dump(yamlValue);
-    }
-
-    @Override
-    public Object getJsonObjectValue() {
-        return yamlValue;
+    @Test
+    void getValue() {
+        final var yamlFunction = new CustomYamlFunction();
+        assertNull(yamlFunction.getValue());
+        final String yamlValue1 = "my value";
+        yamlFunction.setYamlValue(yamlValue1);
+        assertEquals(yamlValue1, yamlFunction.getValue());
+        final Map<String, Map<String, String>> yamlValue2 = Map.of("entry", Map.of("property1", "value1"));
+        yamlFunction.setYamlValue(yamlValue2);
+        assertEquals(new Yaml().dump(yamlValue2), yamlFunction.getValue());
     }
 }

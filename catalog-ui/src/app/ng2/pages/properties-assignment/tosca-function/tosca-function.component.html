@@ -36,6 +36,9 @@
                               [functionType]="toscaFunctionTypeForm.value"
                               (onValidityChange)="onGetFunctionValidityChange($event)"></app-tosca-get-function>
     </div>
+    <div *ngIf="isYamlFunctionSelected()">
+      <app-yaml-function [yamlFunction]="toscaFunction" (onValidityChange)="onYamlFunctionValidityChange($event)"></app-yaml-function>
+    </div>
     <div *ngIf="showClearButton()" class="button-container">
       <button (click)="onClearValues()" class="tlv-btn red ng-star-inserted">{{'TOSCA_FUNCTION_CLEAR_VALUE_BUTTON' | translate}}</button>
     </div>

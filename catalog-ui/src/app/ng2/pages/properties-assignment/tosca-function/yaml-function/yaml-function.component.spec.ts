@@ -21,33 +21,28 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {ToscaConcatFunctionComponent} from './tosca-concat-function.component';
+import {YamlFunctionComponent} from './yaml-function.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ToscaFunctionComponent} from "../tosca-function.component";
 import {TranslateModule} from "../../../../shared/translator/translate.module";
-import {ToscaGetFunctionComponent} from "../tosca-get-function/tosca-get-function.component";
-import {UiElementsModule} from "../../../../components/ui/ui-elements.module";
-import {YamlFunctionComponent} from "../yaml-function/yaml-function.component";
 
-describe('ToscaConcatFunctionComponent', () => {
-    let component: ToscaConcatFunctionComponent;
-    let fixture: ComponentFixture<ToscaConcatFunctionComponent>;
+describe('YamlFunctionComponent', () => {
+    let component: YamlFunctionComponent;
+    let fixture: ComponentFixture<YamlFunctionComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ToscaConcatFunctionComponent, ToscaFunctionComponent, ToscaGetFunctionComponent, YamlFunctionComponent],
+            declarations: [YamlFunctionComponent],
             imports: [
                 FormsModule,
                 ReactiveFormsModule,
-                TranslateModule,
-                UiElementsModule
+                TranslateModule
             ]
         })
         .compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ToscaConcatFunctionComponent);
+        fixture = TestBed.createComponent(YamlFunctionComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
