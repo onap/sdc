@@ -77,7 +77,7 @@ class ServiceDistributionBLTest extends ComponentBusinessLogicMock {
         artifactToscaOperation, componentContactIdValidator,
         componentNameValidator, componentTagsValidator, componentValidator, componentIconValidator,
         componentProjectCodeValidator, componentDescriptionValidator, modelOperation, null, null,
-        null, null, null);
+        null, null, null, null);
 
     private Service serviceToActivate;
     private ActivationRequestInformation activationRequestInformation;
