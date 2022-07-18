@@ -32,7 +32,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
-import org.yaml.snakeyaml.Yaml;
 
 public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction> {
 
@@ -82,8 +81,11 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
 
     private ToscaFunction deserializeYamlFunction(JsonNode node) {
         var yamlFunction = new CustomYamlFunction();
-        final Object value = new Yaml().load(node.get("value").asText());
-        yamlFunction.setYamlValue(value);
+        final JsonNode valueJsonNode = node.get("value");
+        if (valueJsonNode == null) {
+            return yamlFunction;
+        }
+        yamlFunction.setYamlValue(valueJsonNode.asText());
         return yamlFunction;
     }
 
