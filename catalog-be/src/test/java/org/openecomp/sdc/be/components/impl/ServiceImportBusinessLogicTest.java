@@ -542,7 +542,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
             anyString(), anyString(), anyList(), anyBoolean(), anyBoolean())).thenReturn(Either.left(preparedService));
         Assertions.assertNotNull(
             sIBL.createOrUpdateArtifacts(operation, createdArtifacts, yamlFileName, csarInfo,
-                preparedService, nodeTypeInfoToUpdateArtifacts, true, true));
+                preparedService, true, true));
     }
 
     @Test
@@ -923,7 +923,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         List<UploadPropInfo> propertyList = getPropertyList();
         Assertions.assertNotNull(resource);
         Assertions.assertNotNull(currPropertiesMap);
-        sIBL.processProperty(resource, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
+        sIBL.processProperty(resource, allDataTypes, currPropertiesMap, instPropList, propertyList);
     }
 
     @Test
@@ -1263,7 +1263,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         propertyList.add(propertyInfo);
         Assertions.assertNotNull(resource);
 
-        sIBL.processProperty(resource, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
+        sIBL.processProperty(resource, allDataTypes, currPropertiesMap, instPropList, propertyList);
     }
 
     @Test
