@@ -83,7 +83,7 @@ export class InputFEModel extends InputBEModel {
     }
 
     public getDefaultValueObj(): any {
-        return PropertyFEModel.parseValueObj(this.defaultValue, this.type, this.derivedDataType);
+        return PropertyFEModel.parseValueObj(this.defaultValue, this.type, this.derivedDataType, this.isToscaFunction());
     }
 
     public resetDefaultValueObjValidation() {

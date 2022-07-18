@@ -15,13 +15,13 @@
  
  
 <div *ngIf="!property.hidden" class="dynamic-property-row nested-level-{{nestedLevel}}" [@fadeIn]
-    [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.propertiesName, 'readonly':  property.isDisabled || property.isDeclared || property.isToscaGetFunction()}"
+    [ngClass]="{'selected': selectedPropertyId && selectedPropertyId === property.propertiesName, 'readonly':  property.isDisabled || property.isDeclared || property.isToscaFunction()}"
     [class.with-top-border]="property.isChildOfListOrMap"
     (click)="onClickPropertyRow(property, $event)">
     <!-- LEFT CELL -->
     <ng-container *ngIf="!isPropertyFEModel">
         <div class="table-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared"> <!-- simple children of complex type [@checkEffect]="property.isDeclared"-->
-            <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly || property.isToscaGetFunction()" (checkedChange)="checkProperty.emit(property.propertiesName)" ></checkbox>
+            <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly || property.isToscaFunction()" (checkedChange)="checkProperty.emit(property.propertiesName)" ></checkbox>
             <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
         </div>
         <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">
@@ -41,31 +41,31 @@
         </div>
     </ng-container>
     <!-- RIGHT CELL OR FULL WIDTH CELL-->
-    <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || property.isDeclared || property.isToscaGetFunction() || (property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)">
+    <ng-container *ngIf="propType == derivedPropertyTypes.SIMPLE || property.isDeclared || property.isToscaFunction() || (property.isChildOfListOrMap && propType == derivedPropertyTypes.MAP && property.schema.property.isSimpleType)">
         <div class="table-cell">
             <dynamic-element class="value-input"
                 pattern="validationUtils.getValidationPattern(property.type)"
-                [value]="property.isDeclared || property.isToscaGetFunction() ? property.value : property.valueObj"
-                [type]="property.isDeclared || property.isToscaGetFunction() ? 'string' : property.type"
+                [value]="property.isDeclared || property.isToscaFunction() ? property.value : property.valueObj"
+                [type]="property.isDeclared || property.isToscaFunction() ? 'string' : property.type"
                 [name]="property.name"
                 [path]="property.propertiesName"
                 (elementChanged)="onElementChanged($event)"
-                [readonly]="readonly || property.isDeclared || property.isDisabled || property.isToscaGetFunction()"
+                [readonly]="readonly || property.isDeclared || property.isDisabled || property.isToscaFunction()"
                 [testId]="'prop-' + propertyTestsId"
                 [declared] = "property.isDeclared"
                 [constraints] = "constraints"
             ></dynamic-element>
         </div>
     </ng-container>
-    <ng-container *ngIf="!isPropertyFEModel && propType != derivedPropertyTypes.SIMPLE && !property.isDeclared && !property.isToscaGetFunction()"> <!-- right cell for complex elements, or list complex -->
+    <ng-container *ngIf="!isPropertyFEModel && propType != derivedPropertyTypes.SIMPLE && !property.isDeclared && !property.isToscaFunction()"> <!-- right cell for complex elements, or list complex -->
         <div class="table-cell" *ngIf="propType == derivedPropertyTypes.COMPLEX">{{property.type | contentAfterLastDot }}</div>
         <div class="table-cell" *ngIf="propType == derivedPropertyTypes.MAP && !property.schema.property.isSimpleType">{{property.schema.property.type | contentAfterLastDot }}</div>
     </ng-container>
-    <ng-container *ngIf="isPropertyFEModel && (propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isDeclared && !property.isToscaGetFunction()"><!-- empty, full-width table cell - for PropertyFEModel of type list or map -->
+    <ng-container *ngIf="isPropertyFEModel && (propType == derivedPropertyTypes.LIST || propType == derivedPropertyTypes.MAP) && !property.isDeclared && !property.isToscaFunction()"><!-- empty, full-width table cell - for PropertyFEModel of type list or map -->
         <div class="table-cell empty"></div>
     </ng-container>
     <!-- ICONS: add, delete, and expand -->
-    <ng-container *ngIf="!property.isDeclared && !property.isToscaGetFunction()">
+    <ng-container *ngIf="!property.isDeclared && !property.isToscaFunction()">
             <a *ngIf="(propType == derivedPropertyTypes.LIST) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to list</a>
             <a *ngIf="(propType == derivedPropertyTypes.MAP) && (!property.isChildOfListOrMap || property.mapInlist)" class="property-icon add-item" (click)="createNewChildProperty();" [ngClass]="{'disabled':readonly || preventInsertItem(property)}" [attr.data-tests-id]="'add-to-list-' + propertyTestsId">Add value to map</a>
             <span *ngIf="property.isChildOfListOrMap" (click)="deleteItem.emit(property);" class="property-icon sprite-new delete-item-icon" [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'delete-from-list-' + propertyTestsId"></span>
@@ -74,7 +74,7 @@
 
 </div>
 <!-- FLAT CHILDREN -->
-<div class="flat-children-container" *ngIf="isPropertyFEModel && !property.isDeclared && !property.isToscaGetFunction()">
+<div class="flat-children-container" *ngIf="isPropertyFEModel && !property.isDeclared && !property.isToscaFunction()">
     <ng-container *ngFor="let prop of property.flattenedChildren | filterChildProperties: expandedChildId; trackBy:prop?.propertiesName">
         <dynamic-property
             [selectedPropertyId]="selectedPropertyId"

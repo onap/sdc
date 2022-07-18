@@ -21,9 +21,9 @@
  */
 
 import * as _ from "lodash";
-import {SchemaPropertyGroupModel, SchemaProperty} from '../schema-property';
-import { PROPERTY_DATA, PROPERTY_TYPES } from 'app/utils';
-import { FilterPropertiesAssignmentData, PropertyBEModel, DerivedPropertyType, DerivedFEPropertyMap, DerivedFEProperty } from 'app/models';
+import {PROPERTY_DATA, PROPERTY_TYPES} from 'app/utils';
+import {DerivedFEProperty, DerivedPropertyType, PropertyBEModel} from 'app/models';
+import * as jsYaml from 'js-yaml';
 
 
 export class PropertyFEModel extends PropertyBEModel {
@@ -96,7 +96,7 @@ export class PropertyFEModel extends PropertyBEModel {
     }
 
     public getValueObj = (): any => {
-        return PropertyFEModel.parseValueObj(this.value, this.type, this.derivedDataType, this.defaultValue);
+        return PropertyFEModel.parseValueObj(this.value, this.type, this.derivedDataType, this.isToscaFunction(), this.defaultValue);
     }
 
     public setNonDeclared = (childPath?: string): void => {
@@ -278,23 +278,27 @@ export class PropertyFEModel extends PropertyBEModel {
         return valueObj.trim();
     }
 
-    static parseValueObj(value: string, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType, defaultValue?: string): any {
-        let valueObj;
+    static parseValueObj(value: string, propertyType: PROPERTY_TYPES, propertyDerivedType: DerivedPropertyType, isToscaFunction: boolean,
+                         defaultValue?: string): any {
+        if (isToscaFunction) {
+            return jsYaml.load(value);
+        }
         if (propertyDerivedType === DerivedPropertyType.SIMPLE) {
-            valueObj = value || defaultValue || null;  // use null for empty value object
+            const valueObj = value || defaultValue || null;  // use null for empty value object
             if (valueObj &&
                 propertyType !== PROPERTY_TYPES.STRING &&
                 propertyType !== PROPERTY_TYPES.TIMESTAMP &&
                 propertyType !== PROPERTY_TYPES.JSON &&
                 PROPERTY_DATA.SCALAR_TYPES.indexOf(<string>propertyType) == -1) {
-                valueObj = JSON.parse(value);  // the value object contains the real value ans not the value as string
+                return JSON.parse(value);  // the value object contains the real value ans not the value as string
             }
-        } else if (propertyDerivedType == DerivedPropertyType.LIST) {
-            valueObj = _.merge([], JSON.parse(defaultValue || '[]'), JSON.parse(value || '[]'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
-        } else {
-            valueObj = _.merge({}, JSON.parse(defaultValue || '{}'), JSON.parse(value || '{}'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
+            return valueObj;
         }
-        return valueObj;
+        if (propertyDerivedType == DerivedPropertyType.LIST) {
+            return _.merge([], JSON.parse(defaultValue || '[]'), JSON.parse(value || '[]'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
+        }
+
+        return _.merge({}, JSON.parse(defaultValue || '{}'), JSON.parse(value || '{}'));  // value object should be merged value and default value. Value takes higher precedence. Set value object to empty obj if undefined.
     };
 
     static cleanValueObj(valueObj: any, unsetEmpty?: boolean): any {
