@@ -126,7 +126,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
     private Either<List<PolicyDefinition>, StorageOperationStatus> declarePropertiesAsPolicies(Component component, PROPERTYOWNER propertiesOwner,
                                                                                                List<ComponentInstancePropInput> propsToDeclare) {
-        PropertiesDeclarationData policyProperties = createPoliciesAndOverridePropertiesValues(propertiesOwner.getUniqueId(), propertiesOwner,
+        PropertiesDeclarationData policyProperties = createPoliciesAndOverridePropertiesValues(propertiesOwner.getUniqueId(),
             propsToDeclare);
         return updatePropertiesValues(component, propertiesOwner.getUniqueId(), policyProperties.getPropertiesToUpdate()).left()
             .map(updatePropsRes -> policyProperties.getPoliciesToCreate());
@@ -144,8 +144,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             .map(updatePropsRes -> inputsProperties.getInputsToCreate());
     }
 
-    private PropertiesDeclarationData createPoliciesAndOverridePropertiesValues(String componentId, PROPERTYOWNER propertiesOwner,
-                                                                                List<ComponentInstancePropInput> propsToDeclare) {
+    private PropertiesDeclarationData createPoliciesAndOverridePropertiesValues(String componentId, List<ComponentInstancePropInput> propsToDeclare) {
         List<PROPERTYTYPE> declaredProperties = new ArrayList<>();
         List<PolicyDefinition> policies = new ArrayList<>();
         propsToDeclare.forEach(property -> policies.add(declarePropertyPolicy(componentId, declaredProperties, property)));
@@ -250,7 +249,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         if (propertyCapability.isPresent()) {
             String capName = propertyCapability.get().getName();
             if (capName.contains(".")) {
-                capName = capName.replaceAll("\\.", UNDERSCORE);
+                capName = capName.replace("\\.", UNDERSCORE);
             }
             generatedInputPrefix =
                 generatedInputPrefix == null || generatedInputPrefix.isEmpty() ? capName : generatedInputPrefix + UNDERSCORE + capName;
@@ -302,7 +301,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         String[] parsedPropNames = propInput.getParsedPropNames();
         InputDefinition input;
         boolean complexProperty = false;
-        if (propertiesName != null && !propertiesName.isEmpty() && selectedProp != null) {
+        if (StringUtils.isNotEmpty(propertiesName) && selectedProp != null) {
             complexProperty = true;
             input = new InputDefinition(selectedProp);
             input.setDefaultValue(selectedProp.getValue());
@@ -315,7 +314,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         input.setInputPath(propertiesName);
         input.setInstanceUniqueId(propertiesOwner.getUniqueId());
         input.setPropertyId(propInput.getUniqueId());
-        if (Objects.isNull(input.getSubPropertyInputPath()) || (Objects.nonNull(propertiesName) && input.getSubPropertyInputPath()
+        if (Objects.isNull(input.getSubPropertyInputPath()) || (StringUtils.isNotEmpty(propertiesName) && input.getSubPropertyInputPath()
             .substring(input.getSubPropertyInputPath().lastIndexOf('#')).equals(propertiesName.substring(propertiesName.lastIndexOf('#'))))) {
             input.setParentPropertyType(propInput.getType());
             input.setSubPropertyInputPath(propertiesName);
@@ -336,9 +335,11 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             if (complexProperty) {
                 jsonObject = createJSONValueForProperty(parsedPropNames.length - 1, parsedPropNames, jsonObject, inputName);
                 prop.setValue(jsonObject.toJSONString());
+                prop.setDefaultValue(jsonObject.toJSONString());
             } else {
                 jsonObject.put(GET_INPUT, input.getName());
                 prop.setValue(jsonObject.toJSONString());
+                prop.setDefaultValue(jsonObject.toJSONString());
             }
         } else {
             Object objValue = new Yaml().load(value);
@@ -346,15 +347,18 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
                 if (!complexProperty) {
                     jsonObject.put(GET_INPUT, input.getName());
                     prop.setValue(jsonObject.toJSONString());
+                    prop.setDefaultValue(jsonObject.toJSONString());
                 } else {
                     Map<String, Object> mappedToscaTemplate = (Map<String, Object>) objValue;
                     createInputValue(mappedToscaTemplate, 1, parsedPropNames, inputName);
                     String json = gson.toJson(mappedToscaTemplate);
                     prop.setValue(json);
+                    prop.setDefaultValue(json);
                 }
             } else {
                 jsonObject.put(GET_INPUT, input.getName());
                 prop.setValue(jsonObject.toJSONString());
+                prop.setDefaultValue(jsonObject.toJSONString());
             }
         }
         if (CollectionUtils.isEmpty(prop.getGetInputValues())) {
@@ -460,8 +464,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
             if (result.isLeft()) {
                 modifiedMappedToscaTemplate = (Map) result.left().value();
             } else {
-                log.warn("Map cleanup failed -> " + result.right().value()
-                    .toString());    //continue, don't break operation
+                log.warn("Map cleanup failed -> {}", result.right().value());    //continue, don't break operation
             }
             value = gson.toJson(modifiedMappedToscaTemplate);
         }
@@ -546,11 +549,10 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         boolean isEmpty = true;
         if (element != null) {
             if (element instanceof Map) {
-                if (MapUtils.isEmpty((Map) element)) {
-                    isEmpty = true;
-                } else {
-                    for (Object key : ((Map) (element)).keySet()) {
-                        Object value = ((Map) (element)).get(key);
+                final var map = (Map) element;
+                if (MapUtils.isNotEmpty(map)) {
+                    for (Object key : map.keySet()) {
+                        Object value = map.get(key);
                         isEmpty &= isEmptyNestedMap(value);
                     }
                 }
