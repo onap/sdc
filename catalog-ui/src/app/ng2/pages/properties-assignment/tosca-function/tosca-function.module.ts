@@ -27,12 +27,14 @@ import { ToscaFunctionComponent } from './tosca-function.component';
 import { SdcUiComponentsModule } from 'onap-ui-angular';
 import { ToscaGetFunctionComponent } from './tosca-get-function/tosca-get-function.component';
 import { ToscaConcatFunctionComponent } from './tosca-concat-function/tosca-concat-function.component';
+import { YamlFunctionComponent } from './yaml-function/yaml-function.component';
 
 @NgModule({
     declarations: [
         ToscaFunctionComponent,
         ToscaGetFunctionComponent,
         ToscaConcatFunctionComponent,
+        YamlFunctionComponent,
     ],
     imports: [
         CommonModule,

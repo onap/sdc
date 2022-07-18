@@ -19,31 +19,22 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.openecomp.sdc.be.datatypes.elements;
+@import "../../../../../../assets/styles/mixins.less";
 
-import lombok.Setter;
-import org.yaml.snakeyaml.Yaml;
+.yaml-text-area {
+    width: 100%;
+    min-height: 250px;
+    max-height: 400px;
+    font-size: 12px;
+}
 
-@Setter
-public class CustomYamlFunction implements ToscaFunction, ToscaFunctionParameter {
+.error {
+    color: @func_color_q;
+}
 
-    private Object yamlValue;
-
-    @Override
-    public ToscaFunctionType getType() {
-        return ToscaFunctionType.YAML;
-    }
-
-    @Override
-    public String getValue() {
-        if (yamlValue == null) {
-            return null;
-        }
-        return yamlValue instanceof String ? (String) yamlValue : new Yaml().dump(yamlValue);
-    }
-
-    @Override
-    public Object getJsonObjectValue() {
-        return yamlValue;
-    }
+.input-error {
+    .error();
+    border: solid 1px @func_color_q;
+    outline: none;
+    box-sizing: border-box;
 }
