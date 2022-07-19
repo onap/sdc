@@ -748,6 +748,35 @@ Modifications copyright (c) 2018-2019 Nokia
             </modules>
         </profile>
         <profile>
+            <id>fast-build-no-ui</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <skipYamlJsonValidator>true</skipYamlJsonValidator>
+                <checkstyle.skip>true</checkstyle.skip>
+                <jacoco.skip>true</jacoco.skip>
+                <maven.antrun.skip>true</maven.antrun.skip>
+                <swagger.skip>true</swagger.skip>
+            </properties>
+            <modules>
+                <module>openecomp-be</module>
+                <module>common</module>
+                <module>common-app-logging</module>
+                <module>common-app-api</module>
+                <module>common-be</module>
+                <module>common-be-tests-utils</module>
+                <module>catalog-dao</module>
+                <module>catalog-model</module>
+                <module>catalog-be</module>
+                <module>catalog-be-plugins</module>
+                <module>asdctool</module>
+                <module>sdc-os-chef</module>
+                <module>utils/webseal-simulator</module>
+            </modules>
+        </profile>
+        <profile>
             <id>start-sdc</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
