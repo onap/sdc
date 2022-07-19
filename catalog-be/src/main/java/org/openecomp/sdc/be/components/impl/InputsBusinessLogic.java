@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -51,7 +52,7 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
-import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstListInput;
@@ -92,8 +93,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
     private static final Logger log = Logger.getLogger(InputsBusinessLogic.class);
     private static final String FAILED_TO_FOUND_COMPONENT_ERROR = "Failed to found component {}, error: {}";
     private static final String FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR = "Failed to found input {} under component {}, error: {}";
-    private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP = "Going to execute rollback on create group.";
-    private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP = "Going to execute commit on create group.";
+    private static final String GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_INPUT = "Going to execute rollback on create input.";
+    private static final String GOING_TO_EXECUTE_COMMIT_ON_CREATE_INPUT = "Going to execute commit on create input.";
     private static final String GOING_TO_EXECUTE_ROLLBACK_ON_UPDATE_INPUT = "Going to execute rollback on update input.";
     private static final String GOING_TO_EXECUTE_COMMIT_ON_UPDATE_INPUT = "Going to execute commit on update input.";
     private static final LoggerSupportability loggerSupportability = LoggerSupportability.getLogger(InputsBusinessLogic.class.getName());
@@ -146,8 +147,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         filters.setIgnoreInputs(false);
         filters.setIgnoreComponentInstances(false);
         filters.setIgnoreComponentInstancesInputs(false);
-        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
-            .getToscaElement(componentId, filters);
+        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
         if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
@@ -186,8 +186,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         filters.disableAll();
         filters.setIgnoreComponentInstances(false);
         if (!instanceId.equals(inputId)) {
-            Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
-                .getToscaElement(parentId, filters);
+            Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(parentId, filters);
             if (getComponentEither.isRight()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
                 log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, parentId, actionStatus);
@@ -203,8 +202,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         filters.setIgnoreComponentInstancesProperties(false);
         filters.setIgnoreComponentInstancesInputs(false);
         filters.setIgnoreProperties(false);
-        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
-            .getToscaElement(parentId, filters);
+        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(parentId, filters);
         if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, parentId, actionStatus);
@@ -359,8 +357,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         filters.setIgnoreInputs(false);
         filters.setIgnoreComponentInstancesInputs(false);
         filters.setIgnoreProperties(false);
-        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
-            .getToscaElement(componentId, filters);
+        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
         if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
@@ -386,26 +383,25 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                                                                                ComponentInstInputsMap componentInstInputsMapUi,
                                                                                boolean shouldLockComp,
                                                                                boolean inTransaction) {
-        Either<List<InputDefinition>, ResponseFormat> result = null;
         Component component = null;
+        boolean rollback = false;
         try {
-            validateUserExists(userId);
-            component = getAndValidateComponentForCreate(userId, componentId, componentType, shouldLockComp);
-            result = propertyDeclarationOrchestrator.declarePropertiesToInputs(component, componentInstInputsMapUi).left()
-                .bind(inputsToCreate -> prepareInputsForCreation(userId, componentId, inputsToCreate)).right()
+            final var user = validateUserExists(userId);
+            component = getAndValidateComponentForCreate(user.getUserId(), componentId, componentType, shouldLockComp);
+            return propertyDeclarationOrchestrator.declarePropertiesToInputs(component, componentInstInputsMapUi).left()
+                .bind(inputsToCreate -> prepareInputsForCreation(user.getUserId(), componentId, inputsToCreate)).right()
                 .map(componentsUtils::getResponseFormat);
-            return result;
         } catch (ByResponseFormatComponentException e) {
             log.error("#createMultipleInputs: Exception thrown: ", e);
-            result = Either.right(e.getResponseFormat());
-            return result;
+            rollback = true;
+            return Either.right(e.getResponseFormat());
         } finally {
             if (!inTransaction) {
-                if (result == null || result.isRight()) {
-                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+                if (rollback) {
+                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_INPUT);
                     janusGraphDao.rollback();
                 } else {
-                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_INPUT);
                     janusGraphDao.commit();
                 }
             }
@@ -485,10 +481,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
 
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
-                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_INPUT);
                     janusGraphDao.rollback();
                 } else {
-                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_INPUT);
                     janusGraphDao.commit();
                 }
             }
@@ -512,9 +508,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         return componentParametersView;
     }
 
-    private Component getAndValidateComponentForCreate(
-        String userId, String componentId, ComponentTypeEnum componentType, boolean shouldLockComp
-    ) {
+    private Component getAndValidateComponentForCreate(String userId, String componentId, ComponentTypeEnum componentType, boolean shouldLockComp) {
         ComponentParametersView componentParametersView = getBaseComponentParametersView();
         Component component = validateComponentExists(componentId, componentType, componentParametersView);
         if (shouldLockComp) {
@@ -564,41 +558,79 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         inputsToCreate.values().forEach(inputDefinition -> inputDefinition.setOwnerId(userId));
     }
 
-    public Either<List<InputDefinition>, ResponseFormat> createInputsInGraph(Map<String, InputDefinition> inputs,
-                                                                             Component component) {
 
-        List<InputDefinition> resourceProperties = component.getInputs();
+    public Either<List<InputDefinition>, ResponseFormat> createInputsInGraph(final Map<String, InputDefinition> inputs,
+                                                                             final Component component, final String userId) {
 
-        final Map<String, DataTypeDefinition> dataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, component.getModel());
+        final List<InputDefinition> result = new ArrayList<>();
+        // get instance's names
+        final var componentInstancesNames = component.getComponentInstances().stream().map(i -> i.getNormalizedName()).collect(Collectors.toList());
+        for (final Map.Entry<String, InputDefinition> inputDefinitionEntry : inputs.entrySet()) {
+            boolean foundComponentInstanceProperty = false;
+            final var inputDefinition = inputDefinitionEntry.getValue();
+            final var inputName = inputDefinitionEntry.getKey();
+            // get property's name
+            final var propertyNameFromInput = exctractPropertyNameFromInputName(inputName, componentInstancesNames);
+            inputDefinition.setName(propertyNameFromInput);
 
-        for (Map.Entry<String, InputDefinition> inputDefinition : inputs.entrySet()) {
-            String inputName = inputDefinition.getKey();
-            inputDefinition.getValue().setName(inputName);
+            final var componentInstancesProperties = component.getComponentInstancesProperties();
+            final var componentInstancesNameOptional
+                = componentInstancesNames.stream().filter(name -> inputDefinitionEntry.getKey().contains(name)).findFirst();
+            if (componentInstancesNameOptional.isPresent()) {
+                final var componentInstanceIdOptional =
+                    componentInstancesProperties.keySet().stream().filter(key -> key.contains(componentInstancesNameOptional.get())).findFirst();
+                if (componentInstanceIdOptional.isPresent()) {
+                    final var componentInstanceId = componentInstanceIdOptional.get();
+                    final var componentInstanceProperties = componentInstancesProperties.get(componentInstanceId);
+                    final var componentInstancePropertyOptional = componentInstanceProperties.stream()
+                        .filter(prop -> prop.getName().equals(inputDefinition.getName())
+                            && prop.getValue() != null && prop.getValue().contains(ToscaGetFunctionType.GET_INPUT.getFunctionName())).findFirst();
+                    if (componentInstancePropertyOptional.isPresent()) {
+                        // From Instance
+                        foundComponentInstanceProperty = true;
+                        final var componentInstInputsMap = new ComponentInstInputsMap();
+                        final var componentInstanceProperty = componentInstancePropertyOptional.get();
+                        componentInstanceProperty.setParentUniqueId(componentInstanceId);
+                        componentInstInputsMap.setComponentInstancePropInput(Collections.singletonMap(componentInstanceId,
+                            Collections.singletonList(new ComponentInstancePropInput(componentInstanceProperty))));
 
-            Either<InputDefinition, ResponseFormat> preparedInputEither = prepareAndValidateInputBeforeCreate(inputDefinition.getValue(), dataTypes);
-            if (preparedInputEither.isRight()) {
-                return Either.right(preparedInputEither.right().value());
+                        final var createdInputs = createMultipleInputs(userId, component.getUniqueId(),
+                            ComponentTypeEnum.SERVICE, componentInstInputsMap, true, false);
+                        if (createdInputs.isRight()) {
+                            return Either.right((createdInputs.right().value()));
+                        }
+                        result.addAll(createdInputs.left().value());
+                    }
+                }
             }
+            if (!foundComponentInstanceProperty) {
+                final var properties = component.getProperties();
+                final var propDefOptional = properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput)).findFirst();
+                if (propDefOptional.isPresent()) {
+                    // From SELF
+                    final var componentInstInputsMap = new ComponentInstInputsMap();
+                    final var propertyDefinition = propDefOptional.get();
+                    propertyDefinition.setParentUniqueId(component.getUniqueId());
+                    componentInstInputsMap.setServiceProperties(Collections.singletonMap(component.getUniqueId(),
+                        Collections.singletonList(new ComponentInstancePropInput(propertyDefinition))));
 
-        }
-        if (resourceProperties != null) {
-            Map<String, InputDefinition> generatedInputs = resourceProperties.stream()
-                .collect(Collectors.toMap(PropertyDataDefinition::getName, i -> i));
-            Either<Map<String, InputDefinition>, String> mergeEither = ToscaDataDefinition.mergeDataMaps(generatedInputs, inputs);
-            if (mergeEither.isRight()) {
-                return Either.right(componentsUtils.getResponseFormat(ActionStatus.PROPERTY_ALREADY_EXIST, mergeEither.right().value()));
+                    final var createdInputs = createMultipleInputs(userId, component.getUniqueId(),
+                        ComponentTypeEnum.SERVICE, componentInstInputsMap, true, false);
+                    if (createdInputs.isRight()) {
+                        return Either.right((createdInputs.right().value()));
+                    }
+                    result.addAll(createdInputs.left().value());
+                }
             }
-            inputs = mergeEither.left().value();
         }
+        return Either.left(result);
 
-        Either<List<InputDefinition>, StorageOperationStatus> associateInputsEither = toscaOperationFacade
-            .createAndAssociateInputs(inputs, component.getUniqueId());
-        if (associateInputsEither.isRight()) {
-            log.debug("Failed to create inputs under component {}. Status is {}", component.getUniqueId(), associateInputsEither.right().value());
+    }
 
-            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(associateInputsEither.right().value())));
-        }
-        return Either.left(associateInputsEither.left().value());
+    private String exctractPropertyNameFromInputName(final String inputName, final List<String> componentInstancesNames) {
+        AtomicReference<String> result = new AtomicReference<>(inputName);
+        componentInstancesNames.forEach(cin -> result.set(result.get().replace(cin + "_", "")));
+        return result.get();
     }
 
     private Either<List<InputDefinition>, ResponseFormat> createListInputsInGraph(Map<String, InputDefinition> inputs,
@@ -651,8 +683,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         componentParametersView.setIgnoreInterfaces(false);
         componentParametersView.setIgnoreDataType(false);
         componentParametersView.setIgnoreProperties(false);
-        Either<Component, StorageOperationStatus> componentEither = toscaOperationFacade
-            .getToscaElement(componentId, componentParametersView);
+        Either<Component, StorageOperationStatus> componentEither = toscaOperationFacade.getToscaElement(componentId, componentParametersView);
         if (componentEither.isRight()) {
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(componentEither.right().value()));
         }
@@ -702,7 +733,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                                                                     Component component, InputDefinition inputForDelete,
                                                                     StorageOperationStatus status) {
         // the input is created by 'Declare List'.
-        // need to 1. undeclare properties, 2. delete input, 3. delete private data type
+        // need to
+        // 1. undeclare properties,
+        // 2. delete input,
+        // 3. delete private data type
         StorageOperationStatus storageOperationStatus = propertyDeclarationOrchestrator.unDeclarePropertiesAsListInputs(component, inputForDelete);
         if (storageOperationStatus != StorageOperationStatus.OK) {
             log.debug("Component id: {} update properties declared as input for input id: {} failed", componentId, inputId);
@@ -760,8 +794,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             filters.setIgnoreComponentInstancesInputs(false);
             filters.setIgnoreComponentInstancesProperties(false);
             filters.setIgnoreProperties(false);
-            Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
-                .getToscaElement(componentId, filters);
+            Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
             if (getComponentEither.isRight()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
                 log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
@@ -784,10 +817,10 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         } finally {
             if (!inTransaction) {
                 if (result == null || result.isRight()) {
-                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_GROUP);
+                    log.debug(GOING_TO_EXECUTE_ROLLBACK_ON_CREATE_INPUT);
                     janusGraphDao.rollback();
                 } else {
-                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_GROUP);
+                    log.debug(GOING_TO_EXECUTE_COMMIT_ON_CREATE_INPUT);
                     janusGraphDao.commit();
                 }
             }
