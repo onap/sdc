@@ -581,7 +581,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 uploadComponentInstanceInfoMap.getSubstitutionMappingNodeType());
             handleNodeTypes(yamlFileName, preparedResource, yamlFileContent, shouldLock, nodeTypesArtifactsToHandle, createdArtifacts, nodeTypesInfo,
                 csarInfo, nodeName, newResource.getModel());
-            preparedResource = createInputsOnResource(preparedResource, uploadComponentInstanceInfoMap.getInputs());
+            preparedResource = createInputsOnResource(preparedResource, uploadComponentInstanceInfoMap.getInputs(),
+                csarInfo.getModifier().getUserId());
             Map<String, Resource> existingNodeTypesByResourceNames = new HashMap<>();
             final Map<String, UploadComponentInstanceInfo> instancesToCreate = getInstancesToCreate(uploadComponentInstanceInfoMap,
                 newResource.getModel());
@@ -748,7 +749,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                final ParsedToscaYamlInfo parsedToscaYamlInfo, final String substitutionMappingNodeType) {
         if (processSubstitutableAsNodeType(resource, parsedToscaYamlInfo)) {
             final Map<String, Object> substitutableAsNodeType = getSubstitutableAsNodeTypeFromTemplate(
-                (Map<String, Object>) new Yaml().load(topologyTemplateYaml), substitutionMappingNodeType);
+                new Yaml().load(topologyTemplateYaml), substitutionMappingNodeType);
             final Resource genericResource = fetchAndSetDerivedFromGenericType(resource,
                 (String) substitutableAsNodeType.get(TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
 
@@ -1528,7 +1529,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                     generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
                 }
                 final Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
-                resource = createInputsOnResource(resource, inputs);
+                resource = createInputsOnResource(resource, inputs, csarInfo.getModifier().getUserId());
 
                 log.trace("************* Finish to add inputs from yaml {}", yamlName);
                 loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
@@ -1889,10 +1890,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Resource createInputsOnResource(Resource resource, Map<String, InputDefinition> inputs) {
+    private Resource createInputsOnResource(final Resource resource, final Map<String, InputDefinition> inputs, final String userId) {
         List<InputDefinition> resourceProperties = resource.getInputs();
         if (MapUtils.isNotEmpty(inputs) || isNotEmpty(resourceProperties)) {
-            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, resource);
+            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, resource, userId);
             if (createInputs.isRight()) {
                 loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
                     "failed to add inputs from yaml: {}", createInputs.right().value());
