@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c0fd74c_f5bdc3a9",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-19T15:02:01Z",
+      "side": 1,
+      "message": "common-be-tests-utils could/should be excluded from all \u0027fast*\u0027",
+      "range": {
+        "startLine": 769,
+        "startChar": 0,
+        "endLine": 769,
+        "endChar": 54
+      },
+      "revId": "05d638c78ff86ba43639f2e1ed330d3e89a0069e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
