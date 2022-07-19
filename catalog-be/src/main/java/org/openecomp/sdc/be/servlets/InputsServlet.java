@@ -31,7 +31,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -83,7 +82,7 @@ import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.stereotype.Controller;
 
 @Loggable(prepend = true, value = Loggable.DEBUG, trim = false)
-@Tags({@Tag(name = "SDCE-2 APIs")})
+@Tag(name = "SDCE-2 APIs")
 @Server(url = "/sdc2/rest")
 @Path("/v1/catalog")
 @Controller

@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -1092,8 +1093,7 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         Resource resource = createParseResourceObject(true);
         Map<String, InputDefinition> inputs = new HashMap<>();
 
-        Assertions.assertNotNull(
-            testSubject.createInputsOnResource(resource, inputs));
+        Assertions.assertNotNull(testSubject.createInputsOnResource(resource, inputs, user.getUserId()));
     }
 
     @Test
@@ -1106,12 +1106,10 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         resource.setInputs(inputDefinitionList);
         Map<String, InputDefinition> inputs = new HashMap<>();
         inputs.put(key, inputDefinition);
-        when(inputsBusinessLogic.createInputsInGraph(anyMap(),
-            any(Component.class))).thenReturn(Either.left(inputDefinitionList));
-        when(toscaOperationFacade
-            .getToscaElement(anyString())).thenReturn(Either.left(resource));
-        Assertions.assertNotNull(
-            testSubject.createInputsOnResource(resource, inputs));
+        when(inputsBusinessLogic.createInputsInGraph(anyMap(), any(Component.class), eq(user.getUserId())))
+            .thenReturn(Either.left(inputDefinitionList));
+        when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(resource));
+        Assertions.assertNotNull(testSubject.createInputsOnResource(resource, inputs, user.getUserId()));
     }
 
     @Test
@@ -1128,10 +1126,10 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
         List<InputDefinition> inputDefinitionList = new ArrayList<>();
         Service newService = new Service();
 
-        when(inputsBusinessLogic.createInputsInGraph(any(Map.class), any(Component.class)))
+        when(inputsBusinessLogic.createInputsInGraph(anyMap(), any(Component.class), eq(user.getUserId())))
             .thenReturn(Either.left(inputDefinitionList));
         when(toscaOperationFacade.getToscaElement(anyString())).thenReturn(Either.left(newService));
-        Service inputsOnService = testSubject.createInputsOnService(service, inputs);
+        Service inputsOnService = testSubject.createInputsOnService(service, inputs, user.getUserId());
         assertNotNull(inputsOnService);
     }
 

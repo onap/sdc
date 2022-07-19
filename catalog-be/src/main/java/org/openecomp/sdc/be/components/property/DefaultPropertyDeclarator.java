@@ -304,10 +304,8 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         if (StringUtils.isNotEmpty(propertiesName) && selectedProp != null) {
             complexProperty = true;
             input = new InputDefinition(selectedProp);
-            input.setDefaultValue(selectedProp.getValue());
         } else {
             input = new InputDefinition(prop);
-            input.setDefaultValue(prop.getValue());
         }
         input.setName(inputName);
         input.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(componentId, input.getName()));
