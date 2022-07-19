@@ -24,7 +24,6 @@
             <groupId>org.functionaljava</groupId>
             <artifactId>functionaljava</artifactId>
             <version>${functionaljava.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.onap.sdc.common</groupId>
