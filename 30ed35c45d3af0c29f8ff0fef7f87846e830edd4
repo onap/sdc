@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d5dd82d9_36ea4088",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-21T17:05:35Z",
+      "side": 1,
+      "message": "good catch, thanks",
+      "parentUuid": "546ff901_b64a138a",
+      "range": {
+        "startLine": 252,
+        "startChar": 34,
+        "endLine": 252,
+        "endChar": 47
+      },
+      "revId": "30ed35c45d3af0c29f8ff0fef7f87846e830edd4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0e5d6034_44c271f7",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
         "patchSetId": 7
@@ -45,6 +69,30 @@
       "revId": "30ed35c45d3af0c29f8ff0fef7f87846e830edd4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28e57afe_3a737b92",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-21T17:05:35Z",
+      "side": 1,
+      "message": "according to our morning discussion , this not need anymore",
+      "parentUuid": "0e5d6034_44c271f7",
+      "range": {
+        "startLine": 338,
+        "startChar": 13,
+        "endLine": 338,
+        "endChar": 64
+      },
+      "revId": "30ed35c45d3af0c29f8ff0fef7f87846e830edd4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
