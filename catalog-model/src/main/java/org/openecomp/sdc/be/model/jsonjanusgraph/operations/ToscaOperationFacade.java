@@ -1323,10 +1323,10 @@ public class ToscaOperationFacade {
     private Integer getMaxCounterFromNamesAndIds(Component containerComponent, String normalizedName) {
         List<String> countersInNames = containerComponent.getComponentInstances().stream()
             .filter(ci -> ci.getNormalizedName() != null && ci.getNormalizedName().startsWith(normalizedName))
-            .map(ci -> ci.getNormalizedName().split(normalizedName)[1]).collect(Collectors.toList());
+            .map(ci -> ci.getNormalizedName().split(normalizedName)[1].replaceAll("\\D", "")).collect(Collectors.toList());
         List<String> countersInIds = containerComponent.getComponentInstances().stream()
-            .filter(ci -> ci.getUniqueId() != null && ci.getUniqueId().contains(normalizedName)).map(ci -> ci.getUniqueId().split(normalizedName)[1])
-            .collect(Collectors.toList());
+            .filter(ci -> ci.getUniqueId() != null && ci.getUniqueId().contains(normalizedName))
+            .map(ci -> ci.getUniqueId().split(normalizedName)[1].replaceAll("\\D", "")).collect(Collectors.toList());
         List<String> namesAndIdsList = new ArrayList<>(countersInNames);
         namesAndIdsList.addAll(countersInIds);
         return getMaxInteger(namesAndIdsList);
