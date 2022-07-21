@@ -1559,7 +1559,11 @@ public class NodeTemplateOperation extends BaseOperation {
     }
 
     private String buildComponentInstanceName(String instanceSuffixNumber, String instanceName) {
-        return instanceName + " " + (instanceSuffixNumber == null ? 0 : instanceSuffixNumber);
+        String delimiter = ConfigurationManager.getConfigurationManager().getConfiguration().getComponentInstanceCounterDelimiter();
+        if(delimiter == null){
+            delimiter = " ";
+        }
+        return instanceName + delimiter + (instanceSuffixNumber == null ? 0 : instanceSuffixNumber);
     }
 
     public Either<RequirementCapabilityRelDef, StorageOperationStatus> associateResourceInstances(Component component, String componentId,
