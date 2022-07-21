@@ -5,6 +5,97 @@
 Release Notes
 =============
 
+Version: 1.11.6
+==============
+
+:Release Date: 2022-07-21
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+
+    N/A
+
+**Stories**
+
+*  `SDC-4078 <https://jira.onap.org/browse/SDC-4078>`_ - Support tosca functions for group instances in composition view
+*  `SDC-4060 <https://jira.onap.org/browse/SDC-4060>`_ - Service Import - Policies
+*  `SDC-4051 <https://jira.onap.org/browse/SDC-4051>`_ - Service Import - Outputs
+*  `SDC-4080 <https://jira.onap.org/browse/SDC-4080>`_ - Allow set values in properties of type timestamp
+*  `SDC-4095 <https://jira.onap.org/browse/SDC-4095>`_ - Support concat for string property values
+*  `SDC-4090 <https://jira.onap.org/browse/SDC-4090>`_ - Support tosca functions for group instances
+
+
+
+**Bug Fixes**
+
+*  `SDC-4048 <https://jira.onap.org/browse/SDC-4048>`_ - VFC properties of type timestamp not visible in property assignment
+*  `SDC-4063 <https://jira.onap.org/browse/SDC-4063>`_ - Directives drop down list cut short
+*  `SDC-4087 <https://jira.onap.org/browse/SDC-4087>`_ - Node Filters displayed incorrectly
+*  `SDC-4088 <https://jira.onap.org/browse/SDC-4088>`_ - Save/discard button not showing for an instance attributes
+*  `SDC-4081 <https://jira.onap.org/browse/SDC-4081>`_ - Fail to declare Input for duplicated name of property
+*  `SDC-4089 <https://jira.onap.org/browse/SDC-4089>`_ - Fix upgrade failure
+*  `SDC-4079 <https://jira.onap.org/browse/SDC-4079>`_ - Service Import - Input appearing as a property
+*  `SDC-4091 <https://jira.onap.org/browse/SDC-4091>`_ - Fix clear value for group instances toscaGetFunction
+*  `SDC-4085 <https://jira.onap.org/browse/SDC-4085>`_ - Unable to create a property on SELF of type List <Map>
+*  `SDC-4096 <https://jira.onap.org/browse/SDC-4096>`_ - Changing VFC version on composition page results in error
+*  `SDC-4101 <https://jira.onap.org/browse/SDC-4101>`_ - Fix incorrect dependency scope change
+
+
+
+**Tasks**
+
+*  `SDC-4017 <https://jira.onap.org/browse/SDC-4017>`_ - Update vulnerable dependencies
+*  `SDC-4094 <https://jira.onap.org/browse/SDC-4094>`_ - Remove unused dependency (functionaljava)
+*  `SDC-4100 <https://jira.onap.org/browse/SDC-4100>`_ - Add fast build profile ignoring frontend
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.5
 ==============
 
