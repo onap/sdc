@@ -146,6 +146,7 @@ public class Configuration extends BasicConfiguration {
     private Map<String, Map<String, List<String>>> componentAllowedInstanceTypes;
     private ExternalCsarStore externalCsarStore;
     private CsarFormat csarFormat;
+    private String componentInstanceCounterDelimiter;
 
     @SuppressWarnings("unchecked")
     private <K, V> Map<K, V> safeGetCapsInsensitiveMap(Map<K, V> map) {
