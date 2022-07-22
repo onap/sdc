@@ -106,7 +106,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setType(propertyDataDefinition.getType());
         this.setName(propertyDataDefinition.getName());
         this.setValue(propertyDataDefinition.getValue());
-        this.setRequired(propertyDataDefinition.isRequired());
         this.setHidden(propertyDataDefinition.isHidden());
         this.setLabel(propertyDataDefinition.getLabel());
         this.setImmutable(propertyDataDefinition.isImmutable());
@@ -139,7 +138,6 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setUserCreated(propertyDataDefinition.isUserCreated());
     }
 
-    // @Override
     public boolean isDefinition() {
         return true;
     }
@@ -152,17 +150,17 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return required;
     }
 
-    public void setSchemaType(String schemaType) {
-        if (schema != null && schema.getProperty() != null) {
-            schema.getProperty().setType(schemaType);
-        }
-    }
-
     public String getSchemaType() {
         if (schema != null && schema.getProperty() != null) {
             return schema.getProperty().getType();
         }
         return null;
+    }
+
+    public void setSchemaType(String schemaType) {
+        if (schema != null && schema.getProperty() != null) {
+            schema.getProperty().setType(schemaType);
+        }
     }
 
     public PropertyDataDefinition getSchemaProperty() {
@@ -315,6 +313,10 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         return this.getGetInputValues() != null && !this.getGetInputValues().isEmpty();
     }
 
+    public List<Annotation> getAnnotations() {
+        return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
+    }
+
     public void setAnnotations(List<Annotation> newAnnotations) {
         Set<Annotation> annotationSet = isNotEmpty(newAnnotations) ? new HashSet<>(newAnnotations) : new HashSet<>();
         //We would to prioritize the new valid annotations over the old ones if the same one existed.
@@ -325,22 +327,17 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         setToscaPresentationValue(JsonPresentationFields.ANNOTATIONS, this.annotations);
     }
 
-    public List<Annotation> getAnnotations() {
-        return (List<Annotation>) getToscaPresentationValue(JsonPresentationFields.ANNOTATIONS);
-    }
-
     @JsonIgnoreProperties
     public boolean isToscaFunction() {
         return this.toscaGetFunctionType != null || this.toscaFunction != null;
     }
 
-
     @JsonIgnoreProperties
     public boolean isToscaGetFunction() {
         return this.toscaGetFunctionType != null || (this.toscaFunction != null
             && (this.toscaFunction.getType() == ToscaFunctionType.GET_ATTRIBUTE
-                || this.toscaFunction.getType() == ToscaFunctionType.GET_INPUT
-                || this.toscaFunction.getType() == ToscaFunctionType.GET_PROPERTY));
+            || this.toscaFunction.getType() == ToscaFunctionType.GET_INPUT
+            || this.toscaFunction.getType() == ToscaFunctionType.GET_PROPERTY));
     }
 
     @JsonIgnoreProperties

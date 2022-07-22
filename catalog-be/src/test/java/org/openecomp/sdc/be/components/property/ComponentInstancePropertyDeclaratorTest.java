@@ -448,8 +448,6 @@ public class ComponentInstancePropertyDeclaratorTest extends PropertyDeclaratorT
     private void verifyCreatedInput(PropertyDataDefinition property, InputDefinition input) {
         assertEquals(property.getType(), input.getType());
         assertEquals(generateExpectedInputName(property), input.getName());
-        assertEquals(property.getValue(), input.getValue());
-        assertEquals(property.getValue(), input.getDefaultValue());
         assertEquals(UniqueIdBuilder.buildPropertyUniqueId(RESOURCE_ID, input.getName()), input.getUniqueId());
         assertEquals(property.getUniqueId(), input.getPropertyId());
         assertEquals(INSTANCE_ID, input.getInstanceUniqueId());
