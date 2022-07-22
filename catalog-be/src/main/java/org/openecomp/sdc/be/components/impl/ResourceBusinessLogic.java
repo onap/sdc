@@ -59,6 +59,7 @@ import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
 import org.openecomp.sdc.be.components.csar.OnboardedCsarInfo;
+import org.openecomp.sdc.be.components.csar.ServiceCsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
@@ -1035,6 +1036,22 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         if (eitherNodeTypes.isLeft()) {
             nodes.putAll(eitherNodeTypes.left().value());
         }
+    }
+
+    public Resource createResourceInstancesAndRelations(Map<String, Object> mappedToscaMainTemplate, String mainTemplateName, ServiceCsarInfo csarInfo, Resource resource) {
+        ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic
+            .getParsedToscaYamlInfoMapped(mappedToscaMainTemplate, mainTemplateName, csarInfo.getCreatedNodesToscaResourceNames(), resource);
+        final Map<String, UploadComponentInstanceInfo> instancesToCreate = getInstancesToCreate(parsedToscaYamlInfo, resource.getModel());
+        if (instancesToCreate.size() == 0) {
+            return resource;
+        }
+        Map<String, Resource> existingNodeTypesByResourceNames = new HashMap<>();
+        createResourceInstances(mainTemplateName, resource, null, instancesToCreate, csarInfo.getCreatedNodes(),
+            existingNodeTypesByResourceNames);
+        resource = createResourceInstancesRelations(csarInfo.getModifier(), mainTemplateName, resource, null, instancesToCreate,
+            existingNodeTypesByResourceNames);
+        compositionBusinessLogic.setPositionsForComponentInstances(resource, csarInfo.getModifier().getUserId());
+        return resource;
     }
 
     public Resource createResourceFromCsar(Resource resource, User user, Map<String, byte[]> csarUIPayload, String csarUUID) {

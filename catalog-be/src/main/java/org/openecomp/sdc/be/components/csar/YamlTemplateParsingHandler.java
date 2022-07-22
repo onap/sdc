@@ -178,6 +178,34 @@ public class YamlTemplateParsingHandler {
         return parsedToscaYamlInfo;
     }
 
+    public ParsedToscaYamlInfo parseResourceInfoFromMappedYAML(String fileName, Map<String, Object> mappedToscaTemplate,
+                                                               Map<String, String> createdNodesToscaResourceNames, Component component,
+                                                               String interfaceTemplateYaml) {
+        log.debug("#parseResourceInfoFromYAML - Going to parse yaml {} ", fileName);
+        final ParsedToscaYamlInfo parsedToscaYamlInfo = new ParsedToscaYamlInfo();
+        final Map<String, Object> mappedTopologyTemplate = (Map<String, Object>) findToscaElement(mappedToscaTemplate, TOPOLOGY_TEMPLATE,
+                ToscaElementTypeEnum.ALL).left().on(err -> failIfNotTopologyTemplate(fileName));
+        final Map<String, Object> mappedTopologyTemplateInputs = mappedTopologyTemplate.entrySet().stream()
+                .filter(entry -> entry.getKey().equals(INPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        final Map<String, Object> mappedTopologyTemplateOutputs = mappedTopologyTemplate.entrySet().stream()
+                .filter(entry -> entry.getKey().equals(OUTPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
+        parsedToscaYamlInfo.setOutputs(getOutputs(mappedTopologyTemplateOutputs));
+        parsedToscaYamlInfo.setInstances(getInstances(mappedToscaTemplate, createdNodesToscaResourceNames));
+        parsedToscaYamlInfo.setGroups(getGroups(mappedToscaTemplate, component.getModel()));
+        parsedToscaYamlInfo.setPolicies(getPolicies(mappedToscaTemplate, component.getModel()));
+        Map<String, Object> substitutionMappings = getSubstitutionMappings(mappedToscaTemplate);
+        if (substitutionMappings != null) {
+            if (component.isService() && !interfaceTemplateYaml.isEmpty()) {
+                parsedToscaYamlInfo.setProperties(getProperties(loadYamlAsStrictMap(interfaceTemplateYaml)));
+                parsedToscaYamlInfo.setSubstitutionFilterProperties(getSubstitutionFilterProperties(mappedToscaTemplate));
+            }
+            parsedToscaYamlInfo.setSubstitutionMappingNodeType((String) substitutionMappings.get(NODE_TYPE.getElementName()));
+        }
+        log.debug("#parseResourceInfoFromYAML - The yaml {} has been parsed ", fileName);
+        return parsedToscaYamlInfo;
+    }
+
     private Map<String, Object> getMappedToscaTemplate(String fileName, String resourceYml, Map<String, NodeTypeInfo> nodeTypesInfo,
                                                        String nodeName) {
         Map<String, Object> mappedToscaTemplate;

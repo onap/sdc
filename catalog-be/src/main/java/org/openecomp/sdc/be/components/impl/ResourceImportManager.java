@@ -21,12 +21,14 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
+import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.DEFAULT_ICON;
 import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataType;
 import static org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaElementOperation.createDataTypeDefinitionWithName;
 
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.auditing.impl.resourceadmin.AuditImportResourceAdminEventFactory;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.ServiceCsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
@@ -331,6 +334,171 @@ public class ResourceImportManager {
         }
     }
 
+    private void importUserDefinedVfcFromYaml(Resource resource, ServiceCsarInfo csarInfo, String resourceName){
+        String resourceTemplate = new String(csarInfo.getCsar().get("Definitions/resource-" + resourceName + "-template.yml"));
+
+        String derivedFrom = derivedFromIfNotExist(new Yaml().load(resourceTemplate), resource.getModel());
+        if (StringUtils.isNotEmpty(derivedFrom)) {
+            String[] nodeTemplateName = derivedFrom.split("\\.");
+            String derivedFromResourceName = nodeTemplateName[nodeTemplateName.length - 1];
+            importUserDefinedResourceFromYaml(csarInfo, derivedFromResourceName, derivedFrom, true);
+        }
+        populateResourceFromYaml(resourceTemplate, resource);
+    }
+
+    private void importUserDefinedVfFromYaml(Resource resource, ServiceCsarInfo csarInfo, String resourceName) {
+        String resourceTemplate = new String(csarInfo.getCsar().get("Definitions/resource-" + resourceName + "-template-interface.yml"));
+
+        String derivedFrom = derivedFromIfNotExist(new Yaml().load(resourceTemplate), resource.getModel());
+        if (StringUtils.isNotEmpty(derivedFrom)) {
+            String[] nodeTemplateName = derivedFrom.split("\\.");
+            String derivedFromResourceName = nodeTemplateName[nodeTemplateName.length - 1];
+            importUserDefinedResourceFromYaml(csarInfo, derivedFromResourceName, derivedFrom, true);
+        }
+        setDerivedFromYaml(resourceTemplate, resource);
+    }
+
+    private Set<String> checkForNewUserDefinedNodeTypes(Resource resource, Map<String, Object> mappedResourceTemplate, ServiceCsarInfo csarInfo) {
+        Set<String> nodeTypesInResource = new HashSet<>();
+        final Either<Map<String, Object>, ImportUtils.ResultStatusEnum> nodeTemplatesEither =
+            ImportUtils.findFirstToscaMapElement(mappedResourceTemplate, ToscaTagNamesEnum.NODE_TEMPLATES);
+        if (nodeTemplatesEither.isRight()) {
+            return Collections.emptySet();
+        }
+        Map<String, Object> nodeTemplates = nodeTemplatesEither.left().value();
+        for (Map.Entry<String, Object> entrySet : nodeTemplates.entrySet()) {
+            Map<String, Object> nodeType = ((Map<String, Object>) entrySet.getValue());
+            Either<String, ResultStatusEnum> typeEither = ImportUtils.findFirstToscaStringElement(nodeType, ToscaTagNamesEnum.TYPE);
+            if (typeEither.isLeft()) {
+                String type = typeEither.left().value();
+                nodeTypesInResource.add(type);
+            }
+        }
+
+        Set<String> newUserDefinedNodeTypesInResource = new HashSet<>();
+        for (String type : nodeTypesInResource) {
+            Either<Resource, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade
+                .getLatestByToscaResourceName(type, resource.getModel());
+            if (latestByToscaResourceName.isRight()) {
+                StorageOperationStatus operationStatus = latestByToscaResourceName.right().value();
+                if (latestByToscaResourceName.right().value() == StorageOperationStatus.NOT_FOUND) {
+                    newUserDefinedNodeTypesInResource.add(type);
+                } else {
+                    ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(operationStatus);
+                    throw new ByActionStatusComponentException(convertFromStorageResponse, type);
+                }
+            }
+        }
+        return newUserDefinedNodeTypesInResource;
+    }
+
+    public void importUserDefinedResourceFromYaml(ServiceCsarInfo csarInfo, String resourceName,
+                                                  String nodeTemplateType, boolean isInTransaction) {
+        Resource resource = new Resource();
+        ImmutablePair<Resource, ActionStatus> responsePair;
+        User user = csarInfo.getModifier();
+        try {
+            String resourceTemplateName = "resource-" + resourceName + "-template.yml";
+            Map<String, Object> mappedResourceTemplate = csarInfo.getMainTemplateImports().get(resourceTemplateName);
+            if (MapUtils.isEmpty(mappedResourceTemplate)) {
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TEMPLATE, resource.getName(), resource.getModel());
+            }
+            setResourceMetadataFromMappedTemplate(resource, mappedResourceTemplate, user.getUserId(), nodeTemplateType);
+
+            if (resource.getResourceType().equals(ResourceTypeEnum.VF)) {
+                Set<String> newNodeTypes = checkForNewUserDefinedNodeTypes(resource, mappedResourceTemplate, csarInfo);
+                for (String type : newNodeTypes) {
+                    String[] nodeTemplateName = type.split("\\.");
+                    String derivedFromResourceName = nodeTemplateName[nodeTemplateName.length - 1];
+                    importUserDefinedResourceFromYaml(csarInfo, derivedFromResourceName, type, true);
+                }
+                importUserDefinedVfFromYaml(resource, csarInfo, resourceName);
+            } else if (resource.getResourceType().equals(ResourceTypeEnum.VFC)) {
+                importUserDefinedVfcFromYaml(resource, csarInfo, resourceName);
+            }
+
+            resourceBusinessLogic.validateDerivedFromNotEmpty(user, resource, AuditingActionEnum.CREATE_RESOURCE);
+            resourceBusinessLogic.validatePropertiesDefaultValues(resource);
+            responsePair = resourceBusinessLogic
+                    .createOrUpdateResourceByImport(resource, user, false, isInTransaction, true, null, null, false);
+            resource = responsePair.left;
+            if (resource.getResourceType().equals(ResourceTypeEnum.VF)) {
+                resource = resourceBusinessLogic.createResourceInstancesAndRelations(mappedResourceTemplate, "Definitions/" + resourceTemplateName,
+                    csarInfo, resource);
+            }
+            LifecycleChangeInfoWithAction lifecycleChangeInfo = new LifecycleChangeInfoWithAction();
+            lifecycleChangeInfo.setUserRemarks("certification on import");
+            lifecycleChangeInfo.setAction(LifecycleChangeInfoWithAction.LifecycleChanceActionEnum.CREATE_FROM_CSAR);
+            resourceBusinessLogic.propagateStateToCertified(user, resource, lifecycleChangeInfo, isInTransaction, true, true);
+        } catch (RuntimeException e) {
+            handleImportResourceException(new UploadResourceInfo(), user, false, e);
+        }
+    }
+
+    private String derivedFromIfNotExist(Map<String, Object> mappedResourceTemplate, String model) {
+        Either<Map<String, Object>, ResultStatusEnum> toscaNodeTypeEither = ImportUtils
+                .findFirstToscaMapElement(mappedResourceTemplate, ToscaTagNamesEnum.NODE_TYPES);
+        if (toscaNodeTypeEither.isRight()) {
+            ResultStatusEnum resultStatusEnum = toscaNodeTypeEither.right().value();
+            throw new ByActionStatusComponentException(
+                    componentsUtils.convertFromResultStatusEnum(resultStatusEnum, JsonPresentationFields.DERIVED_FROM));
+        }
+        Map<String, Object> toscaNodeTypeElement = toscaNodeTypeEither.left().value();
+        Either<String, ResultStatusEnum> toscaDerivedFromEither = ImportUtils
+                .findFirstToscaStringElement(toscaNodeTypeElement, ToscaTagNamesEnum.DERIVED_FROM);
+        if (toscaDerivedFromEither.isRight()) {
+            ResultStatusEnum resultStatusEnum = toscaDerivedFromEither.right().value();
+            throw new ByActionStatusComponentException(
+                    componentsUtils.convertFromResultStatusEnum(resultStatusEnum, JsonPresentationFields.DERIVED_FROM));
+        }
+        String derivedFrom = toscaDerivedFromEither.left().value();
+        Either<Resource, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade
+                .getLatestByToscaResourceName(derivedFrom, model);
+        if (latestByToscaResourceName.isRight()) {
+            StorageOperationStatus operationStatus = latestByToscaResourceName.right().value();
+            if (latestByToscaResourceName.right().value() == StorageOperationStatus.NOT_FOUND) {
+                return derivedFrom;
+            } else {
+                ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(operationStatus);
+                throw new ByActionStatusComponentException(convertFromStorageResponse, derivedFrom);
+            }
+        }
+        return null;
+    }
+
+    private void setResourceMetadataFromMappedTemplate(Resource resource, Map<String, Object> mappedResourceTemplate, String userId,
+                                                       String nodeTemplateType) {
+        final Either<Map<String, Object>, ImportUtils.ResultStatusEnum> metadataEither =
+            ImportUtils.findFirstToscaMapElement(mappedResourceTemplate, TypeUtils.ToscaTagNamesEnum.METADATA);
+        Map<String, Object> metadata = metadataEither.left().value();
+        if (org.apache.commons.collections.MapUtils.isNotEmpty(metadata)) {
+            resource.setToscaResourceName(nodeTemplateType);
+            resource.setContactId(userId);
+            resource.setDescription((String) metadata.get("description"));
+            List<String> tags = new ArrayList<>();
+            tags.add((String) metadata.get("name"));
+            resource.setTags(tags);
+            SubCategoryDefinition subCategory = new SubCategoryDefinition();
+            subCategory.setName((String) metadata.get("subcategory"));
+            CategoryDefinition category = new CategoryDefinition();
+            category.setName((String) metadata.get("category"));
+            category.setNormalizedName(((String) metadata.get("category")).toLowerCase());
+            category.setIcons(List.of(DEFAULT_ICON));
+            category.setNormalizedName(((String) metadata.get("category")).toLowerCase());
+            category.addSubCategory(subCategory);
+            List<CategoryDefinition> categories = new ArrayList<>();
+            categories.add(category);
+            resource.setCategories(categories);
+            resource.setName((String) metadata.get("name"));
+            resource.setIcon("defaulticon");
+            resource.setResourceVendorModelNumber((String) metadata.get("resourceVendorModelNumber"));
+            resource.setResourceType(ResourceTypeEnum.getType((String) metadata.get("type")));
+            resource.setVendorName((String) metadata.get("resourceVendor"));
+            resource.setVendorRelease((String) metadata.get("resourceVendorRelease"));
+            resource.setModel((String) metadata.get("model"));
+        }
+    }
+
     public ImmutablePair<Resource, ActionStatus> importUserDefinedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator,
                                                                            boolean isInTransaction) {
         Resource resource = new Resource();
@@ -382,6 +550,21 @@ public class ResourceImportManager {
             setAttributes(toscaJson, resource);
             setRequirements(toscaJson, resource, parentResource);
             setInterfaceLifecycle(toscaJson, resource, existingResource);
+        } else {
+            throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
+        }
+    }
+
+    public void setDerivedFromYaml(final String resourceYml, Resource resource) {
+        Object ymlObj = new Yaml().load(resourceYml);
+        if (ymlObj instanceof Map) {
+            final Map<String, Object> toscaJsonAll = (Map<String, Object>) ymlObj;
+            Map<String, Object> toscaJson = toscaJsonAll;
+            if (toscaJsonAll.containsKey(ToscaTagNamesEnum.NODE_TYPES.getElementName()) && resource.getResourceType() != ResourceTypeEnum.CVFC) {
+                toscaJson = new HashMap<>();
+                toscaJson.put(ToscaTagNamesEnum.NODE_TYPES.getElementName(), toscaJsonAll.get(ToscaTagNamesEnum.NODE_TYPES.getElementName()));
+            }
+            setDerivedFrom(toscaJson, resource);
         } else {
             throw new ByActionStatusComponentException(ActionStatus.GENERAL_ERROR);
         }

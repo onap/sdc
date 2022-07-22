@@ -26,6 +26,7 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
 import com.google.common.annotations.VisibleForTesting;
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.MapUtils;
@@ -192,6 +194,33 @@ public abstract class CsarInfo {
             return (Map<String, Object>) dataTypesEither.left().value();
         }
         return Collections.emptyMap();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Map<String, Object> getTypesFromTemplate(final Map<String, Object> mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum type, Collection<String> names) {
+        Map<String, Object> allTypes = getTypesFromTemplate(mappedToscaTemplate, type);
+
+        final Map<String, Object> typesToReturn = new HashMap<>();
+        final Stream<Map.Entry<String, Object>> requestedTypes = allTypes.entrySet().stream().filter(entry -> names.contains(entry.getKey()));
+
+        requestedTypes.forEach(requestedType -> {
+            typesToReturn.put(requestedType.getKey(), requestedType.getValue());
+            typesToReturn.putAll(getDerivedFromTypes(allTypes, (Map<String, Object>) requestedType.getValue()));
+        });
+
+        return typesToReturn;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Map<String, Object>> getDerivedFromTypes(Map<String, Object> allTypes, Map<String, Object> type) {
+        final Map<String, Map<String, Object>> derivedFromTypes = new HashMap<>();
+        Either<Object, ResultStatusEnum> derivedFromTypeEither = findToscaElement(type, TypeUtils.ToscaTagNamesEnum.DERIVED_FROM, ToscaElementTypeEnum.STRING);
+        if (derivedFromTypeEither.isLeft() && allTypes.containsKey((String)derivedFromTypeEither.left().value())) {
+            Map<String, Object> derivedFromType = (Map<String, Object>) allTypes.get((String)derivedFromTypeEither.left().value());
+            derivedFromTypes.put((String)derivedFromTypeEither.left().value(), derivedFromType);
+            derivedFromTypes.putAll(getDerivedFromTypes(allTypes, derivedFromType));
+        }
+        return derivedFromTypes;
     }
 
     protected Set<String> findNodeTypesUsedInNodeTemplates(final Map<String, Map<String, Object>> nodeTemplates) {

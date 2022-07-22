@@ -21,8 +21,11 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
@@ -39,7 +42,9 @@ import fj.data.Either;
  */
 public class ServiceCsarInfo extends CsarInfo {
 
+    @Getter
     private Map<String, Map<String, Object>> mainTemplateImports;
+    private Map<String, Object> nodeTypeDefinitions;
 
     public ServiceCsarInfo(final User modifier, final String csarUUID, final Map<String, byte[]> csar, final String vfResourceName,
             final String mainTemplateName, final String mainTemplateContent, final boolean isUpdate) {
@@ -107,6 +112,30 @@ public class ServiceCsarInfo extends CsarInfo {
                 .forEach(entry -> definitions.putAll(getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.DATA_TYPES)));
         definitions.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), TypeUtils.ToscaTagNamesEnum.DATA_TYPES));
         return definitions;
+    }
+
+    public Map<String, Object> getNodeTypesUsed() {
+        if (nodeTypeDefinitions == null) {
+            nodeTypeDefinitions = new HashMap<>();
+            final Set<String> nodeTypesUsed = getNodeTypesUsedInToscaTemplate(getMappedToscaMainTemplate());
+            mainTemplateImports.entrySet().forEach(entry -> nodeTypeDefinitions
+                .putAll(getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.NODE_TYPES, nodeTypesUsed)));
+            nodeTypeDefinitions.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), TypeUtils.ToscaTagNamesEnum.NODE_TYPES, nodeTypesUsed));
+        }
+        return nodeTypeDefinitions;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<String> getNodeTypesUsedInToscaTemplate(Map<String, Object> mappedToscaTemplate) {
+        final Either<Object, ResultStatusEnum> nodeTemplatesEither = findToscaElement(mappedToscaTemplate,
+            TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES, ToscaElementTypeEnum.MAP);
+        final Set<String> nodeTypesUsedInNodeTemplates = new HashSet<>();
+        if (nodeTemplatesEither.isLeft()) {
+            final Map<String, Map<String, Object>> nodeTemplates =
+                (Map<String, Map<String, Object>>) nodeTemplatesEither.left().value();
+            nodeTypesUsedInNodeTemplates.addAll(findNodeTypesUsedInNodeTemplates(nodeTemplates));
+        }
+        return nodeTypesUsedInNodeTemplates;
     }
 
 }
