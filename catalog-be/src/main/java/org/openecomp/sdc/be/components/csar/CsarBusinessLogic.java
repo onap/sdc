@@ -167,6 +167,12 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
                 component, getInterfaceTemplateYaml(csarInfo).orElse(""));
     }
 
+    public ParsedToscaYamlInfo getParsedToscaYamlInfoMapped(Map<String, Object> mappedTopologyTemplateYaml, String yamlName,
+                                                            Map<String, String> createdNodesToscaResourceNames, Component component) {
+        return yamlHandler
+            .parseResourceInfoFromMappedYAML(yamlName, mappedTopologyTemplateYaml, createdNodesToscaResourceNames, component, "");
+    }
+
     private Optional<String> getInterfaceTemplateYaml(CsarInfo csarInfo) {
         String[] yamlFile;
         String interfaceTemplateYaml = "";

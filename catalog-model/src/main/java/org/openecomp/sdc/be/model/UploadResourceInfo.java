@@ -47,6 +47,8 @@ public class UploadResourceInfo {
     private String resourceType = "VFC";
     private String model;
     private boolean isNormative;
+    private String yamlInterfaceName;
+    private String yamlInterfaceData;
 
     public UploadResourceInfo(String payload, String payloadName, String description, String category, List<String> tags,
                               List<UploadArtifactInfo> artifactsList, String modelName) {
