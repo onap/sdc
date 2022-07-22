@@ -23,6 +23,7 @@ package org.openecomp.sdc.be.components.impl.generic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -181,7 +182,7 @@ class GenericTypeBusinessLogicTest {
 
     private void assertInput(InputDefinition inputDefinition, PropertyDefinition propertyDefinition) {
         assertEquals("genericUid", inputDefinition.getOwnerId());
-        assertEquals(inputDefinition.getValue(), propertyDefinition.getValue());
+        assertNull(inputDefinition.getValue());
         assertEquals(inputDefinition.getName(), propertyDefinition.getName());
     }
 

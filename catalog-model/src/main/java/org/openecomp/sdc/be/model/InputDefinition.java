@@ -36,18 +36,26 @@ public class InputDefinition extends PropertyDefinition {
 
     public InputDefinition(PropertyDataDefinition p) {
         super(p);
+        setValue(null);
+        setDefaultValue(null);
     }
 
     public InputDefinition() {
         super();
+        setValue(null);
+        setDefaultValue(null);
     }
 
     public InputDefinition(PropertyDefinition pd) {
         super(pd);
+        setValue(null);
+        setDefaultValue(null);
     }
 
     public InputDefinition(InputDefinition other) {
         super(other);
+        setValue(null);
+        setDefaultValue(null);
     }
 
     public void setAnnotationsToInput(Collection<Annotation> annotations) {
