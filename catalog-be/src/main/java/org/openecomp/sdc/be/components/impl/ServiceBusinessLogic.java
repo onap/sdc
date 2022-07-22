@@ -109,8 +109,10 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
@@ -189,8 +191,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator;
     private final ServiceCategoryValidator serviceCategoryValidator;
     private final ServiceValidator serviceValidator;
-    private final PolicyBusinessLogic policyBusinessLogic;
-    private final GroupBusinessLogic groupBusinessLogic;
+    private final InputsBusinessLogic inputsBusinessLogic;
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
     private ServiceTypeValidator serviceTypeValidator;
@@ -210,7 +211,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 final ServiceRoleValidator serviceRoleValidator,
                                 final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator,
                                 final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator,
-                                final PolicyBusinessLogic policyBusinessLogic) {
+                                final InputsBusinessLogic inputsBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -224,8 +225,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         this.serviceInstantiationTypeValidator = serviceInstantiationTypeValidator;
         this.serviceCategoryValidator = serviceCategoryValidator;
         this.serviceValidator = serviceValidator;
-        this.policyBusinessLogic = policyBusinessLogic;
-        this.groupBusinessLogic = groupBusinessLogic;
+        this.inputsBusinessLogic = inputsBusinessLogic;
     }
 
     @Autowired
@@ -692,7 +692,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private Either<Service, ResponseFormat> createServiceByDao(final Service service, final User user) {
         log.debug("send service {} to dao for create", service.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
-        Either<Boolean, ResponseFormat> lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
+        final var lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
         if (lockResult.isRight()) {
             ResponseFormat responseFormat = lockResult.right().value();
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
@@ -705,27 +705,55 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             setToscaArtifactsPlaceHolders(service, user);
 
             if (service.isSubstituteCandidate() || genericTypeBusinessLogic.hasMandatorySubstitutionType(service)) {
-                final Resource genericType = fetchAndSetDerivedFromGenericType(service);
+                final var genericType = fetchAndSetDerivedFromGenericType(service);
                 generatePropertiesFromGenericType(service, genericType);
-                generateAndAddInputsFromGenericTypeProperties(service, genericType);
             }
             beforeCreate(service);
-            Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
-            if (dataModelResponse.isLeft()) {
-                log.debug("Service '{}' created successfully", service.getName());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
+            final var dataModelResponse = toscaOperationFacade.createToscaComponent(service);
+            if (dataModelResponse.isRight()) {
+                final var responseFormat = componentsUtils.getResponseFormatByComponent(
+                    componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service, ComponentTypeEnum.SERVICE);
+                log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
                 componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
-                ASDCKpiApi.countCreatedServicesKPI();
-                return Either.left(dataModelResponse.left().value());
+                return Either.right(responseFormat);
             }
-            ResponseFormat responseFormat = componentsUtils
-                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service,
-                    ComponentTypeEnum.SERVICE);
-            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
+            log.debug("Service '{}' created successfully", service.getName());
+            final var createdService = dataModelResponse.left().value();
+            if (service.isSubstituteCandidate() || genericTypeBusinessLogic.hasMandatorySubstitutionType(service)) {
+                declareGenericTypePropertiesAsInputs(createdService);
+            }
+            final var responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
-            return Either.right(responseFormat);
+            ASDCKpiApi.countCreatedServicesKPI();
+            return Either.left(createdService);
         } finally {
             graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
+        }
+    }
+
+    private void declareGenericTypePropertiesAsInputs(final Service service) {
+        final var genericTypeProps = service.getProperties();
+        if (CollectionUtils.isNotEmpty(genericTypeProps)) {
+            // From SELF
+            final var componentInstInputsMap = new ComponentInstInputsMap();
+            final var componentInstancePropInputs = genericTypeProps.stream()
+                .map(prop -> {
+                        prop.setInstanceUniqueId(service.getUniqueId());
+                        prop.setParentUniqueId(service.getUniqueId());
+                        return new ComponentInstancePropInput(new ComponentInstanceProperty(prop));
+                    }
+                ).collect(Collectors.toList());
+            componentInstInputsMap.setServiceProperties(Collections.singletonMap(service.getUniqueId(), componentInstancePropInputs));
+
+            final var listResponseFormatEither = inputsBusinessLogic.declareProperties(
+                service.getCreatorUserId(), service.getUniqueId(), ComponentTypeEnum.SERVICE, componentInstInputsMap);
+            if (listResponseFormatEither.isRight()) {
+                log.warn("Failed to declare Generic Type Properties as Inputs");
+                service.setInputs(null);
+                return;
+            }
+            final var createdInputs = listResponseFormatEither.left().value();
+            service.setInputs(createdInputs);
         }
     }
 

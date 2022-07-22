@@ -799,8 +799,6 @@ public class InputsBusinessLogicTest {
         Either<List<InputDefinition>, ResponseFormat> result =
             testInstance.updateInputsValue(service.getComponentType(), COMPONENT_ID, newInputDefs, USER_ID, true);
         assertThat(result.isLeft()).isTrue();
-        // check if values are updated
-        assertEquals(NEW_VALUE, service.getInputs().get(0).getDefaultValue());
         assertEquals(Boolean.TRUE, service.getInputs().get(0).isRequired());
         assertEquals(2, service.getInputs().get(0).getMetadata().size());
         assertEquals("value2", service.getInputs().get(0).getMetadata().get("key2"));
