@@ -457,8 +457,8 @@ export class PropertyFormViewModel {
             this.$scope.editPropertyModel.property.toscaFunction = toscaGetFunction;
         }
 
-        this.$scope.onGetFunctionValidityChange = (isValid: boolean): void => {
-            if (isValid) {
+        this.$scope.onGetFunctionValidityChange = (isValid): void => {
+            if (isValid.isValid) {
                 this.$scope.editPropertyModel.isGetFunctionValid = true;
                 return;
             }
