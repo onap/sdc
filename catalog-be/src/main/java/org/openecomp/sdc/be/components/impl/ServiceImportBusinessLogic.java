@@ -101,6 +101,8 @@ import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.NodeTypeMetadata;
+import org.openecomp.sdc.be.model.NodeTypesMetadataList;
 import org.openecomp.sdc.be.model.Operation;
 import org.openecomp.sdc.be.model.OutputDefinition;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
@@ -182,6 +184,7 @@ public class ServiceImportBusinessLogic {
     private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
     private final GroupBusinessLogic groupBusinessLogic;
     private final PolicyBusinessLogic policyBusinessLogic;
+    private final ResourceImportManager resourceImportManager;
     private final JanusGraphDao janusGraphDao;
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
     private final IGraphLockOperation graphLockOperation;
@@ -192,7 +195,7 @@ public class ServiceImportBusinessLogic {
     public ServiceImportBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                                       IGroupTypeOperation groupTypeOperation, GroupBusinessLogic groupBusinessLogic,
                                       InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-                                      ArtifactsBusinessLogic artifactsBusinessLogic, IDistributionEngine distributionEngine,
+                                      ResourceImportManager resourceImportManager, ArtifactsBusinessLogic artifactsBusinessLogic, IDistributionEngine distributionEngine,
                                       ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
                                       ServiceDistributionValidation serviceDistributionValidation, ForwardingPathValidator forwardingPathValidator,
                                       UiComponentDataConverter uiComponentDataConverter, NodeFilterOperation serviceFilterOperation,
@@ -209,8 +212,9 @@ public class ServiceImportBusinessLogic {
                                       final ServiceImportParseLogic serviceImportParseLogic,
                                       final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic,
                                       final PolicyBusinessLogic policyBusinessLogic, final JanusGraphDao janusGraphDao,
-                                      final IGraphLockOperation graphLockOperation, final PropertyOperation propertyOperation, 
+                                      final IGraphLockOperation graphLockOperation, final PropertyOperation propertyOperation,
                                       final DataTypeBusinessLogic dataTypeBusinessLogic) {
+        this.resourceImportManager = resourceImportManager;
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.componentsUtils = componentsUtils;
@@ -231,7 +235,7 @@ public class ServiceImportBusinessLogic {
         this.propertyOperation = propertyOperation;
         this.dataTypeBusinessLogic = dataTypeBusinessLogic;
     }
-    
+
     @Autowired
     public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
         this.applicationDataTypeCache = applicationDataTypeCache;
@@ -271,7 +275,10 @@ public class ServiceImportBusinessLogic {
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
                 dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), service.getModel(), true);
             }
-            
+            final Map<String, Object> nodeTypesToCreate = getNodeTypesToCreate(service.getModel(), csarInfo);
+            if (MapUtils.isNotEmpty(nodeTypesToCreate)) {
+                createNodeTypesUsedInCsar(nodeTypesToCreate, csarInfo);
+            }
             Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
             Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = serviceImportParseLogic
                 .findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
@@ -298,6 +305,37 @@ public class ServiceImportBusinessLogic {
             }
         }
         return dataTypesToCreate;
+    }
+
+    private void createNodeTypesUsedInCsar(Map<String, Object> nodeTypesToCreate, ServiceCsarInfo csarInfo) {
+        NodeTypesMetadataList nodeTypesMetadataList = new NodeTypesMetadataList();
+        List<NodeTypeMetadata> nodeTypeMetadataList = new ArrayList<>();
+        String resourcesYaml = "node_types:";
+        for (Map.Entry<String, Object> nodeTemplateType : nodeTypesToCreate.entrySet()) {
+            String resourceName = getResourceNameFromToscaType(nodeTemplateType.getKey());
+            resourcesYaml = resourceImportManager.getAllResourcesYamlAndNodeTypesMetadataList(csarInfo, resourceName, nodeTemplateType.getKey(),
+                    nodeTypeMetadataList, resourcesYaml);
+        }
+        nodeTypesMetadataList.setNodeMetadataList(nodeTypeMetadataList);
+        resourceImportManager.importAllNormativeResource(resourcesYaml, nodeTypesMetadataList, csarInfo.getModifier(), true, false);
+    }
+
+    private String getResourceNameFromToscaType(String toscaType) {
+        String[] nodeTemplateName = toscaType.split("\\.");
+        return nodeTemplateName[nodeTemplateName.length - 1];
+    }
+
+    private Map<String, Object> getNodeTypesToCreate(final String model, final ServiceCsarInfo csarInfo) {
+        final Map<String, Object> namesOfNodeTypesToCreate = new HashMap<>();
+
+        for (final Map.Entry<String, Object> nodeTemplateType : csarInfo.getNodeTypesUsed().entrySet()) {
+            Either<Component, StorageOperationStatus> result = toscaOperationFacade
+                .getLatestByToscaResourceName(nodeTemplateType.getKey(), model);
+            if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND) && !nodeTemplateType.getKey().contains("proxy")) {
+                namesOfNodeTypesToCreate.put(nodeTemplateType.getKey(), nodeTemplateType.getValue());
+            }
+        }
+        return namesOfNodeTypesToCreate;
     }
 
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,

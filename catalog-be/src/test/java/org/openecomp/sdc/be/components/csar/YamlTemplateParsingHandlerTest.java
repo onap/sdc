@@ -74,6 +74,7 @@ import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.common.zip.ZipUtils;
 import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.yaml.snakeyaml.Yaml;
 
 @ExtendWith(MockitoExtension.class)
 public class YamlTemplateParsingHandlerTest {

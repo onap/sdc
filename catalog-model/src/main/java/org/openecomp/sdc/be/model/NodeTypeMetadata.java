@@ -46,5 +46,7 @@ public class NodeTypeMetadata {
     private boolean isNormative = true;
     private List<String> tags;
     private List<CategoryDefinition> categories;
+    private String yamlInterfaceName;
+    private String yamlInterfaceData;
 
 }

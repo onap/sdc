@@ -468,7 +468,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
         // name
         Either<Resource, StorageOperationStatus> resourceLinkedToCsarRes = toscaOperationFacade
-            .getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, csarUUID, resource.getSystemName());
+                .getLatestComponentByCsarOrName(ComponentTypeEnum.RESOURCE, csarUUID, resource.getSystemName());
         if (resourceLinkedToCsarRes.isRight()) {
             if (StorageOperationStatus.NOT_FOUND != resourceLinkedToCsarRes.right().value()) {
                 log.debug("Failed to find previous resource by CSAR {} and system name {}", csarUUID, resource.getSystemName());
@@ -691,7 +691,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         } else {
             if (CollectionUtils.isNotEmpty(oldResource.getComponentInstances())) {
                 Map<String, String> oldInstances = oldResource.getComponentInstances().stream()
-                    .collect(toMap(ComponentInstance::getInvariantName, ComponentInstance::getName));
+                        .collect(toMap(ComponentInstance::getInvariantName, ComponentInstance::getName));
                 List<ComponentInstance> updatedInstances = preparedResource.getComponentInstances().stream()
                     .filter(i -> oldInstances.containsKey(i.getInvariantName()) && !i.getName().equals(oldInstances.get(i.getInvariantName())))
                     .collect(toList());
@@ -772,7 +772,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         try {
             final Map<String, List<ArtifactDefinition>> extractedVfcsArtifacts = CsarUtils.extractVfcsArtifactsFromCsar(csarInfo.getCsar());
             final Map<String, ImmutablePair<String, String>> extractedVfcToscaNames = extractVfcToscaNames(nodeTypesInfo, oldResource.getName(),
-                csarInfo);
+                    csarInfo);
             log.debug("Going to fetch node types for resource with name {} during import csar with UUID {}. ", oldResource.getName(),
                 csarInfo.getCsarUUID());
             extractedVfcToscaNames.forEach(
@@ -1031,10 +1031,26 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private void extractNodeTypes(Map<String, Object> nodes, Map<String, Object> mappedToscaTemplate) {
         Either<Map<String, Object>, ResultStatusEnum> eitherNodeTypes = ImportUtils
-            .findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
+                .findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
         if (eitherNodeTypes.isLeft()) {
             nodes.putAll(eitherNodeTypes.left().value());
         }
+    }
+
+    public Resource createResourceInstancesAndRelations(Map<String, Object> mappedToscaMainTemplate, String mainTemplateName, User user, Resource resource) {
+        ParsedToscaYamlInfo parsedToscaYamlInfo = csarBusinessLogic
+            .getParsedToscaYamlInfoMapped(mappedToscaMainTemplate, mainTemplateName, Collections.emptyMap(), resource);
+        final Map<String, UploadComponentInstanceInfo> instancesToCreate = getInstancesToCreate(parsedToscaYamlInfo, resource.getModel());
+        if (instancesToCreate.size() == 0) {
+            return resource;
+        }
+        Map<String, Resource> existingNodeTypesByResourceNames = new HashMap<>();
+        createResourceInstances(mainTemplateName, resource, null, instancesToCreate, Collections.emptyMap(),
+                existingNodeTypesByResourceNames);
+        resource = createResourceInstancesRelations(user, mainTemplateName, resource, null, instancesToCreate,
+            existingNodeTypesByResourceNames);
+        compositionBusinessLogic.setPositionsForComponentInstances(resource, user.getUserId());
+        return resource;
     }
 
     public Resource createResourceFromCsar(Resource resource, User user, Map<String, byte[]> csarUIPayload, String csarUUID) {
