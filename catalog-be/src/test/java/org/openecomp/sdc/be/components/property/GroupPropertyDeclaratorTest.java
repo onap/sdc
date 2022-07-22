@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,21 @@
 
 package org.openecomp.sdc.be.components.property;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,23 +55,8 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GroupOperation;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
-public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
-
+class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
 
     private static final String GROUP_ID = "groupId";
     @InjectMocks
@@ -83,25 +82,29 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
     }
 
     @Test
-    public void testDeclarePropertiesAsInputs_groupNotExist() {
-        Either<List<InputDefinition>, StorageOperationStatus> declareResult = groupPropertyDeclarator.declarePropertiesAsInputs(resource, "nonExistingGroup", Collections.emptyList());
+    void testDeclarePropertiesAsInputs_groupNotExist() {
+        Either<List<InputDefinition>, StorageOperationStatus> declareResult = groupPropertyDeclarator.declarePropertiesAsInputs(resource,
+            "nonExistingGroup", Collections.emptyList());
         assertEquals(StorageOperationStatus.NOT_FOUND, declareResult.right().value());
         verifyZeroInteractions(groupOperation);
     }
 
     @Test
-    public void testDeclarePropertiesAsInputs_failedToUpdateProperties() {
-        when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.GENERAL_ERROR);
-        Either<List<InputDefinition>, StorageOperationStatus> declareResult = groupPropertyDeclarator.declarePropertiesAsInputs(resource, GROUP_ID, Collections.emptyList());
+    void testDeclarePropertiesAsInputs_failedToUpdateProperties() {
+        when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(
+            StorageOperationStatus.GENERAL_ERROR);
+        Either<List<InputDefinition>, StorageOperationStatus> declareResult = groupPropertyDeclarator.declarePropertiesAsInputs(resource, GROUP_ID,
+            Collections.emptyList());
         assertEquals(StorageOperationStatus.GENERAL_ERROR, declareResult.right().value());
     }
 
     @Test
-    public void testDeclarePropertiesAsInputs() {
+    void testDeclarePropertiesAsInputs() {
         List<PropertyDataDefinition> properties = Arrays.asList(prop1, prop2);
         List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
         when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.OK);
-        Either<List<InputDefinition>, StorageOperationStatus> createdInputs = groupPropertyDeclarator.declarePropertiesAsInputs(resource, GROUP_ID, propsToDeclare);
+        Either<List<InputDefinition>, StorageOperationStatus> createdInputs = groupPropertyDeclarator.declarePropertiesAsInputs(resource, GROUP_ID,
+            propsToDeclare);
         List<InputDefinition> inputs = createdInputs.left().value();
         assertEquals(2, inputs.size());
         verifyInputPropertiesList(inputs, updatedPropsCapture.getValue());
@@ -109,7 +112,7 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
     }
 
     @Test
-    public void testUnDeclareProperties_whenComponentHasNoGroups_returnOk() {
+    void testUnDeclareProperties_whenComponentHasNoGroups_returnOk() {
         Resource resource = new Resource();
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsInputs(resource, input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
@@ -117,34 +120,37 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
     }
 
     @Test
-    public void testUnDeclareProperties_whenNoPropertiesFromGroupMatchInputId_returnOk() {
+    void testUnDeclareProperties_whenNoPropertiesFromGroupMatchInputId_returnOk() {
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsInputs(createResourceWithGroup(), input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
         verifyZeroInteractions(groupOperation);
     }
 
     @Test
-    public void whenFailingToUpdateDeclaredProperties_returnErrorStatus() {
+    void whenFailingToUpdateDeclaredProperties_returnErrorStatus() {
         Resource resource = createResourceWithGroups(GROUP_ID);
         Optional<GroupDefinition> groupDefinition = resource.getGroupById(GROUP_ID);
         assertTrue(groupDefinition.isPresent());
         PropertyDataDefinition getInputPropForInput = buildGetInputProperty(INPUT_ID);
         groupDefinition.get().setProperties(Collections.singletonList(getInputPropForInput));
-        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(), getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
-        when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.GENERAL_ERROR);
+        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(),
+            getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
+        when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(
+            StorageOperationStatus.GENERAL_ERROR);
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsInputs(resource, input);
         assertEquals(StorageOperationStatus.GENERAL_ERROR, storageOperationStatus);
     }
 
     @Test
-    public void testUnDeclareProperties_propertiesUpdatedCorrectly() {
+    void testUnDeclareProperties_propertiesUpdatedCorrectly() {
         Resource resource = createResourceWithGroups(GROUP_ID, "groupId2");
         Optional<GroupDefinition> groupDefinition = resource.getGroupById(GROUP_ID);
         PropertyDataDefinition getInputPropForInput = buildGetInputProperty(INPUT_ID);
         PropertyDataDefinition someOtherProperty = new PropertyDataDefinitionBuilder().build();
         groupDefinition.get().setProperties(Arrays.asList(getInputPropForInput, someOtherProperty));
 
-        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(), getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
+        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(),
+            getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
         when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.OK);
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsInputs(resource, input);
 
@@ -153,13 +159,13 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
         assertEquals(1, updatedProperties.size());
         PropertyDataDefinition updatedProperty = updatedProperties.get(0);
         assertFalse(updatedProperty.isGetInputProperty());
-        assertTrue(updatedProperty.getValue().isEmpty());
-        assertEquals(getInputPropForInput.getDefaultValue(), updatedProperty.getDefaultValue());
+        assertNull(updatedProperty.getValue());
+        assertNull(getInputPropForInput.getDefaultValue());
         assertEquals(getInputPropForInput.getUniqueId(), updatedProperty.getUniqueId());
     }
 
     @Test
-    public void testUnDeclarePropertiesAsListInputs_whenComponentHasNoGroups_returnOk() {
+    void testUnDeclarePropertiesAsListInputs_whenComponentHasNoGroups_returnOk() {
         Resource resource = new Resource();
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsListInputs(resource, input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
@@ -167,34 +173,37 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
     }
 
     @Test
-    public void testUnDeclarePropertiesAsListInputs_whenNoPropertiesFromGroupMatchInputId_returnOk() {
+    void testUnDeclarePropertiesAsListInputs_whenNoPropertiesFromGroupMatchInputId_returnOk() {
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsListInputs(createResourceWithGroup(), input);
         assertEquals(StorageOperationStatus.OK, storageOperationStatus);
         verifyZeroInteractions(groupOperation);
     }
 
     @Test
-    public void whenFailingToUpdateDeclaredPropertiesAsListInputs_returnErrorStatus() {
+    void whenFailingToUpdateDeclaredPropertiesAsListInputs_returnErrorStatus() {
         Resource resource = createResourceWithGroups(GROUP_ID);
         Optional<GroupDefinition> groupDefinition = resource.getGroupById(GROUP_ID);
         assertTrue(groupDefinition.isPresent());
         PropertyDataDefinition getInputPropForInput = buildGetInputProperty(INPUT_ID);
         groupDefinition.get().setProperties(Collections.singletonList(getInputPropForInput));
-        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(), getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
-        when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.GENERAL_ERROR);
+        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(),
+            getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
+        when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(
+            StorageOperationStatus.GENERAL_ERROR);
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsListInputs(resource, input);
         assertEquals(StorageOperationStatus.GENERAL_ERROR, storageOperationStatus);
     }
 
     @Test
-    public void testUnDeclarePropertiesAsListInputs_propertiesUpdatedCorrectly() {
+    void testUnDeclarePropertiesAsListInputs_propertiesUpdatedCorrectly() {
         Resource resource = createResourceWithGroups(GROUP_ID, "groupId3");
         Optional<GroupDefinition> groupDefinition = resource.getGroupById(GROUP_ID);
         PropertyDataDefinition getInputPropForInput = buildGetInputProperty(INPUT_ID);
         PropertyDataDefinition someOtherProperty = new PropertyDataDefinitionBuilder().build();
         groupDefinition.get().setProperties(Arrays.asList(getInputPropForInput, someOtherProperty));
 
-        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(), getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
+        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(),
+            getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
         when(groupOperation.updateGroupProperties(eq(resource), eq(GROUP_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.OK);
         StorageOperationStatus storageOperationStatus = groupPropertyDeclarator.unDeclarePropertiesAsListInputs(resource, input);
 
@@ -203,8 +212,8 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
         assertEquals(1, updatedProperties.size());
         PropertyDataDefinition updatedProperty = updatedProperties.get(0);
         assertFalse(updatedProperty.isGetInputProperty());
-        assertTrue(updatedProperty.getValue().isEmpty());
-        assertEquals(getInputPropForInput.getDefaultValue(), updatedProperty.getDefaultValue());
+        assertNull(updatedProperty.getValue());
+        assertNull(updatedProperty.getDefaultValue());
         assertEquals(getInputPropForInput.getUniqueId(), updatedProperty.getUniqueId());
     }
 
@@ -212,31 +221,31 @@ public class GroupPropertyDeclaratorTest extends PropertyDeclaratorTestBase {
         return createResourceWithGroups(GROUP_ID);
     }
 
-    private Resource createResourceWithGroups(String ... groups) {
+    private Resource createResourceWithGroups(String... groups) {
         List<GroupDefinition> groupsDef = Stream.of(groups)
-                .map(this::buildGroup)
-                .collect(Collectors.toList());
+            .map(this::buildGroup)
+            .collect(Collectors.toList());
 
         return new ResourceBuilder()
-                .setUniqueId(RESOURCE_ID)
-                .setGroups(groupsDef)
-                .build();
+            .setUniqueId(RESOURCE_ID)
+            .setGroups(groupsDef)
+            .build();
     }
 
     private GroupDefinition buildGroup(String groupId) {
         return GroupDefinitionBuilder.create()
-                .setUniqueId(groupId)
-                .setName(groupId)
-                .build();
+            .setUniqueId(groupId)
+            .setName(groupId)
+            .build();
     }
 
     private PropertyDataDefinition buildGetInputProperty(String inputId) {
         return new PropertyDataDefinitionBuilder()
-                .addGetInputValue(inputId)
-                .setUniqueId(GROUP_ID + "_" + inputId)
-                .setDefaultValue("defaultValue")
-                .setValue(generateGetInputValue(inputId))
-                .build();
+            .addGetInputValue(inputId)
+            .setUniqueId(GROUP_ID + "_" + inputId)
+            .setDefaultValue("defaultValue")
+            .setValue(generateGetInputValue(inputId))
+            .build();
     }
 
 }

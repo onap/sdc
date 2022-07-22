@@ -36,6 +36,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.io.FilenameUtils;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.ComponentType;
 import org.onap.sdc.backend.ci.tests.datatypes.enums.PackageTypeEnum;
@@ -60,7 +61,6 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateServiceFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
-import org.onap.sdc.frontend.ci.tests.flow.EditComponentPropertiesFlow;
 import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
@@ -114,7 +114,6 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         componentPage = addNodesAndCreateRelationships(resourceName, serviceCreateData, componentPage);
 
         final Map<String, Object> propertyMap = createPropertyToEditMap();
-        editProperties(componentPage, propertyMap);
 
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(componentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
@@ -268,11 +267,6 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         return checkVfPropertiesFlow;
     }
 
-    private void editProperties(final ComponentPage componentPage, final Map<String, Object> propertyMap) {
-        final EditComponentPropertiesFlow editComponentPropertiesFlow = new EditComponentPropertiesFlow(webDriver, propertyMap);
-        editComponentPropertiesFlow.run(componentPage);
-    }
-
     private DownloadCsarArtifactFlow downloadCsarArtifact(final ComponentPage componentPage) {
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
         downloadCsarArtifactFlow.run(componentPage);
@@ -281,15 +275,15 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
 
     private Map<String, Object> createPropertyToEditMap() {
         final Map<String, Object> propertyMap = new HashMap<>();
-        propertyMap.put("designer", "designer1");
-        propertyMap.put("descriptor_id", "descriptor_id1");
-        propertyMap.put("flavour_id", "flavour_id1");
-        propertyMap.put("invariant_id", "invariant_id1");
-        propertyMap.put("name", "name1");
-        propertyMap.put("version", "version1");
-        propertyMap.put("service_availability_level", 1);
+        propertyMap.put("descriptor_id", "{\"get_input\":\"descriptor_id\"}");
+        propertyMap.put("designer", "{\"get_input\":\"designer\"}");
+        propertyMap.put("flavour_id", "{\"get_input\":\"flavour_id\"}");
+        propertyMap.put("invariant_id", "{\"get_input\":\"invariant_id\"}");
+        propertyMap.put("name", "{\"get_input\":\"name\"}");
+        propertyMap.put("service_availability_level", "{\"get_input\":\"service_availability_level\"}");
+        propertyMap.put("version", "{\"get_input\":\"version\"}");
         //does not work yet with TOSCA complex types
-        propertyMap.put("ns_profile", null);
+        propertyMap.put("ns_profile", "{\"get_input\":\"ns_profile\"}");
         return propertyMap;
     }
 
@@ -383,10 +377,10 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
                 properties, hasKey(expectedPropertyName));
             final Object expectedPropertyValue = expectedPropertyEntry.getValue();
             if (expectedPropertyValue != null) {
-                final Object actualPropertyValue = properties.get(expectedPropertyName);
+                Object actualPropertyValue = properties.get(expectedPropertyName);
                 final String msg = String.format("The property '%s', in '%s' node template should have the expected value '%s'",
-                    expectedPropertyName, expectedServiceNodeType, actualPropertyValue);
-                assertThat(msg, actualPropertyValue, is(expectedPropertyValue));
+                    expectedPropertyName, expectedServiceNodeType, expectedPropertyValue);
+                assertThat(msg, (new JSONObject()).toJSONString((Map) actualPropertyValue), is(expectedPropertyValue));
             }
         }
     }

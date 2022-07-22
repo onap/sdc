@@ -127,8 +127,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         ComponentParametersView filters = new ComponentParametersView();
         filters.disableAll();
         filters.setIgnoreInputs(false);
-        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade
-            .getToscaElement(componentId, filters);
+        Either<Component, StorageOperationStatus> getComponentEither = toscaOperationFacade.getToscaElement(componentId, filters);
         if (getComponentEither.isRight()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_COMPONENT_ERROR, componentId, actionStatus);
@@ -213,7 +212,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         }
         component = getComponentEither.left().value();
         Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
-        if (!op.isPresent()) {
+        if (op.isEmpty()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, parentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
@@ -304,8 +303,8 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                     result = Either.right(componentsUtils.getResponseFormat(actionStatus));
                     return result;
                 }
-                String updateInputObjectValue = updateInputObjectValue(currInput, newInput, dataTypes);
-                currInput.setDefaultValue(updateInputObjectValue);
+                currInput.setDefaultValue(newInput.getDefaultValue());
+                currInput.setValue(newInput.getValue());
                 currInput.setOwnerId(userId);
                 currInput.setMetadata(newInput.getMetadata());
                 if (newInput.isRequired() != null) {
@@ -338,7 +337,6 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         List<InputDefinition> inputDefinitions = new ArrayList<>();
         for (InputDefinition inputDefinition : inputs) {
             InputDefinition inputDef = new InputDefinition();
-            inputDefinition.setDefaultValue(inputDefinition.getDefaultValue());
             inputDefinition.setInputPath(inputDefinition.getSubPropertyInputPath());
             inputDefinition.setType(inputDefinition.getType());
             if (Objects.nonNull(inputDefinition.getParentPropertyType())) {
@@ -369,7 +367,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
         }
         component = getComponentEither.left().value();
         Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
-        if (!op.isPresent()) {
+        if (op.isEmpty()) {
             ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
             log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, componentId, actionStatus);
             return Either.right(componentsUtils.getResponseFormat(actionStatus));
@@ -664,7 +662,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                 filter(input -> input.getUniqueId().equals(inputId)).
             // Get the input
                 findAny();
-        if (!optionalInput.isPresent()) {
+        if (optionalInput.isEmpty()) {
             throw new ByActionStatusComponentException(ActionStatus.INPUT_IS_NOT_CHILD_OF_COMPONENT, inputId, componentId);
         }
         InputDefinition inputForDelete = optionalInput.get();
@@ -740,11 +738,6 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                     innerType = prop.getType();
                 }
             }
-            String convertedValue;
-            if (newInputDefinition.getDefaultValue() != null) {
-                convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, dataTypes);
-                newInputDefinition.setDefaultValue(convertedValue);
-            }
         }
         return Either.left(newInputDefinition);
     }
@@ -770,7 +763,7 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
             }
             Component component = getComponentEither.left().value();
             Optional<InputDefinition> op = component.getInputs().stream().filter(in -> in.getUniqueId().equals(inputId)).findFirst();
-            if (!op.isPresent()) {
+            if (op.isEmpty()) {
                 ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(getComponentEither.right().value());
                 log.debug(FAILED_TO_FOUND_INPUT_UNDER_COMPONENT_ERROR, inputId, componentId, actionStatus);
                 return Either.right(componentsUtils.getResponseFormat(actionStatus));
@@ -845,10 +838,6 @@ public class InputsBusinessLogic extends BaseBusinessLogic {
                     if (prop != null) {
                         innerType = prop.getType();
                     }
-                }
-                if (newInputDefinition.getDefaultValue() != null) {
-                    String convertedValue = converter.convert(newInputDefinition.getDefaultValue(), innerType, allDataTypes);
-                    newInputDefinition.setDefaultValue(convertedValue);
                 }
             }
             newInputDefinition.setMappedToComponentProperty(false);
