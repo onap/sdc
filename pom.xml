@@ -735,6 +735,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>common-app-logging</module>
                 <module>common-app-api</module>
                 <module>common-be</module>
+                <module>common-be-tests-utils</module>
                 <module>catalog-dao</module>
                 <module>catalog-model</module>
                 <module>catalog-be</module>
@@ -765,6 +766,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <module>common-app-logging</module>
                 <module>common-app-api</module>
                 <module>common-be</module>
+                <module>common-be-tests-utils</module>
                 <module>catalog-dao</module>
                 <module>catalog-model</module>
                 <module>catalog-be</module>
