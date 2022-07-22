@@ -36,8 +36,8 @@ import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 @org.springframework.stereotype.Component
 public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Component, PropertyDataDefinition> {
 
-    PropertyBusinessLogic propertyBL;
-    private ToscaOperationFacade toscaOperationFacade;
+    private final PropertyBusinessLogic propertyBL;
+    private final ToscaOperationFacade toscaOperationFacade;
 
     public ComponentPropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation,
                                        ToscaOperationFacade toscaOperationFacade, PropertyBusinessLogic propertyBL) {
@@ -123,8 +123,7 @@ public class ComponentPropertyDeclarator extends DefaultPropertyDeclarator<Compo
 
     private StorageOperationStatus unDeclareInput(Component component, InputDefinition input, PropertyDefinition propertyToUpdate) {
         prepareValueBeforeDelete(input, propertyToUpdate, Collections.emptyList());
-        propertyToUpdate.setValue(input.getDefaultValue());
-        Either<PropertyDefinition, StorageOperationStatus> status = toscaOperationFacade.updatePropertyOfComponent(component, propertyToUpdate);
+        final var status = toscaOperationFacade.updatePropertyOfComponent(component, propertyToUpdate);
         if (status.isRight()) {
             return status.right().value();
         }

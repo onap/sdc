@@ -44,8 +44,8 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 public class ComponentInstancePropertyDeclarator extends DefaultPropertyDeclarator<ComponentInstance, ComponentInstanceProperty> {
 
     private static final Logger log = Logger.getLogger(ComponentInstancePropertyDeclarator.class);
-    private ToscaOperationFacade toscaOperationFacade;
-    private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
 
     public ComponentInstancePropertyDeclarator(ComponentsUtils componentsUtils, PropertyOperation propertyOperation,
                                                ToscaOperationFacade toscaOperationFacade,
@@ -94,7 +94,7 @@ public class ComponentInstancePropertyDeclarator extends DefaultPropertyDeclarat
             capabilityPropertyDeclaredAsInput.forEach(cmptInstanceProperty -> prepareValueBeforeDeleteOfCapProp(input, cmptInstanceProperty));
             Optional<CapabilityDefinition> propertyCapabilityOptional = PropertiesUtils
                 .getPropertyCapabilityOfChildInstance(capabilityPropertyDeclaredAsInput.get(0).getParentUniqueId(), component.getCapabilities());
-            if (!propertyCapabilityOptional.isPresent()) {
+            if (propertyCapabilityOptional.isEmpty()) {
                 return StorageOperationStatus.OK;
             }
             return toscaOperationFacade
