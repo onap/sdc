@@ -5,6 +5,101 @@
 Release Notes
 =============
 
+Version: 1.11.7
+==============
+
+:Release Date: 2022-08-15
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+
+    N/A
+
+
+**Stories**
+
+*  `SDC-4113 <https://jira.onap.org/browse/SDC-4113>`_ - Service Import - Node Template Interface Definitions
+*  `SDC-4118 <https://jira.onap.org/browse/SDC-4118>`_ - Service import - Import unknown node types
+*  `SDC-4119 <https://jira.onap.org/browse/SDC-4119>`_ - Service import - Import unknown data types
+*  `SDC-4123 <https://jira.onap.org/browse/SDC-4123>`_ - Support property get_input value in deprecated format
+*  `SDC-4122 <https://jira.onap.org/browse/SDC-4122>`_ - Support tosca functions for policy instance properties in property assignment view
+*  `SDC-4120 <https://jira.onap.org/browse/SDC-4120>`_ - Support for TOSCA functions for Service Import
+*  `SDC-4083 <https://jira.onap.org/browse/SDC-4083>`_ - Service Import - Node Template Relationship Template
+*  `SDC-4109 <https://jira.onap.org/browse/SDC-4109>`_ - Enable configuration of instance name
+*  `SDC-4099 <https://jira.onap.org/browse/SDC-4099>`_ - Set property to yaml string in TOSCA functions modal
+
+
+**Bug Fixes**
+
+*  `SDC-4129 <https://jira.onap.org/browse/SDC-4129>`_ - Newly imported data types not found in UI
+*  `SDC-4126 <https://jira.onap.org/browse/SDC-4126>`_ - Properties of the previous instance is loading in the Hierarchical panel
+*  `SDC-4127 <https://jira.onap.org/browse/SDC-4127>`_ - Fix unable to delete default value for a complex property
+*  `SDC-4124 <https://jira.onap.org/browse/SDC-4124>`_ - Empty node filter in template when directives added with no filter
+*  `SDC-4117 <https://jira.onap.org/browse/SDC-4117>`_ - Error Importing node filter with multiple capability properties
+*  `SDC-4125 <https://jira.onap.org/browse/SDC-4125>`_ - Error thrown when setting policy property with get_property
+*  `SDC-4098 <https://jira.onap.org/browse/SDC-4098>`_ - Error adding capability with properties to VFC
+*  `SDC-4121 <https://jira.onap.org/browse/SDC-4121>`_ - Fix outputs of complex type display and delete
+*  `SDC-4114 <https://jira.onap.org/browse/SDC-4114>`_ - Fix Tosca Function Validation for Group and Policy properties
+*  `SDC-4116 <https://jira.onap.org/browse/SDC-4116>`_ - UI shows text overlay on value field
+*  `SDC-4115 <https://jira.onap.org/browse/SDC-4115>`_ - Fix functionaljava dependency for onboarding
+*  `SDC-4084 <https://jira.onap.org/browse/SDC-4084>`_ - Group Property value display not easily readable
+*  `SDC-4110 <https://jira.onap.org/browse/SDC-4110>`_ - Save button disabled in update property in composition view
+
+
+**Tasks**
+
+*  `SDC-4017 <https://jira.onap.org/browse/SDC-4017>`_ - Remove/update vulnerable dependency
+*  `SDC-4100 <https://jira.onap.org/browse/SDC-4100>`_ - Add fast build profile ignoring the frontend build
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.6
 ==============
 
