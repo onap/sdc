@@ -169,11 +169,15 @@ public class ResourceImportManager {
             log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceImportManager.class.getName(), "Could not parse node types YAML", e);
             throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TYPES_YAML);
         }
-
         if (!nodeTypesYamlMap.containsKey(ToscaTagNamesEnum.NODE_TYPES.getElementName())) {
             return;
         }
         final Map<String, Object> nodeTypesMap = (Map<String, Object>) nodeTypesYamlMap.get(ToscaTagNamesEnum.NODE_TYPES.getElementName());
+        importAllNormativeResource(nodeTypesMap, nodeTypesMetadataList,user, createNewVersion,needLock);
+    }
+
+    public void importAllNormativeResource(final  Map<String, Object> nodeTypesMap, final NodeTypesMetadataList nodeTypesMetadataList,
+                                           final User user, final boolean createNewVersion, final boolean needLock) {
         try {
             nodeTypesMetadataList.getNodeMetadataList().forEach(nodeTypeMetadata -> {
                 final String nodeTypeToscaName = nodeTypeMetadata.getToscaName();
@@ -358,7 +362,6 @@ public class ResourceImportManager {
             final Either<Resource, StorageOperationStatus> existingResource = getExistingResource(resource);
             final Map<String, Object> toscaJsonAll = (Map<String, Object>) ymlObj;
             Map<String, Object> toscaJson = toscaJsonAll;
-            // Checks if exist and builds the node_types map
             if (toscaJsonAll.containsKey(ToscaTagNamesEnum.NODE_TYPES.getElementName()) && resource.getResourceType() != ResourceTypeEnum.CVFC) {
                 toscaJson = new HashMap<>();
                 toscaJson.put(ToscaTagNamesEnum.NODE_TYPES.getElementName(), toscaJsonAll.get(ToscaTagNamesEnum.NODE_TYPES.getElementName()));
@@ -372,7 +375,6 @@ public class ResourceImportManager {
                     resource.setDataTypes(extractDataTypeFromJson(resourceBusinessLogic, toscaAttributes, resource.getModel()));
                 }
             }
-            // Derived From
             final Resource parentResource = setDerivedFrom(toscaJson, resource);
             if (StringUtils.isEmpty(resource.getToscaResourceName())) {
                 setToscaResourceName(toscaJson, resource);
