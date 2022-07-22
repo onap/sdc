@@ -50,6 +50,7 @@ import org.openecomp.sdc.be.auditing.api.AuditEventFactory;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.auditing.impl.resourceadmin.AuditImportResourceAdminEventFactory;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.ServiceCsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.Constants;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
@@ -81,6 +82,8 @@ import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
+import org.openecomp.sdc.be.model.NodeTypeDefinition;
+import org.openecomp.sdc.be.model.NodeTypeMetadata;
 import org.openecomp.sdc.be.model.NodeTypesMetadataList;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
@@ -169,11 +172,15 @@ public class ResourceImportManager {
             log.error(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceImportManager.class.getName(), "Could not parse node types YAML", e);
             throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TYPES_YAML);
         }
-
         if (!nodeTypesYamlMap.containsKey(ToscaTagNamesEnum.NODE_TYPES.getElementName())) {
             return;
         }
         final Map<String, Object> nodeTypesMap = (Map<String, Object>) nodeTypesYamlMap.get(ToscaTagNamesEnum.NODE_TYPES.getElementName());
+        importAllNormativeResource(nodeTypesMap, nodeTypesMetadataList,user, createNewVersion,needLock);
+    }
+
+    public void importAllNormativeResource(final  Map<String, Object> nodeTypesMap, final NodeTypesMetadataList nodeTypesMetadataList,
+                                           final User user, final boolean createNewVersion, final boolean needLock) {
         try {
             nodeTypesMetadataList.getNodeMetadataList().forEach(nodeTypeMetadata -> {
                 final String nodeTypeToscaName = nodeTypeMetadata.getToscaName();
@@ -195,6 +202,24 @@ public class ResourceImportManager {
             janusGraphDao.rollback();
             throw e;
         }
+    }
+
+    public void getAllResourcesYamlAndNodeTypesMetadataList(ServiceCsarInfo csarInfo, NodeTypeDefinition nodeTypeDefinition,
+                                                            List<NodeTypeMetadata> nodeTypeMetadataList, Map<String, Object> resourcesYaml) {
+        NodeTypeMetadata nodeTypeMetadata = nodeTypeDefinition.getNodeTypeMetadata();
+        Entry<String, Object> mappedNodeType = nodeTypeDefinition.getMappedNodeType();
+        if (nodeTypeMetadata.getResourceType().equals(ResourceTypeEnum.VFC.getValue())) {
+            String derivedFrom = derivedFromIfNotExist((Map<String, Object>) mappedNodeType.getValue(), nodeTypeMetadata.getModel());
+            if (StringUtils.isNotEmpty(derivedFrom)) {
+                NodeTypeDefinition derivedFromNodeTypeDefinition = csarInfo.getNodeTypeDefinition(derivedFrom);
+                getAllResourcesYamlAndNodeTypesMetadataList(csarInfo, derivedFromNodeTypeDefinition, nodeTypeMetadataList,
+                        resourcesYaml);
+            }
+        } else {
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_NODE_TYPES_YAML);
+        }
+        nodeTypeMetadataList.add(nodeTypeMetadata);
+        resourcesYaml.put(mappedNodeType.getKey(), mappedNodeType.getValue());
     }
 
     public ImmutablePair<Resource, ActionStatus> importNormativeResourceFromCsar(String resourceYml, UploadResourceInfo resourceMetaData,
@@ -331,6 +356,29 @@ public class ResourceImportManager {
         }
     }
 
+    private String derivedFromIfNotExist(Map<String, Object> mappedNodeType, String model) {
+        Either<String, ResultStatusEnum> toscaDerivedFromEither = ImportUtils
+                .findFirstToscaStringElement(mappedNodeType, ToscaTagNamesEnum.DERIVED_FROM);
+        if (toscaDerivedFromEither.isRight()) {
+            ResultStatusEnum resultStatusEnum = toscaDerivedFromEither.right().value();
+            throw new ByActionStatusComponentException(
+                    componentsUtils.convertFromResultStatusEnum(resultStatusEnum, JsonPresentationFields.DERIVED_FROM));
+        }
+        String derivedFrom = toscaDerivedFromEither.left().value();
+        Either<Resource, StorageOperationStatus> latestByToscaResourceName = toscaOperationFacade
+                .getLatestByToscaResourceName(derivedFrom, model);
+        if (latestByToscaResourceName.isRight()) {
+            StorageOperationStatus operationStatus = latestByToscaResourceName.right().value();
+            if (latestByToscaResourceName.right().value() == StorageOperationStatus.NOT_FOUND) {
+                return derivedFrom;
+            } else {
+                ActionStatus convertFromStorageResponse = componentsUtils.convertFromStorageResponse(operationStatus);
+                throw new ByActionStatusComponentException(convertFromStorageResponse, derivedFrom);
+            }
+        }
+        return null;
+    }
+
     public ImmutablePair<Resource, ActionStatus> importUserDefinedResource(String resourceYml, UploadResourceInfo resourceMetaData, User creator,
                                                                            boolean isInTransaction) {
         Resource resource = new Resource();
@@ -358,7 +406,6 @@ public class ResourceImportManager {
             final Either<Resource, StorageOperationStatus> existingResource = getExistingResource(resource);
             final Map<String, Object> toscaJsonAll = (Map<String, Object>) ymlObj;
             Map<String, Object> toscaJson = toscaJsonAll;
-            // Checks if exist and builds the node_types map
             if (toscaJsonAll.containsKey(ToscaTagNamesEnum.NODE_TYPES.getElementName()) && resource.getResourceType() != ResourceTypeEnum.CVFC) {
                 toscaJson = new HashMap<>();
                 toscaJson.put(ToscaTagNamesEnum.NODE_TYPES.getElementName(), toscaJsonAll.get(ToscaTagNamesEnum.NODE_TYPES.getElementName()));
@@ -372,7 +419,6 @@ public class ResourceImportManager {
                     resource.setDataTypes(extractDataTypeFromJson(resourceBusinessLogic, toscaAttributes, resource.getModel()));
                 }
             }
-            // Derived From
             final Resource parentResource = setDerivedFrom(toscaJson, resource);
             if (StringUtils.isEmpty(resource.getToscaResourceName())) {
                 setToscaResourceName(toscaJson, resource);

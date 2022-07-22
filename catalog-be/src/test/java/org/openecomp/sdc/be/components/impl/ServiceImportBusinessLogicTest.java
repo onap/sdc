@@ -204,6 +204,9 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(applicationDataTypeCache.get(any(), contains("tosca.datatypes.test_"))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(applicationDataTypeCache.get(any(), matches("^((?!tosca.datatypes.test_).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
         
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes.nfv"), isNull())).thenReturn(Either.left(null));
+
         Service result = sIBL.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
         assertNotNull(result);
         assertNotNull(result.getComponentInstances());

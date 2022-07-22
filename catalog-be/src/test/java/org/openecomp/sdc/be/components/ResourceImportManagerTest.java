@@ -29,10 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -40,13 +43,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -55,6 +62,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.components.csar.ServiceCsarInfo;
 import org.openecomp.sdc.be.components.impl.ImportUtils;
 import org.openecomp.sdc.be.components.impl.ImportUtilsTest;
 import org.openecomp.sdc.be.components.impl.InterfaceDefinitionHandler;
@@ -80,6 +88,7 @@ import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.NodeTypeDefinition;
 import org.openecomp.sdc.be.model.NodeTypeMetadata;
 import org.openecomp.sdc.be.model.NodeTypesMetadataList;
 import org.openecomp.sdc.be.model.PropertyConstraint;
@@ -98,6 +107,8 @@ import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ConfigurationSource;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.PolicyException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
@@ -463,6 +474,33 @@ class ResourceImportManagerTest {
         assertEquals(ActionStatus.COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS, actualException.getActionStatus());
     }
 
+    @Test
+    void getAllResourcesYamlAndNodeTypesMetadataListTest() {
+        NodeTypesMetadataList nodeTypesMetadataList = new NodeTypesMetadataList();
+        List<NodeTypeMetadata> nodeTypeMetadataList = new ArrayList<>();
+        Map<String, Object> resourcesYaml = new HashMap<>();
+        ServiceCsarInfo csarInfo= getCsarInfo();
+        NodeTypeDefinition nodeTypeDefinition = csarInfo.getNodeTypeDefinition("org.openecomp.resource.VFC-child");
+
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource.VFC-root"), contains("ETSI SOL001 v2.5.1")))
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+
+        importManager.getAllResourcesYamlAndNodeTypesMetadataList(csarInfo, nodeTypeDefinition,
+                nodeTypeMetadataList, resourcesYaml);
+
+        nodeTypesMetadataList.setNodeMetadataList(nodeTypeMetadataList);
+
+        when(toscaOperationFacade.getLatestByName(any(), any())).thenReturn(Either.left(null)).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceName("org.openecomp.resource.VFC-root", "ETSI SOL001 v2.5.1"))
+                .thenReturn(Either.left(null));
+        when(resourceBusinessLogic
+                .createOrUpdateResourceByImport(any(Resource.class), any(User.class), eq(true), eq(true), eq(false), eq(null), eq(null), eq(false)))
+                .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK)).thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK));
+
+        importManager.importAllNormativeResource(resourcesYaml, nodeTypesMetadataList, user, false, false);
+        verify(janusGraphDao).commit();
+    }
+
     private void setResourceBusinessLogicMock() {
         when(resourceBusinessLogic.getUserAdmin()).thenReturn(userAdmin);
         when(resourceBusinessLogic.createOrUpdateResourceByImport(any(Resource.class), any(User.class), anyBoolean(), anyBoolean(), anyBoolean(),
@@ -717,5 +755,30 @@ class ResourceImportManagerTest {
         assertEquals(ImportUtils.Constants.VENDOR_NAME, resource.getVendorName());
         assertEquals(ImportUtils.Constants.VENDOR_RELEASE, resource.getVendorRelease());
     }
+
+    protected ServiceCsarInfo getCsarInfo() {
+        String csarUuid = "0010";
+        User user = new User("jh0003");
+
+        try {
+            File csarFile = new File(
+                ResourceImportManagerTest.class.getClassLoader().getResource("csars/service-Etsiwithchild-csar.csar").toURI());
+            Map<String, byte[]> csar = ZipUtils.readZip(csarFile, false);
+
+            String vfReousrceName = "resouceName";
+            String mainTemplateName = "Definitions/service-Etsiwithchild-template.yml";
+
+            Optional<String> keyOp = csar.keySet().stream().filter(k -> k.endsWith("service-Etsiwithchild-template.yml")).findAny();
+            byte[] mainTemplateService = keyOp.map(csar::get).orElse(null);
+            assertNotNull(mainTemplateService);
+            final String mainTemplateContent = new String(mainTemplateService);
+
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+        } catch (URISyntaxException | ZipException e) {
+            fail(e);
+        }
+        return null;
+    }
+
 
 }
