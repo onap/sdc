@@ -429,4 +429,3 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     }
 
 }
-
