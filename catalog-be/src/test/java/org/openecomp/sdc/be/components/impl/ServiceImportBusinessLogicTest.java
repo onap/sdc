@@ -157,7 +157,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(serviceBusinessLogic.lockComponentByName(newService.getSystemName(), oldService, CREATE_RESOURCE)).thenReturn(Either.left(true));
         when(toscaOperationFacade.getLatestResourceByToscaResourceName(anyString())).thenReturn(Either.left(createOldResource()));
         when(serviceImportParseLogic.createServiceTransaction(oldService, csarInfo.getModifier(), false)).thenReturn(newService);
-        when(serviceImportParseLogic.createInputsOnService(eq(oldService), anyMap())).thenReturn(newService);
+        when(serviceImportParseLogic.createInputsOnService(eq(oldService), anyMap(), eq(user.getUserId()))).thenReturn(newService);
         Assertions.assertDoesNotThrow(() -> {
             when(serviceImportParseLogic.createSubstitutionFilterOnService(eq(oldService), any())).thenReturn(newService);
         });

@@ -72,7 +72,6 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.L
 import org.openecomp.sdc.be.components.merge.TopologyComparator;
 import org.openecomp.sdc.be.components.merge.property.PropertyDataValueMergeBusinessLogic;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
-import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
 import org.openecomp.sdc.be.components.property.PropertyConstraintsUtils;
 import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
 import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
@@ -209,11 +208,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     private final ResourceImportManager resourceImportManager;
     private final InputsBusinessLogic inputsBusinessLogic;
-    private final OutputsBusinessLogic outputsBusinessLogic;
     private final CompositionBusinessLogic compositionBusinessLogic;
     private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
     private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
-    private final MergeInstanceUtils mergeInstanceUtils;
     private final UiComponentDataConverter uiComponentDataConverter;
     private final CsarBusinessLogic csarBusinessLogic;
     private final PropertyBusinessLogic propertyBusinessLogic;
@@ -235,7 +232,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     @Autowired
     private SoftwareInformationBusinessLogic softwareInformationBusinessLogic;
 
-
     @Autowired
     public ResourceBusinessLogic(final IElementOperation elementDao, final IGroupOperation groupOperation,
                                  final IGroupInstanceOperation groupInstanceOperation, final IGroupTypeOperation groupTypeOperation,
@@ -244,12 +240,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                  final ArtifactsBusinessLogic artifactsBusinessLogic,
                                  final ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
                                  final @Lazy ResourceImportManager resourceImportManager, final InputsBusinessLogic inputsBusinessLogic,
-                                 final OutputsBusinessLogic outputsBusinessLogic, final CompositionBusinessLogic compositionBusinessLogic,
+                                 final CompositionBusinessLogic compositionBusinessLogic,
                                  final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic,
                                  final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic,
-                                 final MergeInstanceUtils mergeInstanceUtils, final UiComponentDataConverter uiComponentDataConverter,
-                                 final CsarBusinessLogic csarBusinessLogic, final ArtifactsOperations artifactToscaOperation,
-                                 final PropertyBusinessLogic propertyBusinessLogic, final ComponentContactIdValidator componentContactIdValidator,
+                                 final UiComponentDataConverter uiComponentDataConverter, final CsarBusinessLogic csarBusinessLogic,
+                                 final ArtifactsOperations artifactToscaOperation, final PropertyBusinessLogic propertyBusinessLogic,
+                                 final ComponentContactIdValidator componentContactIdValidator,
                                  final ComponentNameValidator componentNameValidator, final ComponentTagsValidator componentTagsValidator,
                                  final ComponentValidator componentValidator, final ComponentIconValidator componentIconValidator,
                                  final ComponentProjectCodeValidator componentProjectCodeValidator,
@@ -263,11 +259,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
         this.resourceImportManager = resourceImportManager;
         this.inputsBusinessLogic = inputsBusinessLogic;
-        this.outputsBusinessLogic = outputsBusinessLogic;
         this.compositionBusinessLogic = compositionBusinessLogic;
         this.resourceDataMergeBusinessLogic = resourceDataMergeBusinessLogic;
         this.csarArtifactsAndGroupsBusinessLogic = csarArtifactsAndGroupsBusinessLogic;
-        this.mergeInstanceUtils = mergeInstanceUtils;
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.csarBusinessLogic = csarBusinessLogic;
         this.propertyBusinessLogic = propertyBusinessLogic;
@@ -360,7 +354,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
      * @return
      */
     public List<Resource> getAllCertifiedResources(boolean getAbstract, HighestFilterEnum highestFilter, String userId) {
-        User user = validateUserExists(userId);
+        validateUserExists(userId);
         Boolean isHighest = null;
         switch (highestFilter) {
             case ALL:
@@ -484,11 +478,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private void validateCsarUuidMatching(Resource resource, Resource oldResource, String csarUUID, String resourceUniqueId, User user) {
         // (on boarding flow): If the update includes csarUUID which is
-
         // different from the csarUUID of the VF - fail with
-
         // error: "Error: Resource %1 cannot be updated using since it is linked
-
         // to a different VSP" %1 - VF name
         String oldCsarUUID = oldResource.getCsarUUID();
         if (oldCsarUUID != null && !oldCsarUUID.isEmpty() && !csarUUID.equals(oldCsarUUID)) {
@@ -581,15 +572,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 uploadComponentInstanceInfoMap.getSubstitutionMappingNodeType());
             handleNodeTypes(yamlFileName, preparedResource, yamlFileContent, shouldLock, nodeTypesArtifactsToHandle, createdArtifacts, nodeTypesInfo,
                 csarInfo, nodeName, newResource.getModel());
-            preparedResource = createInputsOnResource(preparedResource, uploadComponentInstanceInfoMap.getInputs());
             Map<String, Resource> existingNodeTypesByResourceNames = new HashMap<>();
             final Map<String, UploadComponentInstanceInfo> instancesToCreate = getInstancesToCreate(uploadComponentInstanceInfoMap,
                 newResource.getModel());
             preparedResource = createResourceInstances(yamlFileName, preparedResource, oldResource, instancesToCreate, csarInfo.getCreatedNodes(),
                 existingNodeTypesByResourceNames);
             preparedResource = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName, preparedResource, oldResource,
-                instancesToCreate,
-                existingNodeTypesByResourceNames);
+                instancesToCreate, existingNodeTypesByResourceNames);
+            preparedResource = createInputsOnResource(preparedResource, uploadComponentInstanceInfoMap.getInputs(),
+                csarInfo.getModifier().getUserId());
         } catch (ComponentException e) {
             ResponseFormat responseFormat =
                 e.getResponseFormat() == null ? componentsUtils.getResponseFormat(e.getActionStatus(), e.getParams()) : e.getResponseFormat();
@@ -748,7 +739,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                                final ParsedToscaYamlInfo parsedToscaYamlInfo, final String substitutionMappingNodeType) {
         if (processSubstitutableAsNodeType(resource, parsedToscaYamlInfo)) {
             final Map<String, Object> substitutableAsNodeType = getSubstitutableAsNodeTypeFromTemplate(
-                (Map<String, Object>) new Yaml().load(topologyTemplateYaml), substitutionMappingNodeType);
+                new Yaml().load(topologyTemplateYaml), substitutionMappingNodeType);
             final Resource genericResource = fetchAndSetDerivedFromGenericType(resource,
                 (String) substitutableAsNodeType.get(TypeUtils.ToscaTagNamesEnum.DERIVED_FROM.getElementName()));
 
@@ -1523,16 +1514,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 final Resource genericResource = fetchAndSetDerivedFromGenericType(resource, null);
                 resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
                 log.trace("************* createResourceFromYaml after full create resource {}", yamlName);
-                log.trace("************* Going to add inputs from yaml {}", yamlName);
-                if (resource.shouldGenerateInputs()) {
-                    generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
-                }
-                final Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
-                resource = createInputsOnResource(resource, inputs);
-
-                log.trace("************* Finish to add inputs from yaml {}", yamlName);
-                loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
-                    "Finish to add inputs from yaml: {}", yamlName);
                 if (resource.getResourceType() == ResourceTypeEnum.PNF) {
                     log.trace("************* Adding generic properties to PNF");
                     resource = (Resource) propertyBusinessLogic.copyPropertyToComponent(resource, genericResource.getProperties());
@@ -1553,6 +1534,17 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                         "Start create nodes, RI and Relations  from yaml: {}", yamlName);
                 resource = createRIAndRelationsFromYaml(yamlName, resource, instancesToCreate, topologyTemplateYaml,
                     nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName, null);
+
+                log.trace("************* Going to add inputs from yaml {}", yamlName);
+                if (resource.shouldGenerateInputs()) {
+                    generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
+                }
+                final Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
+                resource = createInputsOnResource(resource, inputs, csarInfo.getModifier().getUserId());
+                log.trace("************* Finish to add inputs from yaml {}", yamlName);
+                loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
+                    "Finish to add inputs from yaml: {}", yamlName);
+
             }
             log.trace("************* Finished to create nodes, RI and Relation  from yaml {}", yamlName);
             loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.COMPLETE,
@@ -1889,10 +1881,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         }
     }
 
-    private Resource createInputsOnResource(Resource resource, Map<String, InputDefinition> inputs) {
+    private Resource createInputsOnResource(final Resource resource, final Map<String, InputDefinition> inputs, final String userId) {
         List<InputDefinition> resourceProperties = resource.getInputs();
         if (MapUtils.isNotEmpty(inputs) || isNotEmpty(resourceProperties)) {
-            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, resource);
+            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, resource, userId);
             if (createInputs.isRight()) {
                 loggerSupportability.log(LoggerSupportabilityActions.CREATE_INPUTS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
                     "failed to add inputs from yaml: {}", createInputs.right().value());
@@ -2339,7 +2331,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             "Start to create relations");
         List<ComponentInstance> componentInstancesList = resource.getComponentInstances();
         if (isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList) &&
-            resource.getResourceType() != ResourceTypeEnum.PNF) { // PNF can have no resource instances {
+            resource.getResourceType() != ResourceTypeEnum.PNF) { // PNF can have no resource instances
             log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ",
                 resource.getUniqueId(), yamlName);
             loggerSupportability.log(LoggerSupportabilityActions.CREATE_RELATIONS, resource.getComponentMetadataForSupportLog(), StatusCode.ERROR,
@@ -3252,8 +3244,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                 reqDef.setLeftOccurrences(String.valueOf(left));
                                 validRegDef = reqDef;
                                 break;
-                            } else {
-                                continue;
                             }
                         } else {
                             validRegDef = reqDef;
@@ -3279,8 +3269,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                             reqDef.setLeftOccurrences(String.valueOf(left));
                             validRegDef = reqDef;
                             break;
-                        } else {
-                            continue;
                         }
                     } else {
                         validRegDef = reqDef;
@@ -3344,7 +3332,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private void createAndAddResourceInstance(UploadComponentInstanceInfo uploadComponentInstanceInfo, String yamlName, Resource resource,
                                               Map<String, Resource> nodeNamespaceMap, Map<String, Resource> existingnodeTypeMap,
                                               Map<ComponentInstance, Resource> resourcesInstancesMap) {
-        Either<Resource, ResponseFormat> eitherResource;
         log.debug("*************Going to create  resource instances {}", yamlName);
         // updating type if the type is node type name - we need to take the
 
@@ -3474,7 +3461,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 nodeForceCertification(resource, user, lifecycleChangeInfo, inTransaction, needLock);
             }
             if (resource.getLifecycleState() == LifecycleStateEnum.CERTIFIED) {
-                Either<ArtifactDefinition, Operation> eitherPopulated = populateToscaArtifacts(resource, user, false, inTransaction, needLock, false);
+                populateToscaArtifacts(resource, user, false, inTransaction, needLock, false);
                 return resource;
             }
             return nodeFullCertification(resource.getUniqueId(), user, lifecycleChangeInfo, inTransaction, needLock);
@@ -3582,7 +3569,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         log.debug("resource with name {} does not exist. create new resource", resource.getName());
         validateResourceBeforeCreate(resource, user, AuditingActionEnum.IMPORT_RESOURCE, isInTransaction, csarInfo);
         final Resource createResourceByDao = createResourceByDao(resource, user, AuditingActionEnum.IMPORT_RESOURCE, isNormative, isInTransaction);
-        Resource createdResource = updateCatalog(createResourceByDao, ChangeTypeEnum.LIFECYCLE).left().map(r -> (Resource) r).left().value();
+        Resource createdResource = updateCatalog(createResourceByDao, ChangeTypeEnum.LIFECYCLE).left().map(Resource.class::cast).left().value();
         ImmutablePair<Resource, ActionStatus> resourcePair = new ImmutablePair<>(createdResource, ActionStatus.CREATED);
         ASDCKpiApi.countImportResourcesKPI();
         return resourcePair;
@@ -4330,7 +4317,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             } else {
                 newResource.setDerivedFrom(null);
             }
-            Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(resourceIdToUpdate, newResource, user, currentResource, false,
+            Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(resourceIdToUpdate, newResource, user, currentResource,
                 true);
             if (dataModelResponse.isRight()) {
                 log.debug("failed to update resource metadata!!!");
@@ -4352,7 +4339,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Either<Resource, ResponseFormat> updateResourceMetadata(String resourceIdToUpdate, Resource newResource, User user,
-                                                                    Resource currentResource, boolean shouldLock, boolean inTransaction) {
+                                                                    Resource currentResource, boolean inTransaction) {
         updateVfModuleGroupsNames(currentResource, newResource);
         validateResourceFieldsBeforeUpdate(currentResource, newResource, inTransaction, false);
         // Setting last updater and uniqueId
@@ -4924,11 +4911,9 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
     private void validateCost(Resource resource) {
         String cost = resource.getCost();
-        if (cost != null) {
-            if (!ValidationUtils.validateCost(cost)) {
-                log.debug("resource cost is invalid.");
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
-            }
+        if (cost != null && !ValidationUtils.validateCost(cost)) {
+            log.debug("resource cost is invalid.");
+            throw new ByActionStatusComponentException(ActionStatus.INVALID_CONTENT);
         }
     }
 
@@ -5053,7 +5038,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                               String innerType) {
         if (!propertyOperation.isPropertyDefaultValueValid(property, allDataTypes)) {
             log.info("Invalid default value for property {}", property);
-            ResponseFormat responseFormat;
             if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType,
                     property.getDefaultValue());
