@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.Annotation;
@@ -29,6 +30,7 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class InputDefinition extends PropertyDefinition {
 
     private List<ComponentInstanceInput> inputs;

@@ -484,10 +484,7 @@ public class ServiceImportParseLogic {
             resource
                 .setToscaResourceName(CommonBeUtils.generateToscaResourceName(resource.getResourceType().name().toLowerCase(), resourceSystemName));
         }
-        // Generate invariant UUID - must be here and not in operation since it
-
-        // should stay constant during clone
-
+        // Generate invariant UUID - must be here and not in operation since it should stay constant during clone
         // TODO
         String invariantUUID = UniqueIdBuilder.buildInvariantUUID();
         resource.setInvariantUUID(invariantUUID);
@@ -1340,10 +1337,10 @@ public class ServiceImportParseLogic {
         }
     }
 
-    public Service createInputsOnService(Service service, Map<String, InputDefinition> inputs) {
+    public Service createInputsOnService(Service service, Map<String, InputDefinition> inputs, String userId) {
         List<InputDefinition> resourceProperties = service.getInputs();
         if (MapUtils.isNotEmpty(inputs) || isNotEmpty(resourceProperties)) {
-            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, service);
+            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, service, userId);
             if (createInputs.isRight()) {
                 throw new ComponentException(createInputs.right().value());
             }
@@ -1626,10 +1623,10 @@ public class ServiceImportParseLogic {
         return genericResource;
     }
 
-    public Resource createInputsOnResource(Resource resource, Map<String, InputDefinition> inputs) {
+    public Resource createInputsOnResource(Resource resource, Map<String, InputDefinition> inputs, String userId) {
         List<InputDefinition> resourceProperties = resource.getInputs();
         if (MapUtils.isNotEmpty(inputs) || isNotEmpty(resourceProperties)) {
-            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, resource);
+            Either<List<InputDefinition>, ResponseFormat> createInputs = inputsBusinessLogic.createInputsInGraph(inputs, resource, userId);
             if (createInputs.isRight()) {
                 throw new ComponentException(createInputs.right().value());
             }
@@ -1967,7 +1964,7 @@ public class ServiceImportParseLogic {
 
     public InputDefinition findInputByName(List<InputDefinition> inputs, GetInputValueDataDefinition getInput) {
         Optional<InputDefinition> inputOpt = inputs.stream().filter(p -> p.getName().equals(getInput.getInputName())).findFirst();
-        if (!inputOpt.isPresent()) {
+        if (inputOpt.isEmpty()) {
             log.debug("#findInputByName - Failed to find the input {} ", getInput.getInputName());
             serviceBusinessLogic.rollbackWithException(ActionStatus.INPUTS_NOT_FOUND, getInput.getInputName());
         }
