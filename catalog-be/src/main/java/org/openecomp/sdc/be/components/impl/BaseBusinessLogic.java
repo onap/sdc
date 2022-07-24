@@ -421,37 +421,30 @@ public abstract class BaseBusinessLogic {
     }
 
     Either<Boolean, ResponseFormat> validatePropertyDefaultValue(IComplexDefaultValue property, Map<String, DataTypeDefinition> dataTypes) {
-        String type;
         String innerType = null;
         if (!propertyOperation.isPropertyTypeValid(property, dataTypes)) {
             log.info("Invalid type for property '{}' type '{}'", property.getName(), property.getType());
-            ResponseFormat responseFormat = componentsUtils
-                .getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
-            return Either.right(responseFormat);
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName()));
         }
-        type = property.getType();
+        final var type = property.getType();
         if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
-            ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, dataTypes);
+            final var propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, dataTypes);
             innerType = propertyInnerTypeValid.getLeft();
             if (Boolean.FALSE.equals(propertyInnerTypeValid.getRight())) {
                 log.info("Invalid inner type for property '{}' type '{}', dataTypeCount '{}'", property.getName(), property.getType(),
                     dataTypes.size());
-                ResponseFormat responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
-                return Either.right(responseFormat);
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName()));
             }
         }
         if (!propertyOperation.isPropertyDefaultValueValid(property, dataTypes)) {
             log.info("Invalid default value for property '{}' type '{}'", property.getName(), property.getType());
-            ResponseFormat responseFormat;
             if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
-                responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType, property.getDefaultValue());
+                return Either.right(componentsUtils.getResponseFormat(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType,
+                    property.getDefaultValue()));
             } else {
-                responseFormat = componentsUtils
-                    .getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE, property.getName(), type, property.getDefaultValue());
+                return Either.right(
+                    componentsUtils.getResponseFormat(ActionStatus.INVALID_DEFAULT_VALUE, property.getName(), type, property.getDefaultValue()));
             }
-            return Either.right(responseFormat);
         }
         return Either.left(true);
     }

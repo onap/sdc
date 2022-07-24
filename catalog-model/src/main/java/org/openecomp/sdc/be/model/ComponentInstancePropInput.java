@@ -19,6 +19,13 @@
  */
 package org.openecomp.sdc.be.model;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@EqualsAndHashCode
 public class ComponentInstancePropInput extends ComponentInstanceProperty {
 
     private String propertiesName;
@@ -32,20 +39,8 @@ public class ComponentInstancePropInput extends ComponentInstanceProperty {
         super(p);
     }
 
-    public String getPropertiesName() {
-        return propertiesName;
-    }
-
-    public void setPropertiesName(String propertiesName) {
-        this.propertiesName = propertiesName;
-    }
-
-    public PropertyDefinition getInput() {
-        return input;
-    }
-
-    public void setInput(PropertyDefinition input) {
-        this.input = input;
+    public ComponentInstancePropInput(PropertyDefinition p) {
+        super(p);
     }
 
     public String[] getParsedPropNames() {

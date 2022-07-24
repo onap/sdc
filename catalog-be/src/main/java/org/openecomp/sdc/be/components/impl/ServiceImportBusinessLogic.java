@@ -264,30 +264,30 @@ public class ServiceImportBusinessLogic {
         return createdService;
     }
 
-    protected Service createServiceAndRIsFromYaml(Service service, boolean isNormative,
+    protected Service createServiceAndRIsFromYaml(Service service, final boolean isNormative,
                                                   Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate,
-                                                  boolean shouldLock, boolean inTransaction, CreateServiceFromYamlParameter csfyp,
-                                                  final String userId)
-        throws BusinessLogicException {
-        List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
-        String yamlName = csfyp.getYamlName();
-        ParsedToscaYamlInfo parsedToscaYamlInfo = csfyp.getParsedToscaYamlInfo();
-        List<ArtifactDefinition> createdArtifacts = csfyp.getCreatedArtifacts();
-        String topologyTemplateYaml = csfyp.getTopologyTemplateYaml();
-        Map<String, NodeTypeInfo> nodeTypesInfo = csfyp.getNodeTypesInfo();
-        CsarInfo csarInfo = csfyp.getCsarInfo();
-        String nodeName = csfyp.getNodeName();
-        if (shouldLock) {
-            Either<Boolean, ResponseFormat> lockResult = serviceBusinessLogic.lockComponentByName(service.getSystemName(), service, CREATE_RESOURCE);
-            if (lockResult.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
-                throw new ComponentException(lockResult.right().value());
-            }
-            log.debug("name is locked {} status = {}", service.getSystemName(), lockResult);
-        }
+                                                  final boolean shouldLock, final boolean inTransaction,
+                                                  final CreateServiceFromYamlParameter csfyp,
+                                                  final String userId) throws BusinessLogicException {
+        final List<ArtifactDefinition> nodeTypesNewCreatedArtifacts = new ArrayList<>();
+        final var yamlName = csfyp.getYamlName();
+        final var parsedToscaYamlInfo = csfyp.getParsedToscaYamlInfo();
+        final List<ArtifactDefinition> createdArtifacts = csfyp.getCreatedArtifacts();
+        final var topologyTemplateYaml = csfyp.getTopologyTemplateYaml();
+        final var nodeTypesInfo = csfyp.getNodeTypesInfo();
+        final var csarInfo = csfyp.getCsarInfo();
+        final var nodeName = csfyp.getNodeName();
+        boolean rollback = false;
         try {
+            if (shouldLock) {
+                final var lockResult = serviceBusinessLogic.lockComponentByName(service.getSystemName(), service, CREATE_RESOURCE);
+                if (lockResult.isRight()) {
+                    throw new ComponentException(lockResult.right().value());
+                }
+                log.debug("name is locked {} status = {}", service.getSystemName(), lockResult);
+            }
             log.trace("************* Adding properties to service from interface yaml {}", yamlName);
-            Map<String, PropertyDefinition> properties = parsedToscaYamlInfo.getProperties();
+            final var properties = parsedToscaYamlInfo.getProperties();
             if (properties != null && !properties.isEmpty()) {
                 final List<PropertyDefinition> propertiesList = new ArrayList<>();
                 properties.forEach((propertyName, propertyDefinition) -> {
@@ -298,10 +298,7 @@ public class ServiceImportBusinessLogic {
             }
             log.trace("************* createResourceFromYaml before full create resource {}", yamlName);
             service = serviceImportParseLogic.createServiceTransaction(service, csarInfo.getModifier(), isNormative);
-            log.trace("************* Going to add inputs from yaml {}", yamlName);
-            Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
-            service = serviceImportParseLogic.createInputsOnService(service, inputs);
-            log.trace("************* Finished to add inputs from yaml {}", yamlName);
+
             ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
             service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
             log.trace("************* Added Substitution filter from interface yaml {}", yamlName);
@@ -314,23 +311,25 @@ public class ServiceImportBusinessLogic {
             Map<String, OutputDefinition> outputs = parsedToscaYamlInfo.getOutputs();
             service = serviceImportParseLogic.createOutputsOnService(service, outputs, userId);
             log.trace("************* Finished to add outputs from yaml {}", yamlName);
+            log.trace("************* Going to add inputs from yaml {}", yamlName);
+            final var inputs = parsedToscaYamlInfo.getInputs();
+            service = serviceImportParseLogic.createInputsOnService(service, inputs, csarInfo.getModifier().getUserId());
+            log.trace("************* Finished to add inputs from yaml {}", yamlName);
 
             Either<Map<String, GroupDefinition>, ResponseFormat> validateUpdateVfGroupNamesRes
                 = groupBusinessLogic.validateUpdateVfGroupNames(parsedToscaYamlInfo.getGroups(), service.getSystemName());
             if (validateUpdateVfGroupNamesRes.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(validateUpdateVfGroupNamesRes.right().value());
             }
-            Map<String, GroupDefinition> groups;
+            final Map<String, GroupDefinition> groups;
             log.trace("************* Going to add groups from yaml {}", yamlName);
             if (!validateUpdateVfGroupNamesRes.left().value().isEmpty()) {
                 groups = validateUpdateVfGroupNamesRes.left().value();
             } else {
                 groups = parsedToscaYamlInfo.getGroups();
             }
-            Either<Service, ResponseFormat> createGroupsOnResource = createGroupsOnResource(service, groups);
+            final var createGroupsOnResource = createGroupsOnResource(service, groups);
             if (createGroupsOnResource.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(createGroupsOnResource.right().value());
             }
             service = createGroupsOnResource.left().value();
@@ -342,21 +341,25 @@ public class ServiceImportBusinessLogic {
             }
             service = createPoliciesOnResource.left().value();
             log.trace("************* Going to add artifacts from yaml {}", yamlName);
-            Either<Service, ResponseFormat> createArtifactsEither = createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE,
+            final var createArtifactsEither = createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum.CREATE,
                 createdArtifacts, yamlName, csarInfo, service, inTransaction, shouldLock);
             if (createArtifactsEither.isRight()) {
-                serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
                 throw new ComponentException(createArtifactsEither.right().value());
             }
             service = serviceImportParseLogic.getServiceWithGroups(createArtifactsEither.left().value().getUniqueId());
             ASDCKpiApi.countCreatedResourcesKPI();
             return service;
         } catch (ComponentException | StorageException | BusinessLogicException e) {
+            rollback = true;
             serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw e;
         } finally {
             if (!inTransaction) {
-                janusGraphDao.commit();
+                if (rollback) {
+                    janusGraphDao.rollback();
+                } else {
+                    janusGraphDao.commit();
+                }
             }
             if (shouldLock) {
                 graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Resource);
@@ -1291,7 +1294,8 @@ public class ServiceImportBusinessLogic {
                                                                                    boolean forceCertificationAllowed, CsarInfo csarInfo,
                                                                                    boolean isNested) {
         final var resourceMetaData = serviceImportParseLogic.fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(), user);
-        final var singleVfcYaml = serviceImportParseLogic.buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.getResourceType(), csarInfo);
+        final var singleVfcYaml = serviceImportParseLogic.buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.getResourceType(),
+            csarInfo);
         final var validatedUser = serviceBusinessLogic.validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE, true);
         return serviceImportParseLogic.createResourceFromNodeType(singleVfcYaml, resourceMetaData, validatedUser, true, needLock,
             nodeTypeArtifactsToHandle, nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeNameValue.getKey(), isNested);
@@ -1391,7 +1395,7 @@ public class ServiceImportBusinessLogic {
         log.debug("enter ServiceImportBusinessLogic processComponentInstance");
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
             .filter(i -> i.getName().equals(uploadComponentInstanceInfo.getName())).findFirst();
-        if (!currentCompInstanceOpt.isPresent()) {
+        if (currentCompInstanceOpt.isEmpty()) {
             log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(), component.getUniqueId());
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, component.getUniqueId(),
@@ -1508,11 +1512,11 @@ public class ServiceImportBusinessLogic {
         Map<String, List<UploadPropInfo>> propMap = uploadComponentInstanceInfo.getProperties();
         Map<String, PropertyDefinition> currPropertiesMap = new HashMap<>();
         List<PropertyDefinition> listFromMap = originResource.getProperties();
-        if ((propMap != null && !propMap.isEmpty()) && (listFromMap == null || listFromMap.isEmpty())) {
+        if (MapUtils.isNotEmpty(propMap) && CollectionUtils.isEmpty(listFromMap)) {
             log.debug("failed to find properties ");
             return componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND);
         }
-        if (listFromMap == null || listFromMap.isEmpty()) {
+        if (CollectionUtils.isEmpty(listFromMap)) {
             return componentsUtils.getResponseFormat(ActionStatus.OK);
         }
         for (PropertyDefinition prop : listFromMap) {
@@ -1522,7 +1526,7 @@ public class ServiceImportBusinessLogic {
             }
         }
         List<ComponentInstanceProperty> instPropList = new ArrayList<>();
-        if (propMap != null && propMap.size() > 0) {
+        if (MapUtils.isNotEmpty(propMap)) {
             for (List<UploadPropInfo> propertyList : propMap.values()) {
                 UploadPropInfo propertyInfo = propertyList.get(0);
                 String propName = propertyInfo.getName();
@@ -1547,32 +1551,11 @@ public class ServiceImportBusinessLogic {
                 property = new ComponentInstanceProperty(curPropertyDef, value, null);
                 String validatePropValue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
                 property.setValue(validatePropValue);
-                if (getInputs != null && !getInputs.isEmpty()) {
-                    List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
-                    for (GetInputValueDataDefinition getInput : getInputs) {
-                        List<InputDefinition> inputs = component.getInputs();
-                        if (inputs == null || inputs.isEmpty()) {
-                            log.debug("Failed to add property {} to instance. Inputs list is empty ", property);
-                            serviceBusinessLogic.rollbackWithException(ActionStatus.INPUTS_NOT_FOUND,
-                                property.getGetInputValues().stream().map(GetInputValueDataDefinition::getInputName).collect(toList()).toString());
-                        }
-                        InputDefinition input = serviceImportParseLogic.findInputByName(inputs, getInput);
-                        getInput.setInputId(input.getUniqueId());
-                        getInputValues.add(getInput);
-                        GetInputValueDataDefinition getInputIndex = getInput.getGetInputIndex();
-                        if (getInputIndex != null) {
-                            input = serviceImportParseLogic.findInputByName(inputs, getInputIndex);
-                            getInputIndex.setInputId(input.getUniqueId());
-                            getInputValues.add(getInputIndex);
-                        }
-                    }
-                    property.setGetInputValues(getInputValues);
-                }
                 instPropList.add(property);
                 currPropertiesMap.remove(property.getName());
             }
         }
-        if (!currPropertiesMap.isEmpty()) {
+        if (MapUtils.isNotEmpty(currPropertiesMap)) {
             for (PropertyDefinition value : currPropertiesMap.values()) {
                 instPropList.add(new ComponentInstanceProperty(value));
             }
@@ -2126,7 +2109,8 @@ public class ServiceImportBusinessLogic {
             serviceImportParseLogic.handleResourceGenericType(preparedResource);
             handleNodeTypes(yamlFileName, preparedResource, yamlFileContent, shouldLock, nodeTypesArtifactsToHandle, createdArtifacts, nodeTypesInfo,
                 csarInfo, nodeName);
-            preparedResource = serviceImportParseLogic.createInputsOnResource(preparedResource, uploadComponentInstanceInfoMap.getInputs());
+            preparedResource = serviceImportParseLogic.createInputsOnResource(preparedResource, uploadComponentInstanceInfoMap.getInputs(),
+                csarInfo.getModifier().getUserId());
             preparedResource = createResourceInstances(yamlFileName, preparedResource, instances, csarInfo.getCreatedNodes());
             preparedResource = createResourceInstancesRelations(csarInfo.getModifier(), yamlFileName, preparedResource, instances);
         } catch (ComponentException e) {
@@ -2231,7 +2215,7 @@ public class ServiceImportBusinessLogic {
                 serviceBusinessLogic.generateAndAddInputsFromGenericTypeProperties(resource, genericResource);
             }
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
-            resource = serviceImportParseLogic.createInputsOnResource(resource, inputs);
+            resource = serviceImportParseLogic.createInputsOnResource(resource, inputs, csarInfo.getModifier().getUserId());
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo.getInstances();
             resource = createRIAndRelationsFromYaml(yamlName, resource, uploadComponentInstanceInfoMap, topologyTemplateYaml,
                 nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName);
