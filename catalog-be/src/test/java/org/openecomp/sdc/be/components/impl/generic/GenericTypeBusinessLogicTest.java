@@ -181,7 +181,6 @@ class GenericTypeBusinessLogicTest {
 
     private void assertInput(InputDefinition inputDefinition, PropertyDefinition propertyDefinition) {
         assertEquals("genericUid", inputDefinition.getOwnerId());
-        assertEquals(inputDefinition.getValue(), propertyDefinition.getValue());
         assertEquals(inputDefinition.getName(), propertyDefinition.getName());
     }
 
