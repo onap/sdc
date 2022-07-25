@@ -148,7 +148,7 @@ public class YamlTemplateParsingHandlerTest {
         when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(HEAT_GROUP_TYPE), any())).thenReturn(heatGroupType);
 
         String main_template_content = new String(csar.get(MAIN_TEMPLATE_NAME));
-        CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
+        CsarInfo csarInfo = new OnboardedCsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
             MAIN_TEMPLATE_NAME, main_template_content, true);
 
         Resource resource = new Resource();
@@ -163,7 +163,7 @@ public class YamlTemplateParsingHandlerTest {
     void parseServicePropertiesInfoFromYamlTest() {
         when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(HEAT_GROUP_TYPE), any())).thenReturn(heatGroupType);
         String main_template_content = new String(csar.get(MAIN_TEMPLATE_NAME));
-        CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
+        CsarInfo csarInfo = new OnboardedCsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
             MAIN_TEMPLATE_NAME, main_template_content, true);
 
         Service service = new Service();
@@ -183,7 +183,7 @@ public class YamlTemplateParsingHandlerTest {
     void parseRelationshipTemplateInfoFromYamlTest() {
         when(groupTypeBusinessLogic.getLatestGroupTypeByType(eq(HEAT_GROUP_TYPE), any())).thenReturn(heatGroupType);
         String main_template_content = new String(csar.get(MAIN_TEMPLATE_NAME));
-        CsarInfo csarInfo = new CsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
+        CsarInfo csarInfo = new OnboardedCsarInfo(user, CSAR_UUID, csar, RESOURCE_NAME,
             MAIN_TEMPLATE_NAME, main_template_content, true);
 
         Service service = new Service();
