@@ -44,6 +44,7 @@ import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.OnboardedCsarInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.CreateServiceFromYamlParameter;
 import org.openecomp.sdc.be.components.validation.UserValidations;
@@ -673,7 +674,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         String mainTemplateName = "mainTemplateName";
         String mainTemplateContent = getMainTemplateContent();
         final Service service = createServiceObject(false);
-        CsarInfo csarInfo = new CsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+        CsarInfo csarInfo = new OnboardedCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
         return csarInfo;
     }
 

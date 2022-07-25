@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -33,7 +34,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fj.data.Either;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -44,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.glassfish.grizzly.http.util.HttpStatus;
@@ -54,6 +58,7 @@ import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.ElementOperationMock;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.ServiceCsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
@@ -103,16 +108,14 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
 
 class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
 
     private static final String RESOURCE_NAME = "My-Resource_Name with   space";
     private static final String RESOURCE_TOSCA_NAME = "My-Resource_Tosca_Name";
-    private static final String GENERIC_ROOT_NAME = "tosca.nodes.Root";
-    private static final String GENERIC_VF_NAME = "org.openecomp.resource.abstract.nodes.VF";
-    private static final String GENERIC_CR_NAME = "org.openecomp.resource.abstract.nodes.CR";
-    private static final String GENERIC_PNF_NAME = "org.openecomp.resource.abstract.nodes.PNF";
     private static final String RESOURCE_CATEGORY1 = "Network Layer 2-3";
     private static final String RESOURCE_SUBCATEGORY = "Router";
 
@@ -2074,16 +2077,25 @@ class ServiceImportParseLogicTest extends ServiceImportBussinessLogicBaseTestSet
     protected CsarInfo getCsarInfo() {
         String csarUuid = "0010";
         User user = new User();
-        Map<String, byte[]> csar = new HashMap<>();
-        String vfReousrceName = "resouceName";
-        String mainTemplateName = "mainTemplateName";
-        String mainTemplateContent = null;
+        File csarFile;
         try {
-            mainTemplateContent = loadFileNameToJsonString("service_import_template.yml");
-        } catch (IOException e) {
-            e.printStackTrace();
+            csarFile = new File(
+                    ServiceImportBusinessLogicTest.class.getClassLoader().getResource("csars/service-Ser09080002-csar.csar").toURI());
+            Map<String, byte[]> csar = ZipUtils.readZip(csarFile, false);
+        
+            String vfReousrceName = "resouceName";
+            String mainTemplateName = "Definitions/service_import_template.yml";
+            
+            Optional<String> keyOp = csar.keySet().stream().filter(k -> k.endsWith("service-Ser09080002-template.yml")).findAny();
+            byte[] mainTemplateService = keyOp.map(csar::get).orElse(null);
+            assertNotNull(mainTemplateService);
+            final String mainTemplateContent = new String(mainTemplateService);
+            
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+        } catch (URISyntaxException | ZipException e) {
+            fail(e);
         }
-        return new CsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+        return null;
     }
 
     private String loadFileNameToJsonString(String fileName) throws IOException {

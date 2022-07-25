@@ -19,21 +19,28 @@ package org.openecomp.sdc.be.components.impl;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.anyMap;
-import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.matches;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.ServiceImportBusinessLogic.CREATE_RESOURCE;
 
 import fj.data.Either;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,6 +50,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.map.HashedMap;
@@ -50,9 +58,11 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.ServiceCsarInfo;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.impl.utils.CreateServiceFromYamlParameter;
@@ -96,6 +106,7 @@ import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
@@ -104,7 +115,10 @@ import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.zip.ZipUtils;
+import org.openecomp.sdc.common.zip.exception.ZipException;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.yaml.snakeyaml.Yaml;
 
 class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTestSetup {
 
@@ -115,6 +129,9 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final ServletUtils servletUtils = mock(ServletUtils.class);
     private final AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
         componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
+    private final ApplicationDataTypeCache applicationDataTypeCache = mock(ApplicationDataTypeCache.class);
+    private final DataTypeBusinessLogic dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
+
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
 
@@ -148,7 +165,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(serviceBusinessLogic.validateServiceBeforeCreate(eq(newService), any(User.class), any(AuditingActionEnum.class)))
             .thenReturn(Either.left(newService));
         when(toscaOperationFacade.validateCsarUuidUniqueness(anyString())).thenReturn(StorageOperationStatus.OK);
-        CsarInfo csarInfo = getCsarInfo();
+        ServiceCsarInfo csarInfo = getCsarInfo();
         when(csarBusinessLogic.getCsarInfo(any(Service.class), any(), any(User.class), any(Map.class), anyString())).thenReturn(csarInfo);
         when(serviceImportParseLogic.findNodeTypesArtifactsToHandle(any(Map.class), any(CsarInfo.class), any(Service.class)))
             .thenReturn(Either.left(new HashMap<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>>()));
@@ -183,7 +200,10 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponentByName(anyString(), anyString(), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
         when(serviceImportParseLogic.createOutputsOnService(any(Service.class), any(), anyString())).thenReturn(newService);
-
+        
+        when(applicationDataTypeCache.get(any(), contains("tosca.datatypes.test_"))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
+        when(applicationDataTypeCache.get(any(), matches("^((?!tosca.datatypes.test_).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
+        
         Service result = sIBL.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
         assertNotNull(result);
         assertNotNull(result.getComponentInstances());
@@ -195,6 +215,13 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         assertEquals(1, result.getComponentInstances().get(0).getRequirements().size());
         assertNotNull(result.getCategories());
         assertEquals(1, result.getCategories().size());
+        
+        ArgumentCaptor<String> yaml = ArgumentCaptor.forClass(String.class);
+        verify(dataTypeBusinessLogic).createDataTypeFromYaml(yaml.capture(), isNull(), anyBoolean());
+        Map<String, Object> yamlMap = new Yaml().load(yaml.getValue());
+        assertEquals(2, yamlMap.size());
+        assertNotNull(yamlMap.get("tosca.datatypes.test_a"));
+        assertNotNull(yamlMap.get("tosca.datatypes.test_b"));
     }
 
     @Test
@@ -222,7 +249,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Service oldService = createServiceObject(true);
         String csarUUID = "valid_vf";
         Map<String, byte[]> payload = crateCsarFromPayload();
-        CsarInfo csarInfo = getCsarInfo();
+        ServiceCsarInfo csarInfo = getCsarInfo();
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> map =
             new HashedMap();
 
@@ -240,7 +267,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Resource resource = createOldResource();
         String topologyTemplateYaml = getMainTemplateContent("service_import_template.yml");
         String yamlName = "group.yml";
-        CsarInfo csarInfo = getCsarInfo();
+        ServiceCsarInfo csarInfo = getCsarInfo();
         Map<String, EnumMap<ArtifactsBusinessLogic.ArtifactOperationEnum, List<ArtifactDefinition>>> nodeTypesArtifactsToCreate = new HashMap<>();
         String nodeName = "org.openecomp.resource.derivedFrom.zxjTestImportServiceAb.test";
 
@@ -2342,14 +2369,28 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         return mainTemplateContent;
     }
 
-    protected CsarInfo getCsarInfo() {
+    protected ServiceCsarInfo getCsarInfo() {
         String csarUuid = "0010";
         User user = new User("jh0003");
-        Map<String, byte[]> csar = crateCsarFromPayload();
-        String vfReousrceName = "resouceName";
-        String mainTemplateName = "mainTemplateName";
-        String mainTemplateContent = getMainTemplateContent("service_import_template.yml");
-        return new CsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+        
+        try {
+            File csarFile = new File(
+                    ServiceImportBusinessLogicTest.class.getClassLoader().getResource("csars/service-Ser09080002-csar.csar").toURI());
+            Map<String, byte[]> csar = ZipUtils.readZip(csarFile, false);
+        
+            String vfReousrceName = "resouceName";
+            String mainTemplateName = "Definitions/service_import_template.yml";
+            
+            Optional<String> keyOp = csar.keySet().stream().filter(k -> k.endsWith("service-Ser09080002-template.yml")).findAny();
+            byte[] mainTemplateService = keyOp.map(csar::get).orElse(null);
+            assertNotNull(mainTemplateService);
+            final String mainTemplateContent = new String(mainTemplateService);
+            
+            return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
+        } catch (URISyntaxException | ZipException e) {
+            fail(e);
+        }
+        return null;
     }
 
     protected CsarUtils.NonMetaArtifactInfo getNonMetaArtifactInfo() {
