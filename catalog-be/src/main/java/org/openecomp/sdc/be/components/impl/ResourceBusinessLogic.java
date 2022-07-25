@@ -58,6 +58,7 @@ import org.openecomp.sdc.be.catalog.enums.ChangeTypeEnum;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.OnboardedCsarInfo;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
@@ -1041,7 +1042,8 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         loggerSupportability
             .log(LoggerSupportabilityActions.CREATE_RESOURCE_FROM_YAML, StatusCode.STARTED, "Starting to create Resource From Csar by user {}",
                 user.getUserId());
-        CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, csarUIPayload, csarUUID);
+        OnboardedCsarInfo csarInfo = csarBusinessLogic.getCsarInfo(resource, null, user, csarUIPayload, csarUUID);
+
         Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
         final String model = resource.getModel();
         if (StringUtils.isNotEmpty(model)) {
@@ -1057,7 +1059,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 policyTypeBusinessLogic.createPolicyTypeFromYaml(new Yaml().dump(policyTypesToCreate), model, true);
             }
         }
-
         Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = findNodeTypesArtifactsToHandle(
             nodeTypesInfo, csarInfo, resource);
         if (findNodeTypesArtifactsToHandleRes.isRight()) {

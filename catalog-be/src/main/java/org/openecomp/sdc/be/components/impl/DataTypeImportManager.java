@@ -17,10 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
 package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,17 +75,66 @@ public class DataTypeImportManager {
     }
 
     private Either<List<DataTypeDefinition>, ActionStatus> createDataTypesFromYml(final String dataTypesYml, final String modelName) {
-        final Either<List<DataTypeDefinition>, ActionStatus> dataTypes = commonImportManager.createElementTypesFromYml(dataTypesYml,
+        final Either<List<DataTypeDefinition>, ActionStatus> dataTypesEither = commonImportManager.createElementTypesFromYml(dataTypesYml,
             this::createDataType);
-        if (dataTypes.isLeft() && StringUtils.isNotEmpty(modelName)) {
+        if (dataTypesEither.isRight()) {
+            return dataTypesEither;
+        }
+        final List<DataTypeDefinition> dataTypes = dataTypesEither.left().value();
+        if (StringUtils.isNotEmpty(modelName)) {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
-                dataTypes.left().value().forEach(dataType -> dataType.setModel(modelName));
-                return dataTypes;
+                dataTypes.forEach(dataType -> dataType.setModel(modelName));
+            } else {
+                return Either.right(ActionStatus.INVALID_MODEL);
             }
-            return Either.right(ActionStatus.INVALID_MODEL);
         }
-        return dataTypes;
+        if (log.isTraceEnabled()) {
+            log.trace("Unsorted datatypes order:");
+            dataTypes.stream().forEach(dt -> log.trace(dt.getName()));
+        }
+
+        long startTime = System.currentTimeMillis();
+        List<DataTypeDefinition> sortedDataTypeDefinitions = sortDataTypesByDependencyOrder(dataTypes);
+
+        if (log.isTraceEnabled()) {
+            long sortTime = System.currentTimeMillis() - startTime;
+            log.trace("Sorting " + sortedDataTypeDefinitions.size() + " data types from model: " + modelName + " took: " + sortTime);
+            log.trace("Sorted datatypes order:");
+            sortedDataTypeDefinitions.stream().forEach(dt -> log.trace(dt.getName()));
+        }
+        return Either.left(sortedDataTypeDefinitions);
+    }
+    
+    private List<DataTypeDefinition> sortDataTypesByDependencyOrder(final List<DataTypeDefinition> dataTypes) {
+        final List<DataTypeDefinition> sortedDataTypeDefinitions = new ArrayList<>();
+        final Map<String, DataTypeDefinition> dataTypeDefinitionsMap = new HashMap<>();
+        
+        dataTypes.forEach(dataType -> {
+            
+            int highestDependencyIndex = -1;
+            for (final String dependencyName : getDependencyTypes(dataType)) {
+                final DataTypeDefinition dependency = dataTypeDefinitionsMap.get(dependencyName);
+                final int indexOfDependency = sortedDataTypeDefinitions.lastIndexOf(dependency);
+                highestDependencyIndex = indexOfDependency > highestDependencyIndex ? indexOfDependency : highestDependencyIndex;
+            }
+            sortedDataTypeDefinitions.add(highestDependencyIndex + 1, dataType);
+            dataTypeDefinitionsMap.put(dataType.getName(), dataType);
+       
+            } );
+        
+        return sortedDataTypeDefinitions;
+    }
+    
+    private Collection<String> getDependencyTypes(final DataTypeDefinition dataType) {
+        final Set<String> dependencies = new HashSet<>();
+        if (dataType.getDerivedFromName() != null) {
+            dependencies.add(dataType.getDerivedFromName());
+        }
+        if (dataType.getProperties() != null) {
+            dataType.getProperties().stream().forEach(property -> dependencies.add(property.getType()));
+        }
+        return dependencies;
     }
 
     private Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypesByDao(
