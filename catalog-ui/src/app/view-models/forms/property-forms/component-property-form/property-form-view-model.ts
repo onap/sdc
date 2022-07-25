@@ -32,6 +32,7 @@ import {Observable} from "rxjs";
 import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
 import {InstanceFeDetails} from "../../../../models/instance-fe-details";
 import {ToscaGetFunction} from "../../../../models/tosca-get-function";
+import {ToscaFunctionValidationEvent} from "../../../../ng2/pages/properties-assignment/tosca-function/tosca-function.component";
 
 export interface IEditPropertyModel {
     property:PropertyModel;
@@ -457,8 +458,8 @@ export class PropertyFormViewModel {
             this.$scope.editPropertyModel.property.toscaFunction = toscaGetFunction;
         }
 
-        this.$scope.onGetFunctionValidityChange = (isValid): void => {
-            if (isValid.isValid) {
+        this.$scope.onToscaFunctionValidityChange = (validationEvent: ToscaFunctionValidationEvent): void => {
+            if (validationEvent.isValid) {
                 this.$scope.editPropertyModel.isGetFunctionValid = true;
                 return;
             }

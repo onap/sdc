@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -250,8 +249,8 @@ class PolicyBusinessLogicTest {
         when(toscaOperationFacade.getToscaFullElement(COMPONENT_ID)).thenReturn(Either.left(newResource));
         when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(
             Either.left(policy));
-        when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop1), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop1));
-        when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop2), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop2));
+        when(propertyOperation.validateAndUpdatePropertyValue(eq(newResource), eq(properties[0]), anyMap())).thenReturn(Either.left(prop1));
+        when(propertyOperation.validateAndUpdatePropertyValue(eq(newResource), eq(properties[1]), anyMap())).thenReturn(Either.left(prop2));
 
         Map<String, PolicyDefinition> createdPolicy = businessLogic.createPolicies(newResource, policies);
 
@@ -292,8 +291,8 @@ class PolicyBusinessLogicTest {
         when(toscaOperationFacade.getToscaFullElement(COMPONENT_ID)).thenReturn(Either.left(newService));
         when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(
             Either.left(policy));
-        when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop1), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop1));
-        when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop2), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop2));
+        when(propertyOperation.validateAndUpdatePropertyValue(eq(newService), eq(properties[0]), anyMap())).thenReturn(Either.left(prop1));
+        when(propertyOperation.validateAndUpdatePropertyValue(eq(newService), eq(properties[1]), anyMap())).thenReturn(Either.left(prop2));
 
         Map<String, PolicyDefinition> createdPolicy = businessLogic.createPolicies(newService, policies);
 
@@ -408,16 +407,16 @@ class PolicyBusinessLogicTest {
         stubValidateAndLockSuccess();
         String prop1 = "Name";
         String prop2 = "Type";
-        when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop1), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop1));
-        when(propertyOperation.validateAndUpdatePropertyValue(eq(null), eq(prop2), anyBoolean(), eq(null), anyMap())).thenReturn(Either.left(prop2));
+
         when(toscaOperationFacade.updatePolicyOfComponent(eq(COMPONENT_ID), any(PolicyDefinition.class), any(PromoteVersionEnum.class))).thenReturn(
             policySuccessEither);
         stubUnlockAndCommit();
         PropertyDataDefinition[] properties = getProperties(prop1, prop2);
+        when(propertyOperation.validateAndUpdatePropertyValue(any(Resource.class), eq(properties[0]), anyMap())).thenReturn(Either.left(prop1));
+        when(propertyOperation.validateAndUpdatePropertyValue(any(Resource.class), eq(properties[1]), anyMap())).thenReturn(Either.left(prop2));
         policy.setProperties(Arrays.asList(properties));
-        List<PropertyDataDefinition> response = businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, properties,
-            USER_ID, true);
-        List<PropertyDataDefinition> updatedProperties = response;
+        List<PropertyDataDefinition> updatedProperties =
+            businessLogic.updatePolicyProperties(ComponentTypeEnum.RESOURCE, COMPONENT_ID, POLICY_ID, properties, USER_ID, true);
         assertEquals(2, updatedProperties.size());
     }
 

@@ -23,19 +23,26 @@ import fj.data.Either;
 import java.util.List;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.GroupProperty;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
 
 public interface IGroupOperation {
 
-    public Either<List<GraphRelation>, StorageOperationStatus> dissociateAllGroupsFromArtifactOnGraph(String componentId,
-                                                                                                      NodeTypeEnum componentTypeEnum,
-                                                                                                      String artifactId);
+    Either<List<GraphRelation>, StorageOperationStatus> dissociateAllGroupsFromArtifactOnGraph(String componentId, NodeTypeEnum componentTypeEnum,
+                                                                                               String artifactId);
 
-    public StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId,
-                                                                           ArtifactData newArtifact, boolean inTransaction);
+    StorageOperationStatus dissociateAndAssociateGroupsFromArtifact(String componentId, NodeTypeEnum componentTypeEnum, String oldArtifactId,
+                                                                    ArtifactData newArtifact, boolean inTransaction);
 
-    public boolean isGroupExist(String groupName, boolean inTransaction);
+    boolean isGroupExist(String groupName, boolean inTransaction);
 
-    public StorageOperationStatus validateAndUpdatePropertyValue(GroupProperty property);
+    /**
+     * Validates and updates the given property value based on the property type
+     *
+     * @param groupOwner the container component that owns the group instance that has the property
+     * @param property   the group instance property to validate
+     * @return the status of the operation
+     */
+    StorageOperationStatus validateAndUpdatePropertyValue(Component groupOwner, GroupProperty property);
 }

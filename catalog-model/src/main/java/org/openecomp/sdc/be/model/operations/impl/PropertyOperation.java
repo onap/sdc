@@ -76,11 +76,13 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyRule;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.validation.ToscaFunctionValidator;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
@@ -103,9 +105,8 @@ import org.openecomp.sdc.be.resources.data.ResourceMetadataData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component("property-operation")
+@org.springframework.stereotype.Component("property-operation")
 public class PropertyOperation extends AbstractOperation implements IPropertyOperation {
 
     private static final String AFTER_RETRIEVING_DERIVED_FROM_NODE_OF_STATUS_IS = "After retrieving DERIVED_FROM node of {}. status is {}";
@@ -121,12 +122,18 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     private static final String UPDATE_DATA_TYPE = "UpdateDataType";
     private static final Logger log = Logger.getLogger(PropertyOperation.class.getName());
     private final DerivedFromOperation derivedFromOperation;
+    private ToscaFunctionValidator toscaFunctionValidator;
     private DataTypeOperation dataTypeOperation;
 
     @Autowired
     public PropertyOperation(final HealingJanusGraphGenericDao janusGraphGenericDao, final DerivedFromOperation derivedFromOperation) {
         this.janusGraphGenericDao = janusGraphGenericDao;
         this.derivedFromOperation = derivedFromOperation;
+    }
+
+    @Autowired
+    public void setToscaFunctionValidator(final ToscaFunctionValidator toscaFunctionValidator) {
+        this.toscaFunctionValidator = toscaFunctionValidator;
     }
 
     //circular dependency DataTypeOperation->ModelOperation->ModelElementOperation->PropertyOperation
@@ -1645,7 +1652,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
     public Either<Object, Boolean> validateAndUpdatePropertyValue(String propertyType, String value, boolean isValidate, String innerType,
                                                                   Map<String, DataTypeDefinition> dataTypes) {
         log.trace("Going to validate property value and its type. type = {}, value = {}", propertyType, value);
-        ToscaPropertyType type = getType(propertyType);
+        final ToscaPropertyType type = getType(propertyType);
         if (isValidate) {
             if (type == null) {
                 DataTypeDefinition dataTypeDefinition = dataTypes.get(propertyType);
@@ -1678,6 +1685,155 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                                                                   Map<String, DataTypeDefinition> dataTypes) {
         return validateAndUpdatePropertyValue(propertyType, value, true, innerType, dataTypes);
     }
+
+    public Either<Object, Boolean> validateAndUpdatePropertyValue(final Component containerComponent, final PropertyDataDefinition property,
+                                                                  final Map<String, DataTypeDefinition> dataTypes) {
+        if (property.isToscaFunction()) {
+            toscaFunctionValidator.validate(property, containerComponent);
+            property.setValue(property.getToscaFunction().getValue());
+            return Either.left(property.getValue());
+        }
+        Either<String, JanusGraphOperationStatus> checkInnerType = checkInnerType(property);
+        if (checkInnerType.isRight()) {
+            return Either.right(false);
+        }
+        final String innerType = checkInnerType.left().value();
+        return validateAndUpdatePropertyValue(property.getType(), property.getValue(), true, innerType, dataTypes);
+    }
+
+//    private <T extends PropertyDefinition> void validateToscaGetFunction(T property, org.openecomp.sdc.be.model.Component parentComponent) {
+//        final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) property.getToscaFunction();
+//        validateGetToscaFunctionAttributes(toscaGetFunction);
+//        validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
+//        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT) {
+//            validateGetFunction(property, parentComponent.getInputs(), parentComponent.getModel());
+//            return;
+//        }
+//        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_PROPERTY) {
+//            if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
+//                validateGetFunction(property, parentComponent.getProperties(), parentComponent.getModel());
+//            } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
+//                final ComponentInstance componentInstance =
+//                    parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
+//                        .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
+//                validateGetFunction(property, componentInstance.getProperties(), parentComponent.getModel());
+//            }
+//
+//            return;
+//        }
+//        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_ATTRIBUTE) {
+//            if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
+//                validateGetFunction(property, parentComponent.getAttributes(), parentComponent.getModel());
+//            } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
+//                final ComponentInstance componentInstance =
+//                    parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
+//                        .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
+//                validateGetFunction(property, componentInstance.getAttributes(), parentComponent.getModel());
+//            }
+//
+//            return;
+//        }
+//
+//        throw ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get();
+//    }
+
+//    private <T extends PropertyDefinition> void validateGetFunction(final T property,
+//                                                                    final List<? extends ToscaPropertyData> parentProperties,
+//                                                                    final String model) {
+//        final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) property.getToscaFunction();
+//        if (CollectionUtils.isEmpty(parentProperties)) {
+//            throw ToscaGetFunctionExceptionSupplier
+//                .propertyNotFoundOnTarget(toscaGetFunction.getPropertyName(), toscaGetFunction.getPropertySource(),
+//                    toscaGetFunction.getFunctionType()
+//                ).get();
+//        }
+//        final String getFunctionPropertyUniqueId = toscaGetFunction.getPropertyUniqueId();
+//        ToscaPropertyData referredProperty = parentProperties.stream()
+//            .filter(property1 -> getFunctionPropertyUniqueId.equals(property1.getUniqueId()))
+//            .findFirst()
+//            .orElseThrow(ToscaGetFunctionExceptionSupplier
+//                .propertyNotFoundOnTarget(toscaGetFunction.getPropertyName(), toscaGetFunction.getPropertySource()
+//                    , toscaGetFunction.getFunctionType())
+//            );
+//        if (toscaGetFunction.isSubProperty()) {
+//            referredProperty = findSubProperty(referredProperty, toscaGetFunction, model);
+//        }
+//
+//        if (!property.getType().equals(referredProperty.getType())) {
+//            throw ToscaGetFunctionExceptionSupplier
+//                .propertyTypeDiverge(toscaGetFunction.getType(), referredProperty.getType(), property.getType()).get();
+//        }
+//        if (PropertyType.typeHasSchema(referredProperty.getType()) && !referredProperty.getSchemaType().equals(property.getSchemaType())) {
+//            throw ToscaGetFunctionExceptionSupplier
+//                .propertySchemaDiverge(toscaGetFunction.getType(), referredProperty.getSchemaType(), property.getSchemaType()).get();
+//        }
+//    }
+
+//    private void validateGetToscaFunctionAttributes(final ToscaGetFunctionDataDefinition toscaGetFunction) {
+//        if (toscaGetFunction.getFunctionType() == null) {
+//            throw ToscaGetFunctionExceptionSupplier.targetFunctionTypeNotFound().get();
+//        }
+//        if (toscaGetFunction.getPropertySource() == null) {
+//            throw ToscaGetFunctionExceptionSupplier.targetPropertySourceNotFound(toscaGetFunction.getFunctionType()).get();
+//        }
+//        if (CollectionUtils.isEmpty(toscaGetFunction.getPropertyPathFromSource())) {
+//            throw ToscaGetFunctionExceptionSupplier
+//                .targetSourcePathNotFound(toscaGetFunction.getFunctionType()).get();
+//        }
+//        if (StringUtils.isEmpty(toscaGetFunction.getSourceName()) || StringUtils.isBlank(toscaGetFunction.getSourceName())) {
+//            throw ToscaGetFunctionExceptionSupplier.sourceNameNotFound(toscaGetFunction.getPropertySource()).get();
+//        }
+//        if (StringUtils.isEmpty(toscaGetFunction.getSourceUniqueId()) || StringUtils.isBlank(toscaGetFunction.getSourceUniqueId())) {
+//            throw ToscaGetFunctionExceptionSupplier.sourceIdNotFound(toscaGetFunction.getPropertySource()).get();
+//        }
+//        if (StringUtils.isEmpty(toscaGetFunction.getPropertyName()) || StringUtils.isBlank(toscaGetFunction.getPropertyName())) {
+//            throw ToscaGetFunctionExceptionSupplier.propertyNameNotFound(toscaGetFunction.getPropertySource()).get();
+//        }
+//        if (StringUtils.isEmpty(toscaGetFunction.getPropertyUniqueId()) || StringUtils.isBlank(toscaGetFunction.getPropertyUniqueId())) {
+//            throw ToscaGetFunctionExceptionSupplier.propertyIdNotFound(toscaGetFunction.getPropertySource()).get();
+//        }
+//    }
+
+//    private void validateGetPropertySource(final ToscaGetFunctionType functionType, final PropertySource propertySource) {
+//        if (functionType == ToscaGetFunctionType.GET_INPUT && propertySource != PropertySource.SELF) {
+//            throw ToscaGetFunctionExceptionSupplier
+//                .targetSourceNotSupported(functionType, propertySource).get();
+//        }
+//        if (functionType == ToscaGetFunctionType.GET_PROPERTY && !List.of(PropertySource.SELF, PropertySource.INSTANCE).contains(propertySource)) {
+//            throw ToscaGetFunctionExceptionSupplier
+//                .targetSourceNotSupported(functionType, propertySource).get();
+//        }
+//    }
+
+//    private ToscaPropertyData findSubProperty(final ToscaPropertyData referredProperty,
+//                                              final ToscaGetFunctionDataDefinition toscaGetFunction,
+//                                              final String model) {
+//        final Map<String, DataTypeDefinition> dataTypeMap = loadDataTypes(model);
+//        final List<String> propertyPathFromSource = toscaGetFunction.getPropertyPathFromSource();
+//        DataTypeDefinition dataType = dataTypeMap.get(referredProperty.getType());
+//        if (dataType == null) {
+//            throw ToscaGetFunctionExceptionSupplier
+//                .propertyDataTypeNotFound(propertyPathFromSource.get(0), referredProperty.getType(), toscaGetFunction.getFunctionType()).get();
+//        }
+//        ToscaPropertyData foundProperty = referredProperty;
+//        for (int i = 1; i < propertyPathFromSource.size(); i++) {
+//            final String currentPropertyName = propertyPathFromSource.get(i);
+//            foundProperty = dataType.getProperties().stream()
+//                .filter(propertyDefinition -> currentPropertyName.equals(propertyDefinition.getName())).findFirst()
+//                .orElseThrow(
+//                    ToscaGetFunctionExceptionSupplier
+//                        .propertyNotFoundOnTarget(propertyPathFromSource.subList(0, i), toscaGetFunction.getPropertySource(),
+//                            toscaGetFunction.getFunctionType())
+//                );
+//            dataType = dataTypeMap.get(foundProperty.getType());
+//            if (dataType == null) {
+//                throw ToscaGetFunctionExceptionSupplier
+//                    .propertyDataTypeNotFound(propertyPathFromSource.subList(0, i), foundProperty.getType(),
+//                        toscaGetFunction.getFunctionType()).get();
+//            }
+//        }
+//        return foundProperty;
+//    }
 
     public <T extends GraphNode> Either<List<PropertyDefinition>, StorageOperationStatus> getAllPropertiesRec(String uniqueId, NodeTypeEnum nodeType,
                                                                                                               Class<T> clazz) {

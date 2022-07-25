@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.client.Entity;
@@ -63,6 +64,7 @@ import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.PromoteVersionEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
@@ -191,17 +193,14 @@ class GroupEndpointTest extends JerseySpringBaseTest {
         when(componentValidations.getComponentInstance(cr, A)).thenReturn(Optional.of(ci));
         doNothing().when(groupsOperation)
             .updateGroupOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), any(PromoteVersionEnum.class));
-        when(groupOperation.validateAndUpdatePropertyValue(isA(GroupProperty.class)))
+        when(groupOperation.validateAndUpdatePropertyValue(any(Component.class), isA(GroupProperty.class)))
             .thenReturn(StorageOperationStatus.OK);
         when(groupsOperation
             .updateGroupPropertiesOnComponent(eq(VALID_COMPONENT_ID), isA(GroupDefinition.class), anyList(),
-                any(PromoteVersionEnum.class))).thenAnswer(new Answer<Either>() {
-            @Override
-            public Either answer(InvocationOnMock invocationOnMock) throws Throwable {
-                Object[] args = invocationOnMock.getArguments();
-                return Either.left(Arrays.asList(args[2]));
-            }
-        });
+                any(PromoteVersionEnum.class))).thenAnswer((Answer<Either>) invocationOnMock -> {
+                    Object[] args = invocationOnMock.getArguments();
+                    return Either.left(Collections.singletonList(args[2]));
+                });
     }
 
     @Test

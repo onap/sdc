@@ -66,6 +66,7 @@ import org.springframework.core.annotation.Order;
     "org.openecomp.sdc.be.filters",
     "org.openecomp.sdc.be.plugins",
     "org.openecomp.sdc.be.togglz",
+    "org.openecomp.sdc.be.model.cache",
     "org.openecomp.sdc.be.ui.mapper"})
 // @formatter:on
 public class CatalogBESpringConfig {

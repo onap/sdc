@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
     // @formatter:off
     "org.openecomp.sdc.be.model.operations.impl",
     "org.openecomp.sdc.be.model.cache",
+    "org.openecomp.sdc.be.model.validation",
     "org.openecomp.sdc.be.client",
     "org.openecomp.sdc.be.model.jsonjanusgraph.utils",
     "org.openecomp.sdc.be.model.jsonjanusgraph.operations",
