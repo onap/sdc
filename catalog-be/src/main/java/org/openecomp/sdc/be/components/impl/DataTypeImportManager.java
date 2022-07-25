@@ -21,6 +21,8 @@ package org.openecomp.sdc.be.components.impl;
 
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -78,11 +80,59 @@ public class DataTypeImportManager {
             final Optional<Model> modelOptional = modelOperation.findModelByName(modelName);
             if (modelOptional.isPresent()) {
                 dataTypes.left().value().forEach(dataType -> dataType.setModel(modelName));
-                return dataTypes;
+            } else {
+                return Either.right(ActionStatus.INVALID_MODEL);
             }
-            return Either.right(ActionStatus.INVALID_MODEL);
+        }
+        if (dataTypes.isLeft()) {
+            if (log.isTraceEnabled()){
+                log.trace("Unsorted datatypes order:");
+                dataTypes.left().value().stream().forEach(dt -> log.trace(dt.getName()));
+            }
+
+            long startTime = System.currentTimeMillis();
+            List<DataTypeDefinition> sortedDataTyepDefinitions = sortDataTypes(dataTypes.left().value());
+            
+            if (log.isTraceEnabled()){
+                long sortTime = System.currentTimeMillis() - startTime;
+                log.trace("Sorting " + sortedDataTyepDefinitions.size() + " data types from model: " + modelName + " took: " + sortTime);
+                log.trace("Sorted datatypes order:");
+                sortedDataTyepDefinitions.stream().forEach(dt -> log.trace(dt.getName()));
+            }
+            return Either.left(sortedDataTyepDefinitions);
         }
         return dataTypes;
+    }
+    
+    private List<DataTypeDefinition> sortDataTypes(final List<DataTypeDefinition> dataTypes) {
+        final List<DataTypeDefinition> sortedDataTypeDefinitions = new ArrayList<>();
+        final Map<String, DataTypeDefinition> dataTypeDefinitionsMap = new HashMap<>();
+        
+        dataTypes.forEach(dataType -> {
+            
+            int highestDependencyIndex = -1;
+            for (final String dependencyName : getDependencies(dataType)) {
+                final DataTypeDefinition dependency = dataTypeDefinitionsMap.get(dependencyName);
+                final int indexOfDependency = sortedDataTypeDefinitions.lastIndexOf(dependency);
+                highestDependencyIndex = indexOfDependency > highestDependencyIndex ? indexOfDependency : highestDependencyIndex;
+            }
+            sortedDataTypeDefinitions.add(highestDependencyIndex + 1, dataType);
+            dataTypeDefinitionsMap.put(dataType.getName(), dataType);
+       
+            } );
+        
+        return sortedDataTypeDefinitions;
+    }
+    
+    private Collection<String> getDependencies(final DataTypeDefinition dataType) {
+        final Set<String> dependencies = new HashSet<>();
+        if (dataType.getDerivedFromName() != null) {
+            dependencies.add(dataType.getDerivedFromName());
+        }
+        if (dataType.getProperties() != null) {
+            dataType.getProperties().stream().forEach(property -> dependencies.add(property.getType()));
+        }
+        return dependencies;
     }
 
     private Either<List<ImmutablePair<DataTypeDefinition, Boolean>>, ResponseFormat> createDataTypesByDao(
