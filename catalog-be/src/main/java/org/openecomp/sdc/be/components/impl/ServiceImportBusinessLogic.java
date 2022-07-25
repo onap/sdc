@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -45,6 +46,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.ServiceCsarInfo;
 import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
@@ -70,6 +72,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
@@ -131,6 +134,8 @@ import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
+import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
+import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.ui.model.OperationUi;
@@ -143,6 +148,7 @@ import org.openecomp.sdc.common.kpi.api.ASDCKpiApi;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.yaml.snakeyaml.Yaml;
 
 @Getter
@@ -179,6 +185,9 @@ public class ServiceImportBusinessLogic {
     private final JanusGraphDao janusGraphDao;
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
     private final IGraphLockOperation graphLockOperation;
+    private final PropertyOperation propertyOperation;
+    private final DataTypeBusinessLogic dataTypeBusinessLogic;
+    private ApplicationDataTypeCache applicationDataTypeCache;
 
     public ServiceImportBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                                       IGroupTypeOperation groupTypeOperation, GroupBusinessLogic groupBusinessLogic,
@@ -200,7 +209,8 @@ public class ServiceImportBusinessLogic {
                                       final ServiceImportParseLogic serviceImportParseLogic,
                                       final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic,
                                       final PolicyBusinessLogic policyBusinessLogic, final JanusGraphDao janusGraphDao,
-                                      final IGraphLockOperation graphLockOperation) {
+                                      final IGraphLockOperation graphLockOperation, final PropertyOperation propertyOperation, 
+                                      final DataTypeBusinessLogic dataTypeBusinessLogic) {
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.componentsUtils = componentsUtils;
@@ -218,6 +228,13 @@ public class ServiceImportBusinessLogic {
         this.janusGraphDao = janusGraphDao;
         this.artifactsBusinessLogic = artifactsBusinessLogic;
         this.graphLockOperation = graphLockOperation;
+        this.propertyOperation = propertyOperation;
+        this.dataTypeBusinessLogic = dataTypeBusinessLogic;
+    }
+    
+    @Autowired
+    public void setApplicationDataTypeCache(ApplicationDataTypeCache applicationDataTypeCache) {
+        this.applicationDataTypeCache = applicationDataTypeCache;
     }
 
     public Service createService(Service service, AuditingActionEnum auditingAction, User user, Map<String, byte[]> csarUIPayload,
@@ -248,7 +265,13 @@ public class ServiceImportBusinessLogic {
     protected Service createServiceFromCsar(Service service, User user, Map<String, byte[]> csarUIPayload, String csarUUID) {
         log.trace("************* created successfully from YAML, resource TOSCA ");
         try {
-            CsarInfo csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID);
+            ServiceCsarInfo csarInfo = csarBusinessLogic.getCsarInfo(service, null, user, csarUIPayload, csarUUID);
+            
+            final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(service.getModel(), csarInfo);
+            if (MapUtils.isNotEmpty(dataTypesToCreate)) {
+                dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), service.getModel(), true);
+            }
+            
             Map<String, NodeTypeInfo> nodeTypesInfo = csarInfo.extractTypesInfo();
             Either<Map<String, EnumMap<ArtifactOperationEnum, List<ArtifactDefinition>>>, ResponseFormat> findNodeTypesArtifactsToHandleRes = serviceImportParseLogic
                 .findNodeTypesArtifactsToHandle(nodeTypesInfo, csarInfo, service);
@@ -262,6 +285,19 @@ public class ServiceImportBusinessLogic {
             log.debug("Exception occured when createServiceFromCsar,error is:{}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
+    }
+    
+    private Map<String, Object> getDatatypesToCreate(final String model, final CsarInfo csarInfo) {
+        final Map<String, Object> dataTypesToCreate = new HashMap<>();
+
+        for (final Entry<String, Object> dataTypeEntry : csarInfo.getDataTypes().entrySet()){
+            final Either<DataTypeDefinition, JanusGraphOperationStatus> result = applicationDataTypeCache.get(model, UniqueIdBuilder.buildDataTypeUid(model, dataTypeEntry.getKey()));
+            if (result.isRight() && result.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
+                dataTypesToCreate.put(dataTypeEntry.getKey(), dataTypeEntry.getValue());
+                log.info("Deploying unknown type " + dataTypeEntry.getKey() + " to model " + model + " from package " + csarInfo.getCsarUUID());
+            }
+        }
+        return dataTypesToCreate;
     }
 
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
@@ -2521,7 +2557,7 @@ public class ServiceImportBusinessLogic {
             mapToConvert.put(TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), toscaVersion.left().value());
             Map<String, Object> nodeTypes = serviceImportParseLogic.getNodeTypesFromTemplate(mappedToscaTemplate);
             createNodeTypes(yamlName, service, needLock, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                mapToConvert, nodeTypes);
+                    mapToConvert, nodeTypes);
             return csarInfo.getCreatedNodes();
         } catch (Exception e) {
             log.debug("Exception occured when createResourcesFromYamlNodeTypesList,error is:{}", e.getMessage(), e);

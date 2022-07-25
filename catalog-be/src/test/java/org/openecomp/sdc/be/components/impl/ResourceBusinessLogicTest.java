@@ -64,6 +64,7 @@ import org.openecomp.sdc.be.components.ArtifactsResolver;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
+import org.openecomp.sdc.be.components.csar.OnboardedCsarInfo;
 import org.openecomp.sdc.be.components.csar.YamlTemplateParsingHandler;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -387,7 +388,7 @@ class ResourceBusinessLogicTest {
                 nodeTypesArtifactsToHandle,
                 nodeTypesNewCreatedArtifacts,
                 nodeTypesInfo,
-                new CsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name",
+                new OnboardedCsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name",
                     ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml"), true), "");
         });
     }
@@ -1876,7 +1877,7 @@ class ResourceBusinessLogicTest {
         Resource resourceToUpdate = createResourceObject(false);
         String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "." + "abc";
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml");
-        CsarInfo csarInfo = new CsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name", jsonContent,
+        CsarInfo csarInfo = new OnboardedCsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name", jsonContent,
             true);
         String nestedResourceName = bl.buildNestedToscaResourceName(resourceToUpdate.getResourceType()
                 .name(), csarInfo.getVfResourceName(), nodeName)
@@ -1914,7 +1915,7 @@ class ResourceBusinessLogicTest {
         setCanWorkOnResource(resourceResponse);
         String nodeName = Constants.USER_DEFINED_RESOURCE_NAMESPACE_PREFIX + "." + "abc";
         String jsonContent = ImportUtilsTest.loadFileNameToJsonString("normative-types-new-webServer.yml");
-        CsarInfo csarInfo = new CsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name", jsonContent,
+        CsarInfo csarInfo = new OnboardedCsarInfo(user, "abcd1234", new HashMap<>(), RESOURCE_NAME, "template name", jsonContent,
             true);
         String nestedResourceName = bl.buildNestedToscaResourceName(resourceToUpdate.getResourceType()
                 .name(), csarInfo.getVfResourceName(), nodeName)
