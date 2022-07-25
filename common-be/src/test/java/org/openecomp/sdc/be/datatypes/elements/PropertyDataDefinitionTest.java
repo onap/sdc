@@ -694,16 +694,6 @@ class PropertyDataDefinitionTest {
 
 		toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_ATTRIBUTE);
 		assertEquals(ToscaGetFunctionType.GET_ATTRIBUTE, propertyDataDefinition.getToscaGetFunctionType());
-
-		propertyDataDefinition = new PropertyDataDefinition();
-		propertyDataDefinition.setToscaGetFunctionType(ToscaGetFunctionType.GET_INPUT);
-		assertEquals(ToscaGetFunctionType.GET_INPUT, propertyDataDefinition.getToscaGetFunctionType());
-
-		propertyDataDefinition.setToscaGetFunctionType(ToscaGetFunctionType.GET_PROPERTY);
-		assertEquals(ToscaGetFunctionType.GET_PROPERTY, propertyDataDefinition.getToscaGetFunctionType());
-
-		propertyDataDefinition.setToscaGetFunctionType(ToscaGetFunctionType.GET_ATTRIBUTE);
-		assertEquals(ToscaGetFunctionType.GET_ATTRIBUTE, propertyDataDefinition.getToscaGetFunctionType());
 	}
 
 	@Test
@@ -721,12 +711,8 @@ class PropertyDataDefinitionTest {
 
 	@Test
 	void isToscaGetFunctionTest() {
-		var propertyDataDefinition = new PropertyDataDefinition();
-		propertyDataDefinition.setToscaGetFunctionType(ToscaGetFunctionType.GET_PROPERTY);
-		assertTrue(propertyDataDefinition.isToscaGetFunction());
-
-		propertyDataDefinition = new PropertyDataDefinition();
-		final ToscaGetFunctionDataDefinition toscaGetFunction = new ToscaGetFunctionDataDefinition();
+		final var propertyDataDefinition = new PropertyDataDefinition();
+		final var toscaGetFunction = new ToscaGetFunctionDataDefinition();
 		toscaGetFunction.setFunctionType(ToscaGetFunctionType.GET_INPUT);
 		propertyDataDefinition.setToscaFunction(toscaGetFunction);
 		assertTrue(propertyDataDefinition.isToscaGetFunction());

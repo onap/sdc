@@ -173,11 +173,8 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     }
 
     public ToscaGetFunctionType getToscaGetFunctionType() {
-        if (isToscaGetFunction()) {
-            if (toscaFunction != null) {
-                return ((ToscaGetFunctionDataDefinition) toscaFunction).getFunctionType();
-            }
-            return toscaGetFunctionType;
+        if (isToscaGetFunction() && toscaFunction != null) {
+            return ((ToscaGetFunctionDataDefinition) toscaFunction).getFunctionType();
         }
 
         return null;
@@ -337,10 +334,10 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
 
     @JsonIgnoreProperties
     public boolean isToscaGetFunction() {
-        return this.toscaGetFunctionType != null || (this.toscaFunction != null
+        return this.toscaFunction != null
             && (this.toscaFunction.getType() == ToscaFunctionType.GET_ATTRIBUTE
-                || this.toscaFunction.getType() == ToscaFunctionType.GET_INPUT
-                || this.toscaFunction.getType() == ToscaFunctionType.GET_PROPERTY));
+            || this.toscaFunction.getType() == ToscaFunctionType.GET_INPUT
+            || this.toscaFunction.getType() == ToscaFunctionType.GET_PROPERTY);
     }
 
     @JsonIgnoreProperties

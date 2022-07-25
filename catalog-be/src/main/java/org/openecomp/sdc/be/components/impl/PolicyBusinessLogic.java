@@ -45,6 +45,7 @@ import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.components.property.PropertyDeclarationOrchestrator;
 import org.openecomp.sdc.be.components.validation.PolicyUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
@@ -67,6 +68,7 @@ import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
 import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.common.datastructure.Wrapper;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
@@ -624,7 +626,10 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         filter.setIgnorePolicies(false);
         filter.setIgnoreUsers(false);
         filter.setIgnoreComponentInstances(false);
+        filter.setIgnoreComponentInstancesAttributes(false);
+        filter.setIgnoreComponentInstancesProperties(false);
         filter.setIgnoreGroups(false);
+        filter.setIgnoreInputs(false);
         return validateComponentExists(componentId, componentType, filter);
     }
 
@@ -636,7 +641,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
 
     private PolicyDefinition validateAndUpdatePolicyProperties(Component component, String policyId, PropertyDataDefinition[] properties) {
         PolicyDefinition policyById = getPolicyById(component, policyId);
-        policyById = validateUpdatePolicyPropertiesBeforeUpdate(policyById, properties);
+        policyById = validateUpdatePolicyPropertiesBeforeUpdate(component, policyById, properties);
         return updatePolicyOfComponent(component.getUniqueId(), policyById);
     }
 
@@ -645,16 +650,16 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
             .on(ce -> componentExceptionPolicyDefinition(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(ce))));
     }
 
-    private PolicyDefinition validateUpdatePolicyPropertiesBeforeUpdate(PolicyDefinition policy, PropertyDataDefinition[] newProperties) {
+    private PolicyDefinition validateUpdatePolicyPropertiesBeforeUpdate(final Component policyOwnerComponent, PolicyDefinition policy, PropertyDataDefinition[] newProperties) {
         if (CollectionUtils.isEmpty(policy.getProperties())) {
             log.error(
                 "#validateUpdatePolicyPropertiesBeforeUpdate - failed to update properites of the policy. Properties were not found on the policy. ");
             throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND);
         }
-        return updatePropertyValues(policy, newProperties);
+        return updatePropertyValues(policyOwnerComponent, policy, newProperties);
     }
 
-    private PolicyDefinition updatePropertyValues(PolicyDefinition policy, PropertyDataDefinition[] newProperties) {
+    private PolicyDefinition updatePropertyValues(final Component policyOwnerComponent, PolicyDefinition policy, PropertyDataDefinition[] newProperties) {
         Map<String, PropertyDataDefinition> oldProperties = policy.getProperties().stream()
             .collect(toMap(PropertyDataDefinition::getName, Function.identity()));
         for (PropertyDataDefinition newProperty : newProperties) {
@@ -663,10 +668,32 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
                     policy.getName());
                 throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, newProperty.getName());
             }
-            String newPropertyValueEither = updateInputPropertyObjectValue(newProperty);
-            oldProperties.get(newProperty.getName()).setValue(newPropertyValueEither);
+            final String newPropertyValueEither = updatePropertyValue(policyOwnerComponent, newProperty);
+            final PropertyDataDefinition currentProperty = oldProperties.get(newProperty.getName());
+            currentProperty.setValue(newPropertyValueEither);
+            currentProperty.setToscaFunction(newProperty.getToscaFunction());
         }
         return policy;
+    }
+
+    private <T extends PropertyDataDefinition> String updatePropertyValue(final Component policyOwnerComponent, final T property) {
+        Either<Object, Boolean> isValid = propertyOperation
+            .validateAndUpdatePropertyValue(policyOwnerComponent, property,
+                componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel())
+            );
+        if (isValid.isRight()) {
+            Boolean res = isValid.right().value();
+            if (Boolean.FALSE.equals(res)) {
+                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(
+                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
+            }
+        } else {
+            Object object = isValid.left().value();
+            if (object != null) {
+                return object.toString();
+            }
+        }
+        return property.getValue();
     }
 
     private PolicyDefinition deletePolicy(Component component, String policyId) {

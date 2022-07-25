@@ -212,9 +212,9 @@ public class DataTypeValidatorConverter {
         if (value == null || value.isEmpty()) {
             return trueEmptyResult;
         }
-        JsonElement jsonElement = null;
+        final JsonElement jsonElement;
         try {
-            jsonElement = jsonParser.parse(value);
+            jsonElement = JsonParser.parseString(value);
         } catch (JsonSyntaxException e) {
             return falseResult;
         }

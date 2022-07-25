@@ -225,12 +225,7 @@ public class GroupsOperation extends BaseOperation {
             result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
         }
         if (result == null) {
-            groups.forEach(gr -> {
-                updateVersion(promoteVersion, gr);
-                // String groupUUID = UniqueIdBuilder.generateUUID();
-
-                // gr.setGroupUUID(groupUUID);
-            });
+            groups.forEach(gr -> updateVersion(promoteVersion, gr));
             status = updateToscaDataOfToscaElement(component.getUniqueId(), EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, groups,
                 JsonPresentationFields.CI_INVARIANT_NAME);
             if (status != StorageOperationStatus.OK) {
@@ -297,46 +292,36 @@ public class GroupsOperation extends BaseOperation {
     public Either<List<GroupProperty>, StorageOperationStatus> updateGroupPropertiesOnComponent(String componentId, GroupDefinition group,
                                                                                                 List<GroupProperty> newGroupProperties,
                                                                                                 PromoteVersionEnum promoteMinorVersion) {
-        Either<List<GroupProperty>, StorageOperationStatus> result = null;
-        Either<GraphVertex, JanusGraphOperationStatus> getComponentVertex = null;
-        GraphVertex componentVertex = null;
-        getComponentVertex = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseMetadata);
+        Either<GraphVertex, JanusGraphOperationStatus> getComponentVertex = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseMetadata);
         if (getComponentVertex.isRight()) {
             CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch component {}. Status is {} ", componentId);
-            result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
         }
-        if (result == null) {
-            componentVertex = getComponentVertex.left().value();
-            //update
-            List<PropertyDataDefinition> properties = group.getProperties();
-            newGroupProperties.forEach(np -> {
-                Optional<PropertyDataDefinition> currentProp = properties.stream().filter(p -> p.getName().equals(np.getName())).findAny();
-                if (currentProp.isPresent()) {
-                    currentProp.get().setValue(np.getValue());
-                    currentProp.get().setToscaFunction(np.getToscaFunction());
-                }
-            });
-            updateVersion(promoteMinorVersion, group);
-            StorageOperationStatus updateDataRes = updateToscaDataOfToscaElement(componentVertex, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, group,
-                JsonPresentationFields.CI_INVARIANT_NAME);
-            if (updateDataRes != StorageOperationStatus.OK) {
-                log.debug("Failed to update properties for group {} error {}", group.getName(), updateDataRes);
-                result = Either.right(updateDataRes);
+        GraphVertex componentVertex = getComponentVertex.left().value();
+        //update
+        List<PropertyDataDefinition> properties = group.getProperties();
+        newGroupProperties.forEach(np -> {
+            Optional<PropertyDataDefinition> currentProp = properties.stream().filter(p -> p.getName().equals(np.getName())).findAny();
+            if (currentProp.isPresent()) {
+                currentProp.get().setValue(np.getValue());
+                currentProp.get().setToscaFunction(np.getToscaFunction());
             }
+        });
+        updateVersion(promoteMinorVersion, group);
+        StorageOperationStatus updateDataRes = updateToscaDataOfToscaElement(componentVertex, EdgeLabelEnum.GROUPS, VertexTypeEnum.GROUPS, group,
+            JsonPresentationFields.CI_INVARIANT_NAME);
+        if (updateDataRes != StorageOperationStatus.OK) {
+            log.debug("Failed to update properties for group {} error {}", group.getName(), updateDataRes);
+            return Either.right(updateDataRes);
         }
-        if (result == null) {
-            componentVertex.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
-            Either<GraphVertex, JanusGraphOperationStatus> updateRes = janusGraphDao.updateVertex(componentVertex);
-            if (updateRes.isRight()) {
-                CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the component {}. Status is {} ", componentId,
-                    updateRes.right().value());
-                result = Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateRes.right().value()));
-            }
+        componentVertex.setJsonMetadataField(JsonPresentationFields.LAST_UPDATE_DATE, System.currentTimeMillis());
+        Either<GraphVertex, JanusGraphOperationStatus> updateRes = janusGraphDao.updateVertex(componentVertex);
+        if (updateRes.isRight()) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to update the component {}. Status is {} ", componentId,
+                updateRes.right().value());
+            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(updateRes.right().value()));
         }
-        if (result == null) {
-            result = Either.left(newGroupProperties);
-        }
-        return result;
+        return Either.left(newGroupProperties);
     }
 
     public Either<List<GroupInstance>, StorageOperationStatus> updateGroupInstances(Component component, String instanceId,
@@ -402,17 +387,10 @@ public class GroupsOperation extends BaseOperation {
     public Either<GroupInstance, StorageOperationStatus> updateGroupInstancePropertyValuesOnGraph(String componentId, String instanceId,
                                                                                                   GroupInstance oldGroupInstance,
                                                                                                   List<GroupInstanceProperty> newProperties) {
-        Either<GraphVertex, JanusGraphOperationStatus> getComponentVertex = janusGraphDao.getVertexById(componentId, JsonParseFlagEnum.ParseMetadata);
-        if (getComponentVertex.isRight()) {
-            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch component {}. Status is {} ", componentId);
-            return Either.right(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(getComponentVertex.right().value()));
-        }
         List<PropertyDataDefinition> propertiesOld = oldGroupInstance.getProperties();
         newProperties.forEach(np -> {
             Optional<PropertyDataDefinition> prop = propertiesOld.stream().filter(p -> p.getName().equals(np.getName())).findFirst();
-            if (prop.isPresent()) {
-                prop.get().setValue(np.getValue());
-            }
+            prop.ifPresent(propertyDataDefinition -> propertyDataDefinition.setValue(np.getValue()));
         });
         GroupInstanceDataDefinition groupInstanceDataDefinition = new GroupInstanceDataDefinition(oldGroupInstance);
         List<String> pathKeys = new ArrayList<>();

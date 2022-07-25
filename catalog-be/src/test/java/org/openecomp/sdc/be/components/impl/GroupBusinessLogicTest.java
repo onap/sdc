@@ -31,6 +31,7 @@ package org.openecomp.sdc.be.components.impl;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -60,8 +61,9 @@ import org.openecomp.sdc.be.components.validation.AccessValidations;
 import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
@@ -174,7 +176,6 @@ class GroupBusinessLogicTest {
 
     @Test
     void testValidAndUpdateGrpInstancePropValues_fail() {
-        Either<GroupInstance, ResponseFormat> result;
         String componentId = "id";
         String instanceId = "id";
         GroupInstance oldGroupInstance = new GroupInstance();
@@ -182,11 +183,10 @@ class GroupBusinessLogicTest {
         List<PropertyDataDefinition> properties = new LinkedList<>();
         properties.add(new PropertyDataDefinition());
         oldGroupInstance.setProperties(properties);
-        try {
-            result = test.validateAndUpdateGroupInstancePropertyValues(componentId, instanceId, oldGroupInstance, newProperties);
-        } catch (ComponentException e) {
-            assertThat(e.getActionStatus()).isEqualTo(ActionStatus.GENERAL_ERROR);
-        }
+        when(toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll)).thenReturn(Either.left(new Resource()));
+        final ComponentException actualException = assertThrows(ComponentException.class,
+            () -> test.validateAndUpdateGroupInstancePropertyValues(componentId, instanceId, oldGroupInstance, newProperties));
+        assertEquals(ActionStatus.GENERAL_ERROR, actualException.getActionStatus());
     }
 
     @Test

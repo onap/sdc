@@ -86,7 +86,7 @@ public class GroupBusinessLogicNew {
                                                 List<GroupProperty> newProperties) {
         Component component = accessValidations.validateUserCanWorkOnComponent(componentId, componentType, userId, "UPDATE GROUP PROPERTIES");
         GroupDefinition currentGroup = getGroup(component, groupUniqueId);
-        validateUpdatedPropertiesAndSetEmptyValues(currentGroup, newProperties);
+        validateUpdatedPropertiesAndSetEmptyValues(component, currentGroup, newProperties);
         return groupsOperation.updateGroupPropertiesOnComponent(componentId, currentGroup, newProperties, PromoteVersionEnum.MINOR).left()
             .on(this::onUpdatePropertyError);
     }
@@ -122,7 +122,7 @@ public class GroupBusinessLogicNew {
             () -> new ByActionStatusComponentException(ActionStatus.GROUP_IS_MISSING, component.getSystemName(), component.getActualComponentType()));
     }
 
-    private void validateUpdatedPropertiesAndSetEmptyValues(GroupDefinition originalGroup, List<GroupProperty> groupPropertiesToUpdate) {
+    private void validateUpdatedPropertiesAndSetEmptyValues(Component groupOwner, GroupDefinition originalGroup, List<GroupProperty> groupPropertiesToUpdate) {
         if (CollectionUtils.isEmpty(groupPropertiesToUpdate)) {
             throw new ByActionStatusComponentException(ActionStatus.PROPERTY_NOT_FOUND, StringUtils.EMPTY);
         }
@@ -140,13 +140,10 @@ public class GroupBusinessLogicNew {
             if (!isOnlyGroupPropertyValueChanged(gp, originalProperties.get(updatedPropertyName))) {
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY, updatedPropertyName);
             }
-            if (gp.hasToscaFunction()) {
-                gp.setValue(gp.getToscaFunction().getValue());
-            }
             if (StringUtils.isEmpty(gp.getValue())) {
                 gp.setValue(originalProperties.get(updatedPropertyName).getDefaultValue());
             }
-            StorageOperationStatus sos = groupOperation.validateAndUpdatePropertyValue(gp);
+            StorageOperationStatus sos = groupOperation.validateAndUpdatePropertyValue(groupOwner, gp);
             if (StorageOperationStatus.OK != sos) {
                 throw new StorageException(sos, updatedPropertyName);
             }

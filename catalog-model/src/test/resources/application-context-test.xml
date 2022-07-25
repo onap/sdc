@@ -11,6 +11,8 @@
     	org.openecomp.sdc.be.dao.jsongraph,
     	org.openecomp.sdc.be.model.cache,
     	org.openecomp.sdc.be.client,
+    	org.openecomp.sdc.be.model.validation,
+    	org.openecomp.sdc.be.model.config,
 		org.openecomp.sdc.be.dao.janusgraph,
 		org.openecomp.sdc.be.dao.cassandra,
 		org.openecomp.sdc.be.model.jsonjanusgraph.utils,

@@ -31,7 +31,6 @@ import org.openecomp.sdc.common.util.GsonFactory;
 public class JsonConverter implements PropertyValueConverter {
 
     private static JsonConverter jsonConverter = new JsonConverter();
-    private static JsonParser jsonParser = new JsonParser();
     private static Gson gson = GsonFactory.getGson();
 
     private JsonConverter() {
@@ -46,7 +45,7 @@ public class JsonConverter implements PropertyValueConverter {
         StringReader reader = new StringReader(value);
         JsonReader jsonReader = new JsonReader(reader);
         jsonReader.setLenient(true);
-        JsonElement jsonElement = jsonParser.parse(jsonReader);
+        JsonElement jsonElement = JsonParser.parseReader(jsonReader);
         if (jsonElement.isJsonPrimitive()) {
             return value;
         }
