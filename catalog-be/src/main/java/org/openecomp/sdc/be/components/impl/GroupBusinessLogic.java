@@ -58,6 +58,7 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager.ErrorSeverity;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
+import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
@@ -96,6 +97,8 @@ import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.jsongraph.util.CommonUtility;
+import org.openecomp.sdc.common.jsongraph.util.CommonUtility.LogLevelEnum;
 import org.openecomp.sdc.common.log.elements.LoggerSupportability;
 import org.openecomp.sdc.common.log.enums.LogLevel;
 import org.openecomp.sdc.common.log.enums.LoggerSupportabilityActions;
@@ -801,23 +804,29 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
     public Either<GroupInstance, ResponseFormat> validateAndUpdateGroupInstancePropertyValues(String componentId, String instanceId,
                                                                                               GroupInstance oldGroupInstance,
                                                                                               List<GroupInstanceProperty> newProperties) {
-        Either<GroupInstance, ResponseFormat> actionResult = null;
-        List<GroupInstanceProperty> validatedReducedNewProperties = validateReduceGroupInstancePropertiesBeforeUpdate(oldGroupInstance, newProperties);
-        Either<GroupInstance, StorageOperationStatus> updateGroupInstanceResult = groupsOperation
+        final Either<Component, StorageOperationStatus> ownerComponentEither =
+            toscaOperationFacade.getToscaElement(componentId, JsonParseFlagEnum.ParseAll);
+        if (ownerComponentEither.isRight()) {
+            CommonUtility.addRecordToLog(log, LogLevelEnum.DEBUG, "Failed to fetch component {}. Status is {} ", componentId);
+            final ActionStatus actionStatus = componentsUtils.convertFromStorageResponse(ownerComponentEither.right().value());
+            return Either.right(componentsUtils.getResponseFormat(actionStatus, componentId));
+        }
+
+        final List<GroupInstanceProperty> validatedReducedNewProperties =
+            validateReduceGroupInstancePropertiesBeforeUpdate(ownerComponentEither.left().value(), oldGroupInstance, newProperties);
+        final Either<GroupInstance, StorageOperationStatus> updateGroupInstanceResult = groupsOperation
             .updateGroupInstancePropertyValuesOnGraph(componentId, instanceId, oldGroupInstance, validatedReducedNewProperties);
         if (updateGroupInstanceResult.isRight()) {
             log.debug("Failed to update group instance {} property values. ", oldGroupInstance.getName());
-            actionResult = Either
+            return Either
                 .right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(updateGroupInstanceResult.right().value())));
         }
-        if (actionResult == null) {
-            actionResult = Either.left(updateGroupInstanceResult.left().value());
-        }
-        return actionResult;
+        return Either.left(updateGroupInstanceResult.left().value());
     }
 
-    private List<GroupInstanceProperty> validateReduceGroupInstancePropertiesBeforeUpdate(GroupInstance oldGroupInstance,
-                                                                                          List<GroupInstanceProperty> newProperties) {
+    private List<GroupInstanceProperty> validateReduceGroupInstancePropertiesBeforeUpdate(final Component groupOwnerComponent,
+                                                                                          final GroupInstance oldGroupInstance,
+                                                                                          final List<GroupInstanceProperty> newProperties) {
         Boolean validationRes = null;
         List<GroupInstanceProperty> actionResult = null;
         Map<String, GroupInstanceProperty> existingProperties = oldGroupInstance.convertToGroupInstancesProperties().stream()
@@ -828,7 +837,8 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         try {
             for (GroupInstanceProperty currNewProperty : newProperties) {
                 currPropertyName = currNewProperty.getName();
-                validationRes = handleAndAddProperty(reducedProperties, newPropertyValues, currNewProperty, existingProperties.get(currPropertyName));
+                validationRes = handleAndAddProperty(groupOwnerComponent, reducedProperties, newPropertyValues,
+                    currNewProperty, existingProperties.get(currPropertyName));
             }
             if (validationRes == null || validationRes) {
                 Map<PropertyNames, String> existingPropertyValues = new EnumMap<>(PropertyNames.class);
@@ -858,27 +868,25 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    private Boolean handleAndAddProperty(List<GroupInstanceProperty> reducedProperties, Map<PropertyNames, String> newPropertyValues,
-                                         GroupInstanceProperty currNewProperty, GroupInstanceProperty currExistingProperty) {
-        Boolean validationRes = null;
-        String currPropertyName = currNewProperty.getName();
-        PropertyNames propertyName = PropertyNames.findName(currPropertyName);
+    private boolean handleAndAddProperty(final Component groupOwner, final List<GroupInstanceProperty> reducedProperties,
+                                         final Map<PropertyNames, String> newPropertyValues, final GroupInstanceProperty currNewProperty,
+                                         final GroupInstanceProperty currExistingProperty) {
+        final String currPropertyName = currNewProperty.getName();
+        final PropertyNames propertyName = PropertyNames.findName(currPropertyName);
         try {
             if (currExistingProperty == null) {
                 log.warn("The value of property with the name {} cannot be updated. The property not found on group instance. ", currPropertyName);
             } else if (isUpdatable(propertyName)) {
-                validationRes = validateAndUpdatePropertyValue(currNewProperty, currExistingProperty);
+                validateAndUpdatePropertyValue(groupOwner, currNewProperty, currExistingProperty);
                 addPropertyUpdatedValues(reducedProperties, propertyName, newPropertyValues, currNewProperty, currExistingProperty);
             } else {
                 validateImmutableProperty(currExistingProperty, currNewProperty);
             }
-            if (validationRes == null) {
-                validationRes = true;
-            }
-        } catch (Exception e) {
-            log.error("Exception occured during handle and adding property. The message is {}", e.getMessage(), e);
+        } catch (final Exception e) {
+            log.error("Exception occurred during handle and adding property. The message is {}", e.getMessage(), e);
+            return false;
         }
-        return validationRes;
+        return true;
     }
 
     private boolean isUpdatable(PropertyNames updatablePropertyName) {
@@ -918,7 +926,8 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         return result;
     }
 
-    private Boolean validateAndUpdatePropertyValue(GroupInstanceProperty newProperty, GroupInstanceProperty existingProperty) {
+    private void validateAndUpdatePropertyValue(final Component groupOwner, final GroupInstanceProperty newProperty,
+                                                final GroupInstanceProperty existingProperty) {
         String parentValue = existingProperty.getParentValue();
         newProperty.setParentValue(parentValue);
         if (StringUtils.isEmpty(newProperty.getValue())) {
@@ -927,13 +936,12 @@ public class GroupBusinessLogic extends BaseBusinessLogic {
         if (StringUtils.isEmpty(existingProperty.getValue())) {
             existingProperty.setValue(parentValue);
         }
-        StorageOperationStatus status = groupOperation.validateAndUpdatePropertyValue(newProperty);
+        StorageOperationStatus status = groupOperation.validateAndUpdatePropertyValue(groupOwner, newProperty);
         if (status != StorageOperationStatus.OK) {
             log.debug("Failed to validate property value {} of property with name {}. Status is {}. ", newProperty.getValue(), newProperty.getName(),
                 status);
             throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(status));
         }
-        return true;
     }
 
     private void validateImmutableProperty(GroupProperty oldProperty, GroupProperty newProperty) {

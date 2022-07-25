@@ -48,7 +48,6 @@ import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByResponseFormatComponentException;
 import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
-import org.openecomp.sdc.be.components.impl.exceptions.ToscaFunctionExceptionSupplier;
 import org.openecomp.sdc.be.components.impl.exceptions.ToscaGetFunctionExceptionSupplier;
 import org.openecomp.sdc.be.components.impl.instance.ComponentInstanceChangeOperationOrchestrator;
 import org.openecomp.sdc.be.components.impl.utils.DirectivesUtil;
@@ -130,6 +129,7 @@ import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.model.operations.utils.ComponentValidationUtils;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.validation.ToscaFunctionValidator;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -184,6 +184,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     private CompositionBusinessLogic compositionBusinessLogic;
     @Autowired
     private ContainerInstanceTypesData containerInstanceTypesData;
+    private final ToscaFunctionValidator toscaFunctionValidator;
 
     @Autowired
     public ComponentInstanceBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation,
@@ -193,7 +194,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                                           ComponentInstanceMergeDataBusinessLogic compInstMergeDataBL,
                                           ComponentInstanceChangeOperationOrchestrator onChangeInstanceOperationOrchestrator,
                                           ForwardingPathOperation forwardingPathOperation, NodeFilterOperation nodeFilterOperation,
-                                          ArtifactsOperations artifactToscaOperation) {
+                                          ArtifactsOperations artifactToscaOperation, final ToscaFunctionValidator toscaFunctionValidator) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.componentInstanceOperation = componentInstanceOperation;
@@ -202,6 +203,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         this.onChangeInstanceOperationOrchestrator = onChangeInstanceOperationOrchestrator;
         this.forwardingPathOperation = forwardingPathOperation;
         this.nodeFilterOperation = nodeFilterOperation;
+        this.toscaFunctionValidator = toscaFunctionValidator;
     }
 
     public ComponentInstance createComponentInstance(String containerComponentParam, String containerComponentId, String userId,
@@ -1962,12 +1964,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                 validatePropertyExistsOnComponent(property, containerComponent, foundResourceInstance);
                 String propertyParentUniqueId = property.getParentUniqueId();
                 if (property.isToscaFunction()) {
-                    if (property.getToscaFunction().getType() == null) {
-                        throw ToscaFunctionExceptionSupplier.missingFunctionType().get();
-                    }
-                    if (property.isToscaGetFunction()) {
-                        validateToscaGetFunction(property, containerComponent);
-                    }
+                    toscaFunctionValidator.validate(property, containerComponent);
                     property.setValue(property.getToscaFunction().getValue());
                 }
                 Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, containerComponent.getModel());

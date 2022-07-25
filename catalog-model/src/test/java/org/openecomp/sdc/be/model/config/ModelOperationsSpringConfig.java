@@ -20,6 +20,9 @@
 
 package org.openecomp.sdc.be.model.config;
 
+import org.mockito.Mockito;
+import org.openecomp.sdc.be.model.validation.ToscaFunctionValidator;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -32,4 +35,11 @@ import org.springframework.context.annotation.PropertySource;
     "org.openecomp.sdc.be.model.jsonjanusgraph.config",
         "org.openecomp.sdc.be.model.operations.impl"})
 @PropertySource("classpath:dao.properties")
-public class ModelOperationsSpringConfig { }
+public class ModelOperationsSpringConfig {
+
+    @Bean
+    public ToscaFunctionValidator toscaFunctionValidator() {
+        return Mockito.mock(ToscaFunctionValidator.class);
+    }
+
+}

@@ -32,6 +32,7 @@ import {Observable} from "rxjs";
 import {TopologyTemplateService} from "app/ng2/services/component-services/topology-template.service";
 import {InstanceFeDetails} from "../../../../models/instance-fe-details";
 import {ToscaGetFunction} from "../../../../models/tosca-get-function";
+import {ToscaFunctionValidationEvent} from "../../../../ng2/pages/properties-assignment/tosca-function/tosca-function.component";
 
 export interface IEditPropertyModel {
     property:PropertyModel;
@@ -145,14 +146,14 @@ export class PropertyFormViewModel {
     };
 
     private initToscaGetFunction() {
-        this.$scope.editPropertyModel.hasGetFunctionValue = this.$scope.editPropertyModel.property.isToscaGetFunction();
+        this.$scope.editPropertyModel.hasGetFunctionValue = this.$scope.editPropertyModel.property.isToscaFunction();
         this.$scope.editPropertyModel.isGetFunctionValid = true;
     }
 
     private initForNotSimpleType = ():void => {
         const property = this.$scope.editPropertyModel.property;
         this.$scope.isTypeDataType = this.DataTypesService.isDataTypeForPropertyType(this.$scope.editPropertyModel.property);
-        if (property.isToscaGetFunction()) {
+        if (property.isToscaFunction()) {
             this.initValueForGetFunction();
             return;
         }
@@ -249,7 +250,7 @@ export class PropertyFormViewModel {
             'property': property,
             types: PROPERTY_DATA.TYPES,
             simpleTypes: PROPERTY_DATA.SIMPLE_TYPES,
-            hasGetFunctionValue: property.isToscaGetFunction(),
+            hasGetFunctionValue: property.isToscaFunction(),
             isGetFunctionValid: true,
         };
         this.$scope.isPropertyValueOwner = this.isPropertyValueOwner;
@@ -457,8 +458,8 @@ export class PropertyFormViewModel {
             this.$scope.editPropertyModel.property.toscaFunction = toscaGetFunction;
         }
 
-        this.$scope.onGetFunctionValidityChange = (isValid): void => {
-            if (isValid.isValid) {
+        this.$scope.onToscaFunctionValidityChange = (validationEvent: ToscaFunctionValidationEvent): void => {
+            if (validationEvent.isValid) {
                 this.$scope.editPropertyModel.isGetFunctionValid = true;
                 return;
             }

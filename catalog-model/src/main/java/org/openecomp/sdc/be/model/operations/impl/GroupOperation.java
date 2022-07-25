@@ -34,9 +34,9 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphEdge;
 import org.openecomp.sdc.be.dao.graph.datatype.GraphRelation;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphEdgeLabels;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.dao.utils.MapUtil;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.GroupProperty;
@@ -62,9 +63,8 @@ import org.openecomp.sdc.be.resources.data.PropertyData;
 import org.openecomp.sdc.be.resources.data.PropertyValueData;
 import org.openecomp.sdc.be.resources.data.UniqueIdData;
 import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.springframework.stereotype.Component;
 
-@Component
+@org.springframework.stereotype.Component
 public class GroupOperation extends AbstractOperation implements IGroupOperation {
 
     private static final Logger log = Logger.getLogger(GroupOperation.class.getName());
@@ -481,33 +481,20 @@ public class GroupOperation extends AbstractOperation implements IGroupOperation
         return result;
     }
 
-    public StorageOperationStatus validateAndUpdatePropertyValue(GroupProperty property) {
-        StorageOperationStatus result = null;
-        String innerType =
-            property.getSchema() == null ? null : property.getSchema().getProperty() == null ? null : property.getSchema().getProperty().getType();
+    public StorageOperationStatus validateAndUpdatePropertyValue(final Component groupOwner, final GroupProperty property) {
         Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes = applicationDataTypeCache.getAll(property.getModel());
-        Either<Object, Boolean> isValid = null;
         if (allDataTypes.isRight()) {
             JanusGraphOperationStatus status = allDataTypes.right().value();
             log.debug("Failed to fetch data types from cache. Status is {}. ", status);
-            result = DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
+            return DaoStatusConverter.convertJanusGraphStatusToStorageStatus(status);
         }
-        if (result == null) {
-            isValid = propertyOperation.validateAndUpdatePropertyValue(property.getType(), property.getValue(), innerType,
-                allDataTypes.left().value());
-            if (isValid.isRight()) {
-                log.debug("Failed to validate property value {}. Status is {}. ", property.getValue(), StorageOperationStatus.INVALID_PROPERTY);
-                result = StorageOperationStatus.INVALID_PROPERTY;
-            }
+
+        Either<Object, Boolean> isValid = propertyOperation.validateAndUpdatePropertyValue(groupOwner, property,  allDataTypes.left().value());
+        if (isValid.isRight()) {
+            log.debug("Failed to validate property value {}. Status is {}. ", property.getValue(), StorageOperationStatus.INVALID_PROPERTY);
+            return StorageOperationStatus.INVALID_PROPERTY;
         }
-        if (result == null) {
-            if (isValid.left().value() != null) {
-                String validValue = String.valueOf(isValid.left().value());
-                property.setValue(validValue);
-            }
-            result = StorageOperationStatus.OK;
-        }
-        return result;
+        return StorageOperationStatus.OK;
     }
 
     public StorageOperationStatus updateGroupProperties(org.openecomp.sdc.be.model.Component containerComponent, String groupId,

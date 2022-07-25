@@ -336,29 +336,6 @@ public abstract class BaseBusinessLogic {
         return cmpt;
     }
 
-    <T extends PropertyDataDefinition> String updateInputPropertyObjectValue(T property) {
-        String propertyType = property.getType();
-        String innerType = getInnerType(property);
-        // Specific Update Logic
-        Either<Object, Boolean> isValid = propertyOperation
-            .validateAndUpdatePropertyValue(propertyType, property.getValue(), true, innerType,
-                componentsUtils.getAllDataTypes(applicationDataTypeCache, property.getModel()));
-        String newValue = property.getValue();
-        if (isValid.isRight()) {
-            Boolean res = isValid.right().value();
-            if (Boolean.FALSE.equals(res)) {
-                throw new ByActionStatusComponentException(componentsUtils.convertFromStorageResponse(
-                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(JanusGraphOperationStatus.ILLEGAL_ARGUMENT)));
-            }
-        } else {
-            Object object = isValid.left().value();
-            if (object != null) {
-                newValue = object.toString();
-            }
-        }
-        return newValue;
-    }
-
     <T extends PropertyDataDefinition> String getInnerType(T property) {
         ToscaPropertyType type = ToscaPropertyType.isValidType(property.getType());
         log.debug("#getInnerType - The type of the property {} is {}", property.getUniqueId(), property.getType());

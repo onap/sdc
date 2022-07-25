@@ -56,6 +56,7 @@ import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.model.validation.ToscaFunctionValidator;
 import org.openecomp.sdc.be.resources.data.ArtifactData;
 import org.openecomp.sdc.be.resources.data.GroupInstanceData;
 import org.openecomp.sdc.be.resources.data.PropertyData;
@@ -71,12 +72,20 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
     private static final String UPDATE_PROPERTY_VALUE_ON_COMPONENT_INSTANCE = "UpdatePropertyValueOnComponentInstance";
     private static final String FAILED_TO_UPDATE_PROPERTY_VALUE_ON_INSTANCE_STATUS_IS = "Failed to update property value on instance. Status is ";
     private static final Logger log = Logger.getLogger(GroupInstanceOperation.class.getName());
+    private final GroupOperation groupOperation;
+    private final PropertyOperation propertyOperation;
+    private final ToscaFunctionValidator toscaFunctionValidator;
+    private final ApplicationDataTypeCache applicationDataTypeCache;
+
     @Autowired
-    GroupOperation groupOperation;
-    @Autowired
-    PropertyOperation propertyOperation;
-    @javax.annotation.Resource
-    private ApplicationDataTypeCache applicationDataTypeCache;
+    public GroupInstanceOperation(final GroupOperation groupOperation, final PropertyOperation propertyOperation,
+                                  final ToscaFunctionValidator toscaFunctionValidator,
+                                  final ApplicationDataTypeCache applicationDataTypeCache) {
+        this.groupOperation = groupOperation;
+        this.propertyOperation = propertyOperation;
+        this.toscaFunctionValidator = toscaFunctionValidator;
+        this.applicationDataTypeCache = applicationDataTypeCache;
+    }
 
     public Either<List<GroupInstance>, StorageOperationStatus> getAllGroupInstances(String parentId, NodeTypeEnum parentType) {
         Either<List<GroupInstance>, StorageOperationStatus> result = null;
@@ -358,46 +367,47 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
      *
      * @return
      */
-    public Either<PropertyValueData, JanusGraphOperationStatus> updatePropertyOfGroupInstance(ComponentInstanceProperty groupInstanceProerty,
+    public Either<PropertyValueData, JanusGraphOperationStatus> updatePropertyOfGroupInstance(ComponentInstanceProperty groupInstanceProperty,
                                                                                               String groupInstanceId) {
         Wrapper<JanusGraphOperationStatus> errorWrapper = new Wrapper<>();
         UpdateDataContainer<PropertyData, PropertyValueData> updateDataContainer = new UpdateDataContainer<>(GraphEdgeLabels.PROPERTY_IMPL,
             (() -> PropertyData.class), (() -> PropertyValueData.class), NodeTypeEnum.Property, NodeTypeEnum.PropertyValue);
-        preUpdateElementOfResourceInstanceValidations(updateDataContainer, groupInstanceProerty, groupInstanceId, errorWrapper);
+        preUpdateElementOfResourceInstanceValidations(updateDataContainer, groupInstanceProperty, groupInstanceId, errorWrapper);
         if (!errorWrapper.isEmpty()) {
             return Either.right(errorWrapper.getInnerElement());
+        }
+
+        String value = groupInstanceProperty.getValue();
+        // Specific Validation Logic
+        PropertyData propertyData = updateDataContainer.getDataWrapper().getInnerElement();
+        PropertyDataDefinition propDataDef = propertyData.getPropertyDataDefinition();
+        String propertyType = propDataDef.getType();
+        final ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
+        log.debug("The type of the property {} is {}", propertyData.getUniqueId(), propertyType);
+        final Either<String, JanusGraphOperationStatus> innerTypeEither = propertyOperation.getInnerType(type, propDataDef::getSchema);
+        if (innerTypeEither.isRight()) {
+            return Either.right(innerTypeEither.right().value());
+        }
+        // Specific Update Logic
+        Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes =
+            applicationDataTypeCache.getAll(groupInstanceProperty.getModel());
+        if (allDataTypes.isRight()) {
+            JanusGraphOperationStatus status = allDataTypes.right().value();
+            BeEcompErrorManager.getInstance()
+                .logInternalFlowError(UPDATE_PROPERTY_VALUE_ON_COMPONENT_INSTANCE, FAILED_TO_UPDATE_PROPERTY_VALUE_ON_INSTANCE_STATUS_IS + status,
+                    ErrorSeverity.ERROR);
+            return Either.right(status);
+        }
+        PropertyValueData propertyValueData = updateDataContainer.getValueDataWrapper().getInnerElement();
+        if (propDataDef.isToscaFunction()) {
+            Either<GroupInstanceData, JanusGraphOperationStatus> findResInstanceRes = janusGraphGenericDao
+                .getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.GroupInstance), groupInstanceId, GroupInstanceData.class);
+            final GroupInstanceData groupInstanceData = findResInstanceRes.left().value();
+            //TODO fix
+            toscaFunctionValidator.validate(propDataDef, null);
+            propertyValueData.setValue(propDataDef.getToscaFunction().getValue());
         } else {
-            String value = groupInstanceProerty.getValue();
-            // Specific Validation Logic
-            PropertyData propertyData = updateDataContainer.getDataWrapper().getInnerElement();
-            String innerType = null;
-            PropertyDataDefinition propDataDef = propertyData.getPropertyDataDefinition();
-            String propertyType = propDataDef.getType();
-            ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
-            log.debug("The type of the property {} is {}", propertyData.getUniqueId(), propertyType);
-            if (type == ToscaPropertyType.LIST || type == ToscaPropertyType.MAP) {
-                SchemaDefinition def = propDataDef.getSchema();
-                if (def == null) {
-                    log.debug("Schema doesn't exists for property of type {}", type);
-                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
-                }
-                PropertyDataDefinition propDef = def.getProperty();
-                if (propDef == null) {
-                    log.debug("Property in Schema Definition inside property of type {} doesn't exist", type);
-                    return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
-                }
-                innerType = propDef.getType();
-            }
-            // Specific Update Logic
-            Either<Map<String, DataTypeDefinition>, JanusGraphOperationStatus> allDataTypes =
-                applicationDataTypeCache.getAll(groupInstanceProerty.getModel());
-            if (allDataTypes.isRight()) {
-                JanusGraphOperationStatus status = allDataTypes.right().value();
-                BeEcompErrorManager.getInstance()
-                    .logInternalFlowError(UPDATE_PROPERTY_VALUE_ON_COMPONENT_INSTANCE, FAILED_TO_UPDATE_PROPERTY_VALUE_ON_INSTANCE_STATUS_IS + status,
-                        ErrorSeverity.ERROR);
-                return Either.right(status);
-            }
+            final String innerType = innerTypeEither.left().value();
             Either<Object, Boolean> isValid = propertyOperation
                 .validateAndUpdatePropertyValue(propertyType, value, innerType, allDataTypes.left().value());
             String newValue = value;
@@ -412,25 +422,25 @@ public class GroupInstanceOperation extends AbstractOperation implements IGroupI
                     newValue = object.toString();
                 }
             }
-            PropertyValueData propertyValueData = updateDataContainer.getValueDataWrapper().getInnerElement();
             log.debug("Going to update property value from {} to {}", propertyValueData.getValue(), newValue);
             propertyValueData.setValue(newValue);
             ImmutablePair<String, Boolean> pair = propertyOperation
-                .validateAndUpdateRules(propertyType, groupInstanceProerty.getRules(), innerType, allDataTypes.left().value(), true);
+                .validateAndUpdateRules(propertyType, groupInstanceProperty.getRules(), innerType, allDataTypes.left().value(), true);
             if (pair.getRight() != null && !pair.getRight()) {
                 BeEcompErrorManager.getInstance()
-                    .logBeInvalidValueError("Add property value", pair.getLeft(), groupInstanceProerty.getName(), propertyType);
+                    .logBeInvalidValueError("Add property value", pair.getLeft(), groupInstanceProperty.getName(), propertyType);
                 return Either.right(JanusGraphOperationStatus.ILLEGAL_ARGUMENT);
             }
-            propertyOperation.updateRulesInPropertyValue(propertyValueData, groupInstanceProerty, groupInstanceId);
-            Either<PropertyValueData, JanusGraphOperationStatus> updateRes = janusGraphGenericDao
-                .updateNode(propertyValueData, PropertyValueData.class);
-            if (updateRes.isRight()) {
-                JanusGraphOperationStatus status = updateRes.right().value();
-                return Either.right(status);
-            } else {
-                return Either.left(updateRes.left().value());
-            }
+        }
+
+        propertyOperation.updateRulesInPropertyValue(propertyValueData, groupInstanceProperty, groupInstanceId);
+        Either<PropertyValueData, JanusGraphOperationStatus> updateRes = janusGraphGenericDao
+            .updateNode(propertyValueData, PropertyValueData.class);
+        if (updateRes.isRight()) {
+            JanusGraphOperationStatus status = updateRes.right().value();
+            return Either.right(status);
+        } else {
+            return Either.left(updateRes.left().value());
         }
     }
 

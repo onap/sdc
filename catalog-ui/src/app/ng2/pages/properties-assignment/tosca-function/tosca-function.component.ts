@@ -86,7 +86,7 @@ export class ToscaFunctionComponent implements OnInit {
     }
 
     private initToscaGetFunction() {
-        if (!this.property.isToscaGetFunction()) {
+        if (!this.property.isToscaFunction()) {
             return;
         }
         this.toscaFunctionForm.setValue(this.property.toscaFunction);
