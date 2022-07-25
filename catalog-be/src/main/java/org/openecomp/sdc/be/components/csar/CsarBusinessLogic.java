@@ -106,7 +106,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public CsarInfo getCsarInfo(Resource resource, Resource oldResource, User user, Map<String, byte[]> payload, String csarUUID) {
+    public OnboardedCsarInfo getCsarInfo(Resource resource, Resource oldResource, User user, Map<String, byte[]> payload, String csarUUID) {
         Map<String, byte[]> csar = payload;
         if (csar == null) {
             final var vendorSoftwareProduct = getCsar(resource, user);
@@ -125,7 +125,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
                 csarUUID, oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().getImportedToscaChecksum(), checksum);
             oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().setImportedToscaChecksum(checksum);
         }
-        return new CsarInfo(user, csarUUID, resource.getCsarVersionId(), csar, resource.getName(), toscaYamlCsarStatus.getKey(),
+        return new OnboardedCsarInfo(user, csarUUID, resource.getCsarVersionId(), csar, resource.getName(), toscaYamlCsarStatus.getKey(),
             toscaYamlCsarStatus.getValue(), true);
     }
 
@@ -144,7 +144,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
         }
     }
 
-    public CsarInfo getCsarInfo(Service service, Service oldResource, User user, Map<String, byte[]> payload, String csarUUID) {
+    public ServiceCsarInfo getCsarInfo(Service service, Service oldResource, User user, Map<String, byte[]> payload, String csarUUID) {
         Map<String, byte[]> csar = getCsar(service, user, payload, csarUUID);
         ImmutablePair<String, String> toscaYamlCsarStatus = validateAndParseCsar(service, user, csar, csarUUID).left()
             .on(this::throwComponentException);
@@ -157,7 +157,7 @@ public class CsarBusinessLogic extends BaseBusinessLogic {
                 csarUUID, oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().getImportedToscaChecksum(), checksum);
             oldResource.getComponentMetadataDefinition().getMetadataDataDefinition().setImportedToscaChecksum(checksum);
         }
-        return new CsarInfo(user, csarUUID, csar, service.getName(), toscaYamlCsarStatus.getKey(), toscaYamlCsarStatus.getValue(), true);
+        return new ServiceCsarInfo(user, csarUUID, csar, service.getName(), toscaYamlCsarStatus.getKey(), toscaYamlCsarStatus.getValue(), true);
     }
 
     public ParsedToscaYamlInfo getParsedToscaYamlInfo(String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,

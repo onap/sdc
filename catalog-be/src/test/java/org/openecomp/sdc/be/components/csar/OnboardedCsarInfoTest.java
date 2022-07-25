@@ -58,9 +58,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CsarInfoTest {
+public class OnboardedCsarInfoTest {
 
-    private CsarInfo csarInfo;
+    private OnboardedCsarInfo csarInfo;
 
     @Mock
     private User user;
@@ -81,12 +81,12 @@ public class CsarInfoTest {
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
     
-    private CsarInfo createCsarInfo(final String csarFileName, final String mainTemplateName) throws URISyntaxException, ZipException {
-      final File csarFile = new File(CsarInfoTest.class.getClassLoader().getResource(csarFileName).toURI());
+    private OnboardedCsarInfo createCsarInfo(final String csarFileName, final String mainTemplateName) throws URISyntaxException, ZipException {
+      final File csarFile = new File(OnboardedCsarInfoTest.class.getClassLoader().getResource(csarFileName).toURI());
       final Map<String, byte[]> payload = ZipUtils.readZip(csarFile, false);
       String mainTemplateContent = new String(payload.get(mainTemplateName));
 
-      return new CsarInfo(user, CSAR_UUID, payload, RESOURCE_NAME,
+      return new OnboardedCsarInfo(user, CSAR_UUID, payload, RESOURCE_NAME,
               mainTemplateName, mainTemplateContent, true);
   }
 
@@ -149,7 +149,7 @@ public class CsarInfoTest {
     @Test
     public void getSoftwareInformationPathTest() {
         final NonManoConfiguration nonManoConfigurationMock = Mockito.mock(NonManoConfiguration.class);
-        final CsarInfo csarInfo = new CsarInfo(nonManoConfigurationMock);
+        final CsarInfo csarInfo = new OnboardedCsarInfo(nonManoConfigurationMock);
         final NonManoFolderType testNonManoFolderType = new NonManoFolderType();
         testNonManoFolderType.setLocation("sw-location-test");
         testNonManoFolderType.setType("informational-test");
