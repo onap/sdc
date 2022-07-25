@@ -202,7 +202,7 @@ Modifications copyright (c) 2018-2019 Nokia
 
         <jsoup.version>1.15.3</jsoup.version>
 
-        <verbose>false</verbose>
+        <verbose>all</verbose>
     </properties>
 
     <dependencyManagement>
@@ -649,6 +649,8 @@ Modifications copyright (c) 2018-2019 Nokia
             <properties>
                 <checkstyle.skip>true</checkstyle.skip>
                 <surefire.skip.tests>true</surefire.skip.tests>
+                <maven.antrun.skip>true</maven.antrun.skip>
+                <swagger.skip>true</swagger.skip>
             </properties>
             <modules>
                 <module>onboarding</module>
@@ -678,6 +680,8 @@ Modifications copyright (c) 2018-2019 Nokia
             </activation>
             <properties>
                 <checkstyle.skip>true</checkstyle.skip>
+                <maven.antrun.skip>true</maven.antrun.skip>
+                <swagger.skip>true</swagger.skip>
             </properties>
             <modules>
                 <module>onboarding</module>
@@ -706,6 +710,8 @@ Modifications copyright (c) 2018-2019 Nokia
             </activation>
             <properties>
                 <checkstyle.skip>true</checkstyle.skip>
+                <maven.antrun.skip>true</maven.antrun.skip>
+                <swagger.skip>true</swagger.skip>
             </properties>
             <modules>
                 <module>onboarding</module>
@@ -794,6 +800,7 @@ Modifications copyright (c) 2018-2019 Nokia
                 <checkstyle.skip>true</checkstyle.skip>
                 <jacoco.skip>true</jacoco.skip>
                 <docker.keepRunning>true</docker.keepRunning>
+                <swagger.skip>true</swagger.skip>
             </properties>
             <modules>
                 <module>integration-tests</module>
@@ -809,9 +816,8 @@ Modifications copyright (c) 2018-2019 Nokia
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
                 <jacoco.skip>true</jacoco.skip>
-
-
                 <docker.skip.run>true</docker.skip.run>
+                <swagger.skip>true</swagger.skip>
             </properties>
             <modules>
                 <module>integration-tests</module>
@@ -826,6 +832,8 @@ Modifications copyright (c) 2018-2019 Nokia
                 <skipYamlJsonValidator>true</skipYamlJsonValidator>
                 <checkstyle.skip>true</checkstyle.skip>
                 <docker.skip>true</docker.skip>
+                <maven.antrun.skip>true</maven.antrun.skip>
+                <swagger.skip>true</swagger.skip>
             </properties>
             <modules>
                 <module>integration-tests</module>
