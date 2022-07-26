@@ -108,7 +108,7 @@ class InterfaceDefinitionHandlerTest {
     @Test
     void testCreateWithOperationSuccess() throws FileNotFoundException {
         final Map<String, Object> load = loadYaml(Paths.get("interfaceDefinition-tosca1.3.yaml"));
-        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(load, StringUtils.EMPTY);
+        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create( load, StringUtils.EMPTY);
         assertInterfaceDefinition(actualInterfaceDefinition);
     }
 

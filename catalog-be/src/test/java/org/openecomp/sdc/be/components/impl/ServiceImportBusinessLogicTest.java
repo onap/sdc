@@ -878,7 +878,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Assertions.assertNotNull(yamlName);
         sIBL.processComponentInstance(yamlName, resource, componentInstancesList, allDataTypes.left().value(), instProperties,
             instCapabilties, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes,
-            originCompMap, instInputs, instNodeFilter, uploadComponentInstanceInfo);
+            originCompMap, instInputs, instNodeFilter, null, uploadComponentInstanceInfo);
     }
 
     @Test
@@ -904,7 +904,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Assertions.assertThrows(ComponentException.class, () -> sIBL.processComponentInstance(yamlName,
             resource, componentInstancesList, null, instProperties, instCapabilties,
             instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap,
-            instInputs, instNodeFilter, uploadComponentInstanceInfo));
+            instInputs, instNodeFilter, null, uploadComponentInstanceInfo));
     }
 
     @Test
@@ -1209,7 +1209,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
         sIBL.processComponentInstance(yamlName, service, componentInstancesList, allDataTypes.left().value(),
             instProperties, instCapabilties, instRequirements, instDeploymentArtifacts,
-            instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter,
+            instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter, null,
             uploadComponentInstanceInfo);
     }
 
@@ -1236,7 +1236,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Assertions.assertThrows(ComponentException.class, () -> sIBL.processComponentInstance(yamlName,
             service, componentInstancesList, null, instProperties, instCapabilties,
             instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap,
-            instInputs, instNodeFilter, uploadComponentInstanceInfo));
+            instInputs, instNodeFilter, null, uploadComponentInstanceInfo));
     }
 
     @Test
