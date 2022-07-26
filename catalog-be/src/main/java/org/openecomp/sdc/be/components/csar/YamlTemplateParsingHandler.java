@@ -22,6 +22,72 @@
 
 package org.openecomp.sdc.be.components.csar;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import fj.data.Either;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
+import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ImportUtils;
+import org.openecomp.sdc.be.components.impl.InterfaceDefinitionHandler;
+import org.openecomp.sdc.be.components.impl.NodeFilterUploadCreator;
+import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
+import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.components.utils.PropertiesUtils;
+import org.openecomp.sdc.be.config.BeEcompErrorManager;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.impl.ComponentsUtils;
+import org.openecomp.sdc.be.model.CapabilityDefinition;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstanceProperty;
+import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.GroupTypeDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
+import org.openecomp.sdc.be.model.NodeTypeInfo;
+import org.openecomp.sdc.be.model.OutputDefinition;
+import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.PolicyDefinition;
+import org.openecomp.sdc.be.model.PolicyTypeDefinition;
+import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.UploadArtifactInfo;
+import org.openecomp.sdc.be.model.UploadAttributeInfo;
+import org.openecomp.sdc.be.model.UploadCapInfo;
+import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadPropInfo;
+import org.openecomp.sdc.be.model.UploadReqInfo;
+import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
+import org.openecomp.sdc.be.utils.TypeUtils;
+import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.yaml.snakeyaml.parser.ParserException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import static java.util.stream.Collectors.toList;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
@@ -39,6 +105,7 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.FILE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GET_INPUT;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GROUPS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INTERFACES;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
@@ -55,63 +122,6 @@ import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TE
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.openecomp.sdc.be.components.impl.AnnotationBusinessLogic;
-import org.openecomp.sdc.be.components.impl.GroupTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.ImportUtils;
-import org.openecomp.sdc.be.components.impl.NodeFilterUploadCreator;
-import org.openecomp.sdc.be.components.impl.PolicyTypeBusinessLogic;
-import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
-import org.openecomp.sdc.be.components.utils.PropertiesUtils;
-import org.openecomp.sdc.be.config.BeEcompErrorManager;
-import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
-import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
-import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
-import org.openecomp.sdc.be.model.CapabilityDefinition;
-import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.ComponentInstanceProperty;
-import org.openecomp.sdc.be.model.GroupDefinition;
-import org.openecomp.sdc.be.model.GroupTypeDefinition;
-import org.openecomp.sdc.be.model.InputDefinition;
-import org.openecomp.sdc.be.model.NodeTypeInfo;
-import org.openecomp.sdc.be.model.OutputDefinition;
-import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
-import org.openecomp.sdc.be.model.PolicyDefinition;
-import org.openecomp.sdc.be.model.PolicyTypeDefinition;
-import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.UploadArtifactInfo;
-import org.openecomp.sdc.be.model.UploadAttributeInfo;
-import org.openecomp.sdc.be.model.UploadCapInfo;
-import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
-import org.openecomp.sdc.be.model.UploadPropInfo;
-import org.openecomp.sdc.be.model.UploadReqInfo;
-import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.utils.TypeUtils;
-import org.openecomp.sdc.common.log.wrappers.Logger;
-import org.yaml.snakeyaml.parser.ParserException;
-
 /**
  * A handler class designed to parse the YAML file of the service template for a JAVA object
  */
@@ -122,18 +132,30 @@ public class YamlTemplateParsingHandler {
     private static final int SUB_MAPPING_CAPABILITY_OWNER_NAME_IDX = 0;
     private static final int SUB_MAPPING_CAPABILITY_NAME_IDX = 1;
     private static final Logger log = Logger.getLogger(YamlTemplateParsingHandler.class);
-    private Gson gson = new Gson();
-    private JanusGraphDao janusGraphDao;
-    private GroupTypeBusinessLogic groupTypeBusinessLogic;
-    private AnnotationBusinessLogic annotationBusinessLogic;
-    private PolicyTypeBusinessLogic policyTypeBusinessLogic;
+    private final Gson gson = new Gson();
+    private final JanusGraphDao janusGraphDao;
+    private final GroupTypeBusinessLogic groupTypeBusinessLogic;
+    private final AnnotationBusinessLogic annotationBusinessLogic;
+    private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
+    private final ToscaOperationFacade toscaOperationFacade;
+    private final ComponentsUtils componentsUtils;
+    private InterfaceDefinitionHandler interfaceDefinitionHandler;
 
-    public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao, GroupTypeBusinessLogic groupTypeBusinessLogic,
-                                      AnnotationBusinessLogic annotationBusinessLogic, PolicyTypeBusinessLogic policyTypeBusinessLogic) {
+    public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao,
+                                      GroupTypeBusinessLogic groupTypeBusinessLogic,
+                                      AnnotationBusinessLogic annotationBusinessLogic,
+                                      PolicyTypeBusinessLogic policyTypeBusinessLogic,
+                                      ToscaOperationFacade toscaOperationFacade,
+                                      ComponentsUtils componentsUtils,
+                                      InterfaceDefinitionHandler interfaceDefinitionHandler
+    ) {
         this.janusGraphDao = janusGraphDao;
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
         this.annotationBusinessLogic = annotationBusinessLogic;
         this.policyTypeBusinessLogic = policyTypeBusinessLogic;
+        this.toscaOperationFacade = toscaOperationFacade;
+        this.componentsUtils = componentsUtils;
+        this.interfaceDefinitionHandler = interfaceDefinitionHandler;
     }
 
     public ParsedToscaYamlInfo parseResourceInfoFromYAML(String fileName, String resourceYml, Map<String, String> createdNodesToscaResourceNames,
@@ -150,7 +172,11 @@ public class YamlTemplateParsingHandler {
             .filter(entry -> entry.getKey().equals(OUTPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
         parsedToscaYamlInfo.setOutputs(getOutputs(mappedTopologyTemplateOutputs));
-        parsedToscaYamlInfo.setInstances(getInstances(mappedToscaTemplate, createdNodesToscaResourceNames));
+        parsedToscaYamlInfo.setInstances(getInstances(
+                mappedToscaTemplate,
+                createdNodesToscaResourceNames,
+                component.getModel()
+        ));
         parsedToscaYamlInfo.setGroups(getGroups(mappedToscaTemplate, component.getModel()));
         parsedToscaYamlInfo.setPolicies(getPolicies(mappedToscaTemplate, component.getModel()));
         Map<String, Object> substitutionMappings = getSubstitutionMappings(mappedToscaTemplate);
@@ -329,20 +355,38 @@ public class YamlTemplateParsingHandler {
         return targets;
     }
 
-    private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson,
-                                                                  Map<String, String> createdNodesToscaResourceNames) {
-        Map<String, Object> nodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES).left().on(err -> new HashMap<>());
+    private Map<String, UploadComponentInstanceInfo> getInstances(
+            Map<String, Object> toscaJson,
+            Map<String, String> createdNodesToscaResourceNames,
+            String model
+    ) {
+        Map<String, Object> nodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES)
+                .left().on(err -> new HashMap<>());
         if (nodeTemplates.isEmpty()) {
             return Collections.emptyMap();
         }
-        return getInstances(toscaJson, createdNodesToscaResourceNames, nodeTemplates);
+        return getInstances(
+                toscaJson,
+                createdNodesToscaResourceNames,
+                nodeTemplates,
+                model
+        );
     }
 
-    private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames,
-                                                                  Map<String, Object> nodeTemplates) {
+    private Map<String, UploadComponentInstanceInfo> getInstances(
+            Map<String, Object> toscaJson,
+            Map<String, String> createdNodesToscaResourceNames,
+            Map<String, Object> nodeTemplates,
+            String model
+    ) {
         Map<String, Object> substitutionMappings = getSubstitutionMappings(toscaJson);
         return nodeTemplates.entrySet().stream()
-            .map(node -> buildModuleComponentInstanceInfo(node, substitutionMappings, createdNodesToscaResourceNames))
+            .map(node -> buildModuleComponentInstanceInfo(
+                    node,
+                    substitutionMappings,
+                    createdNodesToscaResourceNames,
+                    model
+            ))
             .collect(Collectors.toMap(UploadComponentInstanceInfo::getName, i -> i));
     }
 
@@ -632,9 +676,12 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private UploadComponentInstanceInfo buildModuleComponentInstanceInfo(Map.Entry<String, Object> nodeTemplateJsonEntry,
-                                                                         Map<String, Object> substitutionMappings,
-                                                                         Map<String, String> createdNodesToscaResourceNames) {
+    private UploadComponentInstanceInfo buildModuleComponentInstanceInfo(
+            Map.Entry<String, Object> nodeTemplateJsonEntry,
+            Map<String, Object> substitutionMappings,
+            Map<String, String> createdNodesToscaResourceNames,
+            String model
+    ) {
         UploadComponentInstanceInfo nodeTemplateInfo = new UploadComponentInstanceInfo();
         nodeTemplateInfo.setName(nodeTemplateJsonEntry.getKey());
         try {
@@ -649,6 +696,7 @@ public class YamlTemplateParsingHandler {
                 setArtifacts(nodeTemplateInfo, nodeTemplateJsonMap);
                 updateProperties(nodeTemplateInfo, nodeTemplateJsonMap);
                 updateAttributes(nodeTemplateInfo, nodeTemplateJsonMap);
+                updateInterfaces(nodeTemplateInfo, nodeTemplateJsonMap, model);
                 setDirectives(nodeTemplateInfo, nodeTemplateJsonMap);
                 setNodeFilter(nodeTemplateInfo, nodeTemplateJsonMap);
                 setSubstitutions(substitutionMappings, nodeTemplateInfo);
@@ -691,6 +739,22 @@ public class YamlTemplateParsingHandler {
             Map<String, UploadAttributeInfo> attributes = buildAttributeModuleFromYaml(nodeTemplateJsonMap);
             if (!attributes.isEmpty()) {
                 nodeTemplateInfo.setAttributes(attributes);
+            }
+        }
+    }
+
+    private void updateInterfaces(
+            UploadComponentInstanceInfo nodeTemplateInfo,
+            Map<String, Object> nodeTemplateJsonMap,
+            String model
+    ){
+        if (nodeTemplateJsonMap.containsKey(INTERFACES.getElementName())) {
+            Map<String, InterfaceDefinition> interfaces = buildInterfacesModuleFromYaml(
+                    nodeTemplateJsonMap,
+                    model
+            );
+            if (!interfaces.isEmpty()) {
+                nodeTemplateInfo.setInterfaces(interfaces);
             }
         }
     }
@@ -928,7 +992,8 @@ public class YamlTemplateParsingHandler {
         return regTemplateInfo;
     }
 
-    private Map<String, UploadAttributeInfo> buildAttributeModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
+    private Map<String, UploadAttributeInfo> buildAttributeModuleFromYaml(
+            Map<String, Object> nodeTemplateJsonMap) {
         Map<String, UploadAttributeInfo> moduleAttribute = new HashMap<>();
         Either<Map<String, Object>, ResultStatusEnum> toscaAttributes = findFirstToscaMapElement(nodeTemplateJsonMap, ATTRIBUTES);
         if (toscaAttributes.isLeft()) {
@@ -962,6 +1027,40 @@ public class YamlTemplateParsingHandler {
         return moduleProp;
     }
 
+    private Map<String, InterfaceDefinition> buildInterfacesModuleFromYaml(
+            Map<String, Object> nodeTemplateJsonMap,
+            String model
+    ) {
+        Map<String, InterfaceDefinition> moduleInterfaces = new HashMap<>();
+        Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = findFirstToscaMapElement(nodeTemplateJsonMap, INTERFACES);
+        if (toscaInterfaces.isLeft()) {
+            Map<String, Object> jsonInterfaces = toscaInterfaces.left().value();
+            for (Map.Entry<String, Object> jsonInterfacesObj : jsonInterfaces.entrySet()) {
+                if (valueNotContainsPattern(propertyValuePattern, jsonInterfacesObj.getValue())) {
+                    addInterfaces(moduleInterfaces, jsonInterfacesObj, model);
+                }
+            }
+        }
+        return moduleInterfaces;
+    }
+
+    private Map<String, InterfaceDefinition> buildInterfacesModule(
+            String componentType
+    ) {
+        Either<Resource, StorageOperationStatus> findResourceEither = toscaOperationFacade
+                .getLatestResourceByToscaResourceName(componentType);
+        if (findResourceEither.isRight()) {
+            ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormat(
+                            componentsUtils.convertFromStorageResponse(
+                                findResourceEither.right().value()
+                            )
+                    );
+            throw new ComponentException(responseFormat);
+        }
+        return findResourceEither.left().value().getInterfaces();
+    }
+
     private void addProperty(Map<String, List<UploadPropInfo>> moduleProp, Map.Entry<String, Object> jsonPropObj) {
         UploadPropInfo propertyDef = buildProperty(jsonPropObj.getKey(), jsonPropObj.getValue());
         if (moduleProp.containsKey(propertyDef.getName())) {
@@ -971,6 +1070,15 @@ public class YamlTemplateParsingHandler {
             list.add(propertyDef);
             moduleProp.put(propertyDef.getName(), list);
         }
+    }
+
+    private void addInterfaces(Map<String, InterfaceDefinition> moduleInterface, Map.Entry<String, Object> jsonPropObj, String model) {
+        InterfaceDefinition id = interfaceDefinitionHandler.create(
+                jsonPropObj.getKey(),
+                (Map<String, Object>) jsonPropObj.getValue(),
+                model
+        );
+        moduleInterface.put(jsonPropObj.getKey(), id);
     }
 
     @SuppressWarnings("unchecked")

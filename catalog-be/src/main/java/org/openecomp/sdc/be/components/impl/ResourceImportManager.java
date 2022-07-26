@@ -477,7 +477,7 @@ public class ResourceImportManager {
             }
             if (interfaceJson instanceof Map) {
                 final Map<String, Object> interfaceJsonMap = (Map<String, Object>) interfaceJson;
-                final InterfaceDefinition interfaceDefinition = interfaceDefinitionHandler.create(interfaceJsonMap, model);
+                final InterfaceDefinition interfaceDefinition = interfaceDefinitionHandler.create(null, interfaceJsonMap, model);
                 return Either.left(interfaceDefinition);
             }
             return Either.right(ResultStatusEnum.GENERAL_ERROR);
