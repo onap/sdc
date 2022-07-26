@@ -37,8 +37,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
@@ -68,6 +66,8 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
@@ -82,7 +82,6 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
-import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -90,6 +89,7 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
+import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifeCycleTransitionEnum;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
@@ -106,6 +106,7 @@ import org.openecomp.sdc.be.model.Resource;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.UploadAttributeInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadInterfaceInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
@@ -1012,7 +1013,7 @@ public class ServiceImportBusinessLogic {
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
         Map<String, UploadNodeFilterInfo> instNodeFilter = new HashMap<>();
-
+        Map<String, Map<String, InterfaceDefinition>> instInterfaces = new HashMap<>();
         log.debug("enter ServiceImportBusinessLogic createResourceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
         final ApplicationDataTypeCache applicationDataTypeCache = serviceBusinessLogic.applicationDataTypeCache;
         if (applicationDataTypeCache != null) {
@@ -1020,7 +1021,8 @@ public class ServiceImportBusinessLogic {
             uploadResInstancesMap.values().forEach(
                 i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
                     componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties, instCapabilities,
-                    instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter, i));
+                    instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter,
+                        instInterfaces, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
@@ -1376,6 +1378,7 @@ public class ServiceImportBusinessLogic {
         List<RequirementCapabilityRelDef> relations = new ArrayList<>();
         Map<String, List<ComponentInstanceInput>> instInputs = new HashMap<>();
         Map<String, UploadNodeFilterInfo> instNodeFilter = new HashMap<>();
+        Map<String, Map<String, InterfaceDefinition>> instInterfaces = new HashMap<>();
         log.debug("enter ServiceImportBusinessLogic  createServiceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
         final ApplicationDataTypeCache applicationDataTypeCache = serviceBusinessLogic.applicationDataTypeCache;
         if (applicationDataTypeCache != null) {
@@ -1386,10 +1389,16 @@ public class ServiceImportBusinessLogic {
                 i -> processComponentInstance(yamlName, service1, componentInstancesList,
                     allDataTypesMap, instProperties,
                     instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs,
-                    instNodeFilter, i));
+                    instNodeFilter, instInterfaces, i)
+                );
         }
         updatePropertyToscaFunctionData(service, instProperties, instAttributes);
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
+        serviceImportParseLogic.associateComponentInstanceInterfacesToComponent(
+                yamlName,
+                service,
+                instInterfaces
+        );
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
         serviceImportParseLogic.associateCINodeFilterToComponent(yamlName, service, instNodeFilter);
         serviceImportParseLogic.associateDeploymentArtifactsToInstances(user, yamlName, service, instDeploymentArtifacts);
@@ -1449,6 +1458,7 @@ public class ServiceImportBusinessLogic {
                                             Map<String, List<AttributeDefinition>> instAttributes, Map<String, Resource> originCompMap,
                                             Map<String, List<ComponentInstanceInput>> instInputs,
                                             Map<String, UploadNodeFilterInfo> instNodeFilter,
+                                            Map<String, Map<String, InterfaceDefinition>> instInterfaces,
                                             UploadComponentInstanceInfo uploadComponentInstanceInfo) {
         log.debug("enter ServiceImportBusinessLogic processComponentInstance");
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
@@ -1482,6 +1492,19 @@ public class ServiceImportBusinessLogic {
         }
         if (uploadComponentInstanceInfo.getUploadNodeFilterInfo() != null) {
             instNodeFilter.put(resourceInstanceId, uploadComponentInstanceInfo.getUploadNodeFilterInfo());
+        }
+        if (MapUtils.isNotEmpty(uploadComponentInstanceInfo.getInterfaces())) {
+
+            ResponseFormat addInterfacesToRiRes = addInterfaceValuesToRi(
+                    uploadComponentInstanceInfo,
+                    component,
+                    originResource,
+                    currentCompInstance,
+                    instInterfaces
+            );
+            if (addInterfacesToRiRes.getStatus() != 200) {
+                throw new ComponentException(addInterfacesToRiRes);
+            }
         }
         if (originResource.getResourceType() != ResourceTypeEnum.VF) {
             ResponseFormat addPropertiesValueToRiRes = addPropertyValuesToRi(uploadComponentInstanceInfo, component, originResource,
@@ -1638,6 +1661,96 @@ public class ServiceImportBusinessLogic {
         }
         instProperties.put(currentCompInstance.getUniqueId(), instPropList);
         return componentsUtils.getResponseFormat(ActionStatus.OK);
+    }
+
+    protected ResponseFormat addInterfaceValuesToRi(
+            UploadComponentInstanceInfo uploadComponentInstanceInfo,
+            Component component,
+            Resource originResource, ComponentInstance currentCompInstance,
+            Map<String, Map<String, InterfaceDefinition>> instInterfaces
+    ) {
+        Map<String, UploadInterfaceInfo> instanceInterfacesMap = uploadComponentInstanceInfo.getInterfaces();
+        Map<String, InterfaceDefinition> currInterfacesMap = new HashMap<>();
+        Map<String, InterfaceDefinition> interfacesFromNodeType = originResource.getInterfaces();
+        if ((MapUtils.isNotEmpty(instanceInterfacesMap)) && (MapUtils.isEmpty(interfacesFromNodeType))) {
+            log.debug("failed to find interfaces ");
+            return componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT);
+        }
+        if (interfacesFromNodeType == null || interfacesFromNodeType.isEmpty()) {
+            return componentsUtils.getResponseFormat(ActionStatus.OK);
+        }
+        for (Map.Entry<String, InterfaceDefinition> entryInstances : interfacesFromNodeType.entrySet()) {
+            String interfaceName = entryInstances.getKey().substring(entryInstances.getKey().lastIndexOf(".") + 1);
+            if (!currInterfacesMap.containsKey(interfaceName)) {
+                currInterfacesMap.put(interfaceName, entryInstances.getValue());
+            }
+        }
+
+        Map<String, InterfaceDefinition> instInterfacesMap = new HashMap<>();
+        if (MapUtils.isNotEmpty(instanceInterfacesMap)) {
+            for (UploadInterfaceInfo uploadInterfaceInfo : instanceInterfacesMap.values()) {
+                String interfaceName = uploadInterfaceInfo.getName();
+                if (!currInterfacesMap.containsKey(interfaceName)) {
+                    log.debug("failed to find interface {} ", interfaceName);
+                    return componentsUtils.getResponseFormat(ActionStatus.INTERFACE_NOT_FOUND_IN_COMPONENT, interfaceName);
+                }
+                InterfaceDefinition currentInterfaceDef = currInterfacesMap.get(interfaceName);
+                Map<String, OperationDataDefinition> operationsToAdd = new HashMap<>();
+
+                Map<String, OperationDataDefinition> operations = uploadInterfaceInfo.getOperations();
+                for (Map.Entry<String, OperationDataDefinition> operation : operations.entrySet()) {
+                    OperationDataDefinition templateOperation = currentInterfaceDef.getOperationsMap().get(operation.getKey());
+                    OperationDataDefinition instanceOperation = operation.getValue();
+                    //Inputs
+                    ListDataDefinition<OperationInputDefinition> instanceInputs = instanceOperation.getInputs();
+                    mergeOperationInputDefinitions(templateOperation.getInputs(), instanceInputs);
+                    templateOperation.setInputs(instanceInputs);
+                    //Implementation
+                    templateOperation.setImplementation(instanceOperation.getImplementation());
+                    //Description
+                    templateOperation.setDescription(instanceOperation.getDescription());
+                    operationsToAdd.put(operation.getKey(), templateOperation);
+                }
+                InterfaceDefinition interfaceDef = new InterfaceDefinition();
+                interfaceDef.setModel(component.getModel());
+                interfaceDef.setType(currentInterfaceDef.getType());
+                interfaceDef.setUniqueId(currentInterfaceDef.getType());
+                interfaceDef.setDescription(uploadInterfaceInfo.getDescription());
+                interfaceDef.setOperations(operationsToAdd);
+                instInterfacesMap.put(interfaceName, interfaceDef);
+                currInterfacesMap.remove(interfaceName);
+            }
+        }
+        if (!currInterfacesMap.isEmpty()) {
+            for (InterfaceDefinition value : currInterfacesMap.values()) {
+                instInterfacesMap.put(value.getUniqueId(), value);
+            }
+        }
+        instInterfaces.put(currentCompInstance.getUniqueId(), instInterfacesMap);
+        return componentsUtils.getResponseFormat(ActionStatus.OK);
+    }
+
+    private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> inputsFromNodeType,
+                                                ListDataDefinition<OperationInputDefinition> instanceInputs) {
+        instanceInputs.getListToscaDataDefinition().forEach(
+                instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().filter(
+                        templateInput -> templateInput.getName().equals(instanceInput.getName())
+                ).forEach(
+                        newInstanceInput -> {
+                            instanceInput.setSourceProperty(newInstanceInput.getSourceProperty());
+                            instanceInput.setSource(newInstanceInput.getSource());
+                            instanceInput.setType(newInstanceInput.getType());
+                        }
+                )
+        );
+        ListDataDefinition<OperationInputDefinition> newInputsToAdd = new ListDataDefinition<>();
+        instanceInputs.getListToscaDataDefinition().stream()
+                .filter(instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().noneMatch(
+                    inputFromNodeType -> inputFromNodeType.getName().equals(instanceInput.getName())
+                ))
+                .forEach(oldInput -> {
+                    oldInput.setType("string");
+                });
     }
 
     protected void processComponentInstanceCapabilities(Map<String, DataTypeDefinition> allDataTypes,
