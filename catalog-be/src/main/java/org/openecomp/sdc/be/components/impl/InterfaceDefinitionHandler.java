@@ -155,10 +155,19 @@ public class InterfaceDefinitionHandler {
             .collect(Collectors.toMap(OperationDataDefinition::getName, operationDataDefinition -> operationDataDefinition));
     }
 
-    private OperationDataDefinition createOperation(final String operationName, final Map<String, Object> operationDefinitionMap) {
+    private OperationDataDefinition createOperation(
+            final String operationName,
+            final Map<String, Object> operationDefinitionMap
+    ) {
         final OperationDataDefinition operation = new OperationDataDefinition();
         operation.setUniqueId(UUID.randomUUID().toString());
         operation.setName(operationName);
+        Object operationDescription = operationDefinitionMap.get(
+                DESCRIPTION.getElementName()
+        );
+        if (null != operationDescription) {
+            operation.setDescription(operationDescription.toString());
+        }
         operation.setImplementation(handleOperationImplementation(operationDefinitionMap).orElse(new ArtifactDataDefinition()));
         if (operationDefinitionMap.containsKey(INPUTS.getElementName())) {
             final Map<String, Object> interfaceInputs = (Map<String, Object>) operationDefinitionMap.get(INPUTS.getElementName());

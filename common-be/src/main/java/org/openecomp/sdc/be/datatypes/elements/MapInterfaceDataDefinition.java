@@ -28,6 +28,12 @@ public class MapInterfaceDataDefinition extends MapDataDefinition<InterfaceDataD
         super(mapToscaDataDefinition);
     }
 
+    public void setMapToscaDataDefinition(
+            Map<String, InterfaceDataDefinition> mapToscaDataDefinition
+    ) {
+        this.mapToscaDataDefinition = mapToscaDataDefinition;
+    }
+
     @JsonValue
     @Override
     public Map<String, InterfaceDataDefinition> getMapToscaDataDefinition() {
