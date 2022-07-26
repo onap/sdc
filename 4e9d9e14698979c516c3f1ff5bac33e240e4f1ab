@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "e6a83be5_ae00c715",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-26T16:22:25Z",
+      "side": 1,
+      "message": "addressed by\nhttps://gerrit.onap.org/r/c/sdc/+/129980/12/catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+      "parentUuid": "0fefe3c6_e603759a",
+      "range": {
+        "startLine": 721,
+        "startChar": 0,
+        "endLine": 721,
+        "endChar": 123
+      },
+      "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c798c7c4_5a6451c8",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
         "patchSetId": 12
