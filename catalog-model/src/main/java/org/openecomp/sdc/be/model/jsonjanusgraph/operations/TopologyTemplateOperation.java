@@ -385,6 +385,23 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
         return StorageOperationStatus.OK;
     }
 
+    public StorageOperationStatus associateInstInterfacesToComponent(
+            GraphVertex nodeTypeVertex,
+            Map<String, MapInterfaceDataDefinition> instInterfaces
+    ) {
+        if (instInterfaces != null && !instInterfaces.isEmpty()) {
+            Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData(
+                    nodeTypeVertex,
+                    VertexTypeEnum.INST_INTERFACES,
+                    EdgeLabelEnum.INST_INTERFACES,
+                    instInterfaces);
+            if (associateElementToData.isRight()) {
+                return associateElementToData.right().value();
+            }
+        }
+        return StorageOperationStatus.OK;
+    }
+
     public StorageOperationStatus associateInstGroupsToComponent(GraphVertex nodeTypeVertex, Map<String, MapGroupsDataDefinition> instGroups) {
         if (instGroups != null && !instGroups.isEmpty()) {
             Either<GraphVertex, StorageOperationStatus> assosiateElementToData = associateElementToData(nodeTypeVertex, VertexTypeEnum.INST_GROUPS,
