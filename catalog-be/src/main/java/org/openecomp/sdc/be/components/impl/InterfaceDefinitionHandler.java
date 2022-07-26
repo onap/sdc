@@ -81,7 +81,7 @@ public class InterfaceDefinitionHandler {
      * @param interfaceDefinitionToscaMap the TOSCA interface definition structure
      * @return an interface definition representation
      */
-    public InterfaceDefinition create(final Map<String, Object> interfaceDefinitionToscaMap, final String model) {
+    public InterfaceDefinition create(final String interfaceType, final Map<String, Object> interfaceDefinitionToscaMap, final String model) {
         final InterfaceDefinition interfaceDefinition = new InterfaceDefinition();
         interfaceDefinition.setModel(model);
         if (interfaceDefinitionToscaMap.containsKey(TYPE.getElementName())) {
@@ -92,6 +92,23 @@ public class InterfaceDefinitionHandler {
             final String type = (String) typeObj;
             interfaceDefinition.setType(type);
             interfaceDefinition.setUniqueId(type);
+        }
+        else {
+            Either<Map<String, InterfaceDefinition>, ResponseFormat> interfaceDefinitionMapEither = interfaceOperationBusinessLogic
+                    .getAllInterfaceLifecycleTypes(model);
+            if (interfaceDefinitionMapEither.isRight() || MapUtils.isEmpty(interfaceDefinitionMapEither.left().value())) {
+                throw new ByActionStatusComponentException(ActionStatus.INTERFACE_UNKNOWN, interfaceType);
+            }
+            final Map<String, InterfaceDefinition> interfaceDefinitionMap = interfaceDefinitionMapEither.left().value();
+            final Optional<InterfaceDefinition> interfaceDefinitionOptional = interfaceDefinitionMap.entrySet().stream()
+                    .filter(interfaceDefinitionEntry -> interfaceDefinitionEntry.getKey().contains(interfaceType)).map(Map.Entry::getValue).findFirst();
+
+            if (!interfaceDefinitionOptional.isEmpty()) {
+                interfaceDefinition.setType(interfaceDefinitionOptional.get().getType());
+            }
+            else {
+                throw new ByActionStatusComponentException(ActionStatus.INTERFACE_UNKNOWN, interfaceType);
+            }
         }
         final Map<String, InputDefinition> inputDefinitionMap = handleInputs(interfaceDefinitionToscaMap);
         if (!inputDefinitionMap.isEmpty()) {
@@ -155,10 +172,19 @@ public class InterfaceDefinitionHandler {
             .collect(Collectors.toMap(OperationDataDefinition::getName, operationDataDefinition -> operationDataDefinition));
     }
 
-    private OperationDataDefinition createOperation(final String operationName, final Map<String, Object> operationDefinitionMap) {
+    private OperationDataDefinition createOperation(
+            final String operationName,
+            final Map<String, Object> operationDefinitionMap
+    ) {
         final OperationDataDefinition operation = new OperationDataDefinition();
         operation.setUniqueId(UUID.randomUUID().toString());
         operation.setName(operationName);
+        Object operationDescription = operationDefinitionMap.get(
+                DESCRIPTION.getElementName()
+        );
+        if (null != operationDescription) {
+            operation.setDescription(operationDescription.toString());
+        }
         operation.setImplementation(handleOperationImplementation(operationDefinitionMap).orElse(new ArtifactDataDefinition()));
         if (operationDefinitionMap.containsKey(INPUTS.getElementName())) {
             final Map<String, Object> interfaceInputs = (Map<String, Object>) operationDefinitionMap.get(INPUTS.getElementName());
