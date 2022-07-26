@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c75d7278_223da105",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-07-26T09:24:53Z",
+      "side": 1,
+      "message": "When I set a value on an input it is now not getting set, presumably because of this changes here",
+      "range": {
+        "startLine": 306,
+        "startChar": 10,
+        "endLine": 307,
+        "endChar": 41
+      },
+      "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03bfe6da_406790b6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-07-26T09:24:53Z",
+      "side": 1,
+      "message": "this is called when importing a VSP, Id imagine the consequence of the change below will be the default value will be lost in the import?",
+      "range": {
+        "startLine": 721,
+        "startChar": 0,
+        "endLine": 721,
+        "endChar": 123
+      },
+      "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c798c7c4_5a6451c8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-07-26T09:24:53Z",
+      "side": 1,
+      "message": "you say needed for needed for NsDescriptorGeneratorImpl#createNodeTemplateForNsNodeType - was there something wrong here all along? or is it needed due to the other changes made in this commit?",
+      "range": {
+        "startLine": 337,
+        "startChar": 0,
+        "endLine": 337,
+        "endChar": 64
+      },
+      "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
