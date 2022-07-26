@@ -22,12 +22,11 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 public class VendorSoftwareProductInvalidErrorBuilder {
 
     private static final String VSP_INVALID_MSG =
-        "Vendor software product with Id %s and version %s is invalid - does not contain " + "service model.";
+        "Vendor software product with Id %s and version %s is invalid - does not contain service model.";
     private static final String VSP_INVALID_MISSING_DEPLOYMENT_FLAVOR_MSG =
-        "VSP has to have a " + "minimum of one Deployment Flavor defined for being able to be instantiated.Please add a "
-            + "Deployment Flavor and re-submit the VSP.";
-    private static final String CANDIDATE_DATA_NOT_PROCESSED_OR_ABORTED = "Uploaded network package" + " file %s was not processed/aborted.";
-    private static final String INVALID_PROCESSED_CANDIDATE = "Uploaded network package file %s" + " is invalid and need to be aborted";
+        "VSP has to have a minimum of one Deployment Flavor defined for being able to be instantiated.Please add a Deployment Flavor and re-submit the VSP.";
+    private static final String CANDIDATE_DATA_NOT_PROCESSED_OR_ABORTED = "Uploaded network package file %s was not processed/aborted.";
+    private static final String INVALID_PROCESSED_CANDIDATE = "Uploaded network package file %s is invalid and need to be aborted";
 
     private VendorSoftwareProductInvalidErrorBuilder() {
     }

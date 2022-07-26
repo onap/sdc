@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,17 @@
 
 package org.openecomp.sdc.be.components.property;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,21 +51,9 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.operations.PolicyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
-
 @RunWith(MockitoJUnitRunner.class)
 //note that testing for most of the common logic is under the ComponentInstancePropertyDeceleratorTest
-public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
+public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase {
 
     private static final String POLICY_ID = "policyId";
     private static final String RESOURCE_ID = "resourceId";
@@ -84,15 +82,18 @@ public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
 
     @Test
     public void testDeclarePropertiesAsInputs_policyNotExist() {
-        Either<List<InputDefinition>, StorageOperationStatus> declareResult = policyPropertyDeclarator.declarePropertiesAsInputs(resource, "nonExistingPolicy", Collections.emptyList());
+        Either<List<InputDefinition>, StorageOperationStatus> declareResult = policyPropertyDeclarator.declarePropertiesAsInputs(resource,
+            "nonExistingPolicy", Collections.emptyList());
         assertThat(declareResult.right().value()).isEqualTo(StorageOperationStatus.NOT_FOUND);
         verifyZeroInteractions(policyOperation);
     }
 
     @Test
     public void testDeclarePropertiesAsInputs_failedToUpdateProperties() {
-        when(policyOperation.updatePolicyProperties(eq(resource), eq(POLICY_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.GENERAL_ERROR);
-        Either<List<InputDefinition>, StorageOperationStatus> declareResult = policyPropertyDeclarator.declarePropertiesAsInputs(resource, POLICY_ID, Collections.emptyList());
+        when(policyOperation.updatePolicyProperties(eq(resource), eq(POLICY_ID), updatedPropsCapture.capture())).thenReturn(
+            StorageOperationStatus.GENERAL_ERROR);
+        Either<List<InputDefinition>, StorageOperationStatus> declareResult = policyPropertyDeclarator.declarePropertiesAsInputs(resource, POLICY_ID,
+            Collections.emptyList());
         assertThat(declareResult.right().value()).isEqualTo(StorageOperationStatus.GENERAL_ERROR);
     }
 
@@ -100,8 +101,10 @@ public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
     public void testDeclarePropertiesAsInputs() {
         List<PropertyDataDefinition> properties = Arrays.asList(prop1, prop2);
         List<ComponentInstancePropInput> propsToDeclare = createInstancePropInputList(properties);
-        when(policyOperation.updatePolicyProperties(eq(resource), eq(POLICY_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.OK);
-        Either<List<InputDefinition>, StorageOperationStatus> createdInputs = policyPropertyDeclarator.declarePropertiesAsInputs(resource, POLICY_ID, propsToDeclare);
+        when(policyOperation.updatePolicyProperties(eq(resource), eq(POLICY_ID), updatedPropsCapture.capture())).thenReturn(
+            StorageOperationStatus.OK);
+        Either<List<InputDefinition>, StorageOperationStatus> createdInputs = policyPropertyDeclarator.declarePropertiesAsInputs(resource, POLICY_ID,
+            propsToDeclare);
         List<InputDefinition> inputs = createdInputs.left().value();
         assertThat(inputs).hasSize(2);
         verifyInputPropertiesList(inputs, updatedPropsCapture.getValue());
@@ -129,8 +132,10 @@ public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
         PolicyDefinition policyDefinition = resource.getPolicies().get(POLICY_ID);
         PropertyDataDefinition getInputPropForInput = buildGetInputProperty(INPUT_ID);
         policyDefinition.setProperties(Collections.singletonList(getInputPropForInput));
-        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(), getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
-        when(policyOperation.updatePolicyProperties(eq(resource), eq(POLICY_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.GENERAL_ERROR);
+        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(),
+            getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
+        when(policyOperation.updatePolicyProperties(eq(resource), eq(POLICY_ID), updatedPropsCapture.capture())).thenReturn(
+            StorageOperationStatus.GENERAL_ERROR);
         StorageOperationStatus storageOperationStatus = policyPropertyDeclarator.unDeclarePropertiesAsInputs(resource, input);
         assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.GENERAL_ERROR);
     }
@@ -143,8 +148,10 @@ public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
         PropertyDataDefinition someOtherProperty = new PropertyDataDefinitionBuilder().build();
         policyDefinition.setProperties(Arrays.asList(getInputPropForInput, someOtherProperty));
 
-        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(), getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
-        when(policyOperation.updatePolicyProperties(eq(resource), eq(POLICY_ID), updatedPropsCapture.capture())).thenReturn(StorageOperationStatus.OK);
+        when(propertyOperation.findDefaultValueFromSecondPosition(Collections.emptyList(), getInputPropForInput.getUniqueId(),
+            getInputPropForInput.getDefaultValue())).thenReturn(Either.left(getInputPropForInput.getDefaultValue()));
+        when(policyOperation.updatePolicyProperties(eq(resource), eq(POLICY_ID), updatedPropsCapture.capture())).thenReturn(
+            StorageOperationStatus.OK);
         StorageOperationStatus storageOperationStatus = policyPropertyDeclarator.unDeclarePropertiesAsInputs(resource, input);
 
         assertThat(storageOperationStatus).isEqualTo(StorageOperationStatus.OK);
@@ -152,8 +159,8 @@ public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
         assertThat(updatedProperties).hasSize(1);
         PropertyDataDefinition updatedProperty = updatedProperties.get(0);
         assertThat(updatedProperty.isGetInputProperty()).isFalse();
-        assertThat(updatedProperty.getValue()).isEmpty();
-        assertThat(updatedProperty.getDefaultValue()).isEqualTo(getInputPropForInput.getDefaultValue());
+        assertThat(updatedProperty.getValue()).isNull();
+        assertThat(updatedProperty.getDefaultValue()).isNull();
         assertThat(updatedProperty.getUniqueId()).isEqualTo(getInputPropForInput.getUniqueId());
     }
 
@@ -161,31 +168,31 @@ public class PolicyPropertyDeceleratorTest extends PropertyDeceleratorTestBase{
         return createResourceWithPolicies(POLICY_ID);
     }
 
-    private Resource createResourceWithPolicies(String ... policies) {
+    private Resource createResourceWithPolicies(String... policies) {
         List<PolicyDefinition> policiesDef = Stream.of(policies)
-                .map(this::buildPolicy)
-                .collect(Collectors.toList());
+            .map(this::buildPolicy)
+            .collect(Collectors.toList());
 
         return new ResourceBuilder()
-                .setUniqueId(RESOURCE_ID)
-                .setPolicies(policiesDef)
-                .build();
+            .setUniqueId(RESOURCE_ID)
+            .setPolicies(policiesDef)
+            .build();
     }
 
     private PolicyDefinition buildPolicy(String policyId) {
         return PolicyDefinitionBuilder.create()
-                .setUniqueId(policyId)
-                .setName(policyId)
-                .build();
+            .setUniqueId(policyId)
+            .setName(policyId)
+            .build();
     }
 
     private PropertyDataDefinition buildGetInputProperty(String inputId) {
         return new PropertyDataDefinitionBuilder()
-                .addGetInputValue(inputId)
-                .setUniqueId(POLICY_ID + "_" + inputId)
-                .setDefaultValue("defaultValue")
-                .setValue(generateGetInputValue(inputId))
-                .build();
+            .addGetInputValue(inputId)
+            .setUniqueId(POLICY_ID + "_" + inputId)
+            .setDefaultValue("defaultValue")
+            .setValue(generateGetInputValue(inputId))
+            .build();
     }
 
 
