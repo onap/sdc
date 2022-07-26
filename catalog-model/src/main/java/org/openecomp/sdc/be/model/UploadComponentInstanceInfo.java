@@ -19,11 +19,12 @@
  */
 package org.openecomp.sdc.be.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 import org.openecomp.sdc.be.ui.model.OperationUi;
 
 @Getter
@@ -40,6 +41,7 @@ public class UploadComponentInstanceInfo {
     private Map<String, String> capabilitiesNamesToUpdate;
     private Map<String, String> requirementsNamesToUpdate;
     private Collection<String> directives;
+    private Map<String, UploadInterfaceInfo> interfaces;
     private UploadNodeFilterInfo uploadNodeFilterInfo;
     private Map<String, List<OperationUi>> operations;
 }
