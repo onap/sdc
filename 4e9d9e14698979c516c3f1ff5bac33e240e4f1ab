@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ca569b86_36920a90",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-26T14:45:18Z",
+      "side": 1,
+      "message": "good catch, fixed",
+      "parentUuid": "c75d7278_223da105",
+      "range": {
+        "startLine": 306,
+        "startChar": 10,
+        "endLine": 307,
+        "endChar": 41
+      },
+      "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "03bfe6da_406790b6",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
         "patchSetId": 12
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "86949f96_96b5edc6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-26T14:45:18Z",
+      "side": 1,
+      "message": "I could not find usage during \u0027Import VSP\u0027,\nonly in org.openecomp.sdc.be.servlets.InputsServlet#createListInput",
+      "parentUuid": "03bfe6da_406790b6",
+      "range": {
+        "startLine": 721,
+        "startChar": 0,
+        "endLine": 721,
+        "endChar": 123
+      },
+      "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c798c7c4_5a6451c8",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
         "patchSetId": 12
@@ -68,6 +116,30 @@
       "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93695181_bb41414e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 337,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-07-26T14:45:18Z",
+      "side": 1,
+      "message": "yes, \nit is needed due to the other changes made in this commit",
+      "parentUuid": "c798c7c4_5a6451c8",
+      "range": {
+        "startLine": 337,
+        "startChar": 0,
+        "endLine": 337,
+        "endChar": 64
+      },
+      "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
