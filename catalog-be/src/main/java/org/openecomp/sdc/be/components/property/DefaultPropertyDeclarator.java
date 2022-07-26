@@ -40,7 +40,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.components.utils.PropertiesUtils;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertiesOwner;
@@ -307,6 +306,8 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         } else {
             input = new InputDefinition(prop);
         }
+        input.setValue(null);
+        input.setDefaultValue(null);
         input.setName(inputName);
         input.setUniqueId(UniqueIdBuilder.buildPropertyUniqueId(componentId, input.getName()));
         input.setInputPath(propertiesName);
@@ -430,17 +431,15 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
 
     Either<InputDefinition, ResponseFormat> prepareValueBeforeDelete(InputDefinition inputForDelete, PropertyDataDefinition inputValue,
                                                                      List<String> pathOfComponentInstances) {
-        Either<InputDefinition, ResponseFormat> deleteEither = prepareValueBeforeDelete(inputForDelete, inputValue);
-        Either<String, JanusGraphOperationStatus> findDefaultValue = propertyOperation
-            .findDefaultValueFromSecondPosition(pathOfComponentInstances, inputValue.getUniqueId(), (String) inputValue.getDefaultValue());
+        final var deleteEither = prepareValueBeforeDelete(inputForDelete, inputValue);
+        final var findDefaultValue = propertyOperation.findDefaultValueFromSecondPosition(
+            pathOfComponentInstances, inputValue.getUniqueId(), (String) inputValue.getDefaultValue());
         if (findDefaultValue.isRight()) {
-            deleteEither = Either.right(componentsUtils.getResponseFormat(componentsUtils
-                .convertFromStorageResponse(DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findDefaultValue.right().value()))));
-            return deleteEither;
+            return Either.right(componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(
+                DaoStatusConverter.convertJanusGraphStatusToStorageStatus(findDefaultValue.right().value()))));
         }
-        String defaultValue = findDefaultValue.left().value();
-        inputValue.setDefaultValue(defaultValue);
-        log.debug("The returned default value in ResourceInstanceProperty is {}", defaultValue);
+        inputValue.setDefaultValue(null);
+        inputValue.setValue(null);
         return deleteEither;
     }
 
@@ -458,7 +457,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         resetInputName(mappedToscaTemplate, inputForDelete.getName());
         value = "";
         if (!mappedToscaTemplate.isEmpty()) {
-            Either result = cleanNestedMap(mappedToscaTemplate, true);
+            Either<Map, String> result = cleanNestedMap(mappedToscaTemplate, true);
             Map modifiedMappedToscaTemplate = mappedToscaTemplate;
             if (result.isLeft()) {
                 modifiedMappedToscaTemplate = (Map) result.left().value();
@@ -493,7 +492,7 @@ public abstract class DefaultPropertyDeclarator<PROPERTYOWNER extends Properties
         }
     }
 
-    private Either cleanNestedMap(Map mappedToscaTemplate, boolean deepClone) {
+    private Either<Map, String> cleanNestedMap(Map mappedToscaTemplate, boolean deepClone) {
         if (MapUtils.isNotEmpty(mappedToscaTemplate)) {
             if (deepClone) {
                 if (!(mappedToscaTemplate instanceof HashMap)) {
