@@ -15,22 +15,7 @@
  */
 package org.openecomp.sdc.be.components.impl;
 
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
@@ -52,6 +37,7 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
@@ -115,6 +101,22 @@ import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Getter
 @org.springframework.stereotype.Component
@@ -1999,6 +2001,32 @@ public class ServiceImportParseLogic {
                 log.debug("failed to associate inputs value of resource {} status is {}", resource.getUniqueId(), addInputToInst.right().value());
                 throw new ComponentException(
                     componentsUtils.getResponseFormat(componentsUtils.convertFromStorageResponse(addInputToInst.right().value()), yamlName));
+            }
+        }
+    }
+
+    public void associateComponentInstanceInterfacesToComponent(
+            String yamlName,
+            Service service,
+            Map<String, Map<String, InterfaceDefinition>> instInterfaces
+    ) {
+        if (MapUtils.isNotEmpty(instInterfaces)) {
+            Either<Map<String, MapInterfaceDataDefinition>, StorageOperationStatus> addInterfaceToInst =
+                    toscaOperationFacade
+                    .associateComponentInstanceInterfacesToComponent(
+                            instInterfaces,
+                            service.getUniqueId()
+                    );
+            if (addInterfaceToInst.isRight()) {
+                log.error("failed to associate interfaces value of service {}, status is {}", service.getUniqueId(), addInterfaceToInst.right().value());
+                throw new ComponentException(
+                    componentsUtils.getResponseFormat(
+                        componentsUtils.convertFromStorageResponse(
+                            addInterfaceToInst.right().value()
+                        ),
+                        yamlName
+                    )
+                );
             }
         }
     }

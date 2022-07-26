@@ -19,33 +19,9 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.janusgraph.core.attribute.Text.REGEX;
-
 import com.vdurmont.semver4j.Semver;
 import com.vdurmont.semver4j.Semver.SemverType;
 import fj.data.Either;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,6 +44,7 @@ import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.DataTypeDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GroupDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapArtifactDataDefinition;
@@ -133,6 +110,31 @@ import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.janusgraph.core.attribute.Text.REGEX;
 
 @org.springframework.stereotype.Component("tosca-operation-facade")
 public class ToscaOperationFacade {
@@ -1661,6 +1663,48 @@ public class ToscaOperationFacade {
         if (StorageOperationStatus.OK == status) {
             log.debug(COMPONENT_CREATED_SUCCESSFULLY);
             return Either.left(instInputs);
+        }
+        return Either.right(status);
+    }
+
+    public Either<Map<String, MapInterfaceDataDefinition>, StorageOperationStatus> associateComponentInstanceInterfacesToComponent(
+            Map<String, Map<String, InterfaceDefinition>> instInterfaces,
+            String componentId
+    ) {
+        Either<GraphVertex, JanusGraphOperationStatus> getVertexEither = janusGraphDao.getVertexById(
+                componentId,
+                JsonParseFlagEnum.NoParse
+        );
+        if (getVertexEither.isRight()) {
+            log.debug(
+                    COULDNT_FETCH_COMPONENT_WITH_AND_UNIQUE_ID_ERROR,
+                    componentId,
+                    getVertexEither.right().value()
+            );
+            return Either.right(
+                    DaoStatusConverter.convertJanusGraphStatusToStorageStatus(
+                            getVertexEither.right().value()
+                    )
+            );
+        }
+        GraphVertex vertex = getVertexEither.left().value();
+        Map<String, MapInterfaceDataDefinition> instInterfacesMap = new HashMap<>();
+        if (instInterfaces != null) {
+            MapInterfaceDataDefinition interfacesMap = new MapInterfaceDataDefinition();
+            for (Map.Entry<String, Map<String, InterfaceDefinition>> entry : instInterfaces.entrySet()) {
+                Map<String, InterfaceDataDefinition> _interfacesMap = entry.getValue().entrySet().stream()
+                        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+                interfacesMap.setMapToscaDataDefinition(_interfacesMap);
+                instInterfacesMap.put(entry.getKey(), interfacesMap);
+            }
+        }
+        StorageOperationStatus status = topologyTemplateOperation.associateInstInterfacesToComponent(
+                vertex,
+                instInterfacesMap
+        );
+        if (StorageOperationStatus.OK == status) {
+            log.debug(COMPONENT_CREATED_SUCCESSFULLY);
+            return Either.left(instInterfacesMap);
         }
         return Either.right(status);
     }

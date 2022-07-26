@@ -101,14 +101,14 @@ class InterfaceDefinitionHandlerTest {
     @Test
     void testCreateWithLegacyOperationDeclarationSuccess() throws FileNotFoundException {
         final Map<String, Object> load = loadYaml(Paths.get("interfaceDefinition-legacy.yaml"));
-        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(load, StringUtils.EMPTY);
+        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(null, load, StringUtils.EMPTY);
         assertInterfaceDefinition(actualInterfaceDefinition);
     }
 
     @Test
     void testCreateWithOperationSuccess() throws FileNotFoundException {
         final Map<String, Object> load = loadYaml(Paths.get("interfaceDefinition-tosca1.3.yaml"));
-        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(load, StringUtils.EMPTY);
+        final InterfaceDefinition actualInterfaceDefinition = interfaceDefinitionHandler.create(null, load, StringUtils.EMPTY);
         assertInterfaceDefinition(actualInterfaceDefinition);
     }
 
