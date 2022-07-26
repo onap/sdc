@@ -172,7 +172,7 @@ public class ImportVfcUiTest extends SetupCDTest {
     }
 
     private void checkInterfaceDefinitionData(final InterfaceDefinitionOperationsModal interfaceDefinitionOperationsModal) {
-        assertTrue(interfaceDefinitionOperationsModal.getDescription().isEmpty());
+        assertFalse(interfaceDefinitionOperationsModal.getDescription().isEmpty());
         assertEquals("path/to/my/implementation.sh", interfaceDefinitionOperationsModal.getImplementationName());
         final List<InputData> inputList = interfaceDefinitionOperationsModal.getInputs();
         assertTrue(inputList.stream().anyMatch(inputData -> "first".equals(inputData.getName())), "Input of name 'first' expected");
