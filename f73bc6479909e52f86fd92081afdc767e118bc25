@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3513f2a9_13df923f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-26T15:41:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1f9f407_55b09156",
+      "range": {
+        "startLine": 460,
+        "startChar": 8,
+        "endLine": 460,
+        "endChar": 42
+      },
+      "revId": "f73bc6479909e52f86fd92081afdc767e118bc25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "49cb4c3d_cce5222e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "f73bc6479909e52f86fd92081afdc767e118bc25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c445eb8a_5c6cf296",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1887,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-26T15:41:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "49cb4c3d_cce5222e",
+      "range": {
+        "startLine": 1879,
+        "startChar": 4,
+        "endLine": 1887,
+        "endChar": 5
+      },
+      "revId": "f73bc6479909e52f86fd92081afdc767e118bc25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fcdcc704_113619fa",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandlerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-26T15:41:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "280fd16c_b1405818",
+      "range": {
+        "startLine": 181,
+        "startChar": 4,
+        "endLine": 181,
+        "endChar": 10
+      },
+      "revId": "f73bc6479909e52f86fd92081afdc767e118bc25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b23d538_cbfac17e",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
         "patchSetId": 5
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "5da897b3_3b5464a8",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-26T15:41:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b23d538_cbfac17e",
+      "range": {
+        "startLine": 523,
+        "startChar": 12,
+        "endLine": 531,
+        "endChar": 54
+      },
+      "revId": "f73bc6479909e52f86fd92081afdc767e118bc25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4f1e906f_9083df77",
         "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverterTest.java",
         "patchSetId": 5
@@ -114,6 +210,30 @@
       "revId": "f73bc6479909e52f86fd92081afdc767e118bc25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d2c8ce2_e916864d",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverterTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-07-26T15:41:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4f1e906f_9083df77",
+      "range": {
+        "startLine": 281,
+        "startChar": 4,
+        "endLine": 281,
+        "endChar": 10
+      },
+      "revId": "f73bc6479909e52f86fd92081afdc767e118bc25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
