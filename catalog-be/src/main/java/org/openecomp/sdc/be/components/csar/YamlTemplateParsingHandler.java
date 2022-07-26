@@ -22,46 +22,6 @@
 
 package org.openecomp.sdc.be.components.csar;
 
-import static java.util.stream.Collectors.toList;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaListElement;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
-import static org.openecomp.sdc.be.components.impl.ImportUtils.loadYamlAsStrictMap;
-import static org.openecomp.sdc.be.datatypes.enums.MetadataKeyEnum.NAME;
-import static org.openecomp.sdc.be.model.tosca.ToscaType.STRING;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ATTRIBUTES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.CAPABILITIES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.CAPABILITY;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT_VALUE;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.FILE;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GET_INPUT;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GROUPS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IMPLEMENTATION;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INTERFACES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OUTPUTS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.POLICIES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.PROPERTIES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.RELATIONSHIP;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.RELATIONSHIP_TEMPLATES;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIREMENTS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_FILTERS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TARGETS;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
-import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -90,9 +50,12 @@ import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentEx
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.CapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
@@ -112,15 +75,63 @@ import org.openecomp.sdc.be.model.UploadArtifactInfo;
 import org.openecomp.sdc.be.model.UploadAttributeInfo;
 import org.openecomp.sdc.be.model.UploadCapInfo;
 import org.openecomp.sdc.be.model.UploadComponentInstanceInfo;
+import org.openecomp.sdc.be.model.UploadInterfaceInfo;
 import org.openecomp.sdc.be.model.UploadPropInfo;
 import org.openecomp.sdc.be.model.UploadReqInfo;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
+import org.openecomp.sdc.be.tosca.utils.OperationArtifactUtil;
 import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.be.ui.model.PropertyAssignmentUi;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.yaml.snakeyaml.parser.ParserException;
+import java.util.LinkedHashMap;
+import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.Constants.QUOTE;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.ResultStatusEnum;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.ToscaElementTypeEnum;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaListElement;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.loadYamlAsStrictMap;
+import static org.openecomp.sdc.be.datatypes.enums.MetadataKeyEnum.NAME;
+import static org.openecomp.sdc.be.model.tosca.ToscaType.STRING;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ATTRIBUTES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.CAPABILITIES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.CAPABILITY;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DEFAULT_VALUE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.DESCRIPTION;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.FILE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GET_INPUT;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.GROUPS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IMPLEMENTATION;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INPUTS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.INTERFACES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.IS_PASSWORD;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.MEMBERS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TEMPLATES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.NODE_TYPE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OPERATIONS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.OUTPUTS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.POLICIES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.PROPERTIES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.RELATIONSHIP;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.RELATIONSHIP_TEMPLATES;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIRED;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.REQUIREMENTS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.STATUS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_FILTERS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.SUBSTITUTION_MAPPINGS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TARGETS;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TOPOLOGY_TEMPLATE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.TYPE;
+import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.VALID_SOURCE_TYPES;
 
 /**
  * A handler class designed to parse the YAML file of the service template for a JAVA object
@@ -131,6 +142,7 @@ public class YamlTemplateParsingHandler {
     private static final int SUB_MAPPING_CAPABILITY_OWNER_NAME_IDX = 0;
     private static final int SUB_MAPPING_CAPABILITY_NAME_IDX = 1;
     private static final Logger log = Logger.getLogger(YamlTemplateParsingHandler.class);
+    private static final String WITH_ATTRIBUTE = "with attribute '{}': '{}'";
     private final Gson gson = new Gson();
     private final JanusGraphDao janusGraphDao;
     private final GroupTypeBusinessLogic groupTypeBusinessLogic;
@@ -138,9 +150,12 @@ public class YamlTemplateParsingHandler {
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
     private final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler;
 
-    public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao, GroupTypeBusinessLogic groupTypeBusinessLogic,
-                                      AnnotationBusinessLogic annotationBusinessLogic, PolicyTypeBusinessLogic policyTypeBusinessLogic,
-                                      final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler) {
+    public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao,
+                                      GroupTypeBusinessLogic groupTypeBusinessLogic,
+                                      AnnotationBusinessLogic annotationBusinessLogic,
+                                      PolicyTypeBusinessLogic policyTypeBusinessLogic,
+                                      final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler
+    ) {
         this.janusGraphDao = janusGraphDao;
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
         this.annotationBusinessLogic = annotationBusinessLogic;
@@ -162,7 +177,10 @@ public class YamlTemplateParsingHandler {
             .filter(entry -> entry.getKey().equals(OUTPUTS.getElementName())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         parsedToscaYamlInfo.setInputs(getInputs(mappedTopologyTemplateInputs));
         parsedToscaYamlInfo.setOutputs(getOutputs(mappedTopologyTemplateOutputs));
-        parsedToscaYamlInfo.setInstances(getInstances(mappedToscaTemplate, createdNodesToscaResourceNames));
+        parsedToscaYamlInfo.setInstances(getInstances(
+                mappedToscaTemplate,
+                createdNodesToscaResourceNames
+        ));
         associateRelationshipTemplatesToInstances(parsedToscaYamlInfo.getInstances(), mappedTopologyTemplate);
         parsedToscaYamlInfo.setGroups(getGroups(mappedToscaTemplate, component.getModel()));
         parsedToscaYamlInfo.setPolicies(getPolicies(mappedToscaTemplate, component.getModel()));
@@ -347,20 +365,34 @@ public class YamlTemplateParsingHandler {
         return targets;
     }
 
-    private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson,
-                                                                  Map<String, String> createdNodesToscaResourceNames) {
-        Map<String, Object> nodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES).left().on(err -> new HashMap<>());
+    private Map<String, UploadComponentInstanceInfo> getInstances(
+            Map<String, Object> toscaJson,
+            Map<String, String> createdNodesToscaResourceNames
+    ) {
+        Map<String, Object> nodeTemplates = findFirstToscaMapElement(toscaJson, NODE_TEMPLATES)
+                .left().on(err -> new HashMap<>());
         if (nodeTemplates.isEmpty()) {
             return Collections.emptyMap();
         }
-        return getInstances(toscaJson, createdNodesToscaResourceNames, nodeTemplates);
+        return getInstances(
+                toscaJson,
+                createdNodesToscaResourceNames,
+                nodeTemplates
+        );
     }
 
-    private Map<String, UploadComponentInstanceInfo> getInstances(Map<String, Object> toscaJson, Map<String, String> createdNodesToscaResourceNames,
-                                                                  Map<String, Object> nodeTemplates) {
+    private Map<String, UploadComponentInstanceInfo> getInstances(
+            Map<String, Object> toscaJson,
+            Map<String, String> createdNodesToscaResourceNames,
+            Map<String, Object> nodeTemplates
+    ) {
         Map<String, Object> substitutionMappings = getSubstitutionMappings(toscaJson);
         return nodeTemplates.entrySet().stream()
-            .map(node -> buildModuleComponentInstanceInfo(node, substitutionMappings, createdNodesToscaResourceNames))
+            .map(node -> buildModuleComponentInstanceInfo(
+                    node,
+                    substitutionMappings,
+                    createdNodesToscaResourceNames
+            ))
             .collect(Collectors.toMap(UploadComponentInstanceInfo::getName, i -> i));
     }
 
@@ -739,9 +771,11 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private UploadComponentInstanceInfo buildModuleComponentInstanceInfo(Map.Entry<String, Object> nodeTemplateJsonEntry,
-                                                                         Map<String, Object> substitutionMappings,
-                                                                         Map<String, String> createdNodesToscaResourceNames) {
+    private UploadComponentInstanceInfo buildModuleComponentInstanceInfo(
+            Map.Entry<String, Object> nodeTemplateJsonEntry,
+            Map<String, Object> substitutionMappings,
+            Map<String, String> createdNodesToscaResourceNames
+    ) {
         UploadComponentInstanceInfo nodeTemplateInfo = new UploadComponentInstanceInfo();
         nodeTemplateInfo.setName(nodeTemplateJsonEntry.getKey());
         try {
@@ -756,6 +790,7 @@ public class YamlTemplateParsingHandler {
                 setArtifacts(nodeTemplateInfo, nodeTemplateJsonMap);
                 updateProperties(nodeTemplateInfo, nodeTemplateJsonMap);
                 updateAttributes(nodeTemplateInfo, nodeTemplateJsonMap);
+                updateInterfaces(nodeTemplateInfo, nodeTemplateJsonMap);
                 setDirectives(nodeTemplateInfo, nodeTemplateJsonMap);
                 setNodeFilter(nodeTemplateInfo, nodeTemplateJsonMap);
                 setSubstitutions(substitutionMappings, nodeTemplateInfo);
@@ -799,6 +834,20 @@ public class YamlTemplateParsingHandler {
             Map<String, UploadAttributeInfo> attributes = buildAttributeModuleFromYaml(nodeTemplateJsonMap);
             if (!attributes.isEmpty()) {
                 nodeTemplateInfo.setAttributes(attributes);
+            }
+        }
+    }
+
+    private void updateInterfaces(
+            UploadComponentInstanceInfo nodeTemplateInfo,
+            Map<String, Object> nodeTemplateJsonMap
+    ){
+        if (nodeTemplateJsonMap.containsKey(INTERFACES.getElementName())) {
+            Map<String, UploadInterfaceInfo> interfaces = buildInterfacesModuleFromYaml(
+                    nodeTemplateJsonMap
+            );
+            if (!interfaces.isEmpty()) {
+                nodeTemplateInfo.setInterfaces(interfaces);
             }
         }
     }
@@ -1044,7 +1093,8 @@ public class YamlTemplateParsingHandler {
         return regTemplateInfo;
     }
 
-    private Map<String, UploadAttributeInfo> buildAttributeModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
+    private Map<String, UploadAttributeInfo> buildAttributeModuleFromYaml(
+            Map<String, Object> nodeTemplateJsonMap) {
         Map<String, UploadAttributeInfo> moduleAttribute = new HashMap<>();
         Either<Map<String, Object>, ResultStatusEnum> toscaAttributes = findFirstToscaMapElement(nodeTemplateJsonMap, ATTRIBUTES);
         if (toscaAttributes.isLeft()) {
@@ -1070,6 +1120,20 @@ public class YamlTemplateParsingHandler {
         return moduleProp;
     }
 
+    private Map<String, UploadInterfaceInfo> buildInterfacesModuleFromYaml(
+            Map<String, Object> nodeTemplateJsonMap
+    ) {
+        Map<String, UploadInterfaceInfo> moduleInterfaces = new HashMap<>();
+        Either<Map<String, Object>, ResultStatusEnum> toscaInterfaces = findFirstToscaMapElement(nodeTemplateJsonMap, INTERFACES);
+        if (toscaInterfaces.isLeft()) {
+            Map<String, Object> jsonInterfaces = toscaInterfaces.left().value();
+            for (Map.Entry<String, Object> jsonInterfacesObj : jsonInterfaces.entrySet()) {
+                addInterfaces(moduleInterfaces, jsonInterfacesObj);
+            }
+        }
+        return moduleInterfaces;
+    }
+
     private void addProperty(Map<String, List<UploadPropInfo>> moduleProp, Map.Entry<String, Object> jsonPropObj) {
         UploadPropInfo propertyDef = buildProperty(jsonPropObj.getKey(), jsonPropObj.getValue());
         if (moduleProp.containsKey(propertyDef.getName())) {
@@ -1079,6 +1143,11 @@ public class YamlTemplateParsingHandler {
             list.add(propertyDef);
             moduleProp.put(propertyDef.getName(), list);
         }
+    }
+
+    private void addInterfaces(Map<String, UploadInterfaceInfo> moduleInterface, Map.Entry<String, Object> jsonPropObj) {
+        UploadInterfaceInfo interfaceInfo = buildInterface(jsonPropObj.getKey(), jsonPropObj.getValue());
+        moduleInterface.put(jsonPropObj.getKey(), interfaceInfo);
     }
 
     @SuppressWarnings("unchecked")
@@ -1113,6 +1182,155 @@ public class YamlTemplateParsingHandler {
             propertyDef.setValue(propValueObj);
         }
         return propertyDef;
+    }
+
+    private UploadInterfaceInfo buildInterface(String interfaceName, Object interfaceValue) {
+        UploadInterfaceInfo interfaceDef = new UploadInterfaceInfo();
+        interfaceDef.setValue(interfaceValue);
+        interfaceDef.setName(interfaceName);
+        interfaceDef.setKey(interfaceName);
+        Map<String, OperationDataDefinition> operations = new HashMap<>();
+        if (interfaceValue instanceof Map) {
+            Map<String, Object> operationsMap = (Map<String, Object>) interfaceValue;
+            for (Map.Entry<String, Object> operationEntry : operationsMap.entrySet()) {
+                OperationDataDefinition operationDef = new OperationDataDefinition();
+                operationDef.setName(operationEntry.getKey());
+                Map<String, Object> operationValue = (Map<String, Object>) operationEntry.getValue();
+                if (operationValue.containsKey(DESCRIPTION.getElementName())) {
+                    operationDef.setDescription(operationValue.get(DESCRIPTION.getElementName()).toString());
+                }
+                operationDef.setImplementation(handleOperationImplementation(operationValue).orElse(new ArtifactDataDefinition()));
+                if (operationValue.containsKey(INPUTS.getElementName())) {
+                    final Map<String, Object> interfaceInputs = (Map<String, Object>) operationValue.get(INPUTS.getElementName());
+                    operationDef.setInputs(handleInterfaceOperationInputs(interfaceInputs));
+                }
+                operations.put(operationEntry.getKey(), operationDef);
+            }
+            interfaceDef.setOperations(operations);
+            if (operationsMap.containsKey(TYPE.getElementName())) {
+                interfaceDef.setType(((Map<String, Object>) interfaceValue).get(TYPE.getElementName()).toString());
+            }
+        }
+        return interfaceDef;
+    }
+
+    private ListDataDefinition<OperationInputDefinition> handleInterfaceOperationInputs(final Map<String, Object> interfaceInputs) {
+        final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
+        for (final Entry<String, Object> interfaceInput : interfaceInputs.entrySet()) {
+            final OperationInputDefinition operationInput = new OperationInputDefinition();
+            operationInput.setUniqueId(UUID.randomUUID().toString());
+            operationInput.setInputId(operationInput.getUniqueId());
+            operationInput.setName(interfaceInput.getKey());
+            handleInputToscaDefinition(interfaceInput.getKey(), interfaceInput.getValue(), operationInput);
+            inputs.add(operationInput);
+        }
+        return inputs;
+    }
+
+    private void handleInputToscaDefinition(final String inputName, final Object value, final OperationInputDefinition operationInput) {
+        if (value instanceof Map) {
+            final LinkedHashMap<String, Object> inputPropertyValue = (LinkedHashMap<String, Object>) value;
+            log.debug("Creating interface operation input '{}'", inputName);
+            if (inputPropertyValue.get(TYPE.getElementName()) != null) {
+                final String type = inputPropertyValue.get(TYPE.getElementName()).toString();
+                log.debug(WITH_ATTRIBUTE, TYPE.getElementName(), type);
+                operationInput.setType(type);
+            }
+            if (inputPropertyValue.get(DESCRIPTION.getElementName()) != null) {
+                final String description = inputPropertyValue.get(DESCRIPTION.getElementName()).toString();
+                log.debug(WITH_ATTRIBUTE, DESCRIPTION.getElementName(), description);
+                operationInput.setDescription(description);
+            }
+            if (inputPropertyValue.get(REQUIRED.getElementName()) != null) {
+                final boolean required = Boolean.parseBoolean(inputPropertyValue.get(REQUIRED.getElementName()).toString());
+                log.debug(WITH_ATTRIBUTE, REQUIRED.getElementName(), required);
+                operationInput.setRequired(required);
+            }
+            if (inputPropertyValue.get(DEFAULT.getElementName()) != null) {
+                final Gson gson = new Gson();
+                final String json = gson.toJson(inputPropertyValue.get(DEFAULT.getElementName()));
+                log.debug(WITH_ATTRIBUTE, DEFAULT.getElementName(), json);
+                operationInput.setToscaDefaultValue(json);
+            }
+            if (inputPropertyValue.get(STATUS.getElementName()) != null) {
+                final String status = inputPropertyValue.get(STATUS.getElementName()).toString();
+                log.debug(WITH_ATTRIBUTE, STATUS.getElementName(), status);
+                operationInput.setStatus(status);
+            }
+            return;
+        }
+        if (value instanceof String) {
+            final String stringValue = (String) value;
+            operationInput.setDefaultValue(stringValue);
+            operationInput.setToscaDefaultValue(stringValue);
+            operationInput.setValue(stringValue);
+        }
+    }
+
+    private Optional<ArtifactDataDefinition> handleOperationImplementation(final Map<String, Object> operationDefinitionMap) {
+        if (!operationDefinitionMap.containsKey(IMPLEMENTATION.getElementName())) {
+            return Optional.empty();
+        }
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof Map &&
+                ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).containsKey("primary")) {
+            Map<String, Object> implDetails = (Map) ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("primary");
+
+            if (implDetails.get("file") != null) {
+                final String file = implDetails.get("file").toString();
+                artifactDataDefinition.setArtifactName(generateArtifactName(file));
+            }
+            if (implDetails.get("type") != null) {
+                artifactDataDefinition.setArtifactType(implDetails.get("type").toString());
+            }
+            if (implDetails.get("artifact_version") != null) {
+                artifactDataDefinition.setArtifactVersion(implDetails.get("artifact_version").toString());
+            }
+
+            if(implDetails.get("properties") instanceof Map) {
+                List<PropertyDataDefinition> operationProperties = artifactDataDefinition.getProperties() == null ? new ArrayList<>() : artifactDataDefinition.getProperties();
+                Map<String, Object> properties = (Map<String, Object>) implDetails.get("properties");
+                properties.forEach((k,v) -> {
+                    ToscaPropertyType type = getTypeFromObject(v);
+                    if (type != null) {
+                        PropertyDataDefinition propertyDef = new PropertyDataDefinition();
+                        propertyDef.setName(k);
+                        propertyDef.setType(type.getType());
+                        propertyDef.setValue(v.toString());
+                        artifactDataDefinition.addProperty(propertyDef);
+                    }
+                });
+            }
+        }
+        if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof String) {
+            final String implementation = (String) operationDefinitionMap.get(IMPLEMENTATION.getElementName());
+            artifactDataDefinition.setArtifactName(generateArtifactName(implementation));
+        }
+        return Optional.of(artifactDataDefinition);
+    }
+
+    private String generateArtifactName(final String name) {
+        if (OperationArtifactUtil.artifactNameIsALiteralValue(name)) {
+            return name;
+        } else {
+            return QUOTE + name + QUOTE;
+        }
+    }
+
+    private ToscaPropertyType getTypeFromObject(final Object value) {
+        if (value instanceof String) {
+            return ToscaPropertyType.STRING;
+        }
+        if (value instanceof Integer) {
+            return ToscaPropertyType.INTEGER;
+        }
+        if (value instanceof Boolean) {
+            return ToscaPropertyType.BOOLEAN;
+        }
+        if (value instanceof Float || value instanceof Double) {
+            return ToscaPropertyType.FLOAT;
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")

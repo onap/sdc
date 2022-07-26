@@ -1082,7 +1082,7 @@ public class ToscaExportHandler {
 
         final Map<String, InterfaceDefinition> tmpInterfaces = new HashMap<>();
         currServiceInterfaces.forEach(instInterface -> tmpInterfaces.put(instInterface
-            .getUniqueId(), instInterface));
+            .getInterfaceId(), instInterface));
 
         final Map<String, Object> interfaceMap = interfacesOperationsConverter
             .getInterfacesMap(parentComponent, componentInstance, tmpInterfaces, dataTypes, isComponentOfTypeServiceProxy(componentInstance),
