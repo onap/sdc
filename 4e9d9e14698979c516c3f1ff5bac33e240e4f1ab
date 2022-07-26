@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "0fefe3c6_e603759a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/InputsBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-07-26T15:18:24Z",
+      "side": 1,
+      "message": "ResourcesServlet::createResource -\u003e ResourceBusinessLogic::createResource -\u003e createResourceFromCsar -\u003e createResourceFromYaml -\u003e createResourceAndRIsFromYaml -\u003e createInputsOnResource -\u003e inputsBusinessLogic.createInputsInGraph -\u003e prepareAndValidateInputBeforeCreate",
+      "parentUuid": "86949f96_96b5edc6",
+      "range": {
+        "startLine": 721,
+        "startChar": 0,
+        "endLine": 721,
+        "endChar": 123
+      },
+      "revId": "4e9d9e14698979c516c3f1ff5bac33e240e4f1ab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c798c7c4_5a6451c8",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/property/DefaultPropertyDeclarator.java",
         "patchSetId": 12
