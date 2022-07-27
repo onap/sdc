@@ -28,9 +28,9 @@ import static org.mockito.Mockito.anyMap;
 import static org.mockito.Mockito.contains;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.matches;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.components.impl.ServiceImportBusinessLogic.CREATE_RESOURCE;
@@ -46,6 +46,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +56,7 @@ import java.util.Set;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,6 +75,7 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.externalapi.servlet.ArtifactExternalServlet;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
@@ -157,10 +160,22 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     @Test
     void testCreateService_OK() {
         Service oldService = createServiceObject(true);
+        oldService.setComponentInstances(creatComponentInstances());
+        oldService.setComponentInstancesProperties(
+            Collections.singletonMap(COMPONENT_ID, Collections.singletonList(new ComponentInstanceProperty())));
         String payloadName = "valid_vf";
         Map<String, byte[]> payload = crateCsarFromPayload();
         Service newService = createServiceObject(true);
         newService.setComponentInstances(creatComponentInstances());
+        ComponentInstanceProperty componentInstanceProperty = new ComponentInstanceProperty();
+        componentInstanceProperty.setName("propertiesName");
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ToscaGetFunctionType.GET_INPUT.getFunctionName(), "zxjTestImportServiceAb_propertiesName");
+        componentInstanceProperty.setValue(jsonObject.toJSONString());
+
+        newService.setComponentInstancesProperties(
+            Collections.singletonMap(COMPONENT_ID + "." + "zxjTestImportServiceAb", Collections.singletonList(componentInstanceProperty)));
+        newService.setProperties(getProperties());
 
         when(serviceBusinessLogic.validateServiceBeforeCreate(eq(newService), any(User.class), any(AuditingActionEnum.class)))
             .thenReturn(Either.left(newService));
@@ -200,12 +215,15 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponentByName(anyString(), anyString(), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
         when(serviceImportParseLogic.createOutputsOnService(any(Service.class), any(), anyString())).thenReturn(newService);
-        
+        when(toscaOperationFacade.updateInputsToComponent(anyList(), eq(newService.getUniqueId()))).thenReturn(Either.left(new ArrayList<>()));
+
         when(applicationDataTypeCache.get(any(), contains("tosca.datatypes.test_"))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(applicationDataTypeCache.get(any(), matches("^((?!tosca.datatypes.test_).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
-        
+
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.left(null));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.updatePropertyOfComponent(eq(oldService), any(PropertyDefinition.class))).thenReturn(Either.left(null));
+        when(toscaOperationFacade.updateComponentInstancePropsToComponent(anyMap(), anyString())).thenReturn(Either.left(null));
 
         Service result = sIBL.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
         assertNotNull(result);
@@ -218,7 +236,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         assertEquals(1, result.getComponentInstances().get(0).getRequirements().size());
         assertNotNull(result.getCategories());
         assertEquals(1, result.getCategories().size());
-        
+
         ArgumentCaptor<String> yaml = ArgumentCaptor.forClass(String.class);
         verify(dataTypeBusinessLogic).createDataTypeFromYaml(yaml.capture(), isNull(), anyBoolean());
         Map<String, Object> yamlMap = new Yaml().load(yaml.getValue());
@@ -953,7 +971,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         List<UploadPropInfo> propertyList = getPropertyList();
         Assertions.assertNotNull(resource);
         Assertions.assertNotNull(currPropertiesMap);
-        sIBL.processProperty(resource, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
+        sIBL.processProperty(resource, allDataTypes, currPropertiesMap, instPropList, propertyList);
     }
 
     @Test
@@ -1293,7 +1311,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         propertyList.add(propertyInfo);
         Assertions.assertNotNull(resource);
 
-        sIBL.processProperty(resource, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
+        sIBL.processProperty(resource, allDataTypes, currPropertiesMap, instPropList, propertyList);
     }
 
     @Test
@@ -2326,6 +2344,8 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         componentInstance.setUniqueId("uniqueId");
         componentInstance.setComponentUid("componentUid");
         componentInstance.setName("zxjTestImportServiceAb");
+        componentInstance.setNormalizedName("zxjTestImportServiceAb");
+        componentInstance.setProperties(getProperties());
         componentInstances.add(componentInstance);
         return componentInstances;
     }
@@ -2375,20 +2395,20 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     protected ServiceCsarInfo getCsarInfo() {
         String csarUuid = "0010";
         User user = new User("jh0003");
-        
+
         try {
             File csarFile = new File(
-                    ServiceImportBusinessLogicTest.class.getClassLoader().getResource("csars/service-Ser09080002-csar.csar").toURI());
+                ServiceImportBusinessLogicTest.class.getClassLoader().getResource("csars/service-Ser09080002-csar.csar").toURI());
             Map<String, byte[]> csar = ZipUtils.readZip(csarFile, false);
-        
+
             String vfReousrceName = "resouceName";
             String mainTemplateName = "Definitions/service_import_template.yml";
-            
+
             Optional<String> keyOp = csar.keySet().stream().filter(k -> k.endsWith("service-Ser09080002-template.yml")).findAny();
             byte[] mainTemplateService = keyOp.map(csar::get).orElse(null);
             assertNotNull(mainTemplateService);
             final String mainTemplateContent = new String(mainTemplateService);
-            
+
             return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
         } catch (URISyntaxException | ZipException e) {
             fail(e);
