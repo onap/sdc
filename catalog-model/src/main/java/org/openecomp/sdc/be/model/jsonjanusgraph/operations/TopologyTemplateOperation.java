@@ -152,7 +152,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             return Either.right(associateInstProperties);
         }
         StorageOperationStatus associateInstInputs = associateInstInputsToComponent(topologyTemplateVertex, topologyTemplate);
-        if (associateInstProperties != StorageOperationStatus.OK) {
+        if (associateInstInputs != StorageOperationStatus.OK) {
             return Either.right(associateInstInputs);
         }
         StorageOperationStatus associateInstGroups = associateInstGroupsToComponent(topologyTemplateVertex, topologyTemplate);
@@ -184,7 +184,7 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
             return Either.right(associateInterfaces);
         }
         StorageOperationStatus associatePathProperties = associateForwardingPathToResource(topologyTemplateVertex, topologyTemplate);
-        if (associateCapProperties != StorageOperationStatus.OK) {
+        if (associatePathProperties != StorageOperationStatus.OK) {
             return Either.right(associatePathProperties);
         }
         final StorageOperationStatus associateServiceToModel = associateComponentToModel(topologyTemplateVertex, topologyTemplate,
@@ -386,15 +386,15 @@ public class TopologyTemplateOperation extends ToscaElementOperation {
     }
 
     public StorageOperationStatus associateInstInterfacesToComponent(
-            GraphVertex nodeTypeVertex,
-            Map<String, MapInterfaceDataDefinition> instInterfaces
+        GraphVertex nodeTypeVertex,
+        Map<String, MapInterfaceDataDefinition> instInterfaces
     ) {
         if (instInterfaces != null && !instInterfaces.isEmpty()) {
             Either<GraphVertex, StorageOperationStatus> associateElementToData = associateElementToData(
-                    nodeTypeVertex,
-                    VertexTypeEnum.INST_INTERFACES,
-                    EdgeLabelEnum.INST_INTERFACES,
-                    instInterfaces);
+                nodeTypeVertex,
+                VertexTypeEnum.INST_INTERFACES,
+                EdgeLabelEnum.INST_INTERFACES,
+                instInterfaces);
             if (associateElementToData.isRight()) {
                 return associateElementToData.right().value();
             }
