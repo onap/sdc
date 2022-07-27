@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +45,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.json.simple.JSONObject;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
@@ -63,7 +66,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
-import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
+import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -76,6 +79,7 @@ import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterProp
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
@@ -124,7 +128,6 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.PropertyOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -160,8 +163,6 @@ public class ServiceImportBusinessLogic {
 
     private final ComponentsUtils componentsUtils;
     private final ToscaOperationFacade toscaOperationFacade;
-    private final UiComponentDataConverter uiComponentDataConverter;
-    private final ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
     private final ServiceBusinessLogic serviceBusinessLogic;
     private final CsarBusinessLogic csarBusinessLogic;
     private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
@@ -169,7 +170,6 @@ public class ServiceImportBusinessLogic {
     private final CompositionBusinessLogic compositionBusinessLogic;
     private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
     private final ServiceImportParseLogic serviceImportParseLogic;
-    private final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
     private final GroupBusinessLogic groupBusinessLogic;
     private final PolicyBusinessLogic policyBusinessLogic;
     private final ResourceImportManager resourceImportManager;
@@ -177,28 +177,19 @@ public class ServiceImportBusinessLogic {
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
     private final IGraphLockOperation graphLockOperation;
     private final ToscaFunctionService toscaFunctionService;
-    private final PropertyOperation propertyOperation;
     private final DataTypeBusinessLogic dataTypeBusinessLogic;
     private ApplicationDataTypeCache applicationDataTypeCache;
 
-    public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic,
-                                      final ArtifactsBusinessLogic artifactsBusinessLogic,
-                                      final ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
-                                      final UiComponentDataConverter uiComponentDataConverter, final ComponentsUtils componentsUtils,
-                                      final ToscaOperationFacade toscaOperationFacade, final ServiceBusinessLogic serviceBusinessLogic,
-                                      final CsarBusinessLogic csarBusinessLogic,
+    public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
+                                      final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
+                                      final ServiceBusinessLogic serviceBusinessLogic, final CsarBusinessLogic csarBusinessLogic,
                                       final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic,
                                       final LifecycleBusinessLogic lifecycleBusinessLogic, final CompositionBusinessLogic compositionBusinessLogic,
                                       final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic,
-                                      final ServiceImportParseLogic serviceImportParseLogic,
-                                      final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic,
-                                      final PolicyBusinessLogic policyBusinessLogic, final JanusGraphDao janusGraphDao,
+                                      final ServiceImportParseLogic serviceImportParseLogic, final PolicyBusinessLogic policyBusinessLogic,
+                                      final ResourceImportManager resourceImportManager, final JanusGraphDao janusGraphDao,
                                       final IGraphLockOperation graphLockOperation, final ToscaFunctionService toscaFunctionService,
-                                      final PropertyOperation propertyOperation, final DataTypeBusinessLogic dataTypeBusinessLogic,
-                                      ResourceImportManager resourceImportManager) {
-        this.resourceImportManager = resourceImportManager;
-        this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
-        this.uiComponentDataConverter = uiComponentDataConverter;
+                                      final DataTypeBusinessLogic dataTypeBusinessLogic) {
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
         this.serviceBusinessLogic = serviceBusinessLogic;
@@ -208,14 +199,13 @@ public class ServiceImportBusinessLogic {
         this.compositionBusinessLogic = compositionBusinessLogic;
         this.resourceDataMergeBusinessLogic = resourceDataMergeBusinessLogic;
         this.serviceImportParseLogic = serviceImportParseLogic;
-        this.componentNodeFilterBusinessLogic = componentNodeFilterBusinessLogic;
         this.groupBusinessLogic = groupBusinessLogic;
         this.policyBusinessLogic = policyBusinessLogic;
+        this.resourceImportManager = resourceImportManager;
         this.janusGraphDao = janusGraphDao;
         this.artifactsBusinessLogic = artifactsBusinessLogic;
         this.graphLockOperation = graphLockOperation;
         this.toscaFunctionService = toscaFunctionService;
-        this.propertyOperation = propertyOperation;
         this.dataTypeBusinessLogic = dataTypeBusinessLogic;
     }
 
@@ -286,8 +276,9 @@ public class ServiceImportBusinessLogic {
     private Map<String, Object> getDatatypesToCreate(final String model, final CsarInfo csarInfo) {
         final Map<String, Object> dataTypesToCreate = new HashMap<>();
 
-        for (final Entry<String, Object> dataTypeEntry : csarInfo.getDataTypes().entrySet()){
-            final Either<DataTypeDefinition, JanusGraphOperationStatus> result = applicationDataTypeCache.get(model, UniqueIdBuilder.buildDataTypeUid(model, dataTypeEntry.getKey()));
+        for (final Entry<String, Object> dataTypeEntry : csarInfo.getDataTypes().entrySet()) {
+            final Either<DataTypeDefinition, JanusGraphOperationStatus> result = applicationDataTypeCache.get(model,
+                UniqueIdBuilder.buildDataTypeUid(model, dataTypeEntry.getKey()));
             if (result.isRight() && result.right().value().equals(JanusGraphOperationStatus.NOT_FOUND)) {
                 dataTypesToCreate.put(dataTypeEntry.getKey(), dataTypeEntry.getValue());
                 log.info("Deploying unknown type " + dataTypeEntry.getKey() + " to model " + model + " from package " + csarInfo.getCsarUUID());
@@ -375,6 +366,7 @@ public class ServiceImportBusinessLogic {
             }
             log.debug("name is locked {} status = {}", service.getSystemName(), lockResult);
         }
+        boolean rollback = false;
         try {
             log.trace("************* Adding properties to service from interface yaml {}", yamlName);
             Map<String, PropertyDefinition> properties = parsedToscaYamlInfo.getProperties();
@@ -440,19 +432,156 @@ public class ServiceImportBusinessLogic {
                 throw new ComponentException(createArtifactsEither.right().value());
             }
             service = serviceImportParseLogic.getServiceWithGroups(createArtifactsEither.left().value().getUniqueId());
+            service = updateInputs(service, userId);
+
             ASDCKpiApi.countCreatedResourcesKPI();
             return service;
         } catch (ComponentException | StorageException | BusinessLogicException e) {
+            rollback = true;
             serviceImportParseLogic.rollback(inTransaction, service, createdArtifacts, nodeTypesNewCreatedArtifacts);
             throw e;
         } finally {
             if (!inTransaction) {
-                janusGraphDao.commit();
+                if (rollback) {
+                    janusGraphDao.rollback();
+                } else {
+                    janusGraphDao.commit();
+                }
             }
             if (shouldLock) {
                 graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Resource);
             }
         }
+    }
+
+    private Service updateInputs(final Service component, final String userId) {
+        final List<InputDefinition> inputs = component.getInputs();
+        final List<ComponentInstance> componentInstances = component.getComponentInstances();
+        final String componentUniqueId = component.getUniqueId();
+        final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties = component.getComponentInstancesProperties();
+        for (final InputDefinition input : inputs) {
+            if (isInputFromComponentInstanceProperty(input.getName(), componentInstances, componentInstancesProperties)) {
+                associateInputToComponentInstanceProperty(userId, input, componentInstances, componentInstancesProperties,
+                    componentUniqueId);
+            } else {
+                associateInputToServiceProperty(userId, input, component);
+            }
+
+        }
+
+        final Either<List<InputDefinition>, StorageOperationStatus> either
+            = toscaOperationFacade.updateInputsToComponent(inputs, componentUniqueId);
+        if (either.isRight()) {
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
+        }
+
+        return component;
+    }
+
+    private boolean isInputFromComponentInstanceProperty(final String inputName, final List<ComponentInstance> componentInstances,
+                                                         final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties) {
+        if (CollectionUtils.isNotEmpty(componentInstances)) {
+            // get instance's names
+            final List<String> componentInstancesNames = componentInstances.stream().map(ComponentInstanceDataDefinition::getNormalizedName)
+                .collect(toList());
+            final Optional<String> componentInstancesNameOptional = componentInstancesNames.stream()
+                .filter(cin -> inputName.startsWith(cin + "_")).findFirst();
+            if (componentInstancesNameOptional.isPresent() && MapUtils.isNotEmpty(componentInstancesProperties)) {
+                final Optional<String> componentInstanceIdOptional = componentInstancesProperties.keySet().stream()
+                    .filter(key -> key.endsWith("." + componentInstancesNameOptional.get())).findFirst();
+                if (componentInstanceIdOptional.isPresent()) {
+                    // get property's name
+                    final String propertyNameFromInput = extractPropertyNameFromInputName(inputName, componentInstancesNames);
+                    return componentInstancesProperties.get(componentInstanceIdOptional.get()).stream()
+                        .anyMatch(prop -> prop.getName().equals(propertyNameFromInput) && prop.getValue() != null
+                            && prop.getValue().contains(ToscaGetFunctionType.GET_INPUT.getFunctionName()));
+                }
+            }
+        }
+        return false;
+    }
+
+    private void associateInputToComponentInstanceProperty(final String userId, final InputDefinition input,
+                                                           final List<ComponentInstance> componentInstances,
+                                                           final Map<String, List<ComponentInstanceProperty>> componentInstancesProperties,
+                                                           String componentUniqueId) {
+        // From Instance
+        final List<String> componentInstancesNames = componentInstances.stream().map(ComponentInstanceDataDefinition::getNormalizedName)
+            .collect(toList());
+        final String propertyNameFromInput = extractPropertyNameFromInputName(input.getName(), componentInstancesNames);
+
+        final Optional<String> componentInstancesNameOptional = componentInstancesNames.stream()
+            .filter(cin -> input.getName().startsWith(cin + "_")).findFirst();
+
+        final Optional<String> componentInstanceIdOptional = componentInstancesProperties.keySet().stream()
+            .filter(key -> key.endsWith("." + componentInstancesNameOptional.get())).findFirst();
+
+        final String componentInstanceId = componentInstanceIdOptional.get();
+        final List<ComponentInstanceProperty> componentInstanceProperties = componentInstancesProperties.get(componentInstanceId);
+
+        final ComponentInstanceProperty componentInstanceProperty = componentInstanceProperties.stream()
+            .filter(prop -> prop.getName().equals(propertyNameFromInput) && prop.getValue() != null
+                && prop.getValue().contains(ToscaGetFunctionType.GET_INPUT.getFunctionName())).findFirst().get();
+
+        // From Instance
+        updateInput(input, componentInstanceProperty, userId, componentInstanceId);
+
+        final Either<Map<String, List<ComponentInstanceProperty>>, StorageOperationStatus> either =
+            toscaOperationFacade.updateComponentInstancePropsToComponent(Collections.singletonMap(componentInstanceId,
+                Collections.singletonList(componentInstanceProperty)), componentUniqueId);
+        if (either.isRight()) {
+            throw new ComponentException(ActionStatus.GENERAL_ERROR);
+        }
+    }
+
+    private void associateInputToServiceProperty(final String userId,
+                                                 final InputDefinition input, final Service component) {
+        final List<PropertyDefinition> properties = component.getProperties();
+        if (CollectionUtils.isNotEmpty(properties)) {
+            final String propertyNameFromInput = input.getName();
+            final Optional<PropertyDefinition> propDefOptional = properties.stream().filter(prop -> prop.getName().equals(propertyNameFromInput))
+                .findFirst();
+            if (propDefOptional.isPresent()) {
+                // From SELF
+                final String componentUniqueId = component.getUniqueId();
+                final PropertyDefinition propertyDefinition = propDefOptional.get();
+                updateProperty(propertyDefinition, input, componentUniqueId);
+                final JSONObject jsonObject = new JSONObject();
+                jsonObject.put(ToscaGetFunctionType.GET_INPUT.getFunctionName(), input.getName());
+                propertyDefinition.setValue(jsonObject.toJSONString());
+                updateInput(input, propertyDefinition, userId, componentUniqueId);
+
+                final Either<PropertyDefinition, StorageOperationStatus> either
+                    = toscaOperationFacade.updatePropertyOfComponent(component, propertyDefinition);
+                if (either.isRight()) {
+                    throw new ComponentException(ActionStatus.GENERAL_ERROR);
+                }
+            }
+        }
+    }
+
+    private void updateProperty(final PropertyDefinition propertyDefinition, final InputDefinition input, final String componentUniqueId) {
+        propertyDefinition.setParentUniqueId(componentUniqueId);
+        final GetInputValueDataDefinition getInputValueDataDefinition = new GetInputValueDataDefinition();
+        getInputValueDataDefinition.setInputId(input.getUniqueId());
+        getInputValueDataDefinition.setInputName(input.getName());
+        getInputValueDataDefinition.setPropName(propertyDefinition.getName());
+        propertyDefinition.setGetInputValues(Collections.singletonList(getInputValueDataDefinition));
+    }
+
+    private void updateInput(final InputDefinition input, final PropertyDefinition propertyDefinition,
+                             final String userId, final String componentUniqueId) {
+        input.setProperties(Collections.singletonList(new ComponentInstanceProperty(propertyDefinition)));
+        input.setInstanceUniqueId(componentUniqueId);
+        input.setOwnerId(userId);
+        input.setPropertyId(propertyDefinition.getUniqueId());
+        input.setParentPropertyType(propertyDefinition.getType());
+    }
+
+    private String extractPropertyNameFromInputName(final String inputName, final List<String> componentInstancesNames) {
+        final AtomicReference<String> result = new AtomicReference<>(inputName);
+        componentInstancesNames.forEach(cin -> result.set(result.get().replace(cin + "_", "")));
+        return result.get();
     }
 
     protected Either<Resource, ResponseFormat> createOrUpdateArtifacts(ArtifactsBusinessLogic.ArtifactOperationEnum operation,
@@ -713,9 +842,7 @@ public class ServiceImportBusinessLogic {
                     handledNodeTypeArtifacts.addAll(handleNodeTypeArtifactsRequestRes);
                 }
             }
-            if (handleNodeTypeArtifactsRes == null) {
-                handleNodeTypeArtifactsRes = Either.left(handledNodeTypeArtifacts);
-            }
+            handleNodeTypeArtifactsRes = Either.left(handledNodeTypeArtifacts);
         } catch (Exception e) {
             ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR);
             handleNodeTypeArtifactsRes = Either.right(responseFormat);
@@ -1002,7 +1129,8 @@ public class ServiceImportBusinessLogic {
             .filter(PropertyDataDefinition::isToscaFunction)
             .forEach(policyDefinition ->
                 toscaFunctionService
-                    .updateFunctionWithDataFromSelfComponent(policyDefinition.getToscaFunction(), service, service.getComponentInstancesProperties(), instanceAttributeMap)
+                    .updateFunctionWithDataFromSelfComponent(policyDefinition.getToscaFunction(), service, service.getComponentInstancesProperties(),
+                        instanceAttributeMap)
             );
         policyBusinessLogic.createPolicies(service, policies);
         return getServiceResponseFormatEither(service);
@@ -1093,7 +1221,7 @@ public class ServiceImportBusinessLogic {
                 i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
                     componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties, instCapabilities,
                     instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter,
-                        instInterfaces, i));
+                    instInterfaces, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
@@ -1115,7 +1243,7 @@ public class ServiceImportBusinessLogic {
         return eitherGetResource.left().value();
     }
 
-    protected void processProperty(Resource resource, ComponentInstance currentCompInstance, Map<String, DataTypeDefinition> allDataTypes,
+    protected void processProperty(Resource resource, Map<String, DataTypeDefinition> allDataTypes,
                                    Map<String, InputDefinition> currPropertiesMap, List<ComponentInstanceInput> instPropList,
                                    List<UploadPropInfo> propertyList) {
         UploadPropInfo propertyInfo = propertyList.get(0);
@@ -1399,10 +1527,13 @@ public class ServiceImportBusinessLogic {
                                                                                    List<ArtifactDefinition> nodeTypesNewCreatedArtifacts,
                                                                                    boolean forceCertificationAllowed, CsarInfo csarInfo,
                                                                                    boolean isNested) {
-        UploadResourceInfo resourceMetaData = serviceImportParseLogic.fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(), user);
+        final var validatedUser = serviceBusinessLogic.validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE,
+            true);
+        UploadResourceInfo resourceMetaData = serviceImportParseLogic.fillResourceMetadata(yamlName, resourceVf, nodeNameValue.getKey(),
+            validatedUser);
         String singleVfcYaml = serviceImportParseLogic.buildNodeTypeYaml(nodeNameValue, mapToConvert, resourceMetaData.getResourceType(), csarInfo);
-        user = serviceBusinessLogic.validateUser(user, "CheckIn Resource", resourceVf, AuditingActionEnum.CHECKIN_RESOURCE, true);
-        return serviceImportParseLogic.createResourceFromNodeType(singleVfcYaml, resourceMetaData, user, true, needLock, nodeTypeArtifactsToHandle,
+        return serviceImportParseLogic.createResourceFromNodeType(singleVfcYaml, resourceMetaData, validatedUser, true, needLock,
+            nodeTypeArtifactsToHandle,
             nodeTypesNewCreatedArtifacts, forceCertificationAllowed, csarInfo, nodeNameValue.getKey(), isNested);
     }
 
@@ -1461,14 +1592,14 @@ public class ServiceImportBusinessLogic {
                     allDataTypesMap, instProperties,
                     instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs,
                     instNodeFilter, instInterfaces, i)
-                );
+            );
         }
         updatePropertyToscaFunctionData(service, instProperties, instAttributes);
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
         serviceImportParseLogic.associateComponentInstanceInterfacesToComponent(
-                yamlName,
-                service,
-                instInterfaces
+            yamlName,
+            service,
+            instInterfaces
         );
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
         serviceImportParseLogic.associateCINodeFilterToComponent(yamlName, service, instNodeFilter);
@@ -1567,11 +1698,11 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(uploadComponentInstanceInfo.getInterfaces())) {
 
             ResponseFormat addInterfacesToRiRes = addInterfaceValuesToRi(
-                    uploadComponentInstanceInfo,
-                    component,
-                    originResource,
-                    currentCompInstance,
-                    instInterfaces
+                uploadComponentInstanceInfo,
+                component,
+                originResource,
+                currentCompInstance,
+                instInterfaces
             );
             if (addInterfacesToRiRes.getStatus() != 200) {
                 throw new ComponentException(addInterfacesToRiRes);
@@ -1602,7 +1733,7 @@ public class ServiceImportBusinessLogic {
                 }
                 originResource.getInputs().forEach(p -> serviceImportParseLogic.addInput(currPropertiesMap, p));
                 for (List<UploadPropInfo> propertyList : propMap.values()) {
-                    processProperty(component, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
+                    processProperty(component, allDataTypes, currPropertiesMap, instPropList, propertyList);
                 }
                 currPropertiesMap.values().forEach(p -> instPropList.add(new ComponentInstanceInput(p)));
                 instInputs.put(currentCompInstance.getUniqueId(), instPropList);
@@ -1613,7 +1744,7 @@ public class ServiceImportBusinessLogic {
         }
     }
 
-    protected void processProperty(Component component, ComponentInstance currentCompInstance, Map<String, DataTypeDefinition> allDataTypes,
+    protected void processProperty(Component component, Map<String, DataTypeDefinition> allDataTypes,
                                    Map<String, InputDefinition> currPropertiesMap, List<ComponentInstanceInput> instPropList,
                                    List<UploadPropInfo> propertyList) {
         UploadPropInfo propertyInfo = propertyList.get(0);
@@ -1735,10 +1866,10 @@ public class ServiceImportBusinessLogic {
     }
 
     protected ResponseFormat addInterfaceValuesToRi(
-            UploadComponentInstanceInfo uploadComponentInstanceInfo,
-            Component component,
-            Resource originResource, ComponentInstance currentCompInstance,
-            Map<String, Map<String, InterfaceDefinition>> instInterfaces
+        UploadComponentInstanceInfo uploadComponentInstanceInfo,
+        Component component,
+        Resource originResource, ComponentInstance currentCompInstance,
+        Map<String, Map<String, InterfaceDefinition>> instInterfaces
     ) {
         Map<String, UploadInterfaceInfo> instanceInterfacesMap = uploadComponentInstanceInfo.getInterfaces();
         Map<String, InterfaceDefinition> currInterfacesMap = new HashMap<>();
@@ -1804,24 +1935,21 @@ public class ServiceImportBusinessLogic {
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> inputsFromNodeType,
                                                 ListDataDefinition<OperationInputDefinition> instanceInputs) {
         instanceInputs.getListToscaDataDefinition().forEach(
-                instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().filter(
-                        templateInput -> templateInput.getName().equals(instanceInput.getName())
-                ).forEach(
-                        newInstanceInput -> {
-                            instanceInput.setSourceProperty(newInstanceInput.getSourceProperty());
-                            instanceInput.setSource(newInstanceInput.getSource());
-                            instanceInput.setType(newInstanceInput.getType());
-                        }
-                )
+            instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().filter(
+                templateInput -> templateInput.getName().equals(instanceInput.getName())
+            ).forEach(
+                newInstanceInput -> {
+                    instanceInput.setSourceProperty(newInstanceInput.getSourceProperty());
+                    instanceInput.setSource(newInstanceInput.getSource());
+                    instanceInput.setType(newInstanceInput.getType());
+                }
+            )
         );
-        ListDataDefinition<OperationInputDefinition> newInputsToAdd = new ListDataDefinition<>();
         instanceInputs.getListToscaDataDefinition().stream()
-                .filter(instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().noneMatch(
-                    inputFromNodeType -> inputFromNodeType.getName().equals(instanceInput.getName())
-                ))
-                .forEach(oldInput -> {
-                    oldInput.setType("string");
-                });
+            .filter(instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().noneMatch(
+                inputFromNodeType -> inputFromNodeType.getName().equals(instanceInput.getName())
+            ))
+            .forEach(oldInput -> oldInput.setType("string"));
     }
 
     protected void processComponentInstanceCapabilities(Map<String, DataTypeDefinition> allDataTypes,
@@ -2729,7 +2857,7 @@ public class ServiceImportBusinessLogic {
             mapToConvert.put(TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), toscaVersion.left().value());
             Map<String, Object> nodeTypes = serviceImportParseLogic.getNodeTypesFromTemplate(mappedToscaTemplate);
             createNodeTypes(yamlName, service, needLock, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                    mapToConvert, nodeTypes);
+                mapToConvert, nodeTypes);
             return csarInfo.getCreatedNodes();
         } catch (Exception e) {
             log.debug("Exception occured when createResourcesFromYamlNodeTypesList,error is:{}", e.getMessage(), e);
