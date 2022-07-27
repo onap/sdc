@@ -85,6 +85,7 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
@@ -269,6 +270,14 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         service.setContactId("aa1234");
         service.setProjectCode("12345");
         service.setEcompGeneratedNaming(true);
+
+        List<InputDefinition> inputs = new ArrayList<>();
+        InputDefinition inputDefinition = new InputDefinition();
+        inputDefinition.setName("propertiesName");
+        inputDefinition.setUniqueId("uniqueId");
+        inputDefinition.setType("inputDefinitionType");
+        inputs.add(inputDefinition);
+        service.setInputs(inputs);
 
         if (afterCreate) {
             service.setVersion("0.1");
