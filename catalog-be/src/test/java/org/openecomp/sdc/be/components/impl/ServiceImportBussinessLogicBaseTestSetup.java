@@ -85,9 +85,11 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.GroupDefinition;
+import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.ParsedToscaYamlInfo;
+import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -118,7 +120,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     protected static final String INSTANTIATION_TYPE = "A-la-carte";
     protected static final String CERTIFIED_VERSION = "1.0";
     protected static final String UNCERTIFIED_VERSION = "0.2";
-    protected static final String COMPONNET_ID = "myUniqueId";
+    protected static final String COMPONENT_ID = "myUniqueId";
     protected static final String GENERIC_SERVICE_NAME = "org.openecomp.resource.abstract.nodes.service";
     protected static final String SERVICE_ROLE = JsonPresentationFields.SERVICE_ROLE.getPresentation();
     protected static final String SERVICE_TYPE = JsonPresentationFields.SERVICE_TYPE.getPresentation();
@@ -270,6 +272,19 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         service.setProjectCode("12345");
         service.setEcompGeneratedNaming(true);
 
+        List<InputDefinition> inputs = new ArrayList<>();
+        InputDefinition input_1 = new InputDefinition();
+        input_1.setName("propertiesName");
+        input_1.setUniqueId("uniqueId");
+        input_1.setType("inputDefinitionType");
+        inputs.add(input_1);
+        InputDefinition input_2 = new InputDefinition();
+        input_2.setName("zxjTestImportServiceAb_propertiesName");
+        input_2.setUniqueId("uniqueId");
+        input_2.setType("inputDefinitionType");
+        inputs.add(input_2);
+        service.setInputs(inputs);
+
         if (afterCreate) {
             service.setVersion("0.1");
             service.setUniqueId(service.getName() + ":" + service.getVersion());
@@ -309,7 +324,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
 
     protected Resource createParseResourceObject(boolean afterCreate) {
         Resource resource = new Resource();
-        resource.setUniqueId(COMPONNET_ID);
+        resource.setUniqueId(COMPONENT_ID);
         resource.setName(RESOURCE_NAME);
         resource.setToscaResourceName(RESOURCE_TOSCA_NAME);
         resource.addCategory(RESOURCE_CATEGORY1, RESOURCE_SUBCATEGORY);
@@ -487,6 +502,7 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
         componentInstance.setUniqueId("uniqueId");
         componentInstance.setComponentUid("componentUid");
         componentInstance.setName("zxjTestImportServiceAb");
+        componentInstance.setProperties(Collections.singletonList(new PropertyDefinition()));
         componentInstances.add(componentInstance);
         return componentInstances;
     }
