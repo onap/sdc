@@ -144,6 +144,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, byte[]> payload = crateCsarFromPayload();
         Service newService = createServiceObject(true);
         newService.setComponentInstances(creatComponentInstances());
+        newService.setProperties(getProperties());
 
         when(serviceBusinessLogic.validateServiceBeforeCreate(eq(newService), any(User.class), any(AuditingActionEnum.class)))
             .thenReturn(Either.left(newService));
@@ -183,6 +184,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(mockJanusGraphDao.commit()).thenReturn(JanusGraphOperationStatus.OK);
         when(graphLockOperation.unlockComponentByName(anyString(), anyString(), any(NodeTypeEnum.class))).thenReturn(StorageOperationStatus.OK);
         when(serviceImportParseLogic.createOutputsOnService(any(Service.class), any(), anyString())).thenReturn(newService);
+        when(toscaOperationFacade.updateInputsToComponent(anyList(), eq(newService.getUniqueId()))).thenReturn(Either.left(new ArrayList<>()));
 
         Service result = sIBL.createService(oldService, AuditingActionEnum.CREATE_RESOURCE, user, payload, payloadName);
         assertNotNull(result);
@@ -923,7 +925,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         List<UploadPropInfo> propertyList = getPropertyList();
         Assertions.assertNotNull(resource);
         Assertions.assertNotNull(currPropertiesMap);
-        sIBL.processProperty(resource, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
+        sIBL.processProperty(resource, allDataTypes, currPropertiesMap, instPropList, propertyList);
     }
 
     @Test
@@ -1263,7 +1265,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         propertyList.add(propertyInfo);
         Assertions.assertNotNull(resource);
 
-        sIBL.processProperty(resource, currentCompInstance, allDataTypes, currPropertiesMap, instPropList, propertyList);
+        sIBL.processProperty(resource, allDataTypes, currPropertiesMap, instPropList, propertyList);
     }
 
     @Test
@@ -2296,6 +2298,8 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         componentInstance.setUniqueId("uniqueId");
         componentInstance.setComponentUid("componentUid");
         componentInstance.setName("zxjTestImportServiceAb");
+        componentInstance.setNormalizedName("zxjTestImportServiceAb");
+        componentInstance.setProperties(getProperties());
         componentInstances.add(componentInstance);
         return componentInstances;
     }
