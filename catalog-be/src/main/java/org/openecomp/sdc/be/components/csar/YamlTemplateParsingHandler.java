@@ -118,22 +118,25 @@ import org.yaml.snakeyaml.parser.ParserException;
 @org.springframework.stereotype.Component
 public class YamlTemplateParsingHandler {
 
-    private static final Pattern propertyValuePattern = Pattern.compile("[ ]*\\{[ ]*(str_replace=|token=|get_property=|concat=|get_attribute=)+");
+    private static final Pattern propertyValuePattern = Pattern.compile("[ ]*\\{[ ]*(str_replace=|token=)+");
     private static final int SUB_MAPPING_CAPABILITY_OWNER_NAME_IDX = 0;
     private static final int SUB_MAPPING_CAPABILITY_NAME_IDX = 1;
     private static final Logger log = Logger.getLogger(YamlTemplateParsingHandler.class);
-    private Gson gson = new Gson();
-    private JanusGraphDao janusGraphDao;
-    private GroupTypeBusinessLogic groupTypeBusinessLogic;
-    private AnnotationBusinessLogic annotationBusinessLogic;
-    private PolicyTypeBusinessLogic policyTypeBusinessLogic;
+    private final Gson gson = new Gson();
+    private final JanusGraphDao janusGraphDao;
+    private final GroupTypeBusinessLogic groupTypeBusinessLogic;
+    private final AnnotationBusinessLogic annotationBusinessLogic;
+    private final PolicyTypeBusinessLogic policyTypeBusinessLogic;
+    private final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler;
 
     public YamlTemplateParsingHandler(JanusGraphDao janusGraphDao, GroupTypeBusinessLogic groupTypeBusinessLogic,
-                                      AnnotationBusinessLogic annotationBusinessLogic, PolicyTypeBusinessLogic policyTypeBusinessLogic) {
+                                      AnnotationBusinessLogic annotationBusinessLogic, PolicyTypeBusinessLogic policyTypeBusinessLogic,
+                                      final ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler) {
         this.janusGraphDao = janusGraphDao;
         this.groupTypeBusinessLogic = groupTypeBusinessLogic;
         this.annotationBusinessLogic = annotationBusinessLogic;
         this.policyTypeBusinessLogic = policyTypeBusinessLogic;
+        this.toscaFunctionYamlParsingHandler = toscaFunctionYamlParsingHandler;
     }
 
     public ParsedToscaYamlInfo parseResourceInfoFromYAML(String fileName, String resourceYml, Map<String, String> createdNodesToscaResourceNames,
@@ -679,7 +682,8 @@ public class YamlTemplateParsingHandler {
 
     private void updateProperties(UploadComponentInstanceInfo nodeTemplateInfo, Map<String, Object> nodeTemplateJsonMap) {
         if (nodeTemplateJsonMap.containsKey(PROPERTIES.getElementName())) {
-            Map<String, List<UploadPropInfo>> properties = buildPropModuleFromYaml(nodeTemplateJsonMap);
+            Map<String, List<UploadPropInfo>> properties =
+                buildPropModuleFromYaml((Map<String, Object>) nodeTemplateJsonMap.get(PROPERTIES.getElementName()));
             if (!properties.isEmpty()) {
                 nodeTemplateInfo.setProperties(properties);
             }
@@ -833,7 +837,8 @@ public class YamlTemplateParsingHandler {
             artifactTemplateInfo.setFile((String) nodeTemplateJsonMap.get(FILE.getElementName()));
         }
         if (nodeTemplateJsonMap.containsKey(PROPERTIES.getElementName())) {
-            Map<String, List<UploadPropInfo>> props = buildPropModuleFromYaml(nodeTemplateJsonMap);
+            Map<String, List<UploadPropInfo>> props =
+                buildPropModuleFromYaml((Map<String, Object>) nodeTemplateJsonMap.get(PROPERTIES.getElementName()));
             if (!props.isEmpty()) {
                 List<UploadPropInfo> properties = props.values().stream().flatMap(Collection::stream).collect(toList());
                 artifactTemplateInfo.setProperties(properties);
@@ -902,7 +907,8 @@ public class YamlTemplateParsingHandler {
             }
         }
         if (nodeTemplateJsonMap.containsKey(PROPERTIES.getElementName())) {
-            Map<String, List<UploadPropInfo>> props = buildPropModuleFromYaml(nodeTemplateJsonMap);
+            Map<String, List<UploadPropInfo>> props =
+                buildPropModuleFromYaml((Map<String, Object>) nodeTemplateJsonMap.get(PROPERTIES.getElementName()));
             if (!props.isEmpty()) {
                 List<UploadPropInfo> properties = props.values().stream().flatMap(Collection::stream).collect(toList());
                 capTemplateInfo.setProperties(properties);
@@ -948,17 +954,9 @@ public class YamlTemplateParsingHandler {
         return attributeDef;
     }
 
-    private Map<String, List<UploadPropInfo>> buildPropModuleFromYaml(Map<String, Object> nodeTemplateJsonMap) {
-        Map<String, List<UploadPropInfo>> moduleProp = new HashMap<>();
-        Either<Map<String, Object>, ResultStatusEnum> toscaProperties = findFirstToscaMapElement(nodeTemplateJsonMap, PROPERTIES);
-        if (toscaProperties.isLeft()) {
-            Map<String, Object> jsonProperties = toscaProperties.left().value();
-            for (Map.Entry<String, Object> jsonPropObj : jsonProperties.entrySet()) {
-                if (valueNotContainsPattern(propertyValuePattern, jsonPropObj.getValue())) {
-                    addProperty(moduleProp, jsonPropObj);
-                }
-            }
-        }
+    private Map<String, List<UploadPropInfo>> buildPropModuleFromYaml(final Map<String, Object> propertyMap) {
+        final Map<String, List<UploadPropInfo>> moduleProp = new HashMap<>();
+        propertyMap.entrySet().forEach(propertyMapEntry -> addProperty(moduleProp, propertyMapEntry));
         return moduleProp;
     }
 
@@ -974,32 +972,35 @@ public class YamlTemplateParsingHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private UploadPropInfo buildProperty(String propName, Object propValue) {
-        UploadPropInfo propertyDef = new UploadPropInfo();
-        propertyDef.setValue(propValue);
+    private UploadPropInfo buildProperty(String propName, Object propValueObj) {
+        final var propertyDef = new UploadPropInfo();
+        propertyDef.setValue(propValueObj);
         propertyDef.setName(propName);
-        if (propValue instanceof Map) {
-            if (((Map<String, Object>) propValue).containsKey(TYPE.getElementName())) {
-                propertyDef.setType(((Map<String, Object>) propValue).get(TYPE.getElementName()).toString());
+        if (propValueObj instanceof Map) {
+            final Map<String, Object> propValueMap = (Map<String, Object>) propValueObj;
+            if (propValueMap.containsKey(TYPE.getElementName())) {
+                propertyDef.setType(propValueMap.get(TYPE.getElementName()).toString());
             }
-            if (containsGetInput(propValue)) {
-                fillInputRecursively(propName, (Map<String, Object>) propValue, propertyDef);
+            if (containsGetInput(propValueObj)) {
+                fillInputRecursively(propName, propValueMap, propertyDef);
             }
-            if (((Map<String, Object>) propValue).containsKey(DESCRIPTION.getElementName())) {
-                propertyDef.setDescription(((Map<String, Object>) propValue).get(DESCRIPTION.getElementName()).toString());
+            if (toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(propValueObj)) {
+                toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue(propValueMap).ifPresent(propertyDef::setToscaFunction);
             }
-            if (((Map<String, Object>) propValue).containsKey(DEFAULT_VALUE.getElementName())) {
-                propertyDef.setValue(((Map<String, Object>) propValue).get(DEFAULT_VALUE.getElementName()));
+            if (propValueMap.containsKey(DESCRIPTION.getElementName())) {
+                propertyDef.setDescription((propValueMap).get(DESCRIPTION.getElementName()).toString());
             }
-            if (((Map<String, Object>) propValue).containsKey(IS_PASSWORD.getElementName())) {
-                propertyDef.setPassword(Boolean.getBoolean(((Map<String, Object>) propValue).get(IS_PASSWORD.getElementName()).toString()));
+            if (propValueMap.containsKey(DEFAULT_VALUE.getElementName())) {
+                propertyDef.setValue(propValueMap.get(DEFAULT_VALUE.getElementName()));
+            }
+            if (propValueMap.containsKey(IS_PASSWORD.getElementName())) {
+                propertyDef.setPassword(Boolean.getBoolean(propValueMap.get(IS_PASSWORD.getElementName()).toString()));
             } else {
-                propertyDef.setValue(propValue);
+                propertyDef.setValue(propValueObj);
             }
-        } else if (propValue instanceof List) {
-            List<Object> propValueList = (List<Object>) propValue;
-            fillInputsListRecursively(propertyDef, propValueList);
-            propertyDef.setValue(propValue);
+        } else if (propValueObj instanceof List) {
+            fillInputsListRecursively(propertyDef, (List<Object>) propValueObj);
+            propertyDef.setValue(propValueObj);
         }
         return propertyDef;
     }

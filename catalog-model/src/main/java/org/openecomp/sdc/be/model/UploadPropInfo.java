@@ -21,14 +21,20 @@ package org.openecomp.sdc.be.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 
+@Setter
+@Getter
 public class UploadPropInfo extends UploadInfo {
 
     private Object value;
     private String description;
     private boolean password;
     private List<GetInputValueDataDefinition> get_input;
+    private ToscaFunction toscaFunction;
 
     public List<GetInputValueDataDefinition> getGet_input() {
         if (get_input == null) {
@@ -37,31 +43,4 @@ public class UploadPropInfo extends UploadInfo {
         return get_input;
     }
 
-    public void setGet_input(List<GetInputValueDataDefinition> get_input) {
-        this.get_input = get_input;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isPassword() {
-        return password;
-    }
-
-    public void setPassword(boolean password) {
-        this.password = password;
-    }
 }
