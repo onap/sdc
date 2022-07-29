@@ -1483,7 +1483,7 @@ class ResourceBusinessLogicTest {
         String resourceYml = new String(csar.get("Definitions/my_vnf.yaml"));
 
         YamlTemplateParsingHandler yamlTemplateParser = new YamlTemplateParsingHandler(mockJanusGraphDao, null,
-            Mockito.mock(AnnotationBusinessLogic.class), null);
+            Mockito.mock(AnnotationBusinessLogic.class), null, null);
         final ParsedToscaYamlInfo parsedToscaYamlInfo = yamlTemplateParser.parseResourceInfoFromYAML("Definitions/my_vnf.yml", resourceYml,
             Collections.EMPTY_MAP, Collections.EMPTY_MAP, "myVnf", resourceResponse, "");
 
