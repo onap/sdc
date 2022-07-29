@@ -53,4 +53,8 @@ public class ToscaConcatFunction implements ToscaFunction, ToscaFunctionParamete
         );
     }
 
+    public void addParameter(final ToscaFunctionParameter functionParameter) {
+        this.parameters.add(functionParameter);
+    }
+
 }

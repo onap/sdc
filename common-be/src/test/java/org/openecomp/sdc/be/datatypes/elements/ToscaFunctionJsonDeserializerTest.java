@@ -27,8 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -84,6 +89,19 @@ class ToscaFunctionJsonDeserializerTest {
         final ValueInstantiationException actualException =
             assertThrows(ValueInstantiationException.class, () -> parseToscaFunction(toscaGetInputFunction));
         assertTrue(actualException.getMessage().contains("Attribute type not provided"));
+    }
+
+    @Test
+    void test() throws IOException {
+        //given
+        final String toscaGetInputFunction = Files.readString(TEST_RESOURCES_PATH.resolve("test.json"));
+        //when/then
+        final ObjectMapper objectMapper = new ObjectMapper()
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .setSerializationInclusion(Include.NON_NULL);
+        JavaType type = objectMapper.getTypeFactory().constructMapType(Map.class, String.class, MapPropertiesDataDefinition.class);
+        assertDoesNotThrow(() -> objectMapper.readerFor(type).readValue(toscaGetInputFunction));
     }
 
     @Test
