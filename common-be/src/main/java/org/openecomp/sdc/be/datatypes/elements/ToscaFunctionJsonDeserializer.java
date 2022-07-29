@@ -105,9 +105,11 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
                                                                        final DeserializationContext context) throws JsonMappingException {
         final ToscaGetFunctionDataDefinition toscaGetFunction = new ToscaGetFunctionDataDefinition();
         toscaGetFunction.setFunctionType(ToscaGetFunctionType.fromToscaFunctionType(toscaFunctionType).orElse(null));
-        toscaGetFunction.setSourceName(node.get("sourceName").asText());
-        toscaGetFunction.setPropertyUniqueId(node.get("propertyUniqueId").asText());
-        final String propertySource = node.get("propertySource").asText();
+        toscaGetFunction.setSourceName(getAsTextOrElseNull(node, "sourceName"));
+        toscaGetFunction.setSourceUniqueId(getAsTextOrElseNull(node, "sourceUniqueId"));
+        toscaGetFunction.setPropertyName(getAsTextOrElseNull(node, "propertyName"));
+        toscaGetFunction.setPropertyUniqueId(getAsTextOrElseNull(node, "propertyUniqueId"));
+        final String propertySource = getAsTextOrElseNull(node, "propertySource");
         if (StringUtils.isNotEmpty(propertySource)) {
             final PropertySource propertySource1 = PropertySource.findType(propertySource).orElseThrow(() ->
                 context.instantiationException(ToscaGetFunctionDataDefinition.class,
@@ -115,9 +117,6 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
             );
             toscaGetFunction.setPropertySource(propertySource1);
         }
-        toscaGetFunction.setPropertyName(node.get("propertyName").asText());
-        toscaGetFunction.setSourceName(node.get("sourceName").asText());
-        toscaGetFunction.setSourceUniqueId(node.get("sourceUniqueId").asText());
         final JsonNode propertyPathFromSourceNode = node.get("propertyPathFromSource");
         if (propertyPathFromSourceNode != null) {
             if (!propertyPathFromSourceNode.isArray()) {
@@ -129,6 +128,17 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
         }
 
         return toscaGetFunction;
+    }
+
+    private String getAsTextOrElseNull(final JsonNode node, final String fieldName) {
+        final JsonNode jsonNode = node.get(fieldName);
+        if (jsonNode == null) {
+            return null;
+        }
+        if (!jsonNode.isTextual()) {
+            return null;
+        }
+        return jsonNode.asText();
     }
 
     private ToscaConcatFunction deserializeConcatFunction(final JsonNode concatFunctionJsonNode,
