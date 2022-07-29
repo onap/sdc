@@ -86,6 +86,8 @@ public class YamlTemplateParsingHandlerTest {
     private User user;
     @Mock
     private PolicyTypeBusinessLogic policyTypeBusinessLogic;
+    @Mock
+    private ToscaFunctionYamlParsingHandler toscaFunctionYamlParsingHandler;
 
     private YamlTemplateParsingHandler handler;
 
@@ -131,10 +133,9 @@ public class YamlTemplateParsingHandlerTest {
 
     @BeforeEach
     public void setup() {
-
-        AnnotationBusinessLogic annotationBusinessLogic = new AnnotationBusinessLogic(annotationTypeOperations,
-            annotationValidator);
-        handler = new YamlTemplateParsingHandler(janusGraphDao, groupTypeBusinessLogic, annotationBusinessLogic, policyTypeBusinessLogic);
+        final var annotationBusinessLogic = new AnnotationBusinessLogic(annotationTypeOperations, annotationValidator);
+        handler = new YamlTemplateParsingHandler(janusGraphDao, groupTypeBusinessLogic, annotationBusinessLogic, policyTypeBusinessLogic,
+            toscaFunctionYamlParsingHandler);
         ReflectionTestUtils.setField(handler, "policyTypeBusinessLogic", policyTypeBusinessLogic);
     }
 
@@ -286,15 +287,15 @@ public class YamlTemplateParsingHandlerTest {
         assertEquals(5, resourceInstanceWithAttributes.getAttributes().size());
 
         assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("fq_name"));
-        assertEquals(resourceInstanceWithAttributes.getAttributes().get("fq_name").getValue(), "fq_name_value");
+        assertEquals("fq_name_value", resourceInstanceWithAttributes.getAttributes().get("fq_name").getValue());
         assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("tosca_name"));
-        assertEquals(resourceInstanceWithAttributes.getAttributes().get("tosca_name").getValue(), "tosca_name_value");
+        assertEquals("tosca_name_value", resourceInstanceWithAttributes.getAttributes().get("tosca_name").getValue());
         assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("subnets_show"));
-        assertEquals(resourceInstanceWithAttributes.getAttributes().get("subnets_show").getValue(), expectedSubnetsShowList);
+        assertEquals(expectedSubnetsShowList, resourceInstanceWithAttributes.getAttributes().get("subnets_show").getValue());
         assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("subnets_name"));
-        assertEquals(resourceInstanceWithAttributes.getAttributes().get("subnets_name").getValue(), expectedSubnetsNameMap);
+        assertEquals(expectedSubnetsNameMap, resourceInstanceWithAttributes.getAttributes().get("subnets_name").getValue());
         assertTrue(resourceInstanceWithAttributes.getAttributes().containsKey("new_attribute"));
-        assertEquals(resourceInstanceWithAttributes.getAttributes().get("new_attribute").getValue(), "new_attribute_value");
+        assertEquals("new_attribute_value", resourceInstanceWithAttributes.getAttributes().get("new_attribute").getValue());
     }
 
     private void validateParsedYaml(ParsedToscaYamlInfo parsedYaml, String group, List<String> expectedProp) {

@@ -33,9 +33,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
@@ -44,7 +47,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.components.csar.CsarArtifactsAndGroupsBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarBusinessLogic;
 import org.openecomp.sdc.be.components.csar.CsarInfo;
-import org.openecomp.sdc.be.components.distribution.engine.IDistributionEngine;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic.ArtifactOperationEnum;
 import org.openecomp.sdc.be.components.impl.artifact.ArtifactOperationInfo;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
@@ -55,16 +57,6 @@ import org.openecomp.sdc.be.components.impl.utils.CreateServiceFromYamlParameter
 import org.openecomp.sdc.be.components.lifecycle.LifecycleBusinessLogic;
 import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
-import org.openecomp.sdc.be.components.path.ForwardingPathValidator;
-import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
-import org.openecomp.sdc.be.components.validation.ServiceDistributionValidation;
-import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentIconValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentNameValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentProjectCodeValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentTagsValidator;
-import org.openecomp.sdc.be.components.validation.component.ComponentValidator;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
@@ -75,6 +67,8 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -87,6 +81,7 @@ import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstance;
+import org.openecomp.sdc.be.model.ComponentInstanceAttribute;
 import org.openecomp.sdc.be.model.ComponentInstanceInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
@@ -117,19 +112,11 @@ import org.openecomp.sdc.be.model.UploadResourceInfo;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.jsonjanusgraph.datamodel.ToscaElement;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ArtifactsOperations;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.InterfaceOperation;
-import org.openecomp.sdc.be.model.jsonjanusgraph.operations.NodeFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
-import org.openecomp.sdc.be.model.operations.api.IElementOperation;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupInstanceOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupOperation;
-import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.utils.TypeUtils;
@@ -177,19 +164,12 @@ public class ServiceImportBusinessLogic {
     private final JanusGraphDao janusGraphDao;
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
     private final IGraphLockOperation graphLockOperation;
+    private final ToscaFunctionService toscaFunctionService;
 
-    public ServiceImportBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
-                                      IGroupTypeOperation groupTypeOperation, GroupBusinessLogic groupBusinessLogic,
-                                      InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
-                                      ArtifactsBusinessLogic artifactsBusinessLogic, IDistributionEngine distributionEngine,
-                                      ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
-                                      ServiceDistributionValidation serviceDistributionValidation, ForwardingPathValidator forwardingPathValidator,
-                                      UiComponentDataConverter uiComponentDataConverter, NodeFilterOperation serviceFilterOperation,
-                                      NodeFilterValidator serviceFilterValidator, ArtifactsOperations artifactToscaOperation,
-                                      ComponentContactIdValidator componentContactIdValidator, ComponentNameValidator componentNameValidator,
-                                      ComponentTagsValidator componentTagsValidator, ComponentValidator componentValidator,
-                                      ComponentIconValidator componentIconValidator, ComponentProjectCodeValidator componentProjectCodeValidator,
-                                      ComponentDescriptionValidator componentDescriptionValidator, final ComponentsUtils componentsUtils,
+    public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic,
+                                      final ArtifactsBusinessLogic artifactsBusinessLogic,
+                                      final ComponentInstanceBusinessLogic componentInstanceBusinessLogic,
+                                      final UiComponentDataConverter uiComponentDataConverter, final ComponentsUtils componentsUtils,
                                       final ToscaOperationFacade toscaOperationFacade, final ServiceBusinessLogic serviceBusinessLogic,
                                       final CsarBusinessLogic csarBusinessLogic,
                                       final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic,
@@ -198,7 +178,7 @@ public class ServiceImportBusinessLogic {
                                       final ServiceImportParseLogic serviceImportParseLogic,
                                       final ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic,
                                       final PolicyBusinessLogic policyBusinessLogic, final JanusGraphDao janusGraphDao,
-                                      final IGraphLockOperation graphLockOperation) {
+                                      final IGraphLockOperation graphLockOperation, final ToscaFunctionService toscaFunctionService) {
         this.componentInstanceBusinessLogic = componentInstanceBusinessLogic;
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.componentsUtils = componentsUtils;
@@ -216,6 +196,7 @@ public class ServiceImportBusinessLogic {
         this.janusGraphDao = janusGraphDao;
         this.artifactsBusinessLogic = artifactsBusinessLogic;
         this.graphLockOperation = graphLockOperation;
+        this.toscaFunctionService = toscaFunctionService;
     }
 
     public Service createService(Service service, AuditingActionEnum auditingAction, User user, Map<String, byte[]> csarUIPayload,
@@ -237,8 +218,11 @@ public class ServiceImportBusinessLogic {
             csarBusinessLogic.validateCsarBeforeCreate(service, csarUUID);
             log.debug("CsarUUID is {} - going to create resource from CSAR", csarUUID);
             return createServiceFromCsar(service, user, csarUIPayload, csarUUID);
-        } catch (Exception e) {
-            log.debug("Exception occured when createService,error is:{}", e.getMessage(), e);
+        } catch (final ComponentException e) {
+            log.debug("Exception occurred when createService: {}", e.getMessage(), e);
+            throw e;
+        } catch (final Exception e) {
+            log.debug("Exception occurred when createService: {}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
     }
@@ -256,8 +240,11 @@ public class ServiceImportBusinessLogic {
             }
             return createServiceFromYaml(service, csarInfo.getMainTemplateContent(), csarInfo.getMainTemplateName(), nodeTypesInfo, csarInfo,
                 findNodeTypesArtifactsToHandleRes.left().value(), true, false, null, user.getUserId());
-        } catch (Exception e) {
-            log.debug("Exception occured when createServiceFromCsar,error is:{}", e.getMessage(), e);
+        } catch (final ComponentException e) {
+            log.debug("Exception occurred when createServiceFromCsar,error is:{}", e.getMessage(), e);
+            throw e;
+        } catch (final Exception e) {
+            log.debug("Exception occurred when createServiceFromCsar,error is:{}", e.getMessage(), e);
             throw new ComponentException(ActionStatus.GENERAL_ERROR);
         }
     }
@@ -923,13 +910,27 @@ public class ServiceImportBusinessLogic {
         return getServiceResponseFormatEither(service);
     }
 
-    private Either<Service, ResponseFormat> createPoliciesOnResource(Service service,
-                                                                     Map<String, PolicyDefinition> policies) {
-        if (MapUtils.isNotEmpty(policies)) {
-            policyBusinessLogic.createPolicies(service, policies);
-        } else {
+    private Either<Service, ResponseFormat> createPoliciesOnResource(final Service service,
+                                                                     final Map<String, PolicyDefinition> policies) {
+        if (MapUtils.isEmpty(policies)) {
             return Either.left(service);
         }
+        final Map<String, List<AttributeDefinition>> instanceAttributeMap =
+            service.getComponentInstancesAttributes()
+                .entrySet().stream()
+                .collect(
+                    toMap(Entry::getKey,
+                        entry -> entry.getValue().stream().map(AttributeDefinition.class::cast).collect(toList()))
+                );
+        policies.values().stream()
+            .map(PolicyDataDefinition::getProperties)
+            .flatMap(Collection::stream)
+            .filter(PropertyDataDefinition::isToscaFunction)
+            .forEach(policyDefinition ->
+                toscaFunctionService
+                    .updateFunctionWithDataFromSelfComponent(policyDefinition.getToscaFunction(), service, service.getComponentInstancesProperties(), instanceAttributeMap)
+            );
+        policyBusinessLogic.createPolicies(service, policies);
         return getServiceResponseFormatEither(service);
     }
 
@@ -1355,7 +1356,7 @@ public class ServiceImportBusinessLogic {
                                                       Map<String, UploadComponentInstanceInfo> uploadResInstancesMap) {
         log.debug("#createResourceInstancesRelations - Going to create relations ");
         List<ComponentInstance> componentInstancesList = service.getComponentInstances();
-        if (((MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)))) { // PNF can have no resource instances
+        if (MapUtils.isEmpty(uploadResInstancesMap) || CollectionUtils.isEmpty(componentInstancesList)) { // PNF can have no resource instances
             log.debug("#createResourceInstancesRelations - No instances found in the resource {} is empty, yaml template file name {}, ",
                 service.getUniqueId(), yamlName);
             BeEcompErrorManager.getInstance()
@@ -1376,13 +1377,16 @@ public class ServiceImportBusinessLogic {
         log.debug("enter ServiceImportBusinessLogic  createServiceInstancesRelations#createResourceInstancesRelations - Before get all datatypes. ");
         final ApplicationDataTypeCache applicationDataTypeCache = serviceBusinessLogic.applicationDataTypeCache;
         if (applicationDataTypeCache != null) {
-            Service finalResource = service;
+            final Map<String, DataTypeDefinition> allDataTypesMap =
+                componentsUtils.getAllDataTypes(applicationDataTypeCache, service.getModel());
+            final Service service1 = service;
             uploadResInstancesMap.values().forEach(
-                i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
-                    componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties,
+                i -> processComponentInstance(yamlName, service1, componentInstancesList,
+                    allDataTypesMap, instProperties,
                     instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs,
                     instNodeFilter, i));
         }
+        updatePropertyToscaFunctionData(service, instProperties, instAttributes);
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
         serviceImportParseLogic.associateCINodeFilterToComponent(yamlName, service, instNodeFilter);
@@ -1410,6 +1414,29 @@ public class ServiceImportBusinessLogic {
         return eitherGetResource.left().value();
     }
 
+    private void updatePropertyToscaFunctionData(final Component service,
+                                                 final Map<String, List<ComponentInstanceProperty>> instancePropertyMap,
+                                                 final Map<String, List<AttributeDefinition>> instanceAttributeMap) {
+        final Component updatedService =
+            toscaOperationFacade.getToscaElement(service.getUniqueId()).left()
+                .on(storageOperationStatus -> {
+                        final ActionStatus status = componentsUtils.convertFromStorageResponse(storageOperationStatus);
+                        final ResponseFormat responseFormat =
+                            componentsUtils.getResponseFormatByComponent(status, service, service.getComponentType());
+                        throw new ComponentException(responseFormat);
+                    }
+                );
+        instancePropertyMap.values().forEach(instancePropertyList ->
+            instancePropertyList.stream()
+                .filter(PropertyDataDefinition::isToscaFunction)
+                .forEach(instanceProperty -> {
+                    toscaFunctionService.updateFunctionWithDataFromSelfComponent(instanceProperty.getToscaFunction(),
+                        updatedService, instancePropertyMap, instanceAttributeMap);
+                    instanceProperty.setValue(instanceProperty.getToscaFunction().getValue());
+                })
+        );
+    }
+
     protected void processComponentInstance(String yamlName, Component component, List<ComponentInstance> componentInstancesList,
                                             Map<String, DataTypeDefinition> allDataTypes,
                                             Map<String, List<ComponentInstanceProperty>> instProperties,
@@ -1424,7 +1451,7 @@ public class ServiceImportBusinessLogic {
         log.debug("enter ServiceImportBusinessLogic processComponentInstance");
         Optional<ComponentInstance> currentCompInstanceOpt = componentInstancesList.stream()
             .filter(i -> i.getName().equals(uploadComponentInstanceInfo.getName())).findFirst();
-        if (!currentCompInstanceOpt.isPresent()) {
+        if (currentCompInstanceOpt.isEmpty()) {
             log.debug(COMPONENT_INSTANCE_WITH_NAME_IN_RESOURCE, uploadComponentInstanceInfo.getName(), component.getUniqueId());
             BeEcompErrorManager.getInstance()
                 .logInternalDataError(COMPONENT_INSTANCE_WITH_NAME + uploadComponentInstanceInfo.getName() + IN_RESOURCE, component.getUniqueId(),
@@ -1540,23 +1567,20 @@ public class ServiceImportBusinessLogic {
                                                    Map<String, DataTypeDefinition> allDataTypes) {
         Map<String, List<UploadPropInfo>> propMap = uploadComponentInstanceInfo.getProperties();
         Map<String, PropertyDefinition> currPropertiesMap = new HashMap<>();
-        List<PropertyDefinition> listFromMap = originResource.getProperties();
-        if ((propMap != null && !propMap.isEmpty()) && (listFromMap == null || listFromMap.isEmpty())) {
+        List<PropertyDefinition> originalPropertyList = originResource.getProperties();
+        if (MapUtils.isNotEmpty(propMap) && CollectionUtils.isEmpty(originalPropertyList)) {
             log.debug("failed to find properties ");
             return componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND);
         }
-        if (listFromMap == null || listFromMap.isEmpty()) {
+        if (CollectionUtils.isEmpty(originalPropertyList)) {
             return componentsUtils.getResponseFormat(ActionStatus.OK);
         }
-        for (PropertyDefinition prop : listFromMap) {
-            String propName = prop.getName();
-            if (!currPropertiesMap.containsKey(propName)) {
-                currPropertiesMap.put(propName, prop);
-            }
-        }
+        originalPropertyList.stream()
+            .filter(property -> !currPropertiesMap.containsKey(property.getName()))
+            .forEach(property -> currPropertiesMap.put(property.getName(), property));
         List<ComponentInstanceProperty> instPropList = new ArrayList<>();
-        if (propMap != null && propMap.size() > 0) {
-            for (List<UploadPropInfo> propertyList : propMap.values()) {
+        if (MapUtils.isNotEmpty(propMap)) {
+            for (final List<UploadPropInfo> propertyList : propMap.values()) {
                 UploadPropInfo propertyInfo = propertyList.get(0);
                 String propName = propertyInfo.getName();
                 if (!currPropertiesMap.containsKey(propName)) {
@@ -1564,26 +1588,26 @@ public class ServiceImportBusinessLogic {
                     return componentsUtils.getResponseFormat(ActionStatus.PROPERTY_NOT_FOUND, propName);
                 }
                 PropertyDefinition curPropertyDef = currPropertiesMap.get(propName);
-                ComponentInstanceProperty property = null;
                 String value = null;
-                List<GetInputValueDataDefinition> getInputs = null;
+                final List<GetInputValueDataDefinition> getInputs = new ArrayList<>();
                 boolean isValidate = true;
                 if (propertyInfo.getValue() != null) {
-                    getInputs = propertyInfo.getGet_input();
-                    isValidate = getInputs == null || getInputs.isEmpty();
+                    getInputs.addAll(propertyInfo.getGet_input());
+                    isValidate = getInputs.isEmpty();
                     if (isValidate) {
                         value = getPropertyJsonStringValue(propertyInfo.getValue(), curPropertyDef.getType());
                     } else {
                         value = getPropertyJsonStringValue(propertyInfo.getValue(), TypeUtils.ToscaTagNamesEnum.GET_INPUT.getElementName());
                     }
                 }
-                property = new ComponentInstanceProperty(curPropertyDef, value, null);
+                final var property = new ComponentInstanceProperty(curPropertyDef, value, null);
                 String validatePropValue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
                 property.setValue(validatePropValue);
-                if (getInputs != null && !getInputs.isEmpty()) {
-                    List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
-                    for (GetInputValueDataDefinition getInput : getInputs) {
-                        List<InputDefinition> inputs = component.getInputs();
+                property.setToscaFunction(propertyInfo.getToscaFunction());
+                if (!getInputs.isEmpty()) {
+                    final List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
+                    for (final GetInputValueDataDefinition getInput : getInputs) {
+                        final List<InputDefinition> inputs = component.getInputs();
                         if (inputs == null || inputs.isEmpty()) {
                             log.debug("Failed to add property {} to instance. Inputs list is empty ", property);
                             serviceBusinessLogic.rollbackWithException(ActionStatus.INPUTS_NOT_FOUND,
@@ -2392,7 +2416,7 @@ public class ServiceImportBusinessLogic {
                 .getResponseFormat(componentsUtils.convertFromStorageResponse(eitherValidation.right().value()));
             throw new ComponentException(errorResponse);
         }
-        if (eitherValidation.left().value()) {
+        if (Boolean.TRUE.equals(eitherValidation.left().value())) {
             log.debug("resource with name: {}, already exists", resource.getName());
             ResponseFormat errorResponse = componentsUtils
                 .getResponseFormat(ActionStatus.COMPONENT_NAME_ALREADY_EXIST, ComponentTypeEnum.RESOURCE.getValue(), resource.getName());
