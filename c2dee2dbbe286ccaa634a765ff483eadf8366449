@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "655968a5_88dde666",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/operations/NodeTemplateOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1566,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-07-30T00:10:29Z",
+      "side": 1,
+      "message": "Also need to update where the instanceSuffixNumber is generated, i.e. ToscaOperationFacade#getMaxCounterFromNamesAndIds\nThe value returned by the split(...) on line 1327 needs to have the delimiter removed to get just the number, e.g. something like:\n.split(normalizedName)[1].replaceAll(\"\\\\D\", \"\")\nand similarly on line 1329",
+      "range": {
+        "startLine": 1566,
+        "startChar": 78,
+        "endLine": 1566,
+        "endChar": 98
+      },
+      "revId": "c2dee2dbbe286ccaa634a765ff483eadf8366449",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
