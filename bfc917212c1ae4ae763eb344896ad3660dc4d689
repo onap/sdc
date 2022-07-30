@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a894c5d4_59319368",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1038,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-07-30T08:52:51Z",
+      "side": 1,
+      "message": "This is what is causing the integration test failure\nThe relationship here can be either a relationship template name or a relation type name\n\nSee chapter 3.8.2.1 in https://docs.oasis-open.org/tosca/TOSCA-Simple-Profile-YAML/v1.3/os/TOSCA-Simple-Profile-YAML-v1.3-os.html#DEFN_ELEMENT_REQUIREMENT_ASSIGNMENT\n\nFor the vgmux.zip VNF test case a relationship type is given here, then on line 390 above when it tries to read the defintion of the relation template it doesnt find it (because there is no relationship template with that name, as it is a relation type instead)",
+      "range": {
+        "startLine": 1036,
+        "startChar": 8,
+        "endLine": 1038,
+        "endChar": 13
+      },
+      "revId": "bfc917212c1ae4ae763eb344896ad3660dc4d689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
