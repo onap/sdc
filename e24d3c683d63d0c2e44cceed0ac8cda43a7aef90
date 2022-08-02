@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9bcb3e10_89260d2f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-02T12:08:35Z",
+      "side": 1,
+      "message": "you are adding the interface definitions from the node type definition here but you need to instead add the interface definitions from the nodeTemplateJsonMap.",
+      "range": {
+        "startLine": 741,
+        "startChar": 58,
+        "endLine": 742,
+        "endChar": 46
+      },
+      "revId": "e24d3c683d63d0c2e44cceed0ac8cda43a7aef90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51e7343a_4d404f95",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-02T12:08:35Z",
+      "side": 1,
+      "message": "this is what is causing the integration test failure - for the ETSI-VNF-SAMPLE.csar package the node type (org.openecomp.resource.EtsiDummyVnf) is not known causing exception to be thrown.\nHowever addressing the comment on line 741 above will remove this code so should not be an issue then",
+      "range": {
+        "startLine": 1020,
+        "startChar": 7,
+        "endLine": 1030,
+        "endChar": 9
+      },
+      "revId": "e24d3c683d63d0c2e44cceed0ac8cda43a7aef90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
