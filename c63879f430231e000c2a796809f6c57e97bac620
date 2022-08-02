@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4a9b5b5_5eaa9206",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-02T10:25:53Z",
+      "side": 1,
+      "message": "I dont think we should assume a relationship type will always contain \u0027tosca\u0027 in its name.\nIf Im not mistaken, a relationship template name will always begin with the instance name, so I think it would be safer to check on that",
+      "range": {
+        "startLine": 1039,
+        "startChar": 0,
+        "endLine": 1039,
+        "endChar": 65
+      },
+      "revId": "c63879f430231e000c2a796809f6c57e97bac620",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
