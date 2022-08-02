@@ -39,18 +39,20 @@ public class CINodeFilterUtils {
         ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> listDataDefinition = new ListDataDefinition<>();
         listDataDefinition.getListToscaDataDefinition().addAll(collect);
         nodeFilterDataDefinition.setProperties(listDataDefinition);
-        nodeFilterDataDefinition.setCapabilities(converCapabilties(uploadNodeFilterInfo.getCapabilities()));
+        nodeFilterDataDefinition.setCapabilities(convertCapabilities(uploadNodeFilterInfo.getCapabilities()));
         nodeFilterDataDefinition.setID(uniqueId);
         nodeFilterDataDefinition.setTosca_id(uploadNodeFilterInfo.getTosca_id());
         return nodeFilterDataDefinition;
     }
 
-    private ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> converCapabilties(
-        Map<String, UploadNodeFilterCapabilitiesInfo> capabilities) {
+    private ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> convertCapabilities(
+        List<Map<String, UploadNodeFilterCapabilitiesInfo>> capabilities) {
         ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> listDataDefinition = new ListDataDefinition<>();
-        for (UploadNodeFilterCapabilitiesInfo capability : capabilities.values()) {
-            RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition = convertCapability(capability);
-            listDataDefinition.add(requirementNodeFilterCapabilityDataDefinition);
+        for (Map<String, UploadNodeFilterCapabilitiesInfo> capability : capabilities) {
+            for (UploadNodeFilterCapabilitiesInfo capabilityDetail : capability.values()) {
+                RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition = convertCapability(capabilityDetail);
+                listDataDefinition.add(requirementNodeFilterCapabilityDataDefinition);
+            }
         }
         return listDataDefinition;
     }

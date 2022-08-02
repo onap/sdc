@@ -16,7 +16,7 @@
 
 package org.openecomp.sdc.be.components.impl;
 
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
@@ -42,8 +42,8 @@ public class NodeFilterUploadCreatorTest {
         final Object o = new YamlUtil().yamlToObject(nodeFilterStr, Object.class);
         final UploadNodeFilterInfo nodeFilterData = new NodeFilterUploadCreator().createNodeFilterData(o);
         assertNotNull(nodeFilterData);
-        final Map<String, UploadNodeFilterCapabilitiesInfo> capabilities = nodeFilterData.getCapabilities();
-        assertTrue(MapUtils.isEmpty(capabilities));
+        final List<Map<String, UploadNodeFilterCapabilitiesInfo>> capabilities = nodeFilterData.getCapabilities();
+        assertTrue(CollectionUtils.isEmpty(capabilities));
         final List<UploadNodeFilterPropertyInfo> properties = nodeFilterData.getProperties();
         assertEquals(4, properties.size());
     }
@@ -55,8 +55,8 @@ public class NodeFilterUploadCreatorTest {
         final Object o = new YamlUtil().yamlToObject(nodeFilterStr, Object.class);
         final UploadNodeFilterInfo nodeFilterData = new NodeFilterUploadCreator().createNodeFilterData(o);
         assertNotNull(nodeFilterData);
-        final Map<String, UploadNodeFilterCapabilitiesInfo> capabilities = nodeFilterData.getCapabilities();
-        assertTrue(MapUtils.isEmpty(capabilities));
+        final List<Map<String, UploadNodeFilterCapabilitiesInfo>> capabilities = nodeFilterData.getCapabilities();
+        assertTrue(CollectionUtils.isEmpty(capabilities));
         final List<UploadNodeFilterPropertyInfo> properties = nodeFilterData.getProperties();
         assertEquals(1, properties.size());
     }

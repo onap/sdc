@@ -53,8 +53,10 @@ public class CINodeFilterUtilsTest {
         capabilitiesInfo.setName("cap1");
         capabilitiesInfo.setProperties(properties);
 
-        Map<String, UploadNodeFilterCapabilitiesInfo> capabilities = new HashMap<>();
-        capabilities.put("test", capabilitiesInfo);
+        List<Map<String, UploadNodeFilterCapabilitiesInfo>> capabilities = new ArrayList<>();
+        Map<String, UploadNodeFilterCapabilitiesInfo> capabilityDetail = new HashMap<>();
+        capabilityDetail.put("test", capabilitiesInfo);
+        capabilities.add(capabilityDetail);
         uNodeFilterInfo.setCapabilities(capabilities);
 
         CINodeFilterDataDefinition dataDefinition = ciNodeFilterUtils.getNodeFilterDataDefinition(uNodeFilterInfo, "id");

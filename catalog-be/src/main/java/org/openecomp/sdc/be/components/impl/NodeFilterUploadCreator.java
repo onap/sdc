@@ -77,18 +77,20 @@ public class NodeFilterUploadCreator {
         return null;
     }
 
-    private Map<String, UploadNodeFilterCapabilitiesInfo> createNodeFilterCapabilities(Object o) {
+    private List<Map<String, UploadNodeFilterCapabilitiesInfo>> createNodeFilterCapabilities(Object o) {
         if (!(o instanceof List)) {
             return null;
         }
-        Map<String, UploadNodeFilterCapabilitiesInfo> retVal = new HashMap<>();
+        List<Map<String, UploadNodeFilterCapabilitiesInfo>> retVal = new ArrayList<>();
         List<Map<String, Object>> capabilitiesMap = (List<Map<String, Object>>) o;
         for (Map<String, Object> map : capabilitiesMap) {
+            Map<String, UploadNodeFilterCapabilitiesInfo> oneCapability = new HashMap<>();
             final Map.Entry<String, Object> entry = map.entrySet().iterator().next();
             UploadNodeFilterCapabilitiesInfo uploadNodeFilterCapabilitiesInfo = new UploadNodeFilterCapabilitiesInfo();
             uploadNodeFilterCapabilitiesInfo.setName(entry.getKey());
             uploadNodeFilterCapabilitiesInfo.setProperties(createCapabilitiesProperties(entry.getValue()));
-            retVal.put(entry.getKey(), uploadNodeFilterCapabilitiesInfo);
+            oneCapability.put(entry.getKey(), uploadNodeFilterCapabilitiesInfo);
+            retVal.add(oneCapability);
         }
         return retVal;
     }

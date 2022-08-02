@@ -25,7 +25,7 @@ public class UploadNodeFilterInfo {
     private String name;
     private Object tosca_id;
     private List<UploadNodeFilterPropertyInfo> properties = new ArrayList<>();
-    private Map<String, UploadNodeFilterCapabilitiesInfo> capabilities = new HashMap<>();
+    private List<Map<String, UploadNodeFilterCapabilitiesInfo>> capabilities = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -43,11 +43,11 @@ public class UploadNodeFilterInfo {
         this.properties = properties;
     }
 
-    public Map<String, UploadNodeFilterCapabilitiesInfo> getCapabilities() {
+    public List<Map<String, UploadNodeFilterCapabilitiesInfo>> getCapabilities() {
         return capabilities;
     }
 
-    public void setCapabilities(Map<String, UploadNodeFilterCapabilitiesInfo> capabilities) {
+    public void setCapabilities(List<Map<String, UploadNodeFilterCapabilitiesInfo>> capabilities) {
         this.capabilities = capabilities;
     }
 
