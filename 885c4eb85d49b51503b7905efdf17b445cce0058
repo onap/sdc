@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fdd85d06_c0a1ec98",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-03T15:57:11Z",
+      "side": 1,
+      "message": "This should only include info from the received json. Create a new class UploadInterfaceInfo similar to the other UploadxxxInfo classes (e.g. UploadPropInfo) and remove the call to toscaOperationFacade",
+      "range": {
+        "startLine": 1145,
+        "startChar": 3,
+        "endLine": 1177,
+        "endChar": 5
+      },
+      "revId": "885c4eb85d49b51503b7905efdf17b445cce0058",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
