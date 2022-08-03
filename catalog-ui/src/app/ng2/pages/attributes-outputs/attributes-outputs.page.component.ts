@@ -651,17 +651,7 @@ export class AttributesOutputsComponent {
     this.attributeOutputTabs.setTabIndication('Outputs', numOutputs);
   };
 
-
-  resetUnsavedChangesForOutput = (output: OutputFEModel) => {
-    this.outputsUtils.resetOutputDefaultValue(output, output.defaultValue);
-    this.changedData = this.changedData.filter((changedItem) => changedItem.uniqueId !== output.uniqueId);
-    this.updateHasChangedData();
-  }
-
   deleteOutput = (output: OutputFEModel) => {
-    //reset any unsaved changes to the output before deleting it
-    this.resetUnsavedChangesForOutput(output);
-
     let outputToDelete = new OutputBEModel(output);
 
     this.componentServiceNg2

@@ -26,7 +26,6 @@ import {InstanceFeAttributesMap} from "app/models/attributes-outputs/attribute-f
 import {Select} from "@ngxs/store";
 import {WorkspaceState} from "../../../store/states/workspace.state";
 import {OutputFEModel} from "app/models/attributes-outputs/output-fe-model";
-import {InputFEModel} from "../../../../models/properties-inputs/input-fe-model";
 
 @Component({
   selector: 'outputs-table',
@@ -50,7 +49,6 @@ export class OutputsTableComponent implements OnInit {
   @Input() feAttributesMap: InstanceFeAttributesMap;
 
   deleteMsgTitle: string;
-  deleteMsgBodyTxt: string;
   modalDeleteBtn: string;
   modalCancelBtn: string;
   sortBy: string;

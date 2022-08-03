@@ -76,7 +76,7 @@
         <div class="table-cell col-output-attribute-value output-value-col"
              [class.inner-table-container]="!output.isSimpleType">
           <dynamic-element class="value-output"
-                           *ngIf="checkInstanceFeAttributesMapIsFilled() && output.isSimpleType"
+                           *ngIf="checkInstanceFeAttributesMapIsFilled()"
                            pattern="null"
                            [value]="output.value"
                            [type]="'string'"
