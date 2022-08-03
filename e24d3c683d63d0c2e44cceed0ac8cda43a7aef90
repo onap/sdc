@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e233704b_0a35fee6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-03T13:45:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9bcb3e10_89260d2f",
+      "range": {
+        "startLine": 741,
+        "startChar": 58,
+        "endLine": 742,
+        "endChar": 46
+      },
+      "revId": "e24d3c683d63d0c2e44cceed0ac8cda43a7aef90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "51e7343a_4d404f95",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "e24d3c683d63d0c2e44cceed0ac8cda43a7aef90",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6230fc5d_2cb5d581",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-03T13:45:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "51e7343a_4d404f95",
+      "range": {
+        "startLine": 1020,
+        "startChar": 7,
+        "endLine": 1030,
+        "endChar": 9
+      },
+      "revId": "e24d3c683d63d0c2e44cceed0ac8cda43a7aef90",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
