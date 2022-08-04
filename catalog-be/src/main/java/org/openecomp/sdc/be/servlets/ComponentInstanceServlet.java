@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -62,6 +63,8 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogic;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
@@ -76,9 +79,13 @@ import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.ForwardingPaths;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.externalapi.servlet.representation.ReplaceVNFInfo;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
@@ -93,7 +100,9 @@ import org.openecomp.sdc.be.model.RequirementCapabilityRelDef;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.PropertyOperation.PropertyConstraintDeserialiser;
+import org.openecomp.sdc.be.resources.data.ComponentMetadataData;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
@@ -138,14 +147,16 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
     private static final String SERVICES = "services";
     private final GroupBusinessLogic groupBL;
     private final ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic;
+    private final ComponentBusinessLogicProvider componentBusinessLogicProvider;
 
     @Inject
     public ComponentInstanceServlet(UserBusinessLogic userBusinessLogic, GroupBusinessLogic groupBL,
                                     ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils, ServletUtils servletUtils,
-                                    ResourceImportManager resourceImportManager, ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic) {
+                                    ResourceImportManager resourceImportManager, ComponentNodeFilterBusinessLogic nodeFilterBusinessLogic, ComponentBusinessLogicProvider componentBusinessLogicProvider) {
         super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
         this.groupBL = groupBL;
         this.nodeFilterBusinessLogic = nodeFilterBusinessLogic;
+        this.componentBusinessLogicProvider = componentBusinessLogicProvider;
     }
 
     @POST
@@ -527,6 +538,7 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE, StatusCode.STARTED,
             "Starting to update Resource Instance Properties for component {} ", componentId + " by " + userId);
         Wrapper<ResponseFormat> errorWrapper = new Wrapper<>();
+        ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         List<ComponentInstanceProperty> propertiesToUpdate = new ArrayList<>();
         if (errorWrapper.isEmpty()) {
             Either<List<ComponentInstanceProperty>, ResponseFormat> propertiesToUpdateEither = convertMultipleProperties(
@@ -535,13 +547,13 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
                 errorWrapper.setInnerElement(propertiesToUpdateEither.right().value());
             } else {
                 propertiesToUpdate = propertiesToUpdateEither.left().value();
+                handleDeprecatedComponentInstancePropertyStructure(propertiesToUpdate, componentTypeEnum);
             }
         }
         if (!errorWrapper.isEmpty()) {
             return buildErrorResponse(errorWrapper.getInnerElement());
         }
         log.debug(START_HANDLE_REQUEST_OF_UPDATE_RESOURCE_INSTANCE_PROPERTY_RECEIVED_PROPERTY_IS, propertiesToUpdate);
-        ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(containerComponentType);
         if (componentInstanceBusinessLogic == null) {
             log.debug(UNSUPPORTED_COMPONENT_TYPE, containerComponentType);
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.UNSUPPORTED_ERROR, containerComponentType));
@@ -565,6 +577,41 @@ public class ComponentInstanceServlet extends AbstractValidationsServlet {
         loggerSupportability.log(LoggerSupportabilityActions.UPDATE_COMPONENT_INSTANCE, StatusCode.COMPLETE,
             "Ended update Resource Instance Properties for component {} ", componentId + " by user " + userId);
         return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), result);
+    }
+
+    private void handleDeprecatedComponentInstancePropertyStructure(final List<ComponentInstanceProperty> propertiesToUpdate,
+            final ComponentTypeEnum componentTypeEnum) {
+        propertiesToUpdate.stream().forEach(property -> {
+            if (property.getGetInputValues() != null) {
+                property.getGetInputValues().stream()
+                        .forEach(getInputValue -> property.setToscaFunction(createToscaFunction(getInputValue, componentTypeEnum)));
+            }
+        });
+    }
+
+    private ToscaGetFunctionDataDefinition createToscaFunction(final GetInputValueDataDefinition getInput,
+            final ComponentTypeEnum componentTypeEnum) {
+        final String[] inputIdSplit = getInput.getInputId().split("\\.");
+
+        ToscaGetFunctionDataDefinition toscaFunction = new ToscaGetFunctionDataDefinition();
+        toscaFunction.setFunctionType(ToscaGetFunctionType.GET_INPUT);
+        toscaFunction.setPropertyUniqueId(getInput.getInputId());
+        toscaFunction.setPropertySource(PropertySource.SELF);
+        toscaFunction.setPropertyName(inputIdSplit[1]);
+        toscaFunction.setSourceName(getSourceName(inputIdSplit[0], componentTypeEnum));
+        toscaFunction.setSourceUniqueId(inputIdSplit[0]);
+        toscaFunction.setPropertyPathFromSource(Collections.singletonList(inputIdSplit[1]));
+
+        return toscaFunction;
+    }
+
+    private String getSourceName(final String componentId, final ComponentTypeEnum componentTypeEnum) {
+        ComponentBusinessLogic compBL = componentBusinessLogicProvider.getInstance(componentTypeEnum);
+        final Either<ComponentMetadataData, StorageOperationStatus> componentEither = compBL.getComponentMetadata(componentId);
+        if (componentEither.isLeft()) {
+            return componentEither.left().value().getMetadataDataDefinition().getName();
+        }
+        return "";
     }
 
     @POST
