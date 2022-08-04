@@ -206,6 +206,10 @@ public abstract class ComponentBusinessLogic extends BaseBusinessLogic {
      */
     public abstract Either<UiComponentDataTransfer, ResponseFormat> getUiComponentDataTransferByComponentId(String componentId,
                                                                                                             List<String> dataParamsToReturn);
+    
+    public Either<ComponentMetadataData, StorageOperationStatus> getComponentMetadata(final String componentId) {
+        return toscaOperationFacade.getComponentMetadata(componentId);
+    }
 
     User validateUser(User user, String ecompErrorContext, Component component, AuditingActionEnum auditAction, boolean inTransaction) {
         User validatedUser;
