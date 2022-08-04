@@ -511,17 +511,18 @@ export class PropertiesAssignmentComponent {
      * Select Tosca function value from defined values
      */
     selectToscaFunctionAndValues = (): void => {
-        const selectedInstanceData: ComponentInstance | GroupInstance = this.getSelectedInstance();
+        const selectedInstanceData: ComponentInstance | GroupInstance | PolicyInstance = this.getSelectedInstance();
         if (!selectedInstanceData) {
             return;
         }
         this.openToscaGetFunctionModal();
     }
 
-    private getSelectedInstance(): ComponentInstance | GroupInstance {
+    private getSelectedInstance(): ComponentInstance | GroupInstance | PolicyInstance {
         const instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
         const instanceId: string = instancesIds[0];
-        return <ComponentInstance | GroupInstance> this.instances.find(instance => instance.uniqueId == instanceId && instance instanceof ComponentInstance || instance instanceof GroupInstance);
+        return <ComponentInstance | GroupInstance | PolicyInstance> this.instances.find(instance => 
+            instance.uniqueId == instanceId && instance instanceof ComponentInstance || instance instanceof GroupInstance || instance instanceof PolicyInstance);
     }
 
     private buildCheckedInstanceProperty(): PropertyBEModel {
@@ -582,6 +583,8 @@ export class PropertiesAssignmentComponent {
             this.updateInstanceProperty(checkedInstanceProperty);
         } else if (this.selectedInstanceData instanceof GroupInstance) {
             this.updateGroupInstanceProperty(checkedInstanceProperty);
+        } else if (this.selectedInstanceData instanceof PolicyInstance) {
+            this.updatePolicyInstanceProperty(checkedInstanceProperty);
         }
     }
 
@@ -592,6 +595,8 @@ export class PropertiesAssignmentComponent {
             this.updateInstanceProperty(checkedProperty);
         } else if (this.selectedInstanceData instanceof GroupInstance) {
             this.updateGroupInstanceProperty(checkedProperty);
+        } else if (this.selectedInstanceData instanceof PolicyInstance) {
+            this.updatePolicyInstanceProperty(checkedProperty);
         }
     }
 
@@ -612,6 +617,20 @@ export class PropertiesAssignmentComponent {
     updateGroupInstanceProperty(instanceProperty: PropertyBEModel) {
         this.loadingProperties = true;
         this.componentInstanceServiceNg2.updateComponentGroupInstanceProperties(this.component.componentType, this.component.uniqueId,
+            this.selectedInstanceData.uniqueId, [instanceProperty])
+        .subscribe(() => {
+            this.changeSelectedInstance(this.getSelectedInstance());
+        }, (error) => {
+            this.loadingProperties = false;
+            console.error(error);
+        }, () => {
+            this.loadingProperties = false;
+        });
+    }
+
+    updatePolicyInstanceProperty(instanceProperty: PropertyBEModel) {
+        this.loadingProperties = true;
+        this.componentInstanceServiceNg2.updateComponentPolicyInstanceProperties(this.component.componentType, this.component.uniqueId,
             this.selectedInstanceData.uniqueId, [instanceProperty])
         .subscribe(() => {
             this.changeSelectedInstance(this.getSelectedInstance());
