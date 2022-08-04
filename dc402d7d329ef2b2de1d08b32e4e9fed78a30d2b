@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8bf67cdb_1a42e26f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-04T18:53:31Z",
+      "side": 1,
+      "message": "can an existing method be re-used rather than creating a new one, e.g. importAllNormativeResource",
+      "range": {
+        "startLine": 395,
+        "startChar": 0,
+        "endLine": 395,
+        "endChar": 96
+      },
+      "revId": "dc402d7d329ef2b2de1d08b32e4e9fed78a30d2b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
