@@ -66,6 +66,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.openecomp.sdc.be.components.impl.ComponentBusinessLogicProvider;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.GroupBusinessLogic;
@@ -130,6 +131,7 @@ class ComponentInstanceServletTest extends JerseyTest {
     private ResourceImportManager resourceImportManager;
     private ServiceBusinessLogic serviceBusinessLogic;
     private ComponentNodeFilterBusinessLogic componentNodeFilterBusinessLogic;
+    private ComponentBusinessLogicProvider componentBusinessLogicProvider;
     private ConfigurationManager configurationManager;
     private User user;
     private String inputData;
@@ -201,7 +203,7 @@ class ComponentInstanceServletTest extends JerseyTest {
             .accept(MediaType.APPLICATION_JSON)
             .header("USER_ID", USER_ID)
             .get(Response.class);
-
+        
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
     }
 
@@ -342,6 +344,7 @@ class ComponentInstanceServletTest extends JerseyTest {
                     bind(resourceImportManager).to(ResourceImportManager.class);
                     bind(serviceBusinessLogic).to(ServiceBusinessLogic.class);
                     bind(componentNodeFilterBusinessLogic).to(ComponentNodeFilterBusinessLogic.class);
+                    bind(componentBusinessLogicProvider).to(ComponentBusinessLogicProvider.class);
                 }
             })
             .property("contextConfig", context);
@@ -362,6 +365,7 @@ class ComponentInstanceServletTest extends JerseyTest {
         responseFormat = Mockito.mock(ResponseFormat.class);
         serviceBusinessLogic = Mockito.mock(ServiceBusinessLogic.class);
         componentNodeFilterBusinessLogic = Mockito.mock(ComponentNodeFilterBusinessLogic.class);
+        componentBusinessLogicProvider = Mockito.mock(ComponentBusinessLogicProvider.class);
         userValidations = Mockito.mock(UserValidations.class);
     }
 
@@ -482,6 +486,7 @@ class ComponentInstanceServletTest extends JerseyTest {
             .path(path)
             .request(MediaType.APPLICATION_JSON)
             .header("USER_ID", USER_ID).post(Entity.entity(properties, MediaType.APPLICATION_JSON));
+        
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND_404);
     }
 
