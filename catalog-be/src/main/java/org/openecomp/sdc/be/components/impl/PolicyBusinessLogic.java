@@ -630,6 +630,7 @@ public class PolicyBusinessLogic extends BaseBusinessLogic {
         filter.setIgnoreComponentInstancesProperties(false);
         filter.setIgnoreGroups(false);
         filter.setIgnoreInputs(false);
+        filter.setIgnoreProperties(false);
         return validateComponentExists(componentId, componentType, filter);
     }
 
