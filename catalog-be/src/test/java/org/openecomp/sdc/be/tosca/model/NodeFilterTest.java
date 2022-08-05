@@ -31,9 +31,4 @@ public class NodeFilterTest {
     public void testDefaultCtor() {
         assertThat(NodeFilter.class, hasValidBeanConstructor());
     }
-
-    @Test
-    public void testGettersSetters() {
-        assertThat(NodeFilter.class, hasValidGettersAndSetters());
-    }
 }

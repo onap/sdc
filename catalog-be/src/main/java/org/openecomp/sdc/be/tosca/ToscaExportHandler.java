@@ -937,8 +937,10 @@ public class ToscaExportHandler {
             }
             nodeTemplate.setType(componentInstance.getToscaComponentName());
             nodeTemplate.setDirectives(componentInstance.getDirectives());
-            nodeTemplate.setNode_filter(convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter()));
-
+            NodeFilter nodeFilter = convertToNodeTemplateNodeFilterComponent(componentInstance.getNodeFilter());
+            if(nodeFilter != null && nodeFilter.isValid()){
+                nodeTemplate.setNode_filter(nodeFilter);
+            }
             final Either<Component, Boolean> originComponentRes = capabilityRequirementConverter
                 .getOriginComponent(componentCache, componentInstance);
             if (originComponentRes.isRight()) {
