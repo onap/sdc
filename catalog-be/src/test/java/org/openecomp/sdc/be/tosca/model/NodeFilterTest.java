@@ -19,21 +19,42 @@
  */
 
 package org.openecomp.sdc.be.tosca.model;
+import org.junit.jupiter.api.Test;
 
-import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
-import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
-import static org.hamcrest.MatcherAssert.assertThat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeFilterTest {
     @Test
-    public void testDefaultCtor() {
-        assertThat(NodeFilter.class, hasValidBeanConstructor());
-    }
+    public void testHasDataTrue() {
+        NodeFilter nodeFilter = new NodeFilter();
 
+        List<Map<String, CapabilityFilter>> capabilitiesCopy = new ArrayList<>();
+        Map<String, CapabilityFilter> capabilityDataMap= new HashMap<>();
+        CapabilityFilter capabilityFilter = new CapabilityFilter();
+        capabilityDataMap.put("test",capabilityFilter);
+        capabilitiesCopy.add(capabilityDataMap);
+        nodeFilter.setCapabilities(capabilitiesCopy);
+
+        List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
+        Map<String, List<Object>> propertyDataMap = new HashMap<>();
+        List<Object> dataObjectList = new ArrayList<>();
+        Object object = new Object();
+        dataObjectList.add(object);
+        propertyDataMap.put("test",dataObjectList);
+        propertiesCopy.add(propertyDataMap);
+        nodeFilter.setProperties(propertiesCopy);
+        boolean result = nodeFilter.hasData();
+        assertTrue(result);
+    }
     @Test
-    public void testGettersSetters() {
-        assertThat(NodeFilter.class, hasValidGettersAndSetters());
+    public void testHasDataFalse() {
+        NodeFilter nodeFilter = new NodeFilter();
+        boolean result = nodeFilter.hasData();
+        assertFalse(result);
     }
 }

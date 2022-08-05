@@ -17,6 +17,9 @@ package org.openecomp.sdc.be.tosca.model;
 
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,4 +30,11 @@ public class NodeFilter {
     private Object tosca_id;
     private List<Map<String, List<Object>>> properties;
     private List<Map<String, CapabilityFilter>> capabilities;
+    
+    public boolean hasData() {
+        if(CollectionUtils.isNotEmpty(properties) || CollectionUtils.isNotEmpty(capabilities)) {
+            return true;
+        }
+        return false;
+    }
 }
