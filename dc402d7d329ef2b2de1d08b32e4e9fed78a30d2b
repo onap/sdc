@@ -22,6 +22,30 @@
       "revId": "dc402d7d329ef2b2de1d08b32e4e9fed78a30d2b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8724743e_7bb10c7b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-08-05T13:54:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8bf67cdb_1a42e26f",
+      "range": {
+        "startLine": 395,
+        "startChar": 0,
+        "endLine": 395,
+        "endChar": 96
+      },
+      "revId": "dc402d7d329ef2b2de1d08b32e4e9fed78a30d2b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
