@@ -1,0 +1,418 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a58d955_169a16da",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/OnboardedCsarInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "please, fix license format",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 3
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de5d153b_65d78f58",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 3
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d06c3835_c14b7393",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "it would be great to work with Path instead of String",
+      "range": {
+        "startLine": 64,
+        "startChar": 12,
+        "endLine": 64,
+        "endChar": 24
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b2bcede_c797bf71",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "Grammar, or maybe Syntax",
+      "range": {
+        "startLine": 83,
+        "startChar": 63,
+        "endLine": 83,
+        "endChar": 70
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c46ab396_2e5dcdbe",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "to reduce the complexity, I would say to test first if the dataTypes is right and return if true.\nThen set the dataTypes.left().value() in a variable and proceed with the algorithm.",
+      "range": {
+        "startLine": 79,
+        "startChar": 8,
+        "endLine": 79,
+        "endChar": 30
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9dc26687_9d0f7831",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "fix typo",
+      "range": {
+        "startLine": 94,
+        "startChar": 37,
+        "endLine": 94,
+        "endChar": 62
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad7dea17_e00c5cdc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "I suggest to change to sortDataTypesByDependencyOrder",
+      "range": {
+        "startLine": 107,
+        "startChar": 37,
+        "endLine": 107,
+        "endChar": 50
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67a1c8df_927fa09e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/DataTypeImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "suggest to change to getDependencyTypes",
+      "range": {
+        "startLine": 127,
+        "startChar": 31,
+        "endLine": 127,
+        "endChar": 46
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71a533af_353ff10e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 3
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87596aaa_3041947f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "please, use JUnit5\nimport static org.junit.jupiter.api.Assertions.assertEquals;\nimport static org.junit.jupiter.api.Assertions.assertNotNull;",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 45
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85f58d6f_962603c8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "make it package private",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 6
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ef90b28_94b57cfc",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "make it package private",
+      "range": {
+        "startLine": 52,
+        "startChar": 4,
+        "endLine": 52,
+        "endChar": 10
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40a82bcf_e8c691c7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfoTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "make it package private",
+      "range": {
+        "startLine": 67,
+        "startChar": 4,
+        "endLine": 67,
+        "endChar": 10
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a748de7d_cace9fed",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypesImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 0
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79599f12_ea40c9c6",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypesImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "please, convert to JUnit5",
+      "range": {
+        "startLine": 44,
+        "startChar": 13,
+        "endLine": 44,
+        "endChar": 39
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2b176a4_a493711e",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypesImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "this spy is not used. Was the purpose of this to inject it with the @InjectMocks annotation?",
+      "range": {
+        "startLine": 51,
+        "startChar": 32,
+        "endLine": 51,
+        "endChar": 51
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "774f1c31_c58ff16a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypesImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "I would make it local to the test with ArgumentCaptor.forClass(DataTypeDefinition.class);",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 57,
+        "endChar": 64
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cac29994_53f19167",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T14:53:16Z",
+      "side": 1,
+      "message": "I suggest to make it local to the test using it.",
+      "range": {
+        "startLine": 136,
+        "startChar": 4,
+        "endLine": 137,
+        "endChar": 32
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
