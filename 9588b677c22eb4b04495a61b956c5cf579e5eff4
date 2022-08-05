@@ -22,6 +22,30 @@
       "revId": "9588b677c22eb4b04495a61b956c5cf579e5eff4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e1221f7_20f5a2fa",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-05T13:49:09Z",
+      "side": 1,
+      "message": "I agree, thanks for the suggestion.",
+      "parentUuid": "ebac3f8b_ef27c746",
+      "range": {
+        "startLine": 42,
+        "startChar": 80,
+        "endLine": 43,
+        "endChar": 6
+      },
+      "revId": "9588b677c22eb4b04495a61b956c5cf579e5eff4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
