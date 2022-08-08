@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa8c8166_7cdde80f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-08T14:15:01Z",
+      "side": 1,
+      "message": "Split this method:\npublic void importAllNormativeResource(final String resourcesYaml, final NodeTypesMetadataList nodeTypesMetadataList, final User user, final boolean createNewVersion, final boolean needLock)\nand \npublic void importAllNormativeResource(final  Map\u003cString, Object\u003e nodeTypesYamlMap, final NodeTypesMetadataList nodeTypesMetadataList, final User user, final boolean createNewVersion, final boolean needLock)\nThe first method above will call the second method and the second method shall also be called from SericeImportBusinssLogic so there is no need to convert the nodeTypesToCreate to a String and back again",
+      "range": {
+        "startLine": 169,
+        "startChar": 0,
+        "endLine": 204,
+        "endChar": 5
+      },
+      "revId": "44fce9d358902c5229fbed4d8fab3c961fc7b2e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d7e8cf4_43463f82",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-08T14:15:01Z",
+      "side": 1,
+      "message": "I think the reading of the metadata should happen as part of the reading of the csar in CsarInfo getNodeTypesUsed rather than splitting this functionality, you would have somthing like:\n            mainTemplateImports.entrySet().forEach(entry -\u003e {\n                final Map\u003cString, Object\u003e types \u003d getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.NODE_TYPES, nodeTypesUsed);\n                final NodeTypeMetadata metadata \u003d getMetaDataFromTemplate();\n                getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.NODE_TYPES, nodeTypesUsed);\nand return a type containginng both the map and the metadata",
+      "range": {
+        "startLine": 206,
+        "startChar": 0,
+        "endLine": 206,
+        "endChar": 108
+      },
+      "revId": "44fce9d358902c5229fbed4d8fab3c961fc7b2e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f53d62f_ecd7e810",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-08T14:15:01Z",
+      "side": 1,
+      "message": "We shouldnt force the file names has to be in this format. Using the suggestion above just read the metadata from the file the type is defined in, provided it is present and the type is VFC.\n\nWe will also need to hanld the case where the metadata is not provided by providing default value",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 209,
+        "endChar": 83
+      },
+      "revId": "44fce9d358902c5229fbed4d8fab3c961fc7b2e9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
