@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "191664c6_cd0ea07b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/NodeFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-08T07:58:10Z",
+      "side": 1,
+      "message": "better not to add an attribute to this class, as it should be an representation of the TOSCA Node Filter definition.",
+      "range": {
+        "startLine": 33,
+        "startChar": 4,
+        "endLine": 33,
+        "endChar": 26
+      },
+      "revId": "b1ea3aefe02225a195f2a1e2feb3cc836b6ab83a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3e755c5_4889a328",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/NodeFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-08T07:58:10Z",
+      "side": 1,
+      "message": "this is not checking for validity, it is checking if it is not empty, please change the name accordingly.",
+      "range": {
+        "startLine": 35,
+        "startChar": 19,
+        "endLine": 35,
+        "endChar": 26
+      },
+      "revId": "b1ea3aefe02225a195f2a1e2feb3cc836b6ab83a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6c48957_8e424194",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/NodeFilter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-08T07:58:10Z",
+      "side": 1,
+      "message": "what information this tosca_id contains?\nThe Node Filter definition does not contain this information, so I would only consider checking for the properties and capabilities collection.",
+      "range": {
+        "startLine": 37,
+        "startChar": 11,
+        "endLine": 37,
+        "endChar": 27
+      },
+      "revId": "b1ea3aefe02225a195f2a1e2feb3cc836b6ab83a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b6c7ef7_a45edd72",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-08T07:58:10Z",
+      "side": 1,
+      "message": "you should add a test for your new method. Please, use JUnit5 for it.",
+      "range": {
+        "startLine": 29,
+        "startChar": 13,
+        "endLine": 29,
+        "endChar": 27
+      },
+      "revId": "b1ea3aefe02225a195f2a1e2feb3cc836b6ab83a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8ee021c_66b26c03",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-08T07:58:10Z",
+      "side": 1,
+      "message": "please, remove this useless test",
+      "range": {
+        "startLine": 31,
+        "startChar": 16,
+        "endLine": 31,
+        "endChar": 31
+      },
+      "revId": "b1ea3aefe02225a195f2a1e2feb3cc836b6ab83a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
