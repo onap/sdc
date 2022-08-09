@@ -425,7 +425,7 @@ export class PropertyFormViewModel {
 
         this.$scope.onSchemaTypeChange = ():void => {
             if (this.$scope.editPropertyModel.property.type == PROPERTY_TYPES.MAP) {
-                this.$scope.myValue = {'': null};
+                this.$scope.myValue = {};
             } else if (this.$scope.editPropertyModel.property.type == PROPERTY_TYPES.LIST) {
                 this.$scope.myValue = [];
             }
