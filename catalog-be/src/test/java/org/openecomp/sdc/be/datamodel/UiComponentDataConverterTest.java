@@ -19,10 +19,9 @@
 package org.openecomp.sdc.be.datamodel;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.hibernate.validator.internal.util.CollectionHelper.asSet;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,8 +46,12 @@ import org.openecomp.sdc.be.datamodel.utils.UiComponentDataConverter;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetPolicyValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
+import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.GroupDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
@@ -336,15 +339,27 @@ public class UiComponentDataConverterTest {
         SubstitutionFilterDataDefinition substitutionFilter = new SubstitutionFilterDataDefinition();
         substitutionFilter.setID(SUBSTITUTION_FILTER_UID);
 
-        final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> expectedPropertyFilters = new ListDataDefinition<>();
-        var filter1 = new RequirementSubstitutionFilterPropertyDataDefinition();
+        final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> expectedPropertyFilters = new ListDataDefinition<>();
+        var filter1 = new SubstitutionFilterPropertyDataDefinition();
         filter1.setName("filter1");
-        filter1.setConstraints(Collections.singletonList("constraint1: {equal: testvalue1}\n"));
+        var propertyFilter1 = new PropertyFilterConstraintDataDefinition();
+        propertyFilter1.setPropertyName("constraint1");
+        propertyFilter1.setOperator(ConstraintType.EQUAL);
+        propertyFilter1.setValueType(FilterValueType.STATIC);
+        propertyFilter1.setTargetType(PropertyFilterTargetType.PROPERTY);
+        propertyFilter1.setValue("testvalue1");
+        filter1.setConstraints(List.of(propertyFilter1));
         expectedPropertyFilters.add(filter1);
 
-        var filter2 = new RequirementSubstitutionFilterPropertyDataDefinition();
+        var filter2 = new SubstitutionFilterPropertyDataDefinition();
         filter2.setName("filter2");
-        filter2.setConstraints(Collections.singletonList("constraint2: {equal: testvalue2}\n"));
+        var propertyFilter2 = new PropertyFilterConstraintDataDefinition();
+        propertyFilter2.setPropertyName("constraint2");
+        propertyFilter2.setOperator(ConstraintType.EQUAL);
+        propertyFilter2.setValueType(FilterValueType.STATIC);
+        propertyFilter2.setTargetType(PropertyFilterTargetType.PROPERTY);
+        propertyFilter2.setValue("testvalue2");
+        filter2.setConstraints(List.of(propertyFilter2));
         expectedPropertyFilters.add(filter2);
 
         substitutionFilter.setProperties(expectedPropertyFilters);

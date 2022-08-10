@@ -18,7 +18,6 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
-import com.google.common.collect.ImmutableList;
 import fj.data.Either;
 import java.util.List;
 import java.util.Objects;
@@ -28,8 +27,8 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.DaoStatusConverter;
@@ -50,7 +49,7 @@ public class SubstitutionFilterOperation extends BaseOperation {
     public Either<SubstitutionFilterDataDefinition, StorageOperationStatus> deleteConstraint(final String serviceId,
                                                                                              final SubstitutionFilterDataDefinition substitutionFilterDataDefinition,
                                                                                              final int propertyIndex) {
-        final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> properties = substitutionFilterDataDefinition.getProperties();
+        final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> properties = substitutionFilterDataDefinition.getProperties();
         properties.getListToscaDataDefinition().remove(propertyIndex);
         substitutionFilterDataDefinition.setProperties(properties);
         return addOrUpdateSubstitutionFilter(true, serviceId, substitutionFilterDataDefinition);
@@ -58,24 +57,32 @@ public class SubstitutionFilterOperation extends BaseOperation {
 
     public Either<SubstitutionFilterDataDefinition, StorageOperationStatus> addPropertyFilter(final String componentId,
                                                                                               final SubstitutionFilterDataDefinition substitutionFilterDataDefinition,
-                                                                                              final RequirementSubstitutionFilterPropertyDataDefinition substitutionFilterPropertyDataDefinition) {
+                                                                                              final SubstitutionFilterPropertyDataDefinition substitutionFilterPropertyDataDefinition) {
         final SubstitutionFilterDataDefinition substitutionFilterDataDefinition1 = Objects
             .requireNonNullElseGet(substitutionFilterDataDefinition, SubstitutionFilterDataDefinition::new);
-        final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> properties = Objects
+        final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> properties = Objects
             .requireNonNullElseGet(substitutionFilterDataDefinition1.getProperties(), ListDataDefinition::new);
         properties.getListToscaDataDefinition().add(substitutionFilterPropertyDataDefinition);
         substitutionFilterDataDefinition1.setProperties(properties);
         return addOrUpdateSubstitutionFilter(true, componentId, substitutionFilterDataDefinition1);
     }
 
-    public Either<SubstitutionFilterDataDefinition, StorageOperationStatus> updateProperties(final String componentId,
-                                                                                             final SubstitutionFilterDataDefinition substitutionFilterDataDefinition,
-                                                                                             final List<RequirementSubstitutionFilterPropertyDataDefinition> requirementSubstitutionFilterPropertyDataDefinition) {
-        final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> properties = substitutionFilterDataDefinition.getProperties();
+    public Either<SubstitutionFilterDataDefinition, StorageOperationStatus> updatePropertyFilters(final String componentId,
+                                                                                                  final SubstitutionFilterDataDefinition substitutionFilterDataDefinition,
+                                                                                                  final List<SubstitutionFilterPropertyDataDefinition> substitutionFilterPropertyDataDefinition) {
+        final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> properties = substitutionFilterDataDefinition.getProperties();
         properties.getListToscaDataDefinition().clear();
-        properties.getListToscaDataDefinition().addAll(requirementSubstitutionFilterPropertyDataDefinition);
+        properties.getListToscaDataDefinition().addAll(substitutionFilterPropertyDataDefinition);
         substitutionFilterDataDefinition.setProperties(properties);
         return addOrUpdateSubstitutionFilter(true, componentId, substitutionFilterDataDefinition);
+    }
+
+    public Either<SubstitutionFilterDataDefinition, StorageOperationStatus> updatePropertyFilter(final String componentId,
+                                                                                                 final SubstitutionFilterDataDefinition substitutionFilter,
+                                                                                                 final SubstitutionFilterPropertyDataDefinition substitutionFilterProperty,
+                                                                                                 final int index) {
+        substitutionFilter.getProperties().getListToscaDataDefinition().set(index, substitutionFilterProperty);
+        return addOrUpdateSubstitutionFilter(true, componentId, substitutionFilter);
     }
 
     private Either<SubstitutionFilterDataDefinition, StorageOperationStatus> addOrUpdateSubstitutionFilter(final boolean isUpdateAction,
@@ -92,7 +99,7 @@ public class SubstitutionFilterOperation extends BaseOperation {
         final GraphVertex serviceVertex = toscaElementEither.left().value();
         substitutionFilterDataDefinition.setID(componentId);
         final StorageOperationStatus operationStatus = performUpdateToscaAction(isUpdateAction, serviceVertex,
-            ImmutableList.of(substitutionFilterDataDefinition));
+            List.of(substitutionFilterDataDefinition));
         if (!StorageOperationStatus.OK.equals(operationStatus)) {
             janusGraphDao.rollback();
             LOGGER.error(EcompErrorSeverity.ERROR, EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR,

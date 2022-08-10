@@ -26,6 +26,7 @@ package org.openecomp.sdc.be.model;
  */
 public interface ToscaPropertyData {
     String getUniqueId();
+    String getName();
     String getType();
     String getSchemaType();
 }

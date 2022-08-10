@@ -22,6 +22,7 @@ package org.openecomp.sdc.be.model.tosca.constraints;
 import com.google.common.collect.Lists;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;

@@ -17,24 +17,19 @@
 *  ============LICENSE_END=========================================================
 */
 
-import { Component, Input } from '@angular/core';
-import { Store } from '@ngxs/store';
-import {
-    Component as TopologyTemplate,
-    FullComponentInstance, InputBEModel,
-    PropertiesGroup,
-    PropertyBEModel,
-} from 'app/models';
-import { SUBSTITUTION_FILTER_EVENTS } from 'app/utils/constants';
-import { ComponentMetadata } from '../../../../../../models/component-metadata';
-import { ServiceInstanceObject } from '../../../../../../models/service-instance-properties-and-interfaces';
-import { EventListenerService } from '../../../../../../services/event-listener-service';
-import { ConstraintObject } from '../../../../../components/logic/service-dependencies/service-dependencies.component';
-import { TopologyTemplateService } from '../../../../../services/component-services/topology-template.service';
-import { ComponentGenericResponse } from '../../../../../services/responses/component-generic-response';
-import { WorkspaceService } from '../../../../workspace/workspace.service';
-import { SelectedComponentType } from '../../../common/store/graph.actions';
-import { CompositionService } from '../../../composition.service';
+import {Component, Input} from '@angular/core';
+import {Store} from '@ngxs/store';
+import {Component as TopologyTemplate, FullComponentInstance, InputBEModel, PropertiesGroup, PropertyBEModel,} from 'app/models';
+import {SUBSTITUTION_FILTER_EVENTS} from 'app/utils/constants';
+import {ComponentMetadata} from '../../../../../../models/component-metadata';
+import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';
+import {EventListenerService} from '../../../../../../services/event-listener-service';
+import {TopologyTemplateService} from '../../../../../services/component-services/topology-template.service';
+import {ComponentGenericResponse} from '../../../../../services/responses/component-generic-response';
+import {WorkspaceService} from '../../../../workspace/workspace.service';
+import {SelectedComponentType} from '../../../common/store/graph.actions';
+import {CompositionService} from '../../../composition.service';
+import {FilterConstraint} from "../../../../../../models/filter-constraint";
 
 @Component({
     selector: 'substitution-filter-tab',
@@ -46,7 +41,7 @@ export class SubstitutionFilterTabComponent {
 
     selectedInstanceSiblings: ServiceInstanceObject[];
     componentInstancesConstraints: any[];
-    selectedInstanceConstraints: ConstraintObject[];
+    selectedInstanceConstraints: FilterConstraint[];
     parentServiceProperties: PropertyBEModel[];
     parentServiceInputs: InputBEModel[];
     componentInstanceProperties: PropertiesGroup;
@@ -80,7 +75,7 @@ export class SubstitutionFilterTabComponent {
         this.eventListenerService.notifyObservers(SUBSTITUTION_FILTER_EVENTS.ON_SUBSTITUTION_FILTER_CHANGE, isChecked);
     }
 
-    public updateSelectedInstanceConstraints = (constraintsList:Array<ConstraintObject>):void => {
+    public updateSelectedInstanceConstraints = (constraintsList:Array<FilterConstraint>):void => {
         this.componentInstancesConstraints[this.component.uniqueId].properties = constraintsList;
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].properties;
     }
