@@ -21,12 +21,12 @@
 
 import {Component} from '@angular/core';
 import {InputBEModel, PropertyBEModel, PropertyModel} from 'app/models';
-import {OPERATOR_TYPES} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
 import {DropdownValue} from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
 import {PROPERTY_DATA} from 'app/utils';
 import {ServiceInstanceObject} from '../../../../models/service-instance-properties-and-interfaces';
-import {CapabilitiesConstraintObjectUI} from "../../../components/logic/capabilities-constraint/capabilities-constraint.component";
+import {CapabilityFilterConstraintUI} from "../../../../models/capability-filter-constraint";
+import {OPERATOR_TYPES} from "../../../../utils/filter-constraint-helper";
 
 export class UIDropDownSourceTypesElement extends DropdownValue {
   options: any[];
@@ -53,7 +53,7 @@ export class CapabilitiesFilterPropertiesEditorComponent {
 
   input: {
     serviceRuleIndex: number,
-    serviceRules: CapabilitiesConstraintObjectUI[],
+    serviceRules: CapabilityFilterConstraintUI[],
     compositeServiceName: string,
     currentServiceName: string,
     parentServiceInputs: InputBEModel[],
@@ -66,12 +66,12 @@ export class CapabilitiesFilterPropertiesEditorComponent {
   selectedServiceProperties: PropertyBEModel[];
   operatorTypes: DropdownValue[];
   sourceTypes: UIDropDownSourceTypesElement[] = [];
-  currentRule: CapabilitiesConstraintObjectUI;
+  currentRule: CapabilityFilterConstraintUI;
   currentIndex: number;
   listOfValuesToAssign: DropdownValue[];
   listOfSourceOptions: PropertyBEModel[];
   assignedValueLabel: string;
-  serviceRulesList: CapabilitiesConstraintObjectUI[];
+  serviceRulesList: CapabilityFilterConstraintUI[];
 
   capabilitiesNames: string[];
   selectedPropertiesByCapabilityName: Array<PropertyModel>;
@@ -92,7 +92,7 @@ export class CapabilitiesFilterPropertiesEditorComponent {
     this.serviceRulesList = this.input.serviceRules;
     this.currentRule = this.serviceRulesList && this.input.serviceRuleIndex >= 0 ?
         this.serviceRulesList[this.input.serviceRuleIndex] :
-        new CapabilitiesConstraintObjectUI({
+        new CapabilityFilterConstraintUI({
           capabilityName: this.SOURCE_TYPES.CAPABILITY_NAME.value,
           sourceName: this.SOURCE_TYPES.STATIC.value,
           sourceType: this.SOURCE_TYPES.STATIC.value, value: '',

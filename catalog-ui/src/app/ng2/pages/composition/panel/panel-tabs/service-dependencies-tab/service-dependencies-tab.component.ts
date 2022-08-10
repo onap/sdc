@@ -11,13 +11,13 @@ import {DEPENDENCY_EVENTS} from 'app/utils/constants';
 import {ComponentMetadata} from '../../../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../../../models/service-instance-properties-and-interfaces';
 import {EventListenerService} from '../../../../../../services/event-listener-service';
-import {ConstraintObject} from '../../../../../components/logic/service-dependencies/service-dependencies.component';
 import {TopologyTemplateService} from '../../../../../services/component-services/topology-template.service';
 import {ComponentGenericResponse} from '../../../../../services/responses/component-generic-response';
 import {WorkspaceService} from '../../../../workspace/workspace.service';
 import {SelectedComponentType} from '../../../common/store/graph.actions';
 import {CompositionService} from '../../../composition.service';
-import {CapabilitiesConstraintObject} from "../../../../../components/logic/capabilities-constraint/capabilities-constraint.component";
+import {CapabilityFilterConstraint} from "../../../../../../models/capability-filter-constraint";
+import {FilterConstraint} from "../../../../../../models/filter-constraint";
 
 @Component({
     selector: 'service-dependencies-tab',
@@ -29,7 +29,7 @@ export class ServiceDependenciesTabComponent {
 
     selectedInstanceSiblings: ServiceInstanceObject[];
     componentInstancesConstraints: any[];
-    selectedInstanceConstraints: ConstraintObject[];
+    selectedInstanceConstraints: FilterConstraint[];
     selectedInstanceProperties: PropertyBEModel[];
     componentInstanceProperties: PropertiesGroup;
     componentInstanceCapabilityProperties: CapabilitiesGroup;
@@ -68,12 +68,12 @@ export class ServiceDependenciesTabComponent {
         this.eventListenerService.notifyObservers(DEPENDENCY_EVENTS.ON_DEPENDENCY_CHANGE, isChecked);
     }
 
-    public updateSelectedInstanceConstraints = (constraintsList:Array<ConstraintObject>):void => {
+    public updateSelectedInstanceConstraints = (constraintsList:Array<FilterConstraint>):void => {
         this.componentInstancesConstraints[this.component.uniqueId].properties = constraintsList;
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].properties;
     }
 
-    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList:Array<CapabilitiesConstraintObject>):void => {
+    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList:Array<CapabilityFilterConstraint>):void => {
         this.componentInstancesConstraints[this.component.uniqueId].capabilities = constraintsList;
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].capabilities;
     }

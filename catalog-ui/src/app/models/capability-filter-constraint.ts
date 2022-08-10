@@ -19,7 +19,7 @@
 *  ============LICENSE_END=========================================================
 */
 
-export class CapabilitiesConstraintObject {
+export class CapabilityFilterConstraint {
     capabilityName: string;
     servicePropertyName: string;
     constraintOperator: string;
@@ -39,7 +39,7 @@ export class CapabilitiesConstraintObject {
     }
 }
 
-export class CapabilitiesConstraintObjectUI extends CapabilitiesConstraintObject{
+export class CapabilityFilterConstraintUI extends CapabilityFilterConstraint {
     isValidValue: boolean;
 
     constructor(input?: any) {
