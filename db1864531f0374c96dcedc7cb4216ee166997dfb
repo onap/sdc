@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "51a284f5_43ca80ec",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T15:22:33Z",
+      "side": 1,
+      "message": "There are a couple of format problems. Please, format this file according to project code style.",
+      "range": {
+        "startLine": 30,
+        "startChar": 13,
+        "endLine": 30,
+        "endChar": 27
+      },
+      "revId": "db1864531f0374c96dcedc7cb4216ee166997dfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93c55432_3d4e826d",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T15:22:33Z",
+      "side": 1,
+      "message": "please, centralize this code and reuse in the other test",
+      "range": {
+        "startLine": 35,
+        "startChar": 8,
+        "endLine": 39,
+        "endChar": 48
+      },
+      "revId": "db1864531f0374c96dcedc7cb4216ee166997dfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9e970d6_e40a34ec",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T15:22:33Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 42,
+        "startChar": 8,
+        "endLine": 48,
+        "endChar": 44
+      },
+      "revId": "db1864531f0374c96dcedc7cb4216ee166997dfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
