@@ -2324,13 +2324,22 @@ errors:
         messageId: "SVC4719"
     }
 
-    #---------SVC4720----------------------------
+    #---------SVC4734----------------------------
     # %1 - Property Name
     # %2 - Operator Type
     SOURCE_TARGET_PROPERTY_TYPE_MISMATCH: {
         code: 400,
-        message: "Error: %1 property and %2 property type is not same.",
-        messageId: "SVC4720"
+        message: "Error: '%1' property and '%2' property type is not same.",
+        messageId: "SVC4734"
+    }
+
+    #---------SVC4735----------------------------
+    # %1 - Target property name
+    # %2 - Source property name
+    SOURCE_TARGET_SCHEMA_MISMATCH: {
+        code: 400,
+        message: "Target property '%1' schema '%2' does not match with source property '%3' schema '%4'.",
+        messageId: "SVC4735"
     }
 
     #---------SVC4721----------------------------
