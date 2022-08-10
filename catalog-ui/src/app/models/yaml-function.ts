@@ -22,6 +22,7 @@
 import {ToscaFunction} from "./tosca-function";
 import {ToscaFunctionType} from "./tosca-function-type.enum";
 import {ToscaFunctionParameter} from "./tosca-function-parameter";
+import * as jsYaml from 'js-yaml';
 
 export class YamlFunction implements ToscaFunction, ToscaFunctionParameter {
     type = ToscaFunctionType.YAML;
@@ -32,6 +33,14 @@ export class YamlFunction implements ToscaFunction, ToscaFunctionParameter {
             return;
         }
         this.value = yamlFunction.value;
+    }
+
+    public buildValueObject(): Object {
+        return jsYaml.load(this.value);
+    }
+
+    public buildValueString(): string {
+        return this.value;
     }
 
 }

@@ -24,4 +24,5 @@ import {ToscaFunctionType} from "./tosca-function-type.enum";
 export interface ToscaFunctionParameter {
     type: ToscaFunctionType;
     value: any;
+    buildValueObject(): Object;
 }

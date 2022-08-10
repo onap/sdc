@@ -33,6 +33,19 @@ export class ToscaConcatFunction implements ToscaFunction, ToscaFunctionParamete
             return;
         }
         this.value = toscaConcatFunction.value;
+        if (toscaConcatFunction.parameters) {
+            this.parameters = Array.from(toscaConcatFunction.parameters);
+        }
+    }
+
+    public buildValueString(): string {
+        return JSON.stringify(this.buildValueObject());
+    }
+
+    public buildValueObject(): Object {
+        return {
+            [this.type.toLowerCase()]: this.parameters.map(parameter => parameter.buildValueObject())
+        }
     }
 
 }
