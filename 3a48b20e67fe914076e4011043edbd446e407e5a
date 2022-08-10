@@ -848,6 +848,30 @@
     },
     {
       "key": {
+        "uuid": "2af5d8aa_b4ee7a57",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypesImportManagerTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T09:24:54Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "5070b1e4_e02c709d",
+      "range": {
+        "startLine": 51,
+        "startChar": 32,
+        "endLine": 51,
+        "endChar": 51
+      },
+      "revId": "3a48b20e67fe914076e4011043edbd446e407e5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "774f1c31_c58ff16a",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/DataTypesImportManagerTest.java",
         "patchSetId": 3

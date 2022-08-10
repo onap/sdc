@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1c4ca22_c91f1b63",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T09:24:54Z",
+      "side": 1,
+      "message": "I think this method can stay in a loop if we have import circular dependency.\nWe should check somehow that the file was already processed.",
+      "range": {
+        "startLine": 60,
+        "startChar": 45,
+        "endLine": 60,
+        "endChar": 63
+      },
+      "revId": "b749f763d82139792f733add5b63b76132f8043d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
