@@ -21,7 +21,11 @@
 package org.openecomp.sdc.be.components.validation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 import fj.data.Either;
 import java.util.Arrays;
@@ -30,7 +34,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -51,7 +54,7 @@ import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-public class NodeFilterValidationTest {
+class NodeFilterValidationTest {
 
     private static final String EMPTY_STR = "";
 	private static final String UI_CONSTRAINT_STATIC = "Prop1: {equal: 'value'}";
@@ -71,14 +74,14 @@ public class NodeFilterValidationTest {
     private NodeFilterValidator nodeFilterValidator;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         componentsUtils = Mockito.mock(ComponentsUtils.class);
         MockitoAnnotations.openMocks(this);
         new ConfigurationManager(new FSConfigurationSource(ExternalConfiguration.getChangeListener(), "src/test/resources/config/catalog-be"));
     }
 
     @Test
-    public void testValidateComponentInstanceExist() {
+    void testValidateComponentInstanceExist() {
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateComponentInstanceExist(null, INNER_SERVICE);
         assertTrue(either.isRight());
@@ -101,7 +104,7 @@ public class NodeFilterValidationTest {
     }
 
     @Test
-    public void testValidateNodeFilterStaticIncorrectPropertyTypeProvided() {
+    void testValidateNodeFilterStaticIncorrectPropertyTypeProvided() {
         Service service = createService("booleanIncorrect");
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, INNER_SERVICE,
@@ -117,44 +120,45 @@ public class NodeFilterValidationTest {
     }
 
     @Test
-    public void testValidateComponentFilter() {
-        Service service = createService("booleanIncorrect");
+    void testValidateComponentFilter() {
+        Service service = createService("integer");
         String property = "Prop1: {equal: {get_property: ['test','test2']}}";
-        Either<Boolean, ResponseFormat> either =
+        Either<Boolean, ResponseFormat> actualValidationResult =
                 nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(property),
                         NodeFilterConstraintAction.ADD);
-        assertTrue(either.isRight());
+        assertTrue(actualValidationResult.isRight());
 
         property = "Prop1: {equal: {get_property: ['parentservice','Prop1']}}";
-        either =
+        actualValidationResult =
                 nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(property),
                         NodeFilterConstraintAction.ADD);
-        assertTrue(either.isLeft());
+        assertTrue(actualValidationResult.isLeft());
 
         String staticStr = "Prop1: {equal: 1}";
-        either = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
+        actualValidationResult = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
                         NodeFilterConstraintAction.ADD);
-        assertTrue(either.isLeft());
-        assertTrue(either.left().value());
+        assertTrue(actualValidationResult.isLeft());
+        assertTrue(actualValidationResult.left().value());
 
         staticStr = "Prop1: {equal: 'true'}";
-        either = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
+        actualValidationResult = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
                         NodeFilterConstraintAction.ADD);
-        assertTrue(either.isRight());
+        assertTrue(actualValidationResult.isRight());
 
+        service = createService("boolean");
         staticStr = "Prop1: {greater_than: '3'}";
-        either = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
+        actualValidationResult = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
                 NodeFilterConstraintAction.ADD);
-        assertTrue(either.isRight());
+        assertTrue(actualValidationResult.isRight());
 
         staticStr = "test: {greater_than: '3'}";
-        either = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
+        actualValidationResult = nodeFilterValidator.validateComponentFilter(service, Collections.singletonList(staticStr),
                 NodeFilterConstraintAction.ADD);
-        assertTrue(either.isRight());
+        assertTrue(actualValidationResult.isRight());
     }
 
     @Test
-    public void testValidateNodeFilterStaticIncorrectOperatorProvidedBoolean() {
+    void testValidateNodeFilterStaticIncorrectOperatorProvidedBoolean() {
         Service service = createService("boolean");
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, INNER_SERVICE,
@@ -162,22 +166,22 @@ public class NodeFilterValidationTest {
                                 .replace("equal", "greater_than")),
                         NodeFilterConstraintAction.ADD, NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertFalse(either.isLeft());
+        assertFalse(either.isLeft());
     }
 
     @Test
-    public void testValidateNodeFilterStaticIncorrectValueProvidedBoolean() {
+    void testValidateNodeFilterStaticIncorrectValueProvidedBoolean() {
         Service service = createService("boolean");
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, INNER_SERVICE,
                         Collections.singletonList(UI_CONSTRAINT_STATIC.replace(VALUE, "trues")),
                         NodeFilterConstraintAction.ADD, NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertFalse(either.isLeft());
+        assertFalse(either.isLeft());
     }
 
     @Test
-    public void testValidateNodeFilterStaticIncorrectOperatorProvidedString() {
+    void testValidateNodeFilterStaticIncorrectOperatorProvidedString() {
         Service service = createService(STRING_TYPE);
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, INNER_SERVICE,
@@ -185,25 +189,25 @@ public class NodeFilterValidationTest {
                                 .replace("equal", "greater_than")),
                         NodeFilterConstraintAction.ADD, NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertTrue(either.isLeft());
+        assertTrue(either.isLeft());
     }
 
     @Test
-    public void testValidateNodeFilterIntegerValueSuccess() {
+    void testValidateNodeFilterIntegerValueSuccess() {
         Service service = createService(INTEGER_TYPE);
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, INNER_SERVICE,
                         Collections.singletonList(UI_CONSTRAINT_STATIC.replace(VALUE, "1")),
                                 NodeFilterConstraintAction.ADD, NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertTrue(either.isLeft());
+        assertTrue(either.isLeft());
     }
 
     @Test
-    public void testValidateNodeFilterIntegerValueFail() {
+    void testValidateNodeFilterIntegerValueFail() {
         Service service = createService(INTEGER_TYPE);
 
-        Mockito.when(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, "param1"))
+        when(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, "param1"))
                 .thenReturn(new ResponseFormat());
 
         Either<Boolean, ResponseFormat> either =
@@ -211,25 +215,25 @@ public class NodeFilterValidationTest {
                         Collections.singletonList(UI_CONSTRAINT_STATIC.replace(VALUE, "1.0")),
                         NodeFilterConstraintAction.ADD, NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertTrue(either.isRight());
+        assertTrue(either.isRight());
     }
 
     @Test
-    public void testValidateNodeFilterFloatValueSuccess() {
+    void testValidateNodeFilterFloatValueSuccess() {
         Service service = createService(FLOAT_TYPE);
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, INNER_SERVICE,
                         Collections.singletonList(UI_CONSTRAINT_STATIC.replace(VALUE, "1.0")),
                         NodeFilterConstraintAction.ADD, NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertTrue(either.isLeft());
+        assertTrue(either.isLeft());
     }
 
     @Test
-    public void testValidateNodeFilterFloatValueFail() {
+    void testValidateNodeFilterFloatValueFail() {
         Service service = createService(FLOAT_TYPE);
 
-        Mockito.when(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, "param1"))
+        when(componentsUtils.getResponseFormat(ActionStatus.UNSUPPORTED_VALUE_PROVIDED, "param1"))
                 .thenReturn(new ResponseFormat());
 
         Either<Boolean, ResponseFormat> either =
@@ -237,44 +241,46 @@ public class NodeFilterValidationTest {
                         Collections.singletonList(UI_CONSTRAINT_STATIC), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertTrue(either.isRight());
+        assertTrue(either.isRight());
     }
 
     @Test
-    public void testValidateNodeFilterStringValueSuccess() {
+    void testValidateNodeFilterStringValueSuccess() {
         Service service = createService(STRING_TYPE);
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, INNER_SERVICE,
                     Collections.singletonList(UI_CONSTRAINT_STATIC), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertTrue(either.isLeft());
+        assertTrue(either.isLeft());
     }
 
     @Test
-    public void testValidatePropertyConstraintBrotherSuccess() {
+    void testValidatePropertyConstraintBrotherSuccess() {
         Service service = createService(STRING_TYPE);
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, COMPONENT1_ID, Collections.singletonList("Prop1:\n"
                         + "  equal:  { get_property :[component2, Prop1]}\n"), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertTrue(either.isLeft());
+        assertTrue(either.isLeft());
+        assertTrue(either.left().value());
     }
 
     @Test
-    public void testValidatePropertyConstraintParentSuccess() {
+    void testValidatePropertyConstraintParentSuccess() {
         Service service = createService(STRING_TYPE);
         Either<Boolean, ResponseFormat> either =
                 nodeFilterValidator.validateFilter(service, COMPONENT1_ID, Collections.singletonList("Prop1:\n"
                         + "  equal:  { get_property : [SELF, Prop1]}\n"), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertTrue(either.isLeft());
+        assertTrue(either.isLeft());
+        assertTrue(either.left().value());
     }
 
     @Test
-    public void testValidatePropertyConstraintBrotherPropertyTypeMismatch() {
+    void testValidatePropertyConstraintBrotherPropertyTypeMismatch() {
         Service service = createService(STRING_TYPE);
         service.getComponentInstancesProperties().get(COMPONENT2_ID).get(0).setType(INTEGER_TYPE);
 
@@ -283,11 +289,11 @@ public class NodeFilterValidationTest {
                         + "  equal: { get_property : [component2, Prop1]}\n"), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertFalse(either.isLeft());
+        assertFalse(either.isLeft());
     }
 
     @Test
-    public void testValidatePropertyConstraintParentPropertyTypeMismatch() {
+    void testValidatePropertyConstraintParentPropertyTypeMismatch() {
         Service service = createService(STRING_TYPE);
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setType(INTEGER_TYPE);
 
@@ -296,24 +302,30 @@ public class NodeFilterValidationTest {
                         + "  equal: { get_property : [parentservice, Prop1]}\n"), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertFalse(either.isLeft());
+        assertFalse(either.isLeft());
     }
 
     @Test
-    public void testValidatePropertyConstraintParentPropertyNotFound() {
-        Service service = createService(STRING_TYPE);
+    void testValidatePropertyConstraintParentPropertyNotFound() {
+        final Service service = createService(STRING_TYPE);
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setName("Prop2");
 
-        Either<Boolean, ResponseFormat> either =
-                nodeFilterValidator.validateFilter(service, COMPONENT1_ID, Collections.singletonList("Prop1:\n"
-                        + "  equal: { get_property : [parentservice, Prop1]}\n"), NodeFilterConstraintAction.ADD,
-                    NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
+        final ResponseFormat expectedResponse = new ResponseFormat();
+        when(componentsUtils.getResponseFormat(eq(ActionStatus.MAPPED_PROPERTY_NOT_FOUND), any(), any()))
+            .thenReturn(expectedResponse);
 
-        Assert.assertFalse(either.isLeft());
+
+        final Either<Boolean, ResponseFormat> validationResult =
+                nodeFilterValidator.validateFilter(service, COMPONENT1_ID,
+                    List.of("Prop1:\n  equal: { get_property : [parentservice, Prop1]}\n"),
+                    NodeFilterConstraintAction.ADD, NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
+
+        assertTrue(validationResult.isRight());
+        assertEquals(expectedResponse, validationResult.right().value());
     }
 
     @Test
-    public void testvalidatePropertyConstraintBrotherPropertyNotFound() {
+    void testValidatePropertyConstraintBrotherPropertyNotFound() {
         Service service = createService(STRING_TYPE);
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setName("Prop2");
 
@@ -322,11 +334,11 @@ public class NodeFilterValidationTest {
                         + "  equal:  { get_property : [parentservice, Prop1]}\n"), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertFalse(either.isLeft());
+        assertFalse(either.isLeft());
     }
 
     @Test
-    public void testValidatePropertyConstraintParentPropertySchemaMismatch() {
+    void testValidatePropertyConstraintParentPropertySchemaMismatch() {
         Service service = createService(LIST_TYPE,STRING_TYPE);
         service.getComponentInstancesProperties().get(COMPONENT1_ID).get(0).setType(LIST_TYPE);
 
@@ -335,7 +347,7 @@ public class NodeFilterValidationTest {
                     + "  equal: { get_property : [parentservice, Prop1]}\n"), NodeFilterConstraintAction.ADD,
                     NodeFilterConstraintType.PROPERTIES, EMPTY_STR);
 
-        Assert.assertFalse(either.isLeft());
+        assertFalse(either.isLeft());
     }
 
     private Service createService(String type) {

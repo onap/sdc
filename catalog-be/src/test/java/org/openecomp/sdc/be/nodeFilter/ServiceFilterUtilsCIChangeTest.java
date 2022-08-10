@@ -16,9 +16,16 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fj.data.Either;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
@@ -30,15 +37,6 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.exception.ResponseFormat;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class ServiceFilterUtilsCIChangeTest extends BaseServiceFilterUtilsTest {
 
@@ -52,7 +50,7 @@ public class ServiceFilterUtilsCIChangeTest extends BaseServiceFilterUtilsTest {
 
     private Set<String> getNodeFiltersToBeDeleted(String inCiName) {
         requirementNodeFilterPropertyDataDefinition
-                .setConstraints(Arrays.asList("mem_size:\n" + "  equal:\n" + "    get_property: ["+CI_NAME+", some static]\n"));
+                .setConstraints(List.of("mem_size:\n" + "  equal:\n" + "    get_property: [" + CI_NAME + ", some static]\n"));
         ComponentInstance ci = new ComponentInstance();
         ci.setName(inCiName);
         return ServiceFilterUtils.getNodesFiltersToBeDeleted(service, ci);
@@ -63,7 +61,6 @@ public class ServiceFilterUtilsCIChangeTest extends BaseServiceFilterUtilsTest {
         Set<String> nodesFiltersToBeDeleted = getNodeFiltersToBeDeleted(CI_NAME + " aaa bbb");
         assertNotNull(nodesFiltersToBeDeleted);
         assertTrue(nodesFiltersToBeDeleted.isEmpty());
-        assertFalse(nodesFiltersToBeDeleted.contains(CI_NAME));
     }
 
     @Test

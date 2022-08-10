@@ -16,16 +16,15 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
-import org.openecomp.sdc.be.impl.ServiceFilterUtils;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+import java.util.Map;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.impl.ServiceFilterUtils;
 
 public class ServiceFilterRenameCiTest extends BaseServiceFilterUtilsTest {
 
@@ -38,7 +37,7 @@ public class ServiceFilterRenameCiTest extends BaseServiceFilterUtilsTest {
         final List<String> constraints =
                 renamedNodeFilters.get(CI_NAME).getProperties().getListToscaDataDefinition().iterator().next()
                                   .getConstraints();
-        assertEquals(1,constraints.size());
+        assertEquals(1, constraints.size());
         final String constraint = constraints.iterator().next();
         assertTrue(constraint.contains(CI_NEW_NAME));
     }

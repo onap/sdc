@@ -194,7 +194,7 @@ export class SubstitutionFilterComponent {
       this.emitEventOnChanges(constraintType, response);
       this.isLoading = false;
     }, (err) => {
-      console.error("Failed to Create Substitution Filter on the component with id: ", this.compositeService.uniqueId);
+      console.error(`Failed to Create Substitution Filter on the component with id: ${this.compositeService.uniqueId}`, err);
       this.isLoading = false;
     });
     this.modalServiceNg2.closeCurrentModal();

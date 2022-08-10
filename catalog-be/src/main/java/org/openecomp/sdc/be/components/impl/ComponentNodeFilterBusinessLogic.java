@@ -309,7 +309,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         throws BusinessLogicException {
         validateNodeFilter(component, componentInstanceId, action, constraint, nodeFilterConstraintType, capabilityName);
         final Optional<CINodeFilterDataDefinition> cINodeFilterDataDefinition = getCiNodeFilterDataDefinition(componentInstanceId, component);
-        if (!cINodeFilterDataDefinition.isPresent()) {
+        if (cINodeFilterDataDefinition.isEmpty()) {
             throw new BusinessLogicException(componentsUtils.getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND));
         }
         return cINodeFilterDataDefinition.get();
@@ -320,8 +320,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
         final Either<Boolean, ResponseFormat> response = nodeFilterValidator
             .validateFilter(component, componentInstanceId, Collections.singletonList(constraint), action, nodeFilterConstraintType, capabilityName);
         if (response.isRight()) {
-            throw new BusinessLogicException(
-                componentsUtils.getResponseFormat(ActionStatus.NODE_FILTER_NOT_FOUND, response.right().value().getFormattedMessage()));
+            throw new BusinessLogicException(response.right().value());
         }
     }
 
