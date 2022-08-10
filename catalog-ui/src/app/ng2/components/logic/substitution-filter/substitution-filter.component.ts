@@ -17,14 +17,8 @@
 *  ============LICENSE_END=========================================================
 */
 
-import {Component, ComponentRef, EventEmitter, Input, Output} from '@angular/core';
-import {
-  ButtonModel,
-  ComponentInstance,
-  InputBEModel,
-  ModalModel,
-  PropertyBEModel,
-} from 'app/models';
+import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import {ButtonModel, ComponentInstance, InputBEModel, ModalModel, PropertyBEModel,} from 'app/models';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
 import {ModalService} from 'app/ng2/services/modal.service';
@@ -32,51 +26,9 @@ import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {ComponentMetadata} from '../../../../models/component-metadata';
 import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
 import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
-
-export class ConstraintObject {
-  servicePropertyName: string;
-  constraintOperator: string;
-  sourceType: string;
-  sourceName: string;
-  value: string;
-
-  constructor(input?: any) {
-    if (input) {
-      this.servicePropertyName = input.servicePropertyName;
-      this.constraintOperator = input.constraintOperator;
-      this.sourceType = input.sourceType;
-      this.sourceName = input.sourceName;
-      this.value = input.value;
-    }
-  }
-}
-
-export class ConstraintObjectUI extends ConstraintObject {
-  isValidValue: boolean;
-
-  constructor(input?: any) {
-    super(input);
-    if (input) {
-      this.isValidValue = input.isValidValue ? input.isValidValue : input.value !== '';
-    }
-  }
-
-  public updateValidity(isValidValue: boolean) {
-    this.isValidValue = isValidValue;
-  }
-
-  public isValidRule(isStatic) {
-    const isValidValue = isStatic ? this.isValidValue : true;
-    return this.servicePropertyName != null && this.servicePropertyName !== ''
-        && this.value != null && this.value !== '' && isValidValue;
-  }
-}
-
-export const OPERATOR_TYPES = {
-  EQUAL: 'equal',
-  GREATER_THAN: 'greater_than',
-  LESS_THAN: 'less_than'
-};
+import {FilterConstraint} from "app/models/filter-constraint";
+import {ConstraintObjectUI} from "../../../../models/ui-models/constraint-object-ui";
+import {FilterConstraintHelper, OPERATOR_TYPES} from "../../../../utils/filter-constraint-helper";
 
 class I18nTexts {
   static addSubstitutionFilterTxt: string;
@@ -108,34 +60,37 @@ class I18nTexts {
   providers: [ModalService, TranslateService]
 })
 
-export class SubstitutionFilterComponent {
+export class SubstitutionFilterComponent implements OnInit, OnChanges {
   modalInstance: ComponentRef<ModalComponent>;
   isLoading: boolean;
   operatorTypes: any[];
-  constraintProperties: ConstraintObject[] = [];
+  constraintProperties: FilterConstraint[] = [];
+  constraintPropertyLabels: string[] = [];
   PROPERTIES: string = ToscaFilterConstraintType.PROPERTIES;
 
   @Input() readonly: boolean;
   @Input() compositeService: ComponentMetadata;
   @Input() currentServiceInstance: ComponentInstance;
-  @Input() selectedInstanceConstraints: ConstraintObject[] = [];
+  @Input() selectedInstanceConstraints: FilterConstraint[] = [];
   @Input() selectedInstanceProperties: PropertyBEModel[] = [];
   @Input() parentServiceProperties: PropertyBEModel[] = [];
   @Input() parentServiceInputs: InputBEModel[] = [];
-  @Output() updateSubstitutionFilterProperties: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
-  @Output() updateConstraintListEvent: EventEmitter<ConstraintObject[]> = new EventEmitter<ConstraintObject[]>();
+  @Output() updateSubstitutionFilterProperties: EventEmitter<FilterConstraint[]> = new EventEmitter<FilterConstraint[]>();
+  @Output() updateConstraintListEvent: EventEmitter<FilterConstraint[]> = new EventEmitter<FilterConstraint[]>();
   @Output() loadConstraintListEvent: EventEmitter<any> = new EventEmitter();
   @Output() hasSubstitutionFilter = new EventEmitter<boolean>();
 
   constructor(private topologyTemplateService: TopologyTemplateService, private modalServiceNg2: ModalService, private translateService: TranslateService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.isLoading = false;
     this.operatorTypes = [
-      {label: '>', value: OPERATOR_TYPES.GREATER_THAN},
-      {label: '<', value: OPERATOR_TYPES.LESS_THAN},
-      {label: '=', value: OPERATOR_TYPES.EQUAL}
+      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.GREATER_THAN), value: OPERATOR_TYPES.GREATER_THAN},
+      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.LESS_THAN), value: OPERATOR_TYPES.LESS_THAN},
+      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.EQUAL), value: OPERATOR_TYPES.EQUAL},
+      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.GREATER_OR_EQUAL), value: OPERATOR_TYPES.GREATER_OR_EQUAL},
+      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.LESS_OR_EQUAL), value: OPERATOR_TYPES.LESS_OR_EQUAL}
     ];
     this.loadSubstitutionFilter();
     this.translateService.languageChangedObservable.subscribe((lang) => {
@@ -143,7 +98,7 @@ export class SubstitutionFilterComponent {
     });
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes): void {
     if (changes.compositeService) {
       this.compositeService = changes.compositeService.currentValue;
     }
@@ -158,11 +113,12 @@ export class SubstitutionFilterComponent {
     .subscribe((response) => {
       if(response.substitutionFilters) {
         this.constraintProperties = response.substitutionFilters.properties;
+        this.buildConstraintPropertyLabels();
       }
     });
   }
 
-  onAddSubstitutionFilter = (constraintType: string) => {
+  onAddSubstitutionFilter = (constraintType: string): void => {
     const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
     const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createSubstitutionFilter(constraintType), this.getDisabled);
     const modalModel: ModalModel = new ModalModel('l', I18nTexts.addSubstitutionFilterTxt, '', [saveButton, cancelButton], 'standard');
@@ -182,8 +138,8 @@ export class SubstitutionFilterComponent {
     this.modalInstance.instance.open();
   }
 
-  createSubstitutionFilter = (constraintType: string) => {
-    const newSubstitutionFilter: ConstraintObject = new ConstraintObject(this.modalInstance.instance.dynamicContent.instance.currentRule);
+  createSubstitutionFilter = (constraintType: string): void => {
+    const newSubstitutionFilter: FilterConstraint = new FilterConstraint(this.modalInstance.instance.dynamicContent.instance.currentRule);
     this.isLoading = true;
     this.topologyTemplateService.createSubstitutionFilterConstraints(
         this.compositeService.uniqueId,
@@ -194,7 +150,7 @@ export class SubstitutionFilterComponent {
       this.emitEventOnChanges(constraintType, response);
       this.isLoading = false;
     }, (err) => {
-      console.error("Failed to Create Substitution Filter on the component with id: ", this.compositeService.uniqueId);
+      console.error(`Failed to Create Substitution Filter on the component with id: ${this.compositeService.uniqueId}`, err);
       this.isLoading = false;
     });
     this.modalServiceNg2.closeCurrentModal();
@@ -202,7 +158,7 @@ export class SubstitutionFilterComponent {
 
   onSelectSubstitutionFilter(constraintType: string, index: number) {
     const cancelButton: ButtonModel = new ButtonModel(I18nTexts.modalCancel, 'outline white', this.modalServiceNg2.closeCurrentModal);
-    const updateButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateSubstitutionFilter(constraintType), this.getDisabled);
+    const updateButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateSubstitutionFilter(constraintType, index), this.getDisabled);
     const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateSubstitutionFilterTxt, '', [updateButton, cancelButton], 'standard');
     this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
     this.modalServiceNg2.addDynamicContentToModal(
@@ -222,25 +178,26 @@ export class SubstitutionFilterComponent {
     this.modalInstance.instance.open();
   }
 
-  updateSubstitutionFilter = (constraintType: string): void => {
-    const constraintToUpdate: ConstraintObject[] = this.modalInstance.instance.dynamicContent.instance.serviceRulesList.map((rule) => new ConstraintObject(rule));
+  updateSubstitutionFilter(constraintType: string, index: number): void {
+    const constraintToUpdate: FilterConstraint = this.modalInstance.instance.dynamicContent.instance.currentRule;
     this.isLoading = true;
-    this.topologyTemplateService.updateSubstitutionFilterConstraints(
+    this.topologyTemplateService.updateSubstitutionFilterConstraint(
         this.compositeService.uniqueId,
         constraintToUpdate,
         this.compositeService.componentType,
-        constraintType
+        constraintType,
+        index
     ).subscribe((response) => {
       this.emitEventOnChanges(constraintType, response);
       this.isLoading = false;
-    }, () => {
-      console.error("Failed to Update Substitution Filter on the component with id: ", this.compositeService.uniqueId);
+    }, (error) => {
+      console.error("Failed to Update Substitution Filter on the component with id: ", this.compositeService.uniqueId, error);
       this.isLoading = false;
     });
     this.modalServiceNg2.closeCurrentModal();
   }
 
-  onDeleteSubstitutionFilter = (constraintType: string, index: number) => {
+  onDeleteSubstitutionFilter = (constraintType: string, index: number): void => {
     this.isLoading = true;
     this.topologyTemplateService.deleteSubstitutionFilterConstraints(
         this.compositeService.uniqueId,
@@ -262,26 +219,27 @@ export class SubstitutionFilterComponent {
     return !this.modalInstance.instance.dynamicContent.instance.checkFormValidForSubmit();
   }
 
-  getSymbol(constraintOperator) {
-    switch (constraintOperator) {
-      case OPERATOR_TYPES.LESS_THAN:
-        return '<';
-      case OPERATOR_TYPES.EQUAL:
-        return '=';
-      case OPERATOR_TYPES.GREATER_THAN:
-        return '>';
-    }
-  }
-
-  openDeleteModal = (constraintType: string, index: number) => {
+  openDeleteModal = (constraintType: string, index: number): void => {
     this.modalServiceNg2.createActionModal(I18nTexts.deleteSubstitutionFilterTxt, I18nTexts.deleteSubstitutionFilterMsg,
         I18nTexts.modalDelete, () => this.onDeleteSubstitutionFilter(constraintType, index), I18nTexts.modalCancel).instance.open();
   }
 
-  private emitEventOnChanges(constraintType: string, response) {
-      if (ToscaFilterConstraintType.PROPERTIES === constraintType) {
-              this.updateSubstitutionFilterProperties.emit(response.properties);
-              this.constraintProperties = response.properties;
-      }
+  private emitEventOnChanges(constraintType: string, response): void {
+    if (ToscaFilterConstraintType.PROPERTIES === constraintType) {
+      this.updateSubstitutionFilterProperties.emit(response.properties);
+      this.constraintProperties = response.properties;
+      this.buildConstraintPropertyLabels();
+    }
   }
+
+  private buildConstraintPropertyLabels(): void {
+    this.constraintPropertyLabels = [];
+    if (!this.constraintProperties) {
+      return;
+    }
+    this.constraintProperties.forEach(
+        constraint => this.constraintPropertyLabels.push(FilterConstraintHelper.buildFilterConstraintLabel(constraint))
+    )
+  }
+
 }

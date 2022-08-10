@@ -24,11 +24,18 @@ import org.apache.commons.collections.CollectionUtils;
 import org.javatuples.Pair;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaConcatFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionParameter;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Service;
-import org.openecomp.sdc.be.ui.model.UIConstraint;
+import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
 
 public class ServiceFilterUtils {
 
@@ -48,12 +55,19 @@ public class ServiceFilterUtils {
             || ci.getNodeFilter().getProperties().getListToscaDataDefinition() == null) {
             return false;
         }
-        return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream().flatMap(prop -> prop.getConstraints().stream())
-            .map(String::new)
-            .filter(constraint -> new ConstraintConvertor().convert(constraint).getSourceType().equals(ConstraintConvertor.PROPERTY_CONSTRAINT))
-            .anyMatch(constraintStr -> {
-                UIConstraint uiConstraint = new ConstraintConvertor().convert(constraintStr);
-                return uiConstraint.getSourceName().equals(ciName) && uiConstraint.getValue().equals(propertyName);
+        return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream()
+            .flatMap(prop -> prop.getConstraints().stream())
+            .filter(constraint ->
+                List.of(ConstraintConvertor.PROPERTY_CONSTRAINT, ToscaFunctionType.GET_PROPERTY.getName())
+                    .contains(constraint.getValueType().getName())
+            )
+            .map(new FilterConstraintMapper()::mapFrom)
+            .anyMatch(constraint -> {
+                final ToscaGetFunctionDataDefinition toscaGetFunction = constraint.readGetFunction().orElse(null);
+                if (toscaGetFunction == null) {
+                    return false;
+                }
+                return toscaGetFunction.getSourceName().equals(ciName) && toscaGetFunction.getPropertyPathFromSource().contains(propertyName);
             });
     }
 
@@ -69,20 +83,57 @@ public class ServiceFilterUtils {
         return new Pair<>(ci.getUniqueId(), ci.getNodeFilter());
     }
 
-    private static void renamePropertyCiNames(RequirementNodeFilterPropertyDataDefinition property, String oldName, String newName) {
-        final List<String> constraints = property.getConstraints().stream().map(getConstraintString(oldName, newName)).collect(Collectors.toList());
-        property.setConstraints(constraints);
+    private static void renamePropertyCiNames(final PropertyFilterDataDefinition propertyFilter, final String oldInstanceName,
+                                              final String newInstanceName) {
+        final List<FilterValueType> instanceValueTypes =
+            List.of(FilterValueType.GET_PROPERTY, FilterValueType.GET_ATTRIBUTE, FilterValueType.CONCAT);
+        final List<PropertyFilterConstraintDataDefinition> constraints = propertyFilter.getConstraints().stream()
+            .filter(propertyFilter1 -> instanceValueTypes.contains(propertyFilter1.getValueType()))
+            .map(replaceConstraintsInstanceSource(oldInstanceName, newInstanceName))
+            .collect(Collectors.toList());
+        propertyFilter.setConstraints(constraints);
     }
 
-    private static Function<String, String> getConstraintString(String oldName, String newName) {
+    private static Function<PropertyFilterConstraintDataDefinition, PropertyFilterConstraintDataDefinition> replaceConstraintsInstanceSource(
+        final String oldInstanceName, final String newInstanceName) {
+
         return constraint -> {
-            final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
-            UIConstraint uiConstraint = constraintConvertor.convert(constraint);
-            if (uiConstraint.getSourceName().equals(oldName)) {
-                uiConstraint.setSourceName(newName);
+            final ToscaFunction toscaFunction = new FilterConstraintMapper().parseValueToToscaFunction(constraint.getValue()).orElse(null);
+            if (toscaFunction == null) {
+                return constraint;
             }
-            return constraintConvertor.convert(uiConstraint);
+            renameToscaFunctionComponentInstance(toscaFunction, oldInstanceName, newInstanceName);
+            return constraint;
         };
+    }
+
+    private static void renameToscaFunctionComponentInstance(final ToscaFunction toscaFunction, final String oldInstanceName,
+                                                             final String newInstanceName) {
+        switch (toscaFunction.getType()) {
+            case GET_PROPERTY:
+            case GET_ATTRIBUTE: {
+                final ToscaGetFunctionDataDefinition toscaFunction1 = (ToscaGetFunctionDataDefinition) toscaFunction;
+                if (toscaFunction1.getSourceName().equals(oldInstanceName)) {
+                    toscaFunction1.setSourceName(newInstanceName);
+                }
+                break;
+            }
+            case CONCAT: {
+                final ToscaConcatFunction toscaFunction1 = (ToscaConcatFunction) toscaFunction;
+                for (final ToscaFunctionParameter parameter : toscaFunction1.getParameters()) {
+                    switch (parameter.getType()) {
+                        case GET_PROPERTY:
+                        case GET_ATTRIBUTE:
+                        case CONCAT:
+                            renameToscaFunctionComponentInstance((ToscaFunction) parameter, oldInstanceName, newInstanceName);
+                            break;
+                        default:
+                    }
+                }
+                break;
+            }
+            default:
+        }
     }
 
     public static Set<String> getNodesFiltersToBeDeleted(Service service, String ciName) {
@@ -106,24 +157,24 @@ public class ServiceFilterUtils {
             .anyMatch(property -> isPropertyConstraintChangedByCi(property, name));
     }
 
-    private static boolean isPropertyConstraintChangedByCi(RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition,
+    public static boolean isPropertyConstraintChangedByCi(PropertyFilterDataDefinition propertyFilterDataDefinition,
                                                            String name) {
-        List<String> constraints = requirementNodeFilterPropertyDataDefinition.getConstraints();
-        if (constraints == null) {
+        List<PropertyFilterConstraintDataDefinition> constraints = propertyFilterDataDefinition.getConstraints();
+        if (CollectionUtils.isEmpty(constraints)) {
             return false;
         }
         return constraints.stream().anyMatch(constraint -> isConstraintChangedByCi(constraint, name));
     }
 
-    private static boolean isConstraintChangedByCi(String constraint, String name) {
-        UIConstraint uiConstraint = new ConstraintConvertor().convert(constraint);
-        if (uiConstraint == null || uiConstraint.getSourceType() == null) {
-            return false;
+    private static boolean isConstraintChangedByCi(final PropertyFilterConstraintDataDefinition constraint, final String name) {
+        if (constraint.getValueType() == FilterValueType.GET_PROPERTY || constraint.getValueType() == FilterValueType.GET_ATTRIBUTE) {
+            final ToscaFunction toscaFunction = new FilterConstraintMapper().parseValueToToscaFunction(constraint.getValue()).orElse(null);
+            if (toscaFunction != null) {
+                final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) toscaFunction;
+                return toscaGetFunction.getSourceName().equals(name);
+            }
         }
-        if (!uiConstraint.getSourceType().equals(ConstraintConvertor.PROPERTY_CONSTRAINT)) {
-            return false;
-        }
-        return uiConstraint.getSourceName().equals(name);
+        return false;
     }
 
     public static Set<String> getNodesFiltersToBeDeleted(Service service, InputDefinition changedInput) {
@@ -139,17 +190,20 @@ public class ServiceFilterUtils {
             .anyMatch(property -> isPropertyConstraintChangedByInput(property, changedInput));
     }
 
-    private static boolean isPropertyConstraintChangedByInput(RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition,
-                                                              InputDefinition changedInput) {
-        List<String> constraints = requirementNodeFilterPropertyDataDefinition.getConstraints();
+    private static boolean isPropertyConstraintChangedByInput(final PropertyFilterDataDefinition propertyFilterDataDefinition,
+                                                              final InputDefinition changedInput) {
+        final List<PropertyFilterConstraintDataDefinition> constraints = propertyFilterDataDefinition.getConstraints();
         return constraints.stream().anyMatch(constraint -> isConstraintChangedByInput(constraint, changedInput));
     }
 
-    private static boolean isConstraintChangedByInput(String constraint, InputDefinition changedInput) {
-        UIConstraint uiConstraint = new ConstraintConvertor().convert(constraint);
-        if (!uiConstraint.getSourceType().equals(ConstraintConvertor.SERVICE_INPUT_CONSTRAINT)) {
-            return false;
+    private static boolean isConstraintChangedByInput(final PropertyFilterConstraintDataDefinition constraint, final InputDefinition changedInput) {
+        if (constraint.getValueType() == FilterValueType.GET_INPUT) {
+            final ToscaFunction toscaFunction = new FilterConstraintMapper().parseValueToToscaFunction(constraint.getValue()).orElse(null);
+            if (toscaFunction != null) {
+                final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) toscaFunction;
+                return toscaGetFunction.getPropertyPathFromSource().contains(changedInput.getName());
+            }
         }
-        return uiConstraint.getValue().equals(changedInput.getName());
+        return false;
     }
 }

@@ -16,16 +16,20 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.impl.ServiceFilterUtils;
-import org.openecomp.sdc.be.model.InputDefinition;
-
-import java.util.Arrays;
-import java.util.Set;
-
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+import java.util.Set;
+import org.junit.Test;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
+import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
+import org.openecomp.sdc.be.impl.ServiceFilterUtils;
+import org.openecomp.sdc.be.model.InputDefinition;
 
 public class ServiceFilterUtilsServiceInputTest extends BaseServiceFilterUtilsTest {
 
@@ -40,18 +44,25 @@ public class ServiceFilterUtilsServiceInputTest extends BaseServiceFilterUtilsTe
     }
 
     private Set<String> getNodeFiltersToBeDeleted(String constraintName) {
-        requirementNodeFilterPropertyDataDefinition
-                .setConstraints(Arrays.asList("mem_size:\n  equal: {get_input: " + CONSTRAINT_NAME + "}\n"));
+        final var propertyFilterConstraint = new PropertyFilterConstraintDataDefinition();
+        propertyFilterConstraint.setPropertyName("mem_size");
+        propertyFilterConstraint.setOperator(ConstraintType.EQUAL);
+
+        propertyFilterConstraint.setValue(
+            createToscaGetFunction(PropertySource.SELF.getName(), ToscaGetFunctionType.GET_INPUT, List.of(CONSTRAINT_NAME))
+        );
+        propertyFilterConstraint.setValueType(FilterValueType.GET_INPUT);
+        propertyFilterConstraint.setTargetType(PropertyFilterTargetType.PROPERTY);
+        propertyFilterDataDefinition.setConstraints(List.of(propertyFilterConstraint));
         InputDefinition inputDefinition = new InputDefinition();
         inputDefinition.setName(constraintName);
         return ServiceFilterUtils.getNodesFiltersToBeDeleted(service, inputDefinition);
     }
 
     @Test
-    public void checkInputStreamIsNOtFound() {
+    public void checkInputStreamIsNotFound() {
         Set<String> nodesFiltersToBeDeleted = getNodeFiltersToBeDeleted(CONSTRAINT_NAME + " aaa bbb");
         assertNotNull(nodesFiltersToBeDeleted);
         assertTrue(nodesFiltersToBeDeleted.isEmpty());
-        assertFalse(nodesFiltersToBeDeleted.contains(CI_NAME));
     }
 }
