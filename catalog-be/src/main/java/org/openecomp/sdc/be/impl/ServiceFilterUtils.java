@@ -25,6 +25,7 @@ import org.javatuples.Pair;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Service;
@@ -80,6 +81,17 @@ public class ServiceFilterUtils {
             UIConstraint uiConstraint = constraintConvertor.convert(constraint);
             if (uiConstraint.getSourceName().equals(oldName)) {
                 uiConstraint.setSourceName(newName);
+                if (uiConstraint.getValue() instanceof String) {
+                    uiConstraint.setValue(((String) uiConstraint.getValue()).replace(oldName, newName));
+                } else if (uiConstraint.getValue() instanceof Map) {
+                    final ToscaFunctionType toscaFunctionType = ToscaFunctionType.findType(uiConstraint.getSourceType()).orElse(null);
+                    if (toscaFunctionType != null) {
+                        final Object getFunctionValue = ((Map<?, ?>) uiConstraint.getValue()).get(toscaFunctionType.getName());
+                        if (getFunctionValue instanceof List) {
+                            ((List<Object>) getFunctionValue).set(0, newName);
+                        }
+                    }
+                }
             }
             return constraintConvertor.convert(uiConstraint);
         };
@@ -120,7 +132,8 @@ public class ServiceFilterUtils {
         if (uiConstraint == null || uiConstraint.getSourceType() == null) {
             return false;
         }
-        if (!uiConstraint.getSourceType().equals(ConstraintConvertor.PROPERTY_CONSTRAINT)) {
+        if (!List.of(ConstraintConvertor.PROPERTY_CONSTRAINT, ToscaFunctionType.GET_PROPERTY.getName())
+            .contains(uiConstraint.getSourceType())) {
             return false;
         }
         return uiConstraint.getSourceName().equals(name);

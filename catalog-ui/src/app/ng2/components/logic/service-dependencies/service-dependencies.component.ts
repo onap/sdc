@@ -14,24 +14,19 @@
  * permissions and limitations under the License.
  */
 import {Component, ComponentRef, EventEmitter, Input, Output} from '@angular/core';
+import {ButtonModel, ComponentInstance, InputBEModel, ModalModel, PropertyBEModel, PropertyModel,} from 'app/models';
+import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
+import {ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
+import {ModalService} from 'app/ng2/services/modal.service';
+import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
+import {TranslateService} from 'app/ng2/shared/translator/translate.service';
+import {ComponentMetadata} from '../../../../models/component-metadata';
+import {ServiceInstanceObject} from '../../../../models/service-instance-properties-and-interfaces';
+import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
 import {
-    ButtonModel,
-    ComponentInstance,
-    InputBEModel,
-    ModalModel,
-    PropertyBEModel,
-    PropertyModel,
-} from 'app/models';
-import { ModalComponent } from 'app/ng2/components/ui/modal/modal.component';
-import { ServiceDependenciesEditorComponent } from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
-import { ModalService } from 'app/ng2/services/modal.service';
-import { ComponentGenericResponse } from 'app/ng2/services/responses/component-generic-response';
-import { TranslateService } from 'app/ng2/shared/translator/translate.service';
-import { ComponentMetadata } from '../../../../models/component-metadata';
-import { ServiceInstanceObject } from '../../../../models/service-instance-properties-and-interfaces';
-import { TopologyTemplateService } from '../../../services/component-services/topology-template.service';
-import {CapabilitiesFilterPropertiesEditorComponent} from "../../../pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.component";
-import { CapabilitiesConstraintObjectUI} from "../capabilities-constraint/capabilities-constraint.component";
+    CapabilitiesFilterPropertiesEditorComponent
+} from "../../../pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.component";
+import {CapabilitiesConstraintObjectUI} from "../capabilities-constraint/capabilities-constraint.component";
 import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
 import {CompositionService} from "../../../pages/composition/composition.service";
 
@@ -68,10 +63,14 @@ export class ConstraintObjectUI extends ConstraintObject{
         this.isValidValue = isValidValue;
     }
 
-    public isValidRule(isStatic) {
-        const isValidValue = isStatic ? this.isValidValue : true;
+    public isValidRule() {
+        const isValidValue = this.isStatic() ? this.isValidValue : true;
         return this.servicePropertyName != null && this.servicePropertyName !== ''
             && this.value != null && this.value !== '' && isValidValue;
+    }
+
+    private isStatic() {
+        return this.sourceName === 'static';
     }
 }
 
@@ -82,6 +81,11 @@ export const OPERATOR_TYPES = {
     GREATER_OR_EQUAL: 'greater_or_equal',
     LESS_OR_EQUAL: 'less_or_equal'
 };
+
+export enum SourceType {
+    STATIC = 'static',
+    TOSCA_FUNCTION = 'tosca_function'
+}
 
 // tslint:disable-next-line:max-classes-per-file
 class I18nTexts {
@@ -222,10 +226,8 @@ export class ServiceDependenciesComponent {
         this.topologyTemplateService.getServiceFilterConstraints(this.compositeService.componentType, this.compositeService.uniqueId).subscribe((response) => {
             if (response.nodeFilterforNode && response.nodeFilterforNode[this.currentServiceInstance.uniqueId]) {
                 this.componentInstancesConstraints = response.nodeFilterforNode;
-                const nodeFilterPropertiesResponse: ConstraintObject[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
-                this.constraintProperties = nodeFilterPropertiesResponse;
-                const nodeFilterCapabilitiesResponse: CapabilitiesConstraintObjectUI[] = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].capabilities;
-                this.constraintCapabilities = nodeFilterCapabilitiesResponse;
+                this.constraintProperties = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].properties;
+                this.constraintCapabilities = response.nodeFilterforNode[this.currentServiceInstance.uniqueId].capabilities;
             }
         });
     }
@@ -410,7 +412,7 @@ export class ServiceDependenciesComponent {
             ServiceDependenciesEditorComponent,
             {
                 serviceRuleIndex: index,
-                serviceRules: _.map(this.constraintProperties, (rule) => new ConstraintObjectUI(rule)),
+                serviceRules: this.constraintProperties.map(rule => new ConstraintObjectUI(rule)),
                 currentServiceName: this.currentServiceInstance.name,
                 operatorTypes: this.operatorTypes,
                 compositeServiceName: this.compositeService.name,
