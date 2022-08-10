@@ -75,7 +75,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -396,7 +396,7 @@ public class ServiceImportBusinessLogic {
             Map<String, InputDefinition> inputs = parsedToscaYamlInfo.getInputs();
             service = serviceImportParseLogic.createInputsOnService(service, inputs);
             log.trace("************* Finished to add inputs from yaml {}", yamlName);
-            ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
+            ListDataDefinition<SubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = parsedToscaYamlInfo.getSubstitutionFilterProperties();
             service = serviceImportParseLogic.createSubstitutionFilterOnService(service, substitutionFilterProperties);
             log.trace("************* Added Substitution filter from interface yaml {}", yamlName);
             Map<String, UploadComponentInstanceInfo> uploadComponentInstanceInfoMap = parsedToscaYamlInfo.getInstances();

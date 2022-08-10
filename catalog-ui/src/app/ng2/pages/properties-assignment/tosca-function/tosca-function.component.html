@@ -21,7 +21,7 @@
   <div class="w-sdc-form" [formGroup]="formGroup">
     <div class="i-sdc-form-item">
       <label class="i-sdc-form-label">{{'TOSCA_FUNCTION_LABEL' | translate}}</label>
-      <select formControlName="toscaFunctionType">
+      <select formControlName="toscaFunctionType" (change)="onFunctionTypeChange()">
         <option *ngFor="let toscaFunction of toscaFunctions"
                 [ngValue]="toscaFunction">{{toscaFunction | lowercase}}</option>
       </select>
