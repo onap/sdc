@@ -1,0 +1,5 @@
+vnf_profile:
+  equal:
+    instantiation_level: '1'
+    max_number_of_instances: 1
+    min_number_of_instances: 1

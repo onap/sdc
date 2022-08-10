@@ -1,0 +1,16 @@
+{
+  "propertyName": "aProperty",
+  "targetType": "PROPERTY",
+  "operator": "GREATER_THAN",
+  "valueType": "GET_INPUT",
+  "value": {
+    "type": "GET_INPUT",
+    "functionType": "GET_INPUT",
+    "propertyName": "aProperty",
+    "propertyUniqueId": "aPropertyId",
+    "propertySource": "SELF",
+    "sourceName": "aService",
+    "sourceUniqueId": "aServiceId",
+    "propertyPathFromSource": ["input", "subProperty"]
+  }
+}

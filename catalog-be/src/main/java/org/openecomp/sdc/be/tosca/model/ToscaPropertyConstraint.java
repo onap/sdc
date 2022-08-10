@@ -18,7 +18,7 @@
  */
 package org.openecomp.sdc.be.tosca.model;
 
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 
 /**
  * Represents a Tosca Property Constraint

@@ -19,11 +19,20 @@
  */
 
 import * as _ from "lodash";
-import { Injectable } from '@angular/core';
-import { DataTypeModel, PropertyFEModel, PropertyBEModel, InstanceBePropertiesMap, InstanceFePropertiesMap, DerivedFEProperty,  DerivedPropertyType, InputFEModel} from "app/models";
-import { DataTypeService } from "app/ng2/services/data-type.service";
-import { PropertiesService } from "app/ng2/services/properties.service";
-import { PROPERTY_TYPES, PROPERTY_DATA } from "app/utils";
+import {Injectable} from '@angular/core';
+import {
+    DataTypeModel,
+    DerivedFEProperty,
+    DerivedPropertyType,
+    InputFEModel,
+    InstanceBePropertiesMap,
+    InstanceFePropertiesMap,
+    PropertyBEModel,
+    PropertyFEModel
+} from "app/models";
+import {DataTypeService} from "app/ng2/services/data-type.service";
+import {PropertiesService} from "app/ng2/services/properties.service";
+import {PROPERTY_TYPES} from "app/utils";
 import { SubPropertyToscaFunction } from "app/models/sub-property-tosca-function";
 
 @Injectable()
@@ -139,7 +148,7 @@ export class PropertiesUtils {
                         Object.keys(nestedValue).forEach((keyNested) => {
                             property.flattenedChildren.push(...this.createListOrMapChildren(lastCreatedChild, keyNested, nestedValue[keyNested]));
                         });
-                    };
+                    }
                 });
             } else if (property.derivedDataType === DerivedPropertyType.COMPLEX) {
                 property.flattenedChildren = this.createFlattenedChildren(property.type, property.name);

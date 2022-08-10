@@ -1,0 +1,8 @@
+{
+  "propertyName": "aProperty",
+  "capabilityName": "aCapability",
+  "targetType": "CAPABILITY",
+  "operator": "EQUAL",
+  "valueType": "STATIC",
+  "value": "aStaticValue"
+}

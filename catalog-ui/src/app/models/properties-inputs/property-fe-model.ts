@@ -46,6 +46,9 @@ export class PropertyFEModel extends PropertyBEModel {
 
     constructor(property: PropertyBEModel){
         super(property);
+        if (!property) {
+            return;
+        }
         this.value = property.value ? property.value : property.defaultValue;//In FE if a property doesn't have value - display the default value
         this.isSimpleType = PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) > -1;
         this.setNonDeclared();
@@ -290,7 +293,7 @@ export class PropertyFEModel extends PropertyBEModel {
                 propertyType !== PROPERTY_TYPES.TIMESTAMP &&
                 propertyType !== PROPERTY_TYPES.JSON &&
                 PROPERTY_DATA.SCALAR_TYPES.indexOf(<string>propertyType) == -1) {
-                return JSON.parse(value);  // the value object contains the real value ans not the value as string
+                return JSON.parse(valueObj);  // the value object contains the real value ans not the value as string
             }
             return valueObj;
         }
