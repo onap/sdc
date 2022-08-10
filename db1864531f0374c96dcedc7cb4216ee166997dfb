@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "de8aa6f8_d1c3aef4",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-08-10T17:26:18Z",
+      "side": 1,
+      "message": "I have applied onap java styles by following the confluence, Please let me know if still it has issues.",
+      "parentUuid": "51a284f5_43ca80ec",
+      "range": {
+        "startLine": 30,
+        "startChar": 13,
+        "endLine": 30,
+        "endChar": 27
+      },
+      "revId": "db1864531f0374c96dcedc7cb4216ee166997dfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "93c55432_3d4e826d",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "679729e4_7faffeb2",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-08-10T17:26:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93c55432_3d4e826d",
+      "range": {
+        "startLine": 35,
+        "startChar": 8,
+        "endLine": 39,
+        "endChar": 48
+      },
+      "revId": "db1864531f0374c96dcedc7cb4216ee166997dfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9e970d6_e40a34ec",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "db1864531f0374c96dcedc7cb4216ee166997dfb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c73cdd08_aed623f5",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 8050
+      },
+      "writtenOn": "2022-08-10T17:26:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d9e970d6_e40a34ec",
+      "range": {
+        "startLine": 42,
+        "startChar": 8,
+        "endLine": 48,
+        "endChar": 44
+      },
+      "revId": "db1864531f0374c96dcedc7cb4216ee166997dfb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
