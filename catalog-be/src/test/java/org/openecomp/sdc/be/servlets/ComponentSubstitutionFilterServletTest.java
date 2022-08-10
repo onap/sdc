@@ -22,11 +22,11 @@ package org.openecomp.sdc.be.servlets;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -36,9 +36,8 @@ import static org.openecomp.sdc.common.api.Constants.USER_ID_HEADER;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +45,6 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -62,24 +60,24 @@ import org.openecomp.sdc.be.components.impl.ComponentSubstitutionFilterBusinessL
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.validation.UserValidations;
-import org.openecomp.sdc.be.config.Configuration;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.dto.FilterConstraintDto;
+import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
-import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.impl.ExternalConfiguration;
 import org.openecomp.sdc.common.impl.FSConfigurationSource;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -112,13 +110,11 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     private static ComponentSubstitutionFilterBusinessLogic componentSubstitutionFilterBusinessLogic;
     private static ResponseFormat responseFormat;
     private static UserValidations userValidations;
-    private static ConfigurationManager configurationManager;
     private SubstitutionFilterDataDefinition substitutionFilterDataDefinition;
-    private RequirementSubstitutionFilterPropertyDataDefinition requirementSubstitutionFilterPropertyDataDefinition;
     private UIConstraint uiConstraint;
-    private String constraint;
     private String inputJson;
     private User user;
+    private FilterConstraintDto filterConstraintDto;
 
     @BeforeAll
     public static void initClass() {
@@ -135,7 +131,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
         String appConfigDir = "src/test/resources/config/catalog-be";
         ConfigurationSource configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
-        configurationManager = new ConfigurationManager(configurationSource);
+        ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
         org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
         configuration.setJanusGraphInMemoryGraph(true);
         configurationManager.setConfiguration(configuration);
@@ -155,7 +151,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void addSubstitutionFilterTest() throws Exception {
+    void addSubstitutionFilterTest() throws Exception {
         final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
         final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
@@ -165,21 +161,19 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
 
         assertNotNull(uiConstraint);
-        assertThat(servicePropertyName).isEqualToIgnoringCase(uiConstraint.getServicePropertyName());
-        assertThat(constraintOperator).isEqualToIgnoringCase(uiConstraint.getConstraintOperator());
-        assertThat(sourceType).isEqualToIgnoringCase(uiConstraint.getSourceType());
-        assertThat(sourceName).isEqualToIgnoringCase(uiConstraint.getSourceName());
-        assertThat(propertyValue).isEqualToIgnoringCase(uiConstraint.getValue().toString());
+        assertThat(uiConstraint.getServicePropertyName()).isEqualToIgnoringCase(servicePropertyName);
+        assertThat(uiConstraint.getConstraintOperator()).isEqualToIgnoringCase(constraintOperator);
+        assertThat(uiConstraint.getSourceType()).isEqualToIgnoringCase(sourceType);
+        assertThat(uiConstraint.getSourceName()).isEqualToIgnoringCase(sourceName);
+        assertThat(uiConstraint.getValue().toString()).isEqualToIgnoringCase(propertyValue);
 
         when(componentsUtils.parseToConstraint(anyString(), any(User.class), any(ComponentTypeEnum.class)))
             .thenReturn(Optional.of(uiConstraint));
 
-        assertNotNull(constraint);
         assertNotNull(substitutionFilterDataDefinition);
         assertThat(substitutionFilterDataDefinition.getProperties().getListToscaDataDefinition()).hasSize(1);
-        assertThat("controller_actor: {equal: constraintValue}\n").isEqualToIgnoringCase(constraint);
-        when(componentSubstitutionFilterBusinessLogic.addSubstitutionFilter(componentId, uiConstraint.getServicePropertyName(), constraint,
-                true, ComponentTypeEnum.SERVICE)).thenReturn(Optional.of(substitutionFilterDataDefinition));
+        when(componentSubstitutionFilterBusinessLogic.addSubstitutionFilter(componentId, filterConstraintDto, true, ComponentTypeEnum.SERVICE))
+            .thenReturn(Optional.of(substitutionFilterDataDefinition));
 
         final Response response = target()
             .path(path)
@@ -190,12 +184,11 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
 
         verify(componentSubstitutionFilterBusinessLogic, times(1))
-                .addSubstitutionFilter(componentId, uiConstraint.getServicePropertyName(), constraint,
-                        true, ComponentTypeEnum.SERVICE);
+                .addSubstitutionFilter(componentId, filterConstraintDto, true, ComponentTypeEnum.SERVICE);
     }
 
     @Test
-    public void addSubstitutionFilterFailConstraintParseTest() {
+    void addSubstitutionFilterFailConstraintParseTest() {
         final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
         final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
@@ -216,7 +209,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void addSubstitutionFilterFailTest() {
+    void addSubstitutionFilterFailTest() {
         final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
         final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
@@ -237,7 +230,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void updateSubstitutionFilterTest() throws BusinessLogicException {
+    void updateSubstitutionFilterTest() throws BusinessLogicException {
         final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
         final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
@@ -250,7 +243,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
             any(User.class))).thenReturn(Collections.singletonList(uiConstraint));
 
         when(componentSubstitutionFilterBusinessLogic.updateSubstitutionFilter(componentId.toLowerCase(),
-            Collections.singletonList(constraint), true, ComponentTypeEnum.SERVICE))
+            List.of(filterConstraintDto), true, ComponentTypeEnum.SERVICE))
             .thenReturn(Optional.ofNullable(substitutionFilterDataDefinition));
 
         final Response response = target()
@@ -266,7 +259,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void updateSubstitutionFilterFailConstraintParseTest() {
+    void updateSubstitutionFilterFailConstraintParseTest() {
         final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
         final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
@@ -287,7 +280,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void updateSubstitutionFilterFailTest()  {
+    void updateSubstitutionFilterFailTest()  {
         final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s";
         final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
@@ -308,7 +301,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void deleteSubstitutionFilterConstraintTest() throws BusinessLogicException {
+    void deleteSubstitutionFilterConstraintTest() throws BusinessLogicException {
         final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s/0";
         final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
@@ -334,7 +327,7 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
     }
 
     @Test
-    public void deleteSubstitutionFilterConstraintFailTest() {
+    void deleteSubstitutionFilterConstraintFailTest() {
         final String pathFormat = "/v1/catalog/%s/%s/substitutionFilter/%s/0";
         final String path = String.format(pathFormat, componentType, componentId, constraintType);
 
@@ -390,16 +383,16 @@ public class ComponentSubstitutionFilterServletTest extends JerseyTest {
 
     private void initComponentData() throws JsonProcessingException {
         uiConstraint = new UIConstraint(servicePropertyName, constraintOperator, sourceType, sourceName, propertyValue);
-        constraint = new ConstraintConvertor().convert(uiConstraint);
+        final FilterConstraintMapper filterConstraintMapper = new FilterConstraintMapper();
+        filterConstraintDto = filterConstraintMapper.mapFrom(uiConstraint);
         inputJson = buildConstraintDataJson(uiConstraint);
 
-        requirementSubstitutionFilterPropertyDataDefinition = new RequirementSubstitutionFilterPropertyDataDefinition();
-        requirementSubstitutionFilterPropertyDataDefinition.setName(uiConstraint.getServicePropertyName());
-        requirementSubstitutionFilterPropertyDataDefinition.setConstraints(new LinkedList<>(Arrays.asList(constraint)));
+        SubstitutionFilterPropertyDataDefinition substitutionFilterPropertyDataDefinition = new SubstitutionFilterPropertyDataDefinition();
+        substitutionFilterPropertyDataDefinition.setName(uiConstraint.getServicePropertyName());
+        substitutionFilterPropertyDataDefinition.setConstraints(List.of(filterConstraintMapper.mapTo(filterConstraintDto)));
 
-        final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> listDataDefinition =
-            new ListDataDefinition<>(
-                new LinkedList<>(Arrays.asList(requirementSubstitutionFilterPropertyDataDefinition)));
+        final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> listDataDefinition =
+            new ListDataDefinition<>(List.of(substitutionFilterPropertyDataDefinition));
 
         substitutionFilterDataDefinition = new SubstitutionFilterDataDefinition();
         substitutionFilterDataDefinition.setProperties(listDataDefinition);

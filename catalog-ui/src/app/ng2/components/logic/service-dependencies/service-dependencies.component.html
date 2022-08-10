@@ -23,11 +23,8 @@
             <div class="filter-details" [ngClass]="{'readonly': readonly}">
               <div class="filter-desc" (click)="!readonly && onSelectNodeFilterCapability(capabilities, i)"
                    tooltips
-                   tooltip="{{capability.capabilityName + ' : ' +
-                   capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator) + ' '
-                   + (capability.value | json)}}">
-                   {{capability.capabilityName + ' : ' + capability.servicePropertyName + ' ' + getSymbol(capability.constraintOperator)
-                   + ' ' + (capability.value | json)}}
+                   tooltip="{{constraintCapabilityLabels[i]}}">
+                   {{constraintCapabilityLabels[i]}}
               </div>
               <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                     (click)="openDeleteModal(capabilities, i)"
@@ -56,10 +53,8 @@
             <div class="filter-details" [ngClass]="{'readonly': readonly}">
               <div class="filter-desc" (click)="!readonly && onSelectNodeFilter(properties, i)"
                    tooltips
-                   tooltip="{{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator) + ' '
-                   + (property.value | json)}}">
-                   {{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator)
-                   + ' ' + (property.value | json)}}
+                   tooltip="{{constraintPropertyLabels[i]}}">
+                   {{constraintPropertyLabels[i]}}
               </div>
               <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                     (click)="openDeleteModal(properties, i)"
