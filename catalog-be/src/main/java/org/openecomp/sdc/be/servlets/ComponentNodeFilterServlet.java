@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -47,17 +46,19 @@ import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.aaf.AafPermission;
 import org.openecomp.sdc.be.components.impl.aaf.PermissionAllowed;
-import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
+import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
 import org.openecomp.sdc.be.config.BeEcompErrorManager;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
-import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.dto.FilterConstraintDto;
 import org.openecomp.sdc.be.tosca.utils.NodeFilterConverter;
+import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
@@ -65,7 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/v1/catalog")
-@Tags({@Tag(name = "SDCE-2 APIs")})
+@Tag(name = "SDCE-2 APIs")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Singleton
@@ -122,21 +123,20 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
         final User userModifier = componentNodeFilterBusinessLogic.validateUser(userId);
         final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
         try {
-            final Optional<UIConstraint> convertResponse = componentsUtils.parseToConstraint(constraintData, userModifier, componentTypeEnum);
-            if (convertResponse.isEmpty()) {
-                LOGGER.error(FAILED_TO_PARSE_COMPONENT);
-                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
-            }
             final Optional<NodeFilterConstraintType> nodeFilterConstraintType = NodeFilterConstraintType.parse(constraintType);
             if (nodeFilterConstraintType.isEmpty()) {
                 return buildErrorResponse(
                     getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
-            final UIConstraint uiConstraint = convertResponse.get();
-            final String constraint = new ConstraintConvertor().convert(uiConstraint);
+            final UIConstraint uiConstraint = componentsUtils.parseToConstraint(constraintData, userModifier, componentTypeEnum).orElse(null);
+            if (uiConstraint == null) {
+                LOGGER.error(FAILED_TO_PARSE_COMPONENT);
+                return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
+            }
+            final FilterConstraintDto filterConstraintDto = new FilterConstraintMapper().mapFrom(uiConstraint);
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .addNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.ADD, uiConstraint.getServicePropertyName(),
-                    constraint, true, componentTypeEnum, nodeFilterConstraintType.get(),
+                .addNodeFilter(componentId.toLowerCase(), componentInstanceId,
+                    filterConstraintDto, true, componentTypeEnum, nodeFilterConstraintType.get(),
                     StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? "" : uiConstraint.getCapabilityName());
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_CREATE_NODE_FILTER);
@@ -144,6 +144,10 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             }
             return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
                 new NodeFilterConverter().convertToUi(actionResponse.get()));
+        } catch (final ComponentException e) {
+            throw e;
+        } catch (final BusinessLogicException e) {
+            return buildErrorResponse(e.getResponseFormat());
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_CREATION);
             LOGGER.error(CREATE_NODE_FILTER_WITH_AN_ERROR, e);
@@ -236,7 +240,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
                     getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .deleteNodeFilter(componentId.toLowerCase(), componentInstanceId, NodeFilterConstraintAction.DELETE, null, index, true,
+                .deleteNodeFilter(componentId.toLowerCase(), componentInstanceId, index, true,
                     ComponentTypeEnum.findByParamName(componentType), nodeFilterConstraintType.get());
             if (actionResponse.isEmpty()) {
                 LOGGER.debug(FAILED_TO_DELETE_NODE_FILTER);

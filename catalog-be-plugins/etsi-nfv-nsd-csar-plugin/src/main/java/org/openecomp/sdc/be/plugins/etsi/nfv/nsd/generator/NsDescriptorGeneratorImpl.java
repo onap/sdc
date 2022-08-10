@@ -34,7 +34,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.Nsd;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.VnfDescriptor;

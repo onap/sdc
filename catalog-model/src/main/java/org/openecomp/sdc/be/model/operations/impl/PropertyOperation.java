@@ -82,12 +82,11 @@ import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.IComplexDefaultValue;
 import org.openecomp.sdc.be.model.PropertyConstraint;
 import org.openecomp.sdc.be.model.PropertyDefinition;
-import org.openecomp.sdc.be.model.validation.ToscaFunctionValidator;
 import org.openecomp.sdc.be.model.operations.api.DerivedFromOperation;
 import org.openecomp.sdc.be.model.operations.api.IPropertyOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterOrEqualConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.GreaterThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.InRangeConstraint;
@@ -96,6 +95,7 @@ import org.openecomp.sdc.be.model.tosca.constraints.LessThanConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.MinLengthConstraint;
 import org.openecomp.sdc.be.model.tosca.constraints.ValidValuesConstraint;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
+import org.openecomp.sdc.be.model.validation.ToscaFunctionValidator;
 import org.openecomp.sdc.be.resources.data.ComponentInstanceData;
 import org.openecomp.sdc.be.resources.data.DataTypeData;
 import org.openecomp.sdc.be.resources.data.ModelData;
@@ -2145,7 +2145,7 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
                 Entry<String, JsonElement> element = set.iterator().next();
                 String key = element.getKey();
                 JsonElement value = element.getValue();
-                ConstraintType constraintType = ConstraintType.getByType(key);
+                ConstraintType constraintType = ConstraintType.findByType(key).orElse(null);
                 if (constraintType == null) {
                     log.warn("ConstraintType was not found for constraint name:{}", key);
                 } else {

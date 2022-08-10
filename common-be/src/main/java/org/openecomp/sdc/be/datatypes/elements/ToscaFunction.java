@@ -26,7 +26,25 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(using = ToscaFunctionJsonDeserializer.class)
 public interface ToscaFunction {
 
+    /**
+     * Gets the function type.
+     *
+     * @return the function type.
+     */
     ToscaFunctionType getType();
+
+    /**
+     * Builds the tosca function value as string.
+     *
+     * @return the function value as string
+     */
     String getValue();
+
+    /**
+     * Returns the value mapped as a JSON object.
+     *
+     * @return the value as JSON object.
+     */
+    Object getJsonObjectValue();
 
 }

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.PropertyDefinition;
@@ -36,18 +38,13 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.model.tosca.converters.PropertyValueConverter;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DataTypeValidatorConverter {
 
     private static final Logger log = Logger.getLogger(DataTypeValidatorConverter.class.getName());
-    private static DataTypeValidatorConverter dataTypeValidatorConverter = new DataTypeValidatorConverter();
-    JsonParser jsonParser = new JsonParser();
-    ImmutablePair<JsonElement, Boolean> falseResult = new ImmutablePair<>(null, false);
-    ImmutablePair<JsonElement, Boolean> trueEmptyResult = new ImmutablePair<>(null, true);
-    ImmutablePair<String, Boolean> trueStringEmptyResult = new ImmutablePair<>(null, true);
-    ImmutablePair<String, Boolean> falseStringEmptyResult = new ImmutablePair<>(null, true);
-
-    private DataTypeValidatorConverter() {
-    }
+    private static final DataTypeValidatorConverter dataTypeValidatorConverter = new DataTypeValidatorConverter();
+    private static final ImmutablePair<JsonElement, Boolean> falseResult = new ImmutablePair<>(null, false);
+    private static final ImmutablePair<JsonElement, Boolean> trueEmptyResult = new ImmutablePair<>(null, true);
 
     public static DataTypeValidatorConverter getInstance() {
         return dataTypeValidatorConverter;
@@ -101,7 +98,7 @@ public class DataTypeValidatorConverter {
                     String convertedValue = converter.convert(value, null, allDataTypes);
                     JsonElement element = null;
                     try {
-                        element = jsonParser.parse(convertedValue);
+                        element = JsonParser.parseString(convertedValue);
                     } catch (JsonSyntaxException e) {
                         log.debug("Failed to parse value {} of property {} {}", convertedValue, dataTypeDefinition.getName(), e);
                         return falseResult;
@@ -174,7 +171,7 @@ public class DataTypeValidatorConverter {
                                     element = new JsonPrimitive("");
                                 } else {
                                     try {
-                                        element = jsonParser.parse(convertedValue);
+                                        element = JsonParser.parseString(convertedValue);
                                     } catch (JsonSyntaxException e) {
                                         log.debug("Failed to parse value {} of type {}", convertedValue, propertyType, e);
                                         return falseResult;
@@ -237,9 +234,9 @@ public class DataTypeValidatorConverter {
         if (value == null || value.isEmpty()) {
             return true;
         }
-        JsonElement jsonElement = null;
+        JsonElement jsonElement;
         try {
-            jsonElement = jsonParser.parse(value);
+            jsonElement = JsonParser.parseString(value);
         } catch (JsonSyntaxException e) {
             log.debug("Failed to parse the value {} from type {}", value, dataTypeDefinition, e);
             return false;

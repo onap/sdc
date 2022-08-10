@@ -22,11 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.ui.model.UINodeFilter;
 
@@ -34,39 +34,45 @@ public class SubstitutionFilterConverter {
 
     public UINodeFilter convertToUi(final SubstitutionFilterDataDefinition inSubstitutionFilter) {
         final UINodeFilter uiNodeFilter = new UINodeFilter();
-        final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
-        final List<UIConstraint> uiPropertyFilters = extractPropertyFilter(inSubstitutionFilter, constraintConvertor);
+
+        final List<UIConstraint> uiPropertyFilters = extractPropertyFilter(inSubstitutionFilter);
         if (!uiPropertyFilters.isEmpty()) {
             uiNodeFilter.setProperties(uiPropertyFilters);
         }
-        final List<UIConstraint> uiCapabilityFilters = extractCapabilitiesFilter(inSubstitutionFilter, constraintConvertor);
+        final List<UIConstraint> uiCapabilityFilters = extractCapabilitiesFilter(inSubstitutionFilter);
         if (!uiCapabilityFilters.isEmpty()) {
             uiNodeFilter.setCapabilities(uiCapabilityFilters);
         }
         return uiNodeFilter;
     }
 
-    private List<UIConstraint> extractPropertyFilter(final SubstitutionFilterDataDefinition substitutionFilter,
-                                                     final ConstraintConvertor constraintConvertor) {
-        final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = substitutionFilter
+    private List<UIConstraint> extractPropertyFilter(final SubstitutionFilterDataDefinition substitutionFilter) {
+        final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> substitutionFilterProperties = substitutionFilter
             .getProperties();
         if (substitutionFilterProperties != null && !substitutionFilterProperties.isEmpty() && CollectionUtils
             .isNotEmpty(substitutionFilterProperties.getListToscaDataDefinition())) {
-            return substitutionFilterProperties.getListToscaDataDefinition().stream().map(property -> property.getConstraints().iterator().next())
-                .map(constraintConvertor::convert).collect(Collectors.toList());
+            final var filterConstraintMapper = new FilterConstraintMapper();
+            return substitutionFilterProperties.getListToscaDataDefinition().stream()
+                .map(property -> property.getConstraints().iterator().next())
+                .map(filterConstraintMapper::mapFrom)
+                .map(filterConstraintMapper::mapToUiConstraint)
+                .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
 
-    private List<UIConstraint> extractCapabilitiesFilter(final SubstitutionFilterDataDefinition substitutionFilter,
-                                                         final ConstraintConvertor constraintConvertor) {
+    private List<UIConstraint> extractCapabilitiesFilter(final SubstitutionFilterDataDefinition substitutionFilter) {
         final ListDataDefinition<RequirementSubstitutionFilterCapabilityDataDefinition> substitutionFilterCapabilities = substitutionFilter
             .getCapabilities();
         if (substitutionFilterCapabilities != null && !substitutionFilterCapabilities.isEmpty() && CollectionUtils
             .isNotEmpty(substitutionFilterCapabilities.getListToscaDataDefinition())) {
+            final var filterConstraintMapper = new FilterConstraintMapper();
             return substitutionFilterCapabilities.getListToscaDataDefinition().stream()
                 .map(capabilities -> capabilities.getProperties().getListToscaDataDefinition().iterator().next())
-                .map(property -> property.getConstraints().iterator().next()).map(constraintConvertor::convert).collect(Collectors.toList());
+                .map(property -> property.getConstraints().iterator().next())
+                .map(filterConstraintMapper::mapFrom)
+                .map(filterConstraintMapper::mapToUiConstraint)
+                .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

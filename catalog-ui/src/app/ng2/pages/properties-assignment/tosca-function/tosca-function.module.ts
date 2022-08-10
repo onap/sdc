@@ -45,7 +45,9 @@ import { YamlFunctionComponent } from './yaml-function/yaml-function.component';
         TranslateModule,
         SdcUiComponentsModule
     ],
-    exports: [],
+    exports: [
+        ToscaFunctionComponent
+    ],
     entryComponents: [
         ToscaFunctionComponent
     ],

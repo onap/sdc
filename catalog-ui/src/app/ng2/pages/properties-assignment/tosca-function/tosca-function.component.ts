@@ -17,7 +17,7 @@
  *  ============LICENSE_END=========================================================
  */
 
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {ComponentMetadata, PropertyBEModel, PropertyDeclareAPIModel} from 'app/models';
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
@@ -31,13 +31,15 @@ import {ToscaFunction} from "../../../../models/tosca-function";
 import {ToscaConcatFunctionValidationEvent} from "./tosca-concat-function/tosca-concat-function.component";
 import {PROPERTY_TYPES} from "../../../../utils/constants";
 import {YamlFunctionValidationEvent} from "./yaml-function/yaml-function.component";
+import {ToscaConcatFunction} from "../../../../models/tosca-concat-function";
+import {YamlFunction} from "../../../../models/yaml-function";
 
 @Component({
     selector: 'tosca-function',
     templateUrl: './tosca-function.component.html',
     styleUrls: ['./tosca-function.component.less'],
 })
-export class ToscaFunctionComponent implements OnInit {
+export class ToscaFunctionComponent implements OnInit, OnChanges {
 
     @Input() property: PropertyBEModel;
     @Input() componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
@@ -81,11 +83,21 @@ export class ToscaFunctionComponent implements OnInit {
         this.isInitialized = true;
     }
 
-    private validate() {
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.property) {
+            this.resetForm();
+            this.toscaFunction = this.property.toscaFunction ? this.property.toscaFunction : undefined;
+            this.initToscaFunction();
+            this.loadToscaFunctions();
+            this.emitValidityChange();
+        }
+    }
+
+    private validate(): boolean {
         return (!this.toscaFunctionForm.value && !this.toscaFunctionTypeForm.value) || this.formGroup.valid;
     }
 
-    private initToscaFunction() {
+    private initToscaFunction(): void {
 	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
 	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");
             if (propertiesPath.length > 1){
@@ -100,7 +112,7 @@ export class ToscaFunctionComponent implements OnInit {
                 return;
             }
         }
-	
+
         if (!this.property.isToscaFunction()) {
             return;
         }
@@ -113,6 +125,7 @@ export class ToscaFunctionComponent implements OnInit {
     }
 
     private loadToscaFunctions(): void {
+        this.toscaFunctions = [];
         this.toscaFunctions.push(ToscaFunctionType.GET_ATTRIBUTE);
         this.toscaFunctions.push(ToscaFunctionType.GET_INPUT);
         this.toscaFunctions.push(ToscaFunctionType.GET_PROPERTY);
@@ -151,7 +164,7 @@ export class ToscaFunctionComponent implements OnInit {
         return this.formGroup.get('toscaFunctionType').value === ToscaFunctionType.YAML;
     }
 
-    onClearValues() {
+    onClearValues(): void {
         this.resetForm();
     }
 
@@ -159,7 +172,7 @@ export class ToscaFunctionComponent implements OnInit {
         return this.allowClear && this.toscaFunctionTypeForm.value;
     }
 
-    onConcatFunctionValidityChange(validationEvent: ToscaConcatFunctionValidationEvent) {
+    onConcatFunctionValidityChange(validationEvent: ToscaConcatFunctionValidationEvent): void {
         if (validationEvent.isValid) {
             this.toscaFunctionForm.setValue(validationEvent.toscaConcatFunction);
         } else {
@@ -167,7 +180,7 @@ export class ToscaFunctionComponent implements OnInit {
         }
     }
 
-    onGetFunctionValidityChange(validationEvent: ToscaGetFunctionValidationEvent) {
+    onGetFunctionValidityChange(validationEvent: ToscaGetFunctionValidationEvent): void {
         if (validationEvent.isValid) {
             this.toscaFunctionForm.setValue(validationEvent.toscaGetFunction);
         } else {
@@ -175,7 +188,7 @@ export class ToscaFunctionComponent implements OnInit {
         }
     }
 
-    onYamlFunctionValidityChange(validationEvent: YamlFunctionValidationEvent) {
+    onYamlFunctionValidityChange(validationEvent: YamlFunctionValidationEvent): void {
         if (validationEvent.isValid) {
             this.toscaFunctionForm.setValue(validationEvent.value);
         } else {
@@ -183,14 +196,35 @@ export class ToscaFunctionComponent implements OnInit {
         }
     }
 
-    private emitValidityChange() {
-        const isValid = this.validate();
+    onFunctionTypeChange(): void {
+        this.toscaFunction = undefined;
+        this.toscaFunctionForm.reset();
+    }
+
+    private emitValidityChange(): void {
+        const isValid: boolean = this.validate();
         this.onValidityChange.emit({
             isValid: isValid,
-            toscaFunction: isValid ? this.toscaFunctionForm.value : undefined
+            toscaFunction: isValid ? this.buildFunctionFromForm() : undefined
         });
     }
 
+    private buildFunctionFromForm(): ToscaFunction {
+        if (!this.toscaFunctionTypeForm.value) {
+            return undefined;
+        }
+        if (this.isConcatSelected()) {
+            return new ToscaConcatFunction(this.toscaFunctionForm.value);
+        }
+        if (this.isGetFunctionSelected()) {
+            return new ToscaGetFunction(this.toscaFunctionForm.value);
+        }
+        if (this.isYamlFunctionSelected()) {
+            return new YamlFunction(this.toscaFunctionForm.value);
+        }
+
+        console.error(`Function ${this.toscaFunctionTypeForm.value} not supported`);
+    }
 }
 
 export class ToscaFunctionValidationEvent {

@@ -1,0 +1,6 @@
+flavour_id:
+  equal:
+    get_attribute:
+      - SELF
+      - property
+      - subProperty

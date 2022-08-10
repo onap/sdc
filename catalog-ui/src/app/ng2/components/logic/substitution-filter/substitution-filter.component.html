@@ -30,11 +30,8 @@
           <div class="rule-details" [ngClass]="{'readonly': readonly}">
             <div class="rule-desc" (click)="!readonly && onSelectSubstitutionFilter(PROPERTIES, i)"
                  tooltips
-                 tooltip="{{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator) + ' '
-             + (property.sourceName ? property.sourceName + ':' : '') + property.value}}">
-              {{property.servicePropertyName + ' ' + getSymbol(property.constraintOperator)
-            + ' '
-            + (property.sourceName ? property.sourceName + ':' : '') + property.value}}
+                 tooltip="{{constraintPropertyLabels[i]}}">
+              {{constraintPropertyLabels[i]}}
             </div>
             <span *ngIf="!readonly" class="sprite-new delete-btn delete-icon"
                   (click)="openDeleteModal(PROPERTIES, i)"
