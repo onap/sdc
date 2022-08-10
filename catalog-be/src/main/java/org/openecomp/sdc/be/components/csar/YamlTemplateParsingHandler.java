@@ -95,7 +95,12 @@ import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
+import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
@@ -118,6 +123,7 @@ import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.tosca.model.ToscaInterfaceDefinition;
 import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.be.ui.model.PropertyAssignmentUi;
+import org.openecomp.sdc.be.utils.PropertyFilterConstraintDataDefinitionHelper;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.yaml.snakeyaml.parser.ParserException;
@@ -219,8 +225,8 @@ public class YamlTemplateParsingHandler {
         return ImportUtils.getProperties(toscaJson).left().on(err -> new HashMap<>());
     }
 
-    private ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> getSubstitutionFilterProperties(Map<String, Object> toscaJson) {
-        ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> propertyList = new ListDataDefinition<>();
+    private ListDataDefinition<SubstitutionFilterPropertyDataDefinition> getSubstitutionFilterProperties(Map<String, Object> toscaJson) {
+        ListDataDefinition<SubstitutionFilterPropertyDataDefinition> propertyList = new ListDataDefinition<>();
         Map<String, Object> substitutionFilters = findFirstToscaMapElement(toscaJson, SUBSTITUTION_FILTERS).left().on(err -> new HashMap<>());
         if (MapUtils.isEmpty(substitutionFilters)) {
             return propertyList;
@@ -231,25 +237,41 @@ public class YamlTemplateParsingHandler {
             return propertyList;
         }
         for (Map<String, List<Map<String, Object>>> filterProps : substitutionFilterProperties) {
-            for (Map.Entry<String, List<Map<String, Object>>> filterPropsMap : filterProps.entrySet()) {
-                for (Map<String, Object> mapValue : filterPropsMap.getValue()) {
-                    RequirementSubstitutionFilterPropertyDataDefinition requirementSubstitutionFilterPropertyDataDefinition =
-                        new RequirementSubstitutionFilterPropertyDataDefinition();
-                    requirementSubstitutionFilterPropertyDataDefinition.setName(filterPropsMap.getKey());
-                    requirementSubstitutionFilterPropertyDataDefinition.setConstraints(
-                        getSubstitutionFilterConstraints(filterPropsMap.getKey(), mapValue));
-                    propertyList.add(requirementSubstitutionFilterPropertyDataDefinition);
+            for (Map.Entry<String, List<Map<String, Object>>> propertyFilterEntry : filterProps.entrySet()) {
+                final String propertyName = propertyFilterEntry.getKey();
+                for (Map<String, Object> filterValueMap : propertyFilterEntry.getValue()) {
+                    final var substitutionFilterPropertyDataDefinition = new SubstitutionFilterPropertyDataDefinition();
+                    substitutionFilterPropertyDataDefinition.setName(propertyName);
+                    substitutionFilterPropertyDataDefinition.setConstraints(readSubstitutionFilterConstraints(propertyName, filterValueMap));
+                    propertyList.add(substitutionFilterPropertyDataDefinition);
                 }
             }
         }
         return propertyList;
     }
 
-    private List<String> getSubstitutionFilterConstraints(String name, Map<String, Object> value) {
-        List<String> constraints = new ArrayList<>();
-        for (Map.Entry<String, Object> valueMap : value.entrySet()) {
-            constraints.add(name + ": {" + valueMap.getKey() + ": " + valueMap.getValue() + "}");
+    private List<PropertyFilterConstraintDataDefinition> readSubstitutionFilterConstraints(final String name, final Map<String, Object> value) {
+        final List<PropertyFilterConstraintDataDefinition> constraints = new ArrayList<>();
+        for (final Map.Entry<String, Object> valueEntry : value.entrySet()) {
+            final var propertyFilterConstraint = new PropertyFilterConstraintDataDefinition();
+            propertyFilterConstraint.setPropertyName(name);
+            propertyFilterConstraint.setOperator(ConstraintType.findByType(valueEntry.getKey()).orElse(null));
+            propertyFilterConstraint.setTargetType(PropertyFilterTargetType.PROPERTY);
+            final Optional<ToscaFunction> toscaFunction = PropertyFilterConstraintDataDefinitionHelper
+                .readToscaFunctionFromLegacyConstraintValue(valueEntry.getValue());
+            if (toscaFunction.isPresent()) {
+                final ToscaFunction toscaFunction1 = toscaFunction.get();
+                propertyFilterConstraint.setValue(toscaFunction1);
+                propertyFilterConstraint.setValueType(
+                    PropertyFilterConstraintDataDefinitionHelper.convertFromToscaFunctionType(toscaFunction1.getType()).orElse(null)
+                );
+            } else {
+                propertyFilterConstraint.setValue(valueEntry.getValue());
+                propertyFilterConstraint.setValueType(FilterValueType.STATIC);
+            }
+            constraints.add(propertyFilterConstraint);
         }
+
         return constraints;
     }
 

@@ -22,7 +22,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 
 /**
  * Represents a tosca valid_values constraint

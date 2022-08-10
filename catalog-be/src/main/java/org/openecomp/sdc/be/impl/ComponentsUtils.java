@@ -80,9 +80,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.cassandra.CassandraOperationStatus;
 import org.openecomp.sdc.be.dao.graph.datatype.AdditionalInformationEnum;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
-import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.AdditionalInfoParameterInfo;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionJsonDeserializer;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
@@ -138,7 +136,7 @@ public class ComponentsUtils {
     private static final String CONVERT_JSON_TO_OBJECT = "convertJsonToObject";
     private static final Logger log = Logger.getLogger(ComponentsUtils.class);
     private static final String PARTNER_NAME = "UNKNOWN";
-    private static LoggerSdcAudit audit = new LoggerSdcAudit(DmaapConsumer.class);
+    private static final LoggerSdcAudit audit = new LoggerSdcAudit(DmaapConsumer.class);
     private final AuditingManager auditingManager;
     private final ResponseFormatManager responseFormatManager;
 
@@ -174,27 +172,7 @@ public class ComponentsUtils {
             return false;
         }
         return componentInstance.getNodeFilter().getProperties().getListToscaDataDefinition().stream()
-            .anyMatch(property -> isPropertyConstraintChangedByCi(property, componentInstanceName));
-    }
-
-    private static boolean isPropertyConstraintChangedByCi(
-        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition, final String componentInstanceName) {
-        final List<String> constraints = requirementNodeFilterPropertyDataDefinition.getConstraints();
-        if (constraints == null) {
-            return false;
-        }
-        return constraints.stream().anyMatch(constraint -> isConstraintChangedByCi(constraint, componentInstanceName));
-    }
-
-    private static boolean isConstraintChangedByCi(final String constraint, final String componentInstanceName) {
-        final UIConstraint uiConstraint = new ConstraintConvertor().convert(constraint);
-        if (uiConstraint == null || uiConstraint.getSourceType() == null) {
-            return false;
-        }
-        if (!uiConstraint.getSourceType().equals(ConstraintConvertor.PROPERTY_CONSTRAINT)) {
-            return false;
-        }
-        return uiConstraint.getSourceName().equals(componentInstanceName);
+            .anyMatch(property -> ServiceFilterUtils.isPropertyConstraintChangedByCi(property, componentInstanceName));
     }
 
     public AuditingManager getAuditingManager() {
@@ -1554,7 +1532,7 @@ public class ComponentsUtils {
             log.error(EcompLoggerErrorCode.DATA_ERROR, FAILED_TO_PARSE_CONSTRAINT_DATA, constraintData);
             return Collections.emptyList();
         }
-        return uiConstraintsMaps.stream().map(dataMap -> new com.fasterxml.jackson.databind.ObjectMapper().convertValue(dataMap, UIConstraint.class))
+        return uiConstraintsMaps.stream().map(dataMap -> new ObjectMapper().convertValue(dataMap, UIConstraint.class))
             .collect(Collectors.toList());
     }
 

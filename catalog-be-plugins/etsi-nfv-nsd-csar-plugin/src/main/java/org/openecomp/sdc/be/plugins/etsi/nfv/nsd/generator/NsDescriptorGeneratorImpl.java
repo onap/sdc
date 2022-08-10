@@ -21,7 +21,6 @@ package org.openecomp.sdc.be.plugins.etsi.nfv.nsd.generator;
 
 import com.google.common.collect.ImmutableMap;
 import fj.data.Either;
-import groovy.util.MapEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +36,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.exception.NsdException;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.Nsd;
 import org.openecomp.sdc.be.plugins.etsi.nfv.nsd.model.VnfDescriptor;

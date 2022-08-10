@@ -18,25 +18,24 @@ package org.openecomp.sdc.be.components.impl.utils;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
-import org.openecomp.sdc.common.log.wrappers.Logger;
+import org.openecomp.sdc.be.utils.PropertyFilterConstraintDataDefinitionHelper;
 
 public class CINodeFilterUtils {
-
-    Logger log = Logger.getLogger(CINodeFilterUtils.class);
 
     public CINodeFilterDataDefinition getNodeFilterDataDefinition(UploadNodeFilterInfo uploadNodeFilterInfo, String uniqueId) {
         CINodeFilterDataDefinition nodeFilterDataDefinition = new CINodeFilterDataDefinition();
         nodeFilterDataDefinition.setName(uploadNodeFilterInfo.getName());
-        List<RequirementNodeFilterPropertyDataDefinition> collect = uploadNodeFilterInfo.getProperties().stream().map(this::buildProperty)
+        List<PropertyFilterDataDefinition> collect = uploadNodeFilterInfo.getProperties().stream().map(this::buildProperty)
             .collect(Collectors.toList());
-        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> listDataDefinition = new ListDataDefinition<>();
+        ListDataDefinition<PropertyFilterDataDefinition> listDataDefinition = new ListDataDefinition<>();
         listDataDefinition.getListToscaDataDefinition().addAll(collect);
         nodeFilterDataDefinition.setProperties(listDataDefinition);
         nodeFilterDataDefinition.setCapabilities(converCapabilties(uploadNodeFilterInfo.getCapabilities()));
@@ -58,19 +57,25 @@ public class CINodeFilterUtils {
     private RequirementNodeFilterCapabilityDataDefinition convertCapability(UploadNodeFilterCapabilitiesInfo capability) {
         RequirementNodeFilterCapabilityDataDefinition retVal = new RequirementNodeFilterCapabilityDataDefinition();
         retVal.setName(capability.getName());
-        List<RequirementNodeFilterPropertyDataDefinition> props = capability.getProperties().stream().map(this::buildProperty)
+        List<PropertyFilterDataDefinition> props = capability.getProperties().stream().map(this::buildProperty)
             .collect(Collectors.toList());
-        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propsList = new ListDataDefinition<>();
+        ListDataDefinition<PropertyFilterDataDefinition> propsList = new ListDataDefinition<>();
         propsList.getListToscaDataDefinition().addAll(props);
         retVal.setProperties(propsList);
         return retVal;
     }
 
-    private RequirementNodeFilterPropertyDataDefinition buildProperty(UploadNodeFilterPropertyInfo uploadNodeFilterPropertyInfo) {
-        RequirementNodeFilterPropertyDataDefinition retVal = new RequirementNodeFilterPropertyDataDefinition();
+    private PropertyFilterDataDefinition buildProperty(UploadNodeFilterPropertyInfo uploadNodeFilterPropertyInfo) {
+        PropertyFilterDataDefinition retVal = new PropertyFilterDataDefinition();
         retVal.setName(uploadNodeFilterPropertyInfo.getName());
         List<String> propertyConstraints = uploadNodeFilterPropertyInfo.getValues();
-        retVal.setConstraints(propertyConstraints);
+        if (CollectionUtils.isNotEmpty(propertyConstraints)) {
+            retVal.setConstraints(
+                propertyConstraints.stream()
+                    .map(PropertyFilterConstraintDataDefinitionHelper::convertLegacyConstraint)
+                    .collect(Collectors.toList())
+            );
+        }
         return retVal;
     }
 }

@@ -5,6 +5,8 @@ import { FormElementsModule } from 'app/ng2/components/ui/form-components/form-e
 import { UiElementsModule } from 'app/ng2/components/ui/ui-elements.module';
 import { ServiceDependenciesEditorComponent } from './service-dependencies-editor.component';
 import { PropertyTableModule } from 'app/ng2/components/logic/properties-table/property-table.module';
+import {TranslateModule} from "../../shared/translator/translate.module";
+import {ToscaFunctionModule} from "../properties-assignment/tosca-function/tosca-function.module";
 
 @NgModule({
     declarations: [
@@ -15,7 +17,9 @@ import { PropertyTableModule } from 'app/ng2/components/logic/properties-table/p
         FormsModule,
         FormElementsModule,
         UiElementsModule,
-        PropertyTableModule
+        PropertyTableModule,
+        TranslateModule,
+        ToscaFunctionModule
     ],
     exports: [],
     entryComponents: [

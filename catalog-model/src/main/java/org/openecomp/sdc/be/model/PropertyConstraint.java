@@ -21,7 +21,7 @@ package org.openecomp.sdc.be.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openecomp.sdc.be.model.tosca.ToscaType;
-import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintFunctionalException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintValueDoNotMatchPropertyTypeException;
 import org.openecomp.sdc.be.model.tosca.constraints.exception.ConstraintViolationException;
