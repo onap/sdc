@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "49a3f05c_b572fb75",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/model/NodeFilter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T09:05:09Z",
+      "side": 1,
+      "message": "simplify to:\nreturn CollectionUtils.isNotEmpty(properties) || CollectionUtils.isNotEmpty(capabilities)",
+      "range": {
+        "startLine": 35,
+        "startChar": 8,
+        "endLine": 38,
+        "endChar": 21
+      },
+      "revId": "e65509739b3dabc938c157fe3ff2844f730c1234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42e4fb43_3618ef5a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T09:05:09Z",
+      "side": 1,
+      "message": "please, avoid using wildcard import",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 49
+      },
+      "revId": "e65509739b3dabc938c157fe3ff2844f730c1234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d8ed63f_bf1d7a57",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T09:05:09Z",
+      "side": 1,
+      "message": "it would be good to have a test for all the conditions:\n- with capabilities and no properties\n- with properties and no capabilities\n- with both",
+      "range": {
+        "startLine": 33,
+        "startChar": 16,
+        "endLine": 33,
+        "endChar": 31
+      },
+      "revId": "e65509739b3dabc938c157fe3ff2844f730c1234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9c876ce4_00142f5f",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-10T09:05:09Z",
+      "side": 1,
+      "message": "add space between methods",
+      "range": {
+        "startLine": 53,
+        "startChar": 4,
+        "endLine": 53,
+        "endChar": 5
+      },
+      "revId": "e65509739b3dabc938c157fe3ff2844f730c1234",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
