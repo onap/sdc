@@ -44,15 +44,13 @@ import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {BEOperationModel, InterfaceModel} from "../../../models/operation";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import {PolicyInstance} from "../../../models/graph/zones/policy-instance";
-import {
-    ConstraintObject
-} from "../../components/logic/service-dependencies/service-dependencies.component";
 import {OutputBEModel} from "app/models/attributes-outputs/output-be-model";
 import {HttpHelperService} from '../http-hepler.service';
 import {
     BEInterfaceOperationModel,
     InterfaceOperationModel
 } from "../../../models/interfaceOperation";
+import {FilterConstraint} from "../../../models/filter-constraint";
 
 /*
 PLEASE DO NOT USE THIS SERVICE IN ANGULAR2! Use the topology-template.service instead
@@ -474,11 +472,11 @@ export class ComponentServiceNg2 {
         return this.getComponentDataByFieldsName(component.componentType, component.uniqueId, [SERVICE_FIELDS.NODE_FILTER]);
     }
 
-    createServiceFilterConstraints(component: Component, componentInstance: ComponentInstance, constraint: ConstraintObject): Observable<any> {
+    createServiceFilterConstraints(component: Component, componentInstance: ComponentInstance, constraint: FilterConstraint): Observable<any> {
         return this.http.post<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstances/' + componentInstance.uniqueId + '/nodeFilter', constraint);
     }
 
-    updateServiceFilterConstraints(component: Component, componentInstance: ComponentInstance, constraints: ConstraintObject[]): Observable<any> {
+    updateServiceFilterConstraints(component: Component, componentInstance: ComponentInstance, constraints: FilterConstraint[]): Observable<any> {
         return this.http.put<any>(this.baseUrl + component.getTypeUrl() + component.uniqueId + '/resourceInstances/' + componentInstance.uniqueId + '/nodeFilter/', constraints);
     }
 

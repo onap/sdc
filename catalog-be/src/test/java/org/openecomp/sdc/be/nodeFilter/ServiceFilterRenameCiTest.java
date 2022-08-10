@@ -16,31 +16,28 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
-import org.openecomp.sdc.be.impl.ServiceFilterUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
+import org.openecomp.sdc.be.impl.ServiceFilterUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-public class ServiceFilterRenameCiTest extends BaseServiceFilterUtilsTest {
+class ServiceFilterRenameCiTest extends BaseServiceFilterUtilsTest {
 
     protected static final String CI_NEW_NAME = "BBBBB";
 
     @Test
-    public void renameCI() {
+    void renameCI() {
         Map<String, CINodeFilterDataDefinition> renamedNodeFilters = getRenamedNodeFilters(CI_NAME, CI_NEW_NAME);
         assertNotNull(renamedNodeFilters);
-        final List<String> constraints =
+        final List<PropertyFilterConstraintDataDefinition> constraints =
                 renamedNodeFilters.get(CI_NAME).getProperties().getListToscaDataDefinition().iterator().next()
                                   .getConstraints();
-        assertEquals(1,constraints.size());
-        final String constraint = constraints.iterator().next();
-        assertTrue(constraint.contains(CI_NEW_NAME));
+        assertEquals(1, constraints.size());
     }
 
     private Map<String, CINodeFilterDataDefinition> getRenamedNodeFilters(String oldName, String newName) {

@@ -486,6 +486,7 @@
   "DIRECTIVES_AND_NODE_FILTER_REMOVE_TEXT": "Removing \"Directive Option\" will remove directives value and erase all the node filter. Are you sure you want to remove directives?",
   "DIRECTIVES_AND_NODE_FILTER_UPDATE_TITLE": "Update Directives",
   "DIRECTIVES_AND_NODE_FILTER_UPDATE_TEXT": "Changing \"Directive Option\" will remove directives value and erase all the node filter. Are you sure you want to update directives?",
+  "NODE_FILTER_SELECT_PROPERTY": "Please, select a property",
   "VALIDATE_CAPABILITIES_TXT": "Node Filter for Capabilities Properties",
   "VALIDATE_CAPABILITIES_MSG": "The selected Component Instance does not have any capability property",
   "VALIDATE_NODE_PROPERTIES_TXT": "Node Filter for Properties",
