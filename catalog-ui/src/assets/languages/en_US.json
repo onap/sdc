@@ -245,6 +245,7 @@
   "COMPONENT_VIEW_DELETE_MODAL_TITLE": "Delete Component Confirmation",
   "COMPONENT_VIEW_DELETE_MODAL_TEXT": "All versions of this component will be permanently deleted. This action cannot be undone. Are you sure you want to proceed?",
   "=========== PROPERTY VIEW ===========": "",
+  "PROPERTY_LABEL": "Property",
   "PROPERTY_VIEW_DELETE_MODAL_TITLE": "Delete Property Confirmation",
   "PROPERTY_VIEW_DELETE_MODAL_TEXT": "Are you sure you want to delete '{{name}}'?",
   "PROPERTY_EDIT_PATTERN": "Invalid value.",
@@ -486,6 +487,7 @@
   "DIRECTIVES_AND_NODE_FILTER_REMOVE_TEXT": "Removing \"Directive Option\" will remove directives value and erase all the node filter. Are you sure you want to remove directives?",
   "DIRECTIVES_AND_NODE_FILTER_UPDATE_TITLE": "Update Directives",
   "DIRECTIVES_AND_NODE_FILTER_UPDATE_TEXT": "Changing \"Directive Option\" will remove directives value and erase all the node filter. Are you sure you want to update directives?",
+  "NODE_FILTER_SELECT_PROPERTY": "Please, select a property",
   "VALIDATE_CAPABILITIES_TXT": "Node Filter for Capabilities Properties",
   "VALIDATE_CAPABILITIES_MSG": "The selected Component Instance does not have any capability property",
   "VALIDATE_NODE_PROPERTIES_TXT": "Node Filter for Properties",
@@ -560,5 +562,8 @@
   "CAP_NAME": "Capability Name",
   "CAP_TYPE": "Capability Type",
   "CAP_DESCRIPTION": "Description",
-  "CAP_VALID_SOURCE": "Valid Sources"
+  "CAP_VALID_SOURCE": "Valid Sources",
+  "VALUE_LABEL": "Value",
+  "VALUE_EXPRESSION_LABEL": "Value Expression",
+  "OPERATOR_LABEL": "Operator"
 }

@@ -111,7 +111,7 @@ errors:
         message: "Error: Invalid userId '%1'.",
         messageId: "SVC4008"
     }
-#---------SVC4009-----------------------------
+    #---------SVC4009-----------------------------
     USER_DEFINED: {
         code: 400,
         message: "Error: User Defined '%1'.",
@@ -1436,10 +1436,10 @@ errors:
         message: "Error: artifact %1 is defined in CSAR %2 manifest but is not provided",
         messageId: "SVC4618"
     }
-#---------SVC4619------------------------------
-# %1 - artifact name
-# %2 - artifact type
-# %3 - existing artifact type
+    #---------SVC4619------------------------------
+    # %1 - artifact name
+    # %2 - artifact type
+    # %3 - existing artifact type
     ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR: {
         code: 400,
         message: "Error: artifact %1 in type %2 already exists in type %3.",
@@ -1803,9 +1803,11 @@ errors:
         messageId: "SVC4669"
     }
     #---------SVC4670------------------------------
+    # %1 - artifactname
+    # %2 - validname
     ARTIFACT_NAME_INVALID: {
         code: 400,
-        message: "Error: Artifact name is invalid.",
+        message: "Error: Artifact name '%1' is invalid. Only the following characters are allowed in the Artifact Name: '%2'.",
         messageId: "SVC4670"
     }
     #---------SVC4671------------------------------
@@ -2010,29 +2012,29 @@ errors:
     #---------SVC4695-----------------------------
     # %1 - Interface Operation Name
     INTERFACE_OPERATION_NAME_ALREADY_IN_USE: {
-      code: 409,
-      message: "Error: Interface Operation name '%1' already in use, Your current changes will not be saved.",
-      messageId: "SVC4695"
+        code: 409,
+        message: "Error: Interface Operation name '%1' already in use, Your current changes will not be saved.",
+        messageId: "SVC4695"
     }
     #---------SVC4696-----------------------------
     # %1 - Interface Operation Name
     INTERFACE_OPERATION_NAME_INVALID: {
-      code: 400,
-      message: "Error: Interface Operation name '%1' is Invalid, Operation name should not contain special character, space and should not be greater than 200 characters.",
-      messageId: "SVC4696"
+        code: 400,
+        message: "Error: Interface Operation name '%1' is Invalid, Operation name should not contain special character, space and should not be greater than 200 characters.",
+        messageId: "SVC4696"
     }
     #---------SVC4697-----------------------------
     INTERFACE_OPERATION_NAME_MANDATORY: {
-      code: 400,
-      message: "Error: Interface Operation name is mandatory, Operation name can't be empty.",
-      messageId: "SVC4697"
+        code: 400,
+        message: "Error: Interface Operation name is mandatory, Operation name can't be empty.",
+        messageId: "SVC4697"
     }
-#---------SVC4698-----------------------------
-# %1 - Interface type
+    #---------SVC4698-----------------------------
+    # %1 - Interface type
     INTERFACE_OPERATION_INVALID_FOR_LOCAL_TYPE: {
-      code: 400,
-      message: "Error: Invalid input, only one operation is allowed in local interface type '%1'.",
-      messageId: "SVC4698"
+        code: 400,
+        message: "Error: Invalid input, only one operation is allowed in local interface type '%1'.",
+        messageId: "SVC4698"
     }
     #---------SVC4699-----------------------------
     # %1 - Interface Operation input parameter name
@@ -2047,18 +2049,18 @@ errors:
         message: "Error: Interface operation input parameter name should not be empty.",
         messageId: "SVC4700"
     }
-#---------SVC4701-----------------------------
-# %1 - component Id
+    #---------SVC4701-----------------------------
+    # %1 - component Id
     INTERFACE_OPERATION_NOT_FOUND: {
-      code: 404,
-      message: "Error: Interface operation not found in the component '%1'.",
-      messageId: "SVC4701"
+        code: 404,
+        message: "Error: Interface operation not found in the component '%1'.",
+        messageId: "SVC4701"
     }
     #---------SVC4702-----------------------------
     INTERFACE_OPERATION_NOT_DELETED: {
-      code: 400,
-      message: "Error: Failed to delete interface operation.",
-      messageId: "SVC4702"
+        code: 400,
+        message: "Error: Failed to delete interface operation.",
+        messageId: "SVC4702"
     }
     #SVC4732
     INTERFACE_UNKNOWN: {
@@ -2129,32 +2131,32 @@ errors:
         message: "Error: CSAR packaging failed for %1 %2.",
         messageId: "SVC4706"
     }
-#---------SVC4708-----------------------------
-# %1 - Interface Operation input property name, component type
+    #---------SVC4708-----------------------------
+    # %1 - Interface Operation input property name, component type
     INTERFACE_OPERATION_INPUT_PROPERTY_NOT_FOUND_IN_COMPONENT: {
         code: 404,
         message: "Error: Interface operation input parameter property '%1' not found in '%2' input properties, capability properties or outputs of other operations.",
         messageId: "SVC4708"
     }
-#---------SVC4709-----------------------------
-# %1 - Interface Operation output parameter name
+    #---------SVC4709-----------------------------
+    # %1 - Interface Operation output parameter name
     INTERFACE_OPERATION_OUTPUT_NAME_ALREADY_IN_USE: {
         code: 400,
         message: "Error: Interface Operation output parameter name '%1' already in use, Your current changes will not be saved.",
         messageId: "SVC4708"
     }
-#---------SVC4710-----------------------------
+    #---------SVC4710-----------------------------
     INTERFACE_OPERATION_OUTPUT_NAME_MANDATORY: {
         code: 400,
         message: "Error: Interface operation output parameter name should not be empty.",
         messageId: "SVC4710"
     }
-#---------SVC4711-----------------------------
-# %1 - interface Id
+    #---------SVC4711-----------------------------
+    # %1 - interface Id
     INTERFACE_NOT_FOUND_IN_COMPONENT: {
-      code: 404,
-      message: "Error: Interface not found in the component '%1'.",
-      messageId: "SVC4711"
+        code: 404,
+        message: "Error: Interface not found in the component '%1'.",
+        messageId: "SVC4711"
     }
     #---------SVC4709-----------------------------
     INVALID_PROPERTY_CONSTRAINTS: {
@@ -2266,18 +2268,18 @@ errors:
         message: "Error: Missing value for the mandatory %1 property" ,
         messageId: "SVC4721"
     }
-#---------SVC4712-----------------------------
+    #---------SVC4712-----------------------------
     INTERFACE_LIFECYCLE_TYPES_NOT_FOUND: {
-      code: 404,
-      message: "Error: Interface Lifecycle types not found.",
-      messageId: "SVC4712"
+        code: 404,
+        message: "Error: Interface Lifecycle types not found.",
+        messageId: "SVC4712"
     }
-#---------SVC4713-----------------------------
-# %1 - Interface Operation Name
+    #---------SVC4713-----------------------------
+    # %1 - Interface Operation Name
     INTERFACE_OPERATION_INVALID_FOR_GLOBAL_TYPE: {
-      code: 400,
-      message: "Error: Invalid input, only pre-defined operation names are allowed in global interface type '%1'",
-      messageId: "SVC4713"
+        code: 400,
+        message: "Error: Invalid input, only pre-defined operation names are allowed in global interface type '%1'",
+        messageId: "SVC4713"
     }
 
     #---------SVC4714-----------------------------
@@ -2300,13 +2302,14 @@ errors:
         messageId: "SVC4716"
     }
 
-    #---------SVC4717----------------------------
-    # %1 - Property Name
-    MAPPED_PROPERTY_NOT_FOUND: {
-        code: 400,
-        message: "Error: %1 property does not exist.",
-        messageId: "SVC4717"
-    }
+    #---------SVC4184----------------------------
+    # %1 - Source type
+    # %2 - Property Type
+    # %3 - Property Name
+    FILTER_PROPERTY_NOT_FOUND:
+        code: 400
+        message: "%1 %2 %3 does not exist."
+        messageId: "SVC4184"
 
     #---------SVC4718----------------------------
     # %1 - Property Name
@@ -2324,13 +2327,13 @@ errors:
         messageId: "SVC4719"
     }
 
-    #---------SVC4720----------------------------
+    #---------SVC4182----------------------------
     # %1 - Property Name
     # %2 - Operator Type
     SOURCE_TARGET_PROPERTY_TYPE_MISMATCH: {
         code: 400,
-        message: "Error: %1 property and %2 property type is not same.",
-        messageId: "SVC4720"
+        message: "Error: Property '%1' type '%2' does not match with property '%3' type '%4'.",
+        messageId: "SVC4182"
     }
 
     #---------SVC4721----------------------------
@@ -2342,78 +2345,471 @@ errors:
         messageId: "SVC4721"
     }
 
-  #---------SVC4722------------------------------
-  # %1 Directive value set
+    #---------SVC4722------------------------------
+    # %1 Directive value set
     DIRECTIVES_INVALID_VALUE: {
-      code: 404,
-      message: "Error: Invalid directive value : '%1' .",
-      messageId: "SVC4722"
+        code: 404,
+        message: "Error: Invalid directive value : '%1' .",
+        messageId: "SVC4722"
     }
-#---------SVC4723-----------------------------
-# %1 - Interface Operation output name
+    #---------SVC4723-----------------------------
+    # %1 - Interface Operation output name
     INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED: {
         code: 400,
         message: "Error: Cannot update or delete interface operation output(s) '%1' mapped to an operation input",
         messageId: "SVC4723"
     }
-#---------SVC4724-----------------------------
-# %1 - Interface Operation output name
+    #---------SVC4724-----------------------------
+    # %1 - Interface Operation output name
     INTERFACE_OPERATION_DELETE_WITH_MAPPED_OUTPUT: {
         code: 400,
         message: "Error: Cannot delete interface operation with output(s) '%1' mapped to another operation input",
         messageId: "SVC4724"
     }
-#---------SVC4725-----------------------------
+    #---------SVC4725-----------------------------
     INVALID_CONSUMPTION_TYPE: {
         code: 400,
         message: "Error: Given value is different than input type. Needs to be %1",
         messageId: "SVC4725"
     }
-#---------SVC4726-----------------------------
+    #---------SVC4726-----------------------------
     INVALID_PROPERTY_VALUES: {
         code: 400,
         message: "Error: Invalid property values provided:\n %1",
         messageId: "SVC4726"
     }
-#---------SVC4727------------------------------
+    #---------SVC4727------------------------------
     INVALID_PROPERTY_NAME: {
         code: 400,
         message: "Error: Property name contains invalid characters. It should have only letters, numbers and underscores.",
         messageId: "SVC4727"
     }
 
-#---------SVC4728------------------------------
+    #---------SVC4728------------------------------
     FAILED_TO_CREATE_OR_UPDATE_CAPABILITY_PROPERTIES: {
         code: 500,
         message: "Error: Failed to create or update capabilities properties",
         messageId: "SVC4728"
     }
 
-#---------SVC4729------------------------------
+    #---------SVC4729------------------------------
     # %1 - resource Id
     CAPABILITY_PROPERTIES_NOT_FOUND: {
         code: 400,
         message: "Error: Capability properties not found in the resource '%1'.",
         messageId: "SVC4729"
     }
-#---------SVC4730------------------------------
+    #---------SVC4730------------------------------
     # %1 - property name
     PROPERTY_EXCEEDS_LIMIT: {
-      code: 400,
-      message: "Error: Invalid Content. %1 exceeds limit.",
-      messageId: "SVC4722"
+        code: 400,
+        message: "Error: Invalid Content. %1 exceeds limit.",
+        messageId: "SVC4722"
     }
-#---------SVC4731------------------------------
+    #---------SVC4731------------------------------
     INVALID_PROPERY: {
       # %1 - property name
-      code: 400,
-      message: 'Error: Invalid Content. %1 has invalid format.',
-      messageId: "SVC4723"
+        code: 400,
+        message: 'Error: Invalid Content. %1 has invalid format.',
+        messageId: "SVC4723"
     }
-#---------SVC4732------------------------------
+    #---------SVC4734------------------------------
     # %1 - list of validation errors
     INVALID_PM_DICTIONARY_FILE: {
         code: 400,
         message: 'Error: Invalid PM Dictionary File. %1',
-        messageId: "SVC4732"
+        messageId: "SVC4734"
     }
+    #-----------SVC4735---------------------------
+    #%1 - input name
+    INPUT_ALREADY_EXIST: {
+        code: 409,
+        message: "Error: Input with '%1' name already exists.",
+        messageId: "SVC4735"
+    }
+    #---------SVC4736------------------------------
+    INVALID_INPUT_NAME: {
+        code: 400,
+        message: "Error: Input name contains invalid characters. It should have only letters, numbers and underscores.",
+        messageId: "SVC4736"
+    }
+    #---------SVC4139------------------------------
+    # %1 - The action that is not supported
+    NOT_SUPPORTED: {
+        code: 400,
+        message: '%1 is not yet supported',
+        messageId: "SVC4139"
+    }
+    #---------SVC4140------------------------------
+    # %1 - Component uid
+    COMPONENT_FIND_ERROR: {
+        code: 500,
+        message: "An unexpected error occurred while retrieving the component '%1'.",
+        messageId: "SVC4140"
+    }
+    #---------SVC4141------------------------------
+    # %1 - Component uid
+    COMPONENT_CAPABILITIES_FIND_ERROR: {
+        code: 500,
+        message: "An unexpected error occurred while retrieving the component '%1' capabilities.",
+        messageId: "SVC4141"
+    }
+    #---------SVC4142------------------------------
+    # %1 - Component uid or name
+    COMPONENT_NOT_FOUND: {
+        code: 404,
+        message: "Component '%1' was not found.",
+        messageId: "SVC4142"
+    }
+    #---------SVC4143------------------------------
+    # %1 - Capability name
+    COMPONENT_INSTANCE_CAPABILITY_UPDATE_ERROR: {
+        code: 500,
+        message: "An unexpected error occurred while updating the capability '%1'.",
+        messageId: "SVC4143"
+    }
+
+    #---------SVC4144------------------------------
+    # %1 - "Model name"
+    MODEL_ALREADY_EXISTS: {
+        code: 409,
+        message: "Error: Model name '%1' already exists.",
+        messageId: "SVC4144"
+    }
+
+    #---------SVC4145------------------------------
+    # %1 - "Model name"
+    INVALID_MODEL: {
+        code: 400,
+        message: "Invalid model '%1'.",
+        messageId: "SVC4145"
+    }
+
+    #---------SVC4146------------------------------
+    MODEL_IMPORTS_IS_EMPTY: {
+        code: 400,
+        message: "Given model imports zip is empty.",
+        messageId: "SVC4146"
+    }
+
+    #---------SVC4147------------------------------
+    COULD_NOT_READ_MODEL_IMPORTS: {
+        code: 400,
+        message: "Could not read imports zip.",
+        messageId: "SVC4147"
+    }
+
+    #---------SVC4148------------------------------
+    # %1 - "Model name"
+    MODEL_NOT_FOUND: {
+        code: 404,
+        message: "Error: Model name '%1' not found. Please, make sure the model is created.",
+        messageId: "SVC4148"
+    }
+
+    #---------SVC4149------------------------------
+    MODEL_NAME_CANNOT_BE_EMPTY: {
+        code: 409,
+        message: "Error: Model name cannot be empty.",
+        messageId: "SVC4149"
+    }
+
+    #-----------SVC4150---------------------------
+    # %1 - "Component name"
+    # %2 - "Model name"
+    COMPONENT_WITH_MODEL_ALREADY_EXIST: {
+        code: 409,
+        message: "Error: Component %1 with Model %2 already exist.",
+        messageId: "SVC4150"
+    }
+    #-----------SVC4151---------------------------
+    # %1 - "Component name"
+    # %2 - "Vendor release"
+    # %3 - "Model name"
+    COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS_IN_MODEL: {
+        code: 409,
+        message: "Error: Component '%1' with Vendor Release '%2' already exists in Model '%3'.",
+        messageId: "SVC4151"
+    }
+    #-----------SVC4152---------------------------
+    # %1 - "Component name"
+    # %2 - "Vendor release"
+    COMPONENT_WITH_VENDOR_RELEASE_ALREADY_EXISTS: {
+        code: 409,
+        message: "Error: Component '%1' with Vendor Release '%2' already exists.",
+        messageId: "SVC4152"
+    }
+
+    #-----------SVC4153---------------------------
+    # %1 - "Model name"
+    DATA_TYPES_NOT_LOADED: {
+        code: 500,
+        message: "Could not fetch data types from data base with model %1",
+        messageId: "SVC4153"
+    }
+
+    #-----------SVC4154---------------------------
+    # %1 - "Model name"
+    UNKNOWN_MODEL_TYPE: {
+        code: 400,
+        message: "Error: Model type  %1 not known in the system",
+        messageId: "SVC4154"
+    }
+
+    #-----------SVC4154---------------------------
+    CSAR_TOSCA_IMPORTS_ERROR: {
+        code: 500,
+        message: "Error: An error has occurred while including the default TOSCA imports in the CSAR",
+        messageId: "SVC4154"
+    }
+
+    #-----------SVC4155---------------------------
+    # %1 - "VSP id"
+    # %2 - "VSP version id"
+    VSP_FIND_ERROR: {
+        code: 500,
+        message: "An error has occurred while retrieving the Vendor Software Product of id '%1', version id '%2'",
+        messageId: "SVC4155"
+    }
+
+    #-----------SVC4156---------------------------
+    # %1 - "VSP id"
+    # %2 - "VSP version id"
+    VSP_NOT_FOUND: {
+        code: 404,
+        message: "Could not find Vendor Software Product of id '%1', version id '%2'",
+        messageId: "SVC4156"
+    }
+
+    #-----------SVC4157---------------------------
+    # %1 - "The model name"
+    # %2 - "List of allowed models"
+    VSP_MODEL_NOT_ALLOWED: {
+        code: 400,
+        message: "The Model '%1' is not allowed for the imported Vendor Software Product. Allowed Models: '%2'",
+        messageId: "SVC4157"
+    }
+
+    #---------SVC4158-----------------------------
+    # %1 - Valid artifact label name
+    INVALID_ARTIFACT_LABEL_NAME: {
+        code: 400,
+        message: "Invalid label name. Only the following characters are allowed in label name: '%1'",
+        messageId: "SVC4158"
+    }
+
+    #---------SVC4159-----------------------------
+    # %1 - The model name
+    COULD_NOT_DELETE_MODEL: {
+        code: 500,
+        message: "Could not delete the model '%1'.",
+        messageId: "SVC4159"
+    }
+
+    #---------SVC4160-----------------------------
+    # %1 - The model name
+    COULD_NOT_DELETE_MODEL_ELEMENTS: {
+        code: 500,
+        message: "Could not delete the model '%1' elements.",
+        messageId: "SVC4160"
+    }
+    #---------SVC4161-----------------------------
+    INVALID_NODE_TYPES_YAML: {
+        code: 400,
+        message: "Invalid node_types TOSCA yaml",
+        messageId: "SVC4161"
+    }
+
+    #---------SVC4162-----------------------------
+    # %1 - The janusgraph status
+    FAILED_CREATE_ARTIFACTS_TYPES: {
+        code: 500,
+        message: "Failed to create artifact types with status '%1'.",
+        messageId: "SVC4162"
+    }
+
+    #---------SVC4163-----------------------------
+    # %1 - The janusgraph status
+    ARTIFACT_TYPE_ALREADY_EXIST: {
+        code: 409,
+        message: "Artifact type '%1' already exist.",
+        messageId: "SVC4163"
+    }
+
+    #---------SVC4692-----------------------------
+    # %1 - Component name
+    COMPONENT_NOT_ARCHIVED: {
+        code: 403,
+        message: "Component '%1' is not archived",
+        messageId: "SVC4692"
+    }
+
+    #---------SVC4693-----------------------------
+    # %1 - List of services
+    COMPONENT_IN_USE_BY_ANOTHER_COMPONENT: {
+        code: 403,
+        message: "Component is in use by '%1'",
+        messageId: "SVC4693"
+    }
+
+    #---------SVC4164-----------------------------
+    # %1 - componentType
+    # %2 - component name
+    CANNOT_DELETE_SYSTEM_DEPLOYED_RESOURCES: {
+        code: 409,
+        message: "System deployed '%1' cannot be deleted '%2'",
+        messageId: "SVC4164"
+    }
+
+    #---------SVC4165-----------------------------
+    # %1 - input origin
+    TOSCA_GET_FUNCTION_INPUTS_ONLY_SELF_ERROR: {
+        code: 400,
+        message: "Invalid get_input definition. Inputs can only be get from SELF, the given origin was '%1'",
+        messageId: "SVC4165"
+    }
+
+    #---------SVC4166-----------------------------
+    # %1 - input name
+    # %2 - input origin
+    TOSCA_GET_FUNCTION_INPUTS_NOT_FOUND: {
+        code: 404,
+        message: "The given input '%1' was not found on '%2'.",
+        messageId: "SVC4166"
+    }
+
+    #---------SVC4167-----------------------------
+    # %1 - Tosca function
+    # %2 - Referred input type
+    # %3 - Selected property type
+    TOSCA_GET_FUNCTION_TYPE_DIVERGE: {
+        code: 400,
+        message: "Could not set %1. Referred input type '%2' diverges from the selected property type '%3'.",
+        messageId: "SVC4167"
+    }
+
+    #---------SVC4168-----------------------------
+    # %1 - Tosca function
+    # %2 - Referred input schema
+    # %3 - Selected property schema
+    TOSCA_GET_FUNCTION_SCHEMA_DIVERGE: {
+        code: 400,
+        message: "Could not set %1. Referred input schema '%2' diverges from the selected property schema '%3'.",
+        messageId: "SVC4168"
+    }
+
+    #---------SVC4169-----------------------------
+    # %1 - Property type (property|input|attribute)
+    # %1 - Property name
+    # %2 - Property origin
+    TOSCA_GET_FUNCTION_PROPERTY_NOT_FOUND: {
+        code: 404,
+        message: "The given %1 '%2' was not found on '%3'.",
+        messageId: "SVC4169"
+    }
+
+    #---------SVC4170-----------------------------
+    # %1 - Property type (property|input|attribute)
+    # %2 - Property name/path
+    # %3 - Property data type
+    TOSCA_GET_FUNCTION_PROPERTY_DATA_TYPE_NOT_FOUND: {
+        code: 404,
+        message: "The %1 '%2' type '%3' was not found.",
+        messageId: "SVC4170"
+    }
+
+    #---------SVC4171-----------------------------
+    # %1 - Instance name
+    TOSCA_GET_FUNCTION_INSTANCE_NOT_FOUND: {
+        code: 404,
+        message: "The instance '%1' was not found.",
+        messageId: "SVC4171"
+    }
+
+    #-----------SVC4172---------------------------
+    #%1 - TOSCA function attribute
+    TOSCA_FUNCTION_MISSING_ATTRIBUTE: {
+        code: 400,
+        message: "Missing TOSCA function '%1'.",
+        messageId: "SVC4172"
+    }
+
+    #-----------SVC4173---------------------------
+    RELATIONSHIP_TEMPLATE_NOT_FOUND: {
+        code: 404,
+        message: "Relationship_templates entry not found in TOSCA CSAR.",
+        messageId: "SVC4173"
+    }
+
+    #-----------SVC4174---------------------------
+    RELATIONSHIP_TEMPLATE_DEFINITION_NOT_FOUND: {
+        code: 404,
+        message: "Relationship_templates definition not found in TOSCA CSAR.",
+        messageId: "SVC4174"
+    }
+
+    #-----------SVC4175---------------------------
+    TOSCA_FUNCTION_EXPECTED_ERROR: {
+        code: 400,
+        message: "Expecting a Tosca Function value.",
+        messageId: "SVC4175"
+    }
+
+    #-----------SVC4176---------------------------
+    FILTER_CONSTRAINT_MISSING: {
+        code: 400,
+        message: "The filter constraint was not provided.",
+        messageId: "SVC4176"
+    }
+
+    #-----------SVC4177---------------------------
+    #%1 - The missing field
+    FILTER_CONSTRAINT_MISSING_FIELD: {
+        code: 400,
+        message: "Required field '%1' is missing in the filter constraint.",
+        messageId: "SVC4177"
+    }
+
+    #%1 - the component id
+    SUBSTITUTION_FILTER_NOT_FOUND: {
+        code: 404,
+        message: 'Substitution filter not found in the component "%1"',
+        messageId: "SVC4178"
+    }
+
+    # %1 - Component name
+    COMPONENT_DOES_NOT_HAVE_INPUTS: {
+        code: 400,
+        message: "Component '%1' does not have inputs.",
+        messageId: "SVC4179"
+    }
+
+    # %1 - Input name
+    # %2 - Component name
+    COMPONENT_INPUT_NOT_FOUND: {
+        code: 400,
+        message: "Input '%1' does not exist in '%2'.",
+        messageId: "SVC4180"
+    }
+
+    # %1 - Target property name
+    # %2 - Source property name
+    SOURCE_TARGET_SCHEMA_MISMATCH: {
+        code: 400,
+        message: "Target property '%1' schema '%2' does not match with source property '%3' schema '%4'.",
+        messageId: "SVC4181"
+    }
+
+    # %1 - Property name
+    # %2 - Component name
+    COMPONENT_PROPERTY_NOT_FOUND:
+        code: 400
+        message: "Property '%1' does not exist in '%2'."
+        messageId: "SVC4183"
+
+    # %1 - The component type
+    # %2 - The expected component types
+    INVALID_COMPONENT_TYPE:
+        code: 400
+        message: "Invalid component type '%1'. Expected types are: %2"
+        messageId: "SVC4185"

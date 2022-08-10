@@ -54,14 +54,14 @@ import {ServiceGenericResponse} from "../responses/service-generic-response";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {HttpHelperService} from "../http-hepler.service";
 import {ConsumptionInput} from "../../components/logic/service-consumption/service-consumption.component";
-import {ConstraintObject} from "../../components/logic/service-dependencies/service-dependencies.component";
 import {PolicyInstance} from "../../../models/graph/zones/policy-instance";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import {map} from "rxjs/operators";
-import {CapabilitiesConstraintObject} from "../../components/logic/capabilities-constraint/capabilities-constraint.component";
+import {CapabilityFilterConstraint} from "../../../models/capability-filter-constraint";
 import {BEInterfaceOperationModel, InterfaceOperationModel} from "../../../models/interfaceOperation";
 import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
 import {InstanceAttributesAPIMap} from "../../../models/attributes-outputs/attribute-fe-map";
+import {FilterConstraint} from "../../../models/filter-constraint";
 
 /* we need to use this service from now, we will remove component.service when we finish remove the angular1.
  The service is duplicated since we can not use downgrades service with NGXS*/
@@ -473,19 +473,19 @@ export class TopologyTemplateService {
             [COMPONENT_FIELDS.COMPONENT_CAPABILITIES, COMPONENT_FIELDS.COMPONENT_CAPABILITIES_PROPERTIES]);
     }
 
-    createServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: ConstraintObject, componentType: string, constraintType: string): Observable<any> {
+    createServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: FilterConstraint, componentType: string, constraintType: string): Observable<any> {
         return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/nodeFilter', constraint);
     }
 
-    createServiceFilterCapabilitiesConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: CapabilitiesConstraintObject, componentType: string, constraintType: string): Observable<any> {
+    createServiceFilterCapabilitiesConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: CapabilityFilterConstraint, componentType: string, constraintType: string): Observable<any> {
         return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/nodeFilter', constraint);
     }
 
-    updateServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraints: ConstraintObject, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
-        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraints)
+    updateServiceFilterConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: FilterConstraint, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
+        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraint)
     }
 
-    updateServiceFilterCapabilitiesConstraint(componentMetaDataId: string, componentInstanceId: string, constraints: CapabilitiesConstraintObject, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
+    updateServiceFilterCapabilitiesConstraint(componentMetaDataId: string, componentInstanceId: string, constraints: CapabilityFilterConstraint, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
         return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraints)
     }
 
@@ -497,12 +497,14 @@ export class TopologyTemplateService {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_PROPERTIES, COMPONENT_FIELDS.COMPONENT_INPUTS]);
     }
 
-    createSubstitutionFilterConstraints(componentMetaDataId: string, constraint: ConstraintObject, componentType: string, constraintType: string): Observable<any> {
+    createSubstitutionFilterConstraints(componentMetaDataId: string, constraint: FilterConstraint, componentType: string, constraintType: string): Observable<any> {
         return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/substitutionFilter/' + constraintType, constraint);
     }
 
-    updateSubstitutionFilterConstraints(componentMetaDataId: string, constraint: ConstraintObject[], componentType: string, constraintType: string): Observable<any>{
-        return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/substitutionFilter/' + constraintType, constraint);
+    updateSubstitutionFilterConstraint(componentId: string, constraint: FilterConstraint, componentType: string, constraintType: string,
+                                       index: number): Observable<any> {
+        const url = `${this.baseUrl}${this.getServerTypeUrl(componentType)}${componentId}/substitutionFilter/${constraintType}/${index}`;
+        return this.http.put<any>(url, constraint);
     }
 
     deleteSubstitutionFilterConstraints(componentMetaDataId: string, constraintIndex: number, componentType: string, constraintType: string): Observable<any>{

@@ -52,9 +52,8 @@ Keys always need " " around them.
 public class MapValidator implements PropertyTypeValidator {
 
     private static final Logger log = Logger.getLogger(MapValidator.class.getName());
-    private static MapValidator mapValidator = new MapValidator();
-    private static DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
-    private static JsonParser jsonParser = new JsonParser();
+    private static final MapValidator mapValidator = new MapValidator();
+    private static final DataTypeValidatorConverter dataTypeValidatorConverter = DataTypeValidatorConverter.getInstance();
 
     public static MapValidator getInstance() {
         return mapValidator;
@@ -99,7 +98,7 @@ public class MapValidator implements PropertyTypeValidator {
             return isValid;
         }
         try {
-            JsonElement jsonObject = jsonParser.parse(value);
+            JsonElement jsonObject = JsonParser.parseString(value);
             if (!jsonObject.isJsonObject()) {
                 return false;
             }
@@ -134,7 +133,7 @@ public class MapValidator implements PropertyTypeValidator {
             return false;
         }
         try {
-            JsonElement jsonObject = jsonParser.parse(value);
+            JsonElement jsonObject = JsonParser.parseString(value);
             JsonObject asJsonObject = jsonObject.getAsJsonObject();
             Set<Entry<String, JsonElement>> entrySet = asJsonObject.entrySet();
             for (Entry<String, JsonElement> entry : entrySet) {

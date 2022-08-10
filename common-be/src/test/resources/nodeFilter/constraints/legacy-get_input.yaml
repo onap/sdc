@@ -1,0 +1,4 @@
+flavour_id:
+  greater_or_equal:
+    get_input:
+      - inputName

@@ -1,0 +1,8 @@
+descriptor_id:
+  equal:
+    concat:
+      - aString
+      - get_input:
+          - vnfProfileInput
+          - instantiation_level
+      - anotherString
