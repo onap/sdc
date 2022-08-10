@@ -22,26 +22,25 @@
 
 package org.openecomp.sdc.be.components.impl.utils;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
-import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
-import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
-import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
+import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
+import org.openecomp.sdc.be.model.UploadNodeFilterPropertyInfo;
 
-import static org.junit.Assert.assertEquals;
 
-public class CINodeFilterUtilsTest {
+class CINodeFilterUtilsTest {
 
-    private CINodeFilterUtils ciNodeFilterUtils;
+    private final CINodeFilterUtils ciNodeFilterUtils = new CINodeFilterUtils();
 
     @Test
-    public void testNodeFilterDataDefinition(){
-        ciNodeFilterUtils = new CINodeFilterUtils();
+    void testNodeFilterDataDefinition() {
         UploadNodeFilterInfo uNodeFilterInfo = new UploadNodeFilterInfo();
 
         UploadNodeFilterPropertyInfo propertyInfo = new UploadNodeFilterPropertyInfo();

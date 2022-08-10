@@ -23,8 +23,9 @@ import {PropertySource} from "./property-source";
 import {ToscaGetFunctionType} from "./tosca-get-function-type";
 import {ToscaFunction} from "./tosca-function";
 import {ToscaFunctionType} from "./tosca-function-type.enum";
+import {ToscaFunctionParameter} from "./tosca-function-parameter";
 
-export class ToscaGetFunction implements ToscaFunction {
+export class ToscaGetFunction implements ToscaFunction, ToscaFunctionParameter {
     type: ToscaFunctionType;
     propertyUniqueId: string;
     propertyName: string;
@@ -39,6 +40,8 @@ export class ToscaGetFunction implements ToscaFunction {
         if (!toscaGetFunction) {
             return;
         }
+        this.type = toscaGetFunction.type;
+        this.value = toscaGetFunction.value;
         this.propertyUniqueId = toscaGetFunction.propertyUniqueId;
         this.propertyName = toscaGetFunction.propertyName;
         this.propertySource = toscaGetFunction.propertySource;
@@ -47,6 +50,40 @@ export class ToscaGetFunction implements ToscaFunction {
         this.functionType = toscaGetFunction.functionType;
         if (toscaGetFunction.propertyPathFromSource) {
             this.propertyPathFromSource = [...toscaGetFunction.propertyPathFromSource];
+        }
+    }
+
+    public buildValueString(): string {
+        return JSON.stringify(this.buildValueObject());
+    }
+
+    public buildValueObject(): Object {
+        if (this.functionType == ToscaGetFunctionType.GET_PROPERTY || this.functionType == ToscaGetFunctionType.GET_ATTRIBUTE) {
+            return this.buildFunctionValueWithPropertySource();
+        }
+        if (this.functionType == ToscaGetFunctionType.GET_INPUT) {
+            return this.buildGetInputFunctionValue();
+        }
+        return undefined;
+    }
+
+    private buildGetInputFunctionValue(): Object {
+        if (this.propertyPathFromSource.length === 1) {
+            return {[this.functionType.toLowerCase()]: this.propertyPathFromSource[0]};
+        }
+        return {[this.functionType.toLowerCase()]: this.propertyPathFromSource};
+    }
+
+    private buildFunctionValueWithPropertySource(): Object {
+        if (this.propertySource == PropertySource.SELF) {
+            return {
+                [this.functionType.toLowerCase()]: [PropertySource.SELF, ...this.propertyPathFromSource]
+            };
+        }
+        if (this.propertySource == PropertySource.INSTANCE) {
+            return {
+                [this.functionType.toLowerCase()]: [this.sourceName, ...this.propertyPathFromSource]
+            };
         }
     }
 

@@ -71,11 +71,13 @@ import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.InterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaArtifactDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.enums.OriginTypeEnum;
@@ -1044,11 +1046,10 @@ public class ToscaExportHandler {
     private Object convertToToscaObject(String value) {
         try {
             ToscaMapValueConverter mapConverterInst = ToscaMapValueConverter.getInstance();
-            JsonParser jsonParser = new JsonParser();
             StringReader reader = new StringReader(value);
             JsonReader jsonReader = new JsonReader(reader);
             jsonReader.setLenient(true);
-            JsonElement jsonElement = jsonParser.parse(jsonReader);
+            JsonElement jsonElement = JsonParser.parseReader(jsonReader);
             if (jsonElement.isJsonObject()) {
                 JsonObject jsonObj = jsonElement.getAsJsonObject();
                 if (jsonObj.entrySet().size() == 1 && jsonObj.has(ToscaFunctions.GET_INPUT.getFunctionName())) {
@@ -1613,14 +1614,13 @@ public class ToscaExportHandler {
         }
         NodeFilter nodeFilter = new NodeFilter();
         ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> origCapabilities = inNodeFilter.getCapabilities();
-        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> origProperties = inNodeFilter.getProperties();
+        ListDataDefinition<PropertyFilterDataDefinition> origProperties = inNodeFilter.getProperties();
         List<Map<String, CapabilityFilter>> capabilitiesCopy = new ArrayList<>();
-        List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
         copyNodeFilterCapabilitiesTemplate(origCapabilities, capabilitiesCopy);
-        copyNodeFilterProperties(origProperties, propertiesCopy);
         if (CollectionUtils.isNotEmpty(capabilitiesCopy)) {
             nodeFilter.setCapabilities(capabilitiesCopy);
         }
+        final List<Map<String, List<Object>>> propertiesCopy = copyNodeFilterProperties(origProperties);
         if (CollectionUtils.isNotEmpty(propertiesCopy)) {
             nodeFilter.setProperties(propertiesCopy);
         }
@@ -1634,10 +1634,8 @@ public class ToscaExportHandler {
             return null;
         }
         NodeFilter nodeFilter = new NodeFilter();
-        ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> origProperties = substitutionFilterDataDefinition.getProperties();
-        List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
-        copySubstitutionFilterProperties(origProperties, propertiesCopy);
-        if (CollectionUtils.isNotEmpty(propertiesCopy)) {
+        final List<Map<String, List<Object>>> propertiesCopy = copySubstitutionPropertiesFilter(substitutionFilterDataDefinition.getProperties());
+        if (!propertiesCopy.isEmpty()) {
             nodeFilter.setProperties(propertiesCopy);
         }
         nodeFilter.setTosca_id(cloneToscaId(substitutionFilterDataDefinition.getTosca_id()));
@@ -1661,79 +1659,69 @@ public class ToscaExportHandler {
         }
         for (RequirementNodeFilterCapabilityDataDefinition capability : origCapabilities.getListToscaDataDefinition()) {
             Map<String, CapabilityFilter> capabilityFilterCopyMap = new HashMap<>();
-            CapabilityFilter capabilityFilter = new CapabilityFilter();
-            List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
-            copyNodeFilterProperties(capability.getProperties(), propertiesCopy);
-            capabilityFilter.setProperties(propertiesCopy);
+            final var capabilityFilter = new CapabilityFilter();
+            capabilityFilter.setProperties(copyNodeFilterProperties(capability.getProperties()));
             capabilityFilterCopyMap.put(capability.getName(), capabilityFilter);
             capabilitiesCopy.add(capabilityFilterCopyMap);
         }
     }
 
-    private void copyNodeFilterProperties(ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> origProperties,
-                                          List<Map<String, List<Object>>> propertiesCopy) {
+    private List<Map<String, List<Object>>> copyNodeFilterProperties(final ListDataDefinition<PropertyFilterDataDefinition> origProperties) {
         if (origProperties == null || origProperties.getListToscaDataDefinition() == null || origProperties.isEmpty()) {
-            return;
+            return Collections.emptyList();
         }
-        Map<String, List<Object>> propertyMapCopy = new HashMap<>();
-        for (RequirementNodeFilterPropertyDataDefinition propertyDataDefinition : origProperties.getListToscaDataDefinition()) {
-            for (String propertyInfoEntry : propertyDataDefinition.getConstraints()) {
-                Map<String, List<Object>> propertyValObj = new YamlUtil().yamlToObject(propertyInfoEntry, Map.class);
-                String propertyName = propertyDataDefinition.getName();
-                if (propertyMapCopy.containsKey(propertyName)) {
-                    addPropertyConstraintValueToList(propertyName, propertyValObj, propertyMapCopy.get(propertyName));
-                } else {
-                    if (propertyName != null) {
-                        List<Object> propsList = new ArrayList<>();
-                        addPropertyConstraintValueToList(propertyName, propertyValObj, propsList);
-                        propertyMapCopy.put(propertyName, propsList);
-                    } else {
-                        propertyMapCopy.putAll(propertyValObj);
+        List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
+        Map<String, List<Object>> propertyFilterDefinitionMap = new HashMap<>();
+        for (final PropertyFilterDataDefinition propertyFilter : origProperties.getListToscaDataDefinition()) {
+            final String propertyName = propertyFilter.getName();
+            for (final PropertyFilterConstraintDataDefinition filterConstraint : propertyFilter.getConstraints()) {
+                propertyFilterDefinitionMap.compute(propertyName, (propertyName1, constraints) -> {
+                    if (constraints == null) {
+                        constraints = new ArrayList<>();
                     }
-                }
+                    constraints.add(buildNodeFilterValue(filterConstraint));
+                    return constraints;
+                });
             }
         }
-        propertyMapCopy.entrySet().stream().forEach(entry -> addCalculatedConstraintsIntoPropertiesList(propertiesCopy, entry));
+        propertyFilterDefinitionMap.entrySet().stream()
+            .map(entry -> Map.of(entry.getKey(), entry.getValue()))
+            .forEach(propertiesCopy::add);
+        return propertiesCopy;
     }
 
-    private void copySubstitutionFilterProperties(final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> origProperties,
-                                                  final List<Map<String, List<Object>>> propertiesCopy) {
+    private List<Map<String, List<Object>>> copySubstitutionPropertiesFilter(
+        final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> origProperties) {
+
         if (origProperties == null || origProperties.getListToscaDataDefinition() == null || origProperties.isEmpty()) {
-            return;
+            return Collections.emptyList();
         }
-        final Map<String, List<Object>> propertyMapCopy = new HashMap<>();
-        for (final RequirementSubstitutionFilterPropertyDataDefinition propertyDataDefinition : origProperties.getListToscaDataDefinition()) {
-            for (final String propertyInfoEntry : propertyDataDefinition.getConstraints()) {
-                final Map<String, List<Object>> propertyValObj = new YamlUtil().yamlToObject(propertyInfoEntry, Map.class);
-                final String propertyName = propertyDataDefinition.getName();
-                if (propertyMapCopy.containsKey(propertyName)) {
-                    addPropertyConstraintValueToList(propertyName, propertyValObj, propertyMapCopy.get(propertyName));
-                } else {
-                    if (propertyName != null) {
-                        final List<Object> propsList = new ArrayList<>();
-                        addPropertyConstraintValueToList(propertyName, propertyValObj, propsList);
-                        propertyMapCopy.put(propertyName, propsList);
-                    } else {
-                        propertyMapCopy.putAll(propertyValObj);
+        List<Map<String, List<Object>>> propertiesCopy = new ArrayList<>();
+        Map<String, List<Object>> propertyFilterDefinitionMap = new HashMap<>();
+        for (final SubstitutionFilterPropertyDataDefinition propertyFilter : origProperties.getListToscaDataDefinition()) {
+            final String propertyName = propertyFilter.getName();
+            for (final PropertyFilterConstraintDataDefinition filterConstraint : propertyFilter.getConstraints()) {
+                propertyFilterDefinitionMap.compute(propertyName, (propertyName1, constraints) -> {
+                    if (constraints == null) {
+                        constraints = new ArrayList<>();
                     }
-                }
+                    constraints.add(buildNodeFilterValue(filterConstraint));
+                    return constraints;
+                });
             }
         }
-        propertyMapCopy.entrySet().forEach(entry -> addCalculatedConstraintsIntoPropertiesList(propertiesCopy, entry));
+        propertyFilterDefinitionMap.entrySet().stream()
+            .map(entry -> Map.of(entry.getKey(), entry.getValue()))
+            .forEach(propertiesCopy::add);
+        return propertiesCopy;
     }
 
-    private void addPropertyConstraintValueToList(String propertyName, Map<String, List<Object>> propertyValObj, List<Object> propsList) {
-        if (propertyValObj.containsKey(propertyName)) {
-            propsList.add(propertyValObj.get(propertyName));
+    private static Object buildNodeFilterValue(final PropertyFilterConstraintDataDefinition filterConstraint) {
+        if (filterConstraint.getValue() instanceof ToscaFunction) {
+            return Map.of(filterConstraint.getOperator().getType(), ((ToscaFunction) filterConstraint.getValue()).getJsonObjectValue());
         } else {
-            propsList.add(propertyValObj);
+            return Map.of(filterConstraint.getOperator().getType(), filterConstraint.getValue());
         }
-    }
-
-    private void addCalculatedConstraintsIntoPropertiesList(List<Map<String, List<Object>>> propertiesCopy, Entry<String, List<Object>> entry) {
-        Map<String, List<Object>> tempMap = new HashMap<>();
-        tempMap.put(entry.getKey(), entry.getValue());
-        propertiesCopy.add(tempMap);
     }
 
     private Map<String, String[]> buildSubstitutionMappingPropertyMapping(final Component component) {
