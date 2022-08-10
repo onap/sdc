@@ -21,6 +21,7 @@
 
 package org.openecomp.sdc.be.datatypes.elements;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
         //necessary for JSON conversions
     }
 
+    @JsonIgnore
     public boolean isSubProperty() {
         return propertyPathFromSource != null && propertyPathFromSource.size() > 1;
     }
@@ -58,6 +60,7 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
         return new Gson().toJson(getJsonObjectValue());
     }
 
+    @JsonIgnore
     @Override
     public Object getJsonObjectValue() {
         if (functionType == null) {
@@ -126,6 +129,7 @@ public class ToscaGetFunctionDataDefinition implements ToscaFunction, ToscaFunct
         }
     }
 
+    @JsonIgnore
     @Override
     public String getValue() {
         return this.generatePropertyValue();

@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,29 +44,30 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
-import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.NodeFilterValidator;
 import org.openecomp.sdc.be.components.validation.UserValidations;
-import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
+import org.openecomp.sdc.be.dao.janusgraph.JanusGraphGenericDao;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.Component;
-import org.openecomp.sdc.be.model.Service;
 import org.openecomp.sdc.be.model.PropertyDefinition;
+import org.openecomp.sdc.be.model.Service;
+import org.openecomp.sdc.be.model.dto.FilterConstraintDto;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.SubstitutionFilterOperation;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.ToscaOperationFacade;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.GraphLockOperation;
+import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 
 @ExtendWith(MockitoExtension.class)
-public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLogicMock {
+class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLogicMock {
 
     private static final String servicePropertyName = "controller_actor";
     private static final String constraintOperator = "equal";
@@ -97,8 +97,9 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
 
     private Component component;
     private SubstitutionFilterDataDefinition substitutionFilterDataDefinition;
-    private RequirementSubstitutionFilterPropertyDataDefinition requirementSubstitutionFilterPropertyDataDefinition;
+    private SubstitutionFilterPropertyDataDefinition substitutionFilterPropertyDataDefinition;
     private String constraint;
+    private FilterConstraintDto filterConstraintDto;
 
     @BeforeEach
     public void init() {
@@ -118,7 +119,7 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
     }
 
     @Test
-    public void doNotCreateSubstitutionFilterAsExistsTest() throws BusinessLogicException {
+    void doNotCreateSubstitutionFilterAsExistsTest() throws BusinessLogicException {
         component.setSubstitutionFilter(substitutionFilterDataDefinition);
 
         when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
@@ -131,7 +132,7 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
     }
 
     @Test
-    public void createSubstitutionFilterIfNotExistTest() throws BusinessLogicException {
+    void createSubstitutionFilterIfNotExistTest() throws BusinessLogicException {
         when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
                 .thenReturn(StorageOperationStatus.OK);
@@ -151,7 +152,7 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
     }
 
     @Test
-    public void createSubstitutionFilterIfNotExistFailTest() {
+    void createSubstitutionFilterIfNotExistFailTest() {
         when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
                 .thenReturn(StorageOperationStatus.OK);
@@ -170,124 +171,111 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
     }
 
     @Test
-    public void addSubstitutionFilterTest() throws BusinessLogicException {
+    void addSubstitutionFilterTest() throws BusinessLogicException {
         component.setSubstitutionFilter(substitutionFilterDataDefinition);
 
         when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
-        when(nodeFilterValidator.validateComponentFilter(component, Collections.singletonList(constraint),
-                NodeFilterConstraintAction.ADD)).thenReturn(Either.left(true));
+        when(nodeFilterValidator.validateSubstitutionFilter(component, filterConstraintDto)).thenReturn(Either.left(true));
         when(substitutionFilterOperation
             .addPropertyFilter(anyString(), any(SubstitutionFilterDataDefinition.class),
-                any(RequirementSubstitutionFilterPropertyDataDefinition.class)))
+                any(SubstitutionFilterPropertyDataDefinition.class)))
             .thenReturn(Either.left(substitutionFilterDataDefinition));
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
 
         final Optional<SubstitutionFilterDataDefinition> result = componentSubstitutionFilterBusinessLogic
-                .addSubstitutionFilter(componentId, servicePropertyName, constraint, true,
-                        ComponentTypeEnum.SERVICE);
+                .addSubstitutionFilter(componentId, filterConstraintDto, true, ComponentTypeEnum.SERVICE);
 
         assertThat(result).isPresent();
         assertThat(result.get().getProperties().getListToscaDataDefinition()).hasSize(1);
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
         verify(graphLockOperation, times(1)).lockComponent(componentId, NodeTypeEnum.Service);
-        verify(nodeFilterValidator, times(1)).validateComponentFilter(component,
-                Collections.singletonList(constraint), NodeFilterConstraintAction.ADD);
+        verify(nodeFilterValidator, times(1)).validateSubstitutionFilter(component, filterConstraintDto);
         verify(substitutionFilterOperation, times(1))
             .addPropertyFilter(anyString(), any(SubstitutionFilterDataDefinition.class),
-                    any(RequirementSubstitutionFilterPropertyDataDefinition.class));
+                    any(SubstitutionFilterPropertyDataDefinition.class));
         verify(graphLockOperation, times(1)).unlockComponent(componentId, NodeTypeEnum.Service);
 
     }
 
     @Test
-    public void addSubstitutionFilterFailTest() {
+    void addSubstitutionFilterFailTest() {
         component.setSubstitutionFilter(substitutionFilterDataDefinition);
 
         when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
-        when(nodeFilterValidator.validateComponentFilter(component, Collections.singletonList(constraint),
-                NodeFilterConstraintAction.ADD)).thenReturn(Either.left(true));
+        when(nodeFilterValidator.validateSubstitutionFilter(component, filterConstraintDto)).thenReturn(Either.left(true));
         when(substitutionFilterOperation
             .addPropertyFilter(componentId, substitutionFilterDataDefinition,
-                    requirementSubstitutionFilterPropertyDataDefinition))
+                substitutionFilterPropertyDataDefinition))
             .thenReturn(Either.right(StorageOperationStatus.GENERAL_ERROR));
 
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
 
         assertThrows(BusinessLogicException.class, () -> componentSubstitutionFilterBusinessLogic
-                .addSubstitutionFilter(componentId, servicePropertyName, constraint, true,
-                        ComponentTypeEnum.SERVICE));
+                .addSubstitutionFilter(componentId, filterConstraintDto, true, ComponentTypeEnum.SERVICE));
 
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
         verify(graphLockOperation, times(1)).lockComponent(componentId, NodeTypeEnum.Service);
-        verify(nodeFilterValidator, times(1)).validateComponentFilter(component,
-                Collections.singletonList(constraint), NodeFilterConstraintAction.ADD);
+        verify(nodeFilterValidator, times(1)).validateSubstitutionFilter(component, filterConstraintDto);
         verify(substitutionFilterOperation, times(0))
             .addPropertyFilter(componentId, substitutionFilterDataDefinition,
-                requirementSubstitutionFilterPropertyDataDefinition);
+                substitutionFilterPropertyDataDefinition);
         verify(graphLockOperation, times(1)).unlockComponent(componentId, NodeTypeEnum.Service);
     }
 
     @Test
-    public void updateSubstitutionFilterTest() throws BusinessLogicException {
+    void updateSubstitutionFilterTest() throws BusinessLogicException {
         component.setSubstitutionFilter(substitutionFilterDataDefinition);
-        final List<String> constraints = requirementSubstitutionFilterPropertyDataDefinition.getConstraints();
 
         when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
-        when(nodeFilterValidator.validateComponentFilter(component, Collections.singletonList(constraint),
-                NodeFilterConstraintAction.UPDATE)).thenReturn(Either.left(true));
-        when(substitutionFilterOperation.updateProperties(anyString(), any(SubstitutionFilterDataDefinition.class), anyList()))
+        when(nodeFilterValidator.validateSubstitutionFilter(component, List.of(filterConstraintDto))).thenReturn(Either.left(true));
+        when(substitutionFilterOperation.updatePropertyFilters(anyString(), any(SubstitutionFilterDataDefinition.class), anyList()))
                 .thenReturn(Either.left(substitutionFilterDataDefinition));
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
 
         final Optional<SubstitutionFilterDataDefinition> result = componentSubstitutionFilterBusinessLogic
-            .updateSubstitutionFilter(componentId, Collections.singletonList(constraint),
-                true, ComponentTypeEnum.SERVICE);
+            .updateSubstitutionFilter(componentId, List.of(filterConstraintDto), true, ComponentTypeEnum.SERVICE);
 
         assertThat(result).isPresent();
         assertThat(result.get().getProperties().getListToscaDataDefinition()).hasSize(1);
         verify(substitutionFilterOperation, times(1))
-                .updateProperties(anyString(), any(SubstitutionFilterDataDefinition.class), anyList());
-        verify(nodeFilterValidator, times(1)).validateComponentFilter(component,
-                Collections.singletonList(constraint), NodeFilterConstraintAction.UPDATE);
+                .updatePropertyFilters(anyString(), any(SubstitutionFilterDataDefinition.class), anyList());
+        verify(nodeFilterValidator, times(1)).validateSubstitutionFilter(component, List.of(filterConstraintDto));
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
         verify(graphLockOperation, times(1)).lockComponent(componentId, NodeTypeEnum.Service);
         verify(graphLockOperation, times(1)).unlockComponent(componentId, NodeTypeEnum.Service);
     }
 
     @Test
-    public void updateSubstitutionFilterFailTest() {
+    void updateSubstitutionFilterFailTest() {
         component.setSubstitutionFilter(substitutionFilterDataDefinition);
 
         when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
         when(graphLockOperation.lockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
-        when(nodeFilterValidator.validateComponentFilter(component, Collections.singletonList(constraint),
-                NodeFilterConstraintAction.UPDATE)).thenReturn(Either.left(true));
+        when(nodeFilterValidator.validateSubstitutionFilter(component, List.of(filterConstraintDto))).thenReturn(Either.left(true));
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
 
-        final List<String> constraints = requirementSubstitutionFilterPropertyDataDefinition.getConstraints();
         assertThrows(BusinessLogicException.class, () -> componentSubstitutionFilterBusinessLogic
-            .updateSubstitutionFilter(componentId, constraints, true, ComponentTypeEnum.SERVICE));
+            .updateSubstitutionFilter(componentId, List.of(filterConstraintDto), true, ComponentTypeEnum.SERVICE));
 
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
         verify(graphLockOperation, times(1)).lockComponent(componentId, NodeTypeEnum.Service);
-        verify(nodeFilterValidator, times(1)).validateComponentFilter(component,
-                Collections.singletonList(constraint), NodeFilterConstraintAction.UPDATE);
+        verify(nodeFilterValidator, times(1)).validateSubstitutionFilter(component, List.of(filterConstraintDto));
         verify(graphLockOperation, times(1)).unlockComponent(componentId, NodeTypeEnum.Service);
     }
 
     @Test
-    public void deleteSubstitutionFilterTest() throws BusinessLogicException {
+    void deleteSubstitutionFilterTest() throws BusinessLogicException {
         substitutionFilterDataDefinition.setProperties(new ListDataDefinition<>());
         component.setSubstitutionFilter(substitutionFilterDataDefinition);
 
@@ -310,7 +298,7 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
     }
 
     @Test
-    public void deleteSubstitutionFilterFailTest() {
+    void deleteSubstitutionFilterFailTest() {
         component.setSubstitutionFilter(substitutionFilterDataDefinition);
 
         when(toscaOperationFacade.getToscaElement(componentId)).thenReturn(Either.left(component));
@@ -322,7 +310,6 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
         when(graphLockOperation.unlockComponent(componentId, NodeTypeEnum.Service))
             .thenReturn(StorageOperationStatus.OK);
 
-        final List<String> constraints = requirementSubstitutionFilterPropertyDataDefinition.getConstraints();
         assertThrows(BusinessLogicException.class, () -> componentSubstitutionFilterBusinessLogic
                 .deleteSubstitutionFilter(componentId, anyInt(),true, ComponentTypeEnum.SERVICE));
 
@@ -341,16 +328,18 @@ public class ComponentSubstitutionFilterBusinessLogicTest extends BaseBusinessLo
 
             final UIConstraint uiConstraint =
                 new UIConstraint(servicePropertyName, constraintOperator, sourceType, sourceName, propertyValue);
+            final FilterConstraintMapper filterConstraintMapper = new FilterConstraintMapper();
+            filterConstraintDto = filterConstraintMapper.mapFrom(uiConstraint);
             constraint = new ConstraintConvertor().convert(uiConstraint);
 
-            requirementSubstitutionFilterPropertyDataDefinition = new RequirementSubstitutionFilterPropertyDataDefinition();
-            requirementSubstitutionFilterPropertyDataDefinition.setName(uiConstraint.getServicePropertyName());
-            requirementSubstitutionFilterPropertyDataDefinition
-                .setConstraints(Collections.singletonList(constraint));
+            substitutionFilterPropertyDataDefinition = new SubstitutionFilterPropertyDataDefinition();
+            substitutionFilterPropertyDataDefinition.setName(uiConstraint.getServicePropertyName());
+            substitutionFilterPropertyDataDefinition
+                .setConstraints(List.of(filterConstraintMapper.mapTo(filterConstraintDto)));
 
-            final ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> listDataDefinition =
+            final ListDataDefinition<SubstitutionFilterPropertyDataDefinition> listDataDefinition =
                 new ListDataDefinition<>(
-                    Collections.singletonList(requirementSubstitutionFilterPropertyDataDefinition));
+                    Collections.singletonList(substitutionFilterPropertyDataDefinition));
 
             substitutionFilterDataDefinition = new SubstitutionFilterDataDefinition();
             substitutionFilterDataDefinition.setProperties(listDataDefinition);

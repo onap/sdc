@@ -49,22 +49,26 @@ public class NodeFilterUploadCreator {
         return uploadNodeFilterInfo;
     }
 
-    private List<UploadNodeFilterPropertyInfo> createNodeFilterProperties(Object o) {
-        if (!(o instanceof List)) {
+    private List<UploadNodeFilterPropertyInfo> createNodeFilterProperties(Object propertyNodeFilterYamlObject) {
+        if (!(propertyNodeFilterYamlObject instanceof List)) {
             return null;
         }
         List<UploadNodeFilterPropertyInfo> retVal = new ArrayList<>();
-        List<Map<String, Object>> propertiesList = (List<Map<String, Object>>) o;
+        List<Map<String, Object>> propertiesList = (List<Map<String, Object>>) propertyNodeFilterYamlObject;
         for (Map<String, Object> map : propertiesList) {
             final Map.Entry<String, Object> entry = map.entrySet().iterator().next();
-            final Object value = entry.getValue();
-            if (value instanceof Map) {
-                List<String> valueList = new ArrayList<>();
-                valueList.add(valueToProperty(entry.getValue()));
-                retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), valueList));
-            } else if (value instanceof List) {
-                List<String> propertiesVals = (List<String>) ((List) value).stream().map(this::valueToProperty).collect(Collectors.toList());
-                retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), propertiesVals));
+            final Object propertyConstraintClauses = entry.getValue();
+            if (propertyConstraintClauses instanceof Map) {
+                final List<String> propertyFilterConstraintList = new ArrayList<>();
+                propertyFilterConstraintList.add(valueToProperty(map));
+                retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), propertyFilterConstraintList));
+            } else if (propertyConstraintClauses instanceof List) {
+                final List<String> propertyFilterConstraintList = ((List<Object>) propertyConstraintClauses).stream()
+                    .map(propertyConstraintClause -> Map.of(entry.getKey(), propertyConstraintClause))
+                    .map(this::valueToProperty)
+                    .collect(Collectors.toList());
+
+                retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), propertyFilterConstraintList));
             }
         }
         return retVal;

@@ -21,6 +21,8 @@
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
 import fj.data.Either;
+import java.util.List;
+import java.util.Map;
 import org.janusgraph.core.JanusGraphVertex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,11 @@ import org.openecomp.sdc.be.dao.jsongraph.types.EdgeLabelEnum;
 import org.openecomp.sdc.be.dao.jsongraph.types.JsonParseFlagEnum;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
+import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 
 import java.util.Arrays;
@@ -66,19 +72,30 @@ class NodeFilterOperationTest {
         nodeFilterDataDefinition.setName("new node filter name");
         String prop1 = "property1";
         String prop2 = "property2";
-        RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition = new RequirementNodeFilterPropertyDataDefinition();
-        requirementNodeFilterPropertyDataDefinition.setName("Name1");
-        requirementNodeFilterPropertyDataDefinition
-                .setConstraints(Arrays.asList("mem_size:\n" + "  equal: { get_property : [" + prop1 + ", size]}\n"));
-        RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition2 = new RequirementNodeFilterPropertyDataDefinition();
-        requirementNodeFilterPropertyDataDefinition2.setName("Name2");
-        requirementNodeFilterPropertyDataDefinition2
-                .setConstraints(Arrays.asList("mem_size:\n {equal:  { get_property : [SELF, " + prop2 + "]}}\n"));
+        final var propertyFilterDataDefinition = new PropertyFilterDataDefinition();
+        propertyFilterDataDefinition.setName("Name1");
+        final var propertyFilterConstraint1 = new PropertyFilterConstraintDataDefinition();
+        propertyFilterConstraint1.setPropertyName("mem_size");
+        propertyFilterConstraint1.setOperator(ConstraintType.EQUAL);
+        propertyFilterConstraint1.setValue(Map.of("get_property", List.of(prop1, "size")));
+        propertyFilterConstraint1.setValueType(FilterValueType.GET_PROPERTY);
+        propertyFilterConstraint1.setTargetType(PropertyFilterTargetType.PROPERTY);
+        propertyFilterDataDefinition.setConstraints(List.of(propertyFilterConstraint1));
 
-        ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> listDataDefinition =
+        final var propertyFilterDataDefinition2 = new PropertyFilterDataDefinition();
+        propertyFilterDataDefinition2.setName("Name2");
+        final var propertyFilterConstraint2 = new PropertyFilterConstraintDataDefinition();
+        propertyFilterConstraint2.setPropertyName("mem_size");
+        propertyFilterConstraint2.setOperator(ConstraintType.EQUAL);
+        propertyFilterConstraint2.setValue(Map.of("get_property", List.of("SELF", prop2)));
+        propertyFilterConstraint2.setValueType(FilterValueType.GET_PROPERTY);
+        propertyFilterConstraint2.setTargetType(PropertyFilterTargetType.PROPERTY);
+        propertyFilterDataDefinition2.setConstraints(List.of(propertyFilterConstraint2));
+
+        ListDataDefinition<PropertyFilterDataDefinition> listDataDefinition =
                 new ListDataDefinition<>(Arrays.asList(
-                        requirementNodeFilterPropertyDataDefinition,
-                        requirementNodeFilterPropertyDataDefinition2));
+                    propertyFilterDataDefinition,
+                    propertyFilterDataDefinition2));
         nodeFilterDataDefinition.setProperties(listDataDefinition);
 
         String componentId = "componentId";

@@ -406,6 +406,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     onPropertySourceChange(): void {
+        this.selectedProperty.reset();
         if (!this.functionType || !this.propertySource.valid) {
             return;
         }

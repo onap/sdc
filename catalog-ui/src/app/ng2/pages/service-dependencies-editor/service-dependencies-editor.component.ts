@@ -13,42 +13,30 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {InputBEModel, PropertyBEModel, PropertyFEModel} from 'app/models';
-import {
-  ConstraintObjectUI,
-  OPERATOR_TYPES
-} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
+import {SourceType} from 'app/ng2/components/logic/service-dependencies/service-dependencies.component';
 import {DropdownValue} from 'app/ng2/components/ui/form-components/dropdown/ui-element-dropdown.component';
 import {ServiceServiceNg2} from 'app/ng2/services/component-services/service.service';
 import {PROPERTY_DATA} from 'app/utils';
 import {ServiceInstanceObject} from '../../../models/service-instance-properties-and-interfaces';
-import { PropertiesUtils } from '../properties-assignment/services/properties.utils';
+import {PropertiesUtils} from '../properties-assignment/services/properties.utils';
+import {ToscaFunctionValidationEvent} from "../properties-assignment/tosca-function/tosca-function.component";
+import {InstanceFeDetails} from "../../../models/instance-fe-details";
+import {CompositionService} from "../composition/composition.service";
+import {ToscaGetFunction} from "../../../models/tosca-get-function";
+import {ToscaFunction} from "../../../models/tosca-function";
+import {ToscaFunctionType} from "../../../models/tosca-function-type.enum";
+import {ConstraintObjectUI} from "../../../models/ui-models/constraint-object-ui";
+import {OPERATOR_TYPES} from "../../../utils/filter-constraint-helper";
 
-export class UIDropDownSourceTypesElement extends DropdownValue {
-  options: any[];
-  assignedLabel: string;
-  type: string;
-
-  constructor(input?: any) {
-    super(input ? input.value || '' : "", input ? input.label || '' : "");
-    if (input) {
-      this.options = input.options;
-      this.assignedLabel = input.assignedLabel;
-      this.type = input.type;
-    }
-  }
-}
-
-// tslint:disable-next-line:max-classes-per-file
 @Component({
   selector: 'service-dependencies-editor',
   templateUrl: './service-dependencies-editor.component.html',
   styleUrls: ['./service-dependencies-editor.component.less'],
   providers: [ServiceServiceNg2]
 })
-
-export class ServiceDependenciesEditorComponent {
+export class ServiceDependenciesEditorComponent implements OnInit {
 
   input: {
     serviceRuleIndex: number,
@@ -61,139 +49,94 @@ export class ServiceDependenciesEditorComponent {
     operatorTypes: DropdownValue[],
     selectedInstanceSiblings: ServiceInstanceObject[]
   };
+  //output
+  currentRule: ConstraintObjectUI;
+
   currentServiceName: string;
-  selectedServiceProperties: PropertyBEModel[];
-  selectedPropertyObj: PropertyFEModel;
+  selectedServiceProperties: PropertyBEModel[] = [];
   ddValueSelectedServicePropertiesNames: DropdownValue[];
   operatorTypes: DropdownValue[];
-  functionTypes: DropdownValue[];
-  sourceTypes: UIDropDownSourceTypesElement[] = [];
-  currentRule: ConstraintObjectUI;
   currentIndex: number;
-  listOfValuesToAssign: DropdownValue[];
-  listOfSourceOptions: PropertyBEModel[];
-  assignedValueLabel: string;
   serviceRulesList: ConstraintObjectUI[];
+  isLoading: false;
+  selectedProperty: PropertyFEModel;
+  selectedSourceType: string;
+  componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
 
   SOURCE_TYPES = {
-    STATIC: {label: 'Static', value: 'static'},
-    SERVICE_PROPERTY: {label: 'Service Property', value: 'property'},
-    SERVICE_INPUT: {label: 'Service Input', value: 'service_input'}
+    STATIC: {label: 'Static', value: SourceType.STATIC},
+    TOSCA_FUNCTION: {label: 'Tosca Function', value: SourceType.TOSCA_FUNCTION}
   };
 
-  constructor(private propertiesUtils: PropertiesUtils) {}
+  constructor(private propertiesUtils: PropertiesUtils, private compositionService: CompositionService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.currentIndex = this.input.serviceRuleIndex;
     this.serviceRulesList = this.input.serviceRules;
-    this.initFunctionTypes();
-    this.initCurrentRule();
+    if (this.input.selectedInstanceProperties) {
+      this.selectedServiceProperties = this.input.selectedInstanceProperties;
+    }
     this.currentServiceName = this.input.currentServiceName;
     this.operatorTypes = this.input.operatorTypes;
-    this.selectedServiceProperties = this.input.selectedInstanceProperties;
-    this.ddValueSelectedServicePropertiesNames = _.map(this.input.selectedInstanceProperties, (prop) => new DropdownValue(prop.name, prop.name));
-    if (this.SOURCE_TYPES.STATIC.value !== this.currentRule.sourceType) {
-      this.loadSourceTypesData();
-    }
-    this.syncRuleData();
-  }
-
-  private initCurrentRule() {
-    this.currentRule = this.serviceRulesList && this.input.serviceRuleIndex >= 0 ?
-        this.serviceRulesList[this.input.serviceRuleIndex] :
-        new ConstraintObjectUI({
-          sourceName: this.SOURCE_TYPES.STATIC.value,
-          sourceType: this.SOURCE_TYPES.STATIC.value,
-          value: '',
-          constraintOperator: OPERATOR_TYPES.EQUAL
+    if (this.compositionService.componentInstances) {
+      this.compositionService.componentInstances.forEach(value => {
+        this.componentInstanceMap.set(value.uniqueId, <InstanceFeDetails>{
+          name: value.name
         });
-    if (this.currentRule && this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value){
-      this.sourceTypes.push({
-        label: this.SOURCE_TYPES.STATIC.label,
-        value: this.SOURCE_TYPES.STATIC.value,
-        assignedLabel: this.SOURCE_TYPES.STATIC.value,
-        type: this.SOURCE_TYPES.STATIC.value,
-        options: []});
+      });
+    }
+    this.initCurrentRule();
+    this.initSelectedSourceType();
+    this.selectedProperty = new PropertyFEModel(this.selectedServiceProperties.find(property => property.name === this.currentRule.servicePropertyName));
+    this.selectedProperty.toscaFunction = undefined;
+    this.selectedProperty.value = undefined;
+    this.ddValueSelectedServicePropertiesNames = _.map(this.input.selectedInstanceProperties, (prop) => new DropdownValue(prop.name, prop.name));
+    this.syncRuleData();
+    if (this.isValueToscaFunction(this.currentRule.value)) {
+      this.selectedProperty.toscaFunction = this.currentRule.value;
     }
   }
 
-  private initFunctionTypes() {
-    this.functionTypes = [
-      {label: this.SOURCE_TYPES.STATIC.label, value: this.SOURCE_TYPES.STATIC.value},
-      {label: this.SOURCE_TYPES.SERVICE_PROPERTY.label, value: this.SOURCE_TYPES.SERVICE_PROPERTY.value},
-      {label: this.SOURCE_TYPES.SERVICE_INPUT.label, value: this.SOURCE_TYPES.SERVICE_INPUT.value}];
-  }
-
-  onServicePropertyChanged() {
-    if(this.SOURCE_TYPES.SERVICE_INPUT.value === this.currentRule.sourceType || this.SOURCE_TYPES.SERVICE_PROPERTY.value === this.currentRule.sourceType){
-      this.currentRule.sourceName = "SELF";
+  private initSelectedSourceType(): void {
+    if (!this.currentRule.sourceType || this.currentRule.sourceType === SourceType.STATIC) {
+      this.selectedSourceType = SourceType.STATIC;
     } else {
-      this.currentRule.sourceName = "";
+      this.selectedSourceType = SourceType.TOSCA_FUNCTION;
     }
-    this.updateSelectedPropertyObj();
+  }
+
+  private initCurrentRule(): void {
+    if (this.serviceRulesList && this.input.serviceRuleIndex >= 0) {
+      this.currentRule = new ConstraintObjectUI(this.serviceRulesList[this.input.serviceRuleIndex]);
+    } else {
+      this.currentRule = new ConstraintObjectUI({
+        sourceName: SourceType.STATIC,
+        sourceType: SourceType.STATIC,
+        value: '',
+        constraintOperator: OPERATOR_TYPES.EQUAL
+      });
+    }
+  }
+
+  onServicePropertyChanged(): void {
+    this.currentRule.sourceName = undefined;
+    this.currentRule.value = undefined;
+    this.selectedProperty = undefined;
+    this.updateSelectedProperty();
     this.updateOperatorTypesList();
-    this.updateSourceTypesRelatedValues();
-    this.currentRule.value = "";
   }
 
-  onSelectFunctionType(value: any) {
-    this.currentRule.sourceName = "";
-    this.listOfValuesToAssign = [];
-    this.currentRule.sourceType = value;
-    this.loadSourceTypesData();
-    this.updateSourceTypesRelatedValues();
-  }
-
-  private loadSourceTypesData() {
-    const SELF = "SELF";
-    if (this.SOURCE_TYPES.SERVICE_INPUT.value === this.currentRule.sourceType || this.SOURCE_TYPES.SERVICE_PROPERTY.value === this.currentRule.sourceType) {
-      this.currentRule.sourceName = SELF;
+  syncRuleData(): void {
+    if (!this.currentRule.sourceName || this.currentRule.sourceType === SourceType.STATIC) {
+      this.currentRule.sourceName = SourceType.STATIC;
+      this.currentRule.sourceType = SourceType.STATIC;
     }
-    this.sourceTypes = [];
-    this.sourceTypes.push({
-      label: SELF,
-      value: SELF,
-      assignedLabel: this.currentRule.sourceType == this.SOURCE_TYPES.SERVICE_PROPERTY.value
-          ? this.SOURCE_TYPES.SERVICE_PROPERTY.label : this.SOURCE_TYPES.SERVICE_INPUT.label,
-      type: this.currentRule.sourceType == this.SOURCE_TYPES.SERVICE_PROPERTY.value
-          ? this.SOURCE_TYPES.SERVICE_PROPERTY.value : this.SOURCE_TYPES.SERVICE_INPUT.value,
-      options: this.loadSourceTypeBySelectedFunction().get(this.currentRule.sourceType)
-    });
-
-    if (this.currentRule.sourceType !== this.SOURCE_TYPES.SERVICE_INPUT.value) {
-      if (this.input.selectedInstanceSiblings && this.isPropertyFunctionSelected) {
-        _.forEach(this.input.selectedInstanceSiblings, (sib) =>
-            this.sourceTypes.push({
-              label: sib.name,
-              value: sib.name,
-              options: sib.properties || [],
-              assignedLabel: this.SOURCE_TYPES.SERVICE_PROPERTY.label,
-              type: this.SOURCE_TYPES.SERVICE_PROPERTY.value
-            })
-        );
-      }
-    }
-  }
-
-  loadSourceTypeBySelectedFunction = (): any => {
-    let parentDataMap = new Map();
-    parentDataMap.set(this.SOURCE_TYPES.SERVICE_PROPERTY.value, this.input.parentServiceProperties);
-    parentDataMap.set(this.SOURCE_TYPES.SERVICE_INPUT.value , this.input.parentServiceInputs);
-    return parentDataMap;
-  }
-
-  syncRuleData() {
-    if (!this.currentRule.sourceName || this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value) {
-      this.currentRule.sourceName = this.SOURCE_TYPES.STATIC.value;
-      this.currentRule.sourceType = this.SOURCE_TYPES.STATIC.value;
-    }
-    this.updateSelectedPropertyObj();
+    this.initSelectedProperty();
     this.updateOperatorTypesList();
-    this.updateSourceTypesRelatedValues();
   }
 
-  updateOperatorTypesList() {
-    if (this.selectedPropertyObj && PROPERTY_DATA.SIMPLE_TYPES_COMPARABLE.indexOf(this.selectedPropertyObj.type) === -1) {
+  updateOperatorTypesList(): void {
+    if (this.selectedProperty && PROPERTY_DATA.SIMPLE_TYPES_COMPARABLE.indexOf(this.selectedProperty.type) === -1) {
       this.operatorTypes = [{label: '=', value: OPERATOR_TYPES.EQUAL}];
       this.currentRule.constraintOperator = OPERATOR_TYPES.EQUAL;
     } else {
@@ -201,84 +144,95 @@ export class ServiceDependenciesEditorComponent {
     }
   }
 
-  updateSourceTypesRelatedValues() {
-    if (this.currentRule.sourceName) {
-      const selectedSourceType: UIDropDownSourceTypesElement = this.sourceTypes.find(
-          (t) => t.value === this.currentRule.sourceName && t.type === this.currentRule.sourceType
-      );
-      if (selectedSourceType) {
-        this.listOfSourceOptions = [];
-        this.listOfSourceOptions = selectedSourceType.options || [];
-        this.assignedValueLabel = selectedSourceType.assignedLabel || this.SOURCE_TYPES.STATIC.label;
-        this.filterOptionsByType();
-      }
-    }
-  }
-
-  onChangePage(newIndex:any) {
-    if (newIndex >= 0 && newIndex < this.input.serviceRules.length) {
-      this.currentIndex = newIndex;
-      this.currentRule = this.serviceRulesList[newIndex];
-      this.syncRuleData();
-    }
-  }
-
-  filterOptionsByType() {
-    if (!this.selectedPropertyObj) {
-      this.listOfValuesToAssign = [];
-      return;
-    }
-    this.listOfValuesToAssign = this.listOfSourceOptions.reduce((result, op: PropertyBEModel) => {
-      if (op.type === this.selectedPropertyObj.type && (!op.schemaType || op.schemaType === this.selectedPropertyObj.schemaType)) {
-        result.push(new DropdownValue(op.name, op.name));
-      }
-      return result;
-    }, []);
-  }
-
-  onValueChange(isValidValue:any) {
+  onValueChange(isValidValue:any): void {
     this.currentRule.updateValidity(isValidValue);
   }
 
-  checkFormValidForSubmit() {
-    if (!this.serviceRulesList) { // for create modal
-      const isStatic = this.currentRule.sourceName === this.SOURCE_TYPES.STATIC.value;
-      return this.currentRule.isValidRule(isStatic);
-    }
-
-    // for update all rules
-    return this.serviceRulesList.every((rule) => rule.isValidRule(rule.sourceName === this.SOURCE_TYPES.STATIC.value));
+  checkFormValidForSubmit(): boolean {
+    return this.currentRule.isValidRule();
   }
 
-  updateSelectedPropertyObj(): void {
-    this.selectedPropertyObj = null;
-    if (this.currentRule.servicePropertyName) {
-      let newProp = new PropertyFEModel(_.find(this.selectedServiceProperties, (prop) => prop.name === this.currentRule.servicePropertyName));
-      newProp.value = JSON.stringify(this.currentRule.value);
-      this.propertiesUtils.initValueObjectRef(newProp);
-      console.log("TEST" + newProp.value);
-      setTimeout(() => {
-        this.selectedPropertyObj = newProp})
-      this.selectedPropertyObj = newProp;
+  initSelectedProperty(): void {
+    if (!this.currentRule.servicePropertyName) {
+      this.selectedProperty = undefined;
+      return;
     }
+
+    const newProperty = new PropertyFEModel(this.selectedServiceProperties.find(property => property.name === this.currentRule.servicePropertyName));
+    newProperty.value = undefined;
+    newProperty.toscaFunction = undefined;
+    if (typeof this.currentRule.value === 'string') {
+      newProperty.value = this.currentRule.value;
+    } else if (this.isValueToscaFunction(newProperty.value)) {
+      newProperty.toscaFunction = this.currentRule.value;
+      newProperty.value = (<ToscaFunction>this.currentRule.value).buildValueString();
+    } else {
+      newProperty.value = JSON.stringify(this.currentRule.value);
+    }
+    this.propertiesUtils.initValueObjectRef(newProperty);
+    this.selectedProperty = newProperty;
+  }
+
+  updateSelectedProperty(): void {
+    this.selectedProperty = undefined;
+    if (!this.currentRule.servicePropertyName) {
+      return;
+    }
+
+    const newProperty = new PropertyFEModel(this.selectedServiceProperties.find(property => property.name === this.currentRule.servicePropertyName));
+    newProperty.value = undefined;
+    newProperty.toscaFunction = undefined;
+    if (this.isValueToscaFunction(newProperty.value)) {
+      newProperty.toscaFunction = this.currentRule.value;
+    }
+
+    this.propertiesUtils.initValueObjectRef(newProperty);
+    this.selectedProperty = newProperty;
+  }
+
+  isValueToscaFunction(value: any): boolean {
+    return value instanceof Object && 'type' in value && (<any>Object).values(ToscaFunctionType).includes(value.type);
   }
 
   isStaticSource(): boolean {
-    return this.currentRule.sourceType === this.SOURCE_TYPES.STATIC.value
+    return this.selectedSourceType === SourceType.STATIC
   }
 
-  isPropertyFunctionSelected(): boolean {
-    return this.currentRule.sourceType === this.SOURCE_TYPES.SERVICE_PROPERTY.value;
+  isToscaFunctionSource(): boolean {
+    return this.selectedSourceType === SourceType.TOSCA_FUNCTION
   }
 
   isComplexListMapType(): boolean {
-    return this.selectedPropertyObj && this.selectedPropertyObj.derivedDataType > 0;
+    return this.selectedProperty && this.selectedProperty.derivedDataType > 0;
   }
 
   updateComplexListMapTypeRuleValue(): void {
-    let value = PropertyFEModel.cleanValueObj(this.selectedPropertyObj.valueObj);
-    this.currentRule.value = JSON.stringify(value);
-    this.onValueChange(this.selectedPropertyObj.valueObjIsValid);
+    this.currentRule.value = PropertyFEModel.cleanValueObj(this.selectedProperty.valueObj);
+    this.onValueChange(this.selectedProperty.valueObjIsValid);
+  }
+
+  onToscaFunctionValidityChange(validationEvent: ToscaFunctionValidationEvent): void {
+    if (validationEvent.isValid && validationEvent.toscaFunction) {
+      this.currentRule.value = validationEvent.toscaFunction;
+      this.currentRule.sourceType = validationEvent.toscaFunction.type
+      if (validationEvent.toscaFunction instanceof ToscaGetFunction) {
+        this.currentRule.sourceName = validationEvent.toscaFunction.sourceName;
+      }
+    } else {
+      this.currentRule.updateValidity(false);
+      this.currentRule.value = undefined;
+      this.currentRule.sourceType = undefined;
+      this.currentRule.sourceName = undefined;
+    }
+  }
+
+  onSourceTypeChange(): void {
+    this.currentRule.value = undefined;
+    this.currentRule.sourceType = this.selectedSourceType;
+    if (this.isStaticSource()) {
+      this.currentRule.sourceName = SourceType.STATIC;
+    }
+    this.updateSelectedProperty();
   }
 
 }
