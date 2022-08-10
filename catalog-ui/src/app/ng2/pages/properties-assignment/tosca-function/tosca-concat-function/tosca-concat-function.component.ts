@@ -8,6 +8,7 @@ import {PropertyBEModel} from "../../../../../models/properties-inputs/property-
 import {PROPERTY_TYPES} from "../../../../../utils/constants";
 import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 import {ToscaFunctionValidationEvent} from "../tosca-function.component";
+import {ToscaFunction} from "../../../../../models/tosca-function";
 
 @Component({
     selector: 'app-tosca-concat-function',
@@ -30,7 +31,6 @@ export class ToscaConcatFunctionComponent implements OnInit {
 
     parameters: ToscaFunctionParameter[] = [];
     propertyInputList: Array<PropertyBEModel> = [];
-
     stringProperty: PropertyBEModel
 
     STRING_FUNCTION_TYPE = ToscaFunctionType.STRING
@@ -44,7 +44,7 @@ export class ToscaConcatFunctionComponent implements OnInit {
         this.initForm();
     }
 
-    private initForm() {
+    private initForm(): void {
         this.formGroup.valueChanges.subscribe(() => {
             this.onValidityChange.emit({
                 isValid: this.formGroup.valid,
@@ -57,12 +57,13 @@ export class ToscaConcatFunctionComponent implements OnInit {
         if (!this.toscaConcatFunction) {
             return;
         }
-
         if (this.toscaConcatFunction.parameters) {
             this.parameters = Array.from(this.toscaConcatFunction.parameters);
             for (const parameter of this.parameters) {
                 if (parameter.type !== PROPERTY_TYPES.STRING) {
-                    this.propertyInputList.push(this.createStringProperty(parameter));
+                    const propertyBEModel = this.createStringProperty(parameter.value);
+                    propertyBEModel.toscaFunction = <ToscaFunction> parameter;
+                    this.propertyInputList.push(propertyBEModel);
                     this.concatParameterFormArray.push(
                         new FormControl(parameter, [Validators.required, Validators.minLength(1)])
                     );
@@ -92,7 +93,7 @@ export class ToscaConcatFunctionComponent implements OnInit {
         return toscaConcatFunction1;
     }
 
-    addFunction() {
+    addFunction(): void {
         this.propertyInputList.push(this.createStringProperty());
         this.parameters.push({} as ToscaFunctionParameter);
         this.concatParameterFormArray.push(
@@ -100,32 +101,30 @@ export class ToscaConcatFunctionComponent implements OnInit {
         );
     }
 
-    addStringParameter() {
-        this.parameters.push({
-            type: ToscaFunctionType.STRING,
-            value: ''
-        });
+    addStringParameter(): void {
+        const toscaStringParameter = new ToscaStringParameter();
+        toscaStringParameter.value = ''
+        this.parameters.push(toscaStringParameter);
         this.propertyInputList.push(undefined);
         this.concatParameterFormArray.push(
             new FormControl('', [Validators.required, Validators.minLength(1)])
         );
     }
 
-    removeParameter(position) {
+    removeParameter(position): void {
         this.propertyInputList.splice(position, 1);
         this.parameters.splice(position, 1);
         this.concatParameterFormArray.removeAt(position);
     }
 
-    createStringProperty(toscaFunctionParameter?: ToscaFunctionParameter) {
+    createStringProperty(value?: any): PropertyBEModel {
         const property = new PropertyBEModel();
         property.type = PROPERTY_TYPES.STRING;
-        property.toscaFunction = toscaFunctionParameter ? toscaFunctionParameter : undefined;
-        property.value = toscaFunctionParameter ? toscaFunctionParameter.value : undefined;
+        property.value = value ? value : undefined;
         return property;
     }
 
-    onFunctionValidityChange(event: ToscaFunctionValidationEvent, index: number) {
+    onFunctionValidityChange(event: ToscaFunctionValidationEvent, index: number): void {
         if (event.isValid && event.toscaFunction) {
             this.concatParameterFormArray.controls[index].setValue(event.toscaFunction)
         } else {

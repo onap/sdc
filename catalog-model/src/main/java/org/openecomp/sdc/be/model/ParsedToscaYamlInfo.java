@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 
 @ToString
 @Getter
@@ -37,6 +37,6 @@ public class ParsedToscaYamlInfo {
     Map<String, GroupDefinition> groups;
     Map<String, PolicyDefinition> policies;
     Map<String, PropertyDefinition> properties;
-    ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties;
+    ListDataDefinition<SubstitutionFilterPropertyDataDefinition> substitutionFilterProperties;
     String substitutionMappingNodeType;
 }

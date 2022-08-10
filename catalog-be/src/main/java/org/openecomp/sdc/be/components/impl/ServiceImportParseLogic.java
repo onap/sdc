@@ -40,7 +40,7 @@ import org.openecomp.sdc.be.datatypes.elements.ListRequirementDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.MapInterfaceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.CreatedFrom;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
@@ -1381,7 +1381,7 @@ public class ServiceImportParseLogic {
     }
 
     public Service createSubstitutionFilterOnService(Service service,
-                                                     ListDataDefinition<RequirementSubstitutionFilterPropertyDataDefinition> substitutionFilterProperties)
+                                                     ListDataDefinition<SubstitutionFilterPropertyDataDefinition> substitutionFilterProperties)
         throws BusinessLogicException {
         if (substitutionFilterProperties == null || substitutionFilterProperties.isEmpty()) {
             return service;

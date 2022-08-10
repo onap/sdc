@@ -146,8 +146,11 @@ public class ToscaFunctionJsonDeserializer extends StdDeserializer<ToscaFunction
         final var toscaConcatFunction = new ToscaConcatFunction();
         final List<ToscaFunctionParameter> functionParameterList = new ArrayList<>();
         final JsonNode parametersNode = concatFunctionJsonNode.get("parameters");
+        if (parametersNode == null) {
+            return toscaConcatFunction;
+        }
         if (!parametersNode.isArray()) {
-            throw context.instantiationException(List.class, "");
+            throw context.instantiationException(List.class, "Expecting an array for the 'parameters' entry");
         }
         for (final JsonNode parameterNode : parametersNode) {
             final JsonNode typeJsonNode = parameterNode.get("type");

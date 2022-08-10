@@ -71,10 +71,10 @@ public enum ToscaPropertyType {
     JSON("json", JsonValidator.getInstance(), JsonConverter.getInstance(), ToscaJsonValueConverter.getInstance());
     // @formatter:on
 
-    private String type;
-    private PropertyTypeValidator validator;
-    private PropertyValueConverter converter;
-    private ToscaValueConverter valueConverter;
+    private final String type;
+    private final PropertyTypeValidator validator;
+    private final PropertyValueConverter converter;
+    private final ToscaValueConverter valueConverter;
     private boolean isAbstract = false;
 
     ToscaPropertyType(String type, PropertyTypeValidator validator, PropertyValueConverter converter, ToscaValueConverter valueConverter) {
@@ -111,10 +111,7 @@ public enum ToscaPropertyType {
         if (ToscaPropertyType.MAP.getType().equals(dataTypeName) || ToscaPropertyType.LIST.getType().equals(dataTypeName)) {
             return false;
         }
-        if (isScalarType(dataTypeName)) {
-            return true;
-        }
-        return false;
+        return isScalarType(dataTypeName);
     }
 
     public static ToscaPropertyType getTypeIfScalar(String dataTypeName) {

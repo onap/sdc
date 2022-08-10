@@ -20,13 +20,12 @@
 package org.openecomp.sdc.be.servlets;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,8 +34,8 @@ import static org.openecomp.sdc.common.api.Constants.USER_ID_HEADER;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +48,6 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +55,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -65,7 +62,6 @@ import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
-import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.components.validation.UserValidations;
 import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.SpringConfig;
@@ -73,14 +69,16 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
-import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.model.dto.FilterConstraintDto;
+import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
@@ -111,6 +109,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
     private static final String V_1_CATALOG_S_S_COMPONENT_INSTANCE_S_S_NODE_FILTER = "/v1/catalog/%s/%s/componentInstance/%s/%s/nodeFilter";
     private final UIConstraint uiConstraint = new UIConstraint("resourceType", "equal", "static", "static", "resourceTypeValue");
     private final String constraint = new ConstraintConvertor().convert(uiConstraint);
+    private final FilterConstraintDto filterConstraintDto = new FilterConstraintMapper().mapFrom(uiConstraint);
     private final String inputJson = buildConstraintDataJson(uiConstraint);
     private final User user = new User("", "", USER_ID, "", Role.ADMIN.name(), null);
     @Mock
@@ -176,7 +175,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
     }
 
     @Test
-    void addNodeFilterPropertiesSuccessTest() throws BusinessLogicException, JsonProcessingException {
+    void addNodeFilterPropertiesSuccessTest() throws BusinessLogicException {
         initComponentData();
         final String pathFormat = V_1_CATALOG_S_S_COMPONENT_INSTANCE_S_S_NODE_FILTER;
         final String path = String.format(pathFormat, componentType, componentId, componentInstance,
@@ -194,7 +193,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
         assertThat(propertyValue).isEqualToIgnoringCase(uiConstraint.getValue().toString());
 
         doReturn(Optional.of(uiConstraint)).when(componentsUtils)
-            .parseToConstraint(anyString(), any(User.class), ArgumentMatchers.any(ComponentTypeEnum.class));
+            .parseToConstraint(anyString(), any(User.class), any(ComponentTypeEnum.class));
 
         assertNotNull(constraint);
         assertNotNull(ciNodeFilterDataDefinition);
@@ -202,8 +201,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
         assertThat("resourceType: {equal: resourceTypeValue}\n").isEqualToIgnoringCase(constraint);
 
         doReturn(Optional.of(ciNodeFilterDataDefinition)).when(componentNodeFilterBusinessLogic)
-            .addNodeFilter(componentId, componentInstance, NodeFilterConstraintAction.ADD,
-                uiConstraint.getServicePropertyName(), constraint, true, ComponentTypeEnum.RESOURCE,
+            .addNodeFilter(componentId, componentInstance, filterConstraintDto, true, ComponentTypeEnum.RESOURCE,
                 NodeFilterConstraintType.PROPERTIES, "");
 
         final Response response = target()
@@ -213,9 +211,9 @@ class ComponentNodeFilterServletTest extends JerseyTest {
             .post(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
 
         verify(componentNodeFilterBusinessLogic, times(1))
-            .addNodeFilter(anyString(), anyString(), ArgumentMatchers.any(NodeFilterConstraintAction.class), anyString(),
-                anyString(), anyBoolean(), ArgumentMatchers.any(ComponentTypeEnum.class),
-                ArgumentMatchers.any(NodeFilterConstraintType.class), anyString());
+            .addNodeFilter(anyString(), anyString(), any(FilterConstraintDto.class), anyBoolean(), any(ComponentTypeEnum.class),
+                any(NodeFilterConstraintType.class), anyString()
+            );
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
         verify(componentNodeFilterBusinessLogic,times(1)).validateUser(USER_ID);
@@ -224,8 +222,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
     @Test
     void addNodeFilterCapabilitiesSuccessTest() throws BusinessLogicException, JsonProcessingException {
         initComponentData();
-        final String pathFormat = V_1_CATALOG_S_S_COMPONENT_INSTANCE_S_S_NODE_FILTER;
-        final String path = String.format(pathFormat, componentType, componentId, componentInstance,
+        final String path = String.format(V_1_CATALOG_S_S_COMPONENT_INSTANCE_S_S_NODE_FILTER, componentType, componentId, componentInstance,
             NodeFilterConstraintType.CAPABILITIES_PARAM_NAME);
         final UIConstraint uiConstraint1 = new UIConstraint(uiConstraint.getServicePropertyName(), uiConstraint.getConstraintOperator(),
             uiConstraint.getSourceType(), uiConstraint.getSourceName(), uiConstraint.getValue());
@@ -234,27 +231,24 @@ class ComponentNodeFilterServletTest extends JerseyTest {
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
         doReturn(componentsUtils).when(servletUtils).getComponentsUtils();
         uiConstraint1.setCapabilityName(capabilityName);
-
-        when(componentsUtils.parseToConstraint(anyString(), any(User.class), ArgumentMatchers.any(ComponentTypeEnum.class)))
-            .thenReturn(Optional.of(uiConstraint1));
+        final String requestPayload = buildConstraintDataJson(uiConstraint1);
+        when(componentsUtils.parseToConstraint(requestPayload, user, ComponentTypeEnum.RESOURCE)).thenReturn(Optional.of(uiConstraint1));
 
         assertThat(ciNodeFilterDataDefinition.getProperties().getListToscaDataDefinition()).hasSize(1);
+        final FilterConstraintDto filterConstraintDto1 = new FilterConstraintMapper().mapFrom(uiConstraint1);
         when(componentNodeFilterBusinessLogic
-            .addNodeFilter(componentId, componentInstance, NodeFilterConstraintAction.ADD,
-                uiConstraint1.getServicePropertyName(), constraint, true, ComponentTypeEnum.RESOURCE,
-                NodeFilterConstraintType.CAPABILITIES, capabilityName))
-            .thenReturn(Optional.of(ciNodeFilterDataDefinition));
-
+            .addNodeFilter(componentId, componentInstance, filterConstraintDto1, true, ComponentTypeEnum.RESOURCE,
+                NodeFilterConstraintType.CAPABILITIES, capabilityName)
+        ).thenReturn(Optional.of(ciNodeFilterDataDefinition));
         final Response response = target()
             .path(path)
             .request(MediaType.APPLICATION_JSON)
             .header(USER_ID_HEADER, USER_ID)
-            .post(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
+            .post(Entity.entity(requestPayload, MediaType.APPLICATION_JSON));
 
         verify(componentNodeFilterBusinessLogic, times(1))
-            .addNodeFilter(anyString(), anyString(), ArgumentMatchers.any(NodeFilterConstraintAction.class), anyString(),
-                anyString(), anyBoolean(), ArgumentMatchers.any(ComponentTypeEnum.class),
-                ArgumentMatchers.any(NodeFilterConstraintType.class), anyString());
+            .addNodeFilter(componentId, componentInstance, filterConstraintDto1, true, ComponentTypeEnum.RESOURCE,
+                NodeFilterConstraintType.CAPABILITIES, capabilityName);
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
         verify(componentNodeFilterBusinessLogic,times(1)).validateUser(USER_ID);
@@ -352,7 +346,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
 
         when(componentNodeFilterBusinessLogic.validateUser(USER_ID)).thenReturn(user);
 
-        when(componentsUtils.parseToConstraint(anyString(), any(User.class), ArgumentMatchers.any(ComponentTypeEnum.class)))
+        when(componentsUtils.parseToConstraint(anyString(), any(User.class), any(ComponentTypeEnum.class)))
             .thenReturn(Optional.of(uiConstraint));
         doReturn(componentsUtils).when(servletUtils).getComponentsUtils();
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
@@ -370,8 +364,8 @@ class ComponentNodeFilterServletTest extends JerseyTest {
             .put(Entity.entity(inputJson, MediaType.APPLICATION_JSON));
 
         verify(componentNodeFilterBusinessLogic, times(1))
-            .updateNodeFilter(anyString(), anyString(), ArgumentMatchers.any(UIConstraint.class),
-                ArgumentMatchers.any(ComponentTypeEnum.class), ArgumentMatchers.any(NodeFilterConstraintType.class),
+            .updateNodeFilter(anyString(), anyString(), any(UIConstraint.class),
+                any(ComponentTypeEnum.class), any(NodeFilterConstraintType.class),
                 anyInt());
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
@@ -447,9 +441,8 @@ class ComponentNodeFilterServletTest extends JerseyTest {
         when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
         when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
 
-        when(componentNodeFilterBusinessLogic.deleteNodeFilter(componentId, componentInstance,
-            NodeFilterConstraintAction.DELETE, null, 0, true, ComponentTypeEnum.RESOURCE,
-            NodeFilterConstraintType.PROPERTIES))
+        when(componentNodeFilterBusinessLogic
+            .deleteNodeFilter(componentId, componentInstance, 0, true, ComponentTypeEnum.RESOURCE, NodeFilterConstraintType.PROPERTIES))
             .thenReturn(Optional.of(ciNodeFilterDataDefinition));
 
         final Response response = target()
@@ -460,9 +453,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
             .delete(Response.class);
 
         verify(componentNodeFilterBusinessLogic, times(1))
-            .deleteNodeFilter(anyString(), anyString(), ArgumentMatchers.any(NodeFilterConstraintAction.class),
-                nullable(String.class), anyInt(), anyBoolean(), ArgumentMatchers.any(ComponentTypeEnum.class),
-                ArgumentMatchers.any(NodeFilterConstraintType.class));
+            .deleteNodeFilter(anyString(), anyString(), anyInt(), anyBoolean(), any(ComponentTypeEnum.class), any(NodeFilterConstraintType.class));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
         verify(componentNodeFilterBusinessLogic,times(1)).validateUser(USER_ID);
@@ -503,14 +494,14 @@ class ComponentNodeFilterServletTest extends JerseyTest {
             .property("contextConfig", context);
     }
 
-    private void initComponentData() throws JsonProcessingException {
-        final RequirementNodeFilterPropertyDataDefinition requirementNodeFilterPropertyDataDefinition =
-            new RequirementNodeFilterPropertyDataDefinition();
-        requirementNodeFilterPropertyDataDefinition.setName(uiConstraint.getServicePropertyName());
-        requirementNodeFilterPropertyDataDefinition.setConstraints(new LinkedList<>(Arrays.asList(constraint)));
+    private void initComponentData() {
+        final PropertyFilterDataDefinition propertyFilterDataDefinition =
+            new PropertyFilterDataDefinition();
+        propertyFilterDataDefinition.setName(uiConstraint.getServicePropertyName());
+        propertyFilterDataDefinition.setConstraints(new LinkedList<>(List.of(new FilterConstraintMapper().mapTo(filterConstraintDto))));
 
-        final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> propertyDataDefinitionList =
-            new ListDataDefinition<>(new LinkedList<>(Arrays.asList(requirementNodeFilterPropertyDataDefinition)));
+        final ListDataDefinition<PropertyFilterDataDefinition> propertyDataDefinitionList =
+            new ListDataDefinition<>(new LinkedList<>(List.of(propertyFilterDataDefinition)));
 
         final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition =
             new RequirementNodeFilterCapabilityDataDefinition();
@@ -518,7 +509,7 @@ class ComponentNodeFilterServletTest extends JerseyTest {
         requirementNodeFilterCapabilityDataDefinition.setProperties(propertyDataDefinitionList);
 
         final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilityDataDefinitionList =
-            new ListDataDefinition<>(new LinkedList<>(Arrays.asList(requirementNodeFilterCapabilityDataDefinition)));
+            new ListDataDefinition<>(new LinkedList<>(List.of(requirementNodeFilterCapabilityDataDefinition)));
 
         ciNodeFilterDataDefinition = new CINodeFilterDataDefinition();
         ciNodeFilterDataDefinition.setProperties(propertyDataDefinitionList);
