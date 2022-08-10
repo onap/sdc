@@ -19,14 +19,13 @@
  */
 package org.openecomp.sdc.be.datamodel.utils;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.model.tosca.constraints.ConstraintType;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.tosca.datatypes.ToscaFunctions;
@@ -47,81 +46,85 @@ public class ConstraintConvertor {
     public static final String SERVICE_INPUT_CONSTRAINT = "service_input";
     public static final String SELF = "SELF";
     private static final Logger logger = LoggerFactory.getLogger(ConstraintConvertor.class);
-    private static Set<String> SUPPORTED_CONSTRAINT_LIST = ImmutableSet.of(EQUAL_OPERATOR, GREATER_THAN_OPERATOR, LESS_THAN_OPERATOR, GREATER_OR_EQUAL_OPERATOR, LESS_OR_EQUAL_OPERATOR);
-    private static Set<String> SUPPORTED_FUNCTIONS = ImmutableSet
-        .of(ToscaFunctions.GET_INPUT.getFunctionName(), ToscaFunctions.GET_PROPERTY.getFunctionName());
+    private static final Set<String> SUPPORTED_CONSTRAINT_LIST =
+        Set.of(EQUAL_OPERATOR, GREATER_THAN_OPERATOR, LESS_THAN_OPERATOR, GREATER_OR_EQUAL_OPERATOR, LESS_OR_EQUAL_OPERATOR);
 
-    public UIConstraint convert(String inConstraint) {
-        return convert(inConstraint, "");
+    public UIConstraint convert(final String constraintValue) {
+        return convert(constraintValue, null);
     }
 
-    public UIConstraint convert(String inConstraint, String valueType) {
+    public UIConstraint convert(final String inConstraint, final String valueType) {
         Yaml yamlSource = new Yaml();
         UIConstraint uiConstraint = new UIConstraint();
         Object content1 = yamlSource.load(inConstraint);
         if (!(content1 instanceof Map)) {
             return null;
         }
-        Map map1 = (Map) content1;
-        Object key = map1.keySet().iterator().next();
-        uiConstraint.setServicePropertyName(key.toString());
-        Object content2 = map1.get(key);
-        if (!(content2 instanceof Map)) {
+        Map propertyAndConstraintMap = (Map) content1;
+        Object propertyNameKey = propertyAndConstraintMap.keySet().iterator().next();
+        uiConstraint.setServicePropertyName(propertyNameKey.toString());
+        Object operatorMapObj = propertyAndConstraintMap.get(propertyNameKey);
+        if (!(operatorMapObj instanceof Map)) {
             return null;
         }
-        Map map2 = (Map) content2;
-        Object key2 = map2.keySet().iterator().next();
-        final String operator = key2.toString();
+        Map operatorMap = (Map) operatorMapObj;
+        Object operatorKey = operatorMap.keySet().iterator().next();
+        final String operator = (String) operatorKey;
         if (SUPPORTED_CONSTRAINT_LIST.contains(operator)) {
             uiConstraint.setConstraintOperator(operator);
         }
-        Object content3 = map2.get(key2);
-        if (content3 instanceof String || content3 instanceof Number || content3 instanceof Boolean) {
-            uiConstraint.setValue(content3);
+        Object constraintValueObj = operatorMap.get(operatorKey);
+        if (constraintValueObj instanceof String || constraintValueObj instanceof Number || constraintValueObj instanceof Boolean) {
+            uiConstraint.setValue(constraintValueObj);
             uiConstraint.setSourceType(STATIC_CONSTRAINT);
             uiConstraint.setSourceName(STATIC_CONSTRAINT);
             return uiConstraint;
-        } else if (content3 instanceof List) {
-            List list1 = (List) content3;
+        } else if (constraintValueObj instanceof List) {
             uiConstraint.setSourceType(STATIC_CONSTRAINT);
             uiConstraint.setSourceName(STATIC_CONSTRAINT);
-            uiConstraint.setValue(list1);
+            uiConstraint.setValue(constraintValueObj);
             return uiConstraint;
-        } else if (valueType != null && valueType.equals("string")) {
+        } else if ("string".equals(valueType)) {
             uiConstraint.setSourceType(STATIC_CONSTRAINT);
             uiConstraint.setSourceName(STATIC_CONSTRAINT);
-            DumperOptions options = new DumperOptions();
-            options.setDefaultFlowStyle(DumperOptions.FlowStyle.FLOW);
-            Yaml yaml = new Yaml(options);
-            String yamlString = yaml.dump(content3);
-            uiConstraint.setValue(yamlString);
+            uiConstraint.setValue(dumpYamlString(constraintValueObj));
             return uiConstraint;
-        } else if (content3 instanceof Map) {
-            return handleMap(uiConstraint, content3);
+        } else if (constraintValueObj instanceof Map) {
+            return handleMap(uiConstraint, (Map<Object, Object>) constraintValueObj);
         }
         return null;
     }
 
-    private UIConstraint handleMap(UIConstraint uiConstraint, Object content3) {
-        Map map3 = (Map) content3;
-        Map.Entry entry = (Map.Entry) map3.entrySet().iterator().next();
+    private String dumpYamlString(final Object constraintValueObj) {
+        final var dumperOptions = new DumperOptions();
+        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.FLOW);
+        return new Yaml(dumperOptions).dump(constraintValueObj);
+    }
+
+    private UIConstraint handleMap(final UIConstraint uiConstraint, final Map<Object, Object> constraintValueAsMap) {
+        final Map.Entry<Object, Object> entry = constraintValueAsMap.entrySet().iterator().next();
         final String firstKey = entry.getKey().toString().trim();
-        if (!SUPPORTED_FUNCTIONS.contains(firstKey)) {
-            uiConstraint.setValue(content3);
+        final ToscaFunctionType toscaFunctionType = ToscaFunctionType.findType(firstKey).orElse(null);
+        if (toscaFunctionType == null) {
+            uiConstraint.setValue(constraintValueAsMap);
             return uiConstraint;
         }
-        if (ToscaFunctions.GET_INPUT.getFunctionName().equals(firstKey)) {
-            uiConstraint.setSourceType(SERVICE_INPUT_CONSTRAINT);
-            uiConstraint.setValue(entry.getValue());
-            return uiConstraint;
-        } else if (ToscaFunctions.GET_PROPERTY.getFunctionName().equals(firstKey)) {
-            uiConstraint.setSourceType(PROPERTY_CONSTRAINT);
-            final List<String> value = (List<String>) entry.getValue();
-            uiConstraint.setSourceName(value.get(0));
-            uiConstraint.setValue(value.get(1));
-            return uiConstraint;
+        uiConstraint.setValue(constraintValueAsMap);
+        uiConstraint.setSourceType(toscaFunctionType.getName());
+        switch (toscaFunctionType) {
+            case GET_INPUT:
+                uiConstraint.setSourceName(PropertySource.SELF.getName());
+                break;
+            case GET_PROPERTY:
+            case GET_ATTRIBUTE:
+                final List<String> value = (List<String>) entry.getValue();
+                uiConstraint.setSourceName(value.get(0));
+                break;
+            default:
+                break;
         }
-        return null;
+
+        return uiConstraint;
     }
 
     public List<String> convertToList(List<UIConstraint> uiConstraints) {
@@ -135,29 +138,39 @@ public class ConstraintConvertor {
         return retVal;
     }
 
-    public String convert(UIConstraint uiConstraint) {
+    public String convert(final UIConstraint uiConstraint) {
         try {
-            Map map1 = new HashMap();
-            Map map2 = new HashMap();
-            map1.put(uiConstraint.getServicePropertyName(), map2);
-            if (uiConstraint.getSourceType().equals(STATIC_CONSTRAINT)) {
-                Object value = uiConstraint.getValue();
-                if (value instanceof String) {
-                    value = new Yaml().load(value.toString());
+            final Map<String, Object> constraintAsMap = new HashMap<>();
+            switch (uiConstraint.getSourceType()) {
+                case STATIC_CONSTRAINT: {
+                    Object value = uiConstraint.getValue();
+                    if (value instanceof String) {
+                        value = new Yaml().load(value.toString());
+                    }
+                    constraintAsMap.put(uiConstraint.getConstraintOperator(), value);
+                    break;
                 }
-                map2.put(uiConstraint.getConstraintOperator(), value);
-            } else if (uiConstraint.getSourceType().equals(PROPERTY_CONSTRAINT)) {
-                List list1 = Arrays.asList(uiConstraint.getSourceName(), uiConstraint.getValue());
-                Map map3 = ImmutableMap.of(ToscaFunctions.GET_PROPERTY.getFunctionName(), list1);
-                map2.put(uiConstraint.getConstraintOperator(), map3);
-            } else if (uiConstraint.getSourceType().equals(SERVICE_INPUT_CONSTRAINT)) {
-                Map map3 = ImmutableMap.of(ToscaFunctions.GET_INPUT.getFunctionName(), uiConstraint.getValue());
-                map2.put(uiConstraint.getConstraintOperator(), map3);
+                case PROPERTY_CONSTRAINT:
+                    constraintAsMap.put(uiConstraint.getConstraintOperator(),
+                        Map.of(ToscaFunctions.GET_PROPERTY.getFunctionName(), List.of(uiConstraint.getSourceName(), uiConstraint.getValue()))
+                    );
+                    break;
+                case SERVICE_INPUT_CONSTRAINT:
+                    constraintAsMap.put(uiConstraint.getConstraintOperator(), Map.of(ToscaFunctions.GET_INPUT.getFunctionName(), uiConstraint.getValue()));
+                    break;
+                default: {
+                    if (ToscaFunctionType.findType(uiConstraint.getSourceType()).isPresent()) {
+                        Object value = uiConstraint.getValue();
+                        if (value instanceof String) {
+                            value = new Yaml().load((String) value);
+                        }
+                        constraintAsMap.put(uiConstraint.getConstraintOperator(), value);
+                    }
+                }
             }
-            Yaml yamlSource = new Yaml();
-            return yamlSource.dump(map1);
-        } catch (NullPointerException ex) {
-            logger.error(ex.getMessage(), ex);
+            return new Yaml().dump(Map.of(uiConstraint.getServicePropertyName(), constraintAsMap));
+        } catch (final Exception ex) {
+            logger.error("Could not convert constraint", ex);
         }
         return null;
     }
@@ -187,13 +200,12 @@ public class ConstraintConvertor {
             uiConstraint.setSourceName(STATIC_CONSTRAINT);
             return uiConstraint;
         } else if (constraintValue instanceof List) {
-            final List constraintValueList = (List) constraintValue;
             uiConstraint.setSourceType(STATIC_CONSTRAINT);
             uiConstraint.setSourceName(STATIC_CONSTRAINT);
-            uiConstraint.setValue(constraintValueList);
+            uiConstraint.setValue(constraintValue);
             return uiConstraint;
         } else if (constraintValue instanceof Map) {
-            return handleMap(uiConstraint, constraintValue);
+            return handleMap(uiConstraint, (Map<Object, Object>) constraintValue);
         }
         return null;
     }

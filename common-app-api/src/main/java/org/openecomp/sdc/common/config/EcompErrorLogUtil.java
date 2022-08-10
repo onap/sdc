@@ -19,10 +19,10 @@
  */
 package org.openecomp.sdc.common.config;
 
-import fj.data.Either;
 import java.util.Formatter;
 import java.util.IllegalFormatException;
 import java.util.Locale;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.common.log.enums.EcompErrorSeverity;
 import org.openecomp.sdc.common.log.enums.EcompLoggerErrorCode;
@@ -32,11 +32,14 @@ import org.slf4j.MDC;
 public class EcompErrorLogUtil {
 
     private static final String FATAL_ERROR_PREFIX = "FATAL ERROR!! ";
-    private static String ECOMP_ERROR_TMPL = "ETYPE = \"%s\" ENAME = \"%s\" ECODE = \"%s\" ECONTEXT = \"%s\" EDESC = \"%s\"";
-    private static Logger log = Logger.getLogger(EcompErrorLogUtil.class.getName());
+    private static final String ECOMP_ERROR_TMPL = "ETYPE = \"%s\" ENAME = \"%s\" ECODE = \"%s\" ECONTEXT = \"%s\" EDESC = \"%s\"";
+    private static final Logger log = Logger.getLogger(EcompErrorLogUtil.class.getName());
 
-    public static void logEcompError(EcompErrorName ecompErrorName, EcompErrorInfo ecompErrorInfo, String ecompErrorContext,
-                                     String... ecompDescriptionParams) {
+    private EcompErrorLogUtil() {
+
+    }
+
+    public static void logEcompError(EcompErrorName ecompErrorName, EcompErrorInfo ecompErrorInfo, String ecompErrorContext) {
         if (ecompErrorInfo != null) {
             StringBuilder sb = new StringBuilder();
             Formatter formatter = new Formatter(sb, Locale.US);
@@ -74,13 +77,9 @@ public class EcompErrorLogUtil {
     public static void logEcompError(String ecompErrorContext, EcompErrorEnum ecompErrorEnum, boolean logMissingParams,
                                      String... ecompDescriptionParams) {
         StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb, Locale.US);
-        try {
-            String description;
-            Either<String, Boolean> setDescriptionParamsResult = setDescriptionParams(ecompErrorEnum, ecompDescriptionParams);
-            if (setDescriptionParamsResult.isLeft()) {
-                description = setDescriptionParamsResult.left().value();
-            } else {
+        try (Formatter formatter = new Formatter(sb, Locale.US)) {
+            Optional<String> descriptionParamsOptional = getDescriptionParams(ecompErrorEnum, ecompDescriptionParams);
+            if (descriptionParamsOptional.isEmpty()) {
                 EcompErrorEnum mismatchErrorEnum = EcompErrorEnum.EcompMismatchParam;
                 if (logMissingParams) {
                     logEcompError("logEcompError", mismatchErrorEnum, false, ecompErrorEnum.name());
@@ -89,6 +88,7 @@ public class EcompErrorLogUtil {
                 }
                 return;
             }
+            String description = descriptionParamsOptional.get();
             EcompClassification classification = ecompErrorEnum.getClassification();
             EcompErrorSeverity severity = EcompErrorSeverity.ERROR;
             // Since there is no FATAL log level, this is how we distinguish the
@@ -109,7 +109,6 @@ public class EcompErrorLogUtil {
             log.error(severity, EcompLoggerErrorCode.getByValue(ecompErrorEnum.getEcompErrorCode().name()), ecompErrorContext, ecompErrorContext,
                 description);
         } finally {
-            formatter.close();
             MDC.remove("alarmSeverity");
         }
     }
@@ -121,31 +120,23 @@ public class EcompErrorLogUtil {
         return "ASDC" + ecodeNumber + classification.getClassification();
     }
 
-    private static Either<String, Boolean> setDescriptionParams(EcompErrorEnum ecompErrorEnum, String... descriptionParams) {
-        String description = ecompErrorEnum.getEcompErrorCode().getDescription();
+    private static Optional<String> getDescriptionParams(final EcompErrorEnum ecompErrorEnum, final String... descriptionParams) {
+        final String description = ecompErrorEnum.getEcompErrorCode().getDescription();
         // Counting number of params in description
-        int countMatches = StringUtils.countMatches(description, AbsEcompErrorManager.PARAM_STR);
-        // Catching cases when there are more params passed than there are in
-
-        // the description (formatter will ignore extra params and won't throw
-
+        final int countMatches = StringUtils.countMatches(description, AbsEcompErrorManager.PARAM_STR);
+        // Catching cases when there are more params passed than there are in the description (formatter will ignore extra params and won't throw
         // exception)
         if (countMatches != descriptionParams.length) {
-            return Either.right(false);
+            return Optional.empty();
         }
         // Setting params of the description if any
-        StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb, Locale.US);
-        try {
+        final StringBuilder sb = new StringBuilder();
+        try (final Formatter formatter = new Formatter(sb, Locale.US)) {
             formatter.format(description, (Object[]) descriptionParams).toString();
-            return Either.left(formatter.toString());
-        } catch (IllegalFormatException e) {
-            // Number of passed params doesn't match number of params in config
-
-            // file
-            return Either.right(false);
-        } finally {
-            formatter.close();
+            return Optional.of(formatter.toString());
+        } catch (final IllegalFormatException ignored) {
+            // Number of passed params doesn't match number of params in config file
+            return Optional.empty();
         }
     }
 }

@@ -19,7 +19,6 @@
  */
 package org.openecomp.sdc.be.components.validation;
 
-import com.google.common.collect.ImmutableSet;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +34,7 @@ import org.openecomp.sdc.be.components.impl.utils.NodeFilterConstraintAction;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -55,10 +55,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class NodeFilterValidator {
 
     private static final String SOURCE = "Source";
-    public static final Set<String> comparableTypes = ImmutableSet
+    public static final Set<String> comparableTypes = Set
         .of(ToscaPropertyType.STRING.getType(), ToscaPropertyType.INTEGER.getType(), ToscaPropertyType.FLOAT.getType());
-    public static final Set<String> schemableTypes = ImmutableSet.of(ToscaPropertyType.MAP.getType(), ToscaPropertyType.LIST.getType());
-    public static final Set<String> comparableConstraintsOperators = ImmutableSet
+    public static final Set<String> schemableTypes = Set.of(ToscaPropertyType.MAP.getType(), ToscaPropertyType.LIST.getType());
+    public static final Set<String> comparableConstraintsOperators = Set
         .of(ConstraintConvertor.GREATER_THAN_OPERATOR, ConstraintConvertor.LESS_THAN_OPERATOR);
     protected final ToscaOperationFacade toscaOperationFacade;
     protected final ComponentsUtils componentsUtils;
@@ -92,39 +92,43 @@ public class NodeFilterValidator {
                                                           final List<String> uiConstraints, final NodeFilterConstraintAction action,
                                                           final NodeFilterConstraintType nodeFilterConstraintType,
                                                           final String capabilityName) {
+        if (NodeFilterConstraintAction.ADD != action && NodeFilterConstraintAction.UPDATE != action) {
+            return Either.left(true);
+        }
+        if (CollectionUtils.isEmpty(uiConstraints)) {
+            return Either.right(componentsUtils.getResponseFormat(ActionStatus.CONSTRAINT_FORMAT_INCORRECT));
+        }
         try {
-            if (NodeFilterConstraintAction.ADD == action || NodeFilterConstraintAction.UPDATE == action) {
-                for (final String uiConstraint : uiConstraints) {
-                    final UIConstraint constraint = new ConstraintConvertor().convert(uiConstraint);
-                    if (ConstraintConvertor.PROPERTY_CONSTRAINT.equals(constraint.getSourceType())) {
-                        final Either<Boolean, ResponseFormat> booleanResponseFormatEither = validatePropertyConstraint(parentComponent,
-                            componentInstanceId, constraint, capabilityName);
-                        if (booleanResponseFormatEither.isRight()) {
-                            return booleanResponseFormatEither;
-                        }
+            for (final String uiConstraint : uiConstraints) {
+                final UIConstraint constraint = new ConstraintConvertor().convert(uiConstraint);
+                if (constraint.getSourceType() == null) {
+                    return Either.left(true);
+                }
+                switch (constraint.getSourceType()) {
+                    case ConstraintConvertor.PROPERTY_CONSTRAINT: {
+                        return validatePropertyConstraint(parentComponent, componentInstanceId, constraint, capabilityName);
                     }
-                    else if (ConstraintConvertor.SERVICE_INPUT_CONSTRAINT.equals(constraint.getSourceType())) {
-                        final Either<Boolean, ResponseFormat> booleanResponseFormatEither = validateInputConstraint(parentComponent,
-                            componentInstanceId, constraint);
-                        if (booleanResponseFormatEither.isRight()) {
-                            return booleanResponseFormatEither;
-                        }
+                    case ConstraintConvertor.SERVICE_INPUT_CONSTRAINT: {
+                        return validateInputConstraint(parentComponent, componentInstanceId, constraint);
                     }
-                    else if (ConstraintConvertor.STATIC_CONSTRAINT.equals(constraint.getSourceType())) {
-                        Either<Boolean, ResponseFormat> booleanResponseFormatEither;
+                    case ConstraintConvertor.STATIC_CONSTRAINT: {
                         if (NodeFilterConstraintType.PROPERTIES.equals(nodeFilterConstraintType)) {
-                            booleanResponseFormatEither = isComponentPropertyFilterValid(parentComponent, componentInstanceId, constraint);
+                            return isComponentPropertyFilterValid(parentComponent, componentInstanceId, constraint);
                         } else {
-                            booleanResponseFormatEither = isComponentCapabilityPropertyFilterValid(parentComponent, componentInstanceId, constraint);
-                        }
-                        if (booleanResponseFormatEither.isRight()) {
-                            return booleanResponseFormatEither;
+                            return isComponentCapabilityPropertyFilterValid(parentComponent, componentInstanceId, constraint);
                         }
                     }
+                    default:
+                        if (ToscaFunctionType.findType(constraint.getSourceType()).isPresent()) {
+                            return Either.left(true);
+                        }
+                        return Either.right(componentsUtils.getResponseFormat(ActionStatus.CONSTRAINT_FORMAT_INCORRECT));
                 }
             }
         } catch (final Exception e) {
-            LOGGER.debug("Provided constraint" + uiConstraints, e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Provided constraints '{}'", String.join(",\n", uiConstraints), e);
+            }
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.CONSTRAINT_FORMAT_INCORRECT));
         }
         return Either.left(true);
@@ -206,7 +210,7 @@ public class NodeFilterValidator {
                 return validatePropertyData(uiConstraint, sourceSelectedProperty, targetComponentInstanceProperty);
             }
         }
-        LOGGER.debug("Parent component does not have inputs", parentComponent);
+        LOGGER.debug("Parent component '{}', unique id '{}', does not have inputs", parentComponent.getName(), parentComponent.getUniqueId());
         return Either.right(componentsUtils.getResponseFormat(ActionStatus.INPUTS_NOT_FOUND));
     }
 
@@ -250,7 +254,7 @@ public class NodeFilterValidator {
         //TODO: get capabilities properties when constraint type is capabilities
         final Optional<ComponentInstanceProperty> componentInstanceProperty = parentComponent.getComponentInstancesProperties()
             .get(componentInstanceId).stream().filter(property -> uiConstraint.getServicePropertyName().equals(property.getName())).findFirst();
-        if (!componentInstanceProperty.isPresent()) {
+        if (componentInstanceProperty.isEmpty()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.SELECTED_PROPERTY_NOT_PRESENT, uiConstraint.getServicePropertyName()));
         }
         if (comparableConstraintsOperators.contains(uiConstraint.getConstraintOperator()) && !comparableTypes
