@@ -62,8 +62,7 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
         properties.selectByVisibleText(property.getName());
         final Select logicalOperator = new Select(webDriver.findElement(By.xpath(XpathSelector.CONSTRAINT_OPERATOR.xPath)));
         logicalOperator.selectByVisibleText(property.getLogicalOperator().getOperator());
-        final Select functionType = new Select(webDriver.findElement(By.xpath(XpathSelector.FUNCTION_TYPE.xPath)));
-        functionType.selectByVisibleText(property.getSource());
+        findElement(XpathSelector.VALUE_TYPE_STATIC.getXPath()).click();
         try {
             addRuleAssignedValue(property);
         } catch (Exception e) {
@@ -123,8 +122,8 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
         SERVICE_DEPENDENCIES_EDITOR("//service-dependencies-editor"),
         SERVICE_PROPERTY_NAME("//*[@data-tests-id='servicePropertyName']/select"),
         CONSTRAINT_OPERATOR("//*[@data-tests-id='constraintOperator']/select"),
-        FUNCTION_TYPE("//*[@data-tests-id='functionType']/select"),
-        SOURCE_TYPE("//*[@data-tests-id='sourceType']/select"),
+        VALUE_TYPE_STATIC("//*[@data-tests-id='value-type-static']"),
+        VALUE_TYPE_TOSCA_FUNCTION("//*[@data-tests-id='value-type-tosca-function']"),
         RULE_ASSIGNED_VALUE("//*[@data-tests-id='ruleAssignedValue']//*[self::input or self::select]"),
         RULE_ASSIGNED_VALUE_ADD_TO_LIST("//a[@data-tests-id = 'add-to-list-%s']"),
         RULE_ASSIGNED_LIST_VALUE("//*[@data-tests-id='value-prop-%s.%d']"),

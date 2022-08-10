@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openecomp.sdc.be.tosca.model;
 
-import org.junit.Test;
-import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
-import org.openecomp.sdc.be.ui.model.UIConstraint;
+package org.openecomp.sdc.be.datamodel.utils;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.ui.model.UIConstraint;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-public class ConstraintConvertorTest {
+class ConstraintConvertorTest {
 
     @Test
-    public void convertStatic(){
+    void convertStatic(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = constraintConvertor.convert("mem_size: {equal: some static}\n");
         assertNotNull(uiConstraint);
@@ -39,7 +40,7 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertFromStatic(){
+    void convertFromStatic(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = new UIConstraint("mem_size", "equal" , ConstraintConvertor.STATIC_CONSTRAINT, "some static");
         String constraint  = constraintConvertor.convert(uiConstraint);
@@ -48,19 +49,19 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertSelfProperty(){
+    void convertSelfProperty(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = constraintConvertor.convert("mem_size:\n {equal: { get_property: [SELF, size] }}");
         assertNotNull(uiConstraint);
         assertEquals(uiConstraint.getConstraintOperator(),"equal");
-        assertEquals(uiConstraint.getValue(),"size");
+        assertEquals(uiConstraint.getValue(), Map.of(ToscaFunctionType.GET_PROPERTY.getName(), List.of("SELF", "size")));
         assertEquals(uiConstraint.getServicePropertyName().trim(),"mem_size");
         assertEquals(uiConstraint.getSourceName().trim(),"SELF");
-        assertEquals(uiConstraint.getSourceType(), ConstraintConvertor.PROPERTY_CONSTRAINT);
+        assertEquals(uiConstraint.getSourceType(), ToscaFunctionType.GET_PROPERTY.getName());
     }
 
     @Test
-    public void convertFromSelfProperty(){
+    void convertFromSelfProperty(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = new UIConstraint("mem_size", "equal" , ConstraintConvertor.PROPERTY_CONSTRAINT, "SELF" ,"some static");
         String constraint  = constraintConvertor.convert(uiConstraint);
@@ -69,19 +70,19 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertCIProperty(){
+    void convertCIProperty(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = constraintConvertor.convert("mem_size:\n" + "  equal: { get_property: [A, size]}");
         assertNotNull(uiConstraint);
         assertEquals(uiConstraint.getConstraintOperator(),"equal");
-        assertEquals(uiConstraint.getValue(),"size");
+        assertEquals(uiConstraint.getValue(),Map.of(ToscaFunctionType.GET_PROPERTY.getName(), List.of("A", "size")));
         assertEquals(uiConstraint.getServicePropertyName().trim(),"mem_size");
         assertEquals(uiConstraint.getSourceName().trim(),"A");
     }
 
 
     @Test
-    public void convertFromCIProperty(){
+    void convertFromCIProperty(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = new UIConstraint("mem_size", "equal" , ConstraintConvertor.PROPERTY_CONSTRAINT, "A" ,"size");
         String constraint  = constraintConvertor.convert(uiConstraint);
@@ -90,14 +91,14 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertServiceTemplateInput(){
+    void convertServiceTemplateInput(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = constraintConvertor.convert("mem_size: {equal: {get_input: InputName}}\n");
         assertNotNull(uiConstraint);
     }
 
     @Test
-    public void convertFromServiceTemplateInput(){
+    void convertFromServiceTemplateInput(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = new UIConstraint("mem_size", "equal" , ConstraintConvertor.SERVICE_INPUT_CONSTRAINT, "InputName");
         String constraint  = constraintConvertor.convert(uiConstraint);
@@ -106,7 +107,7 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertGreaterThanStatic(){
+    void convertGreaterThanStatic(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = constraintConvertor.convert("mem_size: {greater_than: 2}\n");
         assertNotNull(uiConstraint);
@@ -116,7 +117,7 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertFromGreaterThanStatic(){
+    void convertFromGreaterThanStatic(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = new UIConstraint("mem_size", "greater_than" , ConstraintConvertor.STATIC_CONSTRAINT, 2);
         String constraint  = constraintConvertor.convert(uiConstraint);
@@ -125,14 +126,14 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertLessThanServiceProperty(){
+    void convertLessThanServiceProperty(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = constraintConvertor.convert("mem_size: {less_then: {get_input: InputName}}");
         assertNotNull(uiConstraint);
     }
 
     @Test
-    public void convertFromLessThanServiceProperty(){
+    void convertFromLessThanServiceProperty(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = new UIConstraint("mem_size", "less_then" , ConstraintConvertor.SERVICE_INPUT_CONSTRAINT, "InputName");
         String constraint  = constraintConvertor.convert(uiConstraint);
@@ -141,7 +142,7 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertFromEqualStaticMap(){
+    void convertFromEqualStaticMap(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = new UIConstraint("mem_size", "equal" , ConstraintConvertor.STATIC_CONSTRAINT, "{x: xx,"+
                                                                                                                           " y: yy}\n");
@@ -151,7 +152,7 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertStringToMap(){
+    void convertStringToMap(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = constraintConvertor.convert("mem_size:\n" + "  equal: {x: xx, y: yy}\n");
         assertNotNull(uiConstraint);
@@ -159,7 +160,7 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertFromEqualStaticList(){
+    void convertFromEqualStaticList(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = new UIConstraint("mem_size", "equal" , ConstraintConvertor.STATIC_CONSTRAINT, "[x, y]\n");
         String constraint  = constraintConvertor.convert(uiConstraint);
@@ -168,7 +169,7 @@ public class ConstraintConvertorTest {
     }
 
     @Test
-    public void convertStringToList(){
+    void convertStringToList(){
         ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         UIConstraint uiConstraint = constraintConvertor.convert("mem_size:\n" + "  equal: [x, y]\n");
         assertNotNull(uiConstraint);

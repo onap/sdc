@@ -25,6 +25,7 @@ import org.javatuples.Pair;
 import org.openecomp.sdc.be.datamodel.utils.ConstraintConvertor;
 import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.Service;
@@ -50,11 +51,40 @@ public class ServiceFilterUtils {
         }
         return ci.getNodeFilter().getProperties().getListToscaDataDefinition().stream().flatMap(prop -> prop.getConstraints().stream())
             .map(String::new)
-            .filter(constraint -> new ConstraintConvertor().convert(constraint).getSourceType().equals(ConstraintConvertor.PROPERTY_CONSTRAINT))
-            .anyMatch(constraintStr -> {
-                UIConstraint uiConstraint = new ConstraintConvertor().convert(constraintStr);
-                return uiConstraint.getSourceName().equals(ciName) && uiConstraint.getValue().equals(propertyName);
-            });
+            .map(constraint -> new ConstraintConvertor().convert(constraint))
+            .filter(constraint ->
+                List.of(ConstraintConvertor.PROPERTY_CONSTRAINT, ToscaFunctionType.GET_PROPERTY.getName()).contains(constraint.getSourceType())
+            )
+            .anyMatch(constraint -> constraint.getSourceName().equals(ciName) && extractGetFunctionValue(constraint).contains(propertyName));
+    }
+
+    /**
+     * Extracts the assigned value for a get function. E.g.: for a "{ get_property: [SOURCE, property, sub-property] }" it will extract "[SOURCE,
+     * property, sub-property]" as a list.
+     *
+     * @param uiConstraint the ui constraint
+     * @return a list with the get function value
+     */
+    public static List<String> extractGetFunctionValue(final UIConstraint uiConstraint) {
+        final Object value = uiConstraint.getValue();
+        if (value instanceof String) {
+            return List.of((String) value);
+        } else if (value instanceof Map) {
+            final ToscaFunctionType toscaFunctionType = ToscaFunctionType.findType(uiConstraint.getSourceType()).orElse(null);
+            if (toscaFunctionType != null) {
+                final Object getFunctionValue = ((Map<?, ?>) uiConstraint.getValue()).get(toscaFunctionType.getName());
+                if (getFunctionValue instanceof String) {
+                    return List.of((String) getFunctionValue);
+                }
+                if (getFunctionValue instanceof List) {
+                    final List<?> getFunctionValueList = (List<?>) getFunctionValue;
+                    if (!(getFunctionValueList).isEmpty() && (getFunctionValueList).get(0) instanceof String) {
+                        return (List<String>) getFunctionValueList;
+                    }
+                }
+            }
+        }
+        return List.of();
     }
 
     public static Map<String, CINodeFilterDataDefinition> getRenamedNodesFilter(Service service, String oldName, String newName) {
@@ -80,6 +110,17 @@ public class ServiceFilterUtils {
             UIConstraint uiConstraint = constraintConvertor.convert(constraint);
             if (uiConstraint.getSourceName().equals(oldName)) {
                 uiConstraint.setSourceName(newName);
+                final List<String> getFunctionValueList = extractGetFunctionValue(uiConstraint);
+                if (!getFunctionValueList.isEmpty()) {
+                    if (getFunctionValueList.size() == 1) {
+                        uiConstraint.setValue(getFunctionValueList.get(0).replace(oldName, newName));
+                    } else {
+                        ToscaFunctionType.findType(uiConstraint.getSourceType()).ifPresent(toscaFunctionType -> {
+                            getFunctionValueList.set(0, newName);
+                            uiConstraint.setValue(Map.of(toscaFunctionType.getName(), getFunctionValueList));
+                        });
+                    }
+                }
             }
             return constraintConvertor.convert(uiConstraint);
         };
@@ -120,7 +161,8 @@ public class ServiceFilterUtils {
         if (uiConstraint == null || uiConstraint.getSourceType() == null) {
             return false;
         }
-        if (!uiConstraint.getSourceType().equals(ConstraintConvertor.PROPERTY_CONSTRAINT)) {
+        if (!List.of(ConstraintConvertor.PROPERTY_CONSTRAINT, ToscaFunctionType.GET_PROPERTY.getName())
+            .contains(uiConstraint.getSourceType())) {
             return false;
         }
         return uiConstraint.getSourceName().equals(name);
@@ -146,10 +188,11 @@ public class ServiceFilterUtils {
     }
 
     private static boolean isConstraintChangedByInput(String constraint, InputDefinition changedInput) {
-        UIConstraint uiConstraint = new ConstraintConvertor().convert(constraint);
-        if (!uiConstraint.getSourceType().equals(ConstraintConvertor.SERVICE_INPUT_CONSTRAINT)) {
+        final UIConstraint uiConstraint = new ConstraintConvertor().convert(constraint);
+        if (!List.of(ConstraintConvertor.SERVICE_INPUT_CONSTRAINT, ToscaFunctionType.GET_INPUT.getName()).contains(uiConstraint.getSourceType())) {
             return false;
         }
-        return uiConstraint.getValue().equals(changedInput.getName());
+        final List<String> getFunctionValue = extractGetFunctionValue(uiConstraint);
+        return getFunctionValue.contains(changedInput.getName());
     }
 }

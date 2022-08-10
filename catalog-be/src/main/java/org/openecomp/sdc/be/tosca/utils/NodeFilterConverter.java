@@ -38,12 +38,9 @@ public class NodeFilterConverter {
         final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
         final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> nodeFilterProperties = inNodeFilter.getProperties();
         if (nodeFilterProperties != null && !nodeFilterProperties.isEmpty()) {
-            final List<UIConstraint> propertiesConstraint = nodeFilterProperties.getListToscaDataDefinition().stream().map(property -> {
-                    if(property.getType() != null) {
-                        return constraintConvertor.convert(property.getConstraints().iterator().next(), property.getType());
-                    } else {
-                        return constraintConvertor.convert(property.getConstraints().iterator().next());
-                    }}).collect(Collectors.toList());
+            final List<UIConstraint> propertiesConstraint = nodeFilterProperties.getListToscaDataDefinition().stream()
+                .map(property -> constraintConvertor.convert(property.getConstraints().iterator().next(), property.getType()))
+                .collect(Collectors.toList());
             uiNodeFilter.setProperties(propertiesConstraint);
         }
         final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> nodeFilterCapabilities = inNodeFilter.getCapabilities();

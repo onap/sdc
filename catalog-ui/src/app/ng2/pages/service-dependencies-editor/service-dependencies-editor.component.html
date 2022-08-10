@@ -5,7 +5,7 @@
 
         <div class="i-sdc-form-content">
             <div class="rule-builder-content">
-                <div class="i-sdc-form-item rule-input-field">
+                <div class="i-sdc-form-item rule-input-field property">
                     <label class="i-sdc-form-label required">{{currentServiceName}} Property</label>
                     <ui-element-dropdown
                             class="i-sdc-form-select"
@@ -19,48 +19,58 @@
                 <div class="i-sdc-form-item rule-input-field operator">
                     <ui-element-dropdown class="i-sdc-form-select" data-tests-id="constraintOperator" [values]="operatorTypes" [(value)]="currentRule.constraintOperator"></ui-element-dropdown>
                 </div>
-
+            </div>
+            <div class="rule-builder-content">
+                <div class="i-sdc-form-item">
+                    <label class="i-sdc-form-label required">Value Type</label>
+                    <input type="radio" name="sourceType"
+                           data-tests-id="value-type-static"
+                           [(ngModel)]="selectedSourceType"
+                           [value]="SOURCE_TYPES.STATIC.value"
+                           (ngModelChange)="onSourceTypeChange()"/> {{SOURCE_TYPES.STATIC.label}}
+                    <input type="radio" name="sourceType"
+                           data-tests-id="value-type-tosca-function"
+                           [(ngModel)]="selectedSourceType"
+                           [value]="SOURCE_TYPES.TOSCA_FUNCTION.value"
+                           (ngModelChange)="onSourceTypeChange()"/> {{SOURCE_TYPES.TOSCA_FUNCTION.label}}
+                </div>
+            </div>
+            <div class="rule-builder-content" *ngIf="isToscaFunctionSource() && selectedProperty">
                 <div class="i-sdc-form-item rule-input-field">
-                    <label class="i-sdc-form-label required">Function Type</label>
-                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="functionType" [values]="functionTypes" [(value)]="currentRule.sourceType" (elementChanged)="onSelectFunctionType($event.value)"></ui-element-dropdown>
+                    <tosca-function [property]="selectedProperty"
+                                    [componentInstanceMap]="componentInstanceMap"
+                                    [allowClear]="false"
+                                    (onValidityChange)="onToscaFunctionValidityChange($event)"
+                    >
+                    </tosca-function>
                 </div>
-
-                <div class="i-sdc-form-item rule-input-field" *ngIf="isPropertyFunctionSelected()">
-                    <label class="i-sdc-form-label required">Source</label>
-                    <input class="i-sdc-form-select" data-tests-id="sourceType" [disabled]="true" [(value)]="currentRule.sourceName" type="text">
-                </div>
-
-                <div  [ngClass]="isComplexListMapType() && isStaticSource() ? 'complex-input-field' : ''"
-                      class="i-sdc-form-item rule-input-field">
-                    <label class="i-sdc-form-label required">{{assignedValueLabel}}</label>
+            </div>
+            <div *ngIf="isToscaFunctionSource() && !selectedProperty">
+                {{"NODE_FILTER_SELECT_PROPERTY" | translate}}
+            </div>
+            <div class="rule-builder-content" *ngIf="isStaticSource()">
+                <div class="i-sdc-form-item rule-input-field complex-input-field">
                     <dynamic-property
-                        *ngIf="isStaticSource() && isComplexListMapType()"
-                        [selectedPropertyId]="selectedPropertyObj.uniqueId"
-                        [property]="selectedPropertyObj"
-                        [expandedChildId]="selectedPropertyObj.expandedChildPropertyId ?
-                            selectedPropertyObj.expandedChildPropertyId : selectedPropertyObj.name"
+                        *ngIf="isComplexListMapType()"
+                        [selectedPropertyId]="selectedProperty.uniqueId"
+                        [property]="selectedProperty"
+                        [expandedChildId]="selectedProperty.expandedChildPropertyId ?
+                                selectedProperty.expandedChildPropertyId : selectedProperty.name"
                         [canBeDeclared]="true"
                         (propertyChanged)="updateComplexListMapTypeRuleValue()"
-                        [rootProperty]="selectedPropertyObj"
-                        (expandChild)="selectedPropertyObj.updateExpandedChildPropertyId($event)">
+                        [rootProperty]="selectedProperty"
+                        (expandChild)="selectedProperty.updateExpandedChildPropertyId($event)">
                     </dynamic-property>
                     <dynamic-element
-                            *ngIf="isStaticSource() && !isComplexListMapType()"
-                            [(value)]="currentRule.value"
-                            class="rule-assigned-value"
-                            data-tests-id="ruleAssignedValue"
-                            (elementChanged)="onValueChange($event.isValid)"
-                            [type]="selectedPropertyObj ? selectedPropertyObj.type : 'string'">
+                        *ngIf="!isComplexListMapType()"
+                        [(value)]="currentRule.value"
+                        class="rule-assigned-value"
+                        data-tests-id="ruleAssignedValue"
+                        (elementChanged)="onValueChange($event.isValid)"
+                        [type]="selectedProperty ? selectedProperty.type : 'string'">
                     </dynamic-element>
-                    <ui-element-dropdown *ngIf="!isStaticSource()"
-                                         class="i-sdc-form-select"
-                                         data-tests-id="ruleAssignedValue"
-                                         [(value)]="currentRule.value"
-                                         [values]="listOfValuesToAssign">
-                    </ui-element-dropdown>
                 </div>
             </div>
         </div>
     </form>
-
 </div>
