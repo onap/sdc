@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 @AllArgsConstructor
 @Getter
@@ -40,6 +41,9 @@ public enum ToscaFunctionType {
     private final String name;
 
     public static Optional<ToscaFunctionType> findType(final String functionType) {
+        if (StringUtils.isBlank(functionType)) {
+            return Optional.empty();
+        }
         return Arrays.stream(values()).filter(toscaFunctionType -> toscaFunctionType.getName().equalsIgnoreCase(functionType)).findFirst();
     }
 }

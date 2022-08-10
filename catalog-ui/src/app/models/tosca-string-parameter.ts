@@ -25,4 +25,15 @@ import {ToscaFunctionType} from "./tosca-function-type.enum";
 export class ToscaStringParameter implements ToscaFunctionParameter {
     type: ToscaFunctionType = ToscaFunctionType.STRING;
     value: string;
+
+
+    constructor(toscaStringParameter?: ToscaStringParameter) {
+        if (toscaStringParameter) {
+            this.value = toscaStringParameter.value;
+        }
+    }
+
+    buildValueObject(): Object {
+        return this.value;
+    }
 }

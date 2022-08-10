@@ -16,13 +16,25 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fj.data.Either;
-import org.junit.Test;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openecomp.sdc.be.auditing.impl.AuditingManager;
+import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
+import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
+import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServiceFilterUtils;
 import org.openecomp.sdc.be.model.ComponentInstance;
@@ -31,43 +43,38 @@ import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.exception.ResponseFormat;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-public class ServiceFilterUtilsCIChangeTest extends BaseServiceFilterUtilsTest {
-
+class ServiceFilterUtilsCIChangeTest extends BaseServiceFilterUtilsTest {
 
     @Test
-    public void checkComponentInstanceIsFound() {
+    void checkComponentInstanceIsFound() {
         Set<String> nodesFiltersToBeDeleted = getNodeFiltersToBeDeleted(CI_NAME);
         assertNotNull(nodesFiltersToBeDeleted);
         assertTrue(nodesFiltersToBeDeleted.contains(CI_NAME));
     }
 
     private Set<String> getNodeFiltersToBeDeleted(String inCiName) {
-        requirementNodeFilterPropertyDataDefinition
-                .setConstraints(Arrays.asList("mem_size:\n" + "  equal:\n" + "    get_property: ["+CI_NAME+", some static]\n"));
-        ComponentInstance ci = new ComponentInstance();
-        ci.setName(inCiName);
-        return ServiceFilterUtils.getNodesFiltersToBeDeleted(service, ci);
+        final var propertyFilterConstraint = new PropertyFilterConstraintDataDefinition();
+        propertyFilterConstraint.setPropertyName("mem_size");
+        propertyFilterConstraint.setOperator(ConstraintType.EQUAL);
+        propertyFilterConstraint.setValue(createToscaGetFunction(CI_NAME, ToscaGetFunctionType.GET_PROPERTY, List.of("some static")));
+        propertyFilterConstraint.setValueType(FilterValueType.GET_PROPERTY);
+        propertyFilterConstraint.setTargetType(PropertyFilterTargetType.PROPERTY);
+        propertyFilterDataDefinition
+                .setConstraints(List.of(propertyFilterConstraint));
+        final var componentInstance = new ComponentInstance();
+        componentInstance.setName(inCiName);
+        return ServiceFilterUtils.getNodesFiltersToBeDeleted(service, componentInstance);
     }
 
     @Test
-    public void checkComponentInstanceIsNotFound() {
+    void checkComponentInstanceIsNotFound() {
         Set<String> nodesFiltersToBeDeleted = getNodeFiltersToBeDeleted(CI_NAME + " aaa bbb");
         assertNotNull(nodesFiltersToBeDeleted);
         assertTrue(nodesFiltersToBeDeleted.isEmpty());
-        assertFalse(nodesFiltersToBeDeleted.contains(CI_NAME));
     }
 
     @Test
-    public void testServiceConstraintPairSerialization() throws IOException {
+    void testServiceConstraintPairSerialization() throws IOException {
         UIConstraint uiConstraint =new UIConstraint();
         ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);

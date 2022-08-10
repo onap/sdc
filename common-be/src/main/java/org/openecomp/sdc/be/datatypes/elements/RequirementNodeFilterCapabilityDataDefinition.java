@@ -37,12 +37,12 @@ public class RequirementNodeFilterCapabilityDataDefinition extends ToscaDataDefi
         setToscaPresentationValue(JsonPresentationFields.NAME, name);
     }
 
-    public ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> getProperties() {
-        return (ListDataDefinition<RequirementNodeFilterPropertyDataDefinition>) getToscaPresentationValue(
+    public ListDataDefinition<PropertyFilterDataDefinition> getProperties() {
+        return (ListDataDefinition<PropertyFilterDataDefinition>) getToscaPresentationValue(
                 JsonPresentationFields.PROPERTIES);
     }
 
-    public void setProperties(ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> properties) {
+    public void setProperties(ListDataDefinition<PropertyFilterDataDefinition> properties) {
         setToscaPresentationValue(JsonPresentationFields.PROPERTIES, properties);
     }
 }

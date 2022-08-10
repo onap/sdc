@@ -16,23 +16,24 @@
 
 package org.openecomp.sdc.be.nodeFilter;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.be.impl.ServiceFilterUtils;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-public class ServiceFilterUtilsPropertyRemovedTest extends BaseServiceFilterUtilsTest {
-
+class ServiceFilterUtilsPropertyRemovedTest extends BaseServiceFilterUtilsTest {
 
     @Test
-    public void checkPropertyIsFound() {
+    void checkPropertyIsFound() {
         assertTrue(ServiceFilterUtils.isNodeFilterAffectedByPropertyRemoval(service, CI_NAME, SIZE_PROP));
     }
 
     @Test
-    public void checkPropertyIsNotFound() {
+    void checkPropertyIsNotFound() {
         assertFalse(ServiceFilterUtils.isNodeFilterAffectedByPropertyRemoval(service, CI_NAME, A_PROP_NAME + "XXXX"));
     }
 
 }
+

@@ -20,24 +20,25 @@ package org.openecomp.sdc.be.datatypes.elements;
 
 import java.io.Serializable;
 import java.util.List;
-import org.openecomp.sdc.be.datatypes.enums.JsonPresentationFields;
 import org.openecomp.sdc.be.datatypes.tosca.ToscaDataDefinition;
 
-public class RequirementSubstitutionFilterPropertyDataDefinition extends ToscaDataDefinition implements Serializable {
+public class SubstitutionFilterPropertyDataDefinition extends ToscaDataDefinition implements Serializable {
 
-    public List<String> getConstraints() {
-        return (List<String>) getToscaPresentationValue(JsonPresentationFields.PROPERTY_FILTER_CONSTRAINT);
+    private final PropertyFilterDataDefinition propertyFilterDataDefinition = new PropertyFilterDataDefinition();
+
+    public List<PropertyFilterConstraintDataDefinition> getConstraints() {
+        return propertyFilterDataDefinition.getConstraints();
     }
 
-    public void setConstraints(final List<String> constraints) {
-        setToscaPresentationValue(JsonPresentationFields.PROPERTY_FILTER_CONSTRAINT, constraints);
+    public void setConstraints(final List<PropertyFilterConstraintDataDefinition> constraints) {
+        propertyFilterDataDefinition.setConstraints(constraints);
     }
 
     public String getName() {
-        return (String) getToscaPresentationValue(JsonPresentationFields.PROPERTY_FILTER_NAME);
+        return propertyFilterDataDefinition.getName();
     }
 
     public void setName(final String name) {
-        setToscaPresentationValue(JsonPresentationFields.PROPERTY_FILTER_NAME, name);
+        propertyFilterDataDefinition.setName(name);
     }
 }

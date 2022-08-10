@@ -2302,13 +2302,14 @@ errors:
         messageId: "SVC4716"
     }
 
-    #---------SVC4717----------------------------
-    # %1 - Property Name
-    MAPPED_PROPERTY_NOT_FOUND: {
-        code: 400,
-        message: "Error: %1 property does not exist.",
-        messageId: "SVC4717"
-    }
+    #---------SVC4184----------------------------
+    # %1 - Source type
+    # %2 - Property Type
+    # %3 - Property Name
+    FILTER_PROPERTY_NOT_FOUND:
+        code: 400
+        message: "%1 %2 %3 does not exist."
+        messageId: "SVC4184"
 
     #---------SVC4718----------------------------
     # %1 - Property Name
@@ -2326,13 +2327,13 @@ errors:
         messageId: "SVC4719"
     }
 
-    #---------SVC4720----------------------------
+    #---------SVC4182----------------------------
     # %1 - Property Name
     # %2 - Operator Type
     SOURCE_TARGET_PROPERTY_TYPE_MISMATCH: {
         code: 400,
-        message: "Error: %1 property and %2 property type is not same.",
-        messageId: "SVC4720"
+        message: "Error: Property '%1' type '%2' does not match with property '%3' type '%4'.",
+        messageId: "SVC4182"
     }
 
     #---------SVC4721----------------------------
@@ -2420,7 +2421,7 @@ errors:
         messageId: "SVC4734"
     }
 #-----------SVC4735---------------------------
-    #%1 - input name
+    #%1 - input name
     INPUT_ALREADY_EXIST: {
         code: 409,
         message: "Error: Input with '%1' name already exists.",
@@ -2746,3 +2747,69 @@ errors:
         message: "Relationship_templates definition not found in TOSCA CSAR.",
         messageId: "SVC4174"
     }
+
+    #-----------SVC4175---------------------------
+    TOSCA_FUNCTION_EXPECTED_ERROR: {
+        code: 400,
+        message: "Expecting a Tosca Function value.",
+        messageId: "SVC4175"
+    }
+
+    #-----------SVC4176---------------------------
+    FILTER_CONSTRAINT_MISSING: {
+        code: 400,
+        message: "The filter constraint was not provided.",
+        messageId: "SVC4176"
+    }
+
+    #-----------SVC4177---------------------------
+    #%1 - The missing field
+    FILTER_CONSTRAINT_MISSING_FIELD: {
+        code: 400,
+        message: "Required field '%1' is missing in the filter constraint.",
+        messageId: "SVC4177"
+    }
+
+    #%1 - the component id
+    SUBSTITUTION_FILTER_NOT_FOUND: {
+        code: 404,
+        message: 'Substitution filter not found in the component "%1"',
+        messageId: "SVC4178"
+    }
+
+    # %1 - Component name
+    COMPONENT_DOES_NOT_HAVE_INPUTS: {
+        code: 400,
+        message: "Component '%1' does not have inputs.",
+        messageId: "SVC4179"
+    }
+
+    # %1 - Input name
+    # %2 - Component name
+    COMPONENT_INPUT_NOT_FOUND: {
+        code: 400,
+        message: "Input '%1' does not exist in '%2'.",
+        messageId: "SVC4180"
+    }
+
+    # %1 - Target property name
+    # %2 - Source property name
+    SOURCE_TARGET_SCHEMA_MISMATCH: {
+        code: 400,
+        message: "Target property '%1' schema '%2' does not match with source property '%3' schema '%4'.",
+        messageId: "SVC4181"
+    }
+
+    # %1 - Property name
+    # %2 - Component name
+    COMPONENT_PROPERTY_NOT_FOUND:
+        code: 400
+        message: "Property '%1' does not exist in '%2'."
+        messageId: "SVC4183"
+
+    # %1 - The component type
+    # %2 - The expected component types
+    INVALID_COMPONENT_TYPE:
+        code: 400
+        message: "Invalid component type '%1'. Expected types are: %2"
+        messageId: "SVC4185"
