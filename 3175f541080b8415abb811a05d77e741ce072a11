@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e79bb12_037bef7b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/tosca/model/NodeFilterTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-11T13:18:41Z",
+      "side": 1,
+      "message": "In JUnit5, the test class and the @Test methods doesn\u0027t need to be public, they can be package private.\nSorry, just saw this now. No harm to keep it, update if you can.",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 6
+      },
+      "revId": "3175f541080b8415abb811a05d77e741ce072a11",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
