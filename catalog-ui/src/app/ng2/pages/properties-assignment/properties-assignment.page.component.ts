@@ -522,7 +522,7 @@ export class PropertiesAssignmentComponent {
         const instancesIds = this.keysPipe.transform(this.instanceFePropertiesMap, []);
         const instanceId: string = instancesIds[0];
         return <ComponentInstance | GroupInstance | PolicyInstance> this.instances.find(instance => 
-            instance.uniqueId == instanceId && instance instanceof ComponentInstance || instance instanceof GroupInstance || instance instanceof PolicyInstance);
+            instance.uniqueId == instanceId && (instance instanceof ComponentInstance || instance instanceof GroupInstance || instance instanceof PolicyInstance));
     }
 
     private buildCheckedInstanceProperty(): PropertyBEModel {
