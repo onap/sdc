@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ed4a2867_d8f64360",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T10:33:56Z",
+      "side": 1,
+      "message": "only use the metadata from the template if the resource type is present and equal to VFC",
+      "range": {
+        "startLine": 199,
+        "startChar": 0,
+        "endLine": 199,
+        "endChar": 38
+      },
+      "revId": "6fbe3c99bbeb0dad6e60d9f6b7f28f0c60e6d0dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcab5fa6_8f7d49e7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T10:33:56Z",
+      "side": 1,
+      "message": "extract to new method called something like createMetadataFromTemplate\nMethods should be kept short to improve code readability and maintainability",
+      "range": {
+        "startLine": 200,
+        "startChar": 10,
+        "endLine": 225,
+        "endChar": 49
+      },
+      "revId": "6fbe3c99bbeb0dad6e60d9f6b7f28f0c60e6d0dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b7bbe52_037a8b0b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T10:33:56Z",
+      "side": 1,
+      "message": "extract to new method called something like createDefaultMetadata",
+      "range": {
+        "startLine": 227,
+        "startChar": 11,
+        "endLine": 252,
+        "endChar": 49
+      },
+      "revId": "6fbe3c99bbeb0dad6e60d9f6b7f28f0c60e6d0dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b2175eb_efebdadd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T10:33:56Z",
+      "side": 1,
+      "message": "set the vendorName to:\nService \u003cservice metadata name\u003e\nand vendorRelease to 1",
+      "range": {
+        "startLine": 253,
+        "startChar": 0,
+        "endLine": 253,
+        "endChar": 9
+      },
+      "revId": "6fbe3c99bbeb0dad6e60d9f6b7f28f0c60e6d0dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e84a36a_de3231de",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T10:33:56Z",
+      "side": 1,
+      "message": "change to createNodeTypes.\nFrom the point of view of this method doesnt matter if we creating them because they used or for some other reason",
+      "range": {
+        "startLine": 297,
+        "startChar": 17,
+        "endLine": 297,
+        "endChar": 42
+      },
+      "revId": "6fbe3c99bbeb0dad6e60d9f6b7f28f0c60e6d0dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74008309_fce8f850",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T10:33:56Z",
+      "side": 1,
+      "message": "I think this should all be done as part of the ServiceCsarInfo. I will send you suggestion how to achieve it",
+      "range": {
+        "startLine": 301,
+        "startChar": 8,
+        "endLine": 304,
+        "endChar": 9
+      },
+      "revId": "6fbe3c99bbeb0dad6e60d9f6b7f28f0c60e6d0dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92e6f787_fef517c1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T10:33:56Z",
+      "side": 1,
+      "message": "why the check on \"proxy\"?",
+      "range": {
+        "startLine": 316,
+        "startChar": 23,
+        "endLine": 316,
+        "endChar": 89
+      },
+      "revId": "6fbe3c99bbeb0dad6e60d9f6b7f28f0c60e6d0dd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
