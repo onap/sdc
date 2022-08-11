@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableSet;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.dao.jsongraph.GraphVertex;
@@ -117,7 +118,18 @@ public class NodeFilterOperation extends BaseOperation {
             capabilities = new ListDataDefinition<>();
             nodeFilterDataDefinition.setCapabilities(capabilities);
         }
-        capabilities.getListToscaDataDefinition().add(requirementNodeFilterCapabilityDataDefinition);
+        
+        final Optional<RequirementNodeFilterCapabilityDataDefinition> existingCap = capabilities
+                .getListToscaDataDefinition().stream()
+                .filter(def -> def.getName().equals(requirementNodeFilterCapabilityDataDefinition.getName())).findAny();
+        
+        if (existingCap.isPresent()) {
+            final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> newProperties  = requirementNodeFilterCapabilityDataDefinition.getProperties();
+            final ListDataDefinition<RequirementNodeFilterPropertyDataDefinition> existingProperties = existingCap.get().getProperties();
+            newProperties.getListToscaDataDefinition().stream().forEach((prop -> existingProperties.add(prop))) ;
+        } else {
+            capabilities.getListToscaDataDefinition().add(requirementNodeFilterCapabilityDataDefinition);
+        }
         nodeFilterDataDefinition.setCapabilities(capabilities);
         return addOrUpdateNodeFilter(true, componentId, componentInstanceId, nodeFilterDataDefinition);
     }

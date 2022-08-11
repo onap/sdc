@@ -59,10 +59,12 @@ public class NodeFilterConverter {
 
     private void convertCapabilityConstraint(final RequirementNodeFilterCapabilityDataDefinition requirementNodeFilterCapabilityDataDefinition,
                                              final List<UIConstraint> capabilitiesConstraint) {
-        final UIConstraint uiConstraint = new UIConstraint();
         final ConstraintConvertor constraintConvertor = new ConstraintConvertor();
-        uiConstraint.setCapabilityName(requirementNodeFilterCapabilityDataDefinition.getName());
-        requirementNodeFilterCapabilityDataDefinition.getProperties().getListToscaDataDefinition().forEach(
-            property -> capabilitiesConstraint.add(constraintConvertor.getUiConstraint(property.getConstraints().iterator().next(), uiConstraint)));
+        requirementNodeFilterCapabilityDataDefinition.getProperties().getListToscaDataDefinition().forEach(property -> {
+            final UIConstraint uiConstraint = new UIConstraint();
+            uiConstraint.setCapabilityName(requirementNodeFilterCapabilityDataDefinition.getName());
+            capabilitiesConstraint.add(
+                    constraintConvertor.getUiConstraint(property.getConstraints().iterator().next(), uiConstraint));
+        });
     }
 }
