@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42a6257d_82a1137e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1260,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "there wont be a definition here, just set a json string value:\nGson gson \u003d new Gson();\nType type \u003d new TypeToken\u003cLinkedHashMap\u003cString, Object\u003e\u003e(){}.getType();\nString stringValue \u003d gson.toJson(inputPropertyValue, type);",
+      "range": {
+        "startLine": 1234,
+        "startChar": 2,
+        "endLine": 1260,
+        "endChar": 19
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ef632be_a55f88a5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1298,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "should we set the type here? dont know what the type is until later on when we check the origResource (similar to inputs)",
+      "range": {
+        "startLine": 1298,
+        "startChar": 0,
+        "endLine": 1298,
+        "endChar": 60
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63ae1831_e8f95fee",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1677,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "rename interfacesFromNodeType",
+      "range": {
+        "startLine": 1677,
+        "startChar": 41,
+        "endLine": 1677,
+        "endChar": 62
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "afc93c5a_ec318220",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1736,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "inputsFromNodeType",
+      "range": {
+        "startLine": 1736,
+        "startChar": 93,
+        "endLine": 1736,
+        "endChar": 107
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d58182a1_9004387a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1742,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "inputFromNodeType",
+      "range": {
+        "startLine": 1742,
+        "startChar": 24,
+        "endLine": 1742,
+        "endChar": 40
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "232dc8f1_cdd66a01",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1751,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "instanceInput",
+      "range": {
+        "startLine": 1751,
+        "startChar": 24,
+        "endLine": 1751,
+        "endChar": 32
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68802078_227e3b2e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1752,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "inputFromNodeType",
+      "range": {
+        "startLine": 1752,
+        "startChar": 24,
+        "endLine": 1752,
+        "endChar": 32
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9af46098_a69a1543",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1759,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "why delete them just to add back in again?",
+      "range": {
+        "startLine": 1758,
+        "startChar": 2,
+        "endLine": 1759,
+        "endChar": 90
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01a20e50_29d44ac3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1085,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-11T16:22:33Z",
+      "side": 1,
+      "message": "why this change?",
+      "range": {
+        "startLine": 1085,
+        "startChar": 0,
+        "endLine": 1085,
+        "endChar": 47
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
