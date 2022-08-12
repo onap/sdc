@@ -59,6 +59,17 @@ environment.json
                 "fqdn": ["10.0.11.1", "10.0.11.1"]
             },
 
+            # Kafka config
+            "Kafka": {
+             "bootstrap": "kafka-bootstrap:9092"
+            },
+
+            # Messaging topics to be used by clients
+            "DistributionTopics": {
+             "notificationTopicName": "SDC-DISTR-NOTIF-TOPIC",
+             "statusTopicName": "SDC-DISTR-STATUS-TOPIC"
+            },
+
             # IPs used for docker configuration
             "Nodes": {
                 "CS": ["yyy"],

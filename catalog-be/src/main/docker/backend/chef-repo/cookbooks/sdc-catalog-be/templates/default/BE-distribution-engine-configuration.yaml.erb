@@ -6,8 +6,19 @@ uebServers:
 uebPublicKey: <%= node['UEB']['PublicKey'] %>
 uebSecretKey: <%= node['UEB']['SecretKey'] %>
 
+<% if node.exist?('DistributionTopics','notificationTopicName') -%>
+distributionNotifTopicName: <%= node['DistributionTopics']['notificationTopicName'] %>
+<% else %>
 distributionNotifTopicName: SDC-DISTR-NOTIF-TOPIC
+<% end -%>
+
+<% if node.exist?('DistributionTopics','statusTopicName') -%>
+distributionStatusTopicName: <%= node['DistributionTopics']['statusTopicName'] %>
+<% else %>
 distributionStatusTopicName: SDC-DISTR-STATUS-TOPIC
+<% end -%>
+
+kafkaBootStrapServers: <%= node['Kafka']['bootstrap'] %>
 
 initRetryIntervalSec: 5
 initMaxIntervalSec: 60
