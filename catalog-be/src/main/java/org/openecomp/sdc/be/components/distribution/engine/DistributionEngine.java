@@ -133,6 +133,7 @@ public class DistributionEngine implements IDistributionEngine {
      */
     protected boolean validateConfiguration(DistributionEngineConfiguration deConfiguration) {
         String methodName = "validateConfiguration";
+        logger.info("\n\n\n\n...........kafka CONFIG: " + deConfiguration.getKafkaBootStrapServers() + "..........\n\n\n");
         boolean result = isValidServers(deConfiguration.getUebServers(), methodName, "uebServers");
         result = isValidParam(deConfiguration.getEnvironments(), methodName, "environments") && result;
         result = isValidParam(deConfiguration.getUebPublicKey(), methodName, "uebPublicKey") && result;
