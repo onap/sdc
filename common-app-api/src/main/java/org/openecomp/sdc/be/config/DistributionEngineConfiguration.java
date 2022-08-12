@@ -32,6 +32,7 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
     private List<String> uebServers;
     private String distributionNotifTopicName;
     private String distributionStatusTopicName;
+    private String kafkaBootStrapServers;
     private Integer initRetryIntervalSec;
     private Integer initMaxIntervalSec;
     private ComponentArtifactTypesConfig distribNotifServiceArtifactTypes;
@@ -73,6 +74,14 @@ public class DistributionEngineConfiguration extends BasicConfiguration {
 
     public void setDistributionStatusTopicName(String distributionStatusTopicName) {
         this.distributionStatusTopicName = distributionStatusTopicName;
+    }
+
+    public String getKafkaBootStrapServers() {
+        return kafkaBootStrapServers;
+    }
+
+    public void setKafkaBootStrapServers(String kafkaBootStrapServers) {
+        this.kafkaBootStrapServers = kafkaBootStrapServers;
     }
 
     public Integer getInitRetryIntervalSec() {
