@@ -6,8 +6,10 @@ uebServers:
 uebPublicKey: <%= node['UEB']['PublicKey'] %>
 uebSecretKey: <%= node['UEB']['SecretKey'] %>
 
-distributionNotifTopicName: SDC-DISTR-NOTIF-TOPIC
-distributionStatusTopicName: SDC-DISTR-STATUS-TOPIC
+distributionNotifTopicName: <%= node['Kafka']['notificationTopicName'] %>
+distributionStatusTopicName: <%= node['Kafka']['statusTopicName'] %>
+
+kafkaBootStrapServers: <%= node['Kafka']['bootstrap'] %>
 
 initRetryIntervalSec: 5
 initMaxIntervalSec: 60

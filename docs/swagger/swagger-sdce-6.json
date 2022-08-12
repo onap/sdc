@@ -1,99 +1,111 @@
 {
-  "openapi" : "3.0.1",
-  "info" : {
-    "contact" : {
-      "email" : "onap-discuss@lists.onap.org",
-      "name" : "ONAP",
-      "url" : "https://onap.readthedocs.io"
+  "openapi":"3.0.1",
+  "info":{
+    "contact":{
+      "email":"onap-discuss@lists.onap.org",
+      "name":"ONAP",
+      "url":"https://onap.readthedocs.io"
     },
-    "description" : "SDC API for distribution subscription (SDCE-6)",
-    "license" : {
-      "name" : "Apache 2.0",
-      "url" : "http://www.apache.org/licenses/LICENSE-2.0"
+    "description":"SDC API for distribution subscription (SDCE-6)",
+    "license":{
+      "name":"Apache 2.0",
+      "url":"http://www.apache.org/licenses/LICENSE-2.0"
     },
-    "title" : "SPC API: SDCE-6",
-    "version" : "1.0"
+    "title":"SPC API: SDCE-6",
+    "version":"1.0"
   },
-  "servers" : [ {
-    "description" : "SDCE-6 APIs",
-    "url" : "/sdc"
-  } ],
-  "paths" : {
-    "/v1/artifactTypes" : {
-      "get" : {
-        "description" : "Artifact types list",
-        "operationId" : "getValidArtifactTypes",
-        "parameters" : [ {
-          "description" : "X-ECOMP-RequestID header",
-          "in" : "header",
-          "name" : "X-ECOMP-RequestID",
-          "schema" : {
-            "type" : "string"
+  "servers":[
+    {
+      "description":"SDCE-6 APIs",
+      "url":"/sdc"
+    }
+  ],
+  "paths":{
+    "/v1/artifactTypes":{
+      "get":{
+        "description":"Artifact types list",
+        "operationId":"getValidArtifactTypes",
+        "parameters":[
+          {
+            "description":"X-ECOMP-RequestID header",
+            "in":"header",
+            "name":"X-ECOMP-RequestID",
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"X-ECOMP-InstanceID header",
+            "in":"header",
+            "name":"X-ECOMP-InstanceID",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"The username and password",
+            "in":"header",
+            "name":"Authorization",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"The username and password",
+            "in":"header",
+            "name":"Accept",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
           }
-        }, {
-          "description" : "X-ECOMP-InstanceID header",
-          "in" : "header",
-          "name" : "X-ECOMP-InstanceID",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "The username and password",
-          "in" : "header",
-          "name" : "Authorization",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "The username and password",
-          "in" : "header",
-          "name" : "Accept",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
+        ],
+        "responses":{
+          "200":{
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type":"array",
+                  "items":{
+                    "type":"string"
                   }
                 }
               }
             },
-            "description" : "Artifact types list fetched successfully"
+            "description":"Artifact types list fetched successfully"
           },
-          "400" : {
-            "description" : "Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
+          "400":{
+            "description":"Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
           },
-          "401" : {
-            "description" : "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          "401":{
+            "description":"ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
           },
-          "403" : {
-            "description" : "ECOMP component is not authorized - POL5003"
+          "403":{
+            "description":"ECOMP component is not authorized - POL5003"
           },
-          "405" : {
-            "description" : "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"
+          "405":{
+            "description":"Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( POST,PUT,DELETE  will be rejected) - POL4050"
           },
-          "500" : {
-            "description" : "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
+          "500":{
+            "description":"The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
           }
         },
-        "servers" : [ {
-          "url" : "/sdc",
-          "variables" : { }
-        } ],
-        "summary" : "Fetches available artifact types list",
-        "tags" : [ "SDCE-6 APIs" ]
+        "servers":[
+          {
+            "url":"/sdc",
+            "variables":{
+
+            }
+          }
+        ],
+        "summary":"Fetches available artifact types list",
+        "tags":[
+          "SDCE-6 APIs"
+        ]
       }
-    },
-    "/v1/distributionUebCluster" : {
+    },"/v1/distributionUebCluster" : {
       "get" : {
         "description" : "UEB Server List",
         "operationId" : "getUebServerList",
@@ -166,251 +178,393 @@
         "tags" : [ "SDCE-6 APIs" ]
       }
     },
-    "/v1/registerForDistribution" : {
-      "post" : {
-        "description" : "Subscription status",
-        "operationId" : "registerForDistribution",
-        "parameters" : [ {
-          "description" : "X-ECOMP-RequestID header",
-          "in" : "header",
-          "name" : "X-ECOMP-RequestID",
-          "schema" : {
-            "type" : "string"
+    "/v1/distributionKafkaData":{
+      "get":{
+        "description":"Kafka bootstrap server and topic list",
+        "operationId":"getKafkaData",
+        "parameters":[
+          {
+            "description":"X-ECOMP-RequestID header",
+            "in":"header",
+            "name":"X-ECOMP-RequestID",
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"X-ECOMP-InstanceID header",
+            "in":"header",
+            "name":"X-ECOMP-InstanceID",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"Determines the format of the body of the response",
+            "in":"header",
+            "name":"Accept",
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"The username and password",
+            "in":"header",
+            "name":"Authorization",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
           }
-        }, {
-          "description" : "X-ECOMP-InstanceID header",
-          "in" : "header",
-          "name" : "X-ECOMP-InstanceID",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "Determines the format of the body of the response",
-          "in" : "header",
-          "name" : "Accept",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "Determines the format of the body of the request",
-          "in" : "header",
-          "name" : "Content-Type",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "Length  of  the request body",
-          "in" : "header",
-          "name" : "Content-Length",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "The username and password",
-          "in" : "header",
-          "name" : "Authorization",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/TopicRegistrationResponse"
+        ],
+        "responses":{
+          "200":{
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type":"array",
+                  "items":{
+                    "$ref":"#/components/schemas/KafkaDataResponse"
                   }
                 }
               }
             },
-            "description" : "ECOMP component is successfully registered for distribution"
+            "description":"ECOMP component is authenticated and kafka endpoint and topic list is returned"
           },
-          "400" : {
-            "description" : "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"
+          "400":{
+            "description":"Missing  'X-ECOMP-InstanceID'  HTTP header - POL5001"
           },
-          "401" : {
-            "description" : "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          "401":{
+            "description":"ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its credentials  for  Basic Authentication - POL5002"
           },
-          "403" : {
-            "description" : "ECOMP component is not authorized - POL5003"
+          "403":{
+            "description":"ECOMP component is not authorized - POL5003"
           },
-          "405" : {
-            "description" : "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"
+          "405":{
+            "description":"Method  Not Allowed: Invalid HTTP method type used ( PUT,DELETE,POST will be rejected) - POL4050"
           },
-          "500" : {
-            "description" : "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
+          "500":{
+            "description":"The GET request failed either due to internal SDC problem or Cambria Service failure. ECOMP Component should continue the attempts to get the needed information - POL5000"
           }
         },
-        "servers" : [ {
-          "url" : "/sdc",
-          "variables" : { }
-        } ],
-        "summary" : "Subscribes for distribution notifications",
-        "tags" : [ "SDCE-6 APIs" ]
+        "servers":[
+          {
+            "url":"/sdc",
+            "variables":{
+
+            }
+          }
+        ],
+        "summary":"return the Kafka bootstrap server and topic list",
+        "tags":[
+          "SDCE-6 APIs"
+        ]
       }
     },
-    "/v1/unRegisterForDistribution" : {
-      "post" : {
-        "description" : "Subscription status",
-        "operationId" : "unRegisterForDistribution",
-        "parameters" : [ {
-          "description" : "X-ECOMP-RequestID header",
-          "in" : "header",
-          "name" : "X-ECOMP-RequestID",
-          "schema" : {
-            "type" : "string"
+    "/v1/registerForDistribution":{
+      "post":{
+        "description":"Subscription status",
+        "operationId":"registerForDistribution",
+        "parameters":[
+          {
+            "description":"X-ECOMP-RequestID header",
+            "in":"header",
+            "name":"X-ECOMP-RequestID",
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"X-ECOMP-InstanceID header",
+            "in":"header",
+            "name":"X-ECOMP-InstanceID",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"Determines the format of the body of the response",
+            "in":"header",
+            "name":"Accept",
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"Determines the format of the body of the request",
+            "in":"header",
+            "name":"Content-Type",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"Length  of  the request body",
+            "in":"header",
+            "name":"Content-Length",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"The username and password",
+            "in":"header",
+            "name":"Authorization",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
           }
-        }, {
-          "description" : "X-ECOMP-InstanceID header",
-          "in" : "header",
-          "name" : "X-ECOMP-InstanceID",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "Determines the format of the body of the response",
-          "in" : "header",
-          "name" : "Accept",
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "Determines the format of the body of the request",
-          "in" : "header",
-          "name" : "Content-Type",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "Length  of  the request body",
-          "in" : "header",
-          "name" : "Content-Length",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "The username and password",
-          "in" : "header",
-          "name" : "Authorization",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/TopicUnregistrationResponse"
+        ],
+        "responses":{
+          "200":{
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type":"array",
+                  "items":{
+                    "$ref":"#/components/schemas/TopicRegistrationResponse"
                   }
                 }
               }
             },
-            "description" : "ECOMP component is successfully unregistered"
+            "description":"ECOMP component is successfully registered for distribution"
           },
-          "400" : {
-            "description" : "Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"
+          "400":{
+            "description":"Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"
           },
-          "401" : {
-            "description" : "ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          "401":{
+            "description":"ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
           },
-          "403" : {
-            "description" : "ECOMP component is not authorized - POL5003"
+          "403":{
+            "description":"ECOMP component is not authorized - POL5003"
           },
-          "405" : {
-            "description" : "Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"
+          "405":{
+            "description":"Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET  will be rejected) - POL4050"
           },
-          "500" : {
-            "description" : "The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
+          "500":{
+            "description":"The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
           }
         },
-        "servers" : [ {
-          "url" : "/sdc",
-          "variables" : { }
-        } ],
-        "summary" : "Removes from subscription for distribution notifications",
-        "tags" : [ "SDCE-6 APIs" ]
+        "servers":[
+          {
+            "url":"/sdc",
+            "variables":{
+
+            }
+          }
+        ],
+        "summary":"Subscribes for distribution notifications",
+        "tags":[
+          "SDCE-6 APIs"
+        ]
+      }
+    },
+    "/v1/unRegisterForDistribution":{
+      "post":{
+        "description":"Subscription status",
+        "operationId":"unRegisterForDistribution",
+        "parameters":[
+          {
+            "description":"X-ECOMP-RequestID header",
+            "in":"header",
+            "name":"X-ECOMP-RequestID",
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"X-ECOMP-InstanceID header",
+            "in":"header",
+            "name":"X-ECOMP-InstanceID",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"Determines the format of the body of the response",
+            "in":"header",
+            "name":"Accept",
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"Determines the format of the body of the request",
+            "in":"header",
+            "name":"Content-Type",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"Length  of  the request body",
+            "in":"header",
+            "name":"Content-Length",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          },
+          {
+            "description":"The username and password",
+            "in":"header",
+            "name":"Authorization",
+            "required":true,
+            "schema":{
+              "type":"string"
+            }
+          }
+        ],
+        "responses":{
+          "204":{
+            "content":{
+              "application/json":{
+                "schema":{
+                  "type":"array",
+                  "items":{
+                    "$ref":"#/components/schemas/TopicUnregistrationResponse"
+                  }
+                }
+              }
+            },
+            "description":"ECOMP component is successfully unregistered"
+          },
+          "400":{
+            "description":"Invalid Body :  Specified 'distrEnvName' doesn’t exist - POL4137"
+          },
+          "401":{
+            "description":"ECOMP component  should authenticate itself  and  to  re-send  again  HTTP  request  with its Basic Authentication credentials - POL5002"
+          },
+          "403":{
+            "description":"ECOMP component is not authorized - POL5003"
+          },
+          "405":{
+            "description":"Method  Not Allowed  :  Invalid HTTP method type used to  register for  distribution ( PUT,DELETE,GET will be rejected) - POL4050"
+          },
+          "500":{
+            "description":"The registration failed due to internal SDC problem or Cambria Service failure ECOMP Component  should  continue the attempts to  register for  distribution - POL5000"
+          }
+        },
+        "servers":[
+          {
+            "url":"/sdc",
+            "variables":{
+
+            }
+          }
+        ],
+        "summary":"Removes from subscription for distribution notifications",
+        "tags":[
+          "SDCE-6 APIs"
+        ]
       }
     }
   },
-  "components" : {
-    "schemas" : {
-      "RegistrationRequest" : {
-        "type" : "object",
-        "properties" : {
-          "apiPublicKey" : {
-            "type" : "string"
+  "components":{
+    "schemas":{
+      "RegistrationRequest":{
+        "type":"object",
+        "properties":{
+          "apiPublicKey":{
+            "type":"string"
           },
-          "distEnvEndPoints" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
+          "distEnvEndPoints":{
+            "type":"array",
+            "items":{
+              "type":"string"
             }
           },
-          "distrEnvName" : {
-            "type" : "string"
+          "distrEnvName":{
+            "type":"string"
           },
-          "isConsumerToSdcDistrStatusTopic" : {
-            "type" : "boolean"
+          "isConsumerToSdcDistrStatusTopic":{
+            "type":"boolean"
           },
-          "managerApiPublicKey" : {
-            "type" : "string"
+          "managerApiPublicKey":{
+            "type":"string"
           },
-          "managerApiSecretKey" : {
-            "type" : "string"
+          "managerApiSecretKey":{
+            "type":"string"
           }
         }
       },
-      "ServerListResponse" : {
-        "type" : "object",
-        "properties" : {
-          "uebServerList" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
+      "ServerListResponse":{
+        "type":"object",
+        "properties":{
+          "uebServerList":{
+            "type":"array",
+            "items":{
+              "type":"string"
             }
           }
         }
       },
-      "TopicRegistrationResponse" : {
-        "type" : "object",
-        "properties" : {
-          "distrNotificationTopicName" : {
-            "type" : "string"
+      "KafkaDataResponse":{
+        "type":"object",
+        "properties":{
+          "kafkaBootStrapServer":{
+            "type":"string"
           },
-          "distrStatusTopicName" : {
-            "type" : "string"
+          "distrNotificationTopicName":{
+            "type":"string"
+          },
+          "distrStatusTopicName":{
+            "type":"string"
           }
         }
       },
-      "TopicUnregistrationResponse" : {
-        "type" : "object",
-        "properties" : {
-          "distrNotificationTopicName" : {
-            "type" : "string"
+      "TopicRegistrationResponse":{
+        "type":"object",
+        "properties":{
+          "distrNotificationTopicName":{
+            "type":"string"
           },
-          "distrStatusTopicName" : {
-            "type" : "string"
+          "distrStatusTopicName":{
+            "type":"string"
+          }
+        }
+      },
+      "TopicUnregistrationResponse":{
+        "type":"object",
+        "properties":{
+          "distrNotificationTopicName":{
+            "type":"string"
           },
-          "notificationUnregisterResult" : {
-            "type" : "string",
-            "enum" : [ "OK", "CONNNECTION_ERROR", "NOT_FOUND", "TOPIC_ALREADY_EXIST", "OBJECT_NOT_FOUND", "INTERNAL_SERVER_ERROR", "AUTHENTICATION_ERROR", "UNKNOWN_HOST_ERROR" ]
+          "distrStatusTopicName":{
+            "type":"string"
           },
-          "statusUnregisterResult" : {
-            "type" : "string",
-            "enum" : [ "OK", "CONNNECTION_ERROR", "NOT_FOUND", "TOPIC_ALREADY_EXIST", "OBJECT_NOT_FOUND", "INTERNAL_SERVER_ERROR", "AUTHENTICATION_ERROR", "UNKNOWN_HOST_ERROR" ]
+          "notificationUnregisterResult":{
+            "type":"string",
+            "enum":[
+              "OK",
+              "CONNNECTION_ERROR",
+              "NOT_FOUND",
+              "TOPIC_ALREADY_EXIST",
+              "OBJECT_NOT_FOUND",
+              "INTERNAL_SERVER_ERROR",
+              "AUTHENTICATION_ERROR",
+              "UNKNOWN_HOST_ERROR"
+            ]
+          },
+          "statusUnregisterResult":{
+            "type":"string",
+            "enum":[
+              "OK",
+              "CONNNECTION_ERROR",
+              "NOT_FOUND",
+              "TOPIC_ALREADY_EXIST",
+              "OBJECT_NOT_FOUND",
+              "INTERNAL_SERVER_ERROR",
+              "AUTHENTICATION_ERROR",
+              "UNKNOWN_HOST_ERROR"
+            ]
           }
         }
       }
