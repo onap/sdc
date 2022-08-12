@@ -42,6 +42,7 @@ import org.openecomp.sdc.be.config.ConfigurationManager;
 import org.openecomp.sdc.be.config.DistributionEngineConfiguration;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.distribution.api.client.CambriaOperationStatus;
+import org.openecomp.sdc.be.distribution.api.client.KafkaDataResponse;
 import org.openecomp.sdc.be.distribution.api.client.RegistrationRequest;
 import org.openecomp.sdc.be.distribution.api.client.ServerListResponse;
 import org.openecomp.sdc.be.distribution.api.client.TopicRegistrationResponse;
@@ -96,6 +97,26 @@ public class DistributionBusinessLogic {
             ServerListResponse serverListResponse = new ServerListResponse();
             serverListResponse.setUebServerList(serverList);
             return Either.left(serverListResponse);
+        } else {
+            ResponseFormat errorResponseWrapper = getResponseFormatManager().getResponseFormat(ActionStatus.GENERAL_ERROR);
+            return Either.right(errorResponseWrapper);
+        }
+    }
+
+    public Either<KafkaDataResponse, ResponseFormat> getKafkaData() {
+        DistributionEngineConfiguration distributionEngineConfiguration = ConfigurationManager.getConfigurationManager()
+            .getDistributionEngineConfiguration();
+        String bootStrapServers = distributionEngineConfiguration.getKafkaBootStrapServers();
+        String statusTopicName = DistributionEngineInitTask
+            .buildTopicName(distributionEngineConfiguration.getDistributionStatusTopicName(), distributionEngineConfiguration.getEnvironments().get(0));
+        String notificationTopicName = DistributionEngineInitTask
+            .buildTopicName(distributionEngineConfiguration.getDistributionNotifTopicName(), distributionEngineConfiguration.getEnvironments().get(0));
+        if (bootStrapServers != null) {
+            KafkaDataResponse kafkaDataResponse = new KafkaDataResponse();
+            kafkaDataResponse.setKafkaBootStrapServer(bootStrapServers);
+            kafkaDataResponse.setDistrStatusTopicName(statusTopicName);
+            kafkaDataResponse.setDistrNotificationTopicName(notificationTopicName);
+            return Either.left(kafkaDataResponse);
         } else {
             ResponseFormat errorResponseWrapper = getResponseFormatManager().getResponseFormat(ActionStatus.GENERAL_ERROR);
             return Either.right(errorResponseWrapper);
