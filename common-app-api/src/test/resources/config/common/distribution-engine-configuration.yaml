@@ -10,6 +10,8 @@ uebSecretKey: ffff
 distributionNotifTopicName: ASDC-DISTR-NOTIF-TOPIC
 distributionStatusTopicName: ASDC-DISTR-STATUS-TOPIC
 
+kafkaBootStrapServers: kafka-bootstrap:9092
+
 initRetryIntervalSec: 5
 initMaxIntervalSec: 60
 
