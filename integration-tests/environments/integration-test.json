@@ -27,6 +27,11 @@
          "SecretKey": "Ehq3WyT4bkif4zwgEbvshGal",
          "fqdn": ["10.0.11.1", "10.0.11.1"]
       },
+      "Kafka": {
+         "bootstrap": "kafka-bootstrap:9092",
+         "notificationTopicName": "SDC-DISTR-NOTIF-TOPIC",
+         "statusTopicName": "SDC-DISTR-STATUS-TOPIC"
+      },
       "Nodes": {
          "CS": [
             "sdc-cs"
