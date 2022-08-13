@@ -113,7 +113,7 @@ public class DataTypeImportManager {
         dataTypes.forEach(dataType -> {
             
             int highestDependencyIndex = -1;
-            for (final String dependencyName : getDependencyTypes(dataType)) {
+            for (final String dependencyName : getDependencyTypes(dataType, dataTypes)) {
                 final DataTypeDefinition dependency = dataTypeDefinitionsMap.get(dependencyName);
                 final int indexOfDependency = sortedDataTypeDefinitions.lastIndexOf(dependency);
                 highestDependencyIndex = indexOfDependency > highestDependencyIndex ? indexOfDependency : highestDependencyIndex;
@@ -126,7 +126,7 @@ public class DataTypeImportManager {
         return sortedDataTypeDefinitions;
     }
     
-    private Collection<String> getDependencyTypes(final DataTypeDefinition dataType) {
+    private Collection<String> getDependencyTypes(final DataTypeDefinition dataType, final List<DataTypeDefinition> dataTypes) {
         final Set<String> dependencies = new HashSet<>();
         if (dataType.getDerivedFromName() != null) {
             dependencies.add(dataType.getDerivedFromName());
@@ -134,6 +134,8 @@ public class DataTypeImportManager {
         if (dataType.getProperties() != null) {
             dataType.getProperties().stream().forEach(property -> dependencies.add(property.getType()));
         }
+        dataTypes.stream().filter(dependencyCandidate -> dependencies.contains(dependencyCandidate.getName()))
+                .forEach(dependencyDataType -> dependencies.addAll(getDependencyTypes(dependencyDataType, dataTypes)));
         return dependencies;
     }
 

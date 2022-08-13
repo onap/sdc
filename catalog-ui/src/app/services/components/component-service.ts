@@ -41,6 +41,7 @@ import {
 import {ComponentInstanceFactory, CommonUtils} from "app/utils";
 import {SharingService} from "app/services-ng2";
 import {ComponentMetadata} from "../../models/component-metadata";
+import { DataTypesService } from "app/services";
 
 export interface IComponentService {
 
@@ -99,6 +100,7 @@ export class ComponentService implements IComponentService {
         'Restangular',
         'sdcConfig',
         'Sdc.Services.SharingService',
+        'Sdc.Services.DataTypesService',
         '$q',
         '$base64'
     ];
@@ -106,6 +108,7 @@ export class ComponentService implements IComponentService {
     constructor(protected restangular:restangular.IElement,
                 protected sdcConfig:IAppConfigurtaion,
                 protected sharingService:SharingService,
+                protected dataTypeService:DataTypesService,
                 protected $q:ng.IQService,
                 protected $base64:any
                ) {
@@ -233,6 +236,7 @@ export class ComponentService implements IComponentService {
         let headerObj = this.getHeaderMd5(component);
         this.restangular.customPOST(JSON.stringify(component), 'importService', {}, headerObj).then((response: Component) => {
             let component: Component = this.createComponentObject(response);
+            this.dataTypeService.loadDataTypesCache(component.model);
             deferred.resolve(component);
         }, (err) => {
             deferred.reject(err);

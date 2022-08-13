@@ -132,6 +132,7 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         if (responseWrapper.isEmpty()) {
             String url = request.getMethod() + " " + request.getRequestURI();
             log.debug("Start handle request of {} - modifier id is {}", url, userId);
+            resourceBusinessLogic.getApplicationDataTypeCache().refreshDataTypesCacheIfStale();
             final Map<String, DataTypeDefinition> dataTypes = resourceBusinessLogic.getComponentsUtils()
                 .getAllDataTypes(resourceBusinessLogic.getApplicationDataTypeCache(), modelName);
             String dataTypeJson = gson.toJson(dataTypes);

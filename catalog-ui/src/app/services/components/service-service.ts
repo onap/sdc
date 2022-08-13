@@ -26,6 +26,7 @@ import * as _ from "lodash";
 import {IComponentService, ComponentService} from "./component-service";
 import {Distribution, DistributionComponent, Service, PropertyModel, Component, IAppConfigurtaion} from "app/models";
 import {SharingService} from "app/services-ng2";
+import { DataTypesService } from "app/services";
 
 export interface IServiceService extends IComponentService {
     getDistributionsList(uuid:string):ng.IPromise<Array<Distribution>>;
@@ -40,6 +41,7 @@ export class ServiceService extends ComponentService implements IServiceService 
         'Restangular',
         'sdcConfig',
         'Sdc.Services.SharingService',
+        'Sdc.Services.DataTypesService',
         '$q',
         '$base64'
     ];
@@ -49,9 +51,10 @@ export class ServiceService extends ComponentService implements IServiceService 
     constructor(protected restangular:restangular.IElement,
                 protected sdcConfig:IAppConfigurtaion,
                 protected sharingService:SharingService,
+                protected dataTypeService:DataTypesService,
                 protected $q:ng.IQService,
                 protected $base64:any) {
-        super(restangular, sdcConfig, sharingService, $q, $base64);
+        super(restangular, sdcConfig, sharingService, dataTypeService, $q, $base64);
 
         this.restangular = restangular.one("services");
     }

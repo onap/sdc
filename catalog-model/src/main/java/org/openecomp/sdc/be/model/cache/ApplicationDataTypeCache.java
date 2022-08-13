@@ -206,13 +206,7 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
     @Override
     public void run() {
         try {
-            final long startTime = System.currentTimeMillis();
-            log.trace("Starting refresh data types cache job");
-            if (hasDataTypesChanged()) {
-                log.info("Detected changes in the data types, updating the data type cache.");
-                refreshDataTypesCache();
-            }
-            log.trace("Finished refresh data types cache job. Finished in {}ms", (System.currentTimeMillis() - startTime));
+            refreshDataTypesCacheIfStale();
         } catch (final Exception e) {
             var errorMsg = "Failed to run refresh data types cache job";
             log.error(EcompLoggerErrorCode.UNKNOWN_ERROR, ApplicationDataTypeCache.class.getName(), errorMsg, e);
@@ -290,6 +284,16 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
         } finally {
             readWriteLock.readLock().unlock();
         }
+    }
+    
+    public void refreshDataTypesCacheIfStale() {
+        final long startTime = System.currentTimeMillis();
+        log.trace("Starting refresh data types cache");
+        if (hasDataTypesChanged()) {
+            log.info("Detected changes in the data types, updating the data type cache.");
+            refreshDataTypesCache();
+        }
+        log.trace("Finished refresh data types cache. Finished in {}ms", (System.currentTimeMillis() - startTime));
     }
 
     private void refreshDataTypesCache() {

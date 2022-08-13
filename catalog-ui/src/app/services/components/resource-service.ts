@@ -26,6 +26,7 @@ import * as _ from "lodash";
 import {IComponentService, ComponentService} from "./component-service";
 import {PropertyModel, IAppConfigurtaion, Resource, Component} from "../../models";
 import {SharingService} from "app/services-ng2";
+import { DataTypesService } from "app/services";
 
 export interface IResourceService extends IComponentService {
     updateResourceGroupProperties(uniqueId:string, groupId:string, properties:Array<PropertyModel>):ng.IPromise<Array<PropertyModel>>
@@ -37,6 +38,7 @@ export class ResourceService extends ComponentService implements IResourceServic
         'Restangular',
         'sdcConfig',
         'Sdc.Services.SharingService',
+        'Sdc.Services.DataTypesService',
         '$q',
         '$base64'
     ];
@@ -44,10 +46,11 @@ export class ResourceService extends ComponentService implements IResourceServic
     constructor(protected restangular:restangular.IElement,
                 protected sdcConfig:IAppConfigurtaion,
                 protected sharingService:SharingService,
+                protected dataTypeService:DataTypesService,
                 protected $q:ng.IQService,
                 protected $base64:any
                 ) {
-        super(restangular, sdcConfig, sharingService, $q, $base64);
+        super(restangular, sdcConfig, sharingService, dataTypeService, $q, $base64);
 
         this.restangular = restangular.one("resources");
     }
