@@ -318,9 +318,62 @@ public class ServiceImportBusinessLogic {
                 .getLatestByToscaResourceName(nodeTypeDefinition.getMappedNodeType().getKey(), model);
             if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                 namesOfNodeTypesToCreate.add(nodeTypeDefinition);
+            } else if (result.isLeft()) {
+                Resource latestResource = (Resource) result.left().value();
+                Map<String, Object> mappedToscaTemplate = (Map<String, Object>) nodeTypeDefinition.getMappedNodeType().getValue();
+                if (validChangesToResource(latestResource, mappedToscaTemplate)) {
+                    namesOfNodeTypesToCreate.add(nodeTypeDefinition);
+                }
             }
         }
         return namesOfNodeTypesToCreate;
+    }
+
+    private boolean validChangesToResource(Resource resource, Map<String, Object> mappedToscaTemplate) {
+        Map<String, Object> properties = (Map<String, Object>) mappedToscaTemplate.get("properties");
+        if ((CollectionUtils.isEmpty(resource.getProperties()) && MapUtils.isNotEmpty(properties))
+                || (MapUtils.isNotEmpty(properties) && validChangedProperties(resource.getProperties(), properties))) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean validChangedProperties(List<PropertyDefinition> resourceProps, Map<String, Object> properties) {
+        resourceProps.forEach(propDef -> {
+            properties.entrySet().stream().filter((prop) -> propDef.getName().equals(prop.getKey())).findAny().ifPresentOrElse(value -> {
+                Map<String, Object> prop = (Map<String, Object>) value.getValue();
+                if (propertiesNotEqual(prop.get("type"), propDef.getType())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if(prop.get("entry_schema") != null || propDef.getSchemaType() != null) {
+                    if (propertiesNotEqual(((Map<String, Object>) prop.get("entry_schema")).get("type"), propDef.getSchemaType())) {
+                        throw new ComponentException(ActionStatus.INVALID_MODEL);
+                    }
+                }
+                if (propertiesNotEqual(prop.get("default"), propDef.getDefaultValue())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(prop.get("description"), propDef.getDescription())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(prop.get("required"), propDef.getRequired())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+            }, () -> {
+                throw new ComponentException(ActionStatus.INVALID_MODEL);
+            });
+        });
+        return resourceProps.size() < properties.size();
+    }
+
+    private boolean propertiesNotEqual(Object prop1, Object prop2) {
+        if ((prop1 instanceof Collection<?> || prop1 instanceof Map<?,?>) && !(prop2 instanceof Collection<?> || prop2 instanceof Map<?,?>)){
+            Gson gson = new Gson();
+            prop1 = gson.toJson(prop1);
+        } else if (!(prop1 instanceof String) && prop2 instanceof String) {
+            prop1 = String.valueOf(prop1);
+        }
+        return (prop1 != null || prop2 != null) && (prop1 == null || !prop1.equals(prop2));
     }
 
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
@@ -1093,7 +1146,7 @@ public class ServiceImportBusinessLogic {
                 i -> processComponentInstance(yamlName, finalResource, componentInstancesList,
                     componentsUtils.getAllDataTypes(applicationDataTypeCache, finalResource.getModel()), instProperties, instCapabilities,
                     instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs, instNodeFilter,
-                        instInterfaces, i));
+                    instInterfaces, i));
         }
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, resource, instProperties);
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, resource, instInputs);
@@ -1461,14 +1514,14 @@ public class ServiceImportBusinessLogic {
                     allDataTypesMap, instProperties,
                     instCapabilities, instRequirements, instDeploymentArtifacts, instArtifacts, instAttributes, originCompMap, instInputs,
                     instNodeFilter, instInterfaces, i)
-                );
+            );
         }
         updatePropertyToscaFunctionData(service, instProperties, instAttributes);
         serviceImportParseLogic.associateComponentInstancePropertiesToComponent(yamlName, service, instProperties);
         serviceImportParseLogic.associateComponentInstanceInterfacesToComponent(
-                yamlName,
-                service,
-                instInterfaces
+            yamlName,
+            service,
+            instInterfaces
         );
         serviceImportParseLogic.associateComponentInstanceInputsToComponent(yamlName, service, instInputs);
         serviceImportParseLogic.associateCINodeFilterToComponent(yamlName, service, instNodeFilter);
@@ -1567,11 +1620,11 @@ public class ServiceImportBusinessLogic {
         if (MapUtils.isNotEmpty(uploadComponentInstanceInfo.getInterfaces())) {
 
             ResponseFormat addInterfacesToRiRes = addInterfaceValuesToRi(
-                    uploadComponentInstanceInfo,
-                    component,
-                    originResource,
-                    currentCompInstance,
-                    instInterfaces
+                uploadComponentInstanceInfo,
+                component,
+                originResource,
+                currentCompInstance,
+                instInterfaces
             );
             if (addInterfacesToRiRes.getStatus() != 200) {
                 throw new ComponentException(addInterfacesToRiRes);
@@ -1735,10 +1788,10 @@ public class ServiceImportBusinessLogic {
     }
 
     protected ResponseFormat addInterfaceValuesToRi(
-            UploadComponentInstanceInfo uploadComponentInstanceInfo,
-            Component component,
-            Resource originResource, ComponentInstance currentCompInstance,
-            Map<String, Map<String, InterfaceDefinition>> instInterfaces
+        UploadComponentInstanceInfo uploadComponentInstanceInfo,
+        Component component,
+        Resource originResource, ComponentInstance currentCompInstance,
+        Map<String, Map<String, InterfaceDefinition>> instInterfaces
     ) {
         Map<String, UploadInterfaceInfo> instanceInterfacesMap = uploadComponentInstanceInfo.getInterfaces();
         Map<String, InterfaceDefinition> currInterfacesMap = new HashMap<>();
@@ -1804,24 +1857,24 @@ public class ServiceImportBusinessLogic {
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> inputsFromNodeType,
                                                 ListDataDefinition<OperationInputDefinition> instanceInputs) {
         instanceInputs.getListToscaDataDefinition().forEach(
-                instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().filter(
-                        templateInput -> templateInput.getName().equals(instanceInput.getName())
-                ).forEach(
-                        newInstanceInput -> {
-                            instanceInput.setSourceProperty(newInstanceInput.getSourceProperty());
-                            instanceInput.setSource(newInstanceInput.getSource());
-                            instanceInput.setType(newInstanceInput.getType());
-                        }
-                )
+            instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().filter(
+                templateInput -> templateInput.getName().equals(instanceInput.getName())
+            ).forEach(
+                newInstanceInput -> {
+                    instanceInput.setSourceProperty(newInstanceInput.getSourceProperty());
+                    instanceInput.setSource(newInstanceInput.getSource());
+                    instanceInput.setType(newInstanceInput.getType());
+                }
+            )
         );
         ListDataDefinition<OperationInputDefinition> newInputsToAdd = new ListDataDefinition<>();
         instanceInputs.getListToscaDataDefinition().stream()
-                .filter(instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().noneMatch(
-                    inputFromNodeType -> inputFromNodeType.getName().equals(instanceInput.getName())
-                ))
-                .forEach(oldInput -> {
-                    oldInput.setType("string");
-                });
+            .filter(instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().noneMatch(
+                inputFromNodeType -> inputFromNodeType.getName().equals(instanceInput.getName())
+            ))
+            .forEach(oldInput -> {
+                oldInput.setType("string");
+            });
     }
 
     protected void processComponentInstanceCapabilities(Map<String, DataTypeDefinition> allDataTypes,
@@ -2729,7 +2782,7 @@ public class ServiceImportBusinessLogic {
             mapToConvert.put(TypeUtils.ToscaTagNamesEnum.TOSCA_VERSION.getElementName(), toscaVersion.left().value());
             Map<String, Object> nodeTypes = serviceImportParseLogic.getNodeTypesFromTemplate(mappedToscaTemplate);
             createNodeTypes(yamlName, service, needLock, nodeTypesArtifactsToHandle, nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo,
-                    mapToConvert, nodeTypes);
+                mapToConvert, nodeTypes);
             return csarInfo.getCreatedNodes();
         } catch (Exception e) {
             log.debug("Exception occured when createResourcesFromYamlNodeTypesList,error is:{}", e.getMessage(), e);
