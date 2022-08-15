@@ -429,7 +429,7 @@ public class ModelConverter {
                 final OperationDataDefinition operationDataDefinition = operationEntry.getValue();
                 final ArtifactDataDefinition artifactDataDefinition = operationDataDefinition.getImplementation();
                 if (artifactDataDefinition != null) {
-                    operationUi.setImplementation(artifactDataDefinition);
+                    operationUi.setImplementation(artifactDataDefinition.getArtifactName());
                 }
                 final ListDataDefinition<OperationInputDefinition> inputs = operationDataDefinition.getInputs();
                 if (inputs != null && !inputs.isEmpty()) {
@@ -517,7 +517,8 @@ public class ModelConverter {
         final OperationDataDefinition operationDataDefinition = new OperationDataDefinition();
         operationDataDefinition.setName(operation.getOperationType());
         operationDataDefinition.setUniqueId(UUID.randomUUID().toString());
-        final ArtifactDataDefinition artifactDataDefinition = (ArtifactDataDefinition) operation.getImplementation();
+        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
+        artifactDataDefinition.setArtifactName((String) operation.getImplementation());
         operationDataDefinition.setImplementation(artifactDataDefinition);
         if (CollectionUtils.isNotEmpty(operation.getInputs())) {
             final ListDataDefinition<OperationInputDefinition> inputs = new ListDataDefinition<>();
