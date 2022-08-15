@@ -451,10 +451,7 @@ public class YamlTemplateParsingHandler {
         if (MapUtils.isEmpty(operationToscaMap) || !operationToscaMap.containsKey(IMPLEMENTATION.getElementName())) {
             return Optional.empty();
         }
-        final Map<String, Object> implementationToscaMap = (Map<String, Object>) operationToscaMap.get(IMPLEMENTATION.getElementName());
-        return Optional.ofNullable(
-            implementationToscaMap.computeIfPresent("toscaPresentation", (key, value) -> ((Map<String, Object>) value).get(NAME.getName()))
-        );
+        return Optional.ofNullable(operationToscaMap.get(IMPLEMENTATION.getElementName()));
     }
 
     private List<PropertyAssignmentUi> getOperationsInputs(final Map<String, Object> operationToscaMap) {

@@ -303,9 +303,7 @@ public class ModelConverterTest {
         OperationUi operationUi = new OperationUi();
         operationUi.setInterfaceType("tosca.interfaces.relationship.Configure");
         operationUi.setOperationType("add_source");
-        final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
-        artifactDataDefinition.setArtifactName("impl");
-        operationUi.setImplementation(artifactDataDefinition);
+        operationUi.setImplementation("impl");
         PropertyAssignmentUi propertyAssignmentUi = new PropertyAssignmentUi();
         propertyAssignmentUi.setName("strInput1");
         propertyAssignmentUi.setType(ToscaType.STRING.getType());
