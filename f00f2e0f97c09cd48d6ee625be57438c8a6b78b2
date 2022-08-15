@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3fcdee3_e6155ba6",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-15T16:19:30Z",
+      "side": 1,
+      "message": "by doing this I believe you are ignoring the extended notation of an artifact implementation and assuming that it will be a short notation. Please check the TOSCA 1.3 documentation, section 3.6.16 \"Operation implementation definition\".",
+      "range": {
+        "startLine": 432,
+        "startChar": 20,
+        "endLine": 432,
+        "endChar": 92
+      },
+      "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
