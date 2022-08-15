@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9263c28b_0f678329",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1260,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42a6257d_82a1137e",
+      "range": {
+        "startLine": 1234,
+        "startChar": 2,
+        "endLine": 1260,
+        "endChar": 19
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ef632be_a55f88a5",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
         "patchSetId": 12
@@ -45,6 +69,30 @@
       "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7fa68d2b_ceea5b03",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1298,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ef632be_a55f88a5",
+      "range": {
+        "startLine": 1298,
+        "startChar": 0,
+        "endLine": 1298,
+        "endChar": 60
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "4a197a54_db31ab8d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1677,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63ae1831_e8f95fee",
+      "range": {
+        "startLine": 1677,
+        "startChar": 41,
+        "endLine": 1677,
+        "endChar": 62
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "afc93c5a_ec318220",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 12
@@ -91,6 +163,30 @@
       "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64bc2a24_fe086dd5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1736,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "afc93c5a_ec318220",
+      "range": {
+        "startLine": 1736,
+        "startChar": 93,
+        "endLine": 1736,
+        "endChar": 107
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "f56f0b57_3de36e81",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1742,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d58182a1_9004387a",
+      "range": {
+        "startLine": 1742,
+        "startChar": 24,
+        "endLine": 1742,
+        "endChar": 40
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "232dc8f1_cdd66a01",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 12
@@ -137,6 +257,30 @@
       "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44174ecf_8ef60169",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1751,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "232dc8f1_cdd66a01",
+      "range": {
+        "startLine": 1751,
+        "startChar": 24,
+        "endLine": 1751,
+        "endChar": 32
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "ff3ec809_44a808e8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1752,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68802078_227e3b2e",
+      "range": {
+        "startLine": 1752,
+        "startChar": 24,
+        "endLine": 1752,
+        "endChar": 32
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9af46098_a69a1543",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 12
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "bbbfb4a5_884f52de",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1759,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9af46098_a69a1543",
+      "range": {
+        "startLine": 1758,
+        "startChar": 2,
+        "endLine": 1759,
+        "endChar": 90
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "01a20e50_29d44ac3",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
         "patchSetId": 12
@@ -206,6 +398,30 @@
       "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe507af6_4bad4b1e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 1085,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-08-15T10:02:46Z",
+      "side": 1,
+      "message": "I will recheck this change again, at the begining was having NPE when downloading csar for imported file, as getUniqueId was null.\nTested, not needed anymore. Reverting it",
+      "parentUuid": "01a20e50_29d44ac3",
+      "range": {
+        "startLine": 1085,
+        "startChar": 0,
+        "endLine": 1085,
+        "endChar": 47
+      },
+      "revId": "7eb256d465dcd2824fb7e4a20de4ae77eb271181",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
