@@ -26,7 +26,7 @@
   <parent>
     <artifactId>onap-common-configuration-management</artifactId>
     <groupId>org.onap.sdc.common</groupId>
-    <version>1.11.6-SNAPSHOT</version>
+    <version>1.11.7-SNAPSHOT</version>
   </parent>
 
   <dependencies>
