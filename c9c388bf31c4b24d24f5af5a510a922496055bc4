@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34519b2a_9acb49b8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 1239,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T09:49:32Z",
+      "side": 1,
+      "message": "should set the value rather than the type",
+      "range": {
+        "startLine": 1239,
+        "startChar": 0,
+        "endLine": 1239,
+        "endChar": 48
+      },
+      "revId": "c9c388bf31c4b24d24f5af5a510a922496055bc4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
