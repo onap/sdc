@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -79,9 +80,11 @@ import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.DefaultUploadResourceInfo;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypesMetadataList;
+import org.openecomp.sdc.be.model.NullNodeTypeMetadata;
 import org.openecomp.sdc.be.model.PropertyDefinition;
 import org.openecomp.sdc.be.model.RequirementDefinition;
 import org.openecomp.sdc.be.model.Resource;
@@ -179,8 +182,15 @@ public class ResourceImportManager {
     public void importAllNormativeResource(final  Map<String, Object> nodeTypesMap, final NodeTypesMetadataList nodeTypesMetadataList,
                                            final User user, final boolean createNewVersion, final boolean needLock) {
         try {
+            AtomicInteger index = new AtomicInteger(0);
             nodeTypesMetadataList.getNodeMetadataList().forEach(nodeTypeMetadata -> {
-                final String nodeTypeToscaName = nodeTypeMetadata.getToscaName();
+                final String nodeTypeToscaName;
+                if (nodeTypeMetadata instanceof NullNodeTypeMetadata &&
+                    nodeTypesMap.containsKey(nodeTypesMetadataList.getToscaNameList().get(index.get()))) {
+                    nodeTypeToscaName = nodeTypesMetadataList.getToscaNameList().get(index.get());
+                } else {
+                    nodeTypeToscaName = nodeTypeMetadata.getToscaName();
+                }
                 final Map<String, Object> nodeTypeMap = (Map<String, Object>) nodeTypesMap.get(nodeTypeToscaName);
                 if (nodeTypeMap == null) {
                     log.warn(EcompLoggerErrorCode.BUSINESS_PROCESS_ERROR, ResourceImportManager.class.getName(),
@@ -191,7 +201,21 @@ public class ResourceImportManager {
                             Map.of(nodeTypeToscaName, nodeTypeMap)
                         );
                     final String nodeTypeYaml = new Yaml().dump(nodeTypeDefinitionMap);
-                    importNormativeResource(nodeTypeYaml, NodeTypeMetadataMapper.mapTo(nodeTypeMetadata), user, createNewVersion, needLock, true);
+                    UploadResourceInfo uploadResourceInfo = NodeTypeMetadataMapper.mapTo(nodeTypeMetadata);
+                    if (uploadResourceInfo instanceof DefaultUploadResourceInfo) {
+                        String[] nodeTemplateName = nodeTypeToscaName.split("\\.");
+                        String name =  nodeTemplateName[nodeTemplateName.length - 1];
+                        uploadResourceInfo.setName(name);
+                        uploadResourceInfo.setDescription("A vfc of type " + nodeTypeToscaName);
+                        List<String> tags = new ArrayList<>();
+                        tags.add(name);
+                        uploadResourceInfo.setTags(tags);
+                        uploadResourceInfo.setVendorName(nodeTypesMetadataList.getVendorName());
+                        uploadResourceInfo.setModel(nodeTypesMetadataList.getModel());
+                        uploadResourceInfo.setContactId(user.getUserId());
+                    }
+                    index.getAndIncrement();
+                    importNormativeResource(nodeTypeYaml, uploadResourceInfo, user, createNewVersion, needLock, true);
                 }
             });
             janusGraphDao.commit();
@@ -225,7 +249,7 @@ public class ResourceImportManager {
         try {
             boolean shouldBeCertified = nodeTypeArtifactsToHandle == null || nodeTypeArtifactsToHandle.isEmpty();
             setConstantMetaData(resource, shouldBeCertified);
-            setMetaDataFromJson(resourceMetaData, resource);
+            setResourceMetaData(resource, resourceYml, resourceMetaData);
             populateResourceFromYaml(resourceYml, resource);
             validationFunction.apply(resource);
             resource.getComponentMetadataDefinition().getMetadataDataDefinition().setNormative(resourceMetaData.isNormative());
@@ -429,12 +453,17 @@ public class ResourceImportManager {
     }
 
     private void setToscaResourceName(Map<String, Object> toscaJson, Resource resource) {
+        resource.setToscaResourceName(getToscaResourceName(toscaJson));
+    }
+
+    private String getToscaResourceName(Map<String, Object> toscaJson) {
         Either<Map<String, Object>, ResultStatusEnum> toscaElement = ImportUtils
-            .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.NODE_TYPES);
+                .findFirstToscaMapElement(toscaJson, ToscaTagNamesEnum.NODE_TYPES);
         if (toscaElement.isLeft() && toscaElement.left().value().size() == 1) {
             String toscaResourceName = toscaElement.left().value().keySet().iterator().next();
-            resource.setToscaResourceName(toscaResourceName);
+            return toscaResourceName;
         }
+        return null;
     }
 
     private void setInterfaceLifecycle(Map<String, Object> toscaJson, Resource resource, Either<Resource, StorageOperationStatus> existingResource) {
@@ -576,13 +605,15 @@ public class ResourceImportManager {
                     addPropertyToList(resource.getName(), propertiesList, entry);
                 }
                 if (existingResource.isLeft()) {
-                    final List<PropertyDefinition> userCreatedResourceProperties =
-                        existingResource.left().value().getProperties().stream()
-                            .filter(PropertyDataDefinition::isUserCreated)
-                            .filter(propertyDefinition -> !propertyDefinitionMap.containsKey(propertyDefinition.getName()))
-                            .collect(Collectors.toList());
-                    if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
-                        propertiesList.addAll(userCreatedResourceProperties);
+                    if ( CollectionUtils.isNotEmpty(existingResource.left().value().getProperties())) {
+                        final List<PropertyDefinition> userCreatedResourceProperties =
+                            existingResource.left().value().getProperties().stream()
+                                .filter(PropertyDataDefinition::isUserCreated)
+                                .filter(propertyDefinition -> !propertyDefinitionMap.containsKey(propertyDefinition.getName()))
+                                .collect(Collectors.toList());
+                        if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
+                            propertiesList.addAll(userCreatedResourceProperties);
+                        }
                     }
                 }
 
@@ -876,6 +907,18 @@ public class ResourceImportManager {
         getAuditingManager().auditEvent(factory);
     }
 
+    private void setResourceMetaData(Resource resource, String resourceYml, UploadResourceInfo resourceMetaData) {
+        Map<String, Object> ymlObj = new Yaml().load(resourceYml);
+        String toscaName = getToscaResourceName(ymlObj);
+        final Either<Resource, StorageOperationStatus> latestByToscaName = toscaOperationFacade
+            .getLatestByToscaResourceName(toscaName, resourceMetaData.getModel());
+        if (latestByToscaName.isLeft() && resourceMetaData instanceof DefaultUploadResourceInfo) {
+            setMetaDataFromLatestResource(resource, latestByToscaName.left().value());
+        } else {
+            setMetaDataFromJson(resourceMetaData, resource);
+        }
+    }
+
     private void setMetaDataFromJson(final UploadResourceInfo resourceMetaData, final Resource resource) {
         this.populateResourceMetadata(resourceMetaData, resource);
         resource.setCreatorUserId(resourceMetaData.getContactId());
@@ -885,6 +928,34 @@ public class ResourceImportManager {
         }
         final List<CategoryDefinition> categories = resourceMetaData.getCategories();
         calculateResourceIsAbstract(resource, categories);
+    }
+
+    private void setMetaDataFromLatestResource(Resource resource, Resource latestResource) {
+        if (resource != null && latestResource != null) {
+            resource.setCreatorUserId(latestResource.getContactId());
+            resource.setDescription(latestResource.getDescription());
+            resource.setTags(latestResource.getTags());
+            resource.setCategories(latestResource.getCategories());
+            resource.setContactId(latestResource.getContactId());
+            resource.setName(latestResource.getName());
+            resource.setIcon(latestResource.getIcon());
+            resource.setResourceVendorModelNumber(latestResource.getResourceVendorModelNumber());
+            resource.setResourceType(latestResource.getResourceType());
+            if (latestResource.getVendorName() != null) {
+                resource.setVendorName(latestResource.getVendorName());
+            }
+            if (latestResource.getVendorRelease() != null) {
+                resource.setVendorRelease(latestResource.getVendorRelease());
+            }
+            if (latestResource.getModel() != null) {
+                resource.setModel(latestResource.getModel());
+            }
+            if (latestResource.getToscaVersion() != null) {
+                resource.setToscaVersion(latestResource.getToscaVersion());
+            }
+            final List<CategoryDefinition> categories = latestResource.getCategories();
+            calculateResourceIsAbstract(resource, categories);
+        }
     }
 
     private Map<String, Object> decodePayload(final String payloadData) {

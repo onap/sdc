@@ -1,7 +1,7 @@
 /*
  * -
  *  ============LICENSE_START=======================================================
- *  Copyright (C) 2021 Nordix Foundation.
+ *  Copyright (C) 2022 Nordix Foundation.
  *  ================================================================================
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,18 +21,8 @@
 
 package org.openecomp.sdc.be.model;
 
-import java.util.List;
-import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * Dto to hold a list of TOSCA node type metadata.
- */
-@Data
-public class NodeTypesMetadataList {
-
-    private List<NodeTypeMetadata> nodeMetadataList;
-    private List<String> toscaNameList;
-    private String model;
-    private String vendorName;
-
+@NoArgsConstructor
+public class NullNodeTypeMetadata extends NodeTypeMetadata{
 }
