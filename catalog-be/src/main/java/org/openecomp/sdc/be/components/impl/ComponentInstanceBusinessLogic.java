@@ -3112,9 +3112,10 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     containerComponentId);
             }
 
-            List<ComponentInstanceProperty> instanceProperties = containerComponent.getComponentInstancesProperties().get(componentInstanceUniqueId);
-            if (CollectionUtils.isEmpty(instanceProperties)) {
-                instanceProperties = new ArrayList<>();
+            List<ComponentInstanceProperty> instanceProperties = new ArrayList<>();
+            if (MapUtils.isNotEmpty(containerComponent.getComponentInstancesProperties())) {
+                instanceProperties = containerComponent.getComponentInstancesProperties()
+                    .get(componentInstanceUniqueId);
             }
             return instanceProperties;
         } catch (ComponentException e) {
