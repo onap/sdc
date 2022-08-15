@@ -1255,31 +1255,37 @@ public class YamlTemplateParsingHandler {
         final ArtifactDataDefinition artifactDataDefinition = new ArtifactDataDefinition();
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof Map &&
                 ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).containsKey("primary")) {
-            Map<String, Object> implDetails = (Map) ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("primary");
+            
+            final Object primary = ((Map)operationDefinitionMap.get(IMPLEMENTATION.getElementName())).get("primary");
+            if(primary instanceof Map) {
+                Map<String, Object> implDetails = (Map) primary;
 
-            if (implDetails.get("file") != null) {
-                final String file = implDetails.get("file").toString();
-                artifactDataDefinition.setArtifactName(generateArtifactName(file));
-            }
-            if (implDetails.get("type") != null) {
-                artifactDataDefinition.setArtifactType(implDetails.get("type").toString());
-            }
-            if (implDetails.get("artifact_version") != null) {
-                artifactDataDefinition.setArtifactVersion(implDetails.get("artifact_version").toString());
-            }
+                if (implDetails.get("file") != null) {
+                    final String file = implDetails.get("file").toString();
+                    artifactDataDefinition.setArtifactName(generateArtifactName(file));
+                }
+                if (implDetails.get("type") != null) {
+                    artifactDataDefinition.setArtifactType(implDetails.get("type").toString());
+                }
+                if (implDetails.get("artifact_version") != null) {
+                    artifactDataDefinition.setArtifactVersion(implDetails.get("artifact_version").toString());
+                }
 
-            if(implDetails.get("properties") instanceof Map) {
-                List<PropertyDataDefinition> operationProperties = artifactDataDefinition.getProperties() == null ? new ArrayList<>() : artifactDataDefinition.getProperties();
-                Map<String, Object> properties = (Map<String, Object>) implDetails.get("properties");
-                properties.forEach((k,v) -> {
-                    ToscaPropertyType type = getTypeFromObject(v);
-                    if (type != null) {
-                        PropertyDataDefinition propertyDef = new PropertyDataDefinition();
-                        propertyDef.setName(k);
-                        propertyDef.setValue(v.toString());
-                        artifactDataDefinition.addProperty(propertyDef);
-                    }
-                });
+                if(implDetails.get("properties") instanceof Map) {
+                    List<PropertyDataDefinition> operationProperties = artifactDataDefinition.getProperties() == null ? new ArrayList<>() : artifactDataDefinition.getProperties();
+                    Map<String, Object> properties = (Map<String, Object>) implDetails.get("properties");
+                    properties.forEach((k,v) -> {
+                        ToscaPropertyType type = getTypeFromObject(v);
+                        if (type != null) {
+                            PropertyDataDefinition propertyDef = new PropertyDataDefinition();
+                            propertyDef.setName(k);
+                            propertyDef.setValue(v.toString());
+                            artifactDataDefinition.addProperty(propertyDef);
+                        }
+                    });
+                }
+            } else {
+                artifactDataDefinition.setArtifactName(generateArtifactName(primary.toString()));
             }
         }
         if (operationDefinitionMap.get(IMPLEMENTATION.getElementName()) instanceof String) {
