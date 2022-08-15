@@ -274,7 +274,7 @@ public class ServiceCsarInfo extends CsarInfo {
         nodeTypeMetadata.setResourceVendorModelNumber((String) metadata.get("resourceVendorModelNumber"));
         nodeTypeMetadata.setResourceType((String) metadata.get("type"));
         nodeTypeMetadata.setVendorName((String) metadata.get("resourceVendor"));
-        nodeTypeMetadata.setVendorRelease((String) metadata.get("resourceVendorRelease"));
+        nodeTypeMetadata.setVendorRelease(String.valueOf(metadata.get("resourceVendorRelease")));
         nodeTypeMetadata.setModel((String) metadata.get("model"));
         nodeTypeMetadata.setNormative(false);
     }
