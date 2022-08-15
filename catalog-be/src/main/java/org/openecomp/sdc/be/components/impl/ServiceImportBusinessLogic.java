@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
@@ -131,6 +132,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -309,9 +311,62 @@ public class ServiceImportBusinessLogic {
                 .getLatestByToscaResourceName(nodeTypeDefinition.getMappedNodeType().getKey(), model);
             if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                 namesOfNodeTypesToCreate.add(nodeTypeDefinition);
+            } else if (result.isLeft()) {
+                Resource latestResource = (Resource) result.left().value();
+                Entry<String, Object> latestMappedToscaTemplate = getResourceToscaTemplate(latestResource.getUniqueId(),
+                        latestResource.getToscaArtifacts().get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE), csarInfo.getModifier().getUserId());
+                Map<String, Object> mappedToscaTemplate = (Map<String, Object>) nodeTypeDefinition.getMappedNodeType().getValue();
+                if (validChangesToResource(mappedToscaTemplate, (Map<String, Object>) latestMappedToscaTemplate.getValue())) {
+                    nodeTypeDefinition.setMappedNodeType(latestMappedToscaTemplate);
+                    namesOfNodeTypesToCreate.add(nodeTypeDefinition);
+                }
             }
         }
         return namesOfNodeTypesToCreate;
+    }
+
+    private Entry<String, Object> getResourceToscaTemplate(String uniqueId, ArtifactDefinition assetToscaTemplate, String userId) {
+        String assetToToscaTemplate = assetToscaTemplate.getUniqueId();
+        ImmutablePair<String, byte[]> toscaTemplate = artifactsBusinessLogic.
+                handleDownloadRequestById(uniqueId, assetToToscaTemplate, userId, ComponentTypeEnum.RESOURCE, null, null);
+        Map<String, Object> mappedToscaTemplate = new Yaml().load(new String(toscaTemplate.right));
+        Either<Map<String, Object>, ImportUtils.ResultStatusEnum> eitherNodeTypes =
+                findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
+        if (eitherNodeTypes.isRight()) {
+            throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
+        }
+        Entry<String, Object> entry = eitherNodeTypes.left().value().entrySet().iterator().next();
+        return entry;
+    }
+
+    private boolean validChangesToResource(Map<String, Object> mappedToscaTemplate, Map<String, Object> latestMappedToscaTemplate) {
+        boolean changes = false;
+        Map<String, Object> properties = (Map<String, Object>) mappedToscaTemplate.get("properties");
+        Map<String, Object> latestProperties = (Map<String, Object>) latestMappedToscaTemplate.get("properties");
+        Map<String, Object> combinedProperties = combinedEntries(latestProperties, properties);
+        if ((MapUtils.isEmpty(latestProperties) && MapUtils.isNotEmpty(combinedProperties)) ||
+                (MapUtils.isNotEmpty(latestProperties) && combinedProperties.size() > latestProperties.size())) {
+            latestMappedToscaTemplate.put("properties", combinedProperties);
+            changes = true;
+        }
+        return changes;
+    }
+
+    private Map<String, Object> combinedEntries(Map<String, Object> firstMap, Map<String, Object> secondMap) {
+        if (MapUtils.isEmpty(firstMap)) {
+            firstMap = new HashMap<>();
+        }
+        Map<String, Object> combinedEntries = new HashMap<>(firstMap);
+        if (MapUtils.isEmpty(secondMap)) {
+            return combinedEntries;
+        }
+        firstMap.entrySet().forEach(firstObject ->
+                secondMap.entrySet().stream().filter(secondObject -> firstObject.getKey().equals(secondObject.getKey()))
+                        .findAny().ifPresentOrElse(secondMap::remove, () -> {
+                            throw new ComponentException(ActionStatus.INVALID_MODEL);
+                        }));
+        combinedEntries.putAll(secondMap);
+        return combinedEntries;
     }
 
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,

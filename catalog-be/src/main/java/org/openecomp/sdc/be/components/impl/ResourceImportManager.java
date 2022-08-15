@@ -576,13 +576,15 @@ public class ResourceImportManager {
                     addPropertyToList(resource.getName(), propertiesList, entry);
                 }
                 if (existingResource.isLeft()) {
-                    final List<PropertyDefinition> userCreatedResourceProperties =
-                        existingResource.left().value().getProperties().stream()
-                            .filter(PropertyDataDefinition::isUserCreated)
-                            .filter(propertyDefinition -> !propertyDefinitionMap.containsKey(propertyDefinition.getName()))
-                            .collect(Collectors.toList());
-                    if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
-                        propertiesList.addAll(userCreatedResourceProperties);
+                    if ( CollectionUtils.isNotEmpty(existingResource.left().value().getProperties())) {
+                        final List<PropertyDefinition> userCreatedResourceProperties =
+                            existingResource.left().value().getProperties().stream()
+                                .filter(PropertyDataDefinition::isUserCreated)
+                                .filter(propertyDefinition -> !propertyDefinitionMap.containsKey(propertyDefinition.getName()))
+                                .collect(Collectors.toList());
+                        if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
+                            propertiesList.addAll(userCreatedResourceProperties);
+                        }
                     }
                 }
 
