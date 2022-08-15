@@ -79,6 +79,7 @@ import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.DataTypeDefinition;
+import org.openecomp.sdc.be.model.DefaultUploadResourceInfo;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.LifecycleStateEnum;
 import org.openecomp.sdc.be.model.NodeTypesMetadataList;
@@ -332,6 +333,9 @@ public class ResourceImportManager {
             if (resourceMetaData.getModel() != null) {
                 resource.setModel(resourceMetaData.getModel());
             }
+            if (resourceMetaData instanceof DefaultUploadResourceInfo) {
+                resource.setIsDefaultMetadata(true);
+            }
         }
     }
 
@@ -576,13 +580,15 @@ public class ResourceImportManager {
                     addPropertyToList(resource.getName(), propertiesList, entry);
                 }
                 if (existingResource.isLeft()) {
-                    final List<PropertyDefinition> userCreatedResourceProperties =
-                        existingResource.left().value().getProperties().stream()
-                            .filter(PropertyDataDefinition::isUserCreated)
-                            .filter(propertyDefinition -> !propertyDefinitionMap.containsKey(propertyDefinition.getName()))
-                            .collect(Collectors.toList());
-                    if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
-                        propertiesList.addAll(userCreatedResourceProperties);
+                    if ( CollectionUtils.isNotEmpty(existingResource.left().value().getProperties())) {
+                        final List<PropertyDefinition> userCreatedResourceProperties =
+                            existingResource.left().value().getProperties().stream()
+                                .filter(PropertyDataDefinition::isUserCreated)
+                                .filter(propertyDefinition -> !propertyDefinitionMap.containsKey(propertyDefinition.getName()))
+                                .collect(Collectors.toList());
+                        if (CollectionUtils.isNotEmpty(userCreatedResourceProperties)) {
+                            propertiesList.addAll(userCreatedResourceProperties);
+                        }
                     }
                 }
 

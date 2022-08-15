@@ -75,6 +75,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
     private Map<String, String> categorySpecificMetadata;
     private String model;
     private boolean normative = false;
+    private boolean isDefaultMetadata = false;
 
     protected ComponentMetadataDataDefinition(ComponentMetadataDataDefinition other) {
         this.uniqueId = other.getUniqueId();
@@ -104,6 +105,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.categorySpecificMetadata = other.getCategorySpecificMetadata();
         this.model = other.getModel();
         this.normative = other.isNormative();
+        this.isDefaultMetadata = other.isDefaultMetadata();
     }
 
     protected ComponentMetadataDataDefinition(JsonPresentationFieldsExtractor extractor) {
@@ -132,6 +134,7 @@ public abstract class ComponentMetadataDataDefinition extends ToscaDataDefinitio
         this.archiveTime = extractor.getArchiveTime();
         this.model = extractor.getModel();
         this.normative = extractor.isNormative() == null ? false: extractor.isNormative();
+        this.isDefaultMetadata = extractor.isDefaultMetadata() != null && extractor.isDefaultMetadata();
     }
 
     public void setUniqueId(String uniqueId) {

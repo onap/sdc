@@ -71,6 +71,7 @@ public enum JsonPresentationFields {
     SERVICE_FUNCTION("serviceFunction", null),
     MODEL("model", null),
     NORMATIVE("normative", null),
+    IS_DEFAULT_METADATA("is_default_metadata", null),
     DATA_TYPES("data_types", GraphPropertyEnum.DATA_TYPES),
 
     ////Inputs
