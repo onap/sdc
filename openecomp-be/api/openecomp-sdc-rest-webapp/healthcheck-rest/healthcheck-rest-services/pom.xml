@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.openecomp.sdc</groupId>
     <artifactId>healthcheck-rest</artifactId>
-    <version>1.11.7-SNAPSHOT</version>
+    <version>1.11.8-SNAPSHOT</version>
   </parent>
 
   <artifactId>healthcheck-rest-services</artifactId>
