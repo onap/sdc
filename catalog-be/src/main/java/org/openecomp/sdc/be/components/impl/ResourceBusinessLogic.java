@@ -3524,6 +3524,10 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             .getLatestByToscaResourceNameAndModel(resourceName, resource.getModel());
         if (latestByToscaName.isLeft() && Objects.nonNull(latestByToscaName.left().value())) {
             final Resource foundResource = latestByToscaName.left().value();
+            if(resource.getIsDefaultMetadata()) {
+                resource.setComponentMetadataDefinition(foundResource.getComponentMetadataDefinition());
+                resource.setIsDefaultMetadata(false);
+            }
             // we don't allow updating names of top level types
             if (!isNestedResource && !StringUtils.equals(resource.getName(), foundResource.getName())) {
                 BeEcompErrorManager.getInstance()
