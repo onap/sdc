@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1e231f94_e7b1e6ac",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-08-15T19:13:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5b209f9b_717805d8",
+      "range": {
+        "startLine": 466,
+        "startChar": 0,
+        "endLine": 466,
+        "endChar": 135
+      },
+      "revId": "cd55581a612516697387e4271c12f31a7b5af2e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4d6defc5_2d8a6007",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "cd55581a612516697387e4271c12f31a7b5af2e4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f9708a8_bf92ddd0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-08-15T19:13:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d6defc5_2d8a6007",
+      "range": {
+        "startLine": 469,
+        "startChar": 40,
+        "endLine": 469,
+        "endChar": 47
+      },
+      "revId": "cd55581a612516697387e4271c12f31a7b5af2e4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
