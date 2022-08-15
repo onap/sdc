@@ -20,17 +20,27 @@
  */
 package org.openecomp.sdc.be.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.ArrayList;
+import java.util.List;
+import org.openecomp.sdc.be.model.category.CategoryDefinition;
+import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
 
-import java.util.Map;
+public class DefaultUploadResourceInfo extends UploadResourceInfo{
 
-@Getter
-@AllArgsConstructor
-public class NodeTypeDefinition {
-
-    @Setter
-    private Map.Entry<String, Object> mappedNodeType;
-    private NodeTypeMetadata nodeTypeMetadata;
+    public DefaultUploadResourceInfo(){
+        SubCategoryDefinition subCategory = new SubCategoryDefinition();
+        subCategory.setName("Network Elements");
+        CategoryDefinition category = new CategoryDefinition();
+        category.setName("Generic");
+        category.setNormalizedName("generic");
+        category.setIcons(List.of("defaulticon"));
+        category.setNormalizedName("generic");
+        category.addSubCategory(subCategory);
+        List<CategoryDefinition> categories = new ArrayList<>();
+        categories.add(category);
+        super.setCategories(categories);
+        super.setIcon("defaulticon");
+        super.setVendorRelease("1");
+        super.setNormative(false);
+    }
 }

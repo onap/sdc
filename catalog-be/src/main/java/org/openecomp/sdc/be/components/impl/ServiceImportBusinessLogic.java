@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaStringElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonStringValue;
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
@@ -131,6 +132,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.be.ui.model.OperationUi;
 import org.openecomp.sdc.be.utils.TypeUtils;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
@@ -290,14 +292,25 @@ public class ServiceImportBusinessLogic {
     private void createNodeTypes(List<NodeTypeDefinition> nodeTypesToCreate, ServiceCsarInfo csarInfo) {
         NodeTypesMetadataList nodeTypesMetadataList = new NodeTypesMetadataList();
         List<NodeTypeMetadata> nodeTypeMetadataList = new ArrayList<>();
-
+        List<String> toscaNamesList = new ArrayList<>();
         final Map<String, Object> allTypesToCreate = new HashMap<>();
         nodeTypesToCreate.stream().forEach(nodeType -> {
             allTypesToCreate.put(nodeType.getMappedNodeType().getKey(), nodeType.getMappedNodeType().getValue());
             nodeTypeMetadataList.add(nodeType.getNodeTypeMetadata());
+            toscaNamesList.add(nodeType.getMappedNodeType().getKey());
         });
-
+        Either<Map<String, Object>, ImportUtils.ResultStatusEnum> mainMetadataEither = ImportUtils.findFirstToscaMapElement(csarInfo.getMappedToscaMainTemplate(),
+            TypeUtils.ToscaTagNamesEnum.METADATA);
+        if (mainMetadataEither.isRight()) {
+            throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
+        }
+        Map<String, Object> mainMetadata = mainMetadataEither.left().value();
+        String model = (String) mainMetadata.get("model");
+        String vendorName = (String) mainMetadata.get("name");
+        nodeTypesMetadataList.setModel(model);
+        nodeTypesMetadataList.setVendorName(vendorName);
         nodeTypesMetadataList.setNodeMetadataList(nodeTypeMetadataList);
+        nodeTypesMetadataList.setToscaNameList(toscaNamesList);
         resourceImportManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, csarInfo.getModifier(), true, false);
     }
 
@@ -309,9 +322,60 @@ public class ServiceImportBusinessLogic {
                 .getLatestByToscaResourceName(nodeTypeDefinition.getMappedNodeType().getKey(), model);
             if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                 namesOfNodeTypesToCreate.add(nodeTypeDefinition);
+            } else if (result.isLeft()) {
+                Resource latestResource = (Resource) result.left().value();
+                Entry<String, Object> latestMappedToscaTemplate = getResourceToscaTemplate(latestResource.getUniqueId(),
+                        latestResource.getToscaArtifacts().get(ToscaExportHandler.ASSET_TOSCA_TEMPLATE), csarInfo.getModifier().getUserId());
+                Map<String, Object> mappedToscaTemplate = (Map<String, Object>) nodeTypeDefinition.getMappedNodeType().getValue();
+                Map<String, Object> newMappedToscaTemplate =
+                        getNewChangesToToscaTemplate(mappedToscaTemplate, (Map<String, Object>) latestMappedToscaTemplate.getValue());
+                if (!newMappedToscaTemplate.equals(latestMappedToscaTemplate.getValue())) {
+                    latestMappedToscaTemplate.setValue(newMappedToscaTemplate);
+                    nodeTypeDefinition.setMappedNodeType(latestMappedToscaTemplate);
+                    namesOfNodeTypesToCreate.add(nodeTypeDefinition);
+                }
             }
         }
         return namesOfNodeTypesToCreate;
+    }
+
+    private Entry<String, Object> getResourceToscaTemplate(String uniqueId, ArtifactDefinition assetToscaTemplate, String userId) {
+        String assetToToscaTemplate = assetToscaTemplate.getUniqueId();
+        ImmutablePair<String, byte[]> toscaTemplate = artifactsBusinessLogic.
+                handleDownloadRequestById(uniqueId, assetToToscaTemplate, userId, ComponentTypeEnum.RESOURCE, null, null);
+        Map<String, Object> mappedToscaTemplate = new Yaml().load(new String(toscaTemplate.right));
+        Either<Map<String, Object>, ImportUtils.ResultStatusEnum> eitherNodeTypes =
+                findFirstToscaMapElement(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.NODE_TYPES);
+        if (eitherNodeTypes.isRight()) {
+            throw new ComponentException(ActionStatus.INVALID_TOSCA_TEMPLATE);
+        }
+        Entry<String, Object> entry = eitherNodeTypes.left().value().entrySet().iterator().next();
+        return entry;
+    }
+
+    private Map<String, Object> getNewChangesToToscaTemplate(Map<String, Object> mappedToscaTemplate, Map<String, Object> latestMappedToscaTemplate) {
+        Map<String, Object> newMappedToscaTemplate = new HashMap<>(latestMappedToscaTemplate);
+
+        Map<String, Object> properties = (Map<String, Object>) mappedToscaTemplate.get("properties");
+        Map<String, Object> latestProperties = (Map<String, Object>) latestMappedToscaTemplate.get("properties");
+        Map<String, Object> allProperties = combinedEntries(properties, latestProperties);
+        if ((MapUtils.isEmpty(latestProperties) && MapUtils.isNotEmpty(allProperties)) ||
+            (MapUtils.isNotEmpty(latestProperties) && !allProperties.equals(latestProperties))) {
+            newMappedToscaTemplate.put("properties", allProperties);
+        }
+        return newMappedToscaTemplate;
+    }
+
+    private Map<String, Object> combinedEntries(Map<String, Object> firstMap, Map<String, Object> secondMap) {
+        if (MapUtils.isEmpty(firstMap)) {
+            firstMap = new HashMap<>();
+        }
+        Map<String, Object> combinedEntries = new HashMap<>(firstMap);
+        if (MapUtils.isEmpty(secondMap)) {
+            return combinedEntries;
+        }
+        combinedEntries.putAll(secondMap);
+        return combinedEntries;
     }
 
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
