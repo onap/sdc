@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5965b04f_3607373f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T14:01:02Z",
+      "side": 1,
+      "message": "please restructure along the following lines in improve readability:\n        if(isInputFromComponentInstanceProperty()) {\n            associateInputToComponentInstanceProperty();\n        } \n        if (isInputFromServcieProperty()) {\n            associateInputToServiceProperty();\n        }",
+      "range": {
+        "startLine": 464,
+        "startChar": 0,
+        "endLine": 464,
+        "endChar": 52
+      },
+      "revId": "d9d440a811f114ef8bd2474566a4b6d1a9190bae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6bc3a35_fe87164a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T14:01:02Z",
+      "side": 1,
+      "message": "this isnt guaranteed to get the correct result. For example if you have instances called vfc1 and vfc11, with inputs vfc1_prop and vfc11_prop, then this logic could return vfc1 as the component for vfc11_prop",
+      "range": {
+        "startLine": 474,
+        "startChar": 110,
+        "endLine": 474,
+        "endChar": 118
+      },
+      "revId": "d9d440a811f114ef8bd2474566a4b6d1a9190bae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee6de702_6dd1617d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T14:01:02Z",
+      "side": 1,
+      "message": "same concern here about contains as above",
+      "range": {
+        "startLine": 478,
+        "startChar": 89,
+        "endLine": 478,
+        "endChar": 97
+      },
+      "revId": "d9d440a811f114ef8bd2474566a4b6d1a9190bae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa104ebe_daabecea",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 492,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T14:01:02Z",
+      "side": 1,
+      "message": "if this is needed it could presumably be set where the componentInstanceProperties are created",
+      "range": {
+        "startLine": 492,
+        "startChar": 0,
+        "endLine": 492,
+        "endChar": 93
+      },
+      "revId": "d9d440a811f114ef8bd2474566a4b6d1a9190bae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "899dcb0f_859ec806",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T14:01:02Z",
+      "side": 1,
+      "message": "why change the value of the schema for the component instance property?",
+      "range": {
+        "startLine": 493,
+        "startChar": 0,
+        "endLine": 495,
+        "endChar": 72
+      },
+      "revId": "d9d440a811f114ef8bd2474566a4b6d1a9190bae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1ff1a52_669b7504",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T14:01:02Z",
+      "side": 1,
+      "message": "why not leave null",
+      "range": {
+        "startLine": 500,
+        "startChar": 0,
+        "endLine": 500,
+        "endChar": 71
+      },
+      "revId": "d9d440a811f114ef8bd2474566a4b6d1a9190bae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "577793ff_9ad6b81c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 501,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T14:01:02Z",
+      "side": 1,
+      "message": "why overwriting the schema value",
+      "range": {
+        "startLine": 501,
+        "startChar": 0,
+        "endLine": 501,
+        "endChar": 52
+      },
+      "revId": "d9d440a811f114ef8bd2474566a4b6d1a9190bae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e1f402b_ca624716",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-15T14:01:02Z",
+      "side": 1,
+      "message": "lot of duplication with the previous if statement",
+      "range": {
+        "startLine": 521,
+        "startChar": 4,
+        "endLine": 528,
+        "endChar": 56
+      },
+      "revId": "d9d440a811f114ef8bd2474566a4b6d1a9190bae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
