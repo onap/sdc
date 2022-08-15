@@ -115,6 +115,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -172,6 +173,18 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         final JSONObject jsonObject = new JSONObject();
         jsonObject.put(ToscaGetFunctionType.GET_INPUT.getFunctionName(), "zxjTestImportServiceAb_propertiesName");
         componentInstanceProperty.setValue(jsonObject.toJSONString());
+
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifactDef = new ArtifactDefinition();
+        String artifactUniqueId = "test_extcp_resource.assettoscatemplate";
+        artifactDef.setUniqueId(artifactUniqueId);
+        toscaArtifacts.put(ToscaExportHandler.ASSET_TOSCA_TEMPLATE, artifactDef);
+        Resource resource = new Resource();
+        String resourceUniqueId = "extcp_resource";
+        resource.setUniqueId(resourceUniqueId);
+        resource.setToscaArtifacts(toscaArtifacts);
+        ImmutablePair<String, byte[]> resourceTemplate = getNodeType();
+        String updatedNodeType = "org.openecomp.resource.cp.extCP";
 
         newService.setComponentInstancesProperties(
             Collections.singletonMap(COMPONENT_ID + "." + "zxjTestImportServiceAb", Collections.singletonList(componentInstanceProperty)));
@@ -234,8 +247,13 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
 
 
-        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.left(null));
-        when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull()))
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull()))
+                .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains(updatedNodeType), isNull())).thenReturn(Either.left(resource));
+        when(artifactsBusinessLogic.handleDownloadRequestById(resourceUniqueId, artifactUniqueId, user.getUserId(), ComponentTypeEnum.RESOURCE, null, null))
+                .thenReturn(resourceTemplate);
         when(toscaOperationFacade.updatePropertyOfComponent(eq(oldService), any(PropertyDefinition.class))).thenReturn(Either.left(null));
         when(toscaOperationFacade.updateComponentInstancePropsToComponent(anyMap(), anyString())).thenReturn(Either.left(null));
 
@@ -258,6 +276,13 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         assertNotNull(yamlMap.get("tosca.datatypes.test_a"));
         assertNotNull(yamlMap.get("tosca.datatypes.test_b"));
         assertNotNull(yamlMap.get("onap.datatypes.ToscaConceptIdentifier"));
+
+        ArgumentCaptor<Map<String, Object>> nodeTypes = ArgumentCaptor.forClass(Map.class);
+        verify(resourceImportManager).importAllNormativeResource(nodeTypes.capture(), any(), any(), any(),
+                anyBoolean(), anyBoolean());
+        Map<String, Object> nodeTypesMap = nodeTypes.getValue();
+        Map<String, Object> newUpdatedNodeType = (Map<String, Object>) nodeTypesMap.get(updatedNodeType);
+        assertEquals(8, ((Map<String, Object>) newUpdatedNodeType.get("properties")).size());
     }
 
     @Test
@@ -2426,6 +2451,19 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
             return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
         } catch (URISyntaxException | ZipException e) {
+            fail(e);
+        }
+        return null;
+    }
+
+    private ImmutablePair<String, byte[]> getNodeType() {
+        try {
+            File resource = new File(
+                    ServiceImportBusinessLogicTest.class.getClassLoader().getResource("node-types/resource-Extcp-template.yml").toURI());
+            byte[] extcpResource = Files.readAllBytes(resource.toPath());
+
+            return new ImmutablePair<>("org.openecomp.resource.cp.extCP", extcpResource);
+        } catch (URISyntaxException | IOException e) {
             fail(e);
         }
         return null;

@@ -494,7 +494,7 @@ class ResourceImportManagerTest {
                 .createOrUpdateResourceByImport(any(Resource.class), any(User.class), eq(true), eq(true), eq(false), eq(null), eq(null), eq(false)))
                 .thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK)).thenReturn(new ImmutablePair<>(new Resource(), ActionStatus.OK));
 
-        importManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, user, false, false);
+        importManager.importAllNormativeResource(allTypesToCreate, nodeTypesMetadataList, user, "", false, false);
         verify(janusGraphDao).commit();
     }
 
