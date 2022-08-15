@@ -411,6 +411,14 @@ public abstract class Component implements PropertiesOwner {
         componentMetadataDefinition.getMetadataDataDefinition().setIsDeleted(isDeleted);
     }
 
+    public Boolean getIsDefaultMetadata() {
+        return componentMetadataDefinition.getMetadataDataDefinition().isDefaultMetadata();
+    }
+
+    public void setIsDefaultMetadata(Boolean isDefaultMetadata) {
+        componentMetadataDefinition.getMetadataDataDefinition().setDefaultMetadata(isDefaultMetadata);
+    }
+
     public String getProjectCode() {
         return componentMetadataDefinition.getMetadataDataDefinition().getProjectCode();
     }
