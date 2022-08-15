@@ -220,8 +220,8 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(applicationDataTypeCache.get(any(), contains("tosca.datatypes.test_"))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(applicationDataTypeCache.get(any(), matches("^((?!tosca.datatypes.test_).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
 
-        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.left(null));
-        when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.updatePropertyOfComponent(eq(oldService), any(PropertyDefinition.class))).thenReturn(Either.left(null));
         when(toscaOperationFacade.updateComponentInstancePropsToComponent(anyMap(), anyString())).thenReturn(Either.left(null));
 
