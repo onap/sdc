@@ -309,9 +309,62 @@ public class ServiceImportBusinessLogic {
                 .getLatestByToscaResourceName(nodeTypeDefinition.getMappedNodeType().getKey(), model);
             if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
                 namesOfNodeTypesToCreate.add(nodeTypeDefinition);
+            } else if (result.isLeft()) {
+                Resource latestResource = (Resource) result.left().value();
+                Map<String, Object> mappedToscaTemplate = (Map<String, Object>) nodeTypeDefinition.getMappedNodeType().getValue();
+                if (validChangesToResource(latestResource, mappedToscaTemplate)) {
+                    namesOfNodeTypesToCreate.add(nodeTypeDefinition);
+                }
             }
         }
         return namesOfNodeTypesToCreate;
+    }
+
+    private boolean validChangesToResource(Resource resource, Map<String, Object> mappedToscaTemplate) {
+        Map<String, Object> properties = (Map<String, Object>) mappedToscaTemplate.get("properties");
+        if ((CollectionUtils.isEmpty(resource.getProperties()) && MapUtils.isNotEmpty(properties))
+                || (MapUtils.isNotEmpty(properties) && validChangedProperties(resource.getProperties(), properties))) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean validChangedProperties(List<PropertyDefinition> resourceProps, Map<String, Object> properties) {
+        resourceProps.forEach(propDef -> {
+            properties.entrySet().stream().filter((prop) -> propDef.getName().equals(prop.getKey())).findAny().ifPresentOrElse(value -> {
+                Map<String, Object> prop = (Map<String, Object>) value.getValue();
+                if (propertiesNotEqual(prop.get("type"), propDef.getType())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if(prop.get("entry_schema") != null || propDef.getSchemaType() != null) {
+                    if (propertiesNotEqual(((Map<String, Object>) prop.get("entry_schema")).get("type"), propDef.getSchemaType())) {
+                        throw new ComponentException(ActionStatus.INVALID_MODEL);
+                    }
+                }
+                if (propertiesNotEqual(prop.get("default"), propDef.getDefaultValue())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(prop.get("description"), propDef.getDescription())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(prop.get("required"), propDef.getRequired())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+            }, () -> {
+                throw new ComponentException(ActionStatus.INVALID_MODEL);
+            });
+        });
+        return resourceProps.size() < properties.size();
+    }
+
+    private boolean propertiesNotEqual(Object prop1, Object prop2) {
+        if ((prop1 instanceof Collection<?> || prop1 instanceof Map<?,?>) && !(prop2 instanceof Collection<?> || prop2 instanceof Map<?,?>)){
+            Gson gson = new Gson();
+            prop1 = gson.toJson(prop1);
+        } else if (!(prop1 instanceof String) && prop2 instanceof String) {
+            prop1 = String.valueOf(prop1);
+        }
+        return (prop1 != null || prop2 != null) && (prop1 == null || !prop1.equals(prop2));
     }
 
     protected Service createServiceFromYaml(Service service, String topologyTemplateYaml, String yamlName, Map<String, NodeTypeInfo> nodeTypesInfo,
