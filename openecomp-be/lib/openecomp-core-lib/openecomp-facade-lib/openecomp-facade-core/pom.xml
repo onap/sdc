@@ -8,7 +8,7 @@
     <parent>
         <artifactId>openecomp-facade-lib</artifactId>
         <groupId>org.openecomp.sdc.core</groupId>
-        <version>1.11.6-SNAPSHOT</version>
+        <version>1.11.7-SNAPSHOT</version>
     </parent>
 
 
