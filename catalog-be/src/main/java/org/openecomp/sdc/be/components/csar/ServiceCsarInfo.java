@@ -44,6 +44,7 @@ import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
 import org.openecomp.sdc.be.model.NodeTypeDefinition;
 import org.openecomp.sdc.be.model.NodeTypeInfo;
 import org.openecomp.sdc.be.model.NodeTypeMetadata;
+import org.openecomp.sdc.be.model.NullNodeTypeMetadata;
 import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.category.CategoryDefinition;
 import org.openecomp.sdc.be.model.category.SubCategoryDefinition;
@@ -246,7 +247,7 @@ public class ServiceCsarInfo extends CsarInfo {
             Map<String, Object> metadata = metadataEither.left().value();
             createMetadataFromTemplate(nodeTypeMetadata, metadata, nodeTemplateType);
         } else {
-            createDefaultMetadata(nodeTypeMetadata, nodeTemplateType);
+            nodeTypeMetadata = createDefaultMetadata(nodeTemplateType);
         }
         return nodeTypeMetadata;
     }
@@ -274,12 +275,13 @@ public class ServiceCsarInfo extends CsarInfo {
         nodeTypeMetadata.setResourceVendorModelNumber((String) metadata.get("resourceVendorModelNumber"));
         nodeTypeMetadata.setResourceType((String) metadata.get("type"));
         nodeTypeMetadata.setVendorName((String) metadata.get("resourceVendor"));
-        nodeTypeMetadata.setVendorRelease((String) metadata.get("resourceVendorRelease"));
+        nodeTypeMetadata.setVendorRelease(String.valueOf(metadata.get("resourceVendorRelease")));
         nodeTypeMetadata.setModel((String) metadata.get("model"));
         nodeTypeMetadata.setNormative(false);
     }
 
-    private void createDefaultMetadata(NodeTypeMetadata nodeTypeMetadata, String nodeTemplateType) {
+    private NullNodeTypeMetadata createDefaultMetadata(String nodeTemplateType) {
+        NullNodeTypeMetadata nodeTypeMetadata = new NullNodeTypeMetadata();
         nodeTypeMetadata.setToscaName(nodeTemplateType);
         nodeTypeMetadata.setContactId(getModifier().getUserId());
         nodeTypeMetadata.setDescription("A vfc of type " + nodeTemplateType);
@@ -308,6 +310,7 @@ public class ServiceCsarInfo extends CsarInfo {
         nodeTypeMetadata.setVendorName((String) mainMetadata.get("name"));
         nodeTypeMetadata.setVendorRelease("1");
         nodeTypeMetadata.setNormative(false);
+        return nodeTypeMetadata;
     }
 
 }

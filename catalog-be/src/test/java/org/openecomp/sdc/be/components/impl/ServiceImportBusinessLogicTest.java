@@ -115,6 +115,7 @@ import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.tosca.CsarUtils;
+import org.openecomp.sdc.be.tosca.ToscaExportHandler;
 import org.openecomp.sdc.common.api.ArtifactGroupTypeEnum;
 import org.openecomp.sdc.common.api.ArtifactTypeEnum;
 import org.openecomp.sdc.common.api.Constants;
@@ -173,6 +174,17 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         jsonObject.put(ToscaGetFunctionType.GET_INPUT.getFunctionName(), "zxjTestImportServiceAb_propertiesName");
         componentInstanceProperty.setValue(jsonObject.toJSONString());
 
+        Map<String, ArtifactDefinition> toscaArtifacts = new HashMap<>();
+        ArtifactDefinition artifactDef = new ArtifactDefinition();
+        String artifactUniqueId = "test_extcp_resource.assettoscatemplate";
+        artifactDef.setUniqueId(artifactUniqueId);
+        toscaArtifacts.put(ToscaExportHandler.ASSET_TOSCA_TEMPLATE, artifactDef);
+        Resource resource = new Resource();
+        String resourceUniqueId = "extcp_resource";
+        resource.setUniqueId(resourceUniqueId);
+        resource.setToscaArtifacts(toscaArtifacts);
+        ImmutablePair<String, byte[]> resourceTemplate = getNodeType();
+
         newService.setComponentInstancesProperties(
             Collections.singletonMap(COMPONENT_ID + "." + "zxjTestImportServiceAb", Collections.singletonList(componentInstanceProperty)));
         newService.setProperties(getProperties());
@@ -220,8 +232,11 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(applicationDataTypeCache.get(any(), contains("tosca.datatypes.test_"))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(applicationDataTypeCache.get(any(), matches("^((?!tosca.datatypes.test_).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
 
-        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.left(null));
-        when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull())).thenReturn(Either.left(null));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull())).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource.cp.extCP"), isNull())).thenReturn(Either.left(resource));
+        when(artifactsBusinessLogic.handleDownloadRequestById(resourceUniqueId, artifactUniqueId, user.getUserId(), ComponentTypeEnum.RESOURCE, null, null))
+                .thenReturn(resourceTemplate);
         when(toscaOperationFacade.updatePropertyOfComponent(eq(oldService), any(PropertyDefinition.class))).thenReturn(Either.left(null));
         when(toscaOperationFacade.updateComponentInstancePropsToComponent(anyMap(), anyString())).thenReturn(Either.left(null));
 
@@ -2411,6 +2426,19 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
 
             return new ServiceCsarInfo(user, csarUuid, csar, vfReousrceName, mainTemplateName, mainTemplateContent, false);
         } catch (URISyntaxException | ZipException e) {
+            fail(e);
+        }
+        return null;
+    }
+
+    private ImmutablePair<String, byte[]> getNodeType() {
+        try {
+            File resource = new File(
+                    ServiceImportBusinessLogicTest.class.getClassLoader().getResource("node-types/resource-Extcp-template.yml").toURI());
+            byte[] asdwadw = Files.readAllBytes(resource.toPath());
+
+            return new ImmutablePair<>("org.openecomp.resource.cp.extCP", asdwadw);
+        } catch (URISyntaxException | IOException e) {
             fail(e);
         }
         return null;

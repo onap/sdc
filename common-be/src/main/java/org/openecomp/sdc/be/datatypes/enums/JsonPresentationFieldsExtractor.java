@@ -177,4 +177,8 @@ public class JsonPresentationFieldsExtractor {
     public Boolean isNormative() {
         return (Boolean) properties.get(JsonPresentationFields.NORMATIVE.getPresentation());
     }
+
+    public Boolean isDefaultMetadata() {
+        return (Boolean) properties.get(JsonPresentationFields.IS_DEFAULT_METADATA.getPresentation());
+    }
 }
