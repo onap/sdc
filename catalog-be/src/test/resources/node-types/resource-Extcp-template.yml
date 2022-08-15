@@ -1,0 +1,95 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+metadata:
+  invariantUUID: 93047af6-cd60-401a-b60b-346d67314aeb
+  UUID: e6e6753a-11a7-41d3-b563-90e4a2e5606d
+  name: ExtCP
+  description: The AT&T Connection Point base type all other CP derive from
+  model:
+  category: Generic
+  type: CP
+  subcategory: Network Elements
+  resourceVendor: ONAP (Tosca)
+  resourceVendorRelease: 1.0.0.wd03
+  reourceVendorModelNumber: ''
+imports:
+- nodes:
+    file: nodes.yml
+- datatypes:
+    file: data.yml
+- capabilities:
+    file: capabilities.yml
+- relationships:
+    file: relationships.yml
+- groups:
+    file: groups.yml
+- policies:
+    file: policies.yml
+node_types:
+  org.openecomp.resource.cp.extCP:
+    derived_from: tosca.nodes.Root
+    description: The AT&T Connection Point base type all other CP derive from
+    properties:
+      ip_requirements:
+        type: list
+        description: identifies IP requirements to the CP
+        required: true
+        entry_schema:
+          type: org.openecomp.datatypes.network.IpRequirements
+      network_role:
+        type: string
+        description: identical to VL network_role
+        required: true
+      subnetpoolid:
+        type: string
+        required: false
+      mac_requirements:
+        default:
+          mac_count_required:
+            is_required: false
+        type: org.openecomp.datatypes.network.MacRequirements
+        description: identifies MAC address assignments to the CP
+        required: false
+      exCP_naming:
+        default:
+          ecomp_generated_naming: true
+        type: org.openecomp.datatypes.Naming
+        required: false
+      vlan_requirements:
+        type: list
+        description: identifies vlan address assignments to the CP
+        required: false
+        entry_schema:
+          type: org.openecomp.datatypes.network.VlanRequirements
+      network_role_tag:
+        type: string
+        description: Must correlate to the set of defined network-role tag identifiers
+          from the associated HEAT template
+        required: true
+    capabilities:
+      internal_connectionPoint:
+        type: tosca.capabilities.Node
+        occurrences:
+        - 0
+        - UNBOUNDED
+        valid_source_types:
+        - tosca.nodes.network.Port
+    requirements:
+    - virtualBinding:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.network.Bindable
+        relationship: tosca.relationships.network.BindsTo
+    - virtualLink:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+    - external_virtualLink:
+        occurrences:
+        - 0
+        - UNBOUNDED
+        capability: tosca.capabilities.network.Linkable
+        node: org.openecomp.resource.vl.VL
+        relationship: tosca.relationships.network.LinksTo

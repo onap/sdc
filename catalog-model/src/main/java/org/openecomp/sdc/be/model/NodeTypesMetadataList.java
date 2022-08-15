@@ -31,5 +31,7 @@ import lombok.Data;
 public class NodeTypesMetadataList {
 
     private List<NodeTypeMetadata> nodeMetadataList;
+    private String model;
+    private String vendorName;
 
 }

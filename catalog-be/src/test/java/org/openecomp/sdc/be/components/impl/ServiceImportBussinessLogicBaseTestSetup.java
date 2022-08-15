@@ -131,7 +131,6 @@ public class ServiceImportBussinessLogicBaseTestSetup extends BaseBusinessLogicM
     private static final String RESOURCE_SUBCATEGORY = "Router";
 
     private final ArtifactDefinition artifactDefinition = mock(ArtifactDefinition.class);
-    private final ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
     private final ServletUtils servletUtils = mock(ServletUtils.class);
 
     protected final ServletContext servletContext = mock(ServletContext.class);

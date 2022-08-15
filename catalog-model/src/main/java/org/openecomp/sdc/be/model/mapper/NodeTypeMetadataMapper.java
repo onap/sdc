@@ -23,7 +23,9 @@ package org.openecomp.sdc.be.model.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.openecomp.sdc.be.model.DefaultUploadResourceInfo;
 import org.openecomp.sdc.be.model.NodeTypeMetadata;
+import org.openecomp.sdc.be.model.NullNodeTypeMetadata;
 import org.openecomp.sdc.be.model.UploadResourceInfo;
 
 /**
@@ -33,6 +35,9 @@ import org.openecomp.sdc.be.model.UploadResourceInfo;
 public class NodeTypeMetadataMapper {
 
     public static UploadResourceInfo mapTo(final NodeTypeMetadata nodeTypeMetadata) {
+        if (nodeTypeMetadata instanceof NullNodeTypeMetadata) {
+            return new DefaultUploadResourceInfo(nodeTypeMetadata.getToscaName());
+        }
         var uploadResourceInfo = new UploadResourceInfo();
         uploadResourceInfo.setName(nodeTypeMetadata.getName());
         uploadResourceInfo.setDescription(nodeTypeMetadata.getDescription());
