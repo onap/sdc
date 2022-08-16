@@ -5,6 +5,106 @@
 Release Notes
 =============
 
+Version: 1.11.8
+==============
+
+:Release Date: 2022-09-09
+
+SDC SDKs Versions
+-----------------
+
+-  sdc-distribution-client
+
+   :Version: 1.4.5
+
+-  sdc-tosca
+
+   :Version: 1.7.0
+
+Release Purpose
+----------------
+SDC Kohn early release
+
+**Epics**
+
+    N/A
+
+
+**Stories**
+
+*  `SDC-4168 <https://jira.onap.org/browse/SDC-4168>`_ - Support import of service with TOSCA functions in sub properties
+*  `SDC-4171 <https://jira.onap.org/browse/SDC-4171>`_ - Relax checking on operation property values
+*  `SDC-4128 <https://jira.onap.org/browse/SDC-4128>`_ - Support TOSCA functions for node filters
+*  `SDC-4151 <https://jira.onap.org/browse/SDC-4151>`_ - Support TOSCA functions in sub properties in properties assignment
+*  `SDC-4131 <https://jira.onap.org/browse/SDC-4131>`_ - Service import - Import updated node types
+*  `SDC-4149 <https://jira.onap.org/browse/SDC-4149>`_ - Allow to select properties in the get_attribute function
+*  `SDC-4140 <https://jira.onap.org/browse/SDC-4140>`_ - Service import - Import updated data types
+*  `SDC-4137 <https://jira.onap.org/browse/SDC-4137>`_ - Service Import - general page validation
+*  `SDC-4082 <https://jira.onap.org/browse/SDC-4082>`_ - Service Import - Inputs
+*  `SDC-4136 <https://jira.onap.org/browse/SDC-4136>`_ - Allow ETSI VNF without other node template
+
+
+**Bug Fixes**
+
+*  `SDC-4174 <https://jira.onap.org/browse/SDC-4174>`_ - New node filter API does not accept legacy payload
+*  `SDC-4166 <https://jira.onap.org/browse/SDC-4166>`_ - Importing service with TOSCA function yaml value
+*  `SDC-4169 <https://jira.onap.org/browse/SDC-4169>`_ - application exposed to path traversal attack
+*  `SDC-4134 <https://jira.onap.org/browse/SDC-4134>`_ - Import VFC not importing interfaces
+*  `SDC-4145 <https://jira.onap.org/browse/SDC-4145>`_ - NPE thrown for interface operation template with no inputs
+*  `SDC-4150 <https://jira.onap.org/browse/SDC-4150>`_ - Import service - sub import files are not loading
+*  `SDC-4097 <https://jira.onap.org/browse/SDC-4097>`_ - Wrong Inputs creation on 'Add Service'
+*  `SDC-4144 <https://jira.onap.org/browse/SDC-4144>`_ - SDC Jakarta release: "create service" does not work when new category added
+*  `SDC-4141 <https://jira.onap.org/browse/SDC-4141>`_ - Encrypted user not being handled correctly in SDC-BE
+*  `SDC-4130 <https://jira.onap.org/browse/SDC-4130>`_ - Fix Wrongly generated tosca implementation
+*  `SDC-4132 <https://jira.onap.org/browse/SDC-4132>`_ - Fix error handling for instances with no properties
+*  `SDC-4133 <https://jira.onap.org/browse/SDC-4133>`_ - ClassCastException thrown for artifact primary string value
+
+
+**Tasks**
+
+*  `SDC-4167 <https://jira.onap.org/browse/SDC-4167>`_ - Update/remove vulnerable dependencies
+*  `SDC-4165 <https://jira.onap.org/browse/SDC-4165>`_ - Update SDC with new 'security-util-lib' version
+*  `DOC-782 <https://jira.onap.org/browse/DOC-782>`_ - Create docs for 'Jakarta' main release
+*  `SDC-4143 <https://jira.onap.org/browse/SDC-4143>`_ - Improve error's message readability
+*  `SDC-4017 <https://jira.onap.org/browse/SDC-4017>`_ - Remove/update vulnerable dependency
+*  `SDC-4139 <https://jira.onap.org/browse/SDC-4139>`_ - Fix broken build
+*  `SDC-4133 <https://jira.onap.org/browse/SDC-4133>`_ - ClassCastException thrown for artifact primary string value
+
+
+Security Notes
+--------------
+
+*Fixed Security Issues*
+
+    N/A
+
+*Known Security Issues*
+
+*  `OJSI-94 <https://jira.onap.org/browse/OJSI-94>`_ - sdc-wfd-fe allows to impersonate any user by setting USER_ID
+
+*Known Vulnerabilities in Used Modules*
+
+Quick Links:
+
+- `SDC project page <https://wiki.onap.org/pages/viewpage.action?pageId=6592847>`__
+- `Passing Badge information for SDC <https://bestpractices.coreinfrastructure.org/en/projects/1629>`__
+
+**Known Issues**
+
+-   Uploading and on-boarding several VSP in parallel can cause SDC exceptions, a user should retry failed operations which typically succeed on second try.
+
+**Upgrade Notes**
+
+    N/A
+
+**Deprecation Notes**
+
+    N/A
+
+**Other**
+
+    N/A
+
 Version: 1.11.7
 ==============
 
