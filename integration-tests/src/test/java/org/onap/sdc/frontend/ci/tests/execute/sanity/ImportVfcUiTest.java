@@ -143,6 +143,62 @@ public class ImportVfcUiTest extends SetupCDTest {
 
     }
 
+    @Test
+    public void importVFC_createVF_etsi_addVFC2VF_test() throws UnzipException {
+        ComponentPage componentPage;
+        // TC - Import VFC with root namespace
+        String fileName = "org.openecomp.resource.VFC-root.yml";
+        String subCategory = ResourceCategoryEnum.GENERIC_DATABASE.getSubCategory();
+        CreateVfcFlow createVfcFlow = createVFC(fileName, ModelName.ETSI_SOL001_v2_5_1.getName(), subCategory);
+
+        componentPage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        componentPage.isLoaded();
+
+        Map<String, Object> yamlObject = downloadToscaArtifact(componentPage);
+        checkEtsiMetadata(yamlObject, vfcCreateData);
+        checkNodeTypes(yamlObject);
+        homePage.getTopNavComponent().clickOnHome();
+
+        // TC - Import hierarchy of VFCs
+        fileName = "org.openecomp.resource.VFC-child.yml";
+        createVfcFlow = createVFC(fileName, ModelName.ETSI_SOL001_v2_5_1.getName(), subCategory);
+        componentPage = createVfcFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage.isLoaded();
+
+        componentPage = manageAttributes(componentPage);
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        componentPage.isLoaded();
+
+        yamlObject = downloadToscaArtifact(componentPage);
+        checkEtsiMetadata(yamlObject, vfcCreateData);
+        checkNodeTypes(yamlObject);
+
+        componentPage = viewInterfaceDefinitionFromVFC(componentPage);
+        componentPage.isLoaded();
+
+        homePage.getTopNavComponent().clickOnHome();
+
+        // TC - Import VFC with interface inputs
+        // TC - Import VFC with attributes
+        final CreateVfFlow createVfFlow = createVF();
+        componentPage = createVfFlow.getLandedPage().orElseThrow(() -> new UiTestFlowRuntimeException("Missing expected return ResourceCreatePage"));
+        componentPage.isLoaded();
+
+        final CompositionPage compositionPage = addInterfaceOperations(componentPage);
+        componentPage = compositionPage.goToGeneral();
+        componentPage.isLoaded();
+        componentPage.certifyComponent();
+        componentPage.isLoaded();
+
+        yamlObject = downloadToscaArtifact(componentPage);
+        checkMetadata(yamlObject, vfCreateData);
+        checkTopologyTemplate(yamlObject);
+
+    }
+
     private ComponentPage viewInterfaceDefinitionFromVFC(final ComponentPage componentPage) {
         final GoToInterfaceDefinitionPageFlow goToInterfaceDefinitionPageFlow = new GoToInterfaceDefinitionPageFlow(webDriver);
         goToInterfaceDefinitionPageFlow.run(componentPage);
@@ -361,6 +417,19 @@ public class ImportVfcUiTest extends SetupCDTest {
         assertEquals(createdData.getName(), metadata.get("name"));
         assertEquals(createdData.getDescription(), metadata.get("description"));
         assertEquals("Network L4+", metadata.get("category"));
+        assertThat((String) metadata.get("type"), not(emptyString()));
+        assertEquals(createdData.getCategory(), metadata.get("subcategory"));
+        assertEquals(createdData.getVendorName(), metadata.get("resourceVendor"));
+        assertEquals(createdData.getVendorRelease(), metadata.get("resourceVendorRelease"));
+        assertEquals(createdData.getVendorModelNumber(), metadata.get("reourceVendorModelNumber"));
+    }
+
+    private void checkEtsiMetadata(final Map<String, Object> map, final ResourceCreateData createdData) {
+        final Map<String, Object> metadata = getMapEntry(map, "metadata");
+
+        assertEquals(createdData.getName(), metadata.get("name"));
+        assertEquals(createdData.getDescription(), metadata.get("description"));
+        assertEquals("Application L4+", metadata.get("category"));
         assertThat((String) metadata.get("type"), not(emptyString()));
         assertEquals(createdData.getCategory(), metadata.get("subcategory"));
         assertEquals(createdData.getVendorName(), metadata.get("resourceVendor"));
