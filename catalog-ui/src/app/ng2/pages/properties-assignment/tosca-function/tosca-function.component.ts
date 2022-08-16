@@ -103,6 +103,13 @@ export class ToscaFunctionComponent implements OnInit {
         this.toscaFunctions.push(ToscaFunctionType.YAML);
     }
 
+    private onChangeGetToscaFunction(): void {
+        const selectedGetToscaFunction: string = this.formGroup.get('toscaFunctionType').value.toLowerCase();
+        if (selectedGetToscaFunction != this.toscaFunction.type) {
+            this.toscaFunction = undefined;
+        }
+    }
+
     private resetForm(): void {
         this.formGroup.reset();
         this.toscaFunction = undefined;
