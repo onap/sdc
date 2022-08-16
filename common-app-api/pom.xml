@@ -352,6 +352,12 @@
       <artifactId>cassandra-driver-mapping</artifactId>
       <version>${cassandra.driver.version}</version>
       <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.jnr</groupId>
+          <artifactId>jnr-posix</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
