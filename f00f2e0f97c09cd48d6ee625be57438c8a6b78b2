@@ -22,6 +22,30 @@
       "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4d91959a_c473feac",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-08-16T10:59:00Z",
+      "side": 1,
+      "message": "Operation implementation in relationship_template is limited to short notation only. So its always string value. There is no scope for any other details to add in UI. Also checked this code is relationship_template specific only. I would prefer to make changes here rather than during tosca download. Your thoughts on this please.",
+      "parentUuid": "d3fcdee3_e6155ba6",
+      "range": {
+        "startLine": 432,
+        "startChar": 20,
+        "endLine": 432,
+        "endChar": 92
+      },
+      "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
