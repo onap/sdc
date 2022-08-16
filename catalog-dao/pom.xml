@@ -384,6 +384,10 @@ Modifications copyright (c) 2018 Nokia
           <groupId>io.netty</groupId>
           <artifactId>netty-handler</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>com.github.jnr</groupId>
+          <artifactId>jnr-posix</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -409,6 +413,10 @@ Modifications copyright (c) 2018 Nokia
         <exclusion>
           <groupId>io.netty</groupId>
           <artifactId>netty-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.jnr</groupId>
+          <artifactId>jnr-posix</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

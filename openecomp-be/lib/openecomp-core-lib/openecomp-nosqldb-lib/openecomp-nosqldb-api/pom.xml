@@ -37,6 +37,12 @@
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
             <version>${datastax.cassandra.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.jnr</groupId>
+                    <artifactId>jnr-posix</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
