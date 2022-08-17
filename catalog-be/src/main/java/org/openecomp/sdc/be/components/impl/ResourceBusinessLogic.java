@@ -1512,14 +1512,16 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
                 createResourcePropertiesOnGraph(resource);
                 final Map<String, UploadComponentInstanceInfo> instancesToCreate = getInstancesToCreate(parsedToscaYamlInfo, resource.getModel());
-
-                log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
-                loggerSupportability
-                    .log(LoggerSupportabilityActions.CREATE_RESOURCE_FROM_YAML, resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,
-                        "Start create nodes, RI and Relations  from yaml: {}", yamlName);
-                resource = createRIAndRelationsFromYaml(yamlName, resource, instancesToCreate, topologyTemplateYaml,
-                    nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName,
-                    parsedToscaYamlInfo.getSubstitutionMappingNodeType());
+                
+                if (MapUtils.isNotEmpty(instancesToCreate)) {
+                    log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
+                    loggerSupportability
+                        .log(LoggerSupportabilityActions.CREATE_RESOURCE_FROM_YAML, resource.getComponentMetadataForSupportLog(), StatusCode.STARTED,
+                            "Start create nodes, RI and Relations  from yaml: {}", yamlName);
+                    resource = createRIAndRelationsFromYaml(yamlName, resource, instancesToCreate, topologyTemplateYaml,
+                        nodeTypesNewCreatedArtifacts, nodeTypesInfo, csarInfo, nodeTypesArtifactsToCreate, nodeName,
+                        parsedToscaYamlInfo.getSubstitutionMappingNodeType());
+                }
             } else {
                 final Resource genericResource = fetchAndSetDerivedFromGenericType(resource, null);
                 resource = createResourceTransaction(resource, csarInfo.getModifier(), isNormative);
