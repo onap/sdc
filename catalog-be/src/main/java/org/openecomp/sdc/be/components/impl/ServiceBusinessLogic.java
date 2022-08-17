@@ -109,8 +109,10 @@ import org.openecomp.sdc.be.impl.WebAppContextWrapper;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.ComponentInstInputsMap;
 import org.openecomp.sdc.be.model.ComponentInstance;
 import org.openecomp.sdc.be.model.ComponentInstanceInterface;
+import org.openecomp.sdc.be.model.ComponentInstancePropInput;
 import org.openecomp.sdc.be.model.ComponentInstanceProperty;
 import org.openecomp.sdc.be.model.ComponentParametersView;
 import org.openecomp.sdc.be.model.DistributionStatusEnum;
@@ -189,13 +191,12 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     private final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator;
     private final ServiceCategoryValidator serviceCategoryValidator;
     private final ServiceValidator serviceValidator;
-    private final PolicyBusinessLogic policyBusinessLogic;
-    private final GroupBusinessLogic groupBusinessLogic;
     private ForwardingPathOperation forwardingPathOperation;
     private AuditCassandraDao auditCassandraDao;
     private ServiceTypeValidator serviceTypeValidator;
     private List<ServiceCreationPlugin> serviceCreationPluginList;
     private ServiceFunctionValidator serviceFunctionValidator;
+    private final InputsBusinessLogic inputsBusinessLogic;
 
     public ServiceBusinessLogic(IElementOperation elementDao, IGroupOperation groupOperation, IGroupInstanceOperation groupInstanceOperation,
                                 IGroupTypeOperation groupTypeOperation, GroupBusinessLogic groupBusinessLogic, InterfaceOperation interfaceOperation,
@@ -210,7 +211,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                                 final ServiceRoleValidator serviceRoleValidator,
                                 final ServiceInstantiationTypeValidator serviceInstantiationTypeValidator,
                                 final ServiceCategoryValidator serviceCategoryValidator, final ServiceValidator serviceValidator,
-                                final PolicyBusinessLogic policyBusinessLogic) {
+                                final InputsBusinessLogic inputsBusinessLogic) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -224,8 +225,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         this.serviceInstantiationTypeValidator = serviceInstantiationTypeValidator;
         this.serviceCategoryValidator = serviceCategoryValidator;
         this.serviceValidator = serviceValidator;
-        this.policyBusinessLogic = policyBusinessLogic;
-        this.groupBusinessLogic = groupBusinessLogic;
+        this.inputsBusinessLogic = inputsBusinessLogic;
     }
 
     @Autowired
@@ -311,7 +311,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
         Optional<ComponentInstance> serviceInstanceCandidate = componentInstances.stream()
             .filter(instance -> instance.getUniqueId().equals(serviceInstanceId)).findAny();
-        if (!serviceInstanceCandidate.isPresent()) {
+        if (serviceInstanceCandidate.isEmpty()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
         }
         Map<String, List<ComponentInstanceInterface>> componentInstancesInterfaces = parentService.getComponentInstancesInterfaces();
@@ -324,7 +324,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         }
         ComponentInstance serviceInstance = serviceInstanceCandidate.get();
         Optional<InterfaceDefinition> interfaceCandidate = InterfaceOperationUtils.getInterfaceDefinitionFromOperationId(interfaces, operationId);
-        if (!interfaceCandidate.isPresent()) {
+        if (interfaceCandidate.isEmpty()) {
             return Either.right(componentsUtils.getResponseFormat(ActionStatus.INTERFACE_OPERATION_NOT_FOUND, serviceInstanceId));
         }
         InterfaceDefinition interfaceDefinition = interfaceCandidate.get();
@@ -336,7 +336,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<Operation, ResponseFormat> operationEither = Either.left(operation);
         ListDataDefinition<OperationInputDefinition> inputs = operation.getInputs();
         Optional<OperationInputDefinition> inputCandidate = getOperationInputByInputId(serviceConsumptionData, inputs);
-        if (!inputCandidate.isPresent()) {
+        if (inputCandidate.isEmpty()) {
             return Either.right(new ResponseFormat(HttpStatus.NOT_FOUND.value()));
         }
         OperationInputDefinition operationInputDefinition = inputCandidate.get();
@@ -419,7 +419,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                     .getListToscaDataDefinition();
             } else {
                 Optional<ComponentInstance> getComponentInstance = containerService.getComponentInstanceById(source);
-                if (!getComponentInstance.isPresent()) {
+                if (getComponentInstance.isEmpty()) {
                     return Either.right(componentsUtils.getResponseFormat(ActionStatus.COMPONENT_INSTANCE_NOT_FOUND_ON_CONTAINER, source));
                 }
                 ComponentInstance componentInstance = getComponentInstance.get();
@@ -692,7 +692,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
 
     private Either<Service, ResponseFormat> createServiceByDao(final Service service, final User user) {
         log.debug("send service {} to dao for create", service.getComponentMetadataDefinition().getMetadataDataDefinition().getName());
-        Either<Boolean, ResponseFormat> lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
+        final Either<Boolean, ResponseFormat> lockResult = lockComponentByName(service.getSystemName(), service, "Create Service");
         if (lockResult.isRight()) {
             ResponseFormat responseFormat = lockResult.right().value();
             componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
@@ -710,22 +710,61 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
                 generateAndAddInputsFromGenericTypeProperties(service, genericType);
             }
             beforeCreate(service);
-            Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
-            if (dataModelResponse.isLeft()) {
-                log.debug("Service '{}' created successfully", service.getName());
-                ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
+            final Either<Service, StorageOperationStatus> dataModelResponse = toscaOperationFacade.createToscaComponent(service);
+            if (dataModelResponse.isRight()) {
+                ResponseFormat responseFormat = componentsUtils
+                    .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service,
+                        ComponentTypeEnum.SERVICE);
+                log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
                 componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
-                ASDCKpiApi.countCreatedServicesKPI();
-                return Either.left(dataModelResponse.left().value());
+                return Either.right(responseFormat);
             }
-            ResponseFormat responseFormat = componentsUtils
-                .getResponseFormatByComponent(componentsUtils.convertFromStorageResponse(dataModelResponse.right().value()), service,
-                    ComponentTypeEnum.SERVICE);
-            log.debug(AUDIT_BEFORE_SENDING_RESPONSE);
-            componentsUtils.auditComponentAdmin(responseFormat, user, service, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
-            return Either.right(responseFormat);
+            final Service createdService = dataModelResponse.left().value();
+            if (createdService.isSubstituteCandidate() || genericTypeBusinessLogic.hasMandatorySubstitutionType(createdService)) {
+                updateInputs(createdService);
+            }
+            log.debug("Service '{}' created successfully", createdService.getName());
+            final ResponseFormat responseFormat = componentsUtils.getResponseFormat(ActionStatus.CREATED);
+            componentsUtils.auditComponentAdmin(responseFormat, user, createdService, AuditingActionEnum.CREATE_RESOURCE, ComponentTypeEnum.SERVICE);
+            ASDCKpiApi.countCreatedServicesKPI();
+            return Either.left(createdService);
         } finally {
             graphLockOperation.unlockComponentByName(service.getSystemName(), service.getUniqueId(), NodeTypeEnum.Service);
+        }
+    }
+
+    private void updateInputs(final Service service) {
+        final List<InputDefinition> genericTypeInputs = service.getInputs();
+        final Either<List<InputDefinition>, ResponseFormat> inputs = inputsBusinessLogic.getInputs(service.getCreatorUserId(), service.getUniqueId());
+        if (inputs.isRight() || CollectionUtils.isEmpty(inputs.left().value())) {
+            log.warn("Failed to declare Generic Type Properties as Inputs");
+            service.setInputs(null);
+            return;
+        }
+        inputs.left().value().forEach(
+            inputDefinition -> inputsBusinessLogic.deleteInput(service.getUniqueId(), service.getCreatorUserId(), inputDefinition.getUniqueId()));
+
+        service.setInputs(null);
+        if (CollectionUtils.isNotEmpty(genericTypeInputs)) {
+            // From SELF
+            final ComponentInstInputsMap componentInstInputsMap = new ComponentInstInputsMap();
+            final List<ComponentInstancePropInput> componentInstancePropInputs = genericTypeInputs.stream()
+                .map(prop -> {
+                        prop.setInstanceUniqueId(service.getUniqueId());
+                        prop.setParentUniqueId(service.getUniqueId());
+                        return new ComponentInstancePropInput(new ComponentInstanceProperty(prop));
+                    }
+                ).collect(Collectors.toList());
+            componentInstInputsMap.setServiceProperties(Collections.singletonMap(service.getUniqueId(), componentInstancePropInputs));
+
+            final Either<List<InputDefinition>, ResponseFormat> listResponseFormatEither = inputsBusinessLogic.declareProperties(
+                service.getCreatorUserId(), service.getUniqueId(), ComponentTypeEnum.SERVICE, componentInstInputsMap);
+            if (listResponseFormatEither.isRight()) {
+                log.warn("Failed to declare Generic Type Properties as Inputs");
+                service.setInputs(null);
+                return;
+            }
+            service.setInputs(listResponseFormatEither.left().value());
         }
     }
 
@@ -745,10 +784,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
     @SuppressWarnings("unchecked")
     private void createServiceApiArtifactsData(Service service, User user) {
         // create mandatory artifacts
-
-        // TODO it must be removed after that artifact uniqueId creation will be
-
-        // moved to ArtifactOperation
+        // TODO it must be removed after that artifact uniqueId creation will be moved to ArtifactOperation
         String serviceUniqueId = service.getUniqueId();
         Map<String, ArtifactDefinition> artifactMap = service.getServiceApiArtifacts();
         if (artifactMap == null) {
@@ -1630,13 +1666,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             BeEcompErrorManager.getInstance()
                 .logBeComponentMissingError("markDistributionAsDeployed", ComponentTypeEnum.SERVICE.getValue(), serviceId);
             log.debug("service {} not found", serviceId);
-            ResponseFormat responseFormat = auditDeployError(did, user, auditAction, null,
+            ResponseFormat responseFormat = auditDeployError(did, user, null,
                 componentsUtils.convertFromStorageResponse(getServiceResponse.right().value(), ComponentTypeEnum.SERVICE), "");
             return Either.right(responseFormat);
         }
         Service service = getServiceResponse.left().value();
         user = validateRoleForDeploy(did, user, auditAction, service);
-        return checkDistributionAndDeploy(did, user, auditAction, service);
+        return checkDistributionAndDeploy(did, user, service);
     }
 
     public Either<Service, ResponseFormat> generateVfModuleArtifacts(Service service, User modifier, boolean shouldLock, boolean inTransaction) {
@@ -1710,13 +1746,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return null;
     }
 
-    private synchronized Either<Service, ResponseFormat> checkDistributionAndDeploy(String distributionId, User user, AuditingActionEnum auditAction,
+    private synchronized Either<Service, ResponseFormat> checkDistributionAndDeploy(String distributionId, User user,
                                                                                     Service service) {
         boolean isDeployed = isDistributionDeployed(distributionId);
         if (isDeployed) {
             return Either.left(service);
         }
-        Either<Boolean, ResponseFormat> distributionSuccess = checkDistributionSuccess(distributionId, user, auditAction, service);
+        Either<Boolean, ResponseFormat> distributionSuccess = checkDistributionSuccess(distributionId, user, service);
         if (distributionSuccess.isRight()) {
             return Either.right(distributionSuccess.right().value());
         }
@@ -1739,20 +1775,20 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         return isDeployed;
     }
 
-    protected Either<Boolean, ResponseFormat> checkDistributionSuccess(String did, User user, AuditingActionEnum auditAction, Service service) {
+    protected Either<Boolean, ResponseFormat> checkDistributionSuccess(String did, User user, Service service) {
         log.trace("checkDistributionSuccess");
         // get all "DRequest" records for this distribution
         Either<List<ResourceAdminEvent>, ActionStatus> distRequestsResponse = auditCassandraDao
             .getDistributionRequest(did, AuditingActionEnum.DISTRIBUTION_STATE_CHANGE_REQUEST.getName());
         if (distRequestsResponse.isRight()) {
-            ResponseFormat error = auditDeployError(did, user, auditAction, service, distRequestsResponse.right().value());
+            ResponseFormat error = auditDeployError(did, user, service, distRequestsResponse.right().value());
             return Either.right(error);
         }
         List<ResourceAdminEvent> distributionRequests = distRequestsResponse.left().value();
         if (distributionRequests.isEmpty()) {
             BeEcompErrorManager.getInstance().logBeDistributionMissingError("markDistributionAsDeployed", did);
             log.info("distribution {} is not found", did);
-            ResponseFormat error = auditDeployError(did, user, auditAction, service, ActionStatus.DISTRIBUTION_REQUESTED_NOT_FOUND);
+            ResponseFormat error = auditDeployError(did, user, service, ActionStatus.DISTRIBUTION_REQUESTED_NOT_FOUND);
             return Either.right(error);
         }
         boolean isRequestSucceeded = false;
@@ -1767,7 +1803,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         Either<List<DistributionNotificationEvent>, ActionStatus> distNotificationsResponse = auditCassandraDao
             .getDistributionNotify(did, AuditingActionEnum.DISTRIBUTION_NOTIFY.getName());
         if (distNotificationsResponse.isRight()) {
-            ResponseFormat error = auditDeployError(did, user, auditAction, service, distNotificationsResponse.right().value());
+            ResponseFormat error = auditDeployError(did, user, service, distNotificationsResponse.right().value());
             return Either.right(error);
         }
         List<DistributionNotificationEvent> distributionNotifications = distNotificationsResponse.left().value();
@@ -1783,13 +1819,13 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
         if (!(isRequestSucceeded && isNotificationsSucceeded)) {
             log.info("distribution {} has failed", did);
             ResponseFormat error = componentsUtils.getResponseFormat(ActionStatus.DISTRIBUTION_REQUESTED_FAILED, did);
-            auditDeployError(did, user, auditAction, service, ActionStatus.DISTRIBUTION_REQUESTED_FAILED, did);
+            auditDeployError(did, user, service, ActionStatus.DISTRIBUTION_REQUESTED_FAILED, did);
             return Either.right(error);
         }
         return Either.left(true);
     }
 
-    private ResponseFormat auditDeployError(String did, User user, AuditingActionEnum auditAction, Service service, ActionStatus status,
+    private ResponseFormat auditDeployError(String did, User user, Service service, ActionStatus status,
                                             String... params) {
         ResponseFormat error = componentsUtils.getResponseFormat(status, params);
         String message = "";
@@ -1817,7 +1853,7 @@ public class ServiceBusinessLogic extends ComponentBusinessLogic {
             validateUserRole(user, service, roles, auditAction, null);
         } catch (ByActionStatusComponentException e) {
             log.info("role {} is not allowed to perform this action", user.getRole());
-            auditDeployError(did, user, auditAction, service, e.getActionStatus());
+            auditDeployError(did, user, service, e.getActionStatus());
             throw e;
         }
         return user;
