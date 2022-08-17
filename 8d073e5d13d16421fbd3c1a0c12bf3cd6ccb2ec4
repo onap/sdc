@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "dcb0cae5_3b6be624",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-08-17T09:52:20Z",
+      "side": 1,
+      "message": "if an integer or double, etc is input while casting it will throw an error since it\u0027s expecting a string but this won\u0027t happen with String.valueOf",
+      "parentUuid": "978508c1_fca636d5",
+      "range": {
+        "startLine": 277,
+        "startChar": 49,
+        "endLine": 277,
+        "endChar": 56
+      },
+      "revId": "8d073e5d13d16421fbd3c1a0c12bf3cd6ccb2ec4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c02cd3c1_97f523a9",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 1
