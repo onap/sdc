@@ -46,6 +46,30 @@
       "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff24bae0_c5f4b673",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-17T09:13:48Z",
+      "side": 1,
+      "message": "This code does not seems to be used only by relationship templates, as it was introduced before the support for relationship templates by this ticket: https://jira.onap.org/browse/SDC-3768.\nThis seems to be used for the interface operation in general, where you can have a short or extended notation.\nSo it is better to fix the TOSCA generation for the relationship_templates only.",
+      "parentUuid": "4d91959a_c473feac",
+      "range": {
+        "startLine": 432,
+        "startChar": 20,
+        "endLine": 432,
+        "endChar": 92
+      },
+      "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
