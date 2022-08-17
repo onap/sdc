@@ -70,6 +70,30 @@
       "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62839c2d_dec40e7e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-17T12:51:03Z",
+      "side": 1,
+      "message": "Rechecking here, it seems that the code is only used for the relationship part as you specified before.\nWe can keep this change. As you said, we don\u0027t have support for the extended notation in the relationship template.\nApologies for the disturbance.",
+      "parentUuid": "ff24bae0_c5f4b673",
+      "range": {
+        "startLine": 432,
+        "startChar": 20,
+        "endLine": 432,
+        "endChar": 92
+      },
+      "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
