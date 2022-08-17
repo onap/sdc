@@ -94,6 +94,30 @@
       "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a1bb0c0_e9d60cd4",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/jsonjanusgraph/utils/ModelConverter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-08-17T13:15:39Z",
+      "side": 1,
+      "message": "Thanks for re-testing and reconfirming on that Andre.",
+      "parentUuid": "62839c2d_dec40e7e",
+      "range": {
+        "startLine": 432,
+        "startChar": 20,
+        "endLine": 432,
+        "endChar": 92
+      },
+      "revId": "f00f2e0f97c09cd48d6ee625be57438c8a6b78b2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
