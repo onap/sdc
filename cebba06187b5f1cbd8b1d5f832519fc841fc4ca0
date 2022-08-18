@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "481548f1_081afc2c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-18T11:18:55Z",
+      "side": 1,
+      "message": "I dont see the need to copy the inputs list just use the inputs list as is",
+      "range": {
+        "startLine": 459,
+        "startChar": 0,
+        "endLine": 459,
+        "endChar": 76
+      },
+      "revId": "cebba06187b5f1cbd8b1d5f832519fc841fc4ca0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6506cb7d_6cb3d1dc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-18T11:18:55Z",
+      "side": 1,
+      "message": "not needed, the updates are applied to the inputs already in the list of inputs from the component",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 472,
+        "endChar": 43
+      },
+      "revId": "cebba06187b5f1cbd8b1d5f832519fc841fc4ca0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "683a4ed9_db65762d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-18T11:18:55Z",
+      "side": 1,
+      "message": "this only makes sense of componentInstancesNameOptional below is present, so can move inside that if statement",
+      "range": {
+        "startLine": 490,
+        "startChar": 0,
+        "endLine": 490,
+        "endChar": 118
+      },
+      "revId": "cebba06187b5f1cbd8b1d5f832519fc841fc4ca0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7584e3f1_9ade809a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-18T11:18:55Z",
+      "side": 1,
+      "message": "not needed as per other comments",
+      "range": {
+        "startLine": 529,
+        "startChar": 0,
+        "endLine": 529,
+        "endChar": 55
+      },
+      "revId": "cebba06187b5f1cbd8b1d5f832519fc841fc4ca0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2b88830_41ec7da3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-18T11:18:55Z",
+      "side": 1,
+      "message": "not needed, already set",
+      "range": {
+        "startLine": 530,
+        "startChar": 0,
+        "endLine": 530,
+        "endChar": 78
+      },
+      "revId": "cebba06187b5f1cbd8b1d5f832519fc841fc4ca0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "213fe80f_b77b3923",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-18T11:18:55Z",
+      "side": 1,
+      "message": "not needed as per other comments",
+      "range": {
+        "startLine": 532,
+        "startChar": 0,
+        "endLine": 532,
+        "endChar": 40
+      },
+      "revId": "cebba06187b5f1cbd8b1d5f832519fc841fc4ca0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79dd330b_792c4ae7",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-18T11:18:55Z",
+      "side": 1,
+      "message": "not needed as per other comments",
+      "range": {
+        "startLine": 553,
+        "startChar": 0,
+        "endLine": 553,
+        "endChar": 63
+      },
+      "revId": "cebba06187b5f1cbd8b1d5f832519fc841fc4ca0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb8ecff4_8eaaab8d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 559,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-18T11:18:55Z",
+      "side": 1,
+      "message": "not needed as per other comments",
+      "range": {
+        "startLine": 559,
+        "startChar": 0,
+        "endLine": 559,
+        "endChar": 48
+      },
+      "revId": "cebba06187b5f1cbd8b1d5f832519fc841fc4ca0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
