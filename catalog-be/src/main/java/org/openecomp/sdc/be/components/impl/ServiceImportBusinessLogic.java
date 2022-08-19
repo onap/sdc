@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -458,10 +459,72 @@ public class ServiceImportBusinessLogic {
         Map<String, Object> latestProperties = (Map<String, Object>) latestMappedToscaTemplate.get("properties");
         Map<String, Object> allProperties = combinedEntries(properties, latestProperties);
         if ((MapUtils.isEmpty(latestProperties) && MapUtils.isNotEmpty(allProperties)) ||
-            (MapUtils.isNotEmpty(latestProperties) && !allProperties.equals(latestProperties))) {
+                (MapUtils.isNotEmpty(latestProperties) && !allProperties.equals(latestProperties))) {
             newMappedToscaTemplate.put("properties", allProperties);
         }
+
+        Map<String, Object> attributes = (Map<String, Object>) mappedToscaTemplate.get("attributes");
+        Map<String, Object> latestAttributes = (Map<String, Object>) latestMappedToscaTemplate.get("attributes");
+        Map<String, Object> allAttributes = combinedEntries(attributes, latestAttributes);
+        if ((MapUtils.isEmpty(latestAttributes) && MapUtils.isNotEmpty(allAttributes)) ||
+            ( MapUtils.isNotEmpty(latestAttributes) && !allAttributes.equals(latestAttributes))) {
+            newMappedToscaTemplate.put("attributes", allAttributes);
+        }
+
+        List<Map<String, Object>> latestRequirements = (List<Map<String, Object>>) latestMappedToscaTemplate.get("requirements");
+        List<Map<String, Object>> requirements = (List<Map<String, Object>>) mappedToscaTemplate.get("requirements");
+        Set<Map<String, Object>> allReqs = additionalRequirements(requirements, latestRequirements);
+        if ((CollectionUtils.isEmpty(latestRequirements) && CollectionUtils.isNotEmpty(allReqs))
+            || (CollectionUtils.isNotEmpty(latestRequirements) && !allReqs.equals(latestRequirements))) {
+            newMappedToscaTemplate.put("requirements", allReqs);
+        }
+
+        Map<String, Object> capabilities = (Map<String, Object>) mappedToscaTemplate.get("capabilities");
+        Map<String, Object> latestCapabilities = (Map<String, Object>) latestMappedToscaTemplate.get("capabilities");
+        Map<String, Object> allCapabilities = combinedEntries(capabilities, latestCapabilities);
+        if ((MapUtils.isEmpty(latestCapabilities) && MapUtils.isNotEmpty(allCapabilities)) ||
+            ( MapUtils.isNotEmpty(latestCapabilities) && !allCapabilities.equals(latestCapabilities))) {
+            newMappedToscaTemplate.put("capabilities", allCapabilities);
+        }
+
+        Map<String, Map<String, Object>> latestInterfaces = (Map<String, Map<String, Object>>) latestMappedToscaTemplate.get("interfaces");
+        Map<String, Map<String, Object>> interfaces = (Map<String, Map<String, Object>>) mappedToscaTemplate.get("interfaces");
+        Map<String, Map<String, Object>> allInterfaces = additionalInterfaces(latestInterfaces, interfaces);
+        if ((MapUtils.isEmpty(latestInterfaces) && MapUtils.isNotEmpty(allInterfaces))
+            || (MapUtils.isNotEmpty(latestInterfaces) && !latestInterfaces.equals(allInterfaces))) {
+            newMappedToscaTemplate.put("interfaces", allInterfaces);
+        }
         return newMappedToscaTemplate;
+    }
+
+    private Map<String, Map<String, Object>> additionalInterfaces(Map<String, Map<String, Object>> resInterfaces, Map<String, Map<String, Object>> interfaces) {
+        if (MapUtils.isEmpty(interfaces)) {
+            interfaces = new HashMap<>();
+        }
+        Map<String, Map<String, Object>> combinedEntries = new HashMap<>(interfaces);
+        if (MapUtils.isEmpty(resInterfaces)) {
+            return combinedEntries;
+        }
+        combinedEntries.entrySet().forEach(inter_face -> {
+            resInterfaces.entrySet().stream().filter((interfaceDef) -> inter_face.getValue().get("type").equals(( interfaceDef.getValue()).get("type")))
+                    .forEach((interfaceDef) -> {
+                        inter_face.getValue().putAll(interfaceDef.getValue());
+                    });
+        });
+        return combinedEntries;
+    }
+
+    private Set<Map<String, Object>> additionalRequirements(List<Map<String, Object>> resourceReqs, List<Map<String, Object>> requirements) {
+        if (CollectionUtils.isEmpty(requirements)) {
+            requirements = new ArrayList<>();
+        }
+        Set<Map<String, Object>> combinedReqs = new TreeSet<>((map1, map2) -> map1.keySet().equals(map2.keySet()) ? 0 : 1);
+        combinedReqs.addAll(requirements);
+        if (CollectionUtils.isEmpty(resourceReqs)) {
+            return combinedReqs;
+        }
+        combinedReqs.addAll(resourceReqs);
+        return combinedReqs;
     }
 
     private Map<String, Object> combinedEntries(Map<String, Object> firstMap, Map<String, Object> secondMap) {
