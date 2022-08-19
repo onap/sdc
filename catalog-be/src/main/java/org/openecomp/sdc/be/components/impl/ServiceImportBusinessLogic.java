@@ -250,6 +250,9 @@ public class ServiceImportBusinessLogic {
             final Map<String, Object> dataTypesToCreate = getDatatypesToCreate(service.getModel(), csarInfo);
             if (MapUtils.isNotEmpty(dataTypesToCreate)) {
                 dataTypeBusinessLogic.createDataTypeFromYaml(new Yaml().dump(dataTypesToCreate), service.getModel(), true);
+                dataTypesToCreate.entrySet().stream().forEach(createdOrUpdatedDataType -> {
+                    applicationDataTypeCache.reload(service.getModel(), UniqueIdBuilder.buildDataTypeUid(service.getModel(), createdOrUpdatedDataType.getKey()));
+                });
             }
             final List<NodeTypeDefinition> nodeTypesToCreate = getNodeTypesToCreate(service.getModel(), csarInfo);
             if (CollectionUtils.isNotEmpty(nodeTypesToCreate)) {
@@ -283,8 +286,17 @@ public class ServiceImportBusinessLogic {
                 dataTypesToCreate.put(dataTypeEntry.getKey(), dataTypeEntry.getValue());
                 log.info("Deploying unknown type " + dataTypeEntry.getKey() + " to model " + model + " from package " + csarInfo.getCsarUUID());
             }
+            if (hasNewProperties(result, (Map<String, Map<String, Object>>) dataTypeEntry.getValue())) {
+                dataTypesToCreate.put(dataTypeEntry.getKey(), dataTypeEntry.getValue());
+                log.info("Deploying new version of type " + dataTypeEntry.getKey() + " to model " + model + " from package " + csarInfo.getCsarUUID());
+            }
         }
         return dataTypesToCreate;
+    }
+    
+    private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result, final Map<String, Map<String, Object>> dataType) {
+        return result.isLeft() && dataType.containsKey("properties") && result.left().value().getProperties() != null
+                && result.left().value().getProperties().size() != dataType.get("properties").size();
     }
 
     private void createNodeTypes(List<NodeTypeDefinition> nodeTypesToCreate, ServiceCsarInfo csarInfo) {
