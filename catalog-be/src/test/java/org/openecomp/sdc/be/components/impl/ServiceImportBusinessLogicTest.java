@@ -318,6 +318,10 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         Map<String, Object> nodeTypesMap = nodeTypes.getValue();
         Map<String, Object> newUpdatedNodeType = (Map<String, Object>) nodeTypesMap.get(updatedNodeType);
         assertEquals(8, ((Map<String, Object>) newUpdatedNodeType.get("properties")).size());
+        Assertions.assertNull(newUpdatedNodeType.get("attributes"));
+        assertEquals(3, ((List<Map<String, Object>>) newUpdatedNodeType.get("requirements")).size());
+        assertEquals(1, ((Map<String, Object>) newUpdatedNodeType.get("capabilities")).size());
+        assertEquals(2, ((Map<String, Object>) newUpdatedNodeType.get("interfaces")).size());
 
         ArgumentCaptor<String> interfaceTypes = ArgumentCaptor.forClass(String.class);
         verify(interfaceLifecycleTypeImportManager).createLifecycleTypes(interfaceTypes.capture(), any(), anyBoolean());
