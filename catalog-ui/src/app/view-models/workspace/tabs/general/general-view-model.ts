@@ -638,8 +638,9 @@ export class GeneralViewModel {
             const onSuccess = (validation:IValidate) => {
                 this.$scope.editForm['componentName'].$setValidity('nameExist', validation.isValid);
                 if (validation.isValid) {
-                    // update breadcrumb after changing name
-                    this.updateComponentNameInBreadcrumbs();
+                    this.updateComponentNameInBreadcrumbs(); // update breadcrumb after changing name
+                } else {
+                    this.$scope.editForm['componentName'].$setDirty();
                 }
             };
 
