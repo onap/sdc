@@ -538,9 +538,17 @@ public class CommonImportManager {
     public void addTypesToDefaultImports(final ElementTypeEnum elementTypeEnum, final String typesYaml, final String modelName) {
         modelOperation.addTypesToDefaultImports(elementTypeEnum, typesYaml, modelName);
     }
+    
+    public void updateTypesInAdditionalTypesImport(final ElementTypeEnum elementTypeEnum, final String dataTypeYml, final String modelName) {
+        modelOperation.updateTypesInAdditionalTypesImport(elementTypeEnum, dataTypeYml, modelName);
+    }
 
     public interface ICreateElementType<T1, T2, T3> {
 
         T3 createElement(T1 firstArg, T2 secondArg);
     }
+
+
+
+
 }

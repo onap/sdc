@@ -50,6 +50,7 @@ public class DataTypeDefinition extends DataTypeDataDefinition {
         this.setConstraints(dataTypeDefinition.getConstraints());
         this.setDescription(dataTypeDefinition.getDescription());
         this.setModel(dataTypeDefinition.getModel());
+        this.setProperties(dataTypeDefinition.getProperties());
     }
 
     public List<PropertyConstraint> safeGetConstraints() {
