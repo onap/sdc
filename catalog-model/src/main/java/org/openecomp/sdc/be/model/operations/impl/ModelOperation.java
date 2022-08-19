@@ -26,12 +26,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -50,6 +54,7 @@ import org.openecomp.sdc.be.data.model.ToscaImportByModel;
 import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
 import org.openecomp.sdc.be.datatypes.enums.ModelTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
+import org.openecomp.sdc.be.model.DataTypeDefinition;
 import org.openecomp.sdc.be.model.Model;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.ModelOperationExceptionSupplier;
 import org.openecomp.sdc.be.model.jsonjanusgraph.operations.exception.OperationException;
@@ -377,6 +382,52 @@ public class ModelOperation {
     @Autowired
     public void setModelElementOperation(final ModelElementOperation modelElementOperation) {
         this.modelElementOperation = modelElementOperation;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void updateTypesInAdditionalTypesImport(final ElementTypeEnum elementTypeEnum, final String typesYaml, final String modelName) {
+        final Optional<ToscaImportByModel> additionalTypeDefinitionsImportOptional = getAdditionalTypes(modelName);
+
+        if (additionalTypeDefinitionsImportOptional.isPresent()) {
+
+            final Map<String, Object> existingTypeContent = getExistingTypes(elementTypeEnum, additionalTypeDefinitionsImportOptional.get());
+            final Set<String> existingTypeNames = existingTypeContent.keySet();
+
+            final Map<String, Object> typesToUpate = new HashMap<>();
+
+            final Map<String, Object> newTypesYaml = new Yaml().load(typesYaml);
+            newTypesYaml.entrySet().stream().filter(entry -> existingTypeNames.contains(entry.getKey())).forEach(newTypeToUpdate -> {
+
+                final Map<String, Object> propertiesInNewDef = (Map<String, Object>) ((Map<String, Object>) newTypeToUpdate.getValue()).get("properties");;
+                final Map<String, Object> existingProperties =
+                        (Map<String, Object>) ((Map<String, Object>) existingTypeContent.get(newTypeToUpdate.getKey())).get("properties");
+
+                final List<Entry<String, Object>> propertiesMissingFromNewDef = MapUtils.isEmpty(existingProperties) ? Collections.emptyList()
+                        : existingProperties.entrySet().stream()
+                                .filter(existingPropEntry -> !propertiesInNewDef.keySet().contains(existingPropEntry.getKey()))
+                                .collect(Collectors.toList());
+
+                if (CollectionUtils.isNotEmpty(propertiesMissingFromNewDef)) {
+                    typesToUpate.put(newTypeToUpdate.getKey(), newTypeToUpdate.getValue());
+
+                    propertiesMissingFromNewDef
+                            .forEach(existingPropToAdd -> propertiesInNewDef.put(existingPropToAdd.getKey(), existingPropToAdd.getValue()));
+                }
+            });
+            if (MapUtils.isNotEmpty(typesToUpate)) {
+                addTypesToDefaultImports(elementTypeEnum, new Yaml().dumpAsMap(typesToUpate), modelName);
+            }
+        }
+    }
+    
+    private  Optional<ToscaImportByModel> getAdditionalTypes(final String modelName) {
+        final List<ToscaImportByModel> modelImportList = toscaModelImportCassandraDao.findAllByModel(modelName);
+        return modelImportList.stream().filter(t -> ADDITIONAL_TYPE_DEFINITIONS_PATH.equals(Path.of(t.getFullPath()))).findAny();
+    }
+    
+    private Map<String, Object> getExistingTypes(final ElementTypeEnum elementTypeEnum, final ToscaImportByModel additionalTypeDefinitionsImport) {
+        final Map<String, Object> existingContent = new Yaml().load(additionalTypeDefinitionsImport.getContent());
+        return  (Map<String, Object>) existingContent.get(elementTypeEnum.getToscaEntryName());
     }
 
 }

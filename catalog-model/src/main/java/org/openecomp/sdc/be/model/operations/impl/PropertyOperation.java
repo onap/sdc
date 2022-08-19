@@ -1945,11 +1945,10 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             List<String> newProps = newProperties.stream().map(PropertyDataDefinition::getName).collect(Collectors.toList());
             List<String> oldProps = oldProperties.stream().map(PropertyDataDefinition::getName).collect(Collectors.toList());
             if (!newProps.containsAll(oldProps)) {
-                StringJoiner joiner = new StringJoiner(",", "[", "]");
-                newProps.forEach(joiner::add);
-                log.debug("Properties {} in data type {} are missing, but they already defined in the existing data type", joiner.toString(),
-                    dataTypeName);
-                return true;
+                oldProps.removeAll(newProps);
+                oldProperties.stream().filter(oldProp -> oldProps.contains(oldProp.getName())).forEach(oldProp -> newProperties.add(oldProp));
+                log.info("Maintaining properties {} from old data type definition", oldProps);
+                return false;
             }
         }
         return false;
