@@ -198,6 +198,19 @@ public class ApplicationDataTypeCache implements ApplicationCache<DataTypeDefini
             readWriteLock.readLock().unlock();
         }
     }
+    
+    public void reload(final String model, final String uniqueId) {
+        final Either<DataTypeDefinition, JanusGraphOperationStatus> dataTypeDefEither = propertyOperation.getDataTypeByUid(uniqueId);
+        if (dataTypeDefEither.isLeft()) {
+            DataTypeDefinition dataTypeDef = dataTypeDefEither.left().value();
+            try {
+                readWriteLock.readLock().lock();
+                getDataTypeDefinitionMapByModel(model).put(dataTypeDef.getName(), dataTypeDef);
+            } finally {
+                readWriteLock.readLock().unlock();
+            }
+        }
+    }
 
     private Map<String, DataTypeDefinition> getDataTypeDefinitionMapByModel(final String model) {
         return dataTypesByModelCacheMap.containsKey(model) ? dataTypesByModelCacheMap.get(model) : new HashMap<>();
