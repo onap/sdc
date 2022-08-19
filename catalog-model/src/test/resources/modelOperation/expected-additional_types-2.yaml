@@ -11,6 +11,9 @@ data_types:
   tosca.datatypes.nfv.ServiceAvailability:
     derived_from: tosca.datatypes.Root
     description: additional type
+    properties:
+      added_property_1:
+        type: string
   tosca.datatypes.nfv.L2AddressData:
     derived_from: tosca.datatypes.Root
     description: additional type
