@@ -51,6 +51,7 @@ import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SchemaDefinition;
 import org.openecomp.sdc.be.model.InputDefinition;
 import org.openecomp.sdc.be.model.InterfaceDefinition;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
@@ -261,6 +262,15 @@ public class InterfaceDefinitionHandler {
                         propertyDef.setName(k);
                         propertyDef.setType(type.getType());
                         propertyDef.setValue(v.toString());
+                        if (type.equals(ToscaPropertyType.LIST)) {
+                            Gson gson = new Gson();
+                            propertyDef.setValue(gson.toJson(v));
+                            PropertyDataDefinition pdd = new PropertyDataDefinition();
+                            pdd.setType("string");
+                            SchemaDefinition sd = new SchemaDefinition();
+                            sd.setProperty(pdd);
+                            propertyDef.setSchema(sd);
+                        }
                         artifactDataDefinition.addProperty(propertyDef);
                     }
                 });
@@ -293,6 +303,9 @@ public class InterfaceDefinitionHandler {
         }
         if (value instanceof Float || value instanceof Double) {
             return ToscaPropertyType.FLOAT;
+        }
+        if (value instanceof List) {
+            return ToscaPropertyType.LIST;
         }
         return null;
     }
