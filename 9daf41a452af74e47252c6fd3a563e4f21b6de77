@@ -22,6 +22,30 @@
       "revId": "9daf41a452af74e47252c6fd3a563e4f21b6de77",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c556c94_3496d2da",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 566,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-19T13:27:31Z",
+      "side": 1,
+      "message": "Maybe you could force the field to be dirty: there is a function markAsDirty",
+      "parentUuid": "7b7e4fc4_40ac7beb",
+      "range": {
+        "startLine": 566,
+        "startChar": 26,
+        "endLine": 566,
+        "endChar": 56
+      },
+      "revId": "9daf41a452af74e47252c6fd3a563e4f21b6de77",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
