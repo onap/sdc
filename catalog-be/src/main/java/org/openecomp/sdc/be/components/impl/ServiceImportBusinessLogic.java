@@ -26,6 +26,7 @@ import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_P
 import com.google.gson.Gson;
 import fj.data.Either;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -35,10 +36,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
@@ -66,6 +70,7 @@ import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
+import org.openecomp.sdc.be.datatypes.elements.ArtifactDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
@@ -321,12 +326,198 @@ public class ServiceImportBusinessLogic {
     }
 
     private boolean validChangesToResource(Resource resource, Map<String, Object> mappedToscaTemplate) {
+        boolean changes = false;
         Map<String, Object> properties = (Map<String, Object>) mappedToscaTemplate.get("properties");
         if ((CollectionUtils.isEmpty(resource.getProperties()) && MapUtils.isNotEmpty(properties))
-                || (MapUtils.isNotEmpty(properties) && validChangedProperties(resource.getProperties(), properties))) {
-            return true;
+            || (MapUtils.isNotEmpty(properties) && validChangedProperties(resource.getProperties(), properties))) {
+            changes = true;
         }
-        return false;
+
+        Map<String, Object> attributes = (Map<String, Object>) mappedToscaTemplate.get("attributes");
+        if ((CollectionUtils.isEmpty(resource.getAttributes()) && MapUtils.isNotEmpty(attributes))
+            || (MapUtils.isNotEmpty(attributes) && validChangedAttributes(resource.getAttributes(), attributes))) {
+            changes = true;
+        }
+
+        List<RequirementDefinition> resourceReqs = new ArrayList<>();
+        List<Map<String, Object>> requirements = (List<Map<String, Object>>) mappedToscaTemplate.get("requirements");
+        if (MapUtils.isNotEmpty(resource.getRequirements())) {
+            resource.getRequirements().entrySet().forEach(resReqs ->
+                resourceReqs.addAll(resReqs.getValue().stream().filter(req -> req.getOwnerId() == null).collect(Collectors.toList())));
+        }
+        if ((CollectionUtils.isEmpty(resourceReqs) && CollectionUtils.isNotEmpty(requirements))
+            || (CollectionUtils.isNotEmpty(requirements) && validChangedRequirements(resourceReqs, requirements))) {
+            changes = true;
+        }
+
+        List<CapabilityDefinition> resourceCaps = new ArrayList<>();
+        Map<String, Object> capabilities = (Map<String, Object>) mappedToscaTemplate.get("capabilities");
+        if (MapUtils.isNotEmpty(resource.getCapabilities())) {
+            resource.getCapabilities().entrySet().forEach(resCaps ->
+                resourceCaps.addAll(resCaps.getValue().stream().filter(cap -> cap.getOwnerId() == null).collect(Collectors.toList())));
+        }
+        if ((CollectionUtils.isEmpty(resourceCaps) && MapUtils.isNotEmpty(capabilities))
+            || (MapUtils.isNotEmpty(capabilities) && validChangedCapabilities(resourceCaps, capabilities))) {
+            changes = true;
+        }
+        Map<String, Map<String, Object>> interfaces = (Map<String, Map<String, Object>>) mappedToscaTemplate.get("interfaces");
+        Map<String, InterfaceDefinition> resInterface = resource.getInterfaces();
+        if (resInterface != null) {
+            Collection<InterfaceDefinition> resInterfaces = resInterface.values();
+            if ((CollectionUtils.isEmpty(resInterfaces) && MapUtils.isNotEmpty(interfaces))
+                    || (MapUtils.isNotEmpty(interfaces) && validChangedInterfaces(resInterfaces, interfaces))) {
+                changes = true;
+            }
+        } else if (interfaces != null) {
+            changes = true;
+        }
+        return changes;
+    }
+
+    private boolean validChangedInterfaces(Collection<InterfaceDefinition> resInterfaces, Map<String, Map<String, Object>> interfaces) {
+        AtomicInteger resOperationsCount = new AtomicInteger();
+        resInterfaces.forEach(interfaceDef -> {
+            interfaces.entrySet().stream().filter((inter_face) -> interfaceDef.getType().equals(( inter_face.getValue()).get("type"))).findAny().ifPresentOrElse(value -> {
+                Map<String, Object> inter_face = value.getValue();
+                if (!interfaceDef.getOperations().entrySet().stream().allMatch(e -> inter_face.containsKey(e.getKey()))) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                interfaceDef.getOperations().entrySet().stream().forEach(value1 -> {
+                    resOperationsCount.getAndIncrement();
+                    OperationDataDefinition resOperation = value1.getValue();
+                    Map<String, Object> operation = (Map<String, Object>) inter_face.get(value1.getKey());
+                    if (propertiesNotEqual(operation.get("description"), resOperation.getDescription())) {
+                        throw new ComponentException(ActionStatus.INVALID_MODEL);
+                    }
+                    if (operation.get("implementation") instanceof String) {
+                        if (propertiesNotEqual(operation.get("implementation"), resOperation.getImplementation().getArtifactName().replace("'", ""))) {
+                            throw new ComponentException(ActionStatus.INVALID_MODEL);
+                        }
+                    }
+                    if (operation.get("implementation") instanceof Map) {
+                        checkOperationImplementationIsValid(((Map<String, Map<String, Object>>) operation.get("implementation")).get("primary"), resOperation.getImplementation());
+                    }
+                    Map<String, Object> resInputs = new HashMap<>();
+                    for ( OperationInputDefinition resInput : resOperation.getInputs().getListToscaDataDefinition()){
+                        resInputs.put(resInput.getName(), resInput.getDefaultValue());
+                    }
+                    if (propertiesNotEqual(operation.get("inputs"), resInputs)) {
+                        throw new ComponentException(ActionStatus.INVALID_MODEL);
+                    }
+                });
+            }, () -> {
+                throw new ComponentException(ActionStatus.INVALID_MODEL);
+            });
+        });
+        AtomicInteger operationsCount = new AtomicInteger();
+        interfaces.entrySet().forEach(interfaceType -> operationsCount.set(operationsCount.get() + interfaceType.getValue().size() - 1));
+        return resOperationsCount.get() < operationsCount.get();
+    }
+
+    private void checkOperationImplementationIsValid(Map<String, Object> implementation, ArtifactDataDefinition resOperationImp) {
+        if(propertiesNotEqual(implementation.get("type"), resOperationImp.getArtifactType())) {
+            throw new ComponentException(ActionStatus.INVALID_MODEL);
+        }
+        if(propertiesNotEqual(implementation.get("file"), resOperationImp.getArtifactName().replace("'", ""))) {
+            throw new ComponentException(ActionStatus.INVALID_MODEL);
+        }
+        if(propertiesNotEqual(implementation.get("artifact_version"), resOperationImp.getArtifactVersion())) {
+            throw new ComponentException(ActionStatus.INVALID_MODEL);
+        }
+        Map<String, Object> resImpProps= new HashMap<>();
+        for ( PropertyDataDefinition impProp : resOperationImp.getProperties()){
+            resImpProps.put(impProp.getName(), impProp.getValue());
+        }
+        Map<String, Object> test = (Map<String, Object>) implementation.get("properties");
+        Map<String, String> impProps= new HashMap<>();
+        for ( Entry<String, ?> impProp : test.entrySet()){
+            Gson gson = new Gson();
+            if (impProp.getValue() instanceof String) {
+                impProps.put(impProp.getKey(), (String) impProp.getValue());
+            } else {
+                impProps.put(impProp.getKey(), gson.toJson(impProp.getValue()));
+            }
+        }
+        if(propertiesNotEqual(impProps, resImpProps)) {
+            throw new ComponentException(ActionStatus.INVALID_MODEL);
+        }
+    }
+
+    private boolean validChangedCapabilities(List<CapabilityDefinition> resourceCaps, Map<String, Object> capabilities) {
+        resourceCaps.forEach(capDef -> {
+            capabilities.entrySet().stream().filter((cap) -> capDef.getName().equals(cap.getKey())).findAny().ifPresentOrElse(value -> {
+                Map<String, Object> cap = (Map<String, Object>) value.getValue();
+                if (propertiesNotEqual(cap.get("type"), capDef.getType())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                List<String> capOccurrences = ((List<Object>) cap.get("occurrences")).stream()
+                        .map(object -> Objects.toString(object, null))
+                        .collect(Collectors.toList());
+                if (propertiesNotEqual(capOccurrences, new ArrayList<>(Arrays.asList(capDef.getMinOccurrences(), capDef.getMaxOccurrences())))) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(cap.get("valid_source_types"), capDef.getValidSourceTypes())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(cap.get("description"), capDef.getDescription())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+            }, () -> {
+                throw new ComponentException(ActionStatus.INVALID_MODEL);
+            });
+        });
+        return resourceCaps.size() < capabilities.size();
+    }
+
+    private boolean validChangedRequirements(List<RequirementDefinition> resourceReqs, List<Map<String, Object>> requirements) {
+        resourceReqs.forEach(reqDef -> {
+            requirements.stream().filter((req) -> req.containsKey(reqDef.getName())).findAny().ifPresentOrElse(value -> {
+                Map<String, Object> req = (Map<String, Object>) value.get(reqDef.getName());
+                if (propertiesNotEqual(req.get("capability"), reqDef.getCapability())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                List<String> reqOccurrences = ((List<Object>) req.get("occurrences")).stream()
+                        .map(object -> Objects.toString(object, null))
+                        .collect(Collectors.toList());
+                if (propertiesNotEqual(reqOccurrences, new ArrayList<>(Arrays.asList(reqDef.getMinOccurrences(), reqDef.getMaxOccurrences())))) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(req.get("node"), reqDef.getNode())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(req.get("relationship"), reqDef.getRelationship())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+            }, () -> {
+                throw new ComponentException(ActionStatus.INVALID_MODEL);
+            });
+        });
+        return resourceReqs.size() < requirements.size();
+    }
+
+    private boolean validChangedAttributes(List<AttributeDefinition> resourceAttributes, Map<String, Object> attributes) {
+        resourceAttributes.forEach(attributeDef -> {
+            attributes.entrySet().stream().filter((attr) -> attributeDef.getName().equals(attr.getKey())).findAny().ifPresentOrElse(value -> {
+                Map<String, Object> attribute = (Map<String, Object>) value.getValue();
+                if (propertiesNotEqual(attribute.get("type"), attributeDef.getType())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(attribute.get("default"), attributeDef.getDefaultValue())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if (propertiesNotEqual(attribute.get("description"), attributeDef.getDescription())) {
+                    throw new ComponentException(ActionStatus.INVALID_MODEL);
+                }
+                if(attribute.get("entry_schema") != null || attributeDef.getSchemaType() != null) {
+                    if (propertiesNotEqual(((Map<String, Object>) attribute.get("entry_schema")).get("type"), attributeDef.getSchemaType())) {
+                        throw new ComponentException(ActionStatus.INVALID_MODEL);
+                    }
+                }
+            }, () -> {
+                throw new ComponentException(ActionStatus.INVALID_MODEL);
+            });
+        });
+        return resourceAttributes.size() < attributes.size();
     }
 
     private boolean validChangedProperties(List<PropertyDefinition> resourceProps, Map<String, Object> properties) {
