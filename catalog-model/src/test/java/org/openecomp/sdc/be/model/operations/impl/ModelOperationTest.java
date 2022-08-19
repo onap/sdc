@@ -31,6 +31,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.openecomp.sdc.be.model.operations.impl.ModelOperation.ADDITIONAL_TYPE_DEFINITIONS_PATH;
@@ -503,7 +504,28 @@ class ModelOperationTest extends ModelTestBase {
         final ToscaImportByModel actualImport1 = actualImportList.stream().filter(expectedImport1::equals).findFirst().orElse(null);
         assertNotNull(actualImport1);
         assertEquals(expectedImport1.getContent(), actualImport1.getContent());
+        
+        // Update the added additional type
+        final var updatedDataTypesPath = testResourcePath.resolve(Path.of("input-data_types-updated.yaml"));
+        final var updatedDataTypes = Files.readString(updatedDataTypesPath);
+        modelOperation.updateTypesInAdditionalTypesImport(ElementTypeEnum.DATA_TYPE, updatedDataTypes, modelName);
+        
+        ArgumentCaptor<List<ToscaImportByModel>> updatedImportListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(toscaModelImportCassandraDao, times(2)).saveAll(eq(modelName), updatedImportListArgumentCaptor.capture());
 
+        final List<ToscaImportByModel> updatedActualImportList = updatedImportListArgumentCaptor.getValue();
+        assertEquals(2, updatedActualImportList.size());
+        
+        var expectedUpdatedAdditionalTypesImport = new ToscaImportByModel();
+        expectedUpdatedAdditionalTypesImport.setModelId(modelName);
+        expectedUpdatedAdditionalTypesImport.setFullPath(ADDITIONAL_TYPE_DEFINITIONS_PATH.toString());
+        expectedUpdatedAdditionalTypesImport.setContent(Files.readString(testResourcePath.resolve(Path.of("expected-additional_types-2-updated.yaml"))));
+        final ToscaImportByModel actualUpdatedAdditionalTypesImport =
+            actualImportList.stream().filter(expectedUpdatedAdditionalTypesImport::equals).findFirst().orElse(null);
+        assertNotNull(actualUpdatedAdditionalTypesImport);
+        
+        assertTrue(actualUpdatedAdditionalTypesImport.getContent().contains("added_property_1"));
+        assertTrue(actualUpdatedAdditionalTypesImport.getContent().contains("added_property_2"));
     }
 
     @Test
