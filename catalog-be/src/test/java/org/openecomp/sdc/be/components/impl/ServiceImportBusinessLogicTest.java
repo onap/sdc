@@ -218,7 +218,21 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(toscaOperationFacade.updateInputsToComponent(anyList(), eq(newService.getUniqueId()))).thenReturn(Either.left(new ArrayList<>()));
 
         when(applicationDataTypeCache.get(any(), contains("tosca.datatypes.test_"))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
-        when(applicationDataTypeCache.get(any(), matches("^((?!tosca.datatypes.test_).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
+        DataTypeDefinition typeToBeUpdated = new DataTypeDefinition();
+        List<PropertyDefinition> properties = new ArrayList<>();
+        PropertyDefinition nameProperty = new PropertyDefinition();
+        nameProperty.setName("name");
+        nameProperty.setType("string");
+        properties.add(nameProperty);
+        PropertyDefinition versionProperty = new PropertyDefinition();
+        versionProperty.setName("version");
+        versionProperty.setType("string");
+        properties.add(versionProperty);
+        typeToBeUpdated.setProperties(properties);
+        when(applicationDataTypeCache.get(any(), eq("onap.datatypes.ToscaConceptIdentifier.datatype"))).thenReturn(Either.left(typeToBeUpdated));
+        when(applicationDataTypeCache.get(any(), matches("^((?!(tosca.datatypes.test_|onap.datatypes.ToscaConceptIdentifier)).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
+
+
 
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.left(null));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull())).thenReturn(Either.left(null));
@@ -240,9 +254,10 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         ArgumentCaptor<String> yaml = ArgumentCaptor.forClass(String.class);
         verify(dataTypeBusinessLogic).createDataTypeFromYaml(yaml.capture(), isNull(), anyBoolean());
         Map<String, Object> yamlMap = new Yaml().load(yaml.getValue());
-        assertEquals(2, yamlMap.size());
+        assertEquals(3, yamlMap.size());
         assertNotNull(yamlMap.get("tosca.datatypes.test_a"));
         assertNotNull(yamlMap.get("tosca.datatypes.test_b"));
+        assertNotNull(yamlMap.get("onap.datatypes.ToscaConceptIdentifier"));
     }
 
     @Test

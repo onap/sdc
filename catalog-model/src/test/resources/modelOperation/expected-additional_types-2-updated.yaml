@@ -2,11 +2,19 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 description: Auto-generated file that contains package custom types or types added
   after system installation.
 data_types:
+  tosca.datatypes.nfv.PreviouslyExistingType1:
+    derived_from: tosca.datatypes.Root
+    description: additional type
+  tosca.datatypes.nfv.PreviouslyExistingType2:
+    derived_from: tosca.datatypes.Root
+    description: additional type
   tosca.datatypes.nfv.ServiceAvailability:
     derived_from: tosca.datatypes.Root
     description: additional type
     properties:
       added_property_1:
+        type: string
+      added_property_2:
         type: string
   tosca.datatypes.nfv.L2AddressData:
     derived_from: tosca.datatypes.Root

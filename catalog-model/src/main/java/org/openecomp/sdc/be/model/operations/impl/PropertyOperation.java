@@ -1822,13 +1822,13 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             String oldDerivedFromName = oldDataTypeDefinition.getDerivedFromName();
             String dataTypeName = newDataTypeDefinition.getName();
             List<PropertyDefinition> propertiesToAdd = new ArrayList<>();
-            if (isPropertyOmitted(newProperties, oldProperties, dataTypeName) || isPropertyTypeChanged(dataTypeName, newProperties, oldProperties,
-                propertiesToAdd) || isDerivedFromNameChanged(dataTypeName, newDerivedFromName, oldDerivedFromName)) {
+            if (isPropertyTypeChanged(dataTypeName, newProperties, oldProperties, propertiesToAdd)
+                    || isDerivedFromNameChanged(dataTypeName, newDerivedFromName, oldDerivedFromName)) {
                 log.debug("The new data type {} is invalid.", dataTypeName);
                 result = Either.right(StorageOperationStatus.CANNOT_UPDATE_EXISTING_ENTITY);
                 return result;
             }
-            if (propertiesToAdd == null || propertiesToAdd.isEmpty()) {
+            if (CollectionUtils.isEmpty(propertiesToAdd)) {
                 log.debug("No new properties has been defined in the new data type {}", newDataTypeDefinition);
                 result = Either.right(StorageOperationStatus.OK);
                 return result;
@@ -1933,44 +1933,6 @@ public class PropertyOperation extends AbstractOperation implements IPropertyOpe
             }
         }
         return entryType;
-    }
-
-    private boolean isPropertyOmitted(List<PropertyDefinition> newProperties, List<PropertyDefinition> oldProperties, String dataTypeName) {
-        boolean isValid = validateChangeInCaseOfEmptyProperties(newProperties, oldProperties, dataTypeName);
-        if (!isValid) {
-            log.debug("At least one property is missing in the new data type {}", dataTypeName);
-            return false;
-        }
-        if (newProperties != null && oldProperties != null) {
-            List<String> newProps = newProperties.stream().map(PropertyDataDefinition::getName).collect(Collectors.toList());
-            List<String> oldProps = oldProperties.stream().map(PropertyDataDefinition::getName).collect(Collectors.toList());
-            if (!newProps.containsAll(oldProps)) {
-                StringJoiner joiner = new StringJoiner(",", "[", "]");
-                newProps.forEach(joiner::add);
-                log.debug("Properties {} in data type {} are missing, but they already defined in the existing data type", joiner.toString(),
-                    dataTypeName);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean validateChangeInCaseOfEmptyProperties(List<PropertyDefinition> newProperties, List<PropertyDefinition> oldProperties,
-                                                          String dataTypeName) {
-        if (newProperties != null) {
-            if (newProperties.isEmpty()) {
-                newProperties = null;
-            }
-        }
-        if (oldProperties != null) {
-            if (oldProperties.isEmpty()) {
-                oldProperties = null;
-            }
-        }
-        if ((newProperties == null && oldProperties == null) || (newProperties != null && oldProperties != null)) {
-            return true;
-        }
-        return false;
     }
 
     private boolean isDerivedFromNameChanged(String dataTypeName, String newDerivedFromName, String oldDerivedFromName) {
