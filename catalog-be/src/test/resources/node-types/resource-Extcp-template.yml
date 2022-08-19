@@ -85,11 +85,12 @@ node_types:
         - 0
         - UNBOUNDED
         capability: tosca.capabilities.network.Linkable
-        relationship: tosca.relationships.network.LinksTo
-    - external_virtualLink:
-        occurrences:
-        - 0
-        - UNBOUNDED
-        capability: tosca.capabilities.network.Linkable
-        node: org.openecomp.resource.vl.VL
-        relationship: tosca.relationships.network.LinksTo
+    interfaces:
+      Vnflcm:
+        type: tosca.interfaces.nfv.Vnflcm
+        heal:
+          description: ASDASDAS
+          implementation: Artifacts/Deployment/WORKFLOW/BPMN/ASDWASDW
+          inputs:
+            sd: original
+            ADWA: original
