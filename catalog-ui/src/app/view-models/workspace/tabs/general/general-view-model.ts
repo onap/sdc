@@ -563,7 +563,7 @@ export class GeneralViewModel {
         };
 
         this.$scope.validateField = (field:any):boolean => {
-            if (field && field.$dirty && field.$invalid) {
+            if (field && (field.$$currentValidationRunId !== 1) && field.$invalid) {
                 return true;
             }
             return false;
