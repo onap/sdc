@@ -12,6 +12,11 @@ RUN set -ex && \
         ruby-dev \
         libffi-dev \
         libxml2-dev && \
+<<<<<<< HEAD   (5ae806 Release 1.10.4)
+=======
+    gem install public_suffix -v 4.0.7 --no-document && \
+    gem install multipart-post -v 2.2.0 --no-document && \
+>>>>>>> CHANGE (9efabf Fix broken chef/berkshelf install in docker images)
     gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 etc webrick --no-document && \
     gem cleanup && \
     apk update
