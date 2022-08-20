@@ -12,6 +12,7 @@ RUN set -ex && \
         ruby-dev \
         libffi-dev \
         libxml2-dev && \
+    gem install public_suffix -v 4.0.7 --no-document && \
     gem install multipart-post -v 2.2.0 --no-document && \
     gem install chef:13.8.5 berkshelf:6.3.1 io-console:0.4.6 etc webrick --no-document && \
     gem cleanup && \
