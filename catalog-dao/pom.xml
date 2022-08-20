@@ -286,14 +286,23 @@ Modifications copyright (c) 2018 Nokia
     </dependency>
 
     <dependency>
+      <groupId>org.apache.tinkerpop</groupId>
+      <artifactId>gremlin-core</artifactId>
+      <version>3.4.13</version>
+    </dependency>
+    <dependency>
       <groupId>org.janusgraph</groupId>
       <artifactId>janusgraph-core</artifactId>
       <version>${janusgraph.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <artifactId>gremlin-groovy</artifactId>
           <groupId>org.apache.tinkerpop</groupId>
+          <artifactId>gremlin-groovy</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tinkerpop</groupId>
+          <artifactId>gremlin-core</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.json</groupId>
