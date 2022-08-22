@@ -83,7 +83,7 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
     private void updateUserContext(String user_id) {
         User user = userBusinessLogic.getUser(user_id, false);
         Set<String> roles = new HashSet<>(Arrays.asList(user.getRole()));
-        UserContext userContext = new UserContext(user_id, roles, user.getFirstName(), user.getLastName());
+        UserContext userContext = new UserContext(user.getUserId(), roles, user.getFirstName(), user.getLastName());
         ThreadLocalsHolder.setUserContext(userContext);
     }
 }
