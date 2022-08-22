@@ -45,18 +45,11 @@ public class InputConverter {
     }
 
     /**
-     * This is the converter made for input
-     * input is derived from properties and  is similar to properties
-     * now that it was added annotations , we created a new convertetor for it
-     * Input
-     *    List of annotation
-     *          Annotation:
-     *              name
-     *              type
-     *              description
-     *              list of properties */
+     * This is the converter made for input input is derived from properties and  is similar to properties now that it was added annotations , we
+     * created a new convertetor for it Input List of annotation Annotation: name type description list of properties
+     */
     public Map<String, ToscaProperty> convertInputs(List<InputDefinition> inputDef, Map<String, DataTypeDefinition> dataTypes) {
-        log.debug("convert inputs to to tosca  ");
+        log.debug("convert inputs to tosca");
         Map<String, ToscaProperty> inputs = new HashMap<>();
         if (inputDef != null) {
             inputDef.forEach(i -> {

@@ -74,6 +74,10 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
         resourcePropertiesAssignmentTab.setPropertyValue(propertyName, value);
     }
 
+    public void setInputValue(final String inputName, final Object value) {
+        resourcePropertiesAssignmentInputTab.setInputValue(inputName, value);
+    }
+
     /**
      * Retrieves a property value.
      *
@@ -130,23 +134,23 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
     /**
      * select property
      */
-    public void selectProperty(String propertyName){
+    public void selectProperty(String propertyName) {
         resourcePropertiesAssignmentTab.selectProperty(propertyName);
     }
 
-    public void loadComponentInstanceProperties(final String instanceName){
+    public void loadComponentInstanceProperties(final String instanceName) {
         resourcePropertiesAssignmentTab.loadComponentInstanceProperties(instanceName);
     }
 
-    public void clickOnDeclareInput(){
+    public void clickOnDeclareInput() {
         resourcePropertiesAssignmentTab.clickOnDeclareInput();
     }
 
-    public void loadCompositionTab(){
+    public void loadCompositionTab() {
         resourcePropertiesAssignmentTab.loadCompositionTab();
     }
 
-    public void clickInputTab(String propertyName){
+    public void clickInputTab(String propertyName) {
         waitForElementVisibility(By.xpath(XpathSelector.DECLARE_NOTIFIFICATION.getXpath()));
         ExtentTestActions.takeScreenshot(Status.INFO, "Declare-Input", String.format("Added declared input for property %s", propertyName));
         selectInputTab();
@@ -163,9 +167,9 @@ public class ResourcePropertiesAssignmentPage extends ComponentPage {
         INPUT_TAB("//*[contains(@data-tests-id, 'Inputs') and contains(@class, 'tab')]"),
         DECLARE_NOTIFIFICATION("//div[@data-tests-id='Inputs']/div[contains(@class, 'tab-indication')]");
 
+        private final String xpathFormat;
         @Getter
         private String id;
-        private final String xpathFormat;
 
         XpathSelector(final String xpathFormat) {
             this.xpathFormat = xpathFormat;
