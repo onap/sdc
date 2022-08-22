@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f282f836_a60f9691",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-22T13:00:24Z",
+      "side": 1,
+      "message": "In the scenario where the definition in the service is from a newer version of the model (as opposed to something changed by a user for that service) then changing the description, default value etc is a valid thing to do. Failing the import in this scenario would fall short of what would be a reasonable expectation for it to succeed. However we have no way of knowing if the changes are from a newer version of the model or a customization. \nIf we do allow these things to be changed then at any subsequent upgrade the values could be overwritten thereby removing the customization. This would not be desirable.\n\nTherefore I think the best thing to do is to only the support the addition of new properties to the existing definition and change nothing else (i.e. any other changes are ignored). So the approach would be to add any not already existing properties to the existing definition rather than creating a new version from the new definition.\n\nWe would also then need to make sure at upgrade that the definition included in the upragde is deployed and includes and of these additionally added properties",
+      "range": {
+        "startLine": 312,
+        "startChar": 11,
+        "endLine": 318,
+        "endChar": 13
+      },
+      "revId": "2dadd811efe582b549418fe39c07c1c48b8fc706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
