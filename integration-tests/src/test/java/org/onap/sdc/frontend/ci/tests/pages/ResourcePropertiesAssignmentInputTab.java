@@ -20,28 +20,35 @@
 package org.onap.sdc.frontend.ci.tests.pages;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.onap.sdc.frontend.ci.tests.pages.PropertyNameBuilder.buildInputField;
 
+import com.aventstack.extentreports.Status;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.onap.sdc.frontend.ci.tests.execute.setup.ExtentTestActions;
+import org.onap.sdc.frontend.ci.tests.utilities.LoaderHelper;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent;
+import org.onap.sdc.frontend.ci.tests.utilities.NotificationComponent.NotificationType;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import com.aventstack.extentreports.Status;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * Handles the Resource Properties Assignment Input Tab UI actions
  */
 public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
 
+    private LoaderHelper loaderHelper;
+    private NotificationComponent notificationComponent;
+
     public ResourcePropertiesAssignmentInputTab(final WebDriver webDriver) {
         super(webDriver);
+        notificationComponent = new NotificationComponent(webDriver);
+        loaderHelper = new LoaderHelper(webDriver);
     }
 
     @Override
@@ -61,8 +68,9 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
 
     /**
      * Adds metadata to a property within the inputs tab based on a property name
-     * @param name used to determine which property to add metadata
-     * @param key the metadata key to add
+     *
+     * @param name  used to determine which property to add metadata
+     * @param key   the metadata key to add
      * @param value the metadata value to add
      */
     public void setInputPropertyMetadata(String name, String key, String value) {
@@ -83,12 +91,13 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
 
     public void saveInputProperties() {
         findElement(By.xpath(XpathSelector.PROPERTY_SAVE_BTN.getXpath())).click();
-        waitForElementVisibility(XpathSelector.PROPERTY_SAVE_MESSAGE.getXpath());
-        waitForElementInvisibility(By.xpath(XpathSelector.PROPERTY_SAVE_MESSAGE.getXpath()));
+        loaderHelper.waitForLoaderInvisibility(20);
+        notificationComponent.waitForNotification(NotificationType.SUCCESS, 20);
     }
 
     /**
-     * Adds a input
+     * Adds an input
+     *
      * @param inputsMap the inputs map to be added
      */
     public void addInputs(final Map<String, String> inputsMap) {
@@ -106,6 +115,7 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
 
     /**
      * Fills the creation input modal.
+     *
      * @param inputName the input name to be created
      * @param inputType the input type to be selected
      */
@@ -118,9 +128,10 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
 
     /**
      * Verifies if the added input is displayed on the UI.
+     *
      * @param inputsMap the input name to be found
      */
-    public void verifyInputs(final Map<String, String> inputsMap ) {
+    public void verifyInputs(final Map<String, String> inputsMap) {
         for (Map.Entry<String, String> input : inputsMap.entrySet()) {
             assertTrue(this.getInputPropertyNames().contains(input.getKey()),
                 String.format("%s Input should be listed but found %s", input.getKey(),
@@ -129,7 +140,8 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
     }
 
     /**
-     * Checks if a input exists.
+     * Checks if an input exists.
+     *
      * @param inputName the input name
      * @return the value of the input
      */
@@ -141,6 +153,40 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
             return false;
         }
         return true;
+    }
+
+    public void setInputValue(final String inputName, final Object value) {
+        if (value == null) {
+            return;
+        }
+
+        if (value instanceof String) {
+            setStringInputValue(inputName, (String) value);
+            return;
+        }
+
+        if (value instanceof Integer) {
+            setStringInputValue(inputName, ((Integer) value).toString());
+            return;
+        }
+
+        if (value instanceof Boolean) {
+            setBooleanPropertyValue(inputName, ((Boolean) value).toString());
+            return;
+        }
+
+        throw new UnsupportedOperationException("Cannot set input value of type: " + value.getClass());
+    }
+
+    private void setStringInputValue(final String inputName, final String value) {
+        isInputPropertiesTableLoaded();
+        findElement(By.xpath(XpathSelector.INPUT_VALUE.formatXpath(buildInputField(inputName)))).sendKeys(value);
+    }
+
+    private void setBooleanPropertyValue(final String inputName, final String value) {
+        isInputPropertiesTableLoaded();
+        new Select(findElement(By.xpath(XpathSelector.INPUT_VALUE_BOOLEAN.formatXpath(buildInputField(inputName)))))
+            .selectByVisibleText(value.toUpperCase());
     }
 
     /**
@@ -160,6 +206,8 @@ public class ResourcePropertiesAssignmentInputTab extends AbstractPageObject {
         INPUT_PROPERTY_ADD_METADATA_BUTTON(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//a")),
         INPUT_PROPERTY_METADATA_KEY_VALUE_PAIR(INPUT_PROPERTY_TABLE_ROW.getXpath().concat("//input")),
         INPUT_ADD_BTN("//div[contains(@class,'add-btn')]"),
+        INPUT_VALUE("//input[contains(@class,'value-input') and @data-tests-id='%s']"),
+        INPUT_VALUE_BOOLEAN("//select[@data-tests-id='%s']"),
         MODAL_BACKGROUND("//div[@class='modal-background']");
 
         @Getter

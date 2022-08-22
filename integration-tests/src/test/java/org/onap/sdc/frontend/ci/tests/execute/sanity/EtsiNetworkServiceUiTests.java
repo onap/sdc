@@ -60,7 +60,7 @@ import org.onap.sdc.frontend.ci.tests.flow.CreateServiceFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVlmFlow;
 import org.onap.sdc.frontend.ci.tests.flow.CreateVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.DownloadCsarArtifactFlow;
-import org.onap.sdc.frontend.ci.tests.flow.EditComponentPropertiesFlow;
+import org.onap.sdc.frontend.ci.tests.flow.EditComponentInputsFlow;
 import org.onap.sdc.frontend.ci.tests.flow.ImportVspFlow;
 import org.onap.sdc.frontend.ci.tests.flow.composition.CreateRelationshipFlow;
 import org.onap.sdc.frontend.ci.tests.flow.exception.UiTestFlowRuntimeException;
@@ -113,8 +113,8 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         //adding node
         componentPage = addNodesAndCreateRelationships(resourceName, serviceCreateData, componentPage);
 
-        final Map<String, Object> propertyMap = createPropertyToEditMap();
-        editProperties(componentPage, propertyMap);
+        final Map<String, Object> inputToEditMap = createInputToEditMap();
+        editInputs(componentPage, inputToEditMap);
 
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = downloadCsarArtifact(componentPage);
         final ToscaArtifactsPage toscaArtifactsPage = downloadCsarArtifactFlow.getLandedPage()
@@ -123,8 +123,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         assertThat("No artifact download was found", toscaArtifactsPage.getDownloadedArtifactList(), not(empty()));
 
         final String downloadedCsarName = toscaArtifactsPage.getDownloadedArtifactList().get(0);
-        propertyMap.entrySet().removeIf(e -> e.getValue() == null);
-        checkEtsiNsPackage(createServiceFlow.getServiceCreateData().getName(), downloadedCsarName, propertyMap);
+        checkEtsiNsPackage(createServiceFlow.getServiceCreateData().getName(), downloadedCsarName, inputToEditMap);
     }
 
     private ServiceComponentPage addNodesAndCreateRelationships(final String resourceName, final ServiceCreateData serviceCreateData,
@@ -268,29 +267,27 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         return checkVfPropertiesFlow;
     }
 
-    private void editProperties(final ComponentPage componentPage, final Map<String, Object> propertyMap) {
-        final EditComponentPropertiesFlow editComponentPropertiesFlow = new EditComponentPropertiesFlow(webDriver, propertyMap);
-        editComponentPropertiesFlow.run(componentPage);
-    }
-
     private DownloadCsarArtifactFlow downloadCsarArtifact(final ComponentPage componentPage) {
         final DownloadCsarArtifactFlow downloadCsarArtifactFlow = new DownloadCsarArtifactFlow(webDriver);
         downloadCsarArtifactFlow.run(componentPage);
         return downloadCsarArtifactFlow;
     }
 
-    private Map<String, Object> createPropertyToEditMap() {
-        final Map<String, Object> propertyMap = new HashMap<>();
-        propertyMap.put("designer", "designer1");
-        propertyMap.put("descriptor_id", "descriptor_id1");
-        propertyMap.put("flavour_id", "flavour_id1");
-        propertyMap.put("invariant_id", "invariant_id1");
-        propertyMap.put("name", "name1");
-        propertyMap.put("version", "version1");
-        propertyMap.put("service_availability_level", 1);
-        //does not work yet with TOSCA complex types
-        propertyMap.put("ns_profile", null);
-        return propertyMap;
+    private Map<String, Object> createInputToEditMap() {
+        final Map<String, Object> inputsMap = new HashMap<>();
+        inputsMap.put("descriptor_id", "new descriptor_id");
+        inputsMap.put("designer", "new designer");
+        inputsMap.put("flavour_id", "new flavour_id");
+        inputsMap.put("invariant_id", "new invariant_id");
+        inputsMap.put("name", "new name");
+        inputsMap.put("service_availability_level", 123);
+        inputsMap.put("version", "new version");
+        return inputsMap;
+    }
+
+    private void editInputs(final ComponentPage componentPage, final Map<String, Object> inputsMap) {
+        final EditComponentInputsFlow editComponentInputsFlow = new EditComponentInputsFlow(webDriver, inputsMap);
+        editComponentInputsFlow.run(componentPage);
     }
 
     private ServiceCreateData createServiceFormData() {
@@ -303,8 +300,8 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         return serviceCreateData;
     }
 
-    private void checkEtsiNsPackage(final String serviceName, final String downloadedCsarName,
-                                    final Map<String, Object> expectedPropertyMap) throws UnzipException {
+    private void checkEtsiNsPackage(final String serviceName, final String downloadedCsarName, final Map<String, Object> expectedInputMap)
+        throws UnzipException {
         final String downloadFolderPath = getConfig().getDownloadAutomationFolder();
         final Map<String, byte[]> filesFromZip = FileHandling.getFilesFromZip(downloadFolderPath, downloadedCsarName);
         final Optional<String> etsiPackageEntryOpt =
@@ -327,19 +324,19 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
             assertThat("Expecting the NSD CSAR signature " + nsdCsarSignature, nsPackageFileMap, hasKey(nsdCsarSignature));
             final String nsdCertificate = nsdPackageBaseName + ".cert";
             assertThat("Expecting the NSD CSAR certificate " + nsdCertificate, nsPackageFileMap, hasKey(nsdCertificate));
-            checkNsCsar(nsdPackageBaseName, nodeType, expectedPropertyMap, nsPackageFileMap.get(nsdCsarFile));
+            checkNsCsar(nsdPackageBaseName, nodeType, nsPackageFileMap.get(nsdCsarFile), expectedInputMap);
             return;
         }
         if (etsiPackageEntry.endsWith(".csar")) {
             final Map<String, byte[]> nsPackageFileMap = FileHandling.getFilesFromZip(etsiPackageBytes);
-            checkNsCsar(nsdPackageBaseName, nodeType, expectedPropertyMap, nsPackageFileMap.get(nsdCsarFile));
+            checkNsCsar(nsdPackageBaseName, nodeType, nsPackageFileMap.get(nsdCsarFile), expectedInputMap);
             return;
         }
         fail(String.format("Unexpected ETSI NS PACKAGE entry '%s'. Expecting a '.csar' or '.zip'", etsiPackageEntry));
     }
 
-    private void checkNsCsar(final String expectedServiceName, final String expectedServiceNodeType, final Map<String, Object> expectedPropertiesMap,
-                             final byte[] nsCsar) throws UnzipException {
+    private void checkNsCsar(final String expectedServiceName, final String expectedServiceNodeType,
+                             final byte[] nsCsar, final Map<String, Object> expectedInputMap) throws UnzipException {
         final Map<String, byte[]> csarFileMap = FileHandling.getFilesFromZip(nsCsar);
 
         final String mainDefinitionFile = String.format("Definitions/%s.yaml", expectedServiceName);
@@ -375,9 +372,9 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
         final Map<String, Object> properties = getMapEntry(serviceNodeTemplate, "properties");
         assertThat(String.format("'%s' node template in '%s' should contain a properties entry", expectedServiceNodeType, mainDefinitionFile),
             properties, notNullValue());
-        assertThat(String.format("'%s' node template should contain '%s' properties", expectedServiceNodeType, expectedPropertiesMap.size()),
-            properties.size(), is(expectedPropertiesMap.size()));
-        for (final Entry<String, Object> expectedPropertyEntry : expectedPropertiesMap.entrySet()) {
+        assertThat(String.format("'%s' node template should contain '%s' properties", expectedServiceNodeType, expectedInputMap.size()),
+            properties.size(), is(expectedInputMap.size()));
+        for (final Entry<String, Object> expectedPropertyEntry : expectedInputMap.entrySet()) {
             final String expectedPropertyName = expectedPropertyEntry.getKey();
             assertThat(String.format("'%s' node template should contain the property '%s'", expectedServiceNodeType, expectedPropertyName),
                 properties, hasKey(expectedPropertyName));
@@ -385,7 +382,7 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
             if (expectedPropertyValue != null) {
                 final Object actualPropertyValue = properties.get(expectedPropertyName);
                 final String msg = String.format("The property '%s', in '%s' node template should have the expected value '%s'",
-                    expectedPropertyName, expectedServiceNodeType, actualPropertyValue);
+                    expectedPropertyName, expectedServiceNodeType, expectedPropertyValue);
                 assertThat(msg, actualPropertyValue, is(expectedPropertyValue));
             }
         }
@@ -435,4 +432,3 @@ public class EtsiNetworkServiceUiTests extends SetupCDTest {
     }
 
 }
-
