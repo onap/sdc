@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "713146d7_94ed33b1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-22T09:03:24Z",
+      "side": 1,
+      "message": "I would suggest to improve the message, it is too vague:\n\nFix broken Chef install in docker images\n\nSet a specific version for the ruby gem \"public_suffix\", required by Chef, to be compatible with the used version of ruby (2.5.0).",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 16
+      },
+      "revId": "f152a3ef90c34de73ebb0deff7ebc3d49dc29b0d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
