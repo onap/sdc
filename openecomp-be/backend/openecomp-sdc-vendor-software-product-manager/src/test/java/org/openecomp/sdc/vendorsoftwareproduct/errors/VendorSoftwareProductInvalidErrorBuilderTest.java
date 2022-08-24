@@ -22,29 +22,29 @@ package org.openecomp.sdc.vendorsoftwareproduct.errors;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openecomp.sdc.common.errors.ErrorCategory;
 import org.openecomp.sdc.common.errors.ErrorCode;
 import org.openecomp.sdc.versioning.dao.types.Version;
 
-public class VendorSoftwareProductInvalidErrorBuilderTest {
+class VendorSoftwareProductInvalidErrorBuilderTest {
 
     @Test
-    public void testVendorSoftwareProductMissingServiceModelErrorBuilder() {
+    void testVendorSoftwareProductMissingServiceModelErrorBuilder() {
         //when
         ErrorCode errorCode = VendorSoftwareProductInvalidErrorBuilder
-                                      .vendorSoftwareProductMissingServiceModelErrorBuilder("1",
-                                              Version.valueOf("1.1"));
+            .vendorSoftwareProductMissingServiceModelErrorBuilder("1",
+                Version.valueOf("1.1"));
 
         //then
         assertEquals(VendorSoftwareProductErrorCodes.VSP_INVALID, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals("Vendor software product with Id 1 and version null is invalid - does not contain service model.",
-                errorCode.message());
+            errorCode.message());
     }
 
     @Test
-    public void testVspMissingDeploymentFlavorErrorBuilder() {
+    void testVspMissingDeploymentFlavorErrorBuilder() {
         //when
         ErrorCode errorCode = VendorSoftwareProductInvalidErrorBuilder.vspMissingDeploymentFlavorErrorBuilder();
 
@@ -52,7 +52,7 @@ public class VendorSoftwareProductInvalidErrorBuilderTest {
         assertEquals(VendorSoftwareProductErrorCodes.VSP_INVALID, errorCode.id());
         assertEquals(ErrorCategory.APPLICATION, errorCode.category());
         assertEquals(
-                "VSP has to have a minimum of one Deployment Flavor defined for being able to be instantiated.Please add a "
-                        + "Deployment Flavor and re-submit the VSP.", errorCode.message());
+            "VSP has to have a minimum of one Deployment Flavor defined for being able to be instantiated.Please add a "
+                + "Deployment Flavor and re-submit the VSP.", errorCode.message());
     }
 }
