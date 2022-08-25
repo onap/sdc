@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d97d3946_f49deab2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-25T09:26:05Z",
+      "side": 1,
+      "message": "Problem with this approach is we are potentially overwriting the metadata for the original resource with default metadata.\n\nI would suggest to:\ncreate a new class NullNodeTypeMetadata which extends NodeTypeMetadata which is instaniated in ServiceCsarInfo if we cant find metadata  \ncreate a new class DefaultUploadResourceInfo which contains the default values\nin NodeTypeMetadataMapper resturn an instance of DefaultUploadResourceInfo when the given nodeTypeMetadata is an instance of NullNodeTypeMetadata\nin ResourceImportManager.importCertifiedResource if the resource already exists:\n    - if the given UploadResourceInfo is not DefaultUploadResourceInfo then use it\n    - if the given UploadResourceInfo is DefaultUploadResourceInfo then use the metadata from the existing resource instead",
+      "range": {
+        "startLine": 316,
+        "startChar": 14,
+        "endLine": 317,
+        "endChar": 141
+      },
+      "revId": "d7f8a6f36389d24949e3d02ac8d70105290c5a6f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6084481f_b259e899",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-25T09:26:05Z",
+      "side": 1,
+      "message": "this method is updating the value of latestMappedToscaTemplate which is kind of hidden in the detail. From code readability if should be clearer what the method is doing\nI would suggest to change to:\nprivate Map\u003cString, Object\u003e getNewProperties()\nand then in the calling code check if the returned map is empty",
+      "range": {
+        "startLine": 342,
+        "startChar": 20,
+        "endLine": 342,
+        "endChar": 42
+      },
+      "revId": "d7f8a6f36389d24949e3d02ac8d70105290c5a6f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb6d1672_56c068f9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-25T09:26:05Z",
+      "side": 1,
+      "message": "Can we just do:\nsecondMap.putAll(firstMap)\n?\nbut i guess this may change anyway depending on above comment",
+      "range": {
+        "startLine": 356,
+        "startChar": 0,
+        "endLine": 369,
+        "endChar": 31
+      },
+      "revId": "d7f8a6f36389d24949e3d02ac8d70105290c5a6f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40203aeb_11cd6509",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogicTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-25T09:26:05Z",
+      "side": 1,
+      "message": "there is no testing of importing an updated node type.",
+      "range": {
+        "startLine": 247,
+        "startChar": 0,
+        "endLine": 247,
+        "endChar": 0
+      },
+      "revId": "d7f8a6f36389d24949e3d02ac8d70105290c5a6f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
