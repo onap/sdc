@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "314bdf3d_fbd404cb",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/ModelOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-25T09:40:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63287f53_a565d9f3",
+      "range": {
+        "startLine": 401,
+        "startChar": 154,
+        "endLine": 401,
+        "endChar": 155
+      },
+      "revId": "ef7e9090f4bc1ecd7dd48ab94dd5c12b1e914283",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6de5ec71_dc265003",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2022-08-24T08:25:29Z",
       "side": 1,
       "message": "never return TRUE, is it correct?",
+      "range": {
+        "startLine": 1938,
+        "startChar": 139,
+        "endLine": 1955,
+        "endChar": 5
+      },
+      "revId": "ef7e9090f4bc1ecd7dd48ab94dd5c12b1e914283",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b2cd344_3aa2fa52",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/PropertyOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1955,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-25T09:40:16Z",
+      "side": 1,
+      "message": "good point, this method is superfluous now really",
+      "parentUuid": "6de5ec71_dc265003",
       "range": {
         "startLine": 1938,
         "startChar": 139,
