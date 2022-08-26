@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a317c8f7_82d2d9ca",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 710,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-08-26T11:15:50Z",
+      "side": 1,
+      "message": "Instead of doing \u0027wrong creation and update\u0027, I tried to do \u0027declare properties as input\u0027, but this brought more problems https://gerrit.onap.org/r/c/sdc/+/129934/19/catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java.\nSo, I decided to leave it \u0027as is\u0027 and update after creation.",
+      "parentUuid": "4b550c26_eaa3e72b",
+      "range": {
+        "startLine": 709,
+        "startChar": 16,
+        "endLine": 710,
+        "endChar": 84
+      },
+      "revId": "484ff09de9450c1a3277ca26af9c0bad271aa03b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eab01772_300f0c5c",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
         "patchSetId": 10
@@ -45,6 +69,30 @@
       "revId": "484ff09de9450c1a3277ca26af9c0bad271aa03b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f02a44c4_b14ede16",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 807,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-08-26T11:15:50Z",
+      "side": 1,
+      "message": "to avoid replacement with wrong (null) values",
+      "parentUuid": "eab01772_300f0c5c",
+      "range": {
+        "startLine": 807,
+        "startChar": 12,
+        "endLine": 807,
+        "endChar": 86
+      },
+      "revId": "484ff09de9450c1a3277ca26af9c0bad271aa03b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
