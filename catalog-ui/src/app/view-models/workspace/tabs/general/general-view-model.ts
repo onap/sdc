@@ -853,7 +853,7 @@ export class GeneralViewModel {
         // reload categories
         this.$scope.initCategories();
         this.$scope.categories = this.$scope.categories.filter(category =>
-            !modelName ? category.models.indexOf(DEFAULT_MODEL_NAME) !== -1 : category.models !== null && category.models.indexOf(modelName) !== -1);
+            !modelName ? !category.models || category.models.indexOf(DEFAULT_MODEL_NAME) !== -1 : category.models !== null && category.models.indexOf(modelName) !== -1);
     }
 
 
