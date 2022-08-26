@@ -1934,6 +1934,10 @@ public class ServiceImportBusinessLogic {
 
     private void mergeOperationInputDefinitions(ListDataDefinition<OperationInputDefinition> inputsFromNodeType,
                                                 ListDataDefinition<OperationInputDefinition> instanceInputs) {
+        if (inputsFromNodeType == null || CollectionUtils.isEmpty(inputsFromNodeType.getListToscaDataDefinition()) || instanceInputs == null
+                || CollectionUtils.isEmpty(instanceInputs.getListToscaDataDefinition())) {
+            return;
+        }
         instanceInputs.getListToscaDataDefinition().forEach(
             instanceInput -> inputsFromNodeType.getListToscaDataDefinition().stream().filter(
                 templateInput -> templateInput.getName().equals(instanceInput.getName())
