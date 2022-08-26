@@ -24,6 +24,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,6 +68,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
     @Deprecated
     private ToscaGetFunctionDataDefinition toscaGetFunction;
     private ToscaFunction toscaFunction;
+    private Collection<SubPropertyToscaFunction> subPropertyToscaFunctions;
 
     private String inputPath;
     private String status;
@@ -126,6 +128,7 @@ public class PropertyDataDefinition extends ToscaDataDefinition {
         this.setToscaFunction(propertyDataDefinition.getToscaFunction());
         this.parentPropertyType = propertyDataDefinition.getParentPropertyType();
         this.subPropertyInputPath = propertyDataDefinition.getSubPropertyInputPath();
+        this.subPropertyToscaFunctions = propertyDataDefinition.getSubPropertyToscaFunctions();
         if (isNotEmpty(propertyDataDefinition.annotations)) {
             this.setAnnotations(propertyDataDefinition.annotations);
         }
