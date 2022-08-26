@@ -143,8 +143,9 @@ export class DynamicPropertyComponent {
     };
 
     createNewChildProperty = (): void => {
-
+       
         let newProps: Array<DerivedFEProperty> = this.propertiesUtils.createListOrMapChildren(this.property, "", null);
+
         this.propertiesUtils.assignFlattenedChildrenValues(this.property.valueObj, [newProps[0]], this.property.propertiesName);
         if (this.property instanceof PropertyFEModel) {
             this.addChildProps(newProps, this.property.name);

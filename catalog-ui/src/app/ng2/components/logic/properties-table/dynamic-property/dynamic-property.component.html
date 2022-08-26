@@ -21,7 +21,7 @@
     <!-- LEFT CELL -->
     <ng-container *ngIf="!isPropertyFEModel">
         <div class="table-cell" *ngIf="canBeDeclared" [ngClass]="{'filtered':property.name === propertyNameSearchText}" [class.round-checkbox]="property.isDeclared"> <!-- simple children of complex type [@checkEffect]="property.isDeclared"-->
-            <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly || property.isToscaFunction()" (checkedChange)="checkProperty.emit(property.propertiesName)" ></checkbox>
+            <checkbox *ngIf="hasDeclareOption" [(checked)]="property.isSelected" [disabled]="property.isDisabled || property.isDeclared || readonly " (checkedChange)="checkProperty.emit(property.propertiesName)" ></checkbox>
             <div class="inner-cell-div" tooltip="{{property.name}}"><span>{{property.name}}</span></div>
         </div>
         <div class="table-cell" *ngIf="!canBeDeclared && !property.isChildOfListOrMap">

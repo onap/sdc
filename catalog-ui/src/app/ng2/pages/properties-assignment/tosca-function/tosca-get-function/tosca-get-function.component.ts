@@ -18,7 +18,7 @@
  */
 
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {AttributeModel, ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel} from 'app/models';
+import {AttributeModel, ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel, PropertyDeclareAPIModel} from 'app/models';
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 import {PropertiesService} from "../../../../services/properties.service";
@@ -261,10 +261,17 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     private propertyTypeToString() {
+	    if (this.isSubProperty()){
+	        return this.getType((<PropertyDeclareAPIModel>this.property).propertiesName.split("#").slice(1),  this.property.type);
+        }
         if (this.property.schemaType) {
             return `${this.property.type} of ${this.property.schemaType}`;
         }
         return this.property.type;
+    }
+
+    private isSubProperty(): boolean{
+	    return this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>this.property).propertiesName && (<PropertyDeclareAPIModel>this.property).propertiesName.length > 1;
     }
 
     private extractProperties(componentGenericResponse: ComponentGenericResponse): Array<PropertyBEModel | AttributeModel> {
@@ -358,15 +365,28 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         });
     }
 
-    private hasSameType(property: PropertyBEModel | AttributeModel) {
+    private hasSameType(property: PropertyBEModel | AttributeModel): boolean {
         if (this.typeHasSchema(this.property.type)) {
             if (!property.schema || !property.schema.property) {
                 return false;
             }
             return property.type === this.property.type && this.property.schema.property.type === property.schema.property.type;
         }
+        if (this.property.schema.property.isDataType && this.property instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>this.property).propertiesName){
+            let typeToMatch = this.getType((<PropertyDeclareAPIModel>this.property).propertiesName.split("#").slice(1),  this.property.type);
+            return property.type === typeToMatch;
+        }
 
         return property.type === this.property.type;
+    }
+
+    private getType(propertyPath:string[], type: string): string {
+	    const dataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, type);
+        let nestedProperty = dataTypeFound.properties.find(property => property.name === propertyPath[0]);
+        if (propertyPath.length === 1){
+	        return nestedProperty.type;
+        } 
+        return this.getType(propertyPath.slice(1), nestedProperty.type);
     }
 
     private isGetProperty(): boolean {
