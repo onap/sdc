@@ -18,7 +18,7 @@
  */
 
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ComponentMetadata, PropertyBEModel} from 'app/models';
+import {ComponentMetadata, PropertyBEModel, PropertyDeclareAPIModel} from 'app/models';
 import {TopologyTemplateService} from "../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {ToscaGetFunctionType} from "../../../../models/tosca-get-function-type";
@@ -86,11 +86,30 @@ export class ToscaFunctionComponent implements OnInit {
     }
 
     private initToscaFunction() {
+	    if (this.property instanceof PropertyDeclareAPIModel && this.property.subPropertyToscaFunctions && (<PropertyDeclareAPIModel> this.property).propertiesName){
+	        let propertiesPath = (<PropertyDeclareAPIModel> this.property).propertiesName.split("#");
+            if (propertiesPath.length > 1){
+	            propertiesPath = propertiesPath.slice(1);
+                let subPropertyToscaFunction = this.property.subPropertyToscaFunctions.find(subPropertyToscaFunction => this.areEqual(subPropertyToscaFunction.subPropertyPath, propertiesPath));
+
+                if (subPropertyToscaFunction){
+	                this.toscaFunction = subPropertyToscaFunction.toscaFunction;
+                    this.toscaFunctionForm.setValue(this.toscaFunction);
+                    this.toscaFunctionTypeForm.setValue(this.toscaFunction.type);
+                }
+                return;
+            }
+        }
+	
         if (!this.property.isToscaFunction()) {
             return;
         }
         this.toscaFunctionForm.setValue(this.property.toscaFunction);
         this.toscaFunctionTypeForm.setValue(this.property.toscaFunction.type);
+    }
+
+    private areEqual(array1: string[], array2: string[]): boolean {
+	    return array1.length === array2.length && array1.every(function(value, index) { return value === array2[index]})
     }
 
     private loadToscaFunctions(): void {

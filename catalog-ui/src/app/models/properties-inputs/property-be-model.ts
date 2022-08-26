@@ -23,6 +23,7 @@ import {SchemaProperty, SchemaPropertyGroupModel} from '../schema-property';
 import {ToscaPresentationData} from '../tosca-presentation';
 import {PropertyInputDetail} from './property-input-detail';
 import {Metadata} from '../metadata';
+import {SubPropertyToscaFunction} from "../sub-property-tosca-function";
 import {ToscaFunction} from "../tosca-function";
 import {ToscaGetFunction} from "../tosca-get-function";
 import {ToscaGetFunctionTypeConverter} from "../tosca-get-function-type-converter";
@@ -74,6 +75,7 @@ export class PropertyBEModel {
      */
     toscaGetFunction: ToscaGetFunctionDto;
     toscaFunction: ToscaFunction;
+    subPropertyToscaFunctions: SubPropertyToscaFunction[];
 
     constructor(property?: PropertyBEModel) {
         if (property) {
@@ -114,6 +116,7 @@ export class PropertyBEModel {
                 toscaGetFunction1.propertyPathFromSource = property.toscaGetFunction.propertyPathFromSource;
                 this.toscaFunction = toscaGetFunction1;
             }
+            this.subPropertyToscaFunctions = property.subPropertyToscaFunctions;
         }
 
         if (!this.schema || !this.schema.property) {

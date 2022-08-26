@@ -24,6 +24,7 @@ import { DataTypeModel, PropertyFEModel, PropertyBEModel, InstanceBePropertiesMa
 import { DataTypeService } from "app/ng2/services/data-type.service";
 import { PropertiesService } from "app/ng2/services/properties.service";
 import { PROPERTY_TYPES, PROPERTY_DATA } from "app/utils";
+import { SubPropertyToscaFunction } from "app/models/sub-property-tosca-function";
 
 @Injectable()
 export class PropertiesUtils {
@@ -143,13 +144,30 @@ export class PropertiesUtils {
             } else if (property.derivedDataType === DerivedPropertyType.COMPLEX) {
                 property.flattenedChildren = this.createFlattenedChildren(property.type, property.name);
                 this.assignFlattenedChildrenValues(property.valueObj, property.flattenedChildren, property.name);
+                this.setFlattenedChildernToscaFunction(property.subPropertyToscaFunctions, property.flattenedChildren, property.name);
                 property.flattenedChildren.forEach((childProp) => {
                     property.childPropUpdated(childProp);
                 });
+
             }
         }
         property.updateValueObjOrig();
     };
+
+    public setFlattenedChildernToscaFunction = (subPropertyToscaFunctions: SubPropertyToscaFunction[], derivedPropArray: Array<DerivedFEProperty>, topLevelPropertyName: string) => {
+        if (!subPropertyToscaFunctions || !derivedPropArray || !topLevelPropertyName){
+            return;
+        }
+        derivedPropArray.forEach((prop, index) => {
+            const subPropertyPath = prop.propertiesName.substring(prop.propertiesName.indexOf(topLevelPropertyName) + topLevelPropertyName.length + 1);
+            subPropertyToscaFunctions.forEach(subPropertyToscaFunction => {
+                const toscaFunctionPath = subPropertyToscaFunction.subPropertyPath.join('#');
+                if (subPropertyPath === toscaFunctionPath){
+                    prop.toscaFunction = subPropertyToscaFunction.toscaFunction;
+                }
+            })
+        })
+    }
 
     /*
     * Loops through flattened properties array and to assign values
