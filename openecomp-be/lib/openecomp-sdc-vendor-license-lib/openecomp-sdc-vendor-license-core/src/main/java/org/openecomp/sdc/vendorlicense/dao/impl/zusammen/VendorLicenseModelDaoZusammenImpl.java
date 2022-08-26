@@ -15,6 +15,7 @@
  */
 package org.openecomp.sdc.vendorlicense.dao.impl.zusammen;
 
+import static org.openecomp.sdc.vendorlicense.VendorLicenseConstants.VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE;
 import static org.openecomp.sdc.versioning.dao.impl.zusammen.ItemZusammenDaoImpl.ItemInfoProperty.ITEM_TYPE;
 
 import com.amdocs.zusammen.adaptor.inbound.api.types.item.ZusammenElement;
@@ -44,7 +45,8 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
 
     @Override
     public void registerVersioning(String versionableEntityType) {
-        VersionableEntityMetadata metadata = new VersionableEntityMetadata(VersionableEntityStoreType.Zusammen, "VendorLicenseModel", null, null);
+        VersionableEntityMetadata metadata = new VersionableEntityMetadata(VersionableEntityStoreType.Zusammen, VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE,
+            null, null);
         ActionVersioningManagerFactory.getInstance().createInterface().register(versionableEntityType, metadata);
     }
 
@@ -52,7 +54,7 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
     public Collection<VendorLicenseModelEntity> list(VendorLicenseModelEntity vendorLicenseModelEntity) {
         ElementToVLMGeneralConvertor convertor = new ElementToVLMGeneralConvertor();
         return zusammenAdaptor.listItems(ZusammenUtil.createSessionContext()).stream()
-            .filter(item -> "VendorLicenseModel".equals(item.getInfo().getProperty(ITEM_TYPE.getName()))).map(item -> {
+            .filter(item -> VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE.equals(item.getInfo().getProperty(ITEM_TYPE.getName()))).map(item -> {
                 VendorLicenseModelEntity entity = convertor.convert(item);
                 entity.setId(item.getId().getValue());
                 entity.setVersion(null);
@@ -109,10 +111,10 @@ public class VendorLicenseModelDaoZusammenImpl implements VendorLicenseModelDao 
     }
 
     private void addVlmToInfo(Info info, VendorLicenseModelEntity vendorLicenseModel) {
-        info.addProperty(InfoPropertyName.name.name(), vendorLicenseModel.getVendorName());
-        info.addProperty(InfoPropertyName.description.name(), vendorLicenseModel.getDescription());
-        info.addProperty(InfoPropertyName.iconRef.name(), vendorLicenseModel.getIconRef());
+        info.addProperty(InfoPropertyName.NAME.name(), vendorLicenseModel.getVendorName());
+        info.addProperty(InfoPropertyName.DESCRIPTION.name(), vendorLicenseModel.getDescription());
+        info.addProperty(InfoPropertyName.ICON_REF.name(), vendorLicenseModel.getIconRef());
     }
 
-    public enum InfoPropertyName {name, description, iconRef,}
+    public enum InfoPropertyName {NAME, DESCRIPTION, ICON_REF,}
 }

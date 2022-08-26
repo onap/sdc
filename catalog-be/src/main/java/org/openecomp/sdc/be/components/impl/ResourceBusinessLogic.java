@@ -73,7 +73,6 @@ import org.openecomp.sdc.be.components.lifecycle.LifecycleChangeInfoWithAction.L
 import org.openecomp.sdc.be.components.merge.TopologyComparator;
 import org.openecomp.sdc.be.components.merge.property.PropertyDataValueMergeBusinessLogic;
 import org.openecomp.sdc.be.components.merge.resource.ResourceDataMergeBusinessLogic;
-import org.openecomp.sdc.be.components.merge.utils.MergeInstanceUtils;
 import org.openecomp.sdc.be.components.property.PropertyConstraintsUtils;
 import org.openecomp.sdc.be.components.validation.component.ComponentContactIdValidator;
 import org.openecomp.sdc.be.components.validation.component.ComponentDescriptionValidator;
@@ -214,7 +213,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     private final CompositionBusinessLogic compositionBusinessLogic;
     private final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic;
     private final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic;
-    private final MergeInstanceUtils mergeInstanceUtils;
     private final UiComponentDataConverter uiComponentDataConverter;
     private final CsarBusinessLogic csarBusinessLogic;
     private final PropertyBusinessLogic propertyBusinessLogic;
@@ -248,16 +246,15 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                                  final OutputsBusinessLogic outputsBusinessLogic, final CompositionBusinessLogic compositionBusinessLogic,
                                  final ResourceDataMergeBusinessLogic resourceDataMergeBusinessLogic,
                                  final CsarArtifactsAndGroupsBusinessLogic csarArtifactsAndGroupsBusinessLogic,
-                                 final MergeInstanceUtils mergeInstanceUtils, final UiComponentDataConverter uiComponentDataConverter,
-                                 final CsarBusinessLogic csarBusinessLogic, final ArtifactsOperations artifactToscaOperation,
-                                 final PropertyBusinessLogic propertyBusinessLogic, final ComponentContactIdValidator componentContactIdValidator,
-                                 final ComponentNameValidator componentNameValidator, final ComponentTagsValidator componentTagsValidator,
-                                 final ComponentValidator componentValidator, final ComponentIconValidator componentIconValidator,
+                                 final UiComponentDataConverter uiComponentDataConverter, final CsarBusinessLogic csarBusinessLogic,
+                                 final ArtifactsOperations artifactToscaOperation, final PropertyBusinessLogic propertyBusinessLogic,
+                                 final ComponentContactIdValidator componentContactIdValidator, final ComponentNameValidator componentNameValidator,
+                                 final ComponentTagsValidator componentTagsValidator, final ComponentValidator componentValidator,
+                                 final ComponentIconValidator componentIconValidator,
                                  final ComponentProjectCodeValidator componentProjectCodeValidator,
                                  final ComponentDescriptionValidator componentDescriptionValidator, final PolicyBusinessLogic policyBusinessLogic,
-                                 final ModelBusinessLogic modelBusinessLogic,
-                                 final DataTypeBusinessLogic dataTypeBusinessLogic, final PolicyTypeBusinessLogic policyTypeBusinessLogic,
-                                 final ModelOperation modelOperation) {
+                                 final ModelBusinessLogic modelBusinessLogic, final DataTypeBusinessLogic dataTypeBusinessLogic,
+                                 final PolicyTypeBusinessLogic policyTypeBusinessLogic, final ModelOperation modelOperation) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic, interfaceOperation,
             interfaceLifecycleTypeOperation, artifactsBusinessLogic, artifactToscaOperation, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator, componentDescriptionValidator);
@@ -268,7 +265,6 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
         this.compositionBusinessLogic = compositionBusinessLogic;
         this.resourceDataMergeBusinessLogic = resourceDataMergeBusinessLogic;
         this.csarArtifactsAndGroupsBusinessLogic = csarArtifactsAndGroupsBusinessLogic;
-        this.mergeInstanceUtils = mergeInstanceUtils;
         this.uiComponentDataConverter = uiComponentDataConverter;
         this.csarBusinessLogic = csarBusinessLogic;
         this.propertyBusinessLogic = propertyBusinessLogic;
@@ -1512,7 +1508,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
 
                 createResourcePropertiesOnGraph(resource);
                 final Map<String, UploadComponentInstanceInfo> instancesToCreate = getInstancesToCreate(parsedToscaYamlInfo, resource.getModel());
-                
+
                 if (MapUtils.isNotEmpty(instancesToCreate)) {
                     log.trace("************* Going to create nodes, RI's and Relations  from yaml {}", yamlName);
                     loggerSupportability
@@ -2087,12 +2083,12 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 Constants.VENDOR_LICENSE_MODEL, ArtifactTypeEnum.VENDOR_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
                 Constants.VENDOR_LICENSE_LABEL, Constants.VENDOR_LICENSE_DISPLAY_NAME, Constants.VENDOR_LICENSE_DESCRIPTION, vendorLicenseModelId,
                 artifactOperation, null, true, shouldLock, inTransaction);
-            createOrUpdateSingleNonMetaArtifact(resource, csarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VF_LICENSE_MODEL, Constants.VF_LICENSE_MODEL,
-                ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT, Constants.VF_LICENSE_LABEL,
-                Constants.VF_LICENSE_DISPLAY_NAME, Constants.VF_LICENSE_DESCRIPTION, vfLicenseModelId, artifactOperation, null, true, shouldLock,
-                inTransaction);
-            Either<Resource, ResponseFormat> eitherCreateResult = createOrUpdateNonMetaArtifacts(csarInfo, resource, createdArtifacts, shouldLock,
-                inTransaction, artifactOperation);
+            createOrUpdateSingleNonMetaArtifact(resource, csarInfo, CsarUtils.ARTIFACTS_PATH + Constants.VF_LICENSE_MODEL,
+                Constants.VF_LICENSE_MODEL, ArtifactTypeEnum.VF_LICENSE.getType(), ArtifactGroupTypeEnum.DEPLOYMENT,
+                Constants.VF_LICENSE_LABEL, Constants.VF_LICENSE_DISPLAY_NAME, Constants.VF_LICENSE_DESCRIPTION, vfLicenseModelId,
+                artifactOperation, null, true, shouldLock, inTransaction);
+            Either<Resource, ResponseFormat> eitherCreateResult
+                = createOrUpdateNonMetaArtifacts(csarInfo, resource, createdArtifacts, shouldLock, inTransaction, artifactOperation);
             if (eitherCreateResult.isRight()) {
                 return Either.right(eitherCreateResult.right().value());
             }
@@ -3477,7 +3473,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
                 nodeForceCertification(resource, user, lifecycleChangeInfo, inTransaction, needLock);
             }
             if (resource.getLifecycleState() == LifecycleStateEnum.CERTIFIED) {
-                Either<ArtifactDefinition, Operation> eitherPopulated = populateToscaArtifacts(resource, user, false, inTransaction, needLock, false);
+                populateToscaArtifacts(resource, user, false, inTransaction, needLock, false);
                 return resource;
             }
             return nodeFullCertification(resource.getUniqueId(), user, lifecycleChangeInfo, inTransaction, needLock);
@@ -4333,7 +4329,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
             } else {
                 newResource.setDerivedFrom(null);
             }
-            Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(resourceIdToUpdate, newResource, user, currentResource, false,
+            Either<Resource, ResponseFormat> dataModelResponse = updateResourceMetadata(resourceIdToUpdate, newResource, user, currentResource,
                 true);
             if (dataModelResponse.isRight()) {
                 log.debug("failed to update resource metadata!!!");
@@ -4355,7 +4351,7 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     private Either<Resource, ResponseFormat> updateResourceMetadata(String resourceIdToUpdate, Resource newResource, User user,
-                                                                    Resource currentResource, boolean shouldLock, boolean inTransaction) {
+                                                                    Resource currentResource, boolean inTransaction) {
         updateVfModuleGroupsNames(currentResource, newResource);
         validateResourceFieldsBeforeUpdate(currentResource, newResource, inTransaction, false);
         // Setting last updater and uniqueId
@@ -5033,44 +5029,41 @@ public class ResourceBusinessLogic extends ComponentBusinessLogic {
     }
 
     public void iterateOverProperties(List<PropertyDefinition> properties, String model) {
-        String type = null;
-        String innerType = null;
         for (PropertyDefinition property : properties) {
             if (!propertyOperation.isPropertyTypeValid(property, model)) {
                 log.info("Invalid type for property {}", property);
                 throw new ByActionStatusComponentException(ActionStatus.INVALID_PROPERTY_TYPE, property.getType(), property.getName());
             }
             Map<String, DataTypeDefinition> allDataTypes = componentsUtils.getAllDataTypes(applicationDataTypeCache, model);
-            type = property.getType();
+            String type = property.getType();
             if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
-                ResponseFormat responseFormat = validateMapOrListPropertyType(property, innerType, allDataTypes);
+                ResponseFormat responseFormat = validateMapOrListPropertyType(property, allDataTypes);
                 if (responseFormat != null) {
                     break;
                 }
             }
-            validateDefaultPropertyValue(property, allDataTypes, type, innerType);
+            validateDefaultPropertyValue(property, allDataTypes, type);
         }
     }
 
-    private void validateDefaultPropertyValue(PropertyDefinition property, Map<String, DataTypeDefinition> allDataTypes, String type,
-                                              String innerType) {
+    private void validateDefaultPropertyValue(PropertyDefinition property, Map<String, DataTypeDefinition> allDataTypes, String type) {
         if (!propertyOperation.isPropertyDefaultValueValid(property, allDataTypes)) {
             log.info("Invalid default value for property {}", property);
             ResponseFormat responseFormat;
             if (type.equals(ToscaPropertyType.LIST.getType()) || type.equals(ToscaPropertyType.MAP.getType())) {
-                throw new ByActionStatusComponentException(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type, innerType,
+                throw new ByActionStatusComponentException(ActionStatus.INVALID_COMPLEX_DEFAULT_VALUE, property.getName(), type,
                     property.getDefaultValue());
             }
             throw new ByActionStatusComponentException(ActionStatus.INVALID_DEFAULT_VALUE, property.getName(), type, property.getDefaultValue());
         }
     }
 
-    private ResponseFormat validateMapOrListPropertyType(PropertyDefinition property, String innerType,
+    private ResponseFormat validateMapOrListPropertyType(PropertyDefinition property,
                                                          Map<String, DataTypeDefinition> allDataTypes) {
         ResponseFormat responseFormat = null;
         ImmutablePair<String, Boolean> propertyInnerTypeValid = propertyOperation.isPropertyInnerTypeValid(property, allDataTypes);
-        innerType = propertyInnerTypeValid.getLeft();
-        if (!propertyInnerTypeValid.getRight()) {
+        String innerType = propertyInnerTypeValid.getLeft();
+        if (Boolean.FALSE.equals(propertyInnerTypeValid.getRight())) {
             log.info("Invalid inner type for property {}", property);
             responseFormat = componentsUtils.getResponseFormat(ActionStatus.INVALID_PROPERTY_INNER_TYPE, innerType, property.getName());
         }

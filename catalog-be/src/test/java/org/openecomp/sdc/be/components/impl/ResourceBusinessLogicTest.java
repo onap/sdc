@@ -322,7 +322,7 @@ class ResourceBusinessLogicTest {
         bl = new ResourceBusinessLogic(mockElementDao, groupOperation, groupInstanceOperation, groupTypeOperation, groupBusinessLogic,
             interfaceOperation, interfaceLifecycleTypeOperation, artifactManager, componentInstanceBusinessLogic,
             resourceImportManager, inputsBusinessLogic, outputsBusinessLogic, compositionBusinessLogic, resourceDataMergeBusinessLogic,
-            csarArtifactsAndGroupsBusinessLogic, mergeInstanceUtils, uiComponentDataConverter, csarBusinessLogic,
+            csarArtifactsAndGroupsBusinessLogic, uiComponentDataConverter, csarBusinessLogic,
             artifactToscaOperation, propertyBusinessLogic, componentContactIdValidator, componentNameValidator,
             componentTagsValidator, componentValidator, componentIconValidator, componentProjectCodeValidator,
             componentDescriptionValidator, policyBusinessLogic, modelBusinessLogic, dataTypeBusinessLogic, policyTypeBusinessLogic, modelOperation);
