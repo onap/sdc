@@ -44,6 +44,7 @@ export class HierarchyNavService {
         });
 
         let tree = this.unflatten(flattenProperties, '', []);
+
         return tree[0].childrens; // Return the childrens without the root.
     }
 

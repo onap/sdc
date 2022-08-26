@@ -43,6 +43,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.json.JSONObject;
 import org.onap.sdc.tosca.datatypes.model.PropertyType;
 import org.openecomp.sdc.be.components.impl.exceptions.BusinessLogicException;
 import org.openecomp.sdc.be.components.impl.exceptions.ByActionStatusComponentException;
@@ -1967,6 +1968,13 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     toscaFunctionValidator.validate(property, containerComponent);
                     property.setValue(property.getToscaFunction().getValue());
                 }
+                if (CollectionUtils.isNotEmpty(property.getSubPropertyToscaFunctions())){
+                    final JSONObject jObject  = property.getValue() == null ? new JSONObject() : new JSONObject(property.getValue());
+                    property.getSubPropertyToscaFunctions().stream().forEach(subToscaFunction -> {
+                        setJsonObjectForSubProperty(jObject, subToscaFunction.getSubPropertyPath(), subToscaFunction.getToscaFunction().getValue());
+                    });
+                    property.setValue(jObject.toString());
+                }
                 Either<String, ResponseFormat> updatedPropertyValue = updatePropertyObjectValue(property, containerComponent.getModel());
                 if (updatedPropertyValue.isRight()) {
                     log.error("Failed to update property object value of property: {}",
@@ -2009,6 +2017,22 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
             }
             // unlock resource
             graphLockOperation.unlockComponent(componentId, componentTypeEnum.getNodeType());
+        }
+    }
+    
+    private void setJsonObjectForSubProperty(final JSONObject jObject, final List<String> path, String value) {
+        if (path.size() == 1) {
+            if (!value.startsWith("{")) {
+                value = new StringBuilder("{").append(value).append("}").toString();
+            }
+            final JSONObject jObjectSub  = new JSONObject(value);
+            jObject.put(path.get(0), jObjectSub);
+        } else {
+            if (!jObject.has(path.get(0))) {
+                jObject.put(path.get(0), new JSONObject());
+            }
+            final JSONObject jsonObject = jObject.getJSONObject(path.get(0));
+            setJsonObjectForSubProperty(jsonObject, path.subList(1, path.size()), value);
         }
     }
 
@@ -2300,7 +2324,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
         // Specific Update Logic
         String newValue = property.getValue();
 
-        if (property.hasToscaFunction()) {
+        if (property.hasToscaFunction() || CollectionUtils.isNotEmpty(property.getSubPropertyToscaFunctions())) {
             return Either.left(newValue);
         }
 

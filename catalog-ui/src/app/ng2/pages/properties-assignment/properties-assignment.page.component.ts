@@ -38,7 +38,8 @@ import {
     PropertyBEModel,
     PropertyFEModel,
     Service,
-    SimpleFlatProperty
+    SimpleFlatProperty,
+    PropertyDeclareAPIModel
 } from "app/models";
 import {ResourceType} from "app/utils";
 import {ComponentServiceNg2} from "../../services/component-services/component.service";
@@ -67,6 +68,7 @@ import {ToscaPresentationData} from "../../../models/tosca-presentation";
 import {Observable} from "rxjs";
 import {TranslateService} from "../../shared/translator/translate.service";
 import {ToscaFunction} from "../../../models/tosca-function";
+import {SubPropertyToscaFunction} from "../../../models/sub-property-tosca-function";
 
 const SERVICE_SELF_TITLE = "SELF";
 @Component({
@@ -579,6 +581,14 @@ export class PropertiesAssignmentComponent {
         checkedInstanceProperty.getInputValues = null;
         checkedInstanceProperty.value = null;
         checkedInstanceProperty.toscaFunction = null;
+        if (checkedInstanceProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedInstanceProperty).propertiesName){
+            const propertiesNameArray = (<PropertyDeclareAPIModel>checkedInstanceProperty).propertiesName;
+            const parts = propertiesNameArray.split("#");
+            if (propertiesNameArray.length > 1){
+                const index = checkedInstanceProperty.subPropertyToscaFunctions.findIndex(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, parts.slice(1)));
+                checkedInstanceProperty.subPropertyToscaFunctions.splice(index, 1);
+            }
+        }
         if (this.selectedInstanceData instanceof ComponentInstance) {
             this.updateInstanceProperty(checkedInstanceProperty);
         } else if (this.selectedInstanceData instanceof GroupInstance) {
@@ -590,7 +600,25 @@ export class PropertiesAssignmentComponent {
 
     private updateCheckedInstancePropertyFunctionValue(toscaFunction: ToscaFunction) {
         const checkedProperty: PropertyBEModel = this.buildCheckedInstanceProperty();
-        checkedProperty.toscaFunction = toscaFunction;
+        if (checkedProperty instanceof PropertyDeclareAPIModel && (<PropertyDeclareAPIModel>checkedProperty).propertiesName){
+            const propertiesName = (<PropertyDeclareAPIModel>checkedProperty).propertiesName;
+            const parts = propertiesName.split("#");
+
+            if (checkedProperty.subPropertyToscaFunctions == null){
+                checkedProperty.subPropertyToscaFunctions = [];
+            }
+            let subPropertyToscaFunction = checkedProperty.subPropertyToscaFunctions.find(existingSubPropertyToscaFunction => this.areEqual(existingSubPropertyToscaFunction.subPropertyPath, parts.slice(1)));
+            if (!subPropertyToscaFunction){
+                 subPropertyToscaFunction = new SubPropertyToscaFunction();
+                 checkedProperty.subPropertyToscaFunctions.push(subPropertyToscaFunction);
+            }
+            subPropertyToscaFunction.toscaFunction = toscaFunction;
+            subPropertyToscaFunction.subPropertyPath = parts.slice(1);
+
+        } else {
+            checkedProperty.subPropertyToscaFunctions = null;
+            checkedProperty.toscaFunction = toscaFunction;
+        }
         if (this.selectedInstanceData instanceof ComponentInstance) {
             this.updateInstanceProperty(checkedProperty);
         } else if (this.selectedInstanceData instanceof GroupInstance) {
@@ -598,6 +626,10 @@ export class PropertiesAssignmentComponent {
         } else if (this.selectedInstanceData instanceof PolicyInstance) {
             this.updatePolicyInstanceProperty(checkedProperty);
         }
+    }
+
+    private areEqual(array1: string[], array2: string[]): boolean {
+        return array1.length === array2.length && array1.every(function(value, index) { return value === array2[index]})
     }
 
     updateInstanceProperty(instanceProperty: PropertyBEModel) {
