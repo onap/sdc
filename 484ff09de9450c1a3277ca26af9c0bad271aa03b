@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b550c26_eaa3e72b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 710,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-26T10:36:06Z",
+      "side": 1,
+      "message": "The properties and inputs are created here - can we not create them right here rather than creating them wrong only to update them below",
+      "range": {
+        "startLine": 709,
+        "startChar": 16,
+        "endLine": 710,
+        "endChar": 84
+      },
+      "revId": "484ff09de9450c1a3277ca26af9c0bad271aa03b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eab01772_300f0c5c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/ToscaExportHandler.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 807,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-26T10:36:06Z",
+      "side": 1,
+      "message": "why this change?",
+      "range": {
+        "startLine": 807,
+        "startChar": 12,
+        "endLine": 807,
+        "endChar": 86
+      },
+      "revId": "484ff09de9450c1a3277ca26af9c0bad271aa03b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
