@@ -99,6 +99,7 @@ import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComponentEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ComputeEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.DeploymentFlavorEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.ImageEntity;
+import org.openecomp.sdc.vendorsoftwareproduct.dao.type.LicenseType;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.NicEntity;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OnboardingMethod;
 import org.openecomp.sdc.vendorsoftwareproduct.dao.type.OrchestrationTemplateEntity;
@@ -142,7 +143,7 @@ import org.openecomp.sdc.versioning.dao.types.Version;
 
 public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VendorSoftwareProductManagerImpl.class);
     private VspMergeDao vspMergeDao;
     private OrchestrationTemplateDao orchestrationTemplateDao;
     private OrchestrationTemplateCandidateManager orchestrationTemplateCandidateManager;
@@ -386,7 +387,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     private Map<String, List<ErrorMessage>> compile(String vendorSoftwareProductId, Version version, ToscaServiceModel serviceModel) {
         if (isServiceModelMissing(serviceModel)) {
-            return null;
+            return Collections.emptyMap();
         }
         enrichedServiceModelDao.deleteAll(vendorSoftwareProductId, version);
         if (CollectionUtils.isNotEmpty(serviceModel.getModelList())) {
@@ -552,9 +553,8 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             populateVersionsForVlm(vspDetails.getVendorId(), vlmVersion);
         }
         final PackageInfo packageInfo = createPackageInfo(vspDetails);
-        final ToscaFileOutputServiceCsarImpl toscaServiceTemplateServiceCsar = new ToscaFileOutputServiceCsarImpl(new AsdPackageHelper(new ManifestUtils()));
-        final FileContentHandler licenseArtifacts = licenseArtifactsService
-            .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion, vspDetails.getFeatureGroups());
+        final ToscaFileOutputServiceCsarImpl toscaServiceTemplateServiceCsar = new ToscaFileOutputServiceCsarImpl(
+            new AsdPackageHelper(new ManifestUtils()));
         final ETSIService etsiService = new ETSIServiceImpl();
         if (etsiService.hasEtsiSol261Metadata(toscaServiceModel.getArtifactFiles())) {
             final FileContentHandler handler = toscaServiceModel.getArtifactFiles();
@@ -565,6 +565,11 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
             if (CollectionUtils.isEmpty(vspDetails.getModelIdList())) {
                 packageInfo.setVendorRelease(etsiService.getHighestCompatibleSpecificationVersion(handler).getOriginalValue());
             }
+        }
+        FileContentHandler licenseArtifacts = null;
+        if (!LicenseType.EXTERNAL.name().equals(vspDetails.getLicenseType())) {
+            licenseArtifacts = licenseArtifactsService
+                .createLicenseArtifacts(vspDetails.getId(), vspDetails.getVendorId(), vlmVersion, vspDetails.getFeatureGroups());
         }
         packageInfo.setTranslatedFile(ByteBuffer.wrap(toscaServiceTemplateServiceCsar.createOutputFile(toscaServiceModel, licenseArtifacts)));
         packageInfoDao.create(packageInfo);
@@ -613,7 +618,7 @@ public class VendorSoftwareProductManagerImpl implements VendorSoftwareProductMa
 
     private Map<String, List<ErrorMessage>> validateOrchestrationTemplate(OrchestrationTemplateEntity orchestrationTemplate) throws IOException {
         if (isOrchestrationTemplateMissing(orchestrationTemplate)) {
-            return null;
+            return Collections.emptyMap();
         }
         Map<String, List<ErrorMessage>> validationErrors = new HashMap<>();
         FileContentHandler fileContentMap = CommonUtil

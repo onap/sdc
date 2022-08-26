@@ -19,18 +19,24 @@
  */
 package org.openecomp.sdc.vendorlicense;
 
+import static org.openecomp.sdc.common.api.Constants.VENDOR_LICENSE_MODEL;
+import static org.openecomp.sdc.common.api.Constants.VF_LICENSE_MODEL;
+
 import java.io.File;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 public final class VendorLicenseConstants {
 
     public static final String VENDOR_LICENSE_MODEL_VERSIONABLE_TYPE = "VendorLicenseModel";
     public static final String EXTERNAL_ARTIFACTS_DIR = "Artifacts";
     //todo change when separating external from internal artifacts
-    public static final String VNF_ARTIFACT_NAME_WITH_PATH = EXTERNAL_ARTIFACTS_DIR + File.separator + "vf-license-model.xml";
-    public static final String VENDOR_LICENSE_MODEL_ARTIFACT_NAME_WITH_PATH = EXTERNAL_ARTIFACTS_DIR + File.separator + "vendor-license-model.xml";
+    public static final String VNF_ARTIFACT_NAME_WITH_PATH = EXTERNAL_ARTIFACTS_DIR + File.separator + VF_LICENSE_MODEL;
+    public static final String VENDOR_LICENSE_MODEL_ARTIFACT_NAME_WITH_PATH = EXTERNAL_ARTIFACTS_DIR + File.separator + VENDOR_LICENSE_MODEL;
     public static final String VENDOR_LICENSE_MODEL_ARTIFACT_REGEX_REMOVE = " xmlns=\"\"";
     public static final String UNSUPPORTED_OPERATION_ERROR = "An error has occurred: Unsupported operation for 1707 release.";
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public final class UniqueValues {
 
         public static final String VENDOR_NAME = "Vendor name";
