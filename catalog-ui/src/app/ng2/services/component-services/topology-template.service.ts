@@ -163,6 +163,10 @@ export class TopologyTemplateService {
         return this.getComponentDataByFieldsName(componentType, componentUniqueId, [COMPONENT_FIELDS.COMPONENT_ATTRIBUTES]);
     }
 
+    findAllComponentAttributesAndProperties(componentType: string, componentUniqueId: string): Observable<ComponentGenericResponse> {
+        return this.getComponentDataByFieldsName(componentType, componentUniqueId, [COMPONENT_FIELDS.COMPONENT_ATTRIBUTES, COMPONENT_FIELDS.COMPONENT_PROPERTIES]);
+    }
+
     getCapabilitiesAndRequirements(componentType: string, componentId: string): Observable<ComponentGenericResponse> {
         return this.getComponentDataByFieldsName(componentType, componentId, [COMPONENT_FIELDS.COMPONENT_REQUIREMENTS, COMPONENT_FIELDS.COMPONENT_CAPABILITIES]);
     }

@@ -24,6 +24,8 @@ package org.openecomp.sdc.be.components.impl.validation;
 import fj.data.Either;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.onap.sdc.tosca.datatypes.model.PropertyType;
@@ -63,42 +65,51 @@ public class ToscaFunctionValidatorImpl implements ToscaFunctionValidator {
     private <T extends PropertyDataDefinition> void validateToscaGetFunction(T property, Component parentComponent) {
         final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) property.getToscaFunction();
         validateGetToscaFunctionAttributes(toscaGetFunction);
-        validateGetPropertySource(toscaGetFunction.getFunctionType(), toscaGetFunction.getPropertySource());
-        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_INPUT) {
-            validateGetFunction(property, parentComponent.getInputs(), parentComponent.getModel());
-            return;
-        }
-        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_PROPERTY) {
-            if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
-                validateGetFunction(property, parentComponent.getProperties(), parentComponent.getModel());
-            } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
-                final ComponentInstance componentInstance =
-                    parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
+        final ToscaGetFunctionType functionType = toscaGetFunction.getFunctionType();
+        validateGetPropertySource(functionType, toscaGetFunction.getPropertySource());
+        final String model = parentComponent.getModel();
+        switch (functionType) {
+            case GET_INPUT:
+                validateGetFunction(property, parentComponent.getInputs(), model);
+                break;
+            case GET_PROPERTY:
+                if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
+                    validateGetFunction(property, parentComponent.getProperties(), model);
+                } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
+                    final ComponentInstance componentInstance =
+                        parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
+                            .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
+                    validateGetFunction(property, componentInstance.getProperties(), model);
+                }
+                break;
+            case GET_ATTRIBUTE:
+                if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
+                    validateGetFunction(property, combine(parentComponent.getProperties(), parentComponent.getAttributes()), model);
+                } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
+                    final ComponentInstance componentInstance = parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
                         .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
-                validateGetFunction(property, componentInstance.getProperties(), parentComponent.getModel());
-            }
-
-            return;
+                    validateGetFunction(property, combine(componentInstance.getProperties(), componentInstance.getAttributes()), model);
+                }
+                break;
+            default:
+                throw ToscaGetFunctionExceptionSupplier.functionNotSupported(functionType).get();
         }
-        if (toscaGetFunction.getFunctionType() == ToscaGetFunctionType.GET_ATTRIBUTE) {
-            if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
-                validateGetFunction(property, parentComponent.getAttributes(), parentComponent.getModel());
-            } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
-                final ComponentInstance componentInstance =
-                    parentComponent.getComponentInstanceById(toscaGetFunction.getSourceUniqueId())
-                        .orElseThrow(ToscaGetFunctionExceptionSupplier.instanceNotFound(toscaGetFunction.getSourceName()));
-                validateGetFunction(property, componentInstance.getAttributes(), parentComponent.getModel());
-            }
+    }
 
-            return;
+    private List<? extends ToscaPropertyData> combine(final List<? extends ToscaPropertyData> parentProperties,
+                                                     final List<? extends ToscaPropertyData> parentAttributes) {
+        if (CollectionUtils.isNotEmpty(parentProperties) && CollectionUtils.isNotEmpty(parentAttributes)) {
+            return Stream.concat(parentProperties.stream(), parentAttributes.stream()).collect(Collectors.toList());
         }
-
-        throw ToscaGetFunctionExceptionSupplier.functionNotSupported(toscaGetFunction.getFunctionType()).get();
+        if (CollectionUtils.isEmpty(parentProperties)) {
+            return parentAttributes;
+        }
+        return parentProperties;
     }
 
     private <T extends PropertyDataDefinition> void validateGetFunction(final T property,
-                                                                    final List<? extends ToscaPropertyData> parentProperties,
-                                                                    final String model) {
+                                                                        final List<? extends ToscaPropertyData> parentProperties,
+                                                                        final String model) {
         final ToscaGetFunctionDataDefinition toscaGetFunction = (ToscaGetFunctionDataDefinition) property.getToscaFunction();
         if (CollectionUtils.isEmpty(parentProperties)) {
             throw ToscaGetFunctionExceptionSupplier
