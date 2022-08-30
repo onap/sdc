@@ -18,7 +18,7 @@
  */
 
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {AttributeModel, ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel} from 'app/models';
+import {AttributeBEModel, ComponentMetadata, DataTypeModel, PropertyBEModel, PropertyModel} from 'app/models';
 import {TopologyTemplateService} from "../../../../services/component-services/topology-template.service";
 import {WorkspaceService} from "../../../workspace/workspace.service";
 import {PropertiesService} from "../../../../services/properties.service";
@@ -224,7 +224,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         this.startLoading();
         const propertiesObservable: Observable<ComponentGenericResponse> = this.getPropertyObservable();
         propertiesObservable.subscribe( (response: ComponentGenericResponse) => {
-            const properties: Array<PropertyBEModel | AttributeModel> = this.extractProperties(response);
+            const properties: Array<PropertyBEModel | AttributeBEModel> = this.extractProperties(response);
             if (!properties || properties.length === 0) {
                 const msgCode = this.getNotFoundMsgCode();
                 this.dropDownErrorMsg = this.translateService.translate(msgCode, {type: this.propertyTypeToString()});
@@ -267,22 +267,22 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         return this.property.type;
     }
 
-    private extractProperties(componentGenericResponse: ComponentGenericResponse): Array<PropertyBEModel | AttributeModel> {
+    private extractProperties(componentGenericResponse: ComponentGenericResponse): Array<PropertyBEModel | AttributeBEModel> {
         if (this.isGetInput()) {
             return componentGenericResponse.inputs;
         }
-        const propertySource = this.propertySource.value;
+        const instanceId = this.instanceNameAndIdMap.get(this.propertySource.value);
         if (this.isGetProperty()) {
             if (this.isPropertySourceSelf()) {
                 return componentGenericResponse.properties;
             }
-            const componentInstanceProperties: PropertyModel[] = componentGenericResponse.componentInstancesProperties[this.instanceNameAndIdMap.get(propertySource)];
-            return this.removeSelectedProperty(componentInstanceProperties);
+            return this.removeSelectedProperty(componentGenericResponse.componentInstancesProperties[instanceId]);
         }
         if (this.isPropertySourceSelf()) {
-            return componentGenericResponse.attributes;
+            return [...(componentGenericResponse.attributes || []), ...(componentGenericResponse.properties || [])];
         }
-        return componentGenericResponse.componentInstancesAttributes[this.instanceNameAndIdMap.get(propertySource)];
+        return [...(componentGenericResponse.componentInstancesAttributes[instanceId] || []),
+            ...(componentGenericResponse.componentInstancesProperties[instanceId] || [])];
     }
 
     private isPropertySourceSelf() {
@@ -303,7 +303,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
             if (this.isPropertySourceSelf()) {
                 return this.topologyTemplateService.findAllComponentAttributes(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
             }
-            return this.topologyTemplateService.findAllComponentInstanceAttributes(this.componentMetadata.componentType, this.componentMetadata.uniqueId);
+            return this.topologyTemplateService.getComponentInstanceAttributesAndProperties(this.componentMetadata.uniqueId, this.componentMetadata.componentType);
         }
     }
 
@@ -322,7 +322,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         this.propertyDropdownList.sort((a, b) => a.propertyLabel.localeCompare(b.propertyLabel));
     }
 
-    private addPropertiesToDropdown(properties: Array<PropertyBEModel | AttributeModel>): void {
+    private addPropertiesToDropdown(properties: Array<PropertyBEModel | AttributeBEModel>): void {
         for (const property of properties) {
             if (this.hasSameType(property)) {
                 this.addPropertyToDropdown({
@@ -337,8 +337,8 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         }
     }
 
-    private fillPropertyDropdownWithMatchingChildProperties(inputProperty: PropertyBEModel | AttributeModel,
-                                                            parentPropertyList: Array<PropertyBEModel | AttributeModel> = []): void {
+    private fillPropertyDropdownWithMatchingChildProperties(inputProperty: PropertyBEModel | AttributeBEModel,
+                                                            parentPropertyList: Array<PropertyBEModel | AttributeBEModel> = []): void {
         const dataTypeFound: DataTypeModel = this.dataTypeService.getDataTypeByModelAndTypeName(this.componentMetadata.model, inputProperty.type);
         if (!dataTypeFound || !dataTypeFound.properties) {
             return;
@@ -358,7 +358,7 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
         });
     }
 
-    private hasSameType(property: PropertyBEModel | AttributeModel) {
+    private hasSameType(property: PropertyBEModel | AttributeBEModel) {
         if (this.typeHasSchema(this.property.type)) {
             if (!property.schema || !property.schema.property) {
                 return false;
