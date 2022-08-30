@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c6ed5bd_8f2a1129",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-30T10:15:01Z",
+      "side": 1,
+      "message": "remove all of these values and instead hard code them in DefaultUploadResourceInfo",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 313,
+        "endChar": 32
+      },
+      "revId": "2c368f8bce9275db6bbda8160875c7da0203a6eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee148c59_99a8c15e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 3527,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-30T10:15:01Z",
+      "side": 1,
+      "message": "we dont need the isDefaultMetadata on the resource object\ninstead set the values in ResourceImportManager.importCertifiedResource if the resource already exists:\n\n    - if the given UploadResourceInfo is not DefaultUploadResourceInfo then use it\n    - if the given UploadResourceInfo is DefaultUploadResourceInfo then use the metadata from the existing resource instead",
+      "range": {
+        "startLine": 3527,
+        "startChar": 0,
+        "endLine": 3527,
+        "endChar": 49
+      },
+      "revId": "2c368f8bce9275db6bbda8160875c7da0203a6eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
