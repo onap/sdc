@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf3e0de4_ffb5c805",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/ApplicationDataTypeCache.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-30T22:26:38Z",
+      "side": 1,
+      "message": "is the key the name or the uniqueId?",
+      "range": {
+        "startLine": 204,
+        "startChar": 42,
+        "endLine": 204,
+        "endChar": 102
+      },
+      "revId": "8fb4bf3f23ae98c3db5f83674375df7d650da5ee",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
