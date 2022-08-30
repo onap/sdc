@@ -22,6 +22,30 @@
       "revId": "c743519f91405c7787c1dd0286973f559961da79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99a8fef9_6fed852a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/ApplicationDataTypeCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-30T10:04:05Z",
+      "side": 1,
+      "message": "If its not in the cache then any subsequent get will result in it being loaded so dont need to worry about it here. We shouldnt be adding to that unconnected map though so adding to check to only proceed if the type is already in the cache",
+      "parentUuid": "940cee4c_9a3af44a",
+      "range": {
+        "startLine": 208,
+        "startChar": 16,
+        "endLine": 208,
+        "endChar": 54
+      },
+      "revId": "c743519f91405c7787c1dd0286973f559961da79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
