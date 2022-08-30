@@ -103,7 +103,8 @@ public class ServiceCsarInfo extends CsarInfo {
             if (CollectionUtils.isNotEmpty(importsList)) {
                 if (importsList.get(0) instanceof String) {
                     List<Path> importPaths = new ArrayList<>();
-                    importsList.stream().forEach(importPath -> importPaths.add(Paths.get((String) importPath)));
+                    importsList.stream()
+                        .forEach(importPath -> importPaths.add(fileParentDir == null ? Paths.get((String) importPath) : fileParentDir.resolve(Paths.get((String) importPath)).normalize()));
                     return importPaths;
                 } else if (importsList.get(0) instanceof Map) {
                     return getTemplateImportFilePathsMultiLineGrammar(importsList, fileParentDir);
