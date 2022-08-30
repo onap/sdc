@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "940cee4c_9a3af44a",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/cache/ApplicationDataTypeCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-30T09:42:39Z",
+      "side": 1,
+      "message": "if the model does not exist in the cache, this method will just return a new hash map not connected to the dataTypesByModelCacheMap that seems to be the real cache. I believe we should have a method to handle the add to the cache, that will handle this problem of missing model (preferred), passing the model and data type definition.",
+      "range": {
+        "startLine": 208,
+        "startChar": 16,
+        "endLine": 208,
+        "endChar": 54
+      },
+      "revId": "c743519f91405c7787c1dd0286973f559961da79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
