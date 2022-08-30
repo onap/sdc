@@ -18,10 +18,6 @@
  * ============LICENSE_END=========================================================
  */
 
-/**
- * Created by ob0695 on 2/23/2017.
- */
-import from = require("core-js/fn/array/from");
 export * from './models/activity';
 export * from './models/additional-information';
 export * from './models/app-config';
@@ -48,7 +44,6 @@ export * from './models/graph/zones/policy-instance';
 export * from './models/graph/zones/zone';
 export * from './models/graph/zones/zone-instance';
 export * from './models/csar-component';
-//export * from './models/data-type-properties';
 export * from './models/properties-inputs/property-be-model';
 export * from './models/properties-inputs/property-fe-model';
 export * from './models/properties-inputs/property-fe-map';
@@ -57,6 +52,15 @@ export * from './models/properties-inputs/property-declare-api-model';
 export * from './models/properties-inputs/property-input-detail';
 export * from './models/properties-inputs/input-fe-model';
 export * from './models/properties-inputs/simple-flat-property';
+export * from './models/attributes-outputs/attribute-be-model';
+export * from './models/attributes-outputs/attribute-fe-model';
+export * from './models/attributes-outputs/attribute-fe-map';
+export * from './models/attributes-outputs/attribute-output-detail';
+export * from './models/attributes-outputs/attribute-declare-api-model';
+export * from './models/attributes-outputs/derived-fe-attribute';
+export * from './models/attributes-outputs/output-be-model';
+export * from './models/attributes-outputs/output-fe-model';
+export * from './models/attributes-outputs/simple-flat-attribute';
 export * from './models/data-types-map';
 export * from './models/data-types';
 export * from './models/distribution';
