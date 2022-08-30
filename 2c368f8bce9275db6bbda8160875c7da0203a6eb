@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "6ff27cf9_4fcd9d4b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-08-30T12:22:37Z",
+      "side": 1,
+      "message": "No, the model and modifier should be set to the same values as are applicable to the service being imported. \nThe name should be set to the last element of the node type name (e.g. VNF for tosca.nodes.VNF)\nThey should be set not be set in this NullNodeTypeMetatdata though",
+      "parentUuid": "d6dee024_16e868dc",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 313,
+        "endChar": 32
+      },
+      "revId": "2c368f8bce9275db6bbda8160875c7da0203a6eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee148c59_99a8c15e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 10
