@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3aee05e8_c4204912",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-31T13:39:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e0b42e2_cb14c004",
+      "range": {
+        "startLine": 99,
+        "startChar": 43,
+        "endLine": 99,
+        "endChar": 57
+      },
+      "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "244a1459_84918461",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ServiceFilterUtils.java",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79c44123_31e1fdff",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ServiceFilterUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-31T13:39:29Z",
+      "side": 1,
+      "message": "I made sure that the method extractGetFunctionValue was always returning a list. Anyway, the method is now removed.",
+      "parentUuid": "244a1459_84918461",
+      "range": {
+        "startLine": 114,
+        "startChar": 19,
+        "endLine": 114,
+        "endChar": 52
+      },
+      "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "d7577ed2_ae224988",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/nodeFilter/ServiceFilterRenameCiTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-31T13:39:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "26f4bf22_a932a263",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bb6fefac_eb17b877",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/nodeFilter/ServiceFilterUtilsCIChangeTest.java",
         "patchSetId": 6
@@ -91,6 +163,30 @@
       "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e14fbf4d_654173b7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/nodeFilter/ServiceFilterUtilsCIChangeTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-31T13:39:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb6fefac_eb17b877",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 22
+      },
+      "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "8e108190_d1c19e3a",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/nodeFilter/ServiceFilterUtilsPropertyRemovedTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-31T13:39:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99b05b7b_a1769195",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 22
+      },
+      "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4200e995_ae3baa69",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/nodeFilter/ServiceFilterUtilsServiceInputTest.java",
         "patchSetId": 6
@@ -137,6 +257,30 @@
       "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0216f5eb_0af7dca7",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/nodeFilter/ServiceFilterUtilsServiceInputTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-08-31T13:39:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4200e995_ae3baa69",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "8c3b50a073a822c8cb2caa15dcb951a273ab4f6d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
