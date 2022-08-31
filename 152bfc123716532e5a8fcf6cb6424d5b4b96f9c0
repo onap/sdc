@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b108d887_8b27bde2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentNodeFilterBusinessLogic.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-08-31T16:36:59Z",
+      "side": 1,
+      "message": "check for unused import and remove it",
+      "revId": "152bfc123716532e5a8fcf6cb6424d5b4b96f9c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ceb02175_a9e2dc2a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/FilterConstraintValidatorImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-08-31T16:36:59Z",
+      "side": 1,
+      "message": "check for unused import and remove it",
+      "range": {
+        "startLine": 24,
+        "startChar": 44,
+        "endLine": 29,
+        "endChar": 71
+      },
+      "revId": "152bfc123716532e5a8fcf6cb6424d5b4b96f9c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99cee1b6_8054cd32",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/tosca/utils/NodeFilterConverter.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-08-31T16:36:59Z",
+      "side": 1,
+      "message": "check for unused import and remove it",
+      "revId": "152bfc123716532e5a8fcf6cb6424d5b4b96f9c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
