@@ -22,6 +22,76 @@
       "revId": "b6579292cffe634af282411855caa80f938c0c56",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb635c1a_dfef2005",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/validation/ToscaFunctionValidatorImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-01T08:47:00Z",
+      "side": 1,
+      "message": "yes, we need",
+      "parentUuid": "8ae83584_119a6916",
+      "range": {
+        "startLine": 87,
+        "startChar": 49,
+        "endLine": 87,
+        "endChar": 82
+      },
+      "revId": "b6579292cffe634af282411855caa80f938c0c56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df8aab1e_520abff5",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-get-function/tosca-get-function.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-01T08:47:00Z",
+      "side": 1,
+      "message": "should be instanceId or similar",
+      "range": {
+        "startLine": 274,
+        "startChar": 14,
+        "endLine": 274,
+        "endChar": 26
+      },
+      "revId": "b6579292cffe634af282411855caa80f938c0c56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49c06b86_04b6e6ad",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-get-function/tosca-get-function.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-01T08:47:00Z",
+      "side": 1,
+      "message": "why you are checking if it has properties or not in the self case and here don\u0027t?\nI believe it is to avoid to use the spread operator in undefined. In that case you should have a check for both (attributes and properties array), in the two cases.\nMaybe this will help: https://stackoverflow.com/questions/46957194/javascript-es6-spread-operator-on-undefined",
+      "range": {
+        "startLine": 288,
+        "startChar": 15,
+        "endLine": 288,
+        "endChar": 159
+      },
+      "revId": "b6579292cffe634af282411855caa80f938c0c56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
