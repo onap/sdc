@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "369487ca_0720eeca",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/ServiceCsarInfo.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-09-01T11:09:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ff27cf9_4fcd9d4b",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 313,
+        "endChar": 32
+      },
+      "revId": "2c368f8bce9275db6bbda8160875c7da0203a6eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ee148c59_99a8c15e",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
         "patchSetId": 10
@@ -93,6 +117,30 @@
       "revId": "2c368f8bce9275db6bbda8160875c7da0203a6eb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d99916e8_0308fa26",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceBusinessLogic.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 3527,
+      "author": {
+        "id": 6708
+      },
+      "writtenOn": "2022-09-01T11:09:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee148c59_99a8c15e",
+      "range": {
+        "startLine": 3527,
+        "startChar": 0,
+        "endLine": 3527,
+        "endChar": 49
+      },
+      "revId": "2c368f8bce9275db6bbda8160875c7da0203a6eb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
