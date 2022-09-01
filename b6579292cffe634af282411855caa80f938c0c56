@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "9e6a5781_337340d9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/validation/ToscaFunctionValidatorImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-01T20:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb635c1a_dfef2005",
+      "range": {
+        "startLine": 87,
+        "startChar": 49,
+        "endLine": 87,
+        "endChar": 82
+      },
+      "revId": "b6579292cffe634af282411855caa80f938c0c56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "df8aab1e_520abff5",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-get-function/tosca-get-function.component.ts",
         "patchSetId": 2
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "f9b75087_b59176f3",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-get-function/tosca-get-function.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-01T20:04:20Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "df8aab1e_520abff5",
+      "range": {
+        "startLine": 274,
+        "startChar": 14,
+        "endLine": 274,
+        "endChar": 26
+      },
+      "revId": "b6579292cffe634af282411855caa80f938c0c56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "49c06b86_04b6e6ad",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-get-function/tosca-get-function.component.ts",
         "patchSetId": 2
@@ -92,6 +140,30 @@
       "revId": "b6579292cffe634af282411855caa80f938c0c56",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca588508_8f48287d",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-get-function/tosca-get-function.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-01T20:04:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "49c06b86_04b6e6ad",
+      "range": {
+        "startLine": 288,
+        "startChar": 15,
+        "endLine": 288,
+        "endChar": 159
+      },
+      "revId": "b6579292cffe634af282411855caa80f938c0c56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
