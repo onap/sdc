@@ -152,6 +152,14 @@ public class ServiceCsarInfo extends CsarInfo {
         return definitions;
     }
 
+    public Map<String, Object> getArtifactTypes() {
+        final Map<String, Object> artifactsTypes = new HashMap<>();
+        mainTemplateImports.entrySet().stream()
+            .forEach(entry -> artifactsTypes.putAll(getTypesFromTemplate(entry.getValue(), TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES)));
+        artifactsTypes.putAll(getTypesFromTemplate(getMappedToscaMainTemplate(), TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES));
+        return artifactsTypes;
+    }
+
     public List<NodeTypeDefinition> getNodeTypesUsed() {
         if (nodeTypeDefinitions == null) {
             nodeTypeDefinitions = new ArrayList<>();

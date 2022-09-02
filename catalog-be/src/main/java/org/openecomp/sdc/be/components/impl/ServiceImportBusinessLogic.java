@@ -84,6 +84,7 @@ import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.CapabilityRequirementRelationship;
@@ -129,6 +130,7 @@ import org.openecomp.sdc.be.model.jsonjanusgraph.utils.ModelConverter;
 import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -177,10 +179,12 @@ public class ServiceImportBusinessLogic {
     private final ResourceImportManager resourceImportManager;
     private final JanusGraphDao janusGraphDao;
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
+    private final ArtifactTypeImportManager artifactTypeImportManager;
     private final IGraphLockOperation graphLockOperation;
     private final ToscaFunctionService toscaFunctionService;
     private final DataTypeBusinessLogic dataTypeBusinessLogic;
     private ApplicationDataTypeCache applicationDataTypeCache;
+    private final ArtifactTypeOperation artifactTypeOperation;
 
     public ServiceImportBusinessLogic(final GroupBusinessLogic groupBusinessLogic, final ArtifactsBusinessLogic artifactsBusinessLogic,
                                       final ComponentsUtils componentsUtils, final ToscaOperationFacade toscaOperationFacade,
@@ -191,7 +195,8 @@ public class ServiceImportBusinessLogic {
                                       final ServiceImportParseLogic serviceImportParseLogic, final PolicyBusinessLogic policyBusinessLogic,
                                       final ResourceImportManager resourceImportManager, final JanusGraphDao janusGraphDao,
                                       final IGraphLockOperation graphLockOperation, final ToscaFunctionService toscaFunctionService,
-                                      final DataTypeBusinessLogic dataTypeBusinessLogic) {
+                                      final DataTypeBusinessLogic dataTypeBusinessLogic, final ArtifactTypeOperation artifactTypeOperation,
+                                      ArtifactTypeImportManager artifactTypeImportManager) {
         this.componentsUtils = componentsUtils;
         this.toscaOperationFacade = toscaOperationFacade;
         this.serviceBusinessLogic = serviceBusinessLogic;
@@ -209,6 +214,8 @@ public class ServiceImportBusinessLogic {
         this.graphLockOperation = graphLockOperation;
         this.toscaFunctionService = toscaFunctionService;
         this.dataTypeBusinessLogic = dataTypeBusinessLogic;
+        this.artifactTypeOperation = artifactTypeOperation;
+        this.artifactTypeImportManager = artifactTypeImportManager;
     }
 
     @Autowired
@@ -256,6 +263,12 @@ public class ServiceImportBusinessLogic {
                     applicationDataTypeCache.reload(service.getModel(), UniqueIdBuilder.buildDataTypeUid(service.getModel(), createdOrUpdatedDataType.getKey()));
                 });
             }
+
+            final Map<String, Object> artifactTypesToCreate = getArtifactTypesToCreate(service.getModel(), csarInfo);
+            if (MapUtils.isNotEmpty(artifactTypesToCreate)) {
+                artifactTypeImportManager.createArtifactTypes(new Yaml().dump(artifactTypesToCreate), service.getModel(),true);
+            }
+
             final List<NodeTypeDefinition> nodeTypesToCreate = getNodeTypesToCreate(service.getModel(), csarInfo);
             if (CollectionUtils.isNotEmpty(nodeTypesToCreate)) {
                 createNodeTypes(nodeTypesToCreate, service.getModel(), csarInfo.getModifier());
@@ -294,6 +307,21 @@ public class ServiceImportBusinessLogic {
             }
         }
         return dataTypesToCreate;
+    }
+
+    private Map<String, Object> getArtifactTypesToCreate(final String model, final CsarInfo csarInfo) {
+        final Map<String, Object> artifactTypesToCreate = new HashMap<>();
+        final Map<String, Object> artifactTypesMap = csarInfo.getArtifactTypes();
+        if (artifactTypesMap != null && MapUtils.isNotEmpty(artifactTypesMap)) {
+            for (final Entry<String, Object> artifactTypeEntry : artifactTypesMap.entrySet()) {
+                final Either<ArtifactTypeDefinition, StorageOperationStatus> result = artifactTypeOperation.getArtifactTypeByUid(UniqueIdBuilder.buildArtifactTypeUid(model,artifactTypeEntry.getKey()));
+                if (result.isRight() && result.right().value().equals(StorageOperationStatus.NOT_FOUND)) {
+                    artifactTypesToCreate.put(artifactTypeEntry.getKey(), artifactTypeEntry.getValue());
+                    log.info("Deploying new artifact type={}, to model={}, from package={}", artifactTypeEntry.getKey(), model, csarInfo.getCsarUUID());
+                }
+            }
+        }
+        return artifactTypesToCreate;
     }
     
     private boolean hasNewProperties(final Either<DataTypeDefinition, JanusGraphOperationStatus> result, final Map<String, Map<String, Object>> dataType) {

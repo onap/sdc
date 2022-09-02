@@ -80,6 +80,7 @@ import org.openecomp.sdc.be.externalapi.servlet.ArtifactExternalServlet;
 import org.openecomp.sdc.be.impl.ServletUtils;
 import org.openecomp.sdc.be.info.NodeTypeInfoToUpdateArtifacts;
 import org.openecomp.sdc.be.model.ArtifactDefinition;
+import org.openecomp.sdc.be.model.ArtifactTypeDefinition;
 import org.openecomp.sdc.be.model.AttributeDefinition;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
 import org.openecomp.sdc.be.model.Component;
@@ -112,6 +113,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -134,7 +136,9 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
         componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
     private final ApplicationDataTypeCache applicationDataTypeCache = mock(ApplicationDataTypeCache.class);
+    private final ArtifactTypeOperation artifactTypeOperation = mock(ArtifactTypeOperation.class);
     private final DataTypeBusinessLogic dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
+    private final ArtifactTypeImportManager artifactTypeImportManager = mock(ArtifactTypeImportManager.class);
 
     @InjectMocks
     private ServiceImportBusinessLogic sIBL;
@@ -245,8 +249,8 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         when(applicationDataTypeCache.get(any(), eq("onap.datatypes.ToscaConceptIdentifier.datatype"))).thenReturn(Either.left(typeToBeUpdated));
         when(applicationDataTypeCache.get(any(), matches("^((?!(tosca.datatypes.test_|onap.datatypes.ToscaConceptIdentifier)).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
 
-
-
+        when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.testartifacts.Name"))).thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
+        when(artifactTypeOperation.getArtifactTypeByUid(contains("tosca.artifacts"))).thenReturn(Either.left(null));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull()))
                 .thenReturn(Either.right(StorageOperationStatus.NOT_FOUND));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull()))
@@ -276,6 +280,12 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         assertNotNull(yamlMap.get("tosca.datatypes.test_a"));
         assertNotNull(yamlMap.get("tosca.datatypes.test_b"));
         assertNotNull(yamlMap.get("onap.datatypes.ToscaConceptIdentifier"));
+
+        ArgumentCaptor<String> artifactTypes = ArgumentCaptor.forClass(String.class);
+        verify(artifactTypeImportManager).createArtifactTypes(artifactTypes.capture(),isNull(), anyBoolean());
+        Map<String, Object> artifactTypesMap = new Yaml().load(artifactTypes.getValue());
+        assertEquals(1, artifactTypesMap.size());
+        assertNotNull(artifactTypesMap.get("tosca.testartifacts.Name"));
 
         ArgumentCaptor<Map<String, Object>> nodeTypes = ArgumentCaptor.forClass(Map.class);
         verify(resourceImportManager).importAllNormativeResource(nodeTypes.capture(), any(), any(), any(),
