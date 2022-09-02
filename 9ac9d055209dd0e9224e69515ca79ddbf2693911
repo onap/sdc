@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65746ad8_715c755a",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T09:57:01Z",
+      "side": 1,
+      "message": "add name to NullNodeTypeMetadata to simplify this",
+      "range": {
+        "startLine": 186,
+        "startChar": 0,
+        "endLine": 193,
+        "endChar": 17
+      },
+      "revId": "9ac9d055209dd0e9224e69515ca79ddbf2693911",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "116a603d_a7cad0ca",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T09:57:01Z",
+      "side": 1,
+      "message": "this can then also be done in the mapper as the name is in the NullNodeTypeMetadata",
+      "range": {
+        "startLine": 206,
+        "startChar": 23,
+        "endLine": 211,
+        "endChar": 39
+      },
+      "revId": "9ac9d055209dd0e9224e69515ca79ddbf2693911",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8553644_2b12eaf0",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T09:57:01Z",
+      "side": 1,
+      "message": "not needed",
+      "range": {
+        "startLine": 213,
+        "startChar": 0,
+        "endLine": 213,
+        "endChar": 96
+      },
+      "revId": "9ac9d055209dd0e9224e69515ca79ddbf2693911",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54509afe_500af721",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ResourceImportManager.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T09:57:01Z",
+      "side": 1,
+      "message": "the model is known higher up in the chain, just pass it down rather than adding to nodeTypesMetadataList, i.e. in the service object in SericeImportBusinessLogic createServiceFromCsar",
+      "range": {
+        "startLine": 214,
+        "startChar": 0,
+        "endLine": 214,
+        "endChar": 86
+      },
+      "revId": "9ac9d055209dd0e9224e69515ca79ddbf2693911",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
