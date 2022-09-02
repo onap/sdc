@@ -109,6 +109,7 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.cache.ApplicationDataTypeCache;
 import org.openecomp.sdc.be.model.operations.api.ICapabilityTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
+import org.openecomp.sdc.be.model.operations.impl.ArtifactTypeOperation;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.servlets.AbstractValidationsServlet;
 import org.openecomp.sdc.be.tosca.CsarUtils;
@@ -130,6 +131,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
     private final AbstractValidationsServlet servlet = new ArtifactExternalServlet(userBusinessLogic,
         componentInstanceBusinessLogic, componentsUtils, servletUtils, resourceImportManager, artifactsBusinessLogic);
     private final ApplicationDataTypeCache applicationDataTypeCache = mock(ApplicationDataTypeCache.class);
+    private final ArtifactTypeOperation artifactTypeOperation = mock(ArtifactTypeOperation.class);
     private final DataTypeBusinessLogic dataTypeBusinessLogic = mock(DataTypeBusinessLogic.class);
 
     @InjectMocks
@@ -203,7 +205,7 @@ class ServiceImportBusinessLogicTest extends ServiceImportBussinessLogicBaseTest
         
         when(applicationDataTypeCache.get(any(), contains("tosca.datatypes.test_"))).thenReturn(Either.right(JanusGraphOperationStatus.NOT_FOUND));
         when(applicationDataTypeCache.get(any(), matches("^((?!tosca.datatypes.test_).)*$"))).thenReturn(Either.left(new DataTypeDefinition()));
-        
+        when(artifactTypeOperation.getArtifactTypeByUid(any())).thenReturn(Either.left(null));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("org.openecomp.resource"), isNull())).thenReturn(Either.left(null));
         when(toscaOperationFacade.getLatestByToscaResourceName(contains("tosca.nodes."), isNull())).thenReturn(Either.left(null));
 

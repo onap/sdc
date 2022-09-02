@@ -199,6 +199,8 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
     private LifecycleBusinessLogic lifecycleBusinessLogic;
     @Mock
     private ArtifactTypeOperation artifactTypeOperation;
+    @Mock
+    private ArtifactTypeImportManager artifactTypeImportManager;
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -2451,7 +2453,7 @@ public class ArtifactsBusinessLogicTest extends BaseBusinessLogicMock {
             toscaExportHandler, csarUtils, lifecycleBusinessLogic,
             userBusinessLogic, artifactsResolver, elementDao, groupOperation, groupInstanceOperation,
             groupTypeOperation,
-            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation, artifactTypeOperation);
+            interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation, artifactTypeOperation,artifactTypeImportManager);
         artifactsBusinessLogic.setComponentsUtils(componentsUtils);
         return artifactsBusinessLogic;
     }

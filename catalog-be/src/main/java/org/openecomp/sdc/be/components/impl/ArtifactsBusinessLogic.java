@@ -173,6 +173,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
     private static final String FOUND_DEPLOYMENT_ARTIFACT = "Found deployment artifact {}";
     private static final String VALID_ARTIFACT_LABEL_NAME = "'A-Z', 'a-z', '0-9', '-', '@', '+' and space.";
     private final ArtifactTypeOperation artifactTypeOperation;
+    private final ArtifactTypeImportManager artifactTypeImportManager;
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
     @javax.annotation.Resource
     private IInterfaceLifecycleOperation interfaceLifecycleOperation;
@@ -197,7 +198,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
                                   IGroupInstanceOperation groupInstanceOperation, IGroupTypeOperation groupTypeOperation,
                                   InterfaceOperation interfaceOperation, InterfaceLifecycleOperation interfaceLifecycleTypeOperation,
                                   ArtifactsOperations artifactToscaOperation,
-                                  ArtifactTypeOperation artifactTypeOperation) {
+                                  ArtifactTypeOperation artifactTypeOperation, ArtifactTypeImportManager artifactTypeImportManager) {
         super(elementDao, groupOperation, groupInstanceOperation, groupTypeOperation, interfaceOperation, interfaceLifecycleTypeOperation,
             artifactToscaOperation);
         this.artifactCassandraDao = artifactCassandraDao;
@@ -207,6 +208,7 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
         this.userBusinessLogic = userBusinessLogic;
         this.artifactsResolver = artifactsResolver;
         this.artifactTypeOperation = artifactTypeOperation;
+        this.artifactTypeImportManager = artifactTypeImportManager;
     }
 
     public static <R> Either<Boolean, R> ifTrue(boolean predicate, Supplier<Either<Boolean, R>> ifTrue) {
@@ -4266,6 +4268,10 @@ public class ArtifactsBusinessLogic extends BaseBusinessLogic {
             artifactTypeOperation.validateModel(modelName);
         }
         return artifactTypeOperation.getAllArtifactTypes(modelName);
+    }
+
+    public void createArtifactTypeFromYaml(final String dataTypesYaml, final String model, final boolean includeToModelDefaultImports) {
+        artifactTypeImportManager.createArtifactTypes(dataTypesYaml, model, includeToModelDefaultImports);
     }
 
     public enum ArtifactOperationEnum {
