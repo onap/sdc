@@ -296,7 +296,7 @@ public class ArtifactTypeOperation extends AbstractOperation implements IArtifac
         return result;
     }
 
-    private Either<ArtifactTypeDefinition, StorageOperationStatus> getArtifactTypeByUid(String uniqueId) {
+    public Either<ArtifactTypeDefinition, StorageOperationStatus> getArtifactTypeByUid(String uniqueId) {
         LOGGER.debug("#getArtifactTypeByUid - fetching artifact type with id {}", uniqueId);
         return janusGraphGenericDao.getNode(UniqueIdBuilder.getKeyByNodeType(NodeTypeEnum.ArtifactType), uniqueId, ArtifactTypeData.class).right()
                 .map(DaoStatusConverter::convertJanusGraphStatusToStorageStatus).left()

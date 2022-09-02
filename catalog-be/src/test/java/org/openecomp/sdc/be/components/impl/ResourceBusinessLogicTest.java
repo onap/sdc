@@ -217,6 +217,7 @@ class ResourceBusinessLogicTest {
     private final PolicyTypeOperation policyTypeOperation = Mockito.mock(PolicyTypeOperation.class);
     private final PolicyBusinessLogic policyBusinessLogic = Mockito.mock(PolicyBusinessLogic.class);
     private final ArtifactTypeOperation artifactTypeOperation = Mockito.mock(ArtifactTypeOperation.class);
+    private final ArtifactTypeImportManager artifactTypeImportManager = Mockito.mock(ArtifactTypeImportManager.class);
     private final DataTypeBusinessLogic dataTypeBusinessLogic = Mockito.mock(DataTypeBusinessLogic.class);
     private final PolicyTypeBusinessLogic policyTypeBusinessLogic = Mockito.mock(PolicyTypeBusinessLogic.class);
     private final ModelOperation modelOperation = Mockito.mock(ModelOperation.class);
@@ -235,7 +236,7 @@ class ResourceBusinessLogicTest {
     private ComponentsUtils componentsUtils = new ComponentsUtils(Mockito.mock(AuditingManager.class));
     private ArtifactsBusinessLogic artifactManager = new ArtifactsBusinessLogic(artifactCassandraDao, toscaExportHandler, csarUtils, lifecycleBl,
         userBusinessLogic, artifactsResolver, elementDao, groupOperation, groupInstanceOperation, groupTypeOperation,
-        interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation, artifactTypeOperation);
+        interfaceOperation, interfaceLifecycleTypeOperation, artifactToscaOperation, artifactTypeOperation,artifactTypeImportManager);
     private CsarOperation csarOperation = Mockito.mock(CsarOperation.class);
     @InjectMocks
     private CsarBusinessLogic csarBusinessLogic;
