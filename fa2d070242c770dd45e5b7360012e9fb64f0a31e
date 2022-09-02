@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8604b7be_32be38c9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/validation/ToscaFunctionValidatorImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-02T11:04:33Z",
+      "side": 1,
+      "message": "I think there is a risk of null pointer, I believe the attributes and property collections can come null",
+      "range": {
+        "startLine": 88,
+        "startChar": 38,
+        "endLine": 88,
+        "endChar": 120
+      },
+      "revId": "fa2d070242c770dd45e5b7360012e9fb64f0a31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
