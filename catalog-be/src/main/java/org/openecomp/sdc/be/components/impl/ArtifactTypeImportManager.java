@@ -39,7 +39,7 @@ public class ArtifactTypeImportManager {
 
     private final ArtifactTypeOperation artifactTypeOperation;
     private final ComponentsUtils componentsUtils;
-    private final CommonImportManager commonImportManager;;
+    private final CommonImportManager commonImportManager;
 
     @Autowired
     public ArtifactTypeImportManager(final ArtifactTypeOperation artifactTypeOperation, final ComponentsUtils componentsUtils,
@@ -67,7 +67,7 @@ public class ArtifactTypeImportManager {
     }
 
     private Either<List<ArtifactTypeDefinition>, ActionStatus> createArtifactTypeFromYml(
-            final String artifactTypesYml, final String modelName) {
+        final String artifactTypesYml, final String modelName) {
         final Either<List<ArtifactTypeDefinition>, ActionStatus> artifactTypes =
                 commonImportManager.createElementTypesFromYml(artifactTypesYml, this::createArtifactTypeDefinition);
         if (artifactTypes.isLeft()) {
