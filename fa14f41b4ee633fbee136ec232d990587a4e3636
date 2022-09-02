@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "830cbcb2_bf27f8a6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2023,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-02T15:52:16Z",
+      "side": 1,
+      "message": "Just wondering, not sure if it is possible, but what if two paths have the same final property name? Wouldn\u0027t it cause a conflict in the jObject entries?",
+      "range": {
+        "startLine": 2023,
+        "startChar": 17,
+        "endLine": 2023,
+        "endChar": 44
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e33fc353_b11fc614",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-02T15:52:16Z",
+      "side": 1,
+      "message": "was it left by mistake?",
+      "range": {
+        "startLine": 580,
+        "startChar": 1,
+        "endLine": 580,
+        "endChar": 23
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ee3499c_a93fc163",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-02T15:52:16Z",
+      "side": 1,
+      "message": "const",
+      "range": {
+        "startLine": 598,
+        "startChar": 9,
+        "endLine": 598,
+        "endChar": 12
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06de7397_ab31670a",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-02T15:52:16Z",
+      "side": 1,
+      "message": "seems that the indentation is incorrect, same for lines 602, 613 and 626",
+      "range": {
+        "startLine": 598,
+        "startChar": 5,
+        "endLine": 598,
+        "endChar": 9
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84070a4e_edc7acd1",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-02T15:52:16Z",
+      "side": 1,
+      "message": "const",
+      "range": {
+        "startLine": 599,
+        "startChar": 12,
+        "endLine": 599,
+        "endChar": 15
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aedf8199_02208101",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-02T15:52:16Z",
+      "side": 1,
+      "message": "this could be moved to the parent loop",
+      "range": {
+        "startLine": 163,
+        "startChar": 10,
+        "endLine": 163,
+        "endChar": 147
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8de92213_946b192a",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-02T15:52:16Z",
+      "side": 1,
+      "message": "you could use const in this case, same for the other let",
+      "range": {
+        "startLine": 164,
+        "startChar": 10,
+        "endLine": 164,
+        "endChar": 13
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
