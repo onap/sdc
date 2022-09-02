@@ -60,7 +60,7 @@ public class TypeUtils {
         REQUIREMENTS("requirements"), NODE("node"), RELATIONSHIP("relationship"), CAPABILITY("capability"), INTERFACES("interfaces"),
         NODE_FILTER("node_filter"), TOSCA_ID("tosca_id"),
         // Artifacts
-        ARTIFACTS("artifacts"), FILE("file"),
+        ARTIFACTS("artifacts"), ARTIFACT_TYPES("artifact_types"), FILE("file"),
         // Heat env Validation
         PARAMETERS("parameters"),
         // Import Validations
