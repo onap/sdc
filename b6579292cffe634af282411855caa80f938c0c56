@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "5034c55b_8b1c10bb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/validation/ToscaFunctionValidatorImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T09:20:27Z",
+      "side": 1,
+      "message": "im not seeing where this comment is implemented",
+      "parentUuid": "9e6a5781_337340d9",
+      "range": {
+        "startLine": 87,
+        "startChar": 49,
+        "endLine": 87,
+        "endChar": 82
+      },
+      "revId": "b6579292cffe634af282411855caa80f938c0c56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "df8aab1e_520abff5",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-get-function/tosca-get-function.component.ts",
         "patchSetId": 2
