@@ -90,6 +90,7 @@ public abstract class CsarInfo {
     @Getter
     private Map<String, Resource> createdNodes;
     protected Map<String, Object> datatypeDefinitions;
+    protected Map<String, Object> artifacttypeDefinitions;
     private Map<String, Object> policytypeDefinitions;
 
 
@@ -177,6 +178,8 @@ public abstract class CsarInfo {
      * @return map with the data type name as key and representaion of the data type defintion as value
      */
     public abstract Map<String, Object> getDataTypes();
+
+    public abstract Map<String, Object> getArtifactTypes();
 
     public Map<String, Object> getPolicyTypes() {
         if (policytypeDefinitions == null) {

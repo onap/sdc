@@ -189,6 +189,20 @@ public class OnboardedCsarInfo extends CsarInfo {
     }
 
     @Override
+    public Map<String, Object> getArtifactTypes() {
+        if (artifacttypeDefinitions == null) {
+            artifacttypeDefinitions = new HashMap<>();
+            for (Map.Entry<String, byte[]> entry : globalSubstitutes) {
+                final String yamlFileContents = new String(entry.getValue());
+                final Map<String, Object> mappedToscaTemplate = new Yaml().load(yamlFileContents);
+                artifacttypeDefinitions.putAll(getTypesFromTemplate(mappedToscaTemplate, TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES));
+            }
+            artifacttypeDefinitions.putAll(getTypesFromTemplate(mappedToscaMainTemplate, TypeUtils.ToscaTagNamesEnum.ARTIFACT_TYPES));
+        }
+        return artifacttypeDefinitions;
+    }
+
+    @Override
     public Map<String, Object> getDataTypes() {
         if (datatypeDefinitions == null) {
             datatypeDefinitions = new HashMap<>();
