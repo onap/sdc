@@ -22,6 +22,30 @@
       "revId": "fa2d070242c770dd45e5b7360012e9fb64f0a31e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d916992d_0e0a349e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/validation/ToscaFunctionValidatorImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-02T11:53:56Z",
+      "side": 1,
+      "message": "looks like you are right",
+      "parentUuid": "8604b7be_32be38c9",
+      "range": {
+        "startLine": 88,
+        "startChar": 38,
+        "endLine": 88,
+        "endChar": 120
+      },
+      "revId": "fa2d070242c770dd45e5b7360012e9fb64f0a31e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
