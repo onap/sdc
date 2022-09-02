@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "83b80108_2e6f9571",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "why \u0027read\u0027 rather than \u0027get\u0027? or \u0027create\u0027",
+      "range": {
+        "startLine": 253,
+        "startChar": 57,
+        "endLine": 253,
+        "endChar": 61
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b52d7965_5c9ec14c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "plural",
+      "range": {
+        "startLine": 158,
+        "startChar": 12,
+        "endLine": 158,
+        "endChar": 36
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f1844e4_56bc2861",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "plural",
+      "range": {
+        "startLine": 160,
+        "startChar": 12,
+        "endLine": 160,
+        "endChar": 36
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d37c95c2_52931c7f",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/validation/NodeFilterValidator.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "Property should be Properties as gets all the properties of the instance\nremove \"FromGetFunction\" as its a bit misleading - the properties are not coming from the getFunction\nits also a bit misleading to have properties in the name when it could be properties or attributes, but cant think of a better name",
+      "range": {
+        "startLine": 176,
+        "startChar": 46,
+        "endLine": 176,
+        "endChar": 80
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce3dd32c_8fc4a956",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ServiceFilterUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "rename toscaGetFunctionDataDefinition",
+      "range": {
+        "startLine": 115,
+        "startChar": 53,
+        "endLine": 115,
+        "endChar": 67
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f52b4909_656ee5ba",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/impl/ServiceFilterUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "same comment",
+      "range": {
+        "startLine": 122,
+        "startChar": 42,
+        "endLine": 122,
+        "endChar": 56
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30fcd582_5205dc5d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/dto/FilterConstraintDto.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "rename getAsToscaFunction or similar",
+      "range": {
+        "startLine": 46,
+        "startChar": 52,
+        "endLine": 46,
+        "endChar": 67
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7febec2_74405c07",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/dto/FilterConstraintDto.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "maybe return directly to simplify",
+      "range": {
+        "startLine": 53,
+        "startChar": 12,
+        "endLine": 53,
+        "endChar": 96
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d23c12fe_399d7135",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/PropertyFilterConstraintDataDefinitionHelper.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T07:51:21Z",
+      "side": 1,
+      "message": "not sure about read - get/create/convert might be better",
+      "range": {
+        "startLine": 68,
+        "startChar": 42,
+        "endLine": 68,
+        "endChar": 46
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
