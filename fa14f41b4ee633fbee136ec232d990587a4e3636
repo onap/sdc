@@ -160,6 +160,29 @@
       "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cd33894_e675463d",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-02T16:03:14Z",
+      "side": 1,
+      "message": "any particular reason to be not \u0027List\u0027 but Collection\ni checked its usage and could not find way to this be anything else (not List)",
+      "range": {
+        "startLine": 71,
+        "startChar": 12,
+        "endLine": 71,
+        "endChar": 22
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
