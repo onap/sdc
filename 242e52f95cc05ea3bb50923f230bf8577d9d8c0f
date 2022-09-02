@@ -186,6 +186,29 @@
     },
     {
       "key": {
+        "uuid": "f5ec44ff_4b48b490",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/ui/mapper/FilterConstraintMapper.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-02T08:03:25Z",
+      "side": 1,
+      "message": "If not present the value type is unset resulting in exception thrown in FilterConstraintValidatorImpl::validate line 45.\nI have encountered this error when adding a capability filter with get_property",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 107
+      },
+      "revId": "242e52f95cc05ea3bb50923f230bf8577d9d8c0f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d23c12fe_399d7135",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/utils/PropertyFilterConstraintDataDefinitionHelper.java",
         "patchSetId": 11
