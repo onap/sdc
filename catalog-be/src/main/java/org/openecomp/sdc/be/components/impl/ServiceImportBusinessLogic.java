@@ -67,6 +67,7 @@ import org.openecomp.sdc.be.dao.janusgraph.JanusGraphDao;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datamodel.utils.ArtifactUtils;
 import org.openecomp.sdc.be.datatypes.elements.ComponentInstanceDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.CustomYamlFunction;
 import org.openecomp.sdc.be.datatypes.elements.GetInputValueDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
@@ -1842,7 +1843,19 @@ public class ServiceImportBusinessLogic {
                 final var property = new ComponentInstanceProperty(curPropertyDef, value, null);
                 String validatePropValue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
                 property.setValue(validatePropValue);
-                property.setToscaFunction(propertyInfo.getToscaFunction());
+                
+                if (tryHandlingAsYamlToscaFunction(validatePropValue, value, propertyInfo)) {
+                    try {
+                        final Map<String, Object> valueAsMap = new Yaml().loadAs(value, Map.class);
+                        CustomYamlFunction toscaFunction = new CustomYamlFunction();
+                        toscaFunction.setYamlValue(valueAsMap);
+                        property.setToscaFunction(toscaFunction);
+                    } catch (Exception exception) {
+                        log.info("Cannot create YAML value for {}", propName);
+                    }
+                } else {
+                    property.setToscaFunction(propertyInfo.getToscaFunction());
+                }
                 if (!getInputs.isEmpty()) {
                     final List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
                     for (final GetInputValueDataDefinition getInput : getInputs) {
@@ -1875,6 +1888,10 @@ public class ServiceImportBusinessLogic {
         }
         instProperties.put(currentCompInstance.getUniqueId(), instPropList);
         return componentsUtils.getResponseFormat(ActionStatus.OK);
+    }
+    
+    private boolean tryHandlingAsYamlToscaFunction(String validatePropValue, String value, UploadPropInfo propertyInfo) {
+        return StringUtils.isEmpty(validatePropValue) && StringUtils.isNotEmpty(value) && propertyInfo.getToscaFunction() == null;
     }
 
     protected ResponseFormat addInterfaceValuesToRi(
