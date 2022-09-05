@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e786944f_ba8e91cb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ComponentInstanceBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2023,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T08:59:04Z",
+      "side": 1,
+      "message": "Its possible two paths will have the same final property name, but i dont think t will cause any conflict because the jObjects are in a nested structure, so the final jObects will be in different parent jObjects",
+      "parentUuid": "830cbcb2_bf27f8a6",
+      "range": {
+        "startLine": 2023,
+        "startChar": 17,
+        "endLine": 2023,
+        "endChar": 44
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e33fc353_b11fc614",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2022-09-02T15:52:16Z",
       "side": 1,
       "message": "was it left by mistake?",
+      "range": {
+        "startLine": 580,
+        "startChar": 1,
+        "endLine": 580,
+        "endChar": 23
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5ebdb9e_80ed77b3",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 580,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T08:59:04Z",
+      "side": 1,
+      "message": "yes",
+      "parentUuid": "e33fc353_b11fc614",
       "range": {
         "startLine": 580,
         "startChar": 1,
@@ -94,6 +142,54 @@
     },
     {
       "key": {
+        "uuid": "0fb295ce_9f6764d5",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T08:59:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ee3499c_a93fc163",
+      "range": {
+        "startLine": 598,
+        "startChar": 9,
+        "endLine": 598,
+        "endChar": 12
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0dfc1ed7_a2cc83e6",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T08:59:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06de7397_ab31670a",
+      "range": {
+        "startLine": 598,
+        "startChar": 5,
+        "endLine": 598,
+        "endChar": 9
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84070a4e_edc7acd1",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
         "patchSetId": 2
@@ -114,6 +210,30 @@
       "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "350c0734_4fc83a02",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/properties-assignment.page.component.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T08:59:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84070a4e_edc7acd1",
+      "range": {
+        "startLine": 599,
+        "startChar": 12,
+        "endLine": 599,
+        "endChar": 15
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "55528d78_a027d383",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T08:59:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aedf8199_02208101",
+      "range": {
+        "startLine": 163,
+        "startChar": 10,
+        "endLine": 163,
+        "endChar": 147
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8de92213_946b192a",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
         "patchSetId": 2
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "ed253470_af6b2875",
+        "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/services/properties.utils.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T08:59:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8de92213_946b192a",
+      "range": {
+        "startLine": 164,
+        "startChar": 10,
+        "endLine": 164,
+        "endChar": 13
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6cd33894_e675463d",
         "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
         "patchSetId": 2
@@ -174,6 +342,30 @@
       "writtenOn": "2022-09-02T16:03:14Z",
       "side": 1,
       "message": "any particular reason to be not \u0027List\u0027 but Collection\ni checked its usage and could not find way to this be anything else (not List)",
+      "range": {
+        "startLine": 71,
+        "startChar": 12,
+        "endLine": 71,
+        "endChar": 22
+      },
+      "revId": "fa14f41b4ee633fbee136ec232d990587a4e3636",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c09f726_25f45fd9",
+        "filename": "common-be/src/main/java/org/openecomp/sdc/be/datatypes/elements/PropertyDataDefinition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T08:59:04Z",
+      "side": 1,
+      "message": "It could be list, but there is no reason for it to be (i.e. it does not depend on order). In the absence of any need for it to be a particular type of collection, I kept it as the most general type",
+      "parentUuid": "6cd33894_e675463d",
       "range": {
         "startLine": 71,
         "startChar": 12,
