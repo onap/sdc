@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5db5ea3f_421da0f3",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/NodeTypesMetadataList.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-05T12:28:28Z",
+      "side": 1,
+      "message": "these are not needed now so can be removed",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 30
+      },
+      "revId": "003c52f5e77d2f7c4c67b4efeb5d57ae49adb185",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
