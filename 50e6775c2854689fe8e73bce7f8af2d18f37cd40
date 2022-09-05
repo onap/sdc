@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "914faa6a_d8037db2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-09-05T19:19:48Z",
+      "side": 1,
+      "message": "As it is handling only YAML exceptions, \"Service Import - invalid yaml error handling\" this summary makes more sense i believe.",
+      "parentUuid": "5f2795e9_4e31477b",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 27
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9fbcf9f2_a2555e36",
         "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
         "patchSetId": 1
@@ -235,6 +259,30 @@
       "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "858ec508_32285d4f",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-09-05T19:19:48Z",
+      "side": 1,
+      "message": "I agree this is CSAR package reading, but anything other than YAML issues, it is already handled by backend, like issues in .meta file, invalid CSAR extensions. This story is handling only YAML exceptions which is thrown by YAML library itself which were uncaught. So this story is handling reject promise scenario which will be YAML exceptions only. It is not catching any other issues. This is my observation. If not convincing enough, happy to change the error message and commit summary.",
+      "parentUuid": "beb86196_74fcfa62",
+      "range": {
+        "startLine": 304,
+        "startChar": 24,
+        "endLine": 308,
+        "endChar": 27
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
