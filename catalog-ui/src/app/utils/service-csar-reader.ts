@@ -26,17 +26,21 @@ export class ServiceCsarReader {
 
     private serviceCsar = new ServiceCsar();
 
-    public read(serviceCsarBlob:Blob): Promise<ServiceCsar> {
+    public read(serviceCsarBlob: Blob): Promise<ServiceCsar> {
         const jsZip = require("jszip");
-        return new Promise<ServiceCsar>((resolve) => {
+        return new Promise<ServiceCsar>((resolve, reject) => {
             jsZip.loadAsync(serviceCsarBlob).then(async zip => {
-                const toscaMetaFileContent = await zip.file("TOSCA-Metadata/TOSCA.meta").async("string");
-                this.readToscaMeta(toscaMetaFileContent);
-                const entryDefinitionFileContent = await zip.file(this.serviceCsar.entryDefinitionFileName).async("string");
-                this.readServiceMetadata(entryDefinitionFileContent);
-                const interfaceDefinitionFileContent = await zip.file(this.serviceCsar.interfaceDefinitionFileName).async("string");
-                this.readServiceSubstitutionNode(interfaceDefinitionFileContent);
-                resolve(this.serviceCsar);
+                try {
+                    const toscaMetaFileContent = await zip.file("TOSCA-Metadata/TOSCA.meta").async("string");
+                    this.readToscaMeta(toscaMetaFileContent);
+                    const entryDefinitionFileContent = await zip.file(this.serviceCsar.entryDefinitionFileName).async("string");
+                    this.readServiceMetadata(entryDefinitionFileContent);
+                    const interfaceDefinitionFileContent = await zip.file(this.serviceCsar.interfaceDefinitionFileName).async("string");
+                    this.readServiceSubstitutionNode(interfaceDefinitionFileContent);
+                    resolve(this.serviceCsar);
+                } catch (error) {
+                    reject(error);
+                }
             });
         });
     }
