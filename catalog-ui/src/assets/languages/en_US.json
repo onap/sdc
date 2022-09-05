@@ -560,5 +560,8 @@
   "CAP_NAME": "Capability Name",
   "CAP_TYPE": "Capability Type",
   "CAP_DESCRIPTION": "Description",
-  "CAP_VALID_SOURCE": "Valid Sources"
+  "CAP_VALID_SOURCE": "Valid Sources",
+  "=========== SERVICE IMPORT ===========": "",
+  "IMPORT_FAILURE_MESSAGE_TITLE": "Import Failure",
+  "IMPORT_FAILURE_MESSAGE_TEXT": "YAML exception - Invalid Yaml"
 }
