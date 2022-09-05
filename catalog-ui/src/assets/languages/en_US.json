@@ -565,5 +565,8 @@
   "CAP_VALID_SOURCE": "Valid Sources",
   "VALUE_LABEL": "Value",
   "VALUE_EXPRESSION_LABEL": "Value Expression",
-  "OPERATOR_LABEL": "Operator"
+  "OPERATOR_LABEL": "Operator",
+  "=========== SERVICE IMPORT ===========": "",
+  "IMPORT_FAILURE_MESSAGE_TITLE": "Import Failure",
+  "IMPORT_FAILURE_MESSAGE_TEXT": "Import failed - error reading CSAR"
 }
