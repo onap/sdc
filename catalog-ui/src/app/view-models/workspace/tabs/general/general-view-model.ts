@@ -277,28 +277,38 @@ export class GeneralViewModel {
             if (resource.resourceType === ResourceType.VF && !resource.csarUUID) {
                 this.$scope.isShowFileBrowse = true;
             }
-        } else if(this.$scope.component.isService()){
+        } else if (this.$scope.component.isService()) {
             let service: Service = <Service>this.$scope.component;
             console.log(service.name + ": " + service.csarUUID);
             if (service.importedFile) {
                 this.$scope.isShowFileBrowse = true;
                 (<Service>this.$scope.component).ecompGeneratedNaming = true;
                 let blob = this.FileUtils.base64toBlob(service.importedFile.base64, "zip");
-                new ServiceCsarReader().read(blob).then((serviceCsar) => {
-                    serviceCsar.serviceMetadata.contactId = this.cacheService.get("user").userId;
-                    (<Service>this.$scope.component).setComponentMetadata(serviceCsar.serviceMetadata);
-                    (<Service>this.$scope.component).model = serviceCsar.serviceMetadata.model;
-                    this.$scope.onModelChange();
-                    this.$scope.componentCategories.selectedCategory = serviceCsar.serviceMetadata.selectedCategory;
-                    this.$scope.onCategoryChange();
-                    serviceCsar.extraServiceMetadata.forEach((value: string, key: string) => {
-                        if(this.getMetadataKey(key)) {
-                            (<Service>this.$scope.component).categorySpecificMetadata[key] = value;
-                        }
+                new ServiceCsarReader().read(blob).then(
+                    (serviceCsar) => {
+                        serviceCsar.serviceMetadata.contactId = this.cacheService.get("user").userId;
+                        (<Service>this.$scope.component).setComponentMetadata(serviceCsar.serviceMetadata);
+                        (<Service>this.$scope.component).model = serviceCsar.serviceMetadata.model;
+                        this.$scope.onModelChange();
+                        this.$scope.componentCategories.selectedCategory = serviceCsar.serviceMetadata.selectedCategory;
+                        this.$scope.onCategoryChange();
+                        serviceCsar.extraServiceMetadata.forEach((value: string, key: string) => {
+                            if (this.getMetadataKey(key)) {
+                                (<Service>this.$scope.component).categorySpecificMetadata[key] = value;
+                            }
+                        });
+                        (<Service>this.$scope.component).derivedFromGenericType = serviceCsar.substitutionNodeType;
+                        this.$scope.onBaseTypeChange();
+                    },
+                    (error) => {
+                        const errorMsg = this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT');
+                        console.error(errorMsg, error);
+                        this.Notification.error({
+                            message: this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT'),
+                            title: this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TITLE')
+                        });
+                        this.$state.go('dashboard');
                     });
-                    (<Service>this.$scope.component).derivedFromGenericType = serviceCsar.substitutionNodeType;
-                    this.$scope.onBaseTypeChange();
-                });
             }
             if (this.$scope.isEditMode() && service.serviceType == 'Service' && !service.csarUUID) {
                 this.$scope.isShowFileBrowse = true;
