@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ca1f859_e4cb8cae",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 2
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-05T17:18:03Z",
+      "side": 1,
+      "message": "you can use the same IMPORT_FAILURE_MESSAGE_TEXT message:\nconst errorMsg \u003d this.$filter(\u0027translate\u0027)(\u0027IMPORT_FAILURE_MESSAGE_TEXT\u0027);\nconsole.error(errorMsg, error.name);",
+      "range": {
+        "startLine": 304,
+        "startChar": 24,
+        "endLine": 304,
+        "endChar": 84
+      },
+      "revId": "3e26607ca22783e0a2ed85be01a826b99efa880a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
