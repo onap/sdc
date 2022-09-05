@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "780058f3_adbde6a5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-05T15:24:19Z",
+      "side": 1,
+      "message": "please, give a meaningful title and follow the guidelines https://wiki.onap.org/display/DW/Commit+Messages",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 27
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9fbcf9f2_a2555e36",
+        "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-05T15:24:19Z",
+      "side": 1,
+      "message": "same here, missing indentation for the try content",
+      "range": {
+        "startLine": 33,
+        "startChar": 16,
+        "endLine": 33,
+        "endChar": 21
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b47c50f5_2762c961",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-05T15:24:19Z",
+      "side": 1,
+      "message": "if you move this down, you should indent the inside part of the curly brackets",
+      "range": {
+        "startLine": 288,
+        "startChar": 20,
+        "endLine": 288,
+        "endChar": 38
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f2cbe92_d8142b59",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-05T15:24:19Z",
+      "side": 1,
+      "message": "you can\u0027t be sure this is a syntax error. We either handle the syntax errors and throw custom errors to be able to identify the type of error here or we generalize the error message to a generic package reading error.\nIf the task is to show syntax error, you should try at least to identify the errors from the yaml reading library and show here, otherwise a generic reading error should be thrown",
+      "range": {
+        "startLine": 304,
+        "startChar": 24,
+        "endLine": 308,
+        "endChar": 27
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
