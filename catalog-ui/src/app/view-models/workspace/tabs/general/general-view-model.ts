@@ -284,7 +284,8 @@ export class GeneralViewModel {
                 this.$scope.isShowFileBrowse = true;
                 (<Service>this.$scope.component).ecompGeneratedNaming = true;
                 let blob = this.FileUtils.base64toBlob(service.importedFile.base64, "zip");
-                new ServiceCsarReader().read(blob).then((serviceCsar) => {
+                new ServiceCsarReader().read(blob).then(
+                    (serviceCsar) => {
                     serviceCsar.serviceMetadata.contactId = this.cacheService.get("user").userId;
                     (<Service>this.$scope.component).setComponentMetadata(serviceCsar.serviceMetadata);
                     (<Service>this.$scope.component).model = serviceCsar.serviceMetadata.model;
@@ -298,7 +299,15 @@ export class GeneralViewModel {
                     });
                     (<Service>this.$scope.component).derivedFromGenericType = serviceCsar.substitutionNodeType;
                     this.$scope.onBaseTypeChange();
-                });
+                    },
+                    (error) => {
+                        console.error('Import failed - TOSCA CSAR syntax error ' + error.name);
+                        this.Notification.error({
+                            message: this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TEXT'),
+                            title: this.$filter('translate')('IMPORT_FAILURE_MESSAGE_TITLE')
+                        });
+                        this.$state.go('dashboard');
+                    });
             }
             if (this.$scope.isEditMode() && service.serviceType == 'Service' && !service.csarUUID) {
                 this.$scope.isShowFileBrowse = true;
