@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "b69cfe59_8c5559d9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-06T08:45:31Z",
+      "side": 1,
+      "message": "The commit is not handling YAML errors, so I don\u0027t think the summary makes sense. And, if you were following the guidelines, you would not start the summary with \"Service\", but with an imperative verb, e.g.:\nHandle CSAR reading errors in Service Import",
+      "parentUuid": "914faa6a_d8037db2",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 27
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9fbcf9f2_a2555e36",
         "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
         "patchSetId": 1
@@ -283,6 +307,30 @@
       "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e7e3ac2_742d19e5",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-06T08:45:31Z",
+      "side": 1,
+      "message": "This code is reading a zip file, and files inside the zip. You can have problems not related to syntax, for example, if you provide a corrupted zip file, a file that has a zip extension but it is not a zip in content and so on.\nSo you can\u0027t generalize the error given here as syntax, what you can say is that there was an error reading the CSAR.",
+      "parentUuid": "858ec508_32285d4f",
+      "range": {
+        "startLine": 304,
+        "startChar": 24,
+        "endLine": 308,
+        "endChar": 27
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
