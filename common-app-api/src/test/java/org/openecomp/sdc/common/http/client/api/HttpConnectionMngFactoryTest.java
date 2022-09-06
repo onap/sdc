@@ -32,7 +32,7 @@ public class HttpConnectionMngFactoryTest {
     @Test
     public void validateFactoryCreatesValidHttpClientConnectionManager() {
         final String testKeyStore = "testKeyStore ";
-        final String testKeyStorePassword = SecurityUtil.INSTANCE.encrypt("testKeyStorePassword").left().value();
+        final String testKeyStorePassword = SecurityUtil.encrypt("testKeyStorePassword").left().value();
 
         ClientCertificate clientCertificate = new ClientCertificate();
         clientCertificate.setKeyStore(testKeyStore);

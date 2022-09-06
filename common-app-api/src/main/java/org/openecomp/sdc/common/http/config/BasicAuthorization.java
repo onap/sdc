@@ -56,7 +56,7 @@ public class BasicAuthorization {
     private void setPassword(String password, boolean isEncoded) {
         validate(password);
         if (isEncoded) {
-            Either<String, String> passkey = SecurityUtil.INSTANCE.decrypt(password);
+            Either<String, String> passkey = SecurityUtil.decrypt(password);
             if (passkey.isLeft()) {
                 this.password = passkey.left().value();
             } else {

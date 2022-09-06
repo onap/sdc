@@ -70,7 +70,7 @@ public class DmaapClientFactory {
 
     private Properties buildProperties(DmaapConsumerConfiguration parameters) throws GeneralSecurityException, IOException {
         Properties props = new Properties();
-        Either<String, String> passkey = SecurityUtil.INSTANCE.decrypt(parameters.getCredential().getPassword());
+        Either<String, String> passkey = SecurityUtil.decrypt(parameters.getCredential().getPassword());
         if (passkey.isRight()) {
             throw new GeneralSecurityException("invalid password, cannot build properties");
         }
@@ -119,7 +119,7 @@ public class DmaapClientFactory {
     private Properties buildProducerProperties(DmaapProducerConfiguration parameters) throws GeneralSecurityException, IOException {
         logger.info("The DmaapProducerConfiguration is {} ", parameters);
         Properties props = new Properties();
-        Either<String, String> passkey = SecurityUtil.INSTANCE.decrypt(parameters.getCredential().getPassword());
+        Either<String, String> passkey = SecurityUtil.decrypt(parameters.getCredential().getPassword());
         if (passkey.isRight()) {
             throw new GeneralSecurityException("invalid password, cannot build properties");
         }

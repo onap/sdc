@@ -41,7 +41,7 @@ public class ClientCertificate {
     private void setKeyStorePassword(String keyStorePassword, boolean isEncoded) {
         validate(keyStorePassword);
         if (isEncoded) {
-            Either<String, String> passkey = SecurityUtil.INSTANCE.decrypt(keyStorePassword);
+            Either<String, String> passkey = SecurityUtil.decrypt(keyStorePassword);
             if (passkey.isLeft()) {
                 this.keyStorePassword = passkey.left().value();
             } else {

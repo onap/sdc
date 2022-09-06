@@ -175,7 +175,7 @@ Modifications copyright (c) 2018-2019 Nokia
         <joda.time.version>2.9.9</joda.time.version>
 
         <!--sdc-security-utils-->
-        <security.util.lib.version>1.6.0</security.util.lib.version>
+        <security.util.lib.version>1.7.0</security.util.lib.version>
         <!--jacoco-->
         <jacoco.version>0.8.7</jacoco.version>
 

@@ -51,10 +51,10 @@ public class HttpClientFactoryTest {
 
     private HttpClientConfigImmutable prepareTestClientConfigImmutable() {
         final String testUserName = "testUser";
-        final String testUserPassword = SecurityUtil.INSTANCE.encrypt("testPassword").left().value();
+        final String testUserPassword = SecurityUtil.encrypt("testPassword").left().value();
         final int timeouts = 10;
         final String testKeyStore = "testKeyStore";
-        final String testKeyStorePassword = SecurityUtil.INSTANCE.encrypt("testKeyStorePassword").left().value();
+        final String testKeyStorePassword = SecurityUtil.encrypt("testKeyStorePassword").left().value();
 
         int testNumOfRetries = 10;
         ComparableHttpRequestRetryHandler testRetryHandler = Mockito.mock(ComparableHttpRequestRetryHandler.class);

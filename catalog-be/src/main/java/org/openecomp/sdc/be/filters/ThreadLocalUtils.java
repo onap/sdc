@@ -21,6 +21,8 @@ package org.openecomp.sdc.be.filters;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.onap.sdc.security.AuthenticationCookie;
@@ -52,18 +54,19 @@ public class ThreadLocalUtils implements IUsersThreadLocalHolder {
     }
 
     protected void setUserContext(HttpServletRequest httpRequest) {
-        String user_id = httpRequest.getHeader(Constants.USER_ID_HEADER);
-        if (user_id != null) {
-            String userRolesFromPortal = null;
+        final String userId = httpRequest.getHeader(Constants.USER_ID_HEADER);
+        if (userId != null) {
             Set<String> roles = null;
             try {
-                userRolesFromPortal = portalClient.fetchUserRolesFromPortal(user_id);
-                roles = new HashSet<>(Arrays.asList(userRolesFromPortal));
+                final Optional<String> userRolesFromPortalOptional = portalClient.fetchUserRolesFromPortal(userId);
+                if (userRolesFromPortalOptional.isPresent()){
+                    roles = new HashSet<>(List.of(userRolesFromPortalOptional.get()));
+                }
             } catch (RestrictionAccessFilterException e) {
-                log.debug("Failed to fetch user ID - {} from portal", user_id);
+                log.debug("Failed to fetch user ID - {} from portal", userId);
                 log.debug(e.getMessage());
             }
-            UserContext userContext = new UserContext(user_id, roles, null, null);
+            final UserContext userContext = new UserContext(userId, roles, null, null);
             ThreadLocalsHolder.setUserContext(userContext);
         } else {
             log.debug("user_id value in req header is null, userContext will not be initialized");
