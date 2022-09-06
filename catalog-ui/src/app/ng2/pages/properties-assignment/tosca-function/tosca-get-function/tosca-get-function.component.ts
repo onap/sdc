@@ -71,6 +71,9 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
     }
 
     ngOnInit(): void {
+        if (this.toscaGetFunction && !this.isGetFunction(this.toscaGetFunction.functionType)) {
+            this.toscaGetFunction = undefined;
+        }
         this.componentMetadata = this.workspaceService.metadata;
         this.formGroup.valueChanges.subscribe(() => {
             if (!this.isInitialized) {
@@ -379,6 +382,11 @@ export class ToscaGetFunctionComponent implements OnInit, OnChanges {
 
     private isGetInput(): boolean {
         return this.functionType === ToscaGetFunctionType.GET_INPUT;
+    }
+
+    private isGetFunction(functionType: string): boolean {
+
+        return functionType === ToscaGetFunctionType.GET_PROPERTY || functionType === ToscaGetFunctionType.GET_ATTRIBUTE || functionType === ToscaGetFunctionType.GET_INPUT;
     }
 
     private isComplexType(propertyType: string): boolean {
