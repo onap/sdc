@@ -121,6 +121,30 @@
     },
     {
       "key": {
+        "uuid": "e003ba38_48121889",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-09-06T08:59:33Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b69cfe59_8c5559d9",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 27
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9fbcf9f2_a2555e36",
         "filename": "catalog-ui/src/app/utils/service-csar-reader.ts",
         "patchSetId": 1
@@ -331,6 +355,30 @@
       "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f327437_42013b01",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-09-06T08:59:33Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "1e7e3ac2_742d19e5",
+      "range": {
+        "startLine": 304,
+        "startChar": 24,
+        "endLine": 308,
+        "endChar": 27
+      },
+      "revId": "50e6775c2854689fe8e73bce7f8af2d18f37cd40",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
