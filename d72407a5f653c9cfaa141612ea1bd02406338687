@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "62247b18_afdf3d5e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-06T09:03:18Z",
+      "side": 1,
+      "message": "Add an imperative verb in the beginning, e.g.:\nFix inputs not appearing on tosca function change",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 48
+      },
+      "revId": "d72407a5f653c9cfaa141612ea1bd02406338687",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7395fa61_1da18b33",
         "filename": "catalog-ui/src/app/ng2/pages/properties-assignment/tosca-function/tosca-get-function/tosca-get-function.component.ts",
         "patchSetId": 1
