@@ -25,6 +25,9 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.getPropertyJsonSt
 import static org.openecomp.sdc.be.tosca.CsarUtils.VF_NODE_TYPE_ARTIFACTS_PATH_PATTERN;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import fj.data.Either;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +43,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
@@ -78,6 +82,7 @@ import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.RequirementSubstitutionFilterPropertyDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.enums.ComponentTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.NodeTypeEnum;
 import org.openecomp.sdc.be.datatypes.enums.ResourceTypeEnum;
@@ -131,6 +136,7 @@ import org.openecomp.sdc.be.model.operations.StorageException;
 import org.openecomp.sdc.be.model.operations.api.IGraphLockOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.UniqueIdBuilder;
+import org.openecomp.sdc.be.model.tosca.ToscaPropertyType;
 import org.openecomp.sdc.be.resources.data.auditing.AuditingActionEnum;
 import org.openecomp.sdc.be.tosca.CsarUtils;
 import org.openecomp.sdc.be.tosca.ToscaExportHandler;
@@ -1892,9 +1898,16 @@ public class ServiceImportBusinessLogic {
                     }
                 }
                 final var property = new ComponentInstanceProperty(curPropertyDef, value, null);
-                String validatePropValue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, isValidate, allDataTypes);
-                property.setValue(validatePropValue);
+                String validatePropValue = serviceBusinessLogic.validatePropValueBeforeCreate(property, value, true, allDataTypes);
                 
+                addSubPropertyYamlToscaFunctions(validatePropValue, value, property.getType(), propertyInfo, allDataTypes);
+                
+                if (CollectionUtils.isNotEmpty(propertyInfo.getSubPropertyToscaFunctions())) {
+                    validatePropValue = value;
+                }
+
+                property.setValue(validatePropValue);
+
                 if (tryHandlingAsYamlToscaFunction(validatePropValue, value, propertyInfo)) {
                     try {
                         final Object yamlValue = new Yaml().loadAs(value, Object.class);
@@ -1907,7 +1920,8 @@ public class ServiceImportBusinessLogic {
                 } else {
                     property.setToscaFunction(propertyInfo.getToscaFunction());
                 }
-                if (!getInputs.isEmpty()) {
+                property.setSubPropertyToscaFunctions(propertyInfo.getSubPropertyToscaFunctions());
+                if (!getInputs.isEmpty() && CollectionUtils.isEmpty(property.getSubPropertyToscaFunctions())) {
                     final List<GetInputValueDataDefinition> getInputValues = new ArrayList<>();
                     for (final GetInputValueDataDefinition getInput : getInputs) {
                         final List<InputDefinition> inputs = component.getInputs();
@@ -1942,7 +1956,60 @@ public class ServiceImportBusinessLogic {
     }
     
     private boolean tryHandlingAsYamlToscaFunction(String validatePropValue, String value, UploadPropInfo propertyInfo) {
-        return StringUtils.isEmpty(validatePropValue) && StringUtils.isNotEmpty(value) && propertyInfo.getToscaFunction() == null;
+        return StringUtils.isEmpty(validatePropValue) && StringUtils.isNotEmpty(value) && propertyInfo.getToscaFunction() == null && CollectionUtils.isEmpty(propertyInfo.getSubPropertyToscaFunctions());
+    }
+    
+    private void addSubPropertyYamlToscaFunctions(final String validatePropValue, final String value, final String propertyType, final UploadPropInfo propertyInfo, final Map<String, DataTypeDefinition> allDataTypes) {
+        if (StringUtils.isEmpty(validatePropValue) && StringUtils.isNotEmpty(value)) {
+            ToscaPropertyType type = ToscaPropertyType.isValidType(propertyType);
+            if (type == null) {
+                
+                try {
+                    final JsonObject jsonObject = JsonParser.parseString(value).getAsJsonObject();
+
+                    final DataTypeDefinition dataTypeDefinition = allDataTypes.get(propertyType);
+                    final List<String> propertyNames =
+                            dataTypeDefinition.getProperties().stream().map(dtProperty -> dtProperty.getName()).collect(Collectors.toList());
+
+                    boolean hasSubPropertyValues = jsonObject.entrySet().stream().allMatch(entry -> propertyNames.contains(entry.getKey()));
+
+                    if (hasSubPropertyValues) {
+                        for (final PropertyDefinition prop : dataTypeDefinition.getProperties()) {
+                            if (propertyInfo.getSubPropertyToscaFunctions().stream().anyMatch(
+                                    subPropertyToscaFunction -> subPropertyToscaFunction.getSubPropertyPath().get(0).equals(prop.getName()))) {
+                                continue;
+                            }
+
+                            JsonElement propJsonElement = jsonObject.get(prop.getName());
+                            if (propJsonElement != null) {
+                                final String subPropValue = propJsonElement.toString();
+                                final ComponentInstanceProperty subProperty = new ComponentInstanceProperty(prop, subPropValue, null);
+                                final String validateSubPropValue =
+                                        serviceBusinessLogic.validatePropValueBeforeCreate(subProperty, subPropValue, true, allDataTypes);
+
+                                if (StringUtils.isEmpty(validateSubPropValue) && StringUtils.isNotEmpty(subPropValue)) {
+                                    try {
+                                        Object yamlValue = new Yaml().loadAs(subPropValue, Object.class);
+                                        SubPropertyToscaFunction subPropertyToscaFunction = new SubPropertyToscaFunction();
+                                        CustomYamlFunction toscaFunction = new CustomYamlFunction();
+                                        toscaFunction.setYamlValue(yamlValue);
+                                        subPropertyToscaFunction.setToscaFunction(toscaFunction);
+                                        subPropertyToscaFunction.setSubPropertyPath(Collections.singletonList(prop.getName()));
+
+                                        propertyInfo.getSubPropertyToscaFunctions().add(subPropertyToscaFunction);
+                                    } catch (Exception exception) {
+                                        log.info("Cannot create YAML value for {}", subPropValue);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception exception) {
+                    log.info("Cannot create YAML value for {}", value);
+                }
+                
+            }
+        }
     }
 
     protected ResponseFormat addInterfaceValuesToRi(
