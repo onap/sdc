@@ -1,115 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	version="3.0">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
 
-	<servlet>
-		<servlet-name>jersey</servlet-name>
-		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-		<init-param>
-			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>org.openecomp.sdc.fe.servlets</param-value>
-		</init-param>
+    <servlet>
+        <servlet-name>jersey</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>org.openecomp.sdc.fe.servlets</param-value>
+        </init-param>
 
-		<init-param>
-			<param-name>jersey.config.server.provider.classnames</param-name>
-			<param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
-		</init-param>
-		<init-param>
-			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-		<async-supported>true</async-supported>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>jersey</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>ViewStatusMessages</servlet-name>
-		<servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
-	</servlet>
+    </servlet>
 
-	<servlet-mapping>
-		<servlet-name>ViewStatusMessages</servlet-name>
-		<url-pattern>/lbClassicStatus</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>jersey</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
 
-	<!-- Fe Proxy Servlet -->
-	<servlet>
-		<servlet-name>FeProxy</servlet-name>
-		<servlet-class>org.openecomp.sdc.fe.servlets.FeProxyServlet</servlet-class>
+    <servlet>
+        <servlet-name>ViewStatusMessages</servlet-name>
+        <servlet-class>ch.qos.logback.classic.ViewStatusMessagesServlet</servlet-class>
+        <async-supported>true</async-supported>
+    </servlet>
 
-		<load-on-startup>1</load-on-startup>
-		<async-supported>true</async-supported>
+    <servlet-mapping>
+        <servlet-name>ViewStatusMessages</servlet-name>
+        <url-pattern>/lbClassicStatus</url-pattern>
+    </servlet-mapping>
+
+    <!-- Fe Proxy Servlet -->
+    <servlet>
+        <servlet-name>FeProxy</servlet-name>
+        <servlet-class>org.openecomp.sdc.fe.servlets.FeProxyServlet</servlet-class>
+
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
 
 
-	</servlet>
+    </servlet>
 
-	<servlet-mapping>
-		<servlet-name>FeProxy</servlet-name>
-		<url-pattern>/feProxy/*</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FeProxy</servlet-name>
+        <url-pattern>/feProxy/*</url-pattern>
+    </servlet-mapping>
 
-	<servlet>
-		<servlet-name>Portal</servlet-name>
-		<servlet-class>org.openecomp.sdc.fe.servlets.PortalServlet</servlet-class>
-		<async-supported>true</async-supported>
-	</servlet>
+    <servlet>
+        <servlet-name>Portal</servlet-name>
+        <servlet-class>org.openecomp.sdc.fe.servlets.PortalServlet</servlet-class>
+        <async-supported>true</async-supported>
+    </servlet>
 
-	<servlet-mapping>
-		<servlet-name>Portal</servlet-name>
-		<url-pattern>/portal</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Portal</servlet-name>
+        <url-pattern>/portal</url-pattern>
+    </servlet-mapping>
 
-	
-	<filter>
-		<filter-name>AuditLogServletFilter</filter-name>
-		<filter-class>org.onap.logging.filter.base.AuditLogServletFilter</filter-class>
-		<async-supported>true</async-supported>
-	</filter>
+    <context-param>
+        <param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
+        <param-value>false</param-value>
+    </context-param>
 
-<!--	<filter>-->
-<!--		<filter-name>SecurityFilter</filter-name>-->
-<!--		<filter-class>org.openecomp.sdc.fe.filters.SecurityFilter</filter-class>-->
-<!--        <async-supported>true</async-supported>-->
-<!--        <init-param>-->
-<!--            <param-name>excludedUrls</param-name>-->
-<!--            &lt;!&ndash; Comma separated list of excluded servlet URLs  &ndash;&gt;-->
-<!--            <param-value>/config,/configmgr,/rest</param-value>-->
-<!--        </init-param>-->
-<!--	</filter>-->
 
-	 <filter>
-	   <filter-name>gzipFilter</filter-name>
-	   <filter-class>org.openecomp.sdc.fe.filters.GzipFilter</filter-class>
-       <async-supported>true</async-supported>
-	 </filter>
+    <filter>
+        <filter-name>AuditLogServletFilter</filter-name>
+        <filter-class>org.onap.logging.filter.base.AuditLogServletFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
 
-	<filter-mapping>
-		<filter-name>AuditLogServletFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <!--	<filter>-->
+    <!--		<filter-name>SecurityFilter</filter-name>-->
+    <!--		<filter-class>org.openecomp.sdc.fe.filters.SecurityFilter</filter-class>-->
+    <!--        <async-supported>true</async-supported>-->
+    <!--        <init-param>-->
+    <!--            <param-name>excludedUrls</param-name>-->
+    <!--            &lt;!&ndash; Comma separated list of excluded servlet URLs  &ndash;&gt;-->
+    <!--            <param-value>/config,/configmgr,/rest</param-value>-->
+    <!--        </init-param>-->
+    <!--	</filter>-->
 
-<!--	<filter-mapping>-->
-<!--		<filter-name>SecurityFilter</filter-name>-->
-<!--		<url-pattern>/*</url-pattern>-->
-<!--    </filter-mapping>-->
+    <filter>
+        <filter-name>gzipFilter</filter-name>
+        <filter-class>org.openecomp.sdc.fe.filters.GzipFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
 
-	<filter-mapping>
-	   	<filter-name>gzipFilter</filter-name>
-	   	<url-pattern>*.jsgz</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>AuditLogServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-	<listener>
-		<listener-class>org.openecomp.sdc.fe.listen.FEAppContextListener</listener-class>
-	</listener>
+    <!--	<filter-mapping>-->
+    <!--		<filter-name>SecurityFilter</filter-name>-->
+    <!--		<url-pattern>/*</url-pattern>-->
+    <!--    </filter-mapping>-->
 
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.jsgz</url-pattern>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>org.openecomp.sdc.fe.listen.FEAppContextListener</listener-class>
+    </listener>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
 </web-app>
