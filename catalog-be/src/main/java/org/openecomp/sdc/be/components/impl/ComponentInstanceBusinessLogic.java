@@ -145,6 +145,7 @@ import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.common.util.ValidationUtils;
 import org.openecomp.sdc.exception.ResponseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.yaml.snakeyaml.Yaml;
 
 @org.springframework.stereotype.Component
 public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
@@ -1968,6 +1969,7 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
                     toscaFunctionValidator.validate(property, containerComponent);
                     property.setValue(property.getToscaFunction().getValue());
                 }
+
                 if (CollectionUtils.isNotEmpty(property.getSubPropertyToscaFunctions())){
                     final JSONObject jObject  = property.getValue() == null ? new JSONObject() : new JSONObject(property.getValue());
                     property.getSubPropertyToscaFunctions().stream().forEach(subToscaFunction -> {
@@ -2022,11 +2024,8 @@ public class ComponentInstanceBusinessLogic extends BaseBusinessLogic {
     
     private void setJsonObjectForSubProperty(final JSONObject jObject, final List<String> path, String value) {
         if (path.size() == 1) {
-            if (!value.startsWith("{")) {
-                value = new StringBuilder("{").append(value).append("}").toString();
-            }
-            final JSONObject jObjectSub  = new JSONObject(value);
-            jObject.put(path.get(0), jObjectSub);
+            Object valueAsObject = new Yaml().loadAs(value, Object.class);
+            jObject.put(path.get(0), valueAsObject);
         } else {
             if (!jObject.has(path.get(0))) {
                 jObject.put(path.get(0), new JSONObject());

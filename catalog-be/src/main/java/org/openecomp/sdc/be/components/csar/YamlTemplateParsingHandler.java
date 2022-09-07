@@ -30,7 +30,6 @@ import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaLis
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findFirstToscaMapElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.findToscaElement;
 import static org.openecomp.sdc.be.components.impl.ImportUtils.loadYamlAsStrictMap;
-import static org.openecomp.sdc.be.datatypes.enums.MetadataKeyEnum.NAME;
 import static org.openecomp.sdc.be.model.tosca.ToscaType.STRING;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ARTIFACTS;
 import static org.openecomp.sdc.be.utils.TypeUtils.ToscaTagNamesEnum.ATTRIBUTES;
@@ -104,9 +103,11 @@ import org.openecomp.sdc.be.datatypes.elements.OperationInputDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PolicyTargetType;
 import org.openecomp.sdc.be.datatypes.elements.PropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.SubPropertyToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.SubstitutionFilterPropertyDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
+import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -369,6 +370,7 @@ public class YamlTemplateParsingHandler {
                 final PropertyDefinition propertyDefinition = new PropertyDefinition(originalProperty);
                 propertyDefinition.setValue(gson.toJson(uploadPropInfo.getValue()));
                 propertyDefinition.setToscaFunction(uploadPropInfo.getToscaFunction());
+                propertyDefinition.setSubPropertyToscaFunctions(uploadPropInfo.getSubPropertyToscaFunctions());
                 propertyDefinition.setGetInputValues(uploadPropInfo.getGet_input());
                 propertyDefinition.setDescription(uploadPropInfo.getDescription());
                 return propertyDefinition;
@@ -623,6 +625,7 @@ public class YamlTemplateParsingHandler {
     private void mergeGroupProperty(final PropertyDataDefinition property, final Object propertyYaml) {
         final UploadPropInfo uploadPropInfo = buildProperty(property.getName(), propertyYaml);
         property.setToscaFunction(uploadPropInfo.getToscaFunction());
+        property.setSubPropertyToscaFunctions(uploadPropInfo.getSubPropertyToscaFunctions());
         property.setValue(convertPropertyValue(ToscaPropertyType.isValidType(property.getType()), uploadPropInfo.getValue()));
         property.setGetInputValues(uploadPropInfo.getGet_input());
     }
@@ -1183,6 +1186,16 @@ public class YamlTemplateParsingHandler {
             }
             if (toscaFunctionYamlParsingHandler.isPropertyValueToscaFunction(propValueObj)) {
                 toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue(propValueMap).ifPresent(propertyDef::setToscaFunction);
+            } else {
+                final Collection<SubPropertyToscaFunction> subPropertyToscaFunctions = buildSubPropertyToscaFunctions(propValueMap, new ArrayList<>());
+                if (CollectionUtils.isNotEmpty(subPropertyToscaFunctions)) {
+                    Collection<SubPropertyToscaFunction> existingSubPropertyToscaFunctions = propertyDef.getSubPropertyToscaFunctions();
+                    if (existingSubPropertyToscaFunctions == null) {
+                        propertyDef.setSubPropertyToscaFunctions(subPropertyToscaFunctions);
+                    } else {
+                        propertyDef.getSubPropertyToscaFunctions().addAll(subPropertyToscaFunctions);
+                    }
+                }
             }
             if (propValueMap.containsKey(DESCRIPTION.getElementName())) {
                 propertyDef.setDescription((propValueMap).get(DESCRIPTION.getElementName()).toString());
@@ -1200,6 +1213,30 @@ public class YamlTemplateParsingHandler {
             propertyDef.setValue(propValueObj);
         }
         return propertyDef;
+    }
+    
+    private Collection<SubPropertyToscaFunction> buildSubPropertyToscaFunctions(final Map<String, Object> propValueMap, final List<String> path) {
+        Collection<SubPropertyToscaFunction>  subPropertyToscaFunctions = new ArrayList<>();
+        propValueMap.entrySet().stream().forEach(entry -> {
+            if (entry.getValue() instanceof Map) {
+                List<String> subPropertyPath = new ArrayList<>();
+                subPropertyPath.addAll(path);
+                subPropertyPath.add(entry.getKey());
+                if (ToscaFunctionType.findType(((Map<String, Object>) entry.getValue()).keySet().iterator().next()).isPresent()) {
+                    Optional<ToscaFunction> toscaFunction =
+                            toscaFunctionYamlParsingHandler.buildToscaFunctionBasedOnPropertyValue((Map) entry.getValue());
+                    if (toscaFunction.isPresent()) {
+                        SubPropertyToscaFunction subPropertyToscaFunction = new SubPropertyToscaFunction();
+                        subPropertyToscaFunction.setToscaFunction(toscaFunction.get());
+                        subPropertyToscaFunction.setSubPropertyPath(subPropertyPath);
+                        subPropertyToscaFunctions.add(subPropertyToscaFunction);
+                    }
+                } else {
+                    subPropertyToscaFunctions.addAll(buildSubPropertyToscaFunctions((Map<String, Object>)entry.getValue(), subPropertyPath));
+                }
+            }
+        });
+        return subPropertyToscaFunctions;
     }
 
     private UploadInterfaceInfo buildInterface(String interfaceName, Object interfaceValue) {
