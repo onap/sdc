@@ -23,6 +23,9 @@ package org.openecomp.sdc.be.components.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.ToscaConcatFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
@@ -115,43 +118,75 @@ public class ToscaFunctionService {
         if (toscaGetFunction.getPropertySource() == PropertySource.SELF) {
             toscaGetFunction.setSourceUniqueId(selfComponent.getUniqueId());
             toscaGetFunction.setSourceName(selfComponent.getName());
-            if (toscaGetFunction.getType() == ToscaFunctionType.GET_PROPERTY) {
-                selfComponent.getProperties().stream()
-                    .filter(property -> property.getName().equals(toscaGetFunction.getPropertyPathFromSource().get(0)))
-                    .findAny()
-                    .ifPresent(property ->
-                        toscaGetFunction.setPropertyUniqueId(property.getUniqueId())
-                    );
-            } else {
-                selfComponent.getAttributes().stream()
-                    .filter(attribute -> attribute.getName().equals(toscaGetFunction.getPropertyPathFromSource().get(0)))
-                    .findAny()
-                    .ifPresent(attribute ->
-                        toscaGetFunction.setPropertyUniqueId(attribute.getUniqueId())
-                    );
+            if (isGetAttributeAndComponentHasAttributes(toscaGetFunction, selfComponent)) {
+                setPropertyIdFromAttribute(selfComponent, toscaGetFunction);
             }
-        } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE) {
-            selfComponent.getComponentInstances().stream()
-                .filter(componentInstance -> toscaGetFunction.getSourceName().equals(componentInstance.getName()))
+            if (isGetPropertyOrPropertyIdNotSetAndComponentHasProperties(toscaGetFunction, selfComponent)) {
+                setPropertyIdFromProperty(selfComponent, toscaGetFunction);
+            }
+        } else if (toscaGetFunction.getPropertySource() == PropertySource.INSTANCE && CollectionUtils.isNotEmpty(selfComponent.getComponentInstances())) {
+            setSourceIdFromInstance(selfComponent, toscaGetFunction);
+            if (toscaGetFunction.getType() == ToscaFunctionType.GET_ATTRIBUTE) {
+                setPropertyIdFromInstanceAttribute(instanceAttributeMap, toscaGetFunction);
+            }
+            if (toscaGetFunction.getType() == ToscaFunctionType.GET_PROPERTY || StringUtils.isEmpty(toscaGetFunction.getPropertyUniqueId())) {
+                setPropertyIdFromInstanceProperty(instancePropertyMap, toscaGetFunction);
+            }
+        }
+    }
+    
+    private boolean isGetAttributeAndComponentHasAttributes(final ToscaGetFunctionDataDefinition toscaGetFunction, final Component component) {
+        return toscaGetFunction.getType() == ToscaFunctionType.GET_ATTRIBUTE && CollectionUtils.isNotEmpty(component.getAttributes());
+    }
+    
+    private boolean isGetPropertyOrPropertyIdNotSetAndComponentHasProperties(final ToscaGetFunctionDataDefinition toscaGetFunction, final Component component) {
+        return (toscaGetFunction.getType() == ToscaFunctionType.GET_PROPERTY || StringUtils.isEmpty(toscaGetFunction.getPropertyUniqueId())) && CollectionUtils.isNotEmpty(component.getProperties());
+    }
+    
+    private void setPropertyIdFromAttribute(final Component component, final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        component.getAttributes().stream()
+            .filter(attribute -> attribute.getName().equals(toscaGetFunction.getPropertyPathFromSource().get(0)))
+            .findAny()
+            .ifPresent(attribute -> toscaGetFunction.setPropertyUniqueId(attribute.getUniqueId()));
+    }
+    
+    private void setPropertyIdFromProperty(final Component component, final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        component.getProperties().stream()
+            .filter(property -> property.getName().equals(toscaGetFunction.getPropertyPathFromSource().get(0)))
+            .findAny()
+            .ifPresent(property ->
+                toscaGetFunction.setPropertyUniqueId(property.getUniqueId())
+            );
+    }
+    
+    private void setSourceIdFromInstance(final Component component, final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        component.getComponentInstances().stream()
+            .filter(componentInstance -> toscaGetFunction.getSourceName().equals(componentInstance.getName()))
+            .findAny()
+            .ifPresent(componentInstance -> toscaGetFunction.setSourceUniqueId(componentInstance.getUniqueId()));
+    }
+    
+    private void setPropertyIdFromInstanceAttribute(final Map<String, List<AttributeDefinition>> instanceAttributeMap, final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        final List<AttributeDefinition> instanceAttributes = instanceAttributeMap.get(toscaGetFunction.getSourceUniqueId());
+        if (CollectionUtils.isNotEmpty(instanceAttributes)) {
+            instanceAttributes.stream()
+                .filter(attribute -> attribute.getName().equals(toscaGetFunction.getPropertyPathFromSource().get(0)))
                 .findAny()
-                .ifPresent(componentInstance -> toscaGetFunction.setSourceUniqueId(componentInstance.getUniqueId()));
-            if (toscaGetFunction.getType() == ToscaFunctionType.GET_PROPERTY) {
-                final List<ComponentInstanceProperty> instanceProperties = instancePropertyMap.get(toscaGetFunction.getSourceUniqueId());
-                instanceProperties.stream()
-                    .filter(property -> property.getName().equals(toscaGetFunction.getPropertyPathFromSource().get(0)))
-                    .findAny()
-                    .ifPresent(property ->
-                        toscaGetFunction.setPropertyUniqueId(property.getUniqueId())
-                    );
-            } else {
-                final List<AttributeDefinition> instanceAttributes = instanceAttributeMap.get(toscaGetFunction.getSourceUniqueId());
-                instanceAttributes.stream()
-                    .filter(attribute -> attribute.getName().equals(toscaGetFunction.getPropertyPathFromSource().get(0)))
-                    .findAny()
-                    .ifPresent(attribute ->
-                        toscaGetFunction.setPropertyUniqueId(attribute.getUniqueId())
-                    );
-            }
+                .ifPresent(attribute ->
+                    toscaGetFunction.setPropertyUniqueId(attribute.getUniqueId())
+                );
+        }
+    }
+    
+    private void setPropertyIdFromInstanceProperty(final Map<String, List<ComponentInstanceProperty>> instancePropertyMap, final ToscaGetFunctionDataDefinition toscaGetFunction) {
+        final List<ComponentInstanceProperty> instanceProperties = instancePropertyMap.get(toscaGetFunction.getSourceUniqueId());
+        if (CollectionUtils.isNotEmpty(instanceProperties)) {
+            instanceProperties.stream()
+                .filter(property -> property.getName().equals(toscaGetFunction.getPropertyPathFromSource().get(0)))
+                .findAny()
+                .ifPresent(property ->
+                    toscaGetFunction.setPropertyUniqueId(property.getUniqueId())
+                );
         }
     }
 
