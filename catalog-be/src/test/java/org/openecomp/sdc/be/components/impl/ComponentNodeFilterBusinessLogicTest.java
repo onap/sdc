@@ -274,7 +274,7 @@ class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock {
 
         final Optional<CINodeFilterDataDefinition> result = componentNodeFilterBusinessLogic
             .addNodeFilter(componentId, componentInstanceId, filterConstraintDto, true, ComponentTypeEnum.RESOURCE,
-                NodeFilterConstraintType.PROPERTIES, null);
+                NodeFilterConstraintType.PROPERTIES);
 
         assertThat(result).isPresent();
         assertThat(result.get().getProperties().getListToscaDataDefinition()).hasSize(1);
@@ -305,7 +305,7 @@ class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock {
 
         final Optional<CINodeFilterDataDefinition> result = componentNodeFilterBusinessLogic
             .addNodeFilter(componentId, componentInstanceId, filterConstraintDto, true, ComponentTypeEnum.RESOURCE,
-                NodeFilterConstraintType.CAPABILITIES, capabilityName
+                NodeFilterConstraintType.CAPABILITIES
             );
 
         assertThat(result).isPresent();
@@ -342,7 +342,7 @@ class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock {
 
         final BusinessLogicException businessLogicException = assertThrows(BusinessLogicException.class, () -> componentNodeFilterBusinessLogic
             .addNodeFilter(componentId, componentInstanceId, filterConstraintDto, true, ComponentTypeEnum.RESOURCE,
-                NodeFilterConstraintType.PROPERTIES, capabilityName));
+                NodeFilterConstraintType.PROPERTIES));
 
         assertEquals(expectedResponse, businessLogicException.getResponseFormat());
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);
@@ -370,7 +370,7 @@ class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock {
 
         final BusinessLogicException businessLogicException = assertThrows(BusinessLogicException.class, () -> componentNodeFilterBusinessLogic
             .addNodeFilter(componentId, componentInstanceId, filterConstraintDto, true, ComponentTypeEnum.RESOURCE,
-                NodeFilterConstraintType.PROPERTIES, capabilityName));
+                NodeFilterConstraintType.PROPERTIES));
         assertEquals(expectedResponse, businessLogicException.getResponseFormat());
     }
 
@@ -473,7 +473,7 @@ class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock {
             .thenReturn(StorageOperationStatus.OK);
 
         final Optional<CINodeFilterDataDefinition> updateNodeFilterResult = componentNodeFilterBusinessLogic
-            .updateNodeFilter(componentId, componentInstanceId, uiConstraint, ComponentTypeEnum.RESOURCE,
+            .updateNodeFilter(componentId, componentInstanceId, filterConstraintDto, ComponentTypeEnum.RESOURCE,
                 NodeFilterConstraintType.PROPERTIES, 0);
 
         assertThat(updateNodeFilterResult).isPresent();
@@ -505,7 +505,7 @@ class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock {
             .thenReturn(StorageOperationStatus.OK);
 
         assertThrows(BusinessLogicException.class, () -> componentNodeFilterBusinessLogic
-                .updateNodeFilter(componentId, componentInstanceId, uiConstraint, ComponentTypeEnum.RESOURCE,
+                .updateNodeFilter(componentId, componentInstanceId, filterConstraintDto, ComponentTypeEnum.RESOURCE,
                 NodeFilterConstraintType.PROPERTIES, 0));
     }
 
@@ -516,7 +516,7 @@ class ComponentNodeFilterBusinessLogicTest extends BaseBusinessLogicMock {
             .thenReturn(Either.left(true));
 
         assertThrows(BusinessLogicException.class, () -> componentNodeFilterBusinessLogic
-            .updateNodeFilter(componentId, componentInstanceId, uiConstraint, ComponentTypeEnum.RESOURCE,
+            .updateNodeFilter(componentId, componentInstanceId, filterConstraintDto, ComponentTypeEnum.RESOURCE,
                 NodeFilterConstraintType.PROPERTIES, 0));
 
         verify(toscaOperationFacade, times(1)).getToscaElement(componentId);

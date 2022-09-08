@@ -20,9 +20,22 @@
  */
 package org.openecomp.sdc.be.model.jsonjanusgraph.operations;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import fj.data.Either;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.janusgraph.core.JanusGraphVertex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,21 +50,13 @@ import org.openecomp.sdc.be.datatypes.elements.CINodeFilterDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ListDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.PropertyFilterDataDefinition;
+import org.openecomp.sdc.be.datatypes.elements.RequirementNodeFilterCapabilityDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
+import org.openecomp.sdc.be.datatypes.enums.GraphPropertyEnum;
+import org.openecomp.sdc.be.datatypes.enums.NodeFilterConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
-
-import java.util.Arrays;
-import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class NodeFilterOperationTest {
 
@@ -116,4 +121,54 @@ class NodeFilterOperationTest {
         assertEquals("new node filter name", expectedNodeFilter.getName());
         assertEquals(listDataDefinition, expectedNodeFilter.getProperties());
     }
+
+    @Test
+    void deleteCapabilityConstraintTest() {
+        final var ciNodeFilterDataDefinition = new CINodeFilterDataDefinition();
+        final var capabilities = new ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition>();
+
+        var capabilityFilter1 = new RequirementNodeFilterCapabilityDataDefinition();
+        final var propertyFilterList = new ListDataDefinition<PropertyFilterDataDefinition>();
+        propertyFilterList.add(new PropertyFilterDataDefinition());
+        propertyFilterList.add(new PropertyFilterDataDefinition());
+        propertyFilterList.add(new PropertyFilterDataDefinition());
+        propertyFilterList.add(new PropertyFilterDataDefinition());
+        propertyFilterList.add(new PropertyFilterDataDefinition());
+        propertyFilterList.add(new PropertyFilterDataDefinition());
+        capabilityFilter1.setProperties(propertyFilterList);
+        capabilities.add(capabilityFilter1);
+
+        var capabilityFilter2 = new RequirementNodeFilterCapabilityDataDefinition();
+        final var propertyFilterList2 = new ListDataDefinition<PropertyFilterDataDefinition>();
+        final var filterToDelete = new PropertyFilterDataDefinition();
+        propertyFilterList2.add(filterToDelete);
+        propertyFilterList2.add(new PropertyFilterDataDefinition());
+        capabilityFilter2.setProperties(propertyFilterList2);
+        capabilities.add(capabilityFilter2);
+
+        final GraphVertex serviceVertexMock = mock(GraphVertex.class);
+        final JanusGraphVertex serviceJanusVertex = mock(JanusGraphVertex.class);
+        when(serviceVertexMock.getVertex()).thenReturn(serviceJanusVertex);
+        when(serviceVertexMock.getUniqueId()).thenReturn("componentId");
+        when(janusGraphDao.getVertexById("componentId", JsonParseFlagEnum.NoParse)).thenReturn(Either.left(serviceVertexMock));
+        final GraphVertex nodeFilterVertexMock = mock(GraphVertex.class);
+        when(janusGraphDao.getChildVertex(serviceVertexMock, EdgeLabelEnum.NODE_FILTER_TEMPLATE, JsonParseFlagEnum.ParseJson))
+            .thenReturn(Either.left(nodeFilterVertexMock));
+        final JanusGraphVertex nodeFilterJanusVertexMock = mock(JanusGraphVertex.class);
+        when(nodeFilterVertexMock.getVertex()).thenReturn(nodeFilterJanusVertexMock);
+        final Edge edgeToDeleteMock = mock(Edge.class);
+        when(nodeFilterJanusVertexMock.edges(Direction.IN, EdgeLabelEnum.NODE_FILTER_TEMPLATE.name()))
+            .thenReturn(List.of(edgeToDeleteMock).iterator());
+        when(janusGraphDao.getProperty(any(), eq(GraphPropertyEnum.UNIQUE_ID.getProperty()))).thenReturn("componentId");
+        when(janusGraphDao.updateVertex(nodeFilterVertexMock)).thenReturn(Either.left(nodeFilterVertexMock));
+
+        ciNodeFilterDataDefinition.setCapabilities(capabilities);
+        final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = nodeFilterOperation.deleteConstraint(
+            "componentId", "instanceId", ciNodeFilterDataDefinition, 6, NodeFilterConstraintType.CAPABILITIES);
+
+        assertTrue(result.isLeft());
+        assertEquals(1, propertyFilterList2.getListToscaDataDefinition().size());
+        assertFalse(propertyFilterList2.getListToscaDataDefinition().contains(filterToDelete));
+    }
+
 }

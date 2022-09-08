@@ -19,22 +19,29 @@
  *  ============LICENSE_END=========================================================
  */
 
-export class FilterConstraint {
-    capabilityName: string;
-    servicePropertyName: string;
-    constraintOperator: string;
-    sourceType: string;
-    sourceName: string;
-    value: any;
+import {FilterConstraint} from "../filter-constraint";
+
+export class PropertyFilterConstraintUi extends FilterConstraint {
+    isValidValue: boolean;
 
     constructor(input?: any) {
+        super(input);
         if (input) {
-            this.capabilityName = input.capabilityName;
-            this.servicePropertyName = input.servicePropertyName;
-            this.constraintOperator = input.constraintOperator;
-            this.sourceType = input.sourceType;
-            this.sourceName = input.sourceName;
-            this.value = input.value;
+            this.isValidValue = input.isValidValue ? input.isValidValue : input.value !== '';
         }
+    }
+
+    public updateValidity(isValidValue: boolean) {
+        this.isValidValue = isValidValue;
+    }
+
+    public isValidRule() {
+        const isValidValue = this.isStatic() ? this.isValidValue : true;
+        return this.servicePropertyName != null && this.servicePropertyName !== ''
+            && this.value != null && this.value !== '' && isValidValue;
+    }
+
+    private isStatic() {
+        return this.sourceName === 'static';
     }
 }

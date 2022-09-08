@@ -52,7 +52,6 @@ import org.openecomp.sdc.be.model.operations.api.IGroupTypeOperation;
 import org.openecomp.sdc.be.model.operations.api.StorageOperationStatus;
 import org.openecomp.sdc.be.model.operations.impl.InterfaceLifecycleOperation;
 import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
-import org.openecomp.sdc.be.ui.model.UIConstraint;
 import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.common.log.wrappers.Logger;
 import org.openecomp.sdc.exception.ResponseFormat;
@@ -156,8 +155,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
     public Optional<CINodeFilterDataDefinition> addNodeFilter(final String componentId, final String componentInstanceId,
                                                               final FilterConstraintDto filterConstraint, final boolean shouldLock,
                                                               final ComponentTypeEnum componentTypeEnum,
-                                                              final NodeFilterConstraintType nodeFilterConstraintType,
-                                                              final String capabilityName) throws BusinessLogicException {
+                                                              final NodeFilterConstraintType nodeFilterConstraintType) throws BusinessLogicException {
         final Component component = getComponent(componentId);
         validateNodeFilter(component, componentInstanceId, filterConstraint);
         CINodeFilterDataDefinition nodeFilterDataDefinition = getComponentInstanceNodeFilterOrThrow(componentInstanceId, component);
@@ -171,7 +169,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
             filterPropertyDataDefinition.setName(filterConstraint.getPropertyName());
             filterPropertyDataDefinition.setConstraints(List.of(new FilterConstraintMapper().mapTo(filterConstraint)));
             final Either<CINodeFilterDataDefinition, StorageOperationStatus> result = addNodeFilter(componentId, componentInstanceId,
-                nodeFilterConstraintType, nodeFilterDataDefinition, filterPropertyDataDefinition, capabilityName);
+                nodeFilterConstraintType, nodeFilterDataDefinition, filterPropertyDataDefinition, filterConstraint.getCapabilityName());
             if (result.isRight()) {
                 throw new BusinessLogicException(componentsUtils.getResponseFormatByResource(
                     componentsUtils.convertFromStorageResponse(result.right().value()), component.getSystemName()
@@ -290,7 +288,7 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
     }
 
     public Optional<CINodeFilterDataDefinition> updateNodeFilter(final String componentId, final String componentInstanceId,
-                                                                 final UIConstraint uiConstraint, final ComponentTypeEnum componentTypeEnum,
+                                                                 final FilterConstraintDto filterConstraintDto, final ComponentTypeEnum componentTypeEnum,
                                                                  final NodeFilterConstraintType nodeFilterConstraintType,
                                                                  final int index) throws BusinessLogicException {
         final Optional<CINodeFilterDataDefinition> deleteActionResponse =
@@ -299,8 +297,8 @@ public class ComponentNodeFilterBusinessLogic extends BaseBusinessLogic {
             throw new BusinessLogicException(
                 componentsUtils.getResponseFormat(ActionStatus.GENERAL_ERROR, "Failed to delete node filter capabilities"));
         }
-        return addNodeFilter(componentId.toLowerCase(), componentInstanceId, new FilterConstraintMapper().mapFrom(uiConstraint), true,
-            componentTypeEnum, nodeFilterConstraintType, uiConstraint.getCapabilityName());
+        return addNodeFilter(componentId.toLowerCase(), componentInstanceId, filterConstraintDto, true,
+            componentTypeEnum, nodeFilterConstraintType);
     }
 
     public StorageOperationStatus associateNodeFilterToComponentInstance(final String componentId,
