@@ -6,6 +6,7 @@
  * SDC
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Modification Copyright (C) 2022 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +58,6 @@ import {ConsumptionInput} from "../../components/logic/service-consumption/servi
 import {PolicyInstance} from "../../../models/graph/zones/policy-instance";
 import {PropertyBEModel} from "../../../models/properties-inputs/property-be-model";
 import {map} from "rxjs/operators";
-import {CapabilityFilterConstraint} from "../../../models/capability-filter-constraint";
 import {BEInterfaceOperationModel, InterfaceOperationModel} from "../../../models/interfaceOperation";
 import {AttributeBEModel} from "../../../models/attributes-outputs/attribute-be-model";
 import {InstanceAttributesAPIMap} from "../../../models/attributes-outputs/attribute-fe-map";
@@ -481,7 +481,7 @@ export class TopologyTemplateService {
         return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/nodeFilter', constraint);
     }
 
-    createServiceFilterCapabilitiesConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: CapabilityFilterConstraint, componentType: string, constraintType: string): Observable<any> {
+    createServiceFilterCapabilitiesConstraints(componentMetaDataId: string, componentInstanceId: string, constraint: FilterConstraint, componentType: string, constraintType: string): Observable<any> {
         return this.http.post<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/nodeFilter', constraint);
     }
 
@@ -489,7 +489,7 @@ export class TopologyTemplateService {
         return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraint)
     }
 
-    updateServiceFilterCapabilitiesConstraint(componentMetaDataId: string, componentInstanceId: string, constraints: CapabilityFilterConstraint, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
+    updateServiceFilterCapabilitiesConstraint(componentMetaDataId: string, componentInstanceId: string, constraints: FilterConstraint, componentType: string, constraintType: string, constraintIndex: number):Observable<any>{
         return this.http.put<any>(this.baseUrl + this.getServerTypeUrl(componentType) + componentMetaDataId + '/componentInstance/' + componentInstanceId + '/' + constraintType + '/' + constraintIndex + '/nodeFilter', constraints)
     }
 

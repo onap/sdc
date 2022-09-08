@@ -60,15 +60,16 @@ public class CINodeFilterUtils {
     private RequirementNodeFilterCapabilityDataDefinition convertCapability(UploadNodeFilterCapabilitiesInfo capability) {
         RequirementNodeFilterCapabilityDataDefinition retVal = new RequirementNodeFilterCapabilityDataDefinition();
         retVal.setName(capability.getName());
-        List<PropertyFilterDataDefinition> props = capability.getProperties().stream().map(this::buildProperty)
+        List<PropertyFilterDataDefinition> propertyFilterList = capability.getProperties().stream()
+            .map(filterPropertyInfo -> buildProperty(capability.getName(), filterPropertyInfo))
             .collect(Collectors.toList());
         ListDataDefinition<PropertyFilterDataDefinition> propsList = new ListDataDefinition<>();
-        propsList.getListToscaDataDefinition().addAll(props);
+        propsList.getListToscaDataDefinition().addAll(propertyFilterList);
         retVal.setProperties(propsList);
         return retVal;
     }
 
-    private PropertyFilterDataDefinition buildProperty(final UploadNodeFilterPropertyInfo uploadNodeFilterPropertyInfo) {
+    private PropertyFilterDataDefinition buildProperty(final String capabilityName, final UploadNodeFilterPropertyInfo uploadNodeFilterPropertyInfo) {
         final var propertyFilter = new PropertyFilterDataDefinition();
         propertyFilter.setName(uploadNodeFilterPropertyInfo.getName());
         final List<String> propertyConstraints = uploadNodeFilterPropertyInfo.getValues();
@@ -76,6 +77,7 @@ public class CINodeFilterUtils {
             propertyFilter.setConstraints(
                 propertyConstraints.stream()
                     .map(PropertyFilterConstraintDataDefinitionHelper::convertLegacyConstraint)
+                    .peek(propertyFilterConstraintDataDefinition -> propertyFilterConstraintDataDefinition.setCapabilityName(capabilityName))
                     .collect(Collectors.toList())
             );
         }

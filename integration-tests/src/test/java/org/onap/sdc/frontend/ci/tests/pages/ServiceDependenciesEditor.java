@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,8 +54,11 @@ public class ServiceDependenciesEditor extends AbstractPageObject {
      */
     public List<String> getPropertySelectOptions() {
         return new Select(webDriver.findElement(By.xpath(XpathSelector.SERVICE_PROPERTY_NAME.xPath)))
-                .getOptions().stream()
-                .map(option -> option.getAttribute("innerText")).collect(Collectors.toList());
+            .getOptions().stream()
+            .map(option -> option.getAttribute("innerText"))
+            .filter(Objects::nonNull)
+            .filter(option -> !option.startsWith("Select"))
+            .collect(Collectors.toList());
     }
 
     public void addProperty(final ServiceDependencyProperty property) {

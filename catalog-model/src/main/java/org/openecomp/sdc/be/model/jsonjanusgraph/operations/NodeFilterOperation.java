@@ -84,13 +84,9 @@ public class NodeFilterOperation extends BaseOperation {
                                                                                        final int propertyIndex,
                                                                                        final NodeFilterConstraintType nodeFilterConstraintType) {
         if (NodeFilterConstraintType.PROPERTIES.equals(nodeFilterConstraintType)) {
-            final ListDataDefinition<PropertyFilterDataDefinition> properties = nodeFilterDataDefinition.getProperties();
-            properties.getListToscaDataDefinition().remove(propertyIndex);
-            nodeFilterDataDefinition.setProperties(properties);
+            nodeFilterDataDefinition.getProperties().getListToscaDataDefinition().remove(propertyIndex);
         } else if (NodeFilterConstraintType.CAPABILITIES.equals(nodeFilterConstraintType)) {
-            final ListDataDefinition<RequirementNodeFilterCapabilityDataDefinition> capabilities = nodeFilterDataDefinition.getCapabilities();
-            capabilities.getListToscaDataDefinition().remove(propertyIndex);
-            nodeFilterDataDefinition.setCapabilities(capabilities);
+            removeCapabilityNodeFilterByIndex(nodeFilterDataDefinition, propertyIndex);
         }
         return addOrUpdateNodeFilter(true, serviceId, componentInstanceId, nodeFilterDataDefinition);
     }
@@ -116,11 +112,11 @@ public class NodeFilterOperation extends BaseOperation {
             capabilities = new ListDataDefinition<>();
             nodeFilterDataDefinition.setCapabilities(capabilities);
         }
-        
+
         final Optional<RequirementNodeFilterCapabilityDataDefinition> existingCap = capabilities
                 .getListToscaDataDefinition().stream()
                 .filter(def -> def.getName().equals(requirementNodeFilterCapabilityDataDefinition.getName())).findAny();
-        
+
         if (existingCap.isPresent()) {
             final ListDataDefinition<PropertyFilterDataDefinition> newProperties  = requirementNodeFilterCapabilityDataDefinition.getProperties();
             final ListDataDefinition<PropertyFilterDataDefinition> existingProperties = existingCap.get().getProperties();
@@ -142,6 +138,29 @@ public class NodeFilterOperation extends BaseOperation {
             final String componentInstanceId,
             final CINodeFilterDataDefinition nodeFilterDataDefinition) {
         return addOrUpdateNodeFilter(false, componentId, componentInstanceId, nodeFilterDataDefinition);
+    }
+
+    private void removeCapabilityNodeFilterByIndex(final CINodeFilterDataDefinition nodeFilterDataDefinition, final int filterToRemoveIndex) {
+        int currentFilterCountdown = filterToRemoveIndex;
+        final List<RequirementNodeFilterCapabilityDataDefinition> filtersByCapability =
+            nodeFilterDataDefinition.getCapabilities().getListToscaDataDefinition();
+        for (final RequirementNodeFilterCapabilityDataDefinition capabilityFilterGroup : filtersByCapability) {
+            final List<PropertyFilterDataDefinition> capabilityFilters = capabilityFilterGroup.getProperties().getListToscaDataDefinition();
+            if (isFilterInCapabilityGroup(currentFilterCountdown, capabilityFilters)) {
+                capabilityFilters.remove(currentFilterCountdown);
+                break;
+            } else {
+                currentFilterCountdown = getRemainingFilterCount(currentFilterCountdown, capabilityFilters);
+            }
+        }
+    }
+
+    private boolean isFilterInCapabilityGroup(int currentFilterCount, List<PropertyFilterDataDefinition> capabilityFilters) {
+        return capabilityFilters.size() > currentFilterCount;
+    }
+
+    private int getRemainingFilterCount(int currentFilterCount, final List<PropertyFilterDataDefinition> capabilityFilters) {
+        return currentFilterCount - capabilityFilters.size();
     }
 
     private Either<CINodeFilterDataDefinition, StorageOperationStatus> addOrUpdateNodeFilter(final boolean isUpdateAction, final String componentId,
