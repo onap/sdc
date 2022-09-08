@@ -110,14 +110,6 @@ export class InputListItemComponent implements OnInit {
   }
 
   onValueChange(value: any): void {
-    if (this.type.name == PROPERTY_TYPES.INTEGER || this.type.name == PROPERTY_TYPES.FLOAT) {
-      this.emitValueChangeEvent(this.parseNumber(value));
-      return;
-    }
-    if (this.type.name == PROPERTY_TYPES.BOOLEAN) {
-      this.emitValueChangeEvent(this.parseBoolean(value));
-      return;
-    }
     this.emitValueChangeEvent(value);
   }
 
@@ -222,9 +214,6 @@ export class InputListItemComponent implements OnInit {
   }
 
   getSimpleValueInputType() {
-    if (this.type.name == PROPERTY_TYPES.INTEGER || this.type.name == PROPERTY_TYPES.FLOAT) {
-      return 'number';
-    }
     return 'text';
   }
 
