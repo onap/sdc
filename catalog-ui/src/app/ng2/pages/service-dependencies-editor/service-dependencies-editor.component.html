@@ -1,3 +1,25 @@
+<!--
+  ~ -
+  ~  ============LICENSE_START=======================================================
+  ~  Copyright (C) 2016-2018 European Support Limited
+  ~  Modification Copyright (C) 2022 Nordix Foundation.
+  ~  ================================================================================
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~
+  ~  SPDX-License-Identifier: Apache-2.0
+  ~  ============LICENSE_END=========================================================
+  -->
+
 <div class="service-dependencies-editor">
     <form class="w-sdc-form">
 
@@ -5,20 +27,31 @@
 
         <div class="i-sdc-form-content">
             <div class="rule-builder-content">
+                <div class="i-sdc-form-item rule-input-field property" *ngIf="filterType == FILTER_TYPE_CAPABILITY">
+                    <label class="i-sdc-form-label required">{{"CAPABILITY_LABEL" | translate}}</label>
+                    <ui-element-dropdown
+                        class="i-sdc-form-select"
+                        data-tests-id="servicePropertyName"
+                        [values]="capabilityDropdownList"
+                        [(value)]="currentRule.capabilityName"
+                        (change)="onCapabilityChange()">
+                    </ui-element-dropdown>
+                </div>
                 <div class="i-sdc-form-item rule-input-field property">
                     <label class="i-sdc-form-label required">{{"PROPERTY_LABEL" | translate}}</label>
                     <ui-element-dropdown
                             class="i-sdc-form-select"
                             data-tests-id="servicePropertyName"
-                            [values]="ddValueSelectedServicePropertiesNames"
+                            [values]="servicePropertyDropdownList"
                             [(value)]="currentRule.servicePropertyName"
-                            (change)="onServicePropertyChanged()">
+                            (change)="onPropertyChange()">
                     </ui-element-dropdown>
                 </div>
-
                 <div class="i-sdc-form-item rule-input-field operator">
                     <label class="i-sdc-form-label required">{{"OPERATOR_LABEL" | translate}}</label>
-                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="constraintOperator" [values]="operatorTypes" [(value)]="currentRule.constraintOperator"></ui-element-dropdown>
+                    <ui-element-dropdown class="i-sdc-form-select" data-tests-id="constraintOperator"
+                                         [testId]="'constraintOperator'"
+                                         [values]="operatorTypes" [(value)]="currentRule.constraintOperator"></ui-element-dropdown>
                 </div>
             </div>
             <div class="rule-builder-content">
@@ -74,4 +107,7 @@
             </div>
         </div>
     </form>
+    <div>
+        <pre>{{this.currentRule | json}}</pre>
+    </div>
 </div>

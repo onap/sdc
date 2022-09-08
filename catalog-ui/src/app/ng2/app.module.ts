@@ -20,18 +20,22 @@
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {BrowserModule} from '@angular/platform-browser';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import {APP_INITIALIZER, forwardRef, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import { forwardRef } from '@angular/core';
 import {AppComponent} from './app.component';
 import {UpgradeAdapter} from '@angular/upgrade';
 import {UpgradeModule} from '@angular/upgrade/static';
-import { SdcUiComponentsModule, SdcUiComponents } from 'onap-ui-angular';
+import {SdcUiComponentsModule} from 'onap-ui-angular';
 import {PropertiesAssignmentModule} from './pages/properties-assignment/properties-assignment.module';
 import {
-    DataTypesServiceProvider, CookieServiceProvider, StateServiceFactory,
-    StateParamsServiceFactory, ScopeServiceFactory,
-    NotificationServiceProvider, ComponentFactoryProvider
+  ComponentFactoryProvider,
+  CookieServiceProvider,
+  DataTypesServiceProvider,
+  ModalsHandlerProvider,
+  NotificationServiceProvider,
+  ScopeServiceFactory,
+  StateParamsServiceFactory,
+  StateServiceFactory
 } from './utils/ng1-upgraded-provider';
 import {ConfigService} from './services/config.service';
 import {AuthenticationService} from './services/authentication.service';
@@ -45,7 +49,9 @@ import {UiElementsModule} from './components/ui/ui-elements.module';
 import {ConnectionWizardModule} from './pages/composition/graph/connection-wizard/connection-wizard.module';
 import {InterfaceOperationModule} from './pages/interface-operation/interface-operation.module';
 import {OperationCreatorModule} from './pages/interface-operation/operation-creator/operation-creator.module';
-import {OperationCreatorInterfaceDefinitionModule} from './pages/interface-definition/operation-creator/operation-creator-interface-definition.module';
+import {
+  OperationCreatorInterfaceDefinitionModule
+} from './pages/interface-definition/operation-creator/operation-creator-interface-definition.module';
 import {LayoutModule} from './components/layout/layout.module';
 import {UserService} from './services/user.service';
 import {DynamicComponentService} from './services/dynamic-component.service';
@@ -56,13 +62,12 @@ import {TranslationServiceConfig} from './config/translation.service.config';
 import {MultilineEllipsisModule} from './shared/multiline-ellipsis/multiline-ellipsis.module';
 import {ServicePathCreatorModule} from './pages/composition/graph/service-path-creator/service-path-creator.module';
 import {ServicePathsListModule} from './pages/composition/graph/service-paths-list/service-paths-list.module';
-import { ServicePathSelectorModule } from 'app/ng2/pages/composition/graph/service-path-selector/service-path-selector.module';
-import { CompositionPanelModule } from 'app/ng2/pages/composition/panel/composition-panel.module';
+import {ServicePathSelectorModule} from 'app/ng2/pages/composition/graph/service-path-selector/service-path-selector.module';
+import {CompositionPanelModule} from 'app/ng2/pages/composition/panel/composition-panel.module';
 import {CatalogModule} from './pages/catalog/catalog.module';
 import {HomeModule} from './pages/home/home.module';
 import {WindowRef} from './services/window.service';
 import {CatalogService} from './services/catalog.service';
-import { ModalsHandlerProvider } from './utils/ng1-upgraded-provider';
 import {PluginFrameModule} from './components/ui/plugin/plugin-frame.module';
 import {PluginsService} from './services/plugins.service';
 import {EventBusService} from './services/event-bus.service';
@@ -72,7 +77,7 @@ import {AutomatedUpgradeService} from './pages/automated-upgrade/automated-upgra
 import {AutomatedUpgradeModule} from './pages/automated-upgrade/automated-upgrade.module';
 import {WorkspaceModule} from './pages/workspace/workspace.module';
 import {ModalsModule} from './components/modals/modals.module';
-import { SharingService, CacheService, HomeService } from 'app/services-ng2';
+import {CacheService, HomeService, SharingService} from 'app/services-ng2';
 import {ArtifactConfigService} from "./services/artifact-config.service";
 import {IUserProperties} from 'app/models';
 import {PluginsModule} from './pages/plugins/plugins-module';
@@ -94,14 +99,13 @@ import {ServiceDependenciesModule} from './components/logic/service-dependencies
 import {ServiceDependenciesEditorModule} from './pages/service-dependencies-editor/service-dependencies-editor.module';
 import {PropertyCreatorModule} from './pages/properties-assignment/property-creator/property-creator.module';
 import {DeclareListModule} from './pages/properties-assignment/declare-list/declare-list.module';
-import { ToscaFunctionModule } from "./pages/properties-assignment/tosca-function/tosca-function.module";
+import {ToscaFunctionModule} from "./pages/properties-assignment/tosca-function/tosca-function.module";
 import {WorkflowServiceNg2} from './services/workflow.service';
 import {ToscaTypesServiceNg2} from "./services/tosca-types.service";
-import {CapabilitiesFilterPropertiesEditorComponentModule} from "./pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.module";
 import {InterfaceOperationHandlerModule} from "./pages/composition/interface-operatons/operation-creator/interface-operation-handler.module";
 import {AttributesOutputsModule} from "./pages/attributes-outputs/attributes-outputs.module";
-import { ElementService } from "./services/element.service";
-import { ModelService } from "./services/model.service";
+import {ElementService} from "./services/element.service";
+import {ModelService} from "./services/model.service";
 import {ToscaArtifactService} from "./services/tosca-artifact.service";
 import {InterfaceDefinitionModule} from "./pages/interface-definition/interface-definition.module";
 
@@ -167,7 +171,6 @@ export function configServiceFactory(config: ConfigService, authService: Authent
     ServiceConsumptionCreatorModule,
     ServiceDependenciesModule,
     ServiceDependenciesEditorModule,
-    CapabilitiesFilterPropertiesEditorComponentModule,
     WorkspaceModule,
     ModalsModule,
     CatalogModule,

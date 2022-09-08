@@ -15,5 +15,5 @@
   -->
   
 <select name='{{name}}' [(ngModel)]="value" (change)="onChange()"  [ngClass]="{'disabled':readonly}" [attr.data-tests-id]="'value-' + testId">
-  <option *ngFor="let ddvalue of values" [ngValue]="ddvalue.label != undefined ? ddvalue.value : ddvalue" [hidden]="ddvalue.hidden" [selected] = "ddvalue.selected">{{ddvalue.label||ddvalue}}</option>
+  <option *ngFor="let ddvalue of values" [ngValue]="ddvalue.label != undefined ? ddvalue.value : ddvalue" [hidden]="ddvalue.hidden" [selected] = "ddvalue.selected || ddvalue.value === value">{{ddvalue.label||ddvalue}}</option>
 </select>

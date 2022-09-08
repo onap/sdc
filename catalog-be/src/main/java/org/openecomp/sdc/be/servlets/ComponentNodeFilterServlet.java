@@ -136,8 +136,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             final FilterConstraintDto filterConstraintDto = new FilterConstraintMapper().mapFrom(uiConstraint);
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .addNodeFilter(componentId.toLowerCase(), componentInstanceId,
-                    filterConstraintDto, true, componentTypeEnum, nodeFilterConstraintType.get(),
-                    StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? "" : uiConstraint.getCapabilityName());
+                    filterConstraintDto, true, componentTypeEnum, nodeFilterConstraintType.get());
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_CREATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -194,8 +193,8 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             }
             final NodeFilterConstraintType nodeFilterConstraintType = nodeFilterConstraintTypeOptional.get();
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, convertResponse.get(), componentTypeEnum, nodeFilterConstraintType,
-                    index);
+                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, new FilterConstraintMapper().mapFrom(convertResponse.get()),
+                    componentTypeEnum, nodeFilterConstraintType, index);
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_UPDATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -254,4 +253,5 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
+
 }
