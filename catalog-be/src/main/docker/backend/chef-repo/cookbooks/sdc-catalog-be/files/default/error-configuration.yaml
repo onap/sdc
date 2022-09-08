@@ -111,7 +111,7 @@ errors:
         message: "Error: Invalid userId '%1'.",
         messageId: "SVC4008"
     }
-#---------SVC4009-----------------------------
+    #---------SVC4009-----------------------------
     USER_DEFINED: {
         code: 400,
         message: "Error: User Defined '%1'.",
@@ -1436,10 +1436,10 @@ errors:
         message: "Error: artifact %1 is defined in CSAR %2 manifest but is not provided",
         messageId: "SVC4618"
     }
-#---------SVC4619------------------------------
-# %1 - artifact name
-# %2 - artifact type
-# %3 - existing artifact type
+    #---------SVC4619------------------------------
+    # %1 - artifact name
+    # %2 - artifact type
+    # %3 - existing artifact type
     ARTIFACT_ALREADY_EXIST_IN_DIFFERENT_TYPE_IN_CSAR: {
         code: 400,
         message: "Error: artifact %1 in type %2 already exists in type %3.",
@@ -2012,29 +2012,29 @@ errors:
     #---------SVC4695-----------------------------
     # %1 - Interface Operation Name
     INTERFACE_OPERATION_NAME_ALREADY_IN_USE: {
-      code: 409,
-      message: "Error: Interface Operation name '%1' already in use, Your current changes will not be saved.",
-      messageId: "SVC4695"
+        code: 409,
+        message: "Error: Interface Operation name '%1' already in use, Your current changes will not be saved.",
+        messageId: "SVC4695"
     }
     #---------SVC4696-----------------------------
     # %1 - Interface Operation Name
     INTERFACE_OPERATION_NAME_INVALID: {
-      code: 400,
-      message: "Error: Interface Operation name '%1' is Invalid, Operation name should not contain special character, space and should not be greater than 200 characters.",
-      messageId: "SVC4696"
+        code: 400,
+        message: "Error: Interface Operation name '%1' is Invalid, Operation name should not contain special character, space and should not be greater than 200 characters.",
+        messageId: "SVC4696"
     }
     #---------SVC4697-----------------------------
     INTERFACE_OPERATION_NAME_MANDATORY: {
-      code: 400,
-      message: "Error: Interface Operation name is mandatory, Operation name can't be empty.",
-      messageId: "SVC4697"
+        code: 400,
+        message: "Error: Interface Operation name is mandatory, Operation name can't be empty.",
+        messageId: "SVC4697"
     }
-#---------SVC4698-----------------------------
-# %1 - Interface type
+    #---------SVC4698-----------------------------
+    # %1 - Interface type
     INTERFACE_OPERATION_INVALID_FOR_LOCAL_TYPE: {
-      code: 400,
-      message: "Error: Invalid input, only one operation is allowed in local interface type '%1'.",
-      messageId: "SVC4698"
+        code: 400,
+        message: "Error: Invalid input, only one operation is allowed in local interface type '%1'.",
+        messageId: "SVC4698"
     }
     #---------SVC4699-----------------------------
     # %1 - Interface Operation input parameter name
@@ -2049,18 +2049,18 @@ errors:
         message: "Error: Interface operation input parameter name should not be empty.",
         messageId: "SVC4700"
     }
-#---------SVC4701-----------------------------
-# %1 - component Id
+    #---------SVC4701-----------------------------
+    # %1 - component Id
     INTERFACE_OPERATION_NOT_FOUND: {
-      code: 404,
-      message: "Error: Interface operation not found in the component '%1'.",
-      messageId: "SVC4701"
+        code: 404,
+        message: "Error: Interface operation not found in the component '%1'.",
+        messageId: "SVC4701"
     }
     #---------SVC4702-----------------------------
     INTERFACE_OPERATION_NOT_DELETED: {
-      code: 400,
-      message: "Error: Failed to delete interface operation.",
-      messageId: "SVC4702"
+        code: 400,
+        message: "Error: Failed to delete interface operation.",
+        messageId: "SVC4702"
     }
     #SVC4732
     INTERFACE_UNKNOWN: {
@@ -2131,32 +2131,32 @@ errors:
         message: "Error: CSAR packaging failed for %1 %2.",
         messageId: "SVC4706"
     }
-#---------SVC4708-----------------------------
-# %1 - Interface Operation input property name, component type
+    #---------SVC4708-----------------------------
+    # %1 - Interface Operation input property name, component type
     INTERFACE_OPERATION_INPUT_PROPERTY_NOT_FOUND_IN_COMPONENT: {
         code: 404,
         message: "Error: Interface operation input parameter property '%1' not found in '%2' input properties, capability properties or outputs of other operations.",
         messageId: "SVC4708"
     }
-#---------SVC4709-----------------------------
-# %1 - Interface Operation output parameter name
+    #---------SVC4709-----------------------------
+    # %1 - Interface Operation output parameter name
     INTERFACE_OPERATION_OUTPUT_NAME_ALREADY_IN_USE: {
         code: 400,
         message: "Error: Interface Operation output parameter name '%1' already in use, Your current changes will not be saved.",
         messageId: "SVC4708"
     }
-#---------SVC4710-----------------------------
+    #---------SVC4710-----------------------------
     INTERFACE_OPERATION_OUTPUT_NAME_MANDATORY: {
         code: 400,
         message: "Error: Interface operation output parameter name should not be empty.",
         messageId: "SVC4710"
     }
-#---------SVC4711-----------------------------
-# %1 - interface Id
+    #---------SVC4711-----------------------------
+    # %1 - interface Id
     INTERFACE_NOT_FOUND_IN_COMPONENT: {
-      code: 404,
-      message: "Error: Interface not found in the component '%1'.",
-      messageId: "SVC4711"
+        code: 404,
+        message: "Error: Interface not found in the component '%1'.",
+        messageId: "SVC4711"
     }
     #---------SVC4709-----------------------------
     INVALID_PROPERTY_CONSTRAINTS: {
@@ -2268,18 +2268,18 @@ errors:
         message: "Error: Missing value for the mandatory %1 property" ,
         messageId: "SVC4721"
     }
-#---------SVC4712-----------------------------
+    #---------SVC4712-----------------------------
     INTERFACE_LIFECYCLE_TYPES_NOT_FOUND: {
-      code: 404,
-      message: "Error: Interface Lifecycle types not found.",
-      messageId: "SVC4712"
+        code: 404,
+        message: "Error: Interface Lifecycle types not found.",
+        messageId: "SVC4712"
     }
-#---------SVC4713-----------------------------
-# %1 - Interface Operation Name
+    #---------SVC4713-----------------------------
+    # %1 - Interface Operation Name
     INTERFACE_OPERATION_INVALID_FOR_GLOBAL_TYPE: {
-      code: 400,
-      message: "Error: Invalid input, only pre-defined operation names are allowed in global interface type '%1'",
-      messageId: "SVC4713"
+        code: 400,
+        message: "Error: Invalid input, only pre-defined operation names are allowed in global interface type '%1'",
+        messageId: "SVC4713"
     }
 
     #---------SVC4714-----------------------------
@@ -2345,89 +2345,89 @@ errors:
         messageId: "SVC4721"
     }
 
-  #---------SVC4722------------------------------
-  # %1 Directive value set
+    #---------SVC4722------------------------------
+    # %1 Directive value set
     DIRECTIVES_INVALID_VALUE: {
-      code: 404,
-      message: "Error: Invalid directive value : '%1' .",
-      messageId: "SVC4722"
+        code: 404,
+        message: "Error: Invalid directive value : '%1' .",
+        messageId: "SVC4722"
     }
-#---------SVC4723-----------------------------
-# %1 - Interface Operation output name
+    #---------SVC4723-----------------------------
+    # %1 - Interface Operation output name
     INTERFACE_OPERATION_MAPPED_OUTPUT_MODIFIED: {
         code: 400,
         message: "Error: Cannot update or delete interface operation output(s) '%1' mapped to an operation input",
         messageId: "SVC4723"
     }
-#---------SVC4724-----------------------------
-# %1 - Interface Operation output name
+    #---------SVC4724-----------------------------
+    # %1 - Interface Operation output name
     INTERFACE_OPERATION_DELETE_WITH_MAPPED_OUTPUT: {
         code: 400,
         message: "Error: Cannot delete interface operation with output(s) '%1' mapped to another operation input",
         messageId: "SVC4724"
     }
-#---------SVC4725-----------------------------
+    #---------SVC4725-----------------------------
     INVALID_CONSUMPTION_TYPE: {
         code: 400,
         message: "Error: Given value is different than input type. Needs to be %1",
         messageId: "SVC4725"
     }
-#---------SVC4726-----------------------------
+    #---------SVC4726-----------------------------
     INVALID_PROPERTY_VALUES: {
         code: 400,
         message: "Error: Invalid property values provided:\n %1",
         messageId: "SVC4726"
     }
-#---------SVC4727------------------------------
+    #---------SVC4727------------------------------
     INVALID_PROPERTY_NAME: {
         code: 400,
         message: "Error: Property name contains invalid characters. It should have only letters, numbers and underscores.",
         messageId: "SVC4727"
     }
 
-#---------SVC4728------------------------------
+    #---------SVC4728------------------------------
     FAILED_TO_CREATE_OR_UPDATE_CAPABILITY_PROPERTIES: {
         code: 500,
         message: "Error: Failed to create or update capabilities properties",
         messageId: "SVC4728"
     }
 
-#---------SVC4729------------------------------
+    #---------SVC4729------------------------------
     # %1 - resource Id
     CAPABILITY_PROPERTIES_NOT_FOUND: {
         code: 400,
         message: "Error: Capability properties not found in the resource '%1'.",
         messageId: "SVC4729"
     }
-#---------SVC4730------------------------------
+    #---------SVC4730------------------------------
     # %1 - property name
     PROPERTY_EXCEEDS_LIMIT: {
-      code: 400,
-      message: "Error: Invalid Content. %1 exceeds limit.",
-      messageId: "SVC4722"
+        code: 400,
+        message: "Error: Invalid Content. %1 exceeds limit.",
+        messageId: "SVC4722"
     }
-#---------SVC4731------------------------------
+    #---------SVC4731------------------------------
     INVALID_PROPERY: {
       # %1 - property name
-      code: 400,
-      message: 'Error: Invalid Content. %1 has invalid format.',
-      messageId: "SVC4723"
+        code: 400,
+        message: 'Error: Invalid Content. %1 has invalid format.',
+        messageId: "SVC4723"
     }
-#---------SVC4734------------------------------
+    #---------SVC4734------------------------------
     # %1 - list of validation errors
     INVALID_PM_DICTIONARY_FILE: {
         code: 400,
         message: 'Error: Invalid PM Dictionary File. %1',
         messageId: "SVC4734"
     }
-#-----------SVC4735---------------------------
+    #-----------SVC4735---------------------------
     #%1 - input name
     INPUT_ALREADY_EXIST: {
         code: 409,
         message: "Error: Input with '%1' name already exists.",
         messageId: "SVC4735"
     }
-#---------SVC4736------------------------------
+    #---------SVC4736------------------------------
     INVALID_INPUT_NAME: {
         code: 400,
         message: "Error: Input name contains invalid characters. It should have only letters, numbers and underscores.",
@@ -2548,7 +2548,7 @@ errors:
         messageId: "SVC4153"
     }
     
-        #-----------SVC4154---------------------------
+    #-----------SVC4154---------------------------
     # %1 - "Model name"
     UNKNOWN_MODEL_TYPE: {
         code: 400,
@@ -2813,3 +2813,11 @@ errors:
         code: 400
         message: "Invalid component type '%1'. Expected types are: %2"
         messageId: "SVC4185"
+
+    # %1 - The capability name
+    # %2 - The component type
+    # %3 - The component name
+    CAPABILITY_NOT_FOUND_IN_COMPONENT:
+        code: 400
+        message: "Capability '%1' not found in '%2' '%3'."
+        messageId: "SVC4186"
