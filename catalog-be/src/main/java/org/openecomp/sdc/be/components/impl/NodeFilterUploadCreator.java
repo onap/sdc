@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.onap.sdc.tosca.services.YamlUtil;
 import org.openecomp.sdc.be.model.UploadNodeFilterCapabilitiesInfo;
 import org.openecomp.sdc.be.model.UploadNodeFilterInfo;
@@ -59,16 +58,13 @@ public class NodeFilterUploadCreator {
             final Map.Entry<String, Object> entry = map.entrySet().iterator().next();
             final Object propertyConstraintClauses = entry.getValue();
             if (propertyConstraintClauses instanceof Map) {
-                final List<String> propertyFilterConstraintList = new ArrayList<>();
-                propertyFilterConstraintList.add(valueToProperty(map));
-                retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), propertyFilterConstraintList));
+                retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), List.of(valueToProperty(map))));
             } else if (propertyConstraintClauses instanceof List) {
-                final List<String> propertyFilterConstraintList = ((List<Object>) propertyConstraintClauses).stream()
+                ((List<Object>) propertyConstraintClauses).stream()
                     .map(propertyConstraintClause -> Map.of(entry.getKey(), propertyConstraintClause))
                     .map(this::valueToProperty)
-                    .collect(Collectors.toList());
-
-                retVal.add(new UploadNodeFilterPropertyInfo(entry.getKey(), propertyFilterConstraintList));
+                    .map(filterConstraint -> new UploadNodeFilterPropertyInfo(entry.getKey(), List.of(filterConstraint)))
+                    .forEach(retVal::add);
             }
         }
         return retVal;

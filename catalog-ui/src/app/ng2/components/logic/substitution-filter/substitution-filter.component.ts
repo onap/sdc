@@ -20,15 +20,15 @@
 import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {ButtonModel, ComponentInstance, InputBEModel, ModalModel, PropertyBEModel,} from 'app/models';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
-import {ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
+import {FilterType, ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
 import {ModalService} from 'app/ng2/services/modal.service';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {ComponentMetadata} from '../../../../models/component-metadata';
 import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
 import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
 import {FilterConstraint} from "app/models/filter-constraint";
-import {ConstraintObjectUI} from "../../../../models/ui-models/constraint-object-ui";
-import {FilterConstraintHelper, OPERATOR_TYPES} from "../../../../utils/filter-constraint-helper";
+import {PropertyFilterConstraintUi} from "../../../../models/ui-models/property-filter-constraint-ui";
+import {FilterConstraintHelper, ConstraintOperatorType} from "../../../../utils/filter-constraint-helper";
 
 class I18nTexts {
   static addSubstitutionFilterTxt: string;
@@ -86,11 +86,11 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.isLoading = false;
     this.operatorTypes = [
-      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.GREATER_THAN), value: OPERATOR_TYPES.GREATER_THAN},
-      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.LESS_THAN), value: OPERATOR_TYPES.LESS_THAN},
-      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.EQUAL), value: OPERATOR_TYPES.EQUAL},
-      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.GREATER_OR_EQUAL), value: OPERATOR_TYPES.GREATER_OR_EQUAL},
-      {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.LESS_OR_EQUAL), value: OPERATOR_TYPES.LESS_OR_EQUAL}
+      {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.GREATER_THAN), value: ConstraintOperatorType.GREATER_THAN},
+      {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_THAN), value: ConstraintOperatorType.LESS_THAN},
+      {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.EQUAL), value: ConstraintOperatorType.EQUAL},
+      {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.GREATER_OR_EQUAL), value: ConstraintOperatorType.GREATER_OR_EQUAL},
+      {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_OR_EQUAL), value: ConstraintOperatorType.LESS_OR_EQUAL}
     ];
     this.loadSubstitutionFilter();
     this.translateService.languageChangedObservable.subscribe((lang) => {
@@ -123,16 +123,17 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
     const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createSubstitutionFilter(constraintType), this.getDisabled);
     const modalModel: ModalModel = new ModalModel('l', I18nTexts.addSubstitutionFilterTxt, '', [saveButton, cancelButton], 'standard');
     this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-    this.modalServiceNg2.addDynamicContentToModal(
+    this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
         this.modalInstance,
         ServiceDependenciesEditorComponent,
         {
-          currentServiceName: this.currentServiceInstance.name,
-          operatorTypes: this.operatorTypes,
-          compositeServiceName: this.compositeService.name,
-          parentServiceInputs: this.parentServiceInputs,
-          parentServiceProperties: this.parentServiceProperties,
-          selectedInstanceProperties: this.parentServiceProperties,
+          'currentServiceName': this.currentServiceInstance.name,
+          'operatorTypes': this.operatorTypes,
+          'compositeServiceName': this.compositeService.name,
+          'parentServiceInputs': this.parentServiceInputs,
+          'parentServiceProperties': this.parentServiceProperties,
+          'selectedInstanceProperties': this.selectedInstanceProperties,
+          'filterType': FilterType.PROPERTY
         }
     );
     this.modalInstance.instance.open();
@@ -161,18 +162,19 @@ export class SubstitutionFilterComponent implements OnInit, OnChanges {
     const updateButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateSubstitutionFilter(constraintType, index), this.getDisabled);
     const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateSubstitutionFilterTxt, '', [updateButton, cancelButton], 'standard');
     this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-    this.modalServiceNg2.addDynamicContentToModal(
+    const selectedFilterConstraint = new PropertyFilterConstraintUi(this.constraintProperties[index]);
+    this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
         this.modalInstance,
         ServiceDependenciesEditorComponent,
         {
-          serviceRuleIndex: index,
-          serviceRules: _.map(this.constraintProperties, (constraint) => new ConstraintObjectUI(constraint)),
-          currentServiceName: this.currentServiceInstance.name,
-          operatorTypes: this.operatorTypes,
-          compositeServiceName: this.compositeService.name,
-          parentServiceInputs: this.parentServiceInputs,
-          parentServiceProperties: this.parentServiceProperties,
-          selectedInstanceProperties: this.parentServiceProperties,
+          'filterConstraint': selectedFilterConstraint,
+          'currentServiceName': this.currentServiceInstance.name,
+          'operatorTypes': this.operatorTypes,
+          'compositeServiceName': this.compositeService.name,
+          'parentServiceInputs': this.parentServiceInputs,
+          'parentServiceProperties': this.parentServiceProperties,
+          'selectedInstanceProperties': this.selectedInstanceProperties,
+          'filterType': FilterType.PROPERTY
         }
     );
     this.modalInstance.instance.open();

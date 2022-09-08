@@ -21,6 +21,7 @@ package org.openecomp.sdc.be.components.validation;
 
 import com.google.gson.Gson;
 import fj.data.Either;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.dao.janusgraph.JanusGraphOperationStatus;
 import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
+import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
 import org.openecomp.sdc.be.datatypes.enums.PropertySource;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.model.CapabilityDefinition;
@@ -290,11 +292,25 @@ public class NodeFilterValidator {
                 findSubProperty(propertyPathFromSource.subList(1, propertyPathFromSource.size()), sourceSelectedProperty.get().getType(),
                     allDataTypesEither.left().value());
         }
-        final Optional<? extends PropertyDefinition> targetComponentInstanceProperty =
-            parentComponent.getComponentInstancesProperties()
-                .get(componentInstanceId).stream()
+        final Optional<? extends PropertyDefinition> targetComponentInstanceProperty;
+        if (PropertyFilterTargetType.CAPABILITY.equals(filterConstraint.getTargetType())) {
+            final CapabilityDefinition capability = parentComponent.getComponentInstances().stream()
+                .filter(componentInstance -> componentInstance.getUniqueId().equals(componentInstanceId))
+                .map(componentInstance -> componentInstance.getCapabilities().values())
+                .flatMap(Collection::stream)
+                .flatMap(Collection::stream)
+                .filter(capabilityDefinition -> capabilityDefinition.getName().equals(filterConstraint.getCapabilityName()))
+                .findFirst().orElse(null);
+            targetComponentInstanceProperty = capability.getProperties().stream()
                 .filter(property -> filterConstraint.getPropertyName().equals(property.getName()))
                 .findFirst();
+        } else {
+            targetComponentInstanceProperty =
+                parentComponent.getComponentInstancesProperties()
+                    .get(componentInstanceId).stream()
+                    .filter(property -> filterConstraint.getPropertyName().equals(property.getName()))
+                    .findFirst();
+        }
         if (sourceSelectedProperty.isPresent() && targetComponentInstanceProperty.isPresent()) {
             final ResponseFormat responseFormat = validatePropertyData(sourceSelectedProperty.get(), targetComponentInstanceProperty.get());
             if (responseFormat != null) {
