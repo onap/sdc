@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0fb18531_38ed696c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2002,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-08T19:02:20Z",
+      "side": 1,
+      "message": "avoid having nested \u0027try\u0027, extract into separate method",
+      "range": {
+        "startLine": 1991,
+        "startChar": 35,
+        "endLine": 2002,
+        "endChar": 37
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dda2978f_3fb65a52",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-08T19:02:20Z",
+      "side": 1,
+      "message": "use CollectionUtils.isNotEmpty instead, to not create .stream() on empty list",
+      "range": {
+        "startLine": 120,
+        "startChar": 20,
+        "endLine": 120,
+        "endChar": 57
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "439eeb33_bf3b33e5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-08T19:02:20Z",
+      "side": 1,
+      "message": "same as below",
+      "range": {
+        "startLine": 130,
+        "startChar": 16,
+        "endLine": 130,
+        "endChar": 45
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c8e6785_13e072d6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-08T19:02:20Z",
+      "side": 1,
+      "message": "same as below",
+      "range": {
+        "startLine": 138,
+        "startChar": 12,
+        "endLine": 138,
+        "endChar": 49
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05249a88_2f5b239b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-08T19:02:20Z",
+      "side": 1,
+      "message": "could this be null, if instancePropertyMap does not contain specific key?\nwouldn\u0027t be better to check CollectionUtils.isNotEmpty",
+      "range": {
+        "startLine": 153,
+        "startChar": 16,
+        "endLine": 153,
+        "endChar": 34
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07aa2bac_f137d98d",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-08T19:02:20Z",
+      "side": 1,
+      "message": "I assume this part of code was left after debugging, is it correct?",
+      "range": {
+        "startLine": 500,
+        "startChar": 20,
+        "endLine": 504,
+        "endChar": 30
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b283ea2_e3937e87",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-08T19:02:20Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 522,
+        "startChar": 0,
+        "endLine": 522,
+        "endChar": 140
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
