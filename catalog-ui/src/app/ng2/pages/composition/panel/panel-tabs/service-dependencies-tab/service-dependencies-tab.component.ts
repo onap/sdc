@@ -1,4 +1,25 @@
-import {Component, Input} from '@angular/core';
+/*
+ * -
+ *  ============LICENSE_START=======================================================
+ *  Copyright (C) 2022 Nordix Foundation.
+ *  ================================================================================
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  SPDX-License-Identifier: Apache-2.0
+ *  ============LICENSE_END=========================================================
+ */
+
+import {Component, Input, OnInit} from '@angular/core';
 import {Store} from '@ngxs/store';
 import {
     CapabilitiesGroup, Capability,
@@ -16,7 +37,6 @@ import {ComponentGenericResponse} from '../../../../../services/responses/compon
 import {WorkspaceService} from '../../../../workspace/workspace.service';
 import {SelectedComponentType} from '../../../common/store/graph.actions';
 import {CompositionService} from '../../../composition.service';
-import {CapabilityFilterConstraint} from "../../../../../../models/capability-filter-constraint";
 import {FilterConstraint} from "../../../../../../models/filter-constraint";
 
 @Component({
@@ -24,7 +44,7 @@ import {FilterConstraint} from "../../../../../../models/filter-constraint";
     templateUrl: 'service-dependencies-tab.component.html',
     styleUrls: ['service-dependencies-tab.component.less']
 })
-export class ServiceDependenciesTabComponent {
+export class ServiceDependenciesTabComponent implements OnInit {
     isComponentInstanceSelected: boolean;
 
     selectedInstanceSiblings: ServiceInstanceObject[];
@@ -35,7 +55,6 @@ export class ServiceDependenciesTabComponent {
     componentInstanceCapabilityProperties: CapabilitiesGroup;
     metaData: ComponentMetadata;
     componentInstanceCapabilitiesMap : Map<string, PropertyModel[]> = new Map();
-    componentInstanceCapabilitiesNames: string[];
 
     @Input() isViewOnly: boolean;
     @Input() componentType: SelectedComponentType;
@@ -49,7 +68,7 @@ export class ServiceDependenciesTabComponent {
                 private eventListenerService: EventListenerService) {
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.metaData = this.workspaceService.metadata;
         this.isComponentInstanceSelected = this.componentType === SelectedComponentType.COMPONENT_INSTANCE;
         this.initInstancesWithProperties();
@@ -73,7 +92,7 @@ export class ServiceDependenciesTabComponent {
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].properties;
     }
 
-    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList:Array<CapabilityFilterConstraint>):void => {
+    public updateSelectedInstanceCapabilitiesConstraints = (constraintsList:Array<FilterConstraint>):void => {
         this.componentInstancesConstraints[this.component.uniqueId].capabilities = constraintsList;
         this.selectedInstanceConstraints = this.componentInstancesConstraints[this.component.uniqueId].capabilities;
     }
@@ -97,7 +116,7 @@ export class ServiceDependenciesTabComponent {
         }
     }
 
-    private initInstancesWithCapabilityProperties = (): void => {
+    private initInstancesWithCapabilityProperties(): void {
         this.componentInstanceCapabilityProperties = this.component.capabilities;
         this.updateComponentInstanceCapabilities();
     }

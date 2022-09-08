@@ -1,0 +1,15 @@
+pluginsList:
+  - pluginId: WORKFLOW
+    pluginDiscoveryUrl: http://192.168.86.21:8184/workflows
+    pluginSourceUrl: http://192.168.86.21:8184/workflows
+    pluginStateUrl: "workflowDesigner"
+    pluginDisplayOptions:
+      tab:
+        displayName: "WORKFLOW"
+        displayRoles: ["DESIGNER", "TESTER"]
+      context:
+        displayName: "Workflow Designer"
+        displayContext: ["VF"]
+        displayRoles: ["DESIGNER", "TESTER"]
+
+connectionTimeout: 1000

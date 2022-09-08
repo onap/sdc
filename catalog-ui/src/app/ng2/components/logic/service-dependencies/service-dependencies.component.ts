@@ -1,5 +1,6 @@
-/*!
+/*
  * Copyright © 2016-2018 European Support Limited
+ * Modification Copyright (C) 2022 Nordix Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +14,22 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 import {Component, ComponentRef, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
 import {ButtonModel, ComponentInstance, InputBEModel, ModalModel, PropertyBEModel, PropertyModel,} from 'app/models';
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
-import {ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
+import {FilterType, ServiceDependenciesEditorComponent} from 'app/ng2/pages/service-dependencies-editor/service-dependencies-editor.component';
 import {ModalService} from 'app/ng2/services/modal.service';
 import {ComponentGenericResponse} from 'app/ng2/services/responses/component-generic-response';
 import {TranslateService} from 'app/ng2/shared/translator/translate.service';
 import {ComponentMetadata} from '../../../../models/component-metadata';
 import {ServiceInstanceObject} from '../../../../models/service-instance-properties-and-interfaces';
 import {TopologyTemplateService} from '../../../services/component-services/topology-template.service';
-import {
-    CapabilitiesFilterPropertiesEditorComponent
-} from "../../../pages/composition/capabilities-filter-properties-editor/capabilities-filter-properties-editor.component";
-import {CapabilityFilterConstraintUI} from "../../../../models/capability-filter-constraint";
 import {ToscaFilterConstraintType} from "../../../../models/tosca-filter-constraint-type.enum";
 import {CompositionService} from "../../../pages/composition/composition.service";
 import {FilterConstraint} from "app/models/filter-constraint";
-import {ConstraintObjectUI} from "../../../../models/ui-models/constraint-object-ui";
-import {FilterConstraintHelper, OPERATOR_TYPES} from "../../../../utils/filter-constraint-helper";
+import {PropertyFilterConstraintUi} from "../../../../models/ui-models/property-filter-constraint-ui";
+import {ConstraintOperatorType, FilterConstraintHelper} from "../../../../utils/filter-constraint-helper";
 
 export enum SourceType {
     STATIC = 'static',
@@ -93,7 +91,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     parentServiceProperties: PropertyBEModel[] = [];
     constraintProperties: FilterConstraint[] = [];
     constraintPropertyLabels: string[] = [];
-    constraintCapabilities: CapabilityFilterConstraintUI[] = [];
+    constraintCapabilities: PropertyFilterConstraintUi[] = [];
     constraintCapabilityLabels: string[] = [];
     operatorTypes: any[];
     capabilities: string = ToscaFilterConstraintType.CAPABILITIES;
@@ -110,7 +108,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     @Input() componentInstanceCapabilitiesMap: Map<string, PropertyModel[]>;
     @Output() updateRulesListEvent: EventEmitter<FilterConstraint[]> = new EventEmitter<FilterConstraint[]>();
     @Output() updateNodeFilterProperties: EventEmitter<FilterConstraint[]> = new EventEmitter<FilterConstraint[]>();
-    @Output() updateNodeFilterCapabilities: EventEmitter<CapabilityFilterConstraintUI[]> = new EventEmitter<CapabilityFilterConstraintUI[]>();
+    @Output() updateNodeFilterCapabilities: EventEmitter<PropertyFilterConstraintUi[]> = new EventEmitter<PropertyFilterConstraintUi[]>();
     @Output() loadRulesListEvent:EventEmitter<any> = new EventEmitter();
     @Output() dependencyStatus = new EventEmitter<boolean>();
 
@@ -123,11 +121,11 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         this.isLoading = false;
         this.operatorTypes = [
-            {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.GREATER_THAN), value: OPERATOR_TYPES.GREATER_THAN},
-            {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.LESS_THAN), value: OPERATOR_TYPES.LESS_THAN},
-            {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.EQUAL), value: OPERATOR_TYPES.EQUAL},
-            {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.GREATER_OR_EQUAL), value: OPERATOR_TYPES.GREATER_OR_EQUAL},
-            {label: FilterConstraintHelper.convertToSymbol(OPERATOR_TYPES.LESS_OR_EQUAL), value: OPERATOR_TYPES.LESS_OR_EQUAL}
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.GREATER_THAN), value: ConstraintOperatorType.GREATER_THAN},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_THAN), value: ConstraintOperatorType.LESS_THAN},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.EQUAL), value: ConstraintOperatorType.EQUAL},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.GREATER_OR_EQUAL), value: ConstraintOperatorType.GREATER_OR_EQUAL},
+            {label: FilterConstraintHelper.convertToSymbol(ConstraintOperatorType.LESS_OR_EQUAL), value: ConstraintOperatorType.LESS_OR_EQUAL}
         ];
         this.topologyTemplateService.getComponentInputsWithProperties(this.compositeService.componentType, this.compositeService.uniqueId)
         .subscribe((result: ComponentGenericResponse) => {
@@ -250,17 +248,17 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
             const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilter(this.properties), this.getDisabled);
             const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
             this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-            this.modalServiceNg2.addDynamicContentToModal(
+            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
                 this.modalInstance,
                 ServiceDependenciesEditorComponent,
                 {
-                    currentServiceName: this.currentServiceInstance.name,
-                    operatorTypes: this.operatorTypes,
-                    compositeServiceName: this.compositeService.name,
-                    parentServiceInputs: this.parentServiceInputs,
-                    parentServiceProperties: this.parentServiceProperties,
-                    selectedInstanceProperties: this.selectedInstanceProperties,
-                    selectedInstanceSiblings: this.selectedInstanceSiblings
+                    'currentServiceName': this.currentServiceInstance.name,
+                    'operatorTypes': this.operatorTypes,
+                    'compositeServiceName': this.compositeService.name,
+                    'parentServiceInputs': this.parentServiceInputs,
+                    'parentServiceProperties': this.parentServiceProperties,
+                    'selectedInstanceProperties': this.selectedInstanceProperties,
+                    'filterType': FilterType.PROPERTY,
                 }
             );
             this.modalInstance.instance.open();
@@ -275,17 +273,18 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
             const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalCreate, 'blue', () => this.createNodeFilterCapabilities(this.capabilities), this.getDisabled);
             const modalModel: ModalModel = new ModalModel('l', I18nTexts.addNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
             this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-            this.modalServiceNg2.addDynamicContentToModal(
+            this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
                 this.modalInstance,
-                CapabilitiesFilterPropertiesEditorComponent,
+                ServiceDependenciesEditorComponent,
                 {
-                    currentServiceName: this.currentServiceInstance.name,
-                    operatorTypes: this.operatorTypes,
-                    compositeServiceName: this.compositeService.name,
-                    parentServiceInputs: this.parentServiceInputs,
-                    selectedInstanceProperties: this.selectedInstanceProperties,
-                    selectedInstanceSiblings: this.selectedInstanceSiblings,
-                    componentInstanceCapabilitiesMap: this.componentInstanceCapabilitiesMap
+                    'currentServiceName': this.currentServiceInstance.name,
+                    'operatorTypes': this.operatorTypes,
+                    'compositeServiceName': this.compositeService.name,
+                    'parentServiceInputs': this.parentServiceInputs,
+                    'parentServiceProperties': this.parentServiceProperties,
+                    'selectedInstanceProperties': this.selectedInstanceProperties,
+                    'capabilityNameAndPropertiesMap': this.componentInstanceCapabilitiesMap,
+                    'filterType': FilterType.CAPABILITY,
                 }
             );
             this.modalInstance.instance.open();
@@ -314,7 +313,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         this.topologyTemplateService.createServiceFilterCapabilitiesConstraints(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
-            new CapabilityFilterConstraintUI(this.modalInstance.instance.dynamicContent.instance.currentRule),
+            new PropertyFilterConstraintUi(this.modalInstance.instance.dynamicContent.instance.currentRule),
             this.compositeService.componentType,
             constraintType
         ).subscribe( (response) => {
@@ -331,20 +330,20 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateNodeFilterCapability(constraintType, index), this.getDisabled);
         const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
         this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-
-        this.modalServiceNg2.addDynamicContentToModal(
+        const selectedFilterConstraint = new PropertyFilterConstraintUi(this.constraintCapabilities[index]);
+        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
             this.modalInstance,
-            CapabilitiesFilterPropertiesEditorComponent,
+            ServiceDependenciesEditorComponent,
             {
-                serviceRuleIndex: index,
-                serviceRules: _.map(this.constraintCapabilities, (rule) => new CapabilityFilterConstraintUI(rule)),
-                currentServiceName: this.currentServiceInstance.name,
-                operatorTypes: this.operatorTypes,
-                compositeServiceName: this.compositeService.name,
-                parentServiceInputs: this.parentServiceInputs,
-                selectedInstanceProperties: this.selectedInstanceProperties,
-                selectedInstanceSiblings: this.selectedInstanceSiblings,
-                componentInstanceCapabilitiesMap: this.componentInstanceCapabilitiesMap
+                'filterConstraint': selectedFilterConstraint,
+                'currentServiceName': this.currentServiceInstance.name,
+                'operatorTypes': this.operatorTypes,
+                'compositeServiceName': this.compositeService.name,
+                'parentServiceInputs': this.parentServiceInputs,
+                'parentServiceProperties': this.parentServiceProperties,
+                'selectedInstanceProperties': this.selectedInstanceProperties,
+                'capabilityNameAndPropertiesMap': this.componentInstanceCapabilitiesMap,
+                'filterType': FilterType.CAPABILITY,
             }
         );
         this.modalInstance.instance.open();
@@ -355,19 +354,19 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         const saveButton: ButtonModel = new ButtonModel(I18nTexts.modalSave, 'blue', () => this.updateNodeFilter(constraintType, index), this.getDisabled);
         const modalModel: ModalModel = new ModalModel('l', I18nTexts.updateNodeFilterTxt, '', [saveButton, cancelButton], 'standard');
         this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
-        this.modalServiceNg2.addDynamicContentToModal(
+        const selectedFilterConstraint = new PropertyFilterConstraintUi(this.constraintProperties[index]);
+        this.modalServiceNg2.addDynamicContentToModalAndBindInputs(
             this.modalInstance,
             ServiceDependenciesEditorComponent,
             {
-                serviceRuleIndex: index,
-                serviceRules: this.constraintProperties.map(rule => new ConstraintObjectUI(rule)),
-                currentServiceName: this.currentServiceInstance.name,
-                operatorTypes: this.operatorTypes,
-                compositeServiceName: this.compositeService.name,
-                parentServiceInputs: this.parentServiceInputs,
-                parentServiceProperties: this.parentServiceProperties,
-                selectedInstanceProperties: this.selectedInstanceProperties,
-                selectedInstanceSiblings: this.selectedInstanceSiblings
+                'filterConstraint': selectedFilterConstraint,
+                'currentServiceName': this.currentServiceInstance.name,
+                'operatorTypes': this.operatorTypes,
+                'compositeServiceName': this.compositeService.name,
+                'parentServiceInputs': this.parentServiceInputs,
+                'parentServiceProperties': this.parentServiceProperties,
+                'selectedInstanceProperties': this.selectedInstanceProperties,
+                'filterType': FilterType.PROPERTY
             }
         );
         this.modalInstance.instance.open();
@@ -400,7 +399,7 @@ export class ServiceDependenciesComponent implements OnInit, OnChanges {
         this.topologyTemplateService.updateServiceFilterCapabilitiesConstraint(
             this.compositeService.uniqueId,
             this.currentServiceInstance.uniqueId,
-            new CapabilityFilterConstraintUI(this.modalInstance.instance.dynamicContent.instance.currentRule),
+            new PropertyFilterConstraintUi(this.modalInstance.instance.dynamicContent.instance.currentRule),
             this.compositeService.componentType,
             constraintType,
             index
