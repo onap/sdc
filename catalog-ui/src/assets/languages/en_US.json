@@ -566,6 +566,8 @@
   "VALUE_LABEL": "Value",
   "VALUE_EXPRESSION_LABEL": "Value Expression",
   "OPERATOR_LABEL": "Operator",
+  "CAPABILITY_LABEL": "Capability",
+  "OPERATOR_LABEL": "Operator",
   "=========== SERVICE IMPORT ===========": "",
   "IMPORT_FAILURE_MESSAGE_TEXT": "Import Failure - error reading CSAR"
 }

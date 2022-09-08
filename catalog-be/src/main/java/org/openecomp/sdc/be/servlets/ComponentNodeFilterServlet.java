@@ -42,7 +42,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
@@ -140,8 +139,7 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             final FilterConstraintDto filterConstraintDto = new FilterConstraintMapper().mapFrom(uiConstraint);
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
                 .addNodeFilter(componentId.toLowerCase(), componentInstanceId,
-                    filterConstraintDto, true, componentTypeEnum, nodeFilterConstraintType.get(),
-                    StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? "" : uiConstraint.getCapabilityName());
+                    filterConstraintDto, true, componentTypeEnum, nodeFilterConstraintType.get());
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_CREATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
@@ -201,8 +199,8 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             }
             final NodeFilterConstraintType nodeFilterConstraintType = nodeFilterConstraintTypeOptional.get();
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, uiConstraint, componentTypeEnum, nodeFilterConstraintType,
-                    index);
+                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, new FilterConstraintMapper().mapFrom(uiConstraint),
+                    componentTypeEnum, nodeFilterConstraintType, index);
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_UPDATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
