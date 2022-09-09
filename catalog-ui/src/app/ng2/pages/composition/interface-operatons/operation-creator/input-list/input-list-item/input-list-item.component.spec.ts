@@ -25,6 +25,7 @@ import {InputListItemComponent} from './input-list-item.component';
 import {TranslateModule} from '../../../../../../shared/translator/translate.module';
 import {FormsModule} from '@angular/forms';
 import {DataTypeModel} from '../../../../../../../models/data-types';
+import {ToscaFunctionModule} from '../../../../../properties-assignment/tosca-function/tosca-function.module';
 
 describe('InputListItemComponent', () => {
   let component: InputListItemComponent;
@@ -35,7 +36,8 @@ describe('InputListItemComponent', () => {
       declarations: [ InputListItemComponent ],
       imports: [
         TranslateModule,
-        FormsModule
+        FormsModule,
+        ToscaFunctionModule
       ]
     })
     .compileComponents();

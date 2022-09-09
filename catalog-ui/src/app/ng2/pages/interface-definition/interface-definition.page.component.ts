@@ -147,6 +147,7 @@ export class InterfaceDefinitionComponent {
     openOperation: OperationModel;
     enableWorkflowAssociation: boolean;
     workflowIsOnline: boolean;
+    validImplementationProps:boolean = true;
 
     @Input() component: IComponent;
     @Input() readonly: boolean;
@@ -230,9 +231,10 @@ export class InterfaceDefinitionComponent {
     
         let enableAddArtifactImplementation = this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
         if(enableAddArtifactImplementation) {
+            let validImplementationProps = this.modalInstance.instance.dynamicContent.instance.validImplementationProps;
             let toscaArtifactTypeSelected = this.modalInstance.instance.dynamicContent.instance.toscaArtifactTypeSelected;
             let isToscaArtifactType:boolean = !(typeof toscaArtifactTypeSelected == 'undefined' || _.isEmpty(toscaArtifactTypeSelected));
-            disable = !bothSet || !isToscaArtifactType;
+            disable = !bothSet || !isToscaArtifactType || !validImplementationProps;
             return disable;
         }
         disable = !bothSet;
@@ -264,6 +266,7 @@ export class InterfaceDefinitionComponent {
                 selectedInterfaceOperation: operation ? operation : new InterfaceOperationModel(),
                 validityChangedCallback: this.disableSaveButton,
                 isViewOnly: this.readonly,
+                validImplementationProps: this.validImplementationProps,
                 'isEdit': isEdit,
                 interfaceTypesMap: this.interfaceTypesMap,
                 modelName: this.component.model

@@ -52,6 +52,7 @@ export class InterfaceOperationHandlerComponent {
         validityChangedCallback: Function;
         isViewOnly: boolean;
         isEdit: boolean;
+        validImplementationProps:boolean;
         modelName: string;
     };
 
@@ -67,6 +68,7 @@ export class InterfaceOperationHandlerComponent {
     isLoading: boolean = false;
     isViewOnly: boolean;
     isEdit: boolean;
+    validImplementationProps:boolean;
     interfaceTypes: Array<DropdownValue> = [];
     interfaceTypeOptions: Array<DropDownOption> = [];
     selectedInterfaceType: DropDownOption = undefined;
@@ -88,6 +90,7 @@ export class InterfaceOperationHandlerComponent {
     ngOnInit() {
         this.isViewOnly = this.input.isViewOnly;
         this.isEdit = this.input.isEdit;
+        this.validImplementationProps = this.input.validImplementationProps;
         this.interfaceType = this.input.selectedInterface.type;
         this.operationToUpdate = new InterfaceOperationModel(this.input.selectedInterfaceOperation);
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
@@ -280,11 +283,20 @@ export class InterfaceOperationHandlerComponent {
     }
 
     onArtifactPropertyValueChange(changedProperty: InputOperationParameter) {
+        const property = this.toscaArtifactTypeProperties.find(artifactProperty => artifactProperty.name == changedProperty.name);
         if (changedProperty.value instanceof Object) {
             changedProperty.value = JSON.stringify(changedProperty.value);
         }
-        const property = this.toscaArtifactTypeProperties.find(artifactProperty => artifactProperty.name == changedProperty.name);
+        property.toscaFunction = null;
         property.value = changedProperty.value;
+        if (changedProperty.isToscaFunction()) {
+            property.toscaFunction = changedProperty.toscaFunction;
+            property.value = changedProperty.toscaFunction.buildValueString();
+        }
+    }
+
+    implementationPropsValidityChange(validImplementationProps: boolean) {
+        this.validImplementationProps = validImplementationProps;
     }
 
     /**
@@ -332,6 +344,7 @@ export class InterfaceOperationHandlerComponent {
             input.schema = property.schema;
             input.toscaDefaultValue = property.defaultValue;
             input.value = property.value;
+            input.toscaFunction = property.toscaFunction;
             inputList.push(input);
         });
         return inputList;
