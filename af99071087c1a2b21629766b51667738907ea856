@@ -22,6 +22,30 @@
       "revId": "af99071087c1a2b21629766b51667738907ea856",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fbc1bd9c_309dff3e",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 6710
+      },
+      "writtenOn": "2022-09-09T13:26:15Z",
+      "side": 1,
+      "message": "error.message is too long, its not readable on UI notification. I added the error.message in console.error to keep it specific and readable. Hope that works.",
+      "parentUuid": "b9083918_d86d3666",
+      "range": {
+        "startLine": 307,
+        "startChar": 0,
+        "endLine": 307,
+        "endChar": 94
+      },
+      "revId": "af99071087c1a2b21629766b51667738907ea856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
