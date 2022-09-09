@@ -70,6 +70,30 @@
       "revId": "af99071087c1a2b21629766b51667738907ea856",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79f13084_374cc8a3",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-09T14:14:51Z",
+      "side": 1,
+      "message": "We need to be as helpful as possible to the user. If it doesnt fit in the notification then perhaps we should use the error modal with the \"Show Details/Hide Details\" functionality instead with the error.message in the details",
+      "parentUuid": "e8042a5f_03bd89cd",
+      "range": {
+        "startLine": 307,
+        "startChar": 0,
+        "endLine": 307,
+        "endChar": 94
+      },
+      "revId": "af99071087c1a2b21629766b51667738907ea856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
