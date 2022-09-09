@@ -73,10 +73,10 @@ class FilterConstraintMapperTest {
         assertEquals(propertyName, actualUiConstraint.getServicePropertyName());
         assertEquals(capabilityName, actualUiConstraint.getCapabilityName());
         assertEquals(filterValueType.getName(), actualUiConstraint.getSourceType());
+        assertEquals(filterValueType.getName(), actualUiConstraint.getSourceName());
         assertTrue(actualUiConstraint.getValue() instanceof ToscaGetFunctionDataDefinition);
         assertEquals(expectedValueToscaFunctionType, ((ToscaGetFunctionDataDefinition) actualUiConstraint.getValue()).getType());
         assertEquals(operator.getType(), actualUiConstraint.getConstraintOperator());
-        assertNull(actualUiConstraint.getSourceName());
     }
 
     @Test
