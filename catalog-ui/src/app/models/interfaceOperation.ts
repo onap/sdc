@@ -22,6 +22,7 @@
 import {ArtifactModel} from "./artifacts";
 import {SchemaPropertyGroupModel} from "./schema-property";
 import {PROPERTY_DATA, PROPERTY_TYPES} from "../utils/constants";
+import {ToscaFunction} from "./tosca-function";
 
 export class InputOperationParameter {
     name: string;
@@ -30,6 +31,8 @@ export class InputOperationParameter {
     inputId: string;
     toscaDefaultValue?: string;
     value?: any;
+    toscaFunction?: ToscaFunction;
+    valid:boolean= true;
 
     constructor(param?: any) {
         if (param) {
@@ -39,6 +42,8 @@ export class InputOperationParameter {
             this.inputId = param.inputId;
             this.toscaDefaultValue = param.toscaDefaultValue;
             this.value = param.value;
+            this.toscaFunction = param.toscaFunction;
+            this.valid = param.valid;
         }
     }
 
@@ -61,6 +66,10 @@ export class InputOperationParameter {
 
     private isTypeNotSimple() {
         return PROPERTY_DATA.SIMPLE_TYPES.indexOf(this.type) == -1;
+    }
+
+    public isToscaFunction(): boolean {
+        return this.toscaFunction != null;
     }
 }
 

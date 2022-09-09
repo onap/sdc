@@ -33,6 +33,7 @@ import {DropDownComponent} from "onap-ui-angular/dist/form-elements/dropdown/dro
 import {DataTypeService} from "../../../../services/data-type.service";
 import {Observable} from "rxjs/Observable";
 import {DataTypeModel} from "../../../../../models/data-types";
+import {InstanceFeDetails} from "../../../../../models/instance-fe-details";
 
 @Component({
     selector: 'operation-handler',
@@ -46,12 +47,14 @@ export class InterfaceOperationHandlerComponent {
     @ViewChild('interfaceOperationDropDown') interfaceOperationDropDown: DropDownComponent;
 
     input: {
+        componentInstanceMap: Map<string, InstanceFeDetails>;
         toscaArtifactTypes: Array<DropdownValue>;
         selectedInterface: UIInterfaceModel;
         selectedInterfaceOperation: InterfaceOperationModel;
         validityChangedCallback: Function;
         isViewOnly: boolean;
         isEdit: boolean;
+        validImplementationProps:boolean;
         modelName: string;
     };
 
@@ -67,6 +70,7 @@ export class InterfaceOperationHandlerComponent {
     isLoading: boolean = false;
     isViewOnly: boolean;
     isEdit: boolean;
+    validImplementationProps:boolean;
     interfaceTypes: Array<DropdownValue> = [];
     interfaceTypeOptions: Array<DropDownOption> = [];
     selectedInterfaceType: DropDownOption = undefined;
@@ -78,6 +82,7 @@ export class InterfaceOperationHandlerComponent {
     toscaArtifactTypeProperties: Array<PropertyBEModel> = [];
     artifactTypeProperties: Array<InputOperationParameter> = [];
     toscaArtifactTypes: Array<DropdownValue> = [];
+    componentInstanceMap: Map<string, InstanceFeDetails>;
     enableAddArtifactImplementation: boolean;
     propertyValueValid: boolean = true;
     inputTypeOptions: any[];
@@ -88,6 +93,8 @@ export class InterfaceOperationHandlerComponent {
     ngOnInit() {
         this.isViewOnly = this.input.isViewOnly;
         this.isEdit = this.input.isEdit;
+        this.validImplementationProps = this.input.validImplementationProps;
+        this.componentInstanceMap =  this.input.componentInstanceMap ? this.input.componentInstanceMap : null;
         this.interfaceType = this.input.selectedInterface.type;
         this.operationToUpdate = new InterfaceOperationModel(this.input.selectedInterfaceOperation);
         this.operationToUpdate.interfaceId = this.input.selectedInterface.uniqueId;
@@ -280,11 +287,20 @@ export class InterfaceOperationHandlerComponent {
     }
 
     onArtifactPropertyValueChange(changedProperty: InputOperationParameter) {
+        const property = this.toscaArtifactTypeProperties.find(artifactProperty => artifactProperty.name == changedProperty.name);
         if (changedProperty.value instanceof Object) {
             changedProperty.value = JSON.stringify(changedProperty.value);
         }
-        const property = this.toscaArtifactTypeProperties.find(artifactProperty => artifactProperty.name == changedProperty.name);
+        property.toscaFunction = null;
         property.value = changedProperty.value;
+        if (changedProperty.isToscaFunction()) {
+            property.toscaFunction = changedProperty.toscaFunction;
+            property.value = changedProperty.toscaFunction.buildValueString();
+        }
+    }
+
+    implementationPropsValidityChange(validImplementationProps: boolean) {
+        this.validImplementationProps = validImplementationProps;
     }
 
     /**
@@ -332,6 +348,7 @@ export class InterfaceOperationHandlerComponent {
             input.schema = property.schema;
             input.toscaDefaultValue = property.defaultValue;
             input.value = property.value;
+            input.toscaFunction = property.toscaFunction;
             inputList.push(input);
         });
         return inputList;

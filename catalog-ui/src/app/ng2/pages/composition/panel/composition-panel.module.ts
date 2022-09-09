@@ -50,7 +50,7 @@ import { ServiceConsumptionModule } from "../../../components/logic/service-cons
 import {SubstitutionFilterTabComponent} from "./panel-tabs/substitution-filter-tab/substitution-filter-tab.component";
 import {SubstitutionFilterModule} from "../../../components/logic/substitution-filter/substitution-filter.module";
 import {InterfaceOperationsComponent} from "../interface-operatons/interface-operations.component";
-
+import {CompositionService} from "../composition.service";
 
 @NgModule({
     declarations: [
@@ -106,7 +106,7 @@ import {InterfaceOperationsComponent} from "../interface-operatons/interface-ope
         CompositionPanelComponent
         // EnvParamsModule
     ],
-    providers: [SdcUiServices.ModalService]
+    providers: [SdcUiServices.ModalService, CompositionService]
 })
 export class CompositionPanelModule {
 

@@ -31,8 +31,11 @@
         [dataTypeMap]="dataTypeMap"
         [valueObjRef]="input.value"
         [schema]="input.schema"
+        [toscaFunction]="input.toscaFunction"
+        [showToscaFunctionOption]="showToscaFunctionOption"
         [isViewOnly]="isViewOnly"
         [allowDeletion]="allowDeletion"
+        [componentInstanceMap]="componentInstanceMap"
         (onValueChange)="onValueChange($event)"
         (onDelete)="onDelete($event)">
     </app-input-list-item>
