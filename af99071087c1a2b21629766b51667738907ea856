@@ -46,6 +46,30 @@
       "revId": "af99071087c1a2b21629766b51667738907ea856",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e8042a5f_03bd89cd",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T13:53:17Z",
+      "side": 1,
+      "message": "I think that, in the console.error, you could keep the full error object, as it is not for the end user anyway and will give even more information about the error.\nI believe Michael wanted the message to show in the error dialog, but I understand if it is too big it is not good to show.",
+      "parentUuid": "fbc1bd9c_309dff3e",
+      "range": {
+        "startLine": 307,
+        "startChar": 0,
+        "endLine": 307,
+        "endChar": 94
+      },
+      "revId": "af99071087c1a2b21629766b51667738907ea856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
