@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e509acc_d189b341",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1220,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T10:29:29Z",
+      "side": 1,
+      "message": "could be replaced with forEach only",
+      "range": {
+        "startLine": 1220,
+        "startChar": 31,
+        "endLine": 1220,
+        "endChar": 48
+      },
+      "revId": "4cab6b674befee3631c8ccf3de8d20a0dee1b25c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b421a28_055269fd",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1221,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T10:29:29Z",
+      "side": 1,
+      "message": "could replace for a filter before the for each:\n.filter(entry -\u003e entry.getValue() instanceof Map)",
+      "range": {
+        "startLine": 1221,
+        "startChar": 12,
+        "endLine": 1221,
+        "endChar": 50
+      },
+      "revId": "4cab6b674befee3631c8ccf3de8d20a0dee1b25c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0ba0954_8f7f24b1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/csar/YamlTemplateParsingHandler.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1223,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T10:29:29Z",
+      "side": 1,
+      "message": "could be simplified with:\nList\u003cString\u003e subPropertyPath \u003d new ArrayList\u003c\u003e(path);",
+      "range": {
+        "startLine": 1222,
+        "startChar": 16,
+        "endLine": 1223,
+        "endChar": 45
+      },
+      "revId": "4cab6b674befee3631c8ccf3de8d20a0dee1b25c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51f38a16_32c3c9a8",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1965,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T10:29:29Z",
+      "side": 1,
+      "message": "to reduce the complexity, I would recommend to test this condition first and return:\nif (StringUtils.isNotEmpty(validatedPropValue) || StringUtils.isEmpty(value) || ToscaPropertyType.isValidType(propertyType) !\u003d null) {\n            return;\n        }",
+      "range": {
+        "startLine": 1963,
+        "startChar": 8,
+        "endLine": 1965,
+        "endChar": 31
+      },
+      "revId": "4cab6b674befee3631c8ccf3de8d20a0dee1b25c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fc1631d_81163a97",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1972,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T10:29:29Z",
+      "side": 1,
+      "message": "could replace with PropertyDataDefinition::getName",
+      "range": {
+        "startLine": 1972,
+        "startChar": 76,
+        "endLine": 1972,
+        "endChar": 110
+      },
+      "revId": "4cab6b674befee3631c8ccf3de8d20a0dee1b25c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cebf3ee3_c74a2bb3",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T10:29:29Z",
+      "side": 1,
+      "message": "please, refactor to reduce complexity, maybe split in one method for SELF and other to INSTANCE source",
+      "range": {
+        "startLine": 114,
+        "startChar": 17,
+        "endLine": 114,
+        "endChar": 42
+      },
+      "revId": "4cab6b674befee3631c8ccf3de8d20a0dee1b25c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c245fe9a_c6b121dc",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T10:29:29Z",
+      "side": 1,
+      "message": "you could merge with enclosing if",
+      "range": {
+        "startLine": 121,
+        "startChar": 16,
+        "endLine": 121,
+        "endChar": 18
+      },
+      "revId": "4cab6b674befee3631c8ccf3de8d20a0dee1b25c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca8acd96_32c724cf",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T10:29:29Z",
+      "side": 1,
+      "message": "you could merge with enclosing if",
+      "range": {
+        "startLine": 131,
+        "startChar": 16,
+        "endLine": 131,
+        "endChar": 18
+      },
+      "revId": "4cab6b674befee3631c8ccf3de8d20a0dee1b25c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
