@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db1b1d5f_a02cfe19",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ArtifactTypeImportManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-09T14:35:14Z",
+      "side": 1,
+      "message": "any particular reason to change visibility?",
+      "range": {
+        "startLine": 69,
+        "startChar": 4,
+        "endLine": 69,
+        "endChar": 13
+      },
+      "revId": "cfd7cf2cde08b052982878512c89163149b2f6bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "665693d6_df51e325",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-09T14:35:14Z",
+      "side": 1,
+      "message": "should be final",
+      "range": {
+        "startLine": 187,
+        "startChar": 6,
+        "endLine": 187,
+        "endChar": 19
+      },
+      "revId": "cfd7cf2cde08b052982878512c89163149b2f6bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "794e0f95_b997046b",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-09T14:35:14Z",
+      "side": 1,
+      "message": "use MapUtils.isNotEmpty",
+      "range": {
+        "startLine": 314,
+        "startChar": 12,
+        "endLine": 314,
+        "endChar": 91
+      },
+      "revId": "cfd7cf2cde08b052982878512c89163149b2f6bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8ae5f18_2f5a0aa5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-09T14:35:14Z",
+      "side": 1,
+      "message": "extract as variable and replace in all 3 places",
+      "range": {
+        "startLine": 315,
+        "startChar": 65,
+        "endLine": 315,
+        "endChar": 92
+      },
+      "revId": "cfd7cf2cde08b052982878512c89163149b2f6bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "465dba84_c1969aca",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-09T14:35:14Z",
+      "side": 1,
+      "message": "use formatting instead of concatenating",
+      "range": {
+        "startLine": 319,
+        "startChar": 20,
+        "endLine": 319,
+        "endChar": 157
+      },
+      "revId": "cfd7cf2cde08b052982878512c89163149b2f6bf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
