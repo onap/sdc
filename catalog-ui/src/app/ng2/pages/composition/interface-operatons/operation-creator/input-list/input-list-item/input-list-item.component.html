@@ -26,97 +26,127 @@
     <span class="sprite-new delete-btn" *ngIf="showInputDelete()" (click)="onInputDelete()"></span>
     <span class="sprite-new delete-btn" *ngIf="showListItemDelete()" (click)="onChildListItemDelete()"></span>
   </span>
-  <ng-container *ngIf="isTypeSimple(type.name)">
-    <ul *ngIf="isExpanded">
-      <li class="input-value">
-        <ng-container *ngIf="isViewOnly">
-          {{valueObjRef}}<em class="empty-value" *ngIf="valueObjRef !== false && !valueObjRef">empty</em>
-        </ng-container>
-        <input *ngIf="!isViewOnly" [type]="getSimpleValueInputType()" name="value"
-               [(ngModel)]="valueObjRef"
-               (ngModelChange)="onValueChange($event)"
-        />
-      </li>
-    </ul>
-  </ng-container>
-  <ng-container *ngIf="isTypeComplex(type.name)" >
+
+  <ng-container *ngIf="isExpanded && showToscaFunctionOption">
+    <form>
+      <input type="hidden" [(ngModel)]="isToscaFunction" name="isToscaFunction" required="required"/>
+      <input type="radio" name="hasGetFunctionValue"
+            [(ngModel)]="isToscaFunction"
+            [value]="false"
+            ng-change="onValueTypeChange()"/> Value
+      <input type="radio" name="hasGetFunctionValue"
+            [(ngModel)]="isToscaFunction"
+            [value]="true"
+            ng-change="onValueTypeChange()"/> {{'TOSCA_FUNCTION_LABEL' | translate}}
+    </form>
+    <div *ngIf="isToscaFunction">
       <ul *ngIf="isExpanded">
-        <ng-container *ngFor="let property of this.type.properties">
-          <app-input-list-item
-              [name]="property.name"
-              [type]="getDataType(property.type)"
+        <li>
+          <tosca-function
+                          [property]="property"
+                          [allowClear]="false"
+                          (onValidFunction)="onGetFunctionValidFunction($event)"
+                          (onValidityChange)="onToscaFunctionValidityChange($event)">
+          </tosca-function>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <div *ngIf="!isToscaFunction">
+    <ng-container *ngIf="isTypeSimple(type.name)">
+      <ul *ngIf="isExpanded">
+        <li class="input-value">
+          <ng-container *ngIf="isViewOnly && !isToscaFunction">
+            {{valueObjRef}}<em class="empty-value" *ngIf="valueObjRef !== false && !valueObjRef">empty</em>
+          </ng-container>
+          <input *ngIf="!isViewOnly" [type]="getSimpleValueInputType()" name="value"
+                [(ngModel)]="valueObjRef"
+                (ngModelChange)="onValueChange($event)"
+          />
+        </li>
+      </ul>
+    </ng-container>
+    <ng-container *ngIf="isTypeComplex(type.name)" >
+        <ul *ngIf="isExpanded">
+          <ng-container *ngFor="let property of this.type.properties">
+            <app-input-list-item
+                [name]="property.name"
+                [type]="getDataType(property.type)"
+                [dataTypeMap]="dataTypeMap"
+                [valueObjRef]="valueObjRef[property.name]"
+                [schema]="property.schema"
+                [nestingLevel]="nestingLevel + 1"
+                [isViewOnly]="isViewOnly"
+                [showToscaFunctionOption]="true"
+                [allowDeletion]="allowDeletion"
+                (onValueChange)="onPropertyValueChange($event)">
+            </app-input-list-item>
+          </ng-container>
+        </ul>
+    </ng-container>
+    <ng-container *ngIf="isTypeList(type.name)">
+      <ul *ngIf="isExpanded">
+        <ng-container *ngFor="let value1 of valueObjRef; index as i; trackBy: trackByIndex">
+          <li class="input-value" *ngIf="isTypeSimple(schema.property.type)">
+            <ng-container *ngIf="isViewOnly">
+              {{valueObjRef[i]}}
+            </ng-container>
+            <input type="text" *ngIf="!isViewOnly"
+                  [(ngModel)]="valueObjRef[i]" (ngModelChange)="onListValueChange()" />
+            <span class="sprite-new delete-btn" *ngIf="!isViewOnly" (click)="onListItemDelete(i)"></span>
+          </li>
+          <app-input-list-item *ngIf="!isTypeSimple(schema.property.type)"
+              [name]="i+''"
+              [type]="getDataType(schema.property.type)"
               [dataTypeMap]="dataTypeMap"
-              [valueObjRef]="valueObjRef[property.name]"
-              [schema]="property.schema"
+              [valueObjRef]="valueObjRef[i]"
+              [schema]="schema"
+              [nestingLevel]="nestingLevel + 1"
+              [listIndex]="i"
+              [isListChild]="true"
+              [isViewOnly]="isViewOnly"
+              [allowDeletion]="allowDeletion"
+              (onValueChange)="onPropertyValueChange($event)"
+              (onChildListItemDelete)="onListItemDelete($event)">
+          </app-input-list-item>
+        </ng-container>
+        <li class="input-value" *ngIf="!isViewOnly">
+          <a class="add-btn" (click)="addListElement()">{{'INPUT_LIST_ADD_LIST_ENTRY' | translate}}</a>
+        </li>
+      </ul>
+    </ng-container>
+    <ng-container *ngIf="isTypeMap(type.name)">
+      <ul *ngIf="isExpanded">
+        <ng-container *ngFor="let key of getObjectEntries(valueObjRef); index as i">
+          <li class="input-value" *ngIf="isTypeSimple(schema.property.type)">
+            <label class="input-label">{{key}}:</label>
+            <ng-container *ngIf="isViewOnly">
+              {{valueObjRef[key]}}
+            </ng-container>
+            <input type="text" *ngIf="!isViewOnly" [(ngModel)]="valueObjRef[key]" (ngModelChange)="onMapValueChange()"/>
+            <span class="sprite-new delete-btn" *ngIf="!isViewOnly" (click)="onMapKeyDelete(key)"></span>
+          </li>
+          <app-input-list-item
+              *ngIf="!isTypeSimple(schema.property.type)"
+              [name]="key"
+              [type]="getDataType(schema.property.type)"
+              [dataTypeMap]="dataTypeMap"
+              [valueObjRef]="valueObjRef[key]"
+              [schema]="schema"
+              [isMapChild]="true"
               [nestingLevel]="nestingLevel + 1"
               [isViewOnly]="isViewOnly"
               [allowDeletion]="allowDeletion"
-              (onValueChange)="onPropertyValueChange($event)">
+              (onValueChange)="onPropertyValueChange($event)"
+              (onDelete)="onMapKeyDelete($event)">
           </app-input-list-item>
         </ng-container>
+        <li class="input-value" *ngIf="!isViewOnly">
+          <input type="text" [(ngModel)]="mapEntryName" placeholder="{{ 'INPUT_LIST_MAP_KEY_PLACEHOLDER' | translate }}"/>
+          <a class="add-btn" (click)="addMapEntry()">{{ 'INPUT_LIST_ADD_MAP_ENTRY' | translate }}</a>
+        </li>
       </ul>
-  </ng-container>
-  <ng-container *ngIf="isTypeList(type.name)">
-    <ul *ngIf="isExpanded">
-      <ng-container *ngFor="let value1 of valueObjRef; index as i; trackBy: trackByIndex">
-        <li class="input-value" *ngIf="isTypeSimple(schema.property.type)">
-          <ng-container *ngIf="isViewOnly">
-            {{valueObjRef[i]}}
-          </ng-container>
-          <input type="text" *ngIf="!isViewOnly"
-                 [(ngModel)]="valueObjRef[i]" (ngModelChange)="onListValueChange()" />
-          <span class="sprite-new delete-btn" *ngIf="!isViewOnly" (click)="onListItemDelete(i)"></span>
-        </li>
-        <app-input-list-item *ngIf="!isTypeSimple(schema.property.type)"
-            [name]="i+''"
-            [type]="getDataType(schema.property.type)"
-            [dataTypeMap]="dataTypeMap"
-            [valueObjRef]="valueObjRef[i]"
-            [schema]="schema"
-            [nestingLevel]="nestingLevel + 1"
-            [listIndex]="i"
-            [isListChild]="true"
-            [isViewOnly]="isViewOnly"
-            [allowDeletion]="allowDeletion"
-            (onValueChange)="onPropertyValueChange($event)"
-            (onChildListItemDelete)="onListItemDelete($event)">
-        </app-input-list-item>
-      </ng-container>
-      <li class="input-value" *ngIf="!isViewOnly">
-        <a class="add-btn" (click)="addListElement()">{{'INPUT_LIST_ADD_LIST_ENTRY' | translate}}</a>
-      </li>
-    </ul>
-  </ng-container>
-  <ng-container *ngIf="isTypeMap(type.name)">
-    <ul *ngIf="isExpanded">
-      <ng-container *ngFor="let key of getObjectEntries(valueObjRef); index as i">
-        <li class="input-value" *ngIf="isTypeSimple(schema.property.type)">
-          <label class="input-label">{{key}}:</label>
-          <ng-container *ngIf="isViewOnly">
-            {{valueObjRef[key]}}
-          </ng-container>
-          <input type="text" *ngIf="!isViewOnly" [(ngModel)]="valueObjRef[key]" (ngModelChange)="onMapValueChange()"/>
-          <span class="sprite-new delete-btn" *ngIf="!isViewOnly" (click)="onMapKeyDelete(key)"></span>
-        </li>
-        <app-input-list-item
-            *ngIf="!isTypeSimple(schema.property.type)"
-            [name]="key"
-            [type]="getDataType(schema.property.type)"
-            [dataTypeMap]="dataTypeMap"
-            [valueObjRef]="valueObjRef[key]"
-            [schema]="schema"
-            [isMapChild]="true"
-            [nestingLevel]="nestingLevel + 1"
-            [isViewOnly]="isViewOnly"
-            [allowDeletion]="allowDeletion"
-            (onValueChange)="onPropertyValueChange($event)"
-            (onDelete)="onMapKeyDelete($event)">
-        </app-input-list-item>
-      </ng-container>
-      <li class="input-value" *ngIf="!isViewOnly">
-        <input type="text" [(ngModel)]="mapEntryName" placeholder="{{ 'INPUT_LIST_MAP_KEY_PLACEHOLDER' | translate }}"/>
-        <a class="add-btn" (click)="addMapEntry()">{{ 'INPUT_LIST_ADD_MAP_ENTRY' | translate }}</a>
-      </li>
-    </ul>
-  </ng-container>
+    </ng-container>
+  </div>
 </li>

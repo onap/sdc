@@ -47,7 +47,9 @@ export class InputListComponent {
   @Input() isViewOnly: boolean;
   @Input() title: string;
   @Input() emptyMessage: string;
+  @Input() showToscaFunctionOption: boolean = false;
   @Input() allowDeletion: boolean = false;
+  @Output('onInputsValidityChange') inputsValidityChangeEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output('onValueChange') inputValueChangeEvent: EventEmitter<InputOperationParameter> = new EventEmitter<InputOperationParameter>();
   @Output('onDelete') inputDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
 
@@ -116,7 +118,17 @@ export class InputListComponent {
   onValueChange($event: any) {
     const inputOperationParameter = this._inputs.find(input => input.name == $event.name);
     if (inputOperationParameter) {
-      inputOperationParameter.value = $event.value;
+      inputOperationParameter.valid = true;
+      if ($event.isToscaFunction) {
+        inputOperationParameter.toscaFunction = $event.value;
+        if (!inputOperationParameter.toscaFunction) {
+          inputOperationParameter.valid = false;
+        }
+      } else {
+        inputOperationParameter.value = $event.value;
+        inputOperationParameter.toscaFunction = null;
+      }
+      this.inputsValidityChangeEvent.emit(this._inputs.every(input => input.valid === true));
       this.inputValueChangeEvent.emit(new InputOperationParameter(inputOperationParameter));
     }
   }

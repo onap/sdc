@@ -26,6 +26,7 @@ import {TranslateModule} from '../../../../../shared/translator/translate.module
 import {Component, Input} from '@angular/core';
 import {DataTypeModel} from '../../../../../../models/data-types';
 import {TranslateService} from '../../../../../shared/translator/translate.service';
+import {ToscaFunction} from '../../../../../../models/tosca-function';
 
 @Component({selector: 'app-input-list-item', template: ''})
 class InputListItemStubComponent {
@@ -36,6 +37,8 @@ class InputListItemStubComponent {
   @Input() schema: any;
   @Input() allowDeletion: any;
   @Input() isViewOnly: boolean;
+  @Input() toscaFunction: ToscaFunction;
+  @Input() showToscaFunctionOption: boolean;
 }
 
 const translateServiceMock: Partial<TranslateService> = {
@@ -50,7 +53,9 @@ describe('InputListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ InputListComponent, InputListItemStubComponent ],
-      imports: [ TranslateModule ],
+      imports: [ 
+        TranslateModule
+      ],
       providers: [
         { provide: TranslateService, useValue: translateServiceMock }
       ]
