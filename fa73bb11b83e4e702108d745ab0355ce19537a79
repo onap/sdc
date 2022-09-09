@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d309db8b_28c1a158",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2002,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-09T12:07:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fb18531_38ed696c",
+      "range": {
+        "startLine": 1991,
+        "startChar": 35,
+        "endLine": 2002,
+        "endChar": 37
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dda2978f_3fb65a52",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "469168d8_009cb1bb",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-09T12:07:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dda2978f_3fb65a52",
+      "range": {
+        "startLine": 120,
+        "startChar": 20,
+        "endLine": 120,
+        "endChar": 57
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "d277368e_860b220c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-09T12:07:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "439eeb33_bf3b33e5",
+      "range": {
+        "startLine": 130,
+        "startChar": 16,
+        "endLine": 130,
+        "endChar": 45
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2c8e6785_13e072d6",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edb84a24_dbbd12e5",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-09T12:07:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c8e6785_13e072d6",
+      "range": {
+        "startLine": 138,
+        "startChar": 12,
+        "endLine": 138,
+        "endChar": 49
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "bfbfc4dd_bd0bbd08",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ToscaFunctionService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-09T12:07:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05249a88_2f5b239b",
+      "range": {
+        "startLine": 153,
+        "startChar": 16,
+        "endLine": 153,
+        "endChar": 34
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07aa2bac_f137d98d",
         "filename": "integration-tests/pom.xml",
         "patchSetId": 1
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "57cafc68_0b0cf6c3",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-09T12:07:37Z",
+      "side": 1,
+      "message": "included inadvertently",
+      "parentUuid": "07aa2bac_f137d98d",
+      "range": {
+        "startLine": 500,
+        "startChar": 20,
+        "endLine": 504,
+        "endChar": 30
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7b283ea2_e3937e87",
         "filename": "integration-tests/pom.xml",
         "patchSetId": 1
@@ -160,6 +304,30 @@
       "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1c68b60_c8d3ce11",
+        "filename": "integration-tests/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-09T12:07:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b283ea2_e3937e87",
+      "range": {
+        "startLine": 522,
+        "startChar": 0,
+        "endLine": 522,
+        "endChar": 140
+      },
+      "revId": "fa73bb11b83e4e702108d745ab0355ce19537a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
