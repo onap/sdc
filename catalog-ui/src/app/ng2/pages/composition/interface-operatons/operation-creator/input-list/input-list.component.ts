@@ -24,6 +24,7 @@ import {InputOperationParameter} from "../../../../../../models/interfaceOperati
 import {DataTypeModel} from "../../../../../../models/data-types";
 import {DerivedPropertyType} from "../../../../../../models/properties-inputs/property-be-model";
 import {PROPERTY_DATA, PROPERTY_TYPES} from "../../../../../../utils/constants";
+import {InstanceFeDetails} from "../../../../../../models/instance-fe-details";
 
 @Component({
   selector: 'input-list',
@@ -47,7 +48,10 @@ export class InputListComponent {
   @Input() isViewOnly: boolean;
   @Input() title: string;
   @Input() emptyMessage: string;
+  @Input() showToscaFunctionOption: boolean = false;
   @Input() allowDeletion: boolean = false;
+  @Input() componentInstanceMap: Map<string, InstanceFeDetails> = null;
+  @Output('onInputsValidityChange') inputsValidityChangeEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output('onValueChange') inputValueChangeEvent: EventEmitter<InputOperationParameter> = new EventEmitter<InputOperationParameter>();
   @Output('onDelete') inputDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
 
@@ -116,7 +120,17 @@ export class InputListComponent {
   onValueChange($event: any) {
     const inputOperationParameter = this._inputs.find(input => input.name == $event.name);
     if (inputOperationParameter) {
-      inputOperationParameter.value = $event.value;
+      inputOperationParameter.valid = true;
+      if ($event.isToscaFunction) {
+        inputOperationParameter.toscaFunction = $event.value;
+        if (!inputOperationParameter.toscaFunction) {
+          inputOperationParameter.valid = false;
+        }
+      } else {
+        inputOperationParameter.value = $event.value;
+        inputOperationParameter.toscaFunction = null;
+      }
+      this.inputsValidityChangeEvent.emit(this._inputs.every(input => input.valid === true));
       this.inputValueChangeEvent.emit(new InputOperationParameter(inputOperationParameter));
     }
   }

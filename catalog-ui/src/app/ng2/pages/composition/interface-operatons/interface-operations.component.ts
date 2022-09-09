@@ -25,11 +25,12 @@ import {
 } from '../../../services/component-services/topology-template.service';
 import {TranslateService} from "../../../shared/translator/translate.service";
 import {ModalService} from 'app/ng2/services/modal.service';
+import {CompositionService} from "app/ng2/pages/composition/composition.service";
 import {ModalComponent} from 'app/ng2/components/ui/modal/modal.component';
 import {Component as TopologyTemplate} from "../../../../models/components/component";
 import {PluginsService} from "app/ng2/services/plugins.service";
 import {SelectedComponentType} from "../common/store/graph.actions";
-
+import {InstanceFeDetails} from "../../../../models/instance-fe-details";
 import {WorkspaceService} from "../../workspace/workspace.service";
 import {
     ComponentInterfaceDefinitionModel,
@@ -139,6 +140,8 @@ export class InterfaceOperationsComponent {
 
     deploymentArtifactsFilePath: Array<DropdownValue> = [];
     toscaArtifactTypes: Array<DropdownValue> = [];
+    componentInstanceMap: Map<string, InstanceFeDetails> = new Map<string, InstanceFeDetails>();
+    validImplementationProps:boolean = true;
 
     @Input() component: ComponentInstance;
     @Input() isViewOnly: boolean;
@@ -153,6 +156,7 @@ export class InterfaceOperationsComponent {
         private topologyTemplateService: TopologyTemplateService,
         private toscaArtifactService: ToscaArtifactService,
         private modalServiceNg2: ModalService,
+        private compositionService: CompositionService,
         private workspaceService: WorkspaceService,
         @Inject("Notification") private Notification: any,
     ) {
@@ -215,6 +219,7 @@ export class InterfaceOperationsComponent {
     }
 
     private disableSaveButton = (): boolean => {
+        //validImplementationProps: this.validImplementationProps,
         let disable:boolean = true;
         if(this.isViewOnly) {
             return disable;
@@ -222,9 +227,10 @@ export class InterfaceOperationsComponent {
 
         let enableAddArtifactImplementation = this.modalInstance.instance.dynamicContent.instance.enableAddArtifactImplementation;
         if(enableAddArtifactImplementation) {
+            let validImplementationProps = this.modalInstance.instance.dynamicContent.instance.validImplementationProps;
             let toscaArtifactTypeSelected = this.modalInstance.instance.dynamicContent.instance.toscaArtifactTypeSelected;
             let isToscaArtifactType:boolean = !(typeof toscaArtifactTypeSelected == 'undefined' || _.isEmpty(toscaArtifactTypeSelected));
-            disable = !isToscaArtifactType;
+            disable = !isToscaArtifactType || !validImplementationProps;
             return disable;
         }
         disable = false;
@@ -247,16 +253,27 @@ export class InterfaceOperationsComponent {
         const modalModel: ModalModel = new ModalModel('l', this.modalTranslation.EDIT_TITLE, '', buttonList, 'custom');
         this.modalInstance = this.modalServiceNg2.createCustomModal(modalModel);
 
+        const componentInstances = this.compositionService.getComponentInstances()
+        if (componentInstances) {
+            componentInstances.forEach(value => {
+                this.componentInstanceMap.set(value.uniqueId, <InstanceFeDetails>{
+                    name: value.name
+                });
+            });
+        }
+
         this.modalServiceNg2.addDynamicContentToModal(
             this.modalInstance,
             InterfaceOperationHandlerComponent,
             {
                 deploymentArtifactsFilePath: this.deploymentArtifactsFilePath,
+                componentInstanceMap: this.componentInstanceMap,
                 toscaArtifactTypes: this.toscaArtifactTypes,
                 selectedInterface: interfaceModel ? interfaceModel : new UIInterfaceModel(),
                 selectedInterfaceOperation: operation ? operation : new InterfaceOperationModel(),
                 validityChangedCallback: this.disableSaveButton,
                 isViewOnly: this.isViewOnly,
+                validImplementationProps: this.validImplementationProps,
                 isEdit: true,
                 modelName: this.componentMetaData.model
             }

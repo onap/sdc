@@ -24,6 +24,9 @@ import {DataTypeModel} from '../../../../../../../models/data-types';
 import {SchemaPropertyGroupModel} from '../../../../../../../models/schema-property';
 import {DerivedPropertyType, PropertyBEModel} from '../../../../../../../models/properties-inputs/property-be-model';
 import {PROPERTY_DATA, PROPERTY_TYPES} from '../../../../../../../utils/constants';
+import {ToscaFunction} from '../../../../../../../models/tosca-function';
+import {ToscaFunctionValidationEvent} from "../../../../../../../ng2/pages/properties-assignment/tosca-function/tosca-function.component";
+import {InstanceFeDetails} from "../../../../../../../models/instance-fe-details";
 
 @Component({
   selector: 'app-input-list-item',
@@ -40,15 +43,20 @@ export class InputListItemComponent implements OnInit {
   @Input() nestingLevel: number;
   @Input() isListChild: boolean = false;
   @Input() isMapChild: boolean = false;
+  @Input() showToscaFunctionOption: boolean = false;
   @Input() listIndex: number;
   @Input() isViewOnly: boolean;
   @Input() allowDeletion: boolean = false;
+  @Input() toscaFunction: ToscaFunction;
+  @Input() componentInstanceMap: Map<string, InstanceFeDetails> = null;
   @Output('onValueChange') onValueChangeEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output('onDelete') onDeleteEvent: EventEmitter<string> = new EventEmitter<string>();
   @Output('onChildListItemDelete') onChildListItemDeleteEvent: EventEmitter<number> = new EventEmitter<number>();
 
   isExpanded: boolean = false;
   mapEntryName: string;
+  isToscaFunction: boolean = false;
+  property: PropertyBEModel;
 
   ngOnInit() {
     if (!this.nestingLevel) {
@@ -58,6 +66,18 @@ export class InputListItemComponent implements OnInit {
       this.type.properties.forEach(property => {
         this.initEmptyPropertyInValueObjRef(property);
       });
+    }
+
+    this.property = new PropertyBEModel();
+    this.property.type = this.type.name;
+    if (this.schema) {
+      this.property.schema = this.schema;
+      this.property.schemaType = this.schema.property.type;
+    }
+    if (this.toscaFunction) {
+      this.property.toscaFunction = this.toscaFunction;
+      this.valueObjRef = this.toscaFunction.value;
+      this.isToscaFunction = true;
     }
   }
 
@@ -109,7 +129,29 @@ export class InputListItemComponent implements OnInit {
     return this.dataTypeMap.get(type);
   }
 
+  onValueTypeChange () {
+    if ( !this.isToscaFunction ) {
+      this.onValueChange(this.valueObjRef);
+    }
+  }
+
+  onToscaFunctionValidityChange(validationEvent: ToscaFunctionValidationEvent):void {
+    if (validationEvent.isValid) {
+      this.emitValueChangeEvent(validationEvent.toscaFunction, true);
+      return;
+    }
+    this.emitValueChangeEvent(undefined, true);
+  }
+
   onValueChange(value: any): void {
+    if (this.type.name == PROPERTY_TYPES.INTEGER || this.type.name == PROPERTY_TYPES.FLOAT) {
+      this.emitValueChangeEvent(this.parseNumber(value));
+      return;
+    }
+    if (this.type.name == PROPERTY_TYPES.BOOLEAN) {
+      this.emitValueChangeEvent(this.parseBoolean(value));
+      return;
+    }
     this.emitValueChangeEvent(value);
   }
 
@@ -122,11 +164,13 @@ export class InputListItemComponent implements OnInit {
     this.emitValueChangeEvent(this.valueObjRef);
   }
 
-  private emitValueChangeEvent(value: any) {
-    this.onValueChangeEvent.emit({
+  private emitValueChangeEvent(value: any, isToscaFunction=false) {
+    let emitValue = {
       name: this.name,
-      value: value
-    });
+      value: value,
+      isToscaFunction:isToscaFunction
+    };
+    this.onValueChangeEvent.emit(emitValue);
   }
 
   isRoot(): boolean {
@@ -161,6 +205,9 @@ export class InputListItemComponent implements OnInit {
   }
 
   addListElement() {
+    if (!this.valueObjRef) {
+      this.valueObjRef = [];
+    }
     if (this.isTypeSimple(this.schema.property.type)) {
       this.valueObjRef.push('');
     } else if (this.isTypeComplex(this.schema.property.type) || this.isTypeMap(this.schema.property.type)) {
@@ -214,7 +261,14 @@ export class InputListItemComponent implements OnInit {
   }
 
   getSimpleValueInputType() {
+    if (this.isNumber(this.type.name)){
+      return 'number';
+    }
     return 'text';
+  }
+
+  isNumber(type: string): boolean {
+    return type == PROPERTY_TYPES.INTEGER || type == PROPERTY_TYPES.FLOAT;
   }
 
   private parseBoolean(value: any) {
