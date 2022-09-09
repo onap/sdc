@@ -15,11 +15,13 @@
  */
 package org.openecomp.sdc.be.ui.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 
 @Getter
 @Setter
@@ -51,4 +53,10 @@ public class UIConstraint implements Serializable {
         this.sourceName = sourceName;
         this.value = value;
     }
+
+    @JsonIgnore
+    public boolean isLegacyGetFunction() {
+        return FilterValueType.GET_INPUT.getLegacyName().equals(sourceType) || FilterValueType.GET_PROPERTY.getLegacyName().equals(sourceType);
+    }
+
 }
