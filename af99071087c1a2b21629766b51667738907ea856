@@ -118,6 +118,30 @@
       "revId": "af99071087c1a2b21629766b51667738907ea856",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6f2b2c2_b709cf15",
+        "filename": "catalog-ui/src/app/view-models/workspace/tabs/general/general-view-model.ts",
+        "patchSetId": 5
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-09T15:05:12Z",
+      "side": 1,
+      "message": "The \"Show Details/Hide Details\" would be nice to have",
+      "parentUuid": "7b029bf2_eb0a4f63",
+      "range": {
+        "startLine": 307,
+        "startChar": 0,
+        "endLine": 307,
+        "endChar": 94
+      },
+      "revId": "af99071087c1a2b21629766b51667738907ea856",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
