@@ -33,6 +33,7 @@ import {InterfaceOperationHandlerComponent} from "./interface-operation-handler.
 import {SdcUiComponentsModule} from "onap-ui-angular/dist";
 import {UiElementsModule} from "app/ng2/components/ui/ui-elements.module";
 import {PropertyTableModule} from "app/ng2/components/logic/properties-table/property-table.module";
+import {ToscaFunctionModule} from '../../../properties-assignment/tosca-function/tosca-function.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import {PropertyTableModule} from "app/ng2/components/logic/properties-table/pro
     TranslateModule,
     UiElementsModule,
     PropertyTableModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ToscaFunctionModule
   ],
   exports: [
     PropertyParamRowComponent
