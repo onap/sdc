@@ -112,7 +112,10 @@
                     [inputs]="artifactTypeProperties"
                     [dataTypeMap]="dataTypeMap"
                     [isViewOnly]="isViewOnly"
+                    [showToscaFunctionOption]="true"
+                    [componentInstanceMap]="componentInstanceMap"
                     [allowDeletion]="false"
+                    (onInputsValidityChange)="implementationPropsValidityChange($event)"
                     (onValueChange)="onArtifactPropertyValueChange($event)"
                 >
                 </input-list>
