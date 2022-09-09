@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentNodeFilterBusinessLogic;
@@ -59,7 +61,9 @@ import org.openecomp.sdc.be.model.User;
 import org.openecomp.sdc.be.model.dto.FilterConstraintDto;
 import org.openecomp.sdc.be.tosca.utils.NodeFilterConverter;
 import org.openecomp.sdc.be.ui.mapper.FilterConstraintMapper;
+import org.openecomp.sdc.be.ui.mapper.UIConstraintMapper;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
+import org.openecomp.sdc.be.ui.model.UINodeFilter;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
 import org.openecomp.sdc.common.api.Constants;
 import org.slf4j.Logger;
@@ -142,8 +146,11 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
                 LOGGER.error(FAILED_TO_CREATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                new NodeFilterConverter().convertToUi(actionResponse.get()));
+            final UINodeFilter uiNodeFilter = new NodeFilterConverter().convertToUi(actionResponse.get());
+            if (uiConstraint.isLegacyGetFunction()) {
+                mapToLegacyResponse(uiNodeFilter);
+            }
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), uiNodeFilter);
         } catch (final ComponentException e) {
             throw e;
         } catch (final BusinessLogicException e) {
@@ -187,21 +194,24 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
                     getComponentsUtils().getResponseFormat(ActionStatus.INVALID_CONTENT_PARAM, INVALID_NODE_FILTER_CONSTRAINT_TYPE, constraintType));
             }
             final ComponentTypeEnum componentTypeEnum = ComponentTypeEnum.findByParamName(componentType);
-            final Optional<UIConstraint> convertResponse = componentsUtils.parseToConstraint(constraintData, userModifier, componentTypeEnum);
-            if (convertResponse.isEmpty()) {
+            final UIConstraint uiConstraint = componentsUtils.parseToConstraint(constraintData, userModifier, componentTypeEnum).orElse(null);
+            if (uiConstraint == null) {
                 LOGGER.error(FAILED_TO_PARSE_COMPONENT);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
             final NodeFilterConstraintType nodeFilterConstraintType = nodeFilterConstraintTypeOptional.get();
             final Optional<CINodeFilterDataDefinition> actionResponse = componentNodeFilterBusinessLogic
-                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, convertResponse.get(), componentTypeEnum, nodeFilterConstraintType,
+                .updateNodeFilter(componentId.toLowerCase(), componentInstanceId, uiConstraint, componentTypeEnum, nodeFilterConstraintType,
                     index);
             if (actionResponse.isEmpty()) {
                 LOGGER.error(FAILED_TO_UPDATE_NODE_FILTER);
                 return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
             }
-            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK),
-                new NodeFilterConverter().convertToUi(actionResponse.get()));
+            final UINodeFilter uiNodeFilter = new NodeFilterConverter().convertToUi(actionResponse.get());
+            if (uiConstraint.isLegacyGetFunction()) {
+                mapToLegacyResponse(uiNodeFilter);
+            }
+            return buildOkResponse(getComponentsUtils().getResponseFormat(ActionStatus.OK), uiNodeFilter);
         } catch (final Exception e) {
             BeEcompErrorManager.getInstance().logBeRestApiGeneralError(NODE_FILTER_UPDATE);
             LOGGER.error(UPDATE_NODE_FILTER_WITH_AN_ERROR, e);
@@ -254,4 +264,22 @@ public class ComponentNodeFilterServlet extends AbstractValidationsServlet {
             return buildErrorResponse(getComponentsUtils().getResponseFormat(ActionStatus.GENERAL_ERROR));
         }
     }
+
+    private void mapToLegacyResponse(final UINodeFilter uiNodeFilter) {
+        if (CollectionUtils.isNotEmpty(uiNodeFilter.getProperties())) {
+            uiNodeFilter.setProperties(
+                uiNodeFilter.getProperties().stream()
+                    .map(UIConstraintMapper::mapToLegacyConstraint)
+                    .collect(Collectors.toList())
+            );
+        }
+        if (CollectionUtils.isNotEmpty(uiNodeFilter.getCapabilities())) {
+            uiNodeFilter.setCapabilities(
+                uiNodeFilter.getCapabilities().stream()
+                    .map(UIConstraintMapper::mapToLegacyConstraint)
+                    .collect(Collectors.toList())
+            );
+        }
+    }
+
 }

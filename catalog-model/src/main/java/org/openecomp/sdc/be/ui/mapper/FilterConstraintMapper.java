@@ -23,15 +23,19 @@ package org.openecomp.sdc.be.ui.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.openecomp.sdc.be.datatypes.elements.PropertyFilterConstraintDataDefinition;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunction;
 import org.openecomp.sdc.be.datatypes.elements.ToscaFunctionType;
+import org.openecomp.sdc.be.datatypes.elements.ToscaGetFunctionDataDefinition;
 import org.openecomp.sdc.be.datatypes.enums.ConstraintType;
 import org.openecomp.sdc.be.datatypes.enums.FilterValueType;
 import org.openecomp.sdc.be.datatypes.enums.PropertyFilterTargetType;
+import org.openecomp.sdc.be.datatypes.enums.PropertySource;
+import org.openecomp.sdc.be.datatypes.tosca.ToscaGetFunctionType;
 import org.openecomp.sdc.be.model.dto.FilterConstraintDto;
 import org.openecomp.sdc.be.ui.model.UIConstraint;
 
@@ -44,8 +48,32 @@ public class FilterConstraintMapper {
         filterConstraint.setPropertyName(uiConstraint.getServicePropertyName());
         filterConstraint.setTargetType(StringUtils.isEmpty(uiConstraint.getCapabilityName()) ? PropertyFilterTargetType.PROPERTY : PropertyFilterTargetType.CAPABILITY);
         FilterValueType.findByName(uiConstraint.getSourceType()).ifPresent(filterConstraint::setValueType);
-        filterConstraint.setValue(parseValueFromUiConstraint(uiConstraint.getValue()));
+        filterConstraint.setValue(mapValueFrom(uiConstraint));
         return filterConstraint;
+    }
+
+    private Object mapValueFrom(final UIConstraint uiConstraint) {
+        if (FilterValueType.GET_INPUT.getLegacyName().equals(uiConstraint.getSourceType())) {
+            final ToscaGetFunctionDataDefinition toscaGetFunctionDataDefinition = new ToscaGetFunctionDataDefinition();
+            toscaGetFunctionDataDefinition.setPropertySource(PropertySource.SELF);
+            final String value = (String) uiConstraint.getValue();
+            toscaGetFunctionDataDefinition.setPropertyName(value);
+            toscaGetFunctionDataDefinition.setFunctionType(ToscaGetFunctionType.GET_INPUT);
+            toscaGetFunctionDataDefinition.setPropertyPathFromSource(List.of(value));
+            return toscaGetFunctionDataDefinition;
+        }
+
+        if (FilterValueType.GET_PROPERTY.getLegacyName().equals(uiConstraint.getSourceType())) {
+            final ToscaGetFunctionDataDefinition toscaGetFunctionDataDefinition = new ToscaGetFunctionDataDefinition();
+            toscaGetFunctionDataDefinition.setPropertySource(PropertySource.SELF);
+            final String value = (String) uiConstraint.getValue();
+            toscaGetFunctionDataDefinition.setPropertyName(value);
+            toscaGetFunctionDataDefinition.setFunctionType(ToscaGetFunctionType.GET_PROPERTY);
+            toscaGetFunctionDataDefinition.setPropertyPathFromSource(List.of(value));
+            return toscaGetFunctionDataDefinition;
+        }
+
+        return parseValueFromUiConstraint(uiConstraint.getValue());
     }
 
     public FilterConstraintDto mapFrom(final PropertyFilterConstraintDataDefinition propertyFilterConstraint) {
@@ -77,6 +105,7 @@ public class FilterConstraintMapper {
         uiConstraint.setCapabilityName(filterConstraintDto.getCapabilityName());
         uiConstraint.setServicePropertyName(filterConstraintDto.getPropertyName());
         uiConstraint.setSourceType(filterConstraintDto.getValueType().getName());
+        uiConstraint.setSourceName(uiConstraint.getSourceType());
         return uiConstraint;
     }
 
