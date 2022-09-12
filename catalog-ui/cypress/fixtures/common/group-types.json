@@ -3,21 +3,21 @@
     "name": "Network Collection",
     "icon": "group-network-collection",
     "type": "org.openecomp.groups.NetworkCollection",
-    "uniqueId": "org.openecomp.groups.NetworkCollection.1.0.grouptype",
+    "uniqueId": "org.openecomp.groups.NetworkCollection.1.0.groupType",
     "version": "1.0"
     },
     {
         "name": "Vfc Instance",
         "icon": "group-vfc-instance",
         "type": "org.openecomp.groups.VfcInstanceGroup",
-        "uniqueId": "org.openecomp.groups.VfcInstanceGroup.1.0.grouptype",
+        "uniqueId": "org.openecomp.groups.VfcInstanceGroup.1.0.groupType",
         "version": "1.0"
     },
     {
         "name": "Resource Instance",
         "icon": "group-resource-instance",
         "type": "org.openecomp.groups.ResourceInstanceGroup",
-        "uniqueId": "org.openecomp.groups.ResourceInstanceGroup.1.0.grouptype",
+        "uniqueId": "org.openecomp.groups.ResourceInstanceGroup.1.0.groupType",
         "version": "1.0"
     }
 ]

@@ -19,9 +19,11 @@
  */
 package org.openecomp.sdc.be.model.operations.impl;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.openecomp.sdc.be.dao.jsongraph.types.VertexTypeEnum;
 import org.openecomp.sdc.be.dao.neo4j.GraphPropertiesDictionary;
@@ -33,21 +35,20 @@ import org.openecomp.sdc.be.resources.data.UserData;
 import org.openecomp.sdc.common.api.Constants;
 import org.openecomp.sdc.common.util.ValidationUtils;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UniqueIdBuilder {
 
     private static final String HEAT_PARAM_PREFIX = "heat_";
-    private static String DOT = ".";
-    private static UserData userData = new UserData();
-    private static TagData tagData = new TagData();
-    private static ResourceCategoryData resCategoryData = new ResourceCategoryData();
-    private static ServiceCategoryData serCategoryData = new ServiceCategoryData();
-    private static Map<NodeTypeEnum, String> nodeTypeToUniqueKeyMapper = new HashMap<>();
+    private static final String DOT = ".";
+    private static final UserData userData = new UserData();
+    private static final TagData tagData = new TagData();
+    private static final ResourceCategoryData resCategoryData = new ResourceCategoryData();
+    private static final ServiceCategoryData serCategoryData = new ServiceCategoryData();
+    private static final Map<NodeTypeEnum, String> nodeTypeToUniqueKeyMapper = new EnumMap<>(NodeTypeEnum.class);
 
     static {
         nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.User, userData.getUniqueIdKey());
         nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.Tag, tagData.getUniqueIdKey());
-        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.ResourceCategory, resCategoryData.getUniqueIdKey());
-        nodeTypeToUniqueKeyMapper.put(NodeTypeEnum.ServiceCategory, serCategoryData.getUniqueIdKey());
     }
 
     public static String buildPropertyUniqueId(String resourceId, String propertyName) {
@@ -125,7 +126,7 @@ public class UniqueIdBuilder {
         return buildTypeUid(serviceId, resourceId, logicalName);
     }
 
-    public static String buildRelationsipInstInstanceUid(String resourceInstUid, String requirement) {
+    public static String buildRelationsipInstInstanceUid() {
         return generateUUID();
     }
 
@@ -161,7 +162,7 @@ public class UniqueIdBuilder {
     }
 
     static String buildResourceInstancePropertyValueUid(String resourceInstanceUniqueId, Integer index) {
-        return resourceInstanceUniqueId + DOT + "property" + DOT + index;
+        return resourceInstanceUniqueId + DOT + NodeTypeEnum.Property.getName() + DOT + index;
     }
 
     public static String buildComponentPropertyUniqueId(String resourceId, String propertyName) {
@@ -169,11 +170,11 @@ public class UniqueIdBuilder {
     }
 
     static String buildResourceInstanceAttributeValueUid(String resourceInstanceUniqueId, Integer index) {
-        return resourceInstanceUniqueId + DOT + "attribute" + DOT + index;
+        return resourceInstanceUniqueId + DOT + NodeTypeEnum.Attribute.getName() + DOT + index;
     }
 
     static String buildResourceInstanceInputValueUid(String resourceInstanceUniqueId, Integer index) {
-        return resourceInstanceUniqueId + DOT + "input" + DOT + index;
+        return resourceInstanceUniqueId + DOT + NodeTypeEnum.Input.getName() + DOT + index;
     }
 
     static String buildAdditionalInformationUniqueId(String resourceUniqueId) {
@@ -181,26 +182,24 @@ public class UniqueIdBuilder {
     }
 
     public static String buildDataTypeUid(final String modelName, final String name) {
-        return StringUtils.isEmpty(modelName) ? name + DOT + "datatype" : modelName + DOT + name + DOT + "datatype";
+        return buildTypeUid(modelName, name, NodeTypeEnum.DataType);
     }
 
     public static String buildInvariantUUID() {
         return generateUUID();
     }
 
-    public static String buildGroupTypeUid(String modelName, String type, String version, String resourceName) {
-        return buildTypeUidWithModel(modelName, type, version, resourceName);
+    public static String buildGroupTypeUid(final String modelName, final String type, final String version) {
+        return buildTypeUidWithModel(modelName, type, version, NodeTypeEnum.GroupType.getName());
     }
 
     public static String buildPolicyTypeUid(String modelName, String type, String version, String resourceName) {
         return buildTypeUidWithModel(modelName, type, version, resourceName);
     }
 
-    static String buildTypeUidWithModel(String modelName, String type, String version, String resourceName) {
-        if (StringUtils.isEmpty(modelName)){
-            return buildTypeUid(type, version, resourceName);
-        }
-        return modelName + DOT + buildTypeUid(type, version, resourceName);
+    private static String buildTypeUidWithModel(String modelName, String type, String version, String resourceName) {
+        return StringUtils.isEmpty(modelName) ?
+            buildTypeUid(type, version, resourceName) : modelName + DOT + buildTypeUid(type, version, resourceName);
     }
 
     static String buildTypeUid(String type, String version, String resourceName) {
@@ -212,14 +211,18 @@ public class UniqueIdBuilder {
     }
 
     public static String buildGroupPropertyValueUid(String groupUniqueId, Integer index) {
-        return groupUniqueId + DOT + "property" + DOT + index;
+        return groupUniqueId + DOT + NodeTypeEnum.Property.getName() + DOT + index;
     }
 
     public static String buildModelUid(final String modelName) {
         return NodeTypeEnum.Model.getName() + DOT + modelName;
     }
 
-    public static String  buildArtifactTypeUid(final String modelName, final String name) {
-        return StringUtils.isEmpty(modelName) ? name + DOT + "artifactype" : modelName + DOT + name + DOT + "artifactype";
+    public static String buildArtifactTypeUid(final String modelName, final String name) {
+        return buildTypeUid(modelName, name, NodeTypeEnum.ArtifactType);
+    }
+
+    private static String buildTypeUid(final String modelName, final String name, final NodeTypeEnum nodeType) {
+        return StringUtils.isEmpty(modelName) ? name + DOT + nodeType.getName() : modelName + DOT + name + DOT + nodeType.getName();
     }
 }
