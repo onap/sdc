@@ -20,12 +20,31 @@
 
 package org.openecomp.sdc.be.servlets;
 
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
+import fj.data.Either;
+import java.nio.file.Path;
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-import org.junit.Test;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.MediaType;
+import org.eclipse.jetty.http.HttpStatus;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.openecomp.sdc.be.components.impl.ArtifactsBusinessLogic;
 import org.openecomp.sdc.be.components.impl.CapabilitiesBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ComponentInstanceBusinessLogic;
@@ -34,50 +53,194 @@ import org.openecomp.sdc.be.components.impl.PropertyBusinessLogic;
 import org.openecomp.sdc.be.components.impl.RelationshipTypeBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceBusinessLogic;
 import org.openecomp.sdc.be.components.impl.ResourceImportManager;
+import org.openecomp.sdc.be.components.impl.ResponseFormatManager;
+import org.openecomp.sdc.be.components.impl.exceptions.ComponentException;
+import org.openecomp.sdc.be.config.ConfigurationManager;
+import org.openecomp.sdc.be.config.SpringConfig;
+import org.openecomp.sdc.be.dao.api.ActionStatus;
 import org.openecomp.sdc.be.impl.ComponentsUtils;
 import org.openecomp.sdc.be.impl.ServletUtils;
+import org.openecomp.sdc.be.impl.WebAppContextWrapper;
+import org.openecomp.sdc.be.model.Component;
+import org.openecomp.sdc.be.model.Resource;
+import org.openecomp.sdc.be.model.User;
+import org.openecomp.sdc.be.servlets.builder.ServletResponseBuilder;
+import org.openecomp.sdc.be.servlets.exception.OperationExceptionMapper;
+import org.openecomp.sdc.be.user.Role;
 import org.openecomp.sdc.be.user.UserBusinessLogic;
+import org.openecomp.sdc.common.api.ConfigurationSource;
+import org.openecomp.sdc.common.api.Constants;
+import org.openecomp.sdc.common.impl.ExternalConfiguration;
+import org.openecomp.sdc.common.impl.FSConfigurationSource;
+import org.openecomp.sdc.exception.ResponseFormat;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
-public class TypesFetchServletTest {
+class TypesFetchServletTest  extends JerseyTest {
+	private static final String USER_ID = "cs0008";
+	private static final User USER = new User(USER_ID);
 
-	private TypesFetchServlet createTestSubject() {
-		UserBusinessLogic userBusinessLogic = mock(UserBusinessLogic.class);
-		ComponentInstanceBusinessLogic componentInstanceBL = mock(ComponentInstanceBusinessLogic.class);
-		ComponentsUtils componentsUtils = mock(ComponentsUtils.class);
-		ServletUtils servletUtils = mock(ServletUtils.class);
-		ResourceImportManager resourceImportManager = mock(ResourceImportManager.class);
-		PropertyBusinessLogic propertyBusinessLogic = mock(PropertyBusinessLogic.class);
-		RelationshipTypeBusinessLogic relationshipTypeBusinessLogic = mock(RelationshipTypeBusinessLogic.class);
-		CapabilitiesBusinessLogic capabilitiesBusinessLogic = mock(CapabilitiesBusinessLogic.class);
-		InterfaceOperationBusinessLogic interfaceOperationBusinessLogic = mock(InterfaceOperationBusinessLogic.class);
-		ResourceBusinessLogic resourceBusinessLogic = mock(ResourceBusinessLogic.class);
-		ArtifactsBusinessLogic artifactsBusinessLogic = mock(ArtifactsBusinessLogic.class);
+	@Mock
+	private HttpServletRequest request;
+	@Mock
+	private HttpSession session;
+	@Mock
+	private ServletContext servletContext;
+	@Mock
+	private WebAppContextWrapper webAppContextWrapper;
+	@Mock
+	private WebApplicationContext webApplicationContext;
+	@Mock
+	private ResponseFormat responseFormat;
+	@Mock
+	private UserBusinessLogic userBusinessLogic;
+	@Mock
+	private ComponentInstanceBusinessLogic componentInstanceBusinessLogic;
+	@Mock
+	private ComponentsUtils componentsUtils;
+	@Mock
+	private ServletUtils servletUtils;
+	@Mock
+	private ResourceImportManager resourceImportManager;
+	@Mock
+	private PropertyBusinessLogic propertyBusinessLogic;
+	@Mock
+	private RelationshipTypeBusinessLogic relationshipTypeBusinessLogic;
+	@Mock
+	private CapabilitiesBusinessLogic capabilitiesBusinessLogic;
+	@Mock
+	private InterfaceOperationBusinessLogic interfaceOperationBusinessLogic;
+	@Mock
+	private ResourceBusinessLogic resourceBusinessLogic;
+	@Mock
+	private ArtifactsBusinessLogic artifactsBusinessLogic;
+	@Mock
+	private ResponseFormatManager responseFormatManager;
 
-		return new TypesFetchServlet(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils,
-				resourceImportManager, propertyBusinessLogic, relationshipTypeBusinessLogic, capabilitiesBusinessLogic,
-				interfaceOperationBusinessLogic, resourceBusinessLogic, artifactsBusinessLogic);
+	private final Path rootPath = Path.of("/v1/catalog");
+	private final Path nodeTypesPath = rootPath.resolve("nodeTypes");
+	private User user;
+
+	@BeforeEach
+	void resetMock() throws Exception {
+		super.setUp();
+		initMocks();
+		initConfig();
+		initTestData();
 	}
 
-	
-	@Test
-	public void testGetAllDataTypesServlet() throws Exception {
-		TypesFetchServlet testSubject;
-		HttpServletRequest request = null;
-		String userId = "";
-		Response result;
-
-		// default test
-		testSubject = createTestSubject();
+	@AfterEach
+	void after() throws Exception {
+		super.tearDown();
 	}
 
-	
 	@Test
-	public void testGetPropertyBL() throws Exception {
-		TypesFetchServlet testSubject;
-		ServletContext context = null;
-		PropertyBusinessLogic result;
+	void testGetAllNodeTypesServlet() {
+		final String modelName = "ETSI-SOL001-331";
+		Resource res1 = new Resource();
+		res1.setName("node type 1");
+		res1.setToscaResourceName("toscaResName1");
+		Either<List<Component>, ResponseFormat> actionResponse =
+			Either
+				.left(List.of(res1));
+		when(responseFormat.getStatus()).thenReturn(HttpStatus.OK_200);
+		when(componentsUtils.getResponseFormat(ActionStatus.OK)).thenReturn(responseFormat);
+		when(componentsUtils.getResponseFormat(any(ComponentException.class))).thenReturn(responseFormat);
+		when(servletUtils.getUserAdmin()).thenReturn(userBusinessLogic);
+		when(userBusinessLogic.getUser(anyString())).thenReturn(user);
+		when(resourceBusinessLogic.getLatestVersionNotAbstractComponentsMetadata(
+			anyBoolean(),
+			any(),
+			any(),
+			any(),
+			anyString(),
+			anyString(),
+			anyBoolean())
+		).thenReturn(actionResponse);
 
-		// default test
-		testSubject = createTestSubject();
+		final var response = target()
+			.path(nodeTypesPath.toString())
+			.queryParam("model", modelName)
+			.request(MediaType.APPLICATION_JSON)
+			.header(Constants.USER_ID_HEADER, USER_ID)
+			.get();
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+	}
+
+	@Override
+	protected ResourceConfig configure() {
+		MockitoAnnotations.openMocks(this);
+		forceSet(TestProperties.CONTAINER_PORT, "0");
+		final ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+		return new ResourceConfig(TypesFetchServlet.class)
+			.register(new AbstractBinder() {
+				@Override
+				protected void configure() {
+					bind(request).to(HttpServletRequest.class);
+					bind(userBusinessLogic).to(UserBusinessLogic.class);
+					bind(componentInstanceBusinessLogic).to(ComponentInstanceBusinessLogic.class);
+					bind(componentsUtils).to(ComponentsUtils.class);
+					bind(servletUtils).to(ServletUtils.class);
+					bind(resourceImportManager).to(ResourceImportManager.class);
+					bind(resourceBusinessLogic).to(ResourceBusinessLogic.class);
+					bind(propertyBusinessLogic).to(PropertyBusinessLogic.class);
+					bind(relationshipTypeBusinessLogic).to(RelationshipTypeBusinessLogic.class);
+					bind(capabilitiesBusinessLogic).to(CapabilitiesBusinessLogic.class);
+					bind(interfaceOperationBusinessLogic).to(InterfaceOperationBusinessLogic.class);
+					bind(artifactsBusinessLogic).to(ArtifactsBusinessLogic.class);
+				}
+			})
+			.register(new OperationExceptionMapper(
+				new ServletResponseBuilder(),
+				responseFormatManager
+			))
+			.register(MultiPartFeature.class)
+			.property("contextConfig", context);
+	}
+
+	@Override
+	protected void configureClient(final ClientConfig config) {
+		config.register(MultiPartFeature.class);
+	}
+
+
+	void initMocks() {
+		when(request.getSession()).thenReturn(session);
+		when(session.getServletContext()).thenReturn(servletContext);
+		when(servletContext.getAttribute(Constants.WEB_APPLICATION_CONTEXT_WRAPPER_ATTR))
+			.thenReturn(webAppContextWrapper);
+		when(webAppContextWrapper.getWebAppContext(servletContext)).thenReturn(webApplicationContext);
+		when(webApplicationContext.getBean(ComponentInstanceBusinessLogic.class)).thenReturn(componentInstanceBusinessLogic);
+		when(webApplicationContext.getBean(UserBusinessLogic.class)).thenReturn(userBusinessLogic);
+		when(userBusinessLogic.getUser(USER_ID, false)).thenReturn(USER);
+		when(request.getHeader(Constants.USER_ID_HEADER)).thenReturn(USER_ID);
+		when(webApplicationContext.getBean(ServletUtils.class)).thenReturn(servletUtils);
+		when(servletUtils.getComponentsUtils()).thenReturn(componentsUtils);
+		when(webApplicationContext.getBean(ResourceImportManager.class)).thenReturn(resourceImportManager);
+		when(webApplicationContext.getBean(PropertyBusinessLogic.class)).thenReturn(propertyBusinessLogic);
+		when(webApplicationContext.getBean(RelationshipTypeBusinessLogic.class)).thenReturn(relationshipTypeBusinessLogic);
+		when(webApplicationContext.getBean(CapabilitiesBusinessLogic.class)).thenReturn(capabilitiesBusinessLogic);
+		when(webApplicationContext.getBean(InterfaceOperationBusinessLogic.class)).thenReturn(interfaceOperationBusinessLogic);
+		when(webApplicationContext.getBean(ResourceBusinessLogic.class)).thenReturn(resourceBusinessLogic);
+		when(webApplicationContext.getBean(ArtifactsBusinessLogic.class)).thenReturn(artifactsBusinessLogic);
+	}
+
+	void initConfig() {
+		final String appConfigDir = "src/test/resources/config/catalog-be";
+		final ConfigurationSource
+			configurationSource = new FSConfigurationSource(ExternalConfiguration.getChangeListener(), appConfigDir);
+		final ConfigurationManager configurationManager = new ConfigurationManager(configurationSource);
+		final org.openecomp.sdc.be.config.Configuration configuration = new org.openecomp.sdc.be.config.Configuration();
+		configuration.setJanusGraphInMemoryGraph(true);
+		configurationManager.setConfiguration(configuration);
+		ExternalConfiguration.setAppName("catalog-be");
+	}
+
+	private void initTestData() {
+		user = new User();
+		user.setUserId(USER_ID);
+		user.setRole(Role.ADMIN.name());
+		when(userBusinessLogic.getUser(USER_ID)).thenReturn(user);
 	}
 }
