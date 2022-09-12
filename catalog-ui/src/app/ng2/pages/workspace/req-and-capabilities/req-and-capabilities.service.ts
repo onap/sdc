@@ -16,7 +16,6 @@ export class ReqAndCapabilitiesService {
     private capabilityTypesList: CapabilityTypeModel[];
     private relationshipTypesList: RelationshipTypeModel[];
     private nodeTypesList: NodeTypeModel[];
-    private capabilitiesListUpdated: boolean = false;
     private requirementsListUpdated: boolean = false;
     private nodeTypeListUpdated: boolean = false;
 
@@ -41,13 +40,10 @@ export class ReqAndCapabilitiesService {
 
     public async initInputs(initInputsFor: string) {
 
-        if (!this.capabilitiesListUpdated){
-            // -- COMMON for both --
-            this.capabilityTypesList = [];
-            let capabilityTypesResult = await this.toscaTypesServiceNg2.fetchCapabilityTypes(this.workspaceService.metadata.model);
-            Object.keys(capabilityTypesResult).forEach(key => {this.capabilityTypesList.push(capabilityTypesResult[key])})
-            this.capabilitiesListUpdated = true;
-        }
+        // -- COMMON for both --
+        this.capabilityTypesList = [];
+        let capabilityTypesResult = await this.toscaTypesServiceNg2.fetchCapabilityTypes(this.workspaceService.metadata.model);
+        Object.keys(capabilityTypesResult).forEach(key => {this.capabilityTypesList.push(capabilityTypesResult[key])})
 
         if (initInputsFor === 'INPUTS_FOR_REQUIREMENTS') {
             if (!this.requirementsListUpdated){
