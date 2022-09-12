@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e737ae7d_0847e7fa",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-12T16:13:17Z",
+      "side": 1,
+      "message": "the same will happen with the relationship types, it would be good to apply the same change here",
+      "range": {
+        "startLine": 49,
+        "startChar": 12,
+        "endLine": 49,
+        "endChar": 47
+      },
+      "revId": "906efa0dc974778699ecf8e00baaee739ae253ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76afede1_6cf960b7",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-12T16:13:17Z",
+      "side": 1,
+      "message": "also with the node types. But here the model is not being passed. Could you take a look where this is being used? In theory the model should be passed when retrieving any type.",
+      "range": {
+        "startLine": 58,
+        "startChar": 16,
+        "endLine": 58,
+        "endChar": 87
+      },
+      "revId": "906efa0dc974778699ecf8e00baaee739ae253ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
