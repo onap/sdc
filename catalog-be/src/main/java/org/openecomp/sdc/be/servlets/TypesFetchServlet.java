@@ -99,12 +99,26 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
     private final ArtifactsBusinessLogic artifactsBusinessLogic;
 
     @Inject
-    public TypesFetchServlet(UserBusinessLogic userBusinessLogic, ComponentInstanceBusinessLogic componentInstanceBL, ComponentsUtils componentsUtils,
-                             ServletUtils servletUtils, ResourceImportManager resourceImportManager, PropertyBusinessLogic propertyBusinessLogic,
-                             RelationshipTypeBusinessLogic relationshipTypeBusinessLogic, CapabilitiesBusinessLogic capabilitiesBusinessLogic,
-                             InterfaceOperationBusinessLogic interfaceOperationBusinessLogic, ResourceBusinessLogic resourceBusinessLogic,
-                             ArtifactsBusinessLogic artifactsBusinessLogic) {
-        super(userBusinessLogic, componentInstanceBL, componentsUtils, servletUtils, resourceImportManager);
+    public TypesFetchServlet(
+        UserBusinessLogic userBusinessLogic,
+        ComponentInstanceBusinessLogic componentInstanceBL,
+        ComponentsUtils componentsUtils,
+        ServletUtils servletUtils,
+        ResourceImportManager resourceImportManager,
+        PropertyBusinessLogic propertyBusinessLogic,
+        RelationshipTypeBusinessLogic relationshipTypeBusinessLogic,
+        CapabilitiesBusinessLogic capabilitiesBusinessLogic,
+        InterfaceOperationBusinessLogic interfaceOperationBusinessLogic,
+        ResourceBusinessLogic resourceBusinessLogic,
+        ArtifactsBusinessLogic artifactsBusinessLogic
+    ) {
+        super(
+            userBusinessLogic,
+            componentInstanceBL,
+            componentsUtils,
+            servletUtils,
+            resourceImportManager
+        );
         this.propertyBusinessLogic = propertyBusinessLogic;
         this.relationshipTypeBusinessLogic = relationshipTypeBusinessLogic;
         this.capabilitiesBusinessLogic = capabilitiesBusinessLogic;
@@ -281,7 +295,11 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         @ApiResponse(responseCode = "400", description = "Invalid content / Missing content"),
         @ApiResponse(responseCode = "404", description = "Node types not found")})
     @PermissionAllowed(AafPermission.PermNames.INTERNAL_ALL_VALUE)
-    public Response getAllNodeTypesServlet(@Context final HttpServletRequest request, @HeaderParam(value = Constants.USER_ID_HEADER) String userId) {
+    public Response getAllNodeTypesServlet(
+        @Context final HttpServletRequest request,
+        @HeaderParam(value = Constants.USER_ID_HEADER) String userId,
+        @Parameter(description = "model", required = false) @QueryParam("model") String modelName
+    ) {
         Wrapper<Response> responseWrapper = new Wrapper<>();
         Wrapper<User> userWrapper = new Wrapper<>();
         ServletContext context = request.getSession().getServletContext();
@@ -290,15 +308,16 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
         try {
             init();
             validateUserExist(responseWrapper, userWrapper, userId);
+            modelName = ValidationUtils.sanitizeInputString(modelName);
             if (responseWrapper.isEmpty()) {
                 String url = request.getMethod() + " " + request.getRequestURI();
                 log.debug("Start handle request of {} | modifier id is {}", url, userId);
-                response = getComponent(resourceBusinessLogic, true, userId);
+                response = getComponent(resourceBusinessLogic, true, userId, modelName);
                 if (response.isRight()) {
                     return response.right().value();
                 }
                 componentMap = new HashMap<>(response.left().value());
-                response = getComponent(resourceBusinessLogic, false, userId);
+                response = getComponent(resourceBusinessLogic, false, userId, modelName);
                 if (response.isRight()) {
                     return response.right().value();
                 }
@@ -340,13 +359,16 @@ public class TypesFetchServlet extends AbstractValidationsServlet {
 
     }
 
-
-    private Either<Map<String, Component>, Response> getComponent(ComponentBusinessLogic resourceBL, boolean isAbstract, String userId) {
+    private Either<Map<String, Component>, Response> getComponent(
+        ComponentBusinessLogic resourceBL,
+        boolean isAbstract, String userId,
+        final String modelName
+    ) {
         Either<List<Component>, ResponseFormat> actionResponse;
         List<Component> componentList;
         actionResponse = resourceBL
             .getLatestVersionNotAbstractComponentsMetadata(isAbstract, HighestFilterEnum.HIGHEST_ONLY, ComponentTypeEnum.RESOURCE, null, userId,
-                null, false);
+                modelName, false);
         if (actionResponse.isRight()) {
             log.debug(FAILED_TO_GET_ALL_NON_ABSTRACT, ComponentTypeEnum.RESOURCE.getValue());
             return Either.right(buildErrorResponse(actionResponse.right().value()));

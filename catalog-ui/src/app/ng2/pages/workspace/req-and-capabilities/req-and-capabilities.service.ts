@@ -16,7 +16,6 @@ export class ReqAndCapabilitiesService {
     private capabilityTypesList: CapabilityTypeModel[];
     private relationshipTypesList: RelationshipTypeModel[];
     private nodeTypesList: NodeTypeModel[];
-    private capabilitiesListUpdated: boolean = false;
     private requirementsListUpdated: boolean = false;
     private nodeTypeListUpdated: boolean = false;
 
@@ -41,28 +40,19 @@ export class ReqAndCapabilitiesService {
 
     public async initInputs(initInputsFor: string) {
 
-        if (!this.capabilitiesListUpdated){
-            // -- COMMON for both --
-            this.capabilityTypesList = [];
-            let capabilityTypesResult = await this.toscaTypesServiceNg2.fetchCapabilityTypes(this.workspaceService.metadata.model);
-            Object.keys(capabilityTypesResult).forEach(key => {this.capabilityTypesList.push(capabilityTypesResult[key])})
-            this.capabilitiesListUpdated = true;
-        }
+        // -- COMMON for both --
+        this.capabilityTypesList = [];
+        let capabilityTypesResult = await this.toscaTypesServiceNg2.fetchCapabilityTypes(this.workspaceService.metadata.model);
+        Object.keys(capabilityTypesResult).forEach(key => {this.capabilityTypesList.push(capabilityTypesResult[key])})
 
         if (initInputsFor === 'INPUTS_FOR_REQUIREMENTS') {
-            if (!this.requirementsListUpdated){
-                this.relationshipTypesList = [];
-                let relationshipTypesResult = await this.toscaTypesServiceNg2.fetchRelationshipTypes(this.workspaceService.metadata.model);
-                Object.keys(relationshipTypesResult).forEach(key => {this.relationshipTypesList.push(relationshipTypesResult[key])});
-                this.requirementsListUpdated = true;
-            }
+            this.relationshipTypesList = [];
+            let relationshipTypesResult = await this.toscaTypesServiceNg2.fetchRelationshipTypes(this.workspaceService.metadata.model);
+            Object.keys(relationshipTypesResult).forEach(key => {this.relationshipTypesList.push(relationshipTypesResult[key])});
 
-            if (!this.nodeTypeListUpdated){
-                this.nodeTypesList = [];
-                let nodeTypesResult = await this.toscaTypesServiceNg2.fetchNodeTypes();
-                Object.keys(nodeTypesResult).forEach(key => {this.nodeTypesList.push(nodeTypesResult[key])})
-                this.nodeTypeListUpdated = true;
-            }
+            this.nodeTypesList = [];
+            let nodeTypesResult = await this.toscaTypesServiceNg2.fetchNodeTypes(this.workspaceService.metadata.model);
+            Object.keys(nodeTypesResult).forEach(key => {this.nodeTypesList.push(nodeTypesResult[key])})
         }
     }
 
