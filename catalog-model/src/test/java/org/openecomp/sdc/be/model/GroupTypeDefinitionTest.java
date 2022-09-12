@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,71 +20,19 @@
 
 package org.openecomp.sdc.be.model;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.Test;
 import org.openecomp.sdc.be.datatypes.elements.GroupTypeDataDefinition;
 
-import java.util.HashMap;
-import java.util.List;
-
-
 public class GroupTypeDefinitionTest {
 
-	private GroupTypeDefinition createTestSubject() {
-		return new GroupTypeDefinition();
-	}
+    @Test
+    public void testCtor() throws Exception {
+        GroupTypeDefinition testSubject = new GroupTypeDefinition(new GroupTypeDataDefinition());
+        assertNotNull(testSubject);
+        assertTrue(testSubject instanceof GroupTypeDefinition);
+    }
 
-	@Test
-	public void testCtor() throws Exception {
-		new GroupTypeDefinition(new GroupTypeDataDefinition());
-	}
-	
-	@Test
-	public void testGetProperties() throws Exception {
-		GroupTypeDefinition testSubject;
-		List<PropertyDefinition> result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.getProperties();
-	}
-
-	
-	@Test
-	public void testSetProperties() throws Exception {
-		GroupTypeDefinition testSubject;
-		List<PropertyDefinition> properties = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setProperties(properties);
-	}
-
-	@Test
-	public void testGetCapabilityTypes() throws Exception {
-		GroupTypeDefinition testSubject;
-		List<PropertyDefinition> properties = null;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.getCapabilities();
-	}
-	
-	@Test
-	public void testSetCapabilityTypes() throws Exception {
-		GroupTypeDefinition testSubject;
-
-		// default test
-		testSubject = createTestSubject();
-		testSubject.setCapabilities(new HashMap<>());
-	}
-	
-	@Test
-	public void testToString() throws Exception {
-		GroupTypeDefinition testSubject;
-		String result;
-
-		// default test
-		testSubject = createTestSubject();
-		result = testSubject.toString();
-	}
 }
