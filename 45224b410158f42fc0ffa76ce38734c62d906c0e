@@ -34,6 +34,24 @@
       "revId": "45224b410158f42fc0ffa76ce38734c62d906c0e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1481d67a_6cf2361c",
+        "filename": "integration-tests/environments/plugins-configuration.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-13T09:17:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f172f6f6_ab8088fd",
+      "revId": "45224b410158f42fc0ffa76ce38734c62d906c0e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
