@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6989cf2_37ec563b",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-13T17:07:13Z",
+      "side": 1,
+      "message": "JUnit5 test classes and methods should have default package visibility\nremove it",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 6
+      },
+      "revId": "b07bb20ff1a9b5e153c711021d44101e419997e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87392774_9cda86f1",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-13T17:07:13Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 139,
+        "startChar": 1,
+        "endLine": 139,
+        "endChar": 7
+      },
+      "revId": "b07bb20ff1a9b5e153c711021d44101e419997e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
