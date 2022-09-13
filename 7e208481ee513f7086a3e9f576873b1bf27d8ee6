@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9485c655_2a5c4e1c",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/DistributionBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-13T13:35:21Z",
+      "side": 1,
+      "message": "should be inside of \u0027not null block\u0027, no reasons to get this before",
+      "range": {
+        "startLine": 110,
+        "startChar": 8,
+        "endLine": 113,
+        "endChar": 151
+      },
+      "revId": "7e208481ee513f7086a3e9f576873b1bf27d8ee6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "930b5a6d_5e8c6067",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/api/client/KafkaDataResponse.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-13T13:35:21Z",
+      "side": 1,
+      "message": "it is not distribution client but SDC",
+      "range": {
+        "startLine": 3,
+        "startChar": 3,
+        "endLine": 3,
+        "endChar": 26
+      },
+      "revId": "7e208481ee513f7086a3e9f576873b1bf27d8ee6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
