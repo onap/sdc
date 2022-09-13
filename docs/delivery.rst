@@ -12,36 +12,36 @@ SDC Dockers Containers
 Overview
 --------
 
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| Name                | Content of the container                                                   | On Startup                                     |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-cs-init         | Logic for creating the **schemas for SDC catalog** server                  | Create the **schemas**                         |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-cs-onboard init | Logic for creating the **schemas for SDC onboarding** server               | Create the **schemas**                         |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-cs              | **Cassandra** server, this is optional as SDC uses shared ONAP Cassandra by| Starts **Cassandra**                           |
-|                     | default                                                                    |                                                |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-onboard-BE      | Onboarding **Backend** Jetty server                                        | Starts Jetty with the application.             |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-BE              | **Backend** Jetty server                                                   | Starts Jetty with the application.             |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-BE-init         | Logic for importing the SDC **Tosca normative types**                      | Executes the rest calls for the catalog server |
-|                     | Logic for configuring **external users** for SDC external api's            |                                                |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-FE              | SDC **Frontend** Jetty server                                              | Starts Jetty with our application.             |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-WFD-BE-init     | Logic for configuring **Workflow Designer**                                | Execute configuration tasks of the WFD         |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-WFD-BE          | SDC Workflow **Backtend** Jetty server                                     | Starts Jetty with our application.             |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-WFD-FE          | SDC Workflow **Frontend** Jetty server                                     | Starts Jetty with our application.             |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
-| sdc-helm-validator  | SDC container for Helm package validation                                  | Starts server with our application.            |
-+---------------------+----------------------------------------------------------------------------+------------------------------------------------+
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| Name                       | Content of the container                                            | On Startup                                     |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-cassandra-init         | Logic for creating the **schemas for SDC catalog** server           | Create the **schemas**                         |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-cassandra-onboard-init | Logic for creating the **schemas for SDC onboarding** server        | Create the **schemas**                         |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-cassandra              | **Cassandra** server, this is optional as SDC uses shared ONAP      | Starts **Cassandra**                           |
+|                            | Cassandra by default                                                |                                                |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-onboard-be             | Onboarding **Backend** Jetty server                                 | Starts Jetty with the application.             |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-backend                | **Backend** Jetty server                                            | Starts Jetty with the application.             |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-backend-init           | Logic for importing the SDC **Tosca normative types**               | Executes the rest calls for the catalog server |
+|                            | Logic for configuring **external users** for SDC external api's     |                                                |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-frontend               | SDC **Frontend** Jetty server                                       | Starts Jetty with our application.             |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-wfd-be-init            | Logic for configuring **Workflow Designer**                         | Execute configuration tasks of the WFD         |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-wfd-be                 | SDC Workflow **Backtend** Jetty server                              | Starts Jetty with our application.             |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-wfd-fe                 | SDC Workflow **Frontend** Jetty server                              | Starts Jetty with our application.             |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
+| sdc-helm-validator         | SDC container for Helm package validation                           | Starts server with our application.            |
++----------------------------+---------------------------------------------------------------------+------------------------------------------------+
 
 
-Deployement dependency map
+Deployment dependency map
 --------------------------
 
 .. blockdiag::
@@ -51,19 +51,21 @@ Deployement dependency map
     class app [color = "#29ADFF", shape = "roundedbox"]
     fe [label = "sdc-frontend", class = "app"];
     be [label = "sdc-backend", class = "app"];
-    onboarding-be [label = "sdc-onboarding-backend", class = "app"];
-    cassandra [label = "sdc-cassandra", class = "app"];
-    be-config [label = "sdc-backend-config", class = "job"];
-    cassandra-config [label = "sdc-cassandra-config", class = "job"];
-    onboarding-init [label = "sdc-onboarding-init", class = "job"];
-    sdc-WFD-FE [label = "sdc-workflow-fe", class = "app"];
-    sdc-WFD-BE [label = "sdc-workflow-be", class = "app"];
-    sdc-WFD-BE-init [label = "sdc-workflow-init", class = "job"];
+    onboarding-be [label = "sdc-onboard-backend", class = "app"];
+    cs [label = "sdc-cassandra", class = "app"];
+    be-init [label = "sdc-backend-init", class = "job"];
+    cd-init [label = "sdc-cassandra-init", class = "job"];
+    cs-onboarding-init [label = "sdc-cassandra-onboard-init", class = "job"];
+    sdc-wfd-fe [label = "sdc-workflow-fe", class = "app"];
+    sdc-wfd-be [label = "sdc-workflow-be", class = "app"];
+    sdc-wfd-be-init [label = "sdc-workflow-init", class = "job"];
     job [class = "job"];
     app [class = "app"];
 
-    fe -> be-config -> be -> onboarding-be -> onboarding-init -> cassandra-config -> cassandra;
-    sdc-WFD-FE -> sdc-WFD-BE-init -> sdc-WFD-BE -> cassandra-config;
+    onboarding-be -> cs-onboarding-init -> cs-init -> cs;
+    be-init -> be -> cs-init -> cs;
+    sdc-wfd-fe -> sdc-wfd-be-init -> sdc-wfd-be -> cs-init;
+    fe;
 
 Connectivity Matrix
 -------------------
@@ -86,9 +88,9 @@ Offered APIs
 +---------------------+-------------------+-----------------------------------------------------------------------------------------+----------+-------------+-----------+
 | container / vm name | address           | API purpose                                                                             | protocol | port number | TCP / UDP |
 +---------------------+-------------------+-----------------------------------------------------------------------------------------+----------+-------------+-----------+
-| sdc-fe              | /sdc1/feproxy/*   | Proxy for all REST calls from SDC UI                                                    | HTTP(S)  | 8181 / 8443 | TCP       |
+| sdc-frontend        | /sdc1/feproxy/*   | Proxy for all REST calls from SDC UI                                                    | HTTP(S)  | 8181 / 8443 | TCP       |
 +---------------------+-------------------+-----------------------------------------------------------------------------------------+----------+-------------+-----------+
-| sdc-be              | /sdc2/*           | Internal APIs used by the UI. Request is passed through front end proxy                 | HTTP(S)  | 8080 / 8443 | TCP       |
+| sdc-backend         | /sdc2/*           | Internal APIs used by the UI. Request is passed through front end proxy                 | HTTP(S)  | 8080 / 8443 | TCP       |
 +---------------------+-------------------+-----------------------------------------------------------------------------------------+----------+-------------+-----------+
 |                     | /sdc/*            | External APIs offered to the different components for retrieving info from SDC catalog. | HTTP(S)  | 8080 / 8443 | TCP       |
 +---------------------+-------------------+-----------------------------------------------------------------------------------------+----------+-------------+-----------+
@@ -112,20 +114,20 @@ Below is a diagram of the SDC project docker containers and the connections betw
         sdc-backend [color = yellow]
         sdc-onboarding-backend [color = yellow]
         sdc-backend [color = yellow]
-        sdc-WFD-frontend [color = brown]
-        sdc-WFD-backend [color = brown]
-        sdc-WFD-BE-init [color = brown]
+        sdc-wfd-frontend [color = brown]
+        sdc-wfd-backend [color = brown]
+        sdc-wfd-be-init [color = brown]
         sdc-cassandra-Config [color = orange]
         sdc-backend-config [color = orange]
         sdc-onboarding-init [color = orange]
-        sdc-WFD-BE-init -> sdc-WFD-backend;
+        sdc-wfd-be-init -> sdc-wfd-backend;
         sdc-onboarding-init -> sdc-onboarding-backend;
         sdc-cassandra-Config -> sdc-cassandra;
         sdc-backend-config -> sdc-backend;
         sdc-wss-simulator -> sdc-frontend;
-        sdc-WFD-frontend -> sdc-WFD-backend;
+        sdc-wfd-frontend -> sdc-wfd-backend;
         sdc-frontend -> sdc-backend, sdc-onboarding-backend;
-        sdc-WFD-backend -> sdc-cassandra;
+        sdc-wfd-backend -> sdc-cassandra;
         sdc-backend -> sdc-cassandra;
         sdc-onboarding-backend -> sdc-cassandra;
         sdc-sanity -> sdc-backend;
@@ -133,7 +135,7 @@ Below is a diagram of the SDC project docker containers and the connections betw
         group deploy_group {
             color = green;
             label = "Application Layer"
-            sdc-backend; sdc-onboarding-backend; sdc-frontend; sdc-cassandra; sdc-cassandra-Config; sdc-backend-config; sdc-onboarding-init; sdc-WFD-frontend; sdc-WFD-backend; sdc-WFD-BE-init;
+            sdc-backend; sdc-onboarding-backend; sdc-frontend; sdc-cassandra; sdc-cassandra-Config; sdc-backend-config; sdc-onboarding-init; sdc-wfd-frontend; sdc-wfd-backend; sdc-wfd-be-init;
         }
         group testing_group {
             color = purple;
