@@ -45,6 +45,29 @@
       "revId": "7e208481ee513f7086a3e9f576873b1bf27d8ee6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e35e8d2a_6542dba6",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/servlet/DistributionServlet.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 5562
+      },
+      "writtenOn": "2022-09-13T13:37:49Z",
+      "side": 1,
+      "message": "would be nice to have some descriptions of parameters and return",
+      "range": {
+        "startLine": 154,
+        "startChar": 7,
+        "endLine": 158,
+        "endChar": 14
+      },
+      "revId": "7e208481ee513f7086a3e9f576873b1bf27d8ee6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
