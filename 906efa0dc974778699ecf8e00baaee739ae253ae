@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5e734815_5fa98b5c",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-13T16:50:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e737ae7d_0847e7fa",
+      "range": {
+        "startLine": 49,
+        "startChar": 12,
+        "endLine": 49,
+        "endChar": 47
+      },
+      "revId": "906efa0dc974778699ecf8e00baaee739ae253ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76afede1_6cf960b7",
         "filename": "catalog-ui/src/app/ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service.ts",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "906efa0dc974778699ecf8e00baaee739ae253ae",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "518ac2ab_f8b1d137",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service.ts",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-13T16:50:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "76afede1_6cf960b7",
+      "range": {
+        "startLine": 58,
+        "startChar": 16,
+        "endLine": 58,
+        "endChar": 87
+      },
+      "revId": "906efa0dc974778699ecf8e00baaee739ae253ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
