@@ -163,6 +163,30 @@
     },
     {
       "key": {
+        "uuid": "a4529148_ccd9a24d",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T13:47:15Z",
+      "side": 1,
+      "message": "maybe you can add an attribute \"id\" to the NodeTypeEnum and use it in this class.",
+      "parentUuid": "259ea06b_e740059b",
+      "range": {
+        "startLine": 185,
+        "startChar": 45,
+        "endLine": 185,
+        "endChar": 66
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bf30e27e_b52cc3c7",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
         "patchSetId": 1
