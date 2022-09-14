@@ -71,6 +71,29 @@
     },
     {
       "key": {
+        "uuid": "9092ac5e_86d50079",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T13:40:10Z",
+      "side": 1,
+      "message": "this class is so important to the system, it must have unit tests, it would have picked Michael\u0027s comment easily. You should add unit tests at least for the group type id.",
+      "range": {
+        "startLine": 39,
+        "startChar": 13,
+        "endLine": 39,
+        "endChar": 28
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5a78b40d_e028e67e",
         "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
         "patchSetId": 1
@@ -87,6 +110,29 @@
         "startChar": 0,
         "endLine": 49,
         "endChar": 12
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff9f08ca_d241608f",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T13:40:10Z",
+      "side": 1,
+      "message": "if possible, fix typo",
+      "range": {
+        "startLine": 129,
+        "startChar": 25,
+        "endLine": 129,
+        "endChar": 56
       },
       "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -133,6 +179,52 @@
         "startChar": 45,
         "endLine": 222,
         "endChar": 70
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86e95767_192e0b9e",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/GroupTypeDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T13:40:10Z",
+      "side": 1,
+      "message": "if keeping this test, it would be good to take the opportunity and convert to JUnit5",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 22
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e1806ac_b25667b0",
+        "filename": "catalog-model/src/test/java/org/openecomp/sdc/be/model/GroupTypeDefinitionTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T13:40:10Z",
+      "side": 1,
+      "message": "this test is not testing anything, the assertions are always true, better remove.\nIf it is supposed to test the copy constructor, all the attributes that should be copied must be provided and compared.",
+      "range": {
+        "startLine": 32,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 5
       },
       "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
