@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f5f435c7_e93ee9dc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T16:24:43Z",
+      "side": 1,
+      "message": "I suggest to change to:\nImport unknown artifact types on Service Import",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 52
+      },
+      "revId": "70fdb489a9192fa32fece952543100770ff8a812",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8bf6aa3f_67cd2835",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
         "patchSetId": 6
