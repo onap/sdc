@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae4a50e4_684e08dc",
+        "filename": "docs/delivery.rst",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-14T09:25:48Z",
+      "side": 1,
+      "message": "we deliver images not containers, please reword here and in other places below where containers is mistakenly used",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 22
+      },
+      "revId": "15a82814ba02881c687ddbf7250ebea8496555e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
