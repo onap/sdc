@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "10b28a1a_2b9288d9",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/servlet/DistributionServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T12:55:19Z",
+      "side": 1,
+      "message": "I also don\u0027t know the history about it.\nThe only reason I could think was swagger documentation, but in this specific code for sure they are not being used.\nI saw the X_ECOMP_REQUEST_ID_HEADER being used to logging purposes.\nThere is also a filter assigning the thread id to a response header org.openecomp.sdc.be.filters.BeServletFilter#filter(javax.ws.rs.container.ContainerRequestContext, javax.ws.rs.container.ContainerResponseContext).\nAnyways, as the other APIs in this Servlet have it, no harm in keeping it, we can do this analysis in a separate commit. As you are testing the API, I thought you could be sure this is not being used and we could clean up the code.",
+      "parentUuid": "adb5ca18_d65f2899",
+      "range": {
+        "startLine": 171,
+        "startChar": 20,
+        "endLine": 171,
+        "endChar": 32
+      },
+      "revId": "5d70f28c02def01f133d5ef65b9fbc0e54909aa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "de555387_e87ba71c",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/servlet/DistributionServlet.java",
         "patchSetId": 8
