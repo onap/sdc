@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "adb5ca18_d65f2899",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/servlet/DistributionServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-09-14T12:00:23Z",
+      "side": 1,
+      "message": "Not sure of the history behind adding these params but I can see the other endpoints had them added for some reason.\nI agree that only the instance id is actually used. Same for the others.\nDoes the whole this need an overhaul? Should it be part of a separate commit?",
+      "parentUuid": "8a44df4d_9091693e",
+      "range": {
+        "startLine": 171,
+        "startChar": 20,
+        "endLine": 171,
+        "endChar": 32
+      },
+      "revId": "5d70f28c02def01f133d5ef65b9fbc0e54909aa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "de555387_e87ba71c",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/servlet/DistributionServlet.java",
         "patchSetId": 8
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "0257637f_e12002c1",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/servlet/DistributionServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-09-14T12:00:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de555387_e87ba71c",
+      "range": {
+        "startLine": 178,
+        "startChar": 8,
+        "endLine": 179,
+        "endChar": 45
+      },
+      "revId": "5d70f28c02def01f133d5ef65b9fbc0e54909aa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8541f18a_8710e1b1",
         "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/servlet/DistributionServlet.java",
         "patchSetId": 8
@@ -68,6 +116,30 @@
       "revId": "5d70f28c02def01f133d5ef65b9fbc0e54909aa7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c42dc538_45c986ff",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/distribution/servlet/DistributionServlet.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-09-14T12:00:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8541f18a_8710e1b1",
+      "range": {
+        "startLine": 184,
+        "startChar": 19,
+        "endLine": 184,
+        "endChar": 27
+      },
+      "revId": "5d70f28c02def01f133d5ef65b9fbc0e54909aa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
