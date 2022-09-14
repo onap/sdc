@@ -56,6 +56,7 @@ limitations under the License.
 
         <!-- parser-->
         <sdc-tosca-parser.version>1.7.0</sdc-tosca-parser.version>
+        <docker.showLogs>false</docker.showLogs>
     </properties>
 
     <dependencies>
@@ -374,6 +375,12 @@ limitations under the License.
                                     <filtering>true</filtering>
                                     <includes>
                                         <include>integration-test.json</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>environments</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
                                         <include>plugins-configuration.yaml</include>
                                     </includes>
                                 </resource>
