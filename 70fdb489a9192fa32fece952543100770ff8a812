@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8bf6aa3f_67cd2835",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T16:20:16Z",
+      "side": 1,
+      "message": "please, watch the line limit of 150 characters.",
+      "range": {
+        "startLine": 317,
+        "startChar": 16,
+        "endLine": 317,
+        "endChar": 201
+      },
+      "revId": "70fdb489a9192fa32fece952543100770ff8a812",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "179b6f43_4cc8c50d",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T16:20:16Z",
+      "side": 1,
+      "message": "flip the equals to avoid null pointer exception",
+      "range": {
+        "startLine": 318,
+        "startChar": 63,
+        "endLine": 318,
+        "endChar": 69
+      },
+      "revId": "70fdb489a9192fa32fece952543100770ff8a812",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c7b6767_f41b4698",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T16:20:16Z",
+      "side": 1,
+      "message": "please, watch the line limit of 150 characters.",
+      "range": {
+        "startLine": 320,
+        "startChar": 20,
+        "endLine": 320,
+        "endChar": 152
+      },
+      "revId": "70fdb489a9192fa32fece952543100770ff8a812",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
