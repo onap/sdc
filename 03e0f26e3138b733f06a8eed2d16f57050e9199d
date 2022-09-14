@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d803657_582126b2",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/CommonImportManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 513,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-14T09:46:10Z",
+      "side": 1,
+      "message": "with if null? Exception not being thrown any more - how will the type be displayed in the UI if no display name, icon",
+      "range": {
+        "startLine": 513,
+        "startChar": 0,
+        "endLine": 513,
+        "endChar": 35
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0598b1dc_9f363d9e",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-14T09:46:10Z",
+      "side": 1,
+      "message": "what icon and display name will be used? Need to set a default",
+      "range": {
+        "startLine": 281,
+        "startChar": 121,
+        "endLine": 281,
+        "endChar": 134
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "322ad7ce_2915f732",
+        "filename": "catalog-be/src/main/java/org/openecomp/sdc/be/components/impl/ServiceImportBusinessLogic.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-14T09:46:10Z",
+      "side": 1,
+      "message": "change \u0027artifact\u0027 to \u0027group\u0027",
+      "range": {
+        "startLine": 329,
+        "startChar": 44,
+        "endLine": 329,
+        "endChar": 52
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a78b40d_e028e67e",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-14T09:46:10Z",
+      "side": 1,
+      "message": "why remove the other two entries?",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 12
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf30e27e_b52cc3c7",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-14T09:46:10Z",
+      "side": 1,
+      "message": "This method is called with value \"grouptype\" for \u0027resourceName from GroupTypeOperation addGroupTypeToGraph() i.e.with lowercase, so please check if this new impl is correct or does lower case need to be used (NodeTypeEnum.GroupType.getName() returns camel case value).\n\nNeed to be very careful to not change the generation of the UIDs or will not be able to find types in the DB",
+      "range": {
+        "startLine": 193,
+        "startChar": 63,
+        "endLine": 193,
+        "endChar": 95
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7695e01_d4e2dbff",
+        "filename": "catalog-model/src/main/java/org/openecomp/sdc/be/model/operations/impl/UniqueIdBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-14T09:46:10Z",
+      "side": 1,
+      "message": "you are changing the generation of the uid here - note the misspelling in the original impl \"artifactype\".",
+      "range": {
+        "startLine": 222,
+        "startChar": 45,
+        "endLine": 222,
+        "endChar": 70
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4c126c9_b3a4d0bc",
+        "filename": "catalog-ui/cypress/fixtures/common/group-types.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2022-09-14T09:46:10Z",
+      "side": 1,
+      "message": "Im not sure where this is used by its concerning that you are changing the uid.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 71
+      },
+      "revId": "03e0f26e3138b733f06a8eed2d16f57050e9199d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
