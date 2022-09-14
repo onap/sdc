@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef0f968c_1be21357",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T12:41:31Z",
+      "side": 1,
+      "message": "I believe you are using tab instead of four spaces as indentation. Please, adjust that and reformat your code.",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 1
+      },
+      "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d4eee11d_a9951238",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T12:41:31Z",
+      "side": 1,
+      "message": "is it a success or failure test? You probably shouldn\u0027t be mocking both here, and if so, you should return a different/negative response in the exception case. Otherwise, no matter if an exception is thrown or not, the response will be always 200.",
+      "range": {
+        "startLine": 148,
+        "startChar": 2,
+        "endLine": 149,
+        "endChar": 100
+      },
+      "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e233fa18_ba97de0c",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T12:41:31Z",
+      "side": 1,
+      "message": "I believe you know what will be the parameters based on the call you are doing. Better to be more specific while mocking the methods.\n\n.getLatestVersionNotAbstractComponentsMetadata(isAbstract, HighestFilterEnum.HIGHEST_ONLY, ComponentTypeEnum.RESOURCE, null, userId,\n                modelName, false)",
+      "range": {
+        "startLine": 153,
+        "startChar": 2,
+        "endLine": 159,
+        "endChar": 15
+      },
+      "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a4eaf96f_36b2a768",
+        "filename": "catalog-ui/src/app/ng2/pages/workspace/req-and-capabilities/req-and-capabilities.service.ts",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5565
+      },
+      "writtenOn": "2022-09-14T12:41:31Z",
+      "side": 1,
+      "message": "please, remove those are they are not used anymore",
+      "range": {
+        "startLine": 19,
+        "startChar": 4,
+        "endLine": 20,
+        "endChar": 49
+      },
+      "revId": "53890d309ec71a7b5431ad85b2fdf6ba8aacfc4d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
