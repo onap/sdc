@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9fc6ca34_bd8fc0a8",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-14T09:15:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6989cf2_37ec563b",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 6
+      },
+      "revId": "b07bb20ff1a9b5e153c711021d44101e419997e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87392774_9cda86f1",
         "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "b07bb20ff1a9b5e153c711021d44101e419997e7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7937aad1_d1af9735",
+        "filename": "catalog-be/src/test/java/org/openecomp/sdc/be/servlets/TypesFetchServletTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 7955
+      },
+      "writtenOn": "2022-09-14T09:15:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "87392774_9cda86f1",
+      "range": {
+        "startLine": 139,
+        "startChar": 1,
+        "endLine": 139,
+        "endChar": 7
+      },
+      "revId": "b07bb20ff1a9b5e153c711021d44101e419997e7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
